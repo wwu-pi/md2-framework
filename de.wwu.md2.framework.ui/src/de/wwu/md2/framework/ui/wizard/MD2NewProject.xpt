@@ -1,0 +1,33 @@
+«IMPORT de::wwu::md2::framework::ui::wizard»
+
+«DEFINE main FOR MD2ProjectInfo»
+«EXPAND model FOR this»
+«ENDDEFINE»
+
+«DEFINE model FOR MD2ProjectInfo»
+«FILE "src/" + projectName.replaceAll("\\.", "/") + "/models/defaultModel.md2"-»
+package «projectName + ".models"»
+
+/*
+ * Implement the model here
+ */
+«ENDFILE»
+«FILE "src/" + projectName.replaceAll("\\.", "/") + "/controllers/defaultController.md2"-»
+package «projectName + ".controllers"»
+
+/*
+ * Implement the controller here
+ */
+«ENDFILE»
+«FILE "src/" + projectName.replaceAll("\\.", "/") + "/views/defaultView.md2"-»
+package «projectName + ".views"»
+
+/*
+ * Implement the view here
+ */
+«ENDFILE»
+«FILE ".settings/org.eclipse.core.resources.prefs"-»
+eclipse.preferences.version=1
+encoding/<project>=UTF-8
+«ENDFILE»
+«ENDDEFINE»

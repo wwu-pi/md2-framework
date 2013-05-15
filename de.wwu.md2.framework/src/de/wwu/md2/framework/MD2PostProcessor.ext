@@ -1,0 +1,20 @@
+import ecore;
+
+process(xtext::GeneratedMetamodel this) :
+	ePackage.process()
+;
+
+process(EPackage this) :
+	eClassifiers.typeSelect(EClass).process()
+;
+
+process(EClass this) :
+	switch (name) {
+		case "Spacer": eAttributes.processSpacer()
+		default: null
+	}
+;
+
+processSpacer(EAttribute this) :
+	if name == "number" then setDefaultValueLiteral('1')
+;
