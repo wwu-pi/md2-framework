@@ -1,0 +1,9 @@
+MD² framework
+Copyright 2012-2013 Group for Practical Computer Science, Department of Information Systems, University of Münster and others
+
+This product includes software developed by third parties, namely:
+* Android: The Android Open Source Project, licensed under Apache License 2.0.
+* Guava libraries: Google and others, licensed under Apache License 2.0.
+* Google Guice: Google and others, licensed under Apache License 2.0.
+* Jackson JSON processor: Tatu Saloranta and others, licensed under Apache License 2.0.
+* Jersey: licensed under Common Development and Distribution License (CDDL) Version 1.0
