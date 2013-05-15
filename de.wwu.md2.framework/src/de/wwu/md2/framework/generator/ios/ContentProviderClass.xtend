@@ -6,8 +6,6 @@ import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import java.util.Date
 
-import static de.wwu.md2.framework.generator.ios.ContentProviderClass.*
-
 class ContentProviderClass
 {
 	def static createContentProviderH(ContentProvider cp) '''

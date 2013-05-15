@@ -2,8 +2,6 @@ package de.wwu.md2.framework.generator.ios
 
 import de.wwu.md2.framework.util.UuidProvider
 
-import static de.wwu.md2.framework.generator.ios.ProjectFile.*
-
 class ProjectFile {
 	
 	def static generateProjectFile(UuidProvider uuidProvider, FileStructure fileStructure, String appName) '''

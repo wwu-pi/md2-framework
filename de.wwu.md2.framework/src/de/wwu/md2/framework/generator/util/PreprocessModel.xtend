@@ -65,8 +65,8 @@ import de.wwu.md2.framework.mD2.StandardValidator
 import de.wwu.md2.framework.mD2.StandardValidatorType
 import de.wwu.md2.framework.mD2.StringRangeValidator
 import de.wwu.md2.framework.mD2.StringType
-import de.wwu.md2.framework.mD2.StyleReference
 import de.wwu.md2.framework.mD2.StyleBody
+import de.wwu.md2.framework.mD2.StyleReference
 import de.wwu.md2.framework.mD2.TabSpecificParam
 import de.wwu.md2.framework.mD2.TextInput
 import de.wwu.md2.framework.mD2.TextInputType
@@ -91,11 +91,10 @@ import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.emf.ecore.util.EcoreUtil$Copier
+import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
-import static extension de.wwu.md2.framework.generator.util.PreprocessModel.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 /**

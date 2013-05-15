@@ -4,7 +4,6 @@ import de.wwu.md2.framework.generator.util.DataContainer
 import de.wwu.md2.framework.mD2.ContainerElement
 import java.util.List
 
-import static de.wwu.md2.framework.generator.android.common.Manifest.*
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
 class Manifest {

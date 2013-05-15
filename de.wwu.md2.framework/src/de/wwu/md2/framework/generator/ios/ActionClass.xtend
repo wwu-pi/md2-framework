@@ -53,7 +53,6 @@ import java.util.Date
 import java.util.List
 import java.util.Set
 
-import static de.wwu.md2.framework.generator.ios.ActionClass.*
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
 class ActionClass

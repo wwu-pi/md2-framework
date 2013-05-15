@@ -14,8 +14,6 @@ import de.wwu.md2.framework.mD2.ReferencedType
 import de.wwu.md2.framework.mD2.StringType
 import de.wwu.md2.framework.mD2.TimeType
 
-import static de.wwu.md2.framework.generator.ios.DataModelXML.*
-
 class DataModelXML
 {
 	def static createDataModelXML(Iterable<Entity> entities) '''

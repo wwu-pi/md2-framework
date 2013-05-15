@@ -19,7 +19,6 @@ import de.wwu.md2.framework.mD2.Tooltip
 import de.wwu.md2.framework.mD2.View
 import java.util.Date
 
-import static de.wwu.md2.framework.generator.ios.LocalizableStrings.*
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
 class LocalizableStrings {

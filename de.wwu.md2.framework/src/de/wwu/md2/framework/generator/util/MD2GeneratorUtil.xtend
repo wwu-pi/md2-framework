@@ -43,8 +43,6 @@ import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 
-import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
-
 class MD2GeneratorUtil {
 		
 	private static IQualifiedNameProvider qualifiedNameProvider

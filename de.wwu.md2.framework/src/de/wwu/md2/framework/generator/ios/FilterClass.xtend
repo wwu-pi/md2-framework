@@ -9,10 +9,9 @@ import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.FilterType
 import de.wwu.md2.framework.mD2.WhereClauseCondition
 import java.util.Date
-
-import static de.wwu.md2.framework.generator.ios.FilterClass.*
-import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import java.util.List
+
+import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
 class FilterClass
 {

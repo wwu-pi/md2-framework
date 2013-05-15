@@ -10,7 +10,6 @@ import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.TabIconParam
 import java.util.Date
 
-import static de.wwu.md2.framework.generator.ios.InitializeApplicationAction.*
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
 class InitializeApplicationAction

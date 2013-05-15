@@ -13,8 +13,6 @@ import de.wwu.md2.framework.mD2.StringType
 import de.wwu.md2.framework.mD2.TimeType
 import java.util.Date
 
-import static de.wwu.md2.framework.generator.ios.ModelClass.*
-
 class ModelClass {
 	
 	def static createModelH(Entity entity) '''

@@ -25,7 +25,6 @@ import de.wwu.md2.framework.mD2.ViewElementRef
 import de.wwu.md2.framework.mD2.ViewElementType
 import java.util.Date
 
-import static de.wwu.md2.framework.generator.ios.ViewClass.*
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
 class ViewClass

@@ -1,17 +1,16 @@
 package de.wwu.md2.framework.generator.ios
 
+import de.wwu.md2.framework.mD2.Color
+import de.wwu.md2.framework.mD2.HexColorDef
+import de.wwu.md2.framework.mD2.NamedColorDef
 import de.wwu.md2.framework.mD2.StyleAssignment
+import de.wwu.md2.framework.mD2.StyleBody
 import de.wwu.md2.framework.mD2.StyleDefinition
 import de.wwu.md2.framework.mD2.StyleReference
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import java.util.Date
 
-import static extension de.wwu.md2.framework.generator.ios.StylesheetClass.*
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
-import de.wwu.md2.framework.mD2.Color
-import de.wwu.md2.framework.mD2.NamedColorDef
-import de.wwu.md2.framework.mD2.HexColorDef
-import de.wwu.md2.framework.mD2.StyleBody
 
 class StylesheetClass
 {

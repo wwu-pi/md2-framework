@@ -23,7 +23,6 @@ import de.wwu.md2.framework.mD2.ViewElementEventRef
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import java.util.Set
 
-import static de.wwu.md2.framework.generator.android.util.MD2AndroidUtil.*
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
 class MD2AndroidUtil {
