@@ -653,6 +653,10 @@ class PreprocessModel {
 	}
 	
 	def private static Iterable<ViewElementDef> modelToView(MD2Factory factory, ResourceSet input, ModelElement m, ContentProviderPathDefinition pathDefinition, Collection<EntityPathDefinition> filteredAttributes) {
+		modelToView(factory, input, m, pathDefinition, filteredAttributes, null)
+	}
+	
+	def private static Iterable<ViewElementDef> modelToView(MD2Factory factory, ResourceSet input, ModelElement m, ContentProviderPathDefinition pathDefinition, Collection<EntityPathDefinition> filteredAttributes, String labelPrefix) {
 		val List<ViewElementDef> viewElements = Lists::newArrayList
 		if (m instanceof Entity) {
 			(m as Entity).attributes.forEach [ a |
@@ -679,28 +683,28 @@ class PreprocessModel {
 									val flowLayoutPane = factory.createFlowLayoutPane()
 									flowLayoutPane.name = a.name + "FlowLayoutPane"
 									// Recursive modelToView for references entities
-									for (childElem : modelToView(factory, input, (a.type as ReferencedType).entity, copyElement(pathDefinitionIter) as ContentProviderPathDefinition, filteredAttributes)) {
+									for (childElem : modelToView(factory, input, (a.type as ReferencedType).entity, copyElement(pathDefinitionIter) as ContentProviderPathDefinition, filteredAttributes, a.labelText + " - ")) {
 										flowLayoutPane.elements.add(childElem as ViewElementDef)
 									}
 									flowLayoutPane.params.add(factory.createFlowLayoutPaneFlowDirectionParam)
 									(flowLayoutPane.params.get(0) as FlowLayoutPaneFlowDirectionParam).flowDirection = FlowDirection::VERTICAL
 									viewElementDef.value = flowLayoutPane
 								} else if ((a.type as ReferencedType).entity instanceof Enum) {
-									viewElementDef.value = factory.createOptionInput().applyStyle(a)
+									viewElementDef.value = factory.createOptionInput().applyStyle(a, labelPrefix)
 									viewElementDef.value.name = a.name + "OptionInput"
 									(viewElementDef.value as OptionInput).enumReference = ((a.type as ReferencedType).entity as Enum)
 								}
 							}
 							BooleanType: {
-								viewElementDef.value = factory.createCheckBox().applyStyle(a)
+								viewElementDef.value = factory.createCheckBox().applyStyle(a, labelPrefix)
 								viewElementDef.value.name = a.name + "CheckBox"
 							}
 							case (a.type instanceof IntegerType || a.type instanceof FloatType || a.type instanceof StringType): {
-								viewElementDef.value = factory.createTextInput().applyStyle(a)
+								viewElementDef.value = factory.createTextInput().applyStyle(a, labelPrefix)
 								viewElementDef.value.name = a.name + "TextInput"
 							}
 							case (a.type instanceof DateType || a.type instanceof TimeType || a.type instanceof DateTimeType): {
-								viewElementDef.value = factory.createTextInput().applyStyle(a)
+								viewElementDef.value = factory.createTextInput().applyStyle(a, labelPrefix)
 								viewElementDef.value.name = a.name + "TextInput"
 								(viewElementDef.value as TextInput).type = switch a.type {
 									DateType: TextInputType::DATE
@@ -880,11 +884,11 @@ class PreprocessModel {
 		input.resources.map(r|r.allContents.toIterable.filter(typeof(CustomAction)).filter(action | action.name == autoGenerationActionName)).flatten.last
 	}
 	
-	def private static ContentElement applyStyle(ContentElement contentElement, Attribute attr) {
-		val labelText = switch (attr.extendedName) {
-			String: attr.extendedName
-			default: attr.name.toFirstUpper.replaceAll("(.)([A-Z])","$1 $2")
-		}
+	def private static ContentElement applyStyle(ContentElement contentElement, Attribute attr, String labelPrefix) {
+		applyStyleWithLabelText(contentElement, attr, (labelPrefix?:"") + attr.labelText)
+	}
+	
+	def private static ContentElement applyStyleWithLabelText(ContentElement contentElement, Attribute attr, String labelText) {
 		switch (contentElement) {
 			OptionInput: {
 				contentElement.labelText = labelText
@@ -900,6 +904,13 @@ class PreprocessModel {
 			}
 		}
 		contentElement
+	}
+	
+	def private static String getLabelText(Attribute attr) {
+		switch (attr.extendedName) {
+			String: attr.extendedName
+			default: attr.name.toFirstUpper.replaceAll("(.)([A-Z])","$1 $2")
+		}
 	}
 	
 	def static ResourceSet copyModel(ResourceSet input) {
