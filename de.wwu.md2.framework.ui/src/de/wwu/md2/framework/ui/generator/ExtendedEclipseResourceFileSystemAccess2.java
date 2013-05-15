@@ -3,6 +3,7 @@ package de.wwu.md2.framework.ui.generator;
 import java.io.InputStream;
 import java.util.Collection;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -54,11 +55,11 @@ public class ExtendedEclipseResourceFileSystemAccess2
 		OutputConfiguration outputConfig = getOutputConfig(outputConfiguration);
 		
 		// check output folder exists
-		IFolder folder = getFolder(outputConfig);
+		IContainer folder = getContainer(outputConfig);
 		if (!folder.exists()) {
 			if (outputConfig.isCreateOutputDirectory()) {
 				try {
-					createFolder(folder);
+					createContainer(folder);
 				} catch (CoreException e) {
 					throw new RuntimeException(e);
 				}
@@ -106,11 +107,11 @@ public class ExtendedEclipseResourceFileSystemAccess2
 		if (sourceResource == null) return null;
 		
 		// check output folder exists
-		IFolder folder = getFolder(outputConfiguration);
+		IContainer folder = getContainer(outputConfiguration);
 		if (!folder.exists()) {
 			if (outputConfiguration.isCreateOutputDirectory()) {
 				try {
-					createFolder(folder);
+					createContainer(folder);
 				} catch (CoreException e) {
 					throw new RuntimeException(e);
 				}
@@ -123,7 +124,7 @@ public class ExtendedEclipseResourceFileSystemAccess2
 		IFolder outputFolder = project.getFolder(outputPath.removeLastSegments(1));
 		if (!outputFolder.exists()) {
 			try {
-				createFolder(outputFolder);
+				createContainer(outputFolder);
 			} catch (CoreException e) {
 				throw new RuntimeException(e);
 			}
@@ -181,11 +182,12 @@ public class ExtendedEclipseResourceFileSystemAccess2
 		
 		try {
 			directoryName = directoryName.replaceAll("^/", "");
-			IFolder folder = getFolder(outputConfig);
+			IContainer folder = getContainer(outputConfig);
+			IResource toDelete = folder;
 			if(!directoryName.isEmpty()) {
-				folder = folder.getFolder(directoryName);
+				toDelete = folder.findMember(directoryName);
 			}
-			folder.delete(IResource.KEEP_HISTORY, getMonitor());
+			toDelete.delete(IResource.KEEP_HISTORY, getMonitor());
 		} catch (CoreException e) {
 			throw new RuntimeException(e);
 		}
