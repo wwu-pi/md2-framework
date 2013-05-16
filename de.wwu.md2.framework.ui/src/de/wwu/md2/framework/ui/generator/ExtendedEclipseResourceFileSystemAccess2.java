@@ -183,11 +183,9 @@ public class ExtendedEclipseResourceFileSystemAccess2
 		try {
 			directoryName = directoryName.replaceAll("^/", "");
 			IContainer folder = getContainer(outputConfig);
-			IResource toDelete = folder;
-			if(!directoryName.isEmpty()) {
-				toDelete = folder.findMember(directoryName);
-			}
-			toDelete.delete(IResource.KEEP_HISTORY, getMonitor());
+			IResource toDelete = folder.findMember(directoryName);
+			if(toDelete != null)
+				toDelete.delete(IResource.KEEP_HISTORY, getMonitor());
 		} catch (CoreException e) {
 			throw new RuntimeException(e);
 		}
