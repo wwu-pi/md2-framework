@@ -11,3 +11,6 @@ Development set-up
 ------------------
 
 * [Eclipse IDE for Java and DSL Developers (Juno SR2)](http://www.eclipse.org/downloads/packages/eclipse-ide-java-and-dsl-developers/junosr2)
+* Update to [Xtext](http://www.xtext.org) & [Xtend](http://www.xtend.org) 2.4
+* For Android development: [Android SDK](http://developer.android.com/sdk/index.html)
+* For iOS development: [Xcode](http://developer.apple.com/tools/xcode/) 4.6.2
