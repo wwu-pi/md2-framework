@@ -15,7 +15,6 @@ import static de.wwu.md2.framework.generator.ios.FilterClass.*
 import static de.wwu.md2.framework.generator.ios.InitializeApplicationAction.*
 import static de.wwu.md2.framework.generator.ios.LocalizableStrings.*
 import static de.wwu.md2.framework.generator.ios.ModelClass.*
-import static de.wwu.md2.framework.generator.ios.ProjectFile.*
 import static de.wwu.md2.framework.generator.ios.StylesheetClass.*
 import static de.wwu.md2.framework.generator.ios.ViewClass.*
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
@@ -188,7 +187,7 @@ class IOSGenerator extends AbstractPlatformGenerator
 		
 		// Generate project file and string resources
 		fsa.generateFile(projectFolder + "/Localizable_de.strings", createLocalizableStrings(dataContainer))
-		fsa.generateFile(projectFolder + ".xcodeproj/project.pbxproj", generateProjectFile(new UuidProvider(24, appName), fileStructure, appName))
+		fsa.generateFile(projectFolder + ".xcodeproj/project.pbxproj", new ProjectFile().generateProjectFile(new UuidProvider(24, appName), fileStructure, appName))
 	}
 	
 	

@@ -4,7 +4,14 @@ import de.wwu.md2.framework.util.UuidProvider
 
 class ProjectFile {
 	
-	def static generateProjectFile(UuidProvider uuidProvider, FileStructure fileStructure, String appName) '''
+	extension UuidProvider uuidProvider;
+	
+	def generateProjectFile(UuidProvider uuidProvider, FileStructure fileStructure, String appName) {
+		this.uuidProvider = uuidProvider
+		doGenerateProjectFile(fileStructure, appName)
+	}
+	
+	def protected doGenerateProjectFile(FileStructure fileStructure, String appName) '''
 		// !$*UTF8*$!
 		{
 			archiveVersion = 1;
@@ -35,7 +42,7 @@ class ProjectFile {
 		
 		«generateXCVersionGroupSection(uuidProvider)»
 			};
-			rootObject = «uuidProvider.getUuid("ProjectObject")» /* Project object */;
+			rootObject = «"ProjectObject".uuid» /* Project object */;
 		}
 	'''
 	
