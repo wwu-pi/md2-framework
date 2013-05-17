@@ -115,7 +115,6 @@ static NSString *separator = @".";
 {
     LocalReadRequest *request = [[LocalReadRequest alloc] initWithDataObjectName: dataObjectName filter: filter dataObjectIdentifier: [self getCurrentObjectId]];
     [request execute];
-    [self persistDataObject];
     
     if (request.dataObject != nil && request.dataObjects != nil)
     {
