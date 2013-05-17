@@ -12,7 +12,7 @@
 #import "Utilities.h"
 #import "LocalReadRequest.h"
 #import "DatabaseAccess.h"
-#import "DataTransferObject.h"
+#import "Md2Library/DataTransferObject.h"
 #import "LocalCreateRequest.h"
 #import "Filter.h"
 

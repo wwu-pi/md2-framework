@@ -6,6 +6,10 @@ class ProjectFile {
 	
 	extension UuidProvider uuidProvider;
 	
+	static String md2LibraryName = IOSGenerator::md2LibraryName
+	static String libMd2LibraryOutput = "libMd2Library.a"
+	static String libMd2LibraryOutputId = "9C8E95D41746456D00C2C5BA"
+	
 	def generateProjectFile(UuidProvider uuidProvider, FileStructure fileStructure, String appName) {
 		this.uuidProvider = uuidProvider
 		doGenerateProjectFile(fileStructure, appName)
@@ -22,15 +26,19 @@ class ProjectFile {
 		
 		«generatePBXBuildFileSection(uuidProvider, fileStructure)»
 		
-		«generatePBXFileReferenceSection(uuidProvider, fileStructure, appName)»
+		«generatePBXContainerItemProxySection»
 		
-		«generatePBXFrameworksBuildPhaseSection(uuidProvider, fileStructure)»
+		«generatePBXFileReferenceSection(fileStructure, appName)»
 		
-		«generatePBXGroupSection(uuidProvider, fileStructure, appName)»
+		«generatePBXFrameworksBuildPhaseSection(fileStructure)»
+		
+		«generatePBXGroupSection(fileStructure, appName)»
 		
 		«generatePBXNativeTargetSection(uuidProvider, appName)»
 		
-		«generatePBXProjectSection(uuidProvider, fileStructure, appName)»
+		«generatePBXProjectSection(fileStructure, appName)»
+		
+		«generatePBXReferenceProxySection»
 		
 		«generatePBXResourcesBuildPhaseSection(uuidProvider, fileStructure)»
 		
@@ -51,11 +59,24 @@ class ProjectFile {
 				«FOR curFile : fileStructure.getSourceFilesToBuild(false)»
 					«uuidProvider.getUuid(curFile + "_BuildFile")» /* «curFile» in Sources */ = {isa = PBXBuildFile; fileRef = «uuidProvider.getUuid(curFile + "_FileReference")» /* «curFile» */; };
 				«ENDFOR»
+				«uuidProvider.getUuid(libMd2LibraryOutput + "_BuildFile")» /* «libMd2LibraryOutput» in Frameworks */ = {isa = PBXBuildFile; fileRef = «uuidProvider.getUuid(libMd2LibraryOutput + "_ReferenceProxy")» /* «libMd2LibraryOutput» */; };
 				«uuidProvider.getUuid("DataModel.xcdatamodeld_BuildFile")» /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = «uuidProvider.getUuid("DataModel.xcdatamodeld_FileReference_to_build")» /* DataModel.xcdatamodeld */; };
 		/* End PBXBuildFile section */
 	'''
 	
-	def static generatePBXFileReferenceSection(UuidProvider uuidProvider, FileStructure fileStructure, String appName) '''
+	def protected generatePBXContainerItemProxySection() '''
+		/* Begin PBXContainerItemProxy section */
+		«"ContainerItemProxy".uuid» /* PBXContainerItemProxy */ = {
+				isa = PBXContainerItemProxy;
+				containerPortal = «(md2LibraryName + ".xcodeproj_FileReference").uuid» /* «md2LibraryName».xcodeproj */;
+				proxyType = 2;
+				remoteGlobalIDString = «libMd2LibraryOutputId»;«««refers to id of libMd2Library.a file reference in Md2Library project file»»
+				remoteInfo = «md2LibraryName»;
+		};
+		/* End PBXContainerItemProxy section */
+	'''
+	
+	def protected generatePBXFileReferenceSection(FileStructure fileStructure, String appName) '''
 		/* Begin PBXFileReference section */
 				«uuidProvider.getUuid(appName + ".app_FileReference")» /* «appName».app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = «appName».app; sourceTree = BUILT_PRODUCTS_DIR; };
 				«FOR curFile : fileStructure.projectCodeFiles»
@@ -71,16 +92,18 @@ class ProjectFile {
 				«FOR curImage : fileStructure.Images»
 					«uuidProvider.getUuid(curImage + "_FileReference")» /* «curImage» */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = «curImage»; sourceTree = "<group>"; };
 				«ENDFOR»
+				«(md2LibraryName+".xcodeproj_FileReference").uuid» /* «md2LibraryName».xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = «md2LibraryName».xcodeproj; path = «md2LibraryName»/«md2LibraryName».xcodeproj; sourceTree = "<group>"; };
 				«uuidProvider.getUuid("DataModel.xcdatamodeld_FileReference")» /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 		/* End PBXFileReference section */
 	'''
 	
-	def static generatePBXFrameworksBuildPhaseSection(UuidProvider uuidProvider, FileStructure fileStructure) '''
+	def protected generatePBXFrameworksBuildPhaseSection(FileStructure fileStructure) '''
 		/* Begin PBXFrameworksBuildPhase section */
 				«uuidProvider.getUuid("FrameworksBuildPhase")» /* Frameworks */ = {
 					isa = PBXFrameworksBuildPhase;
 					buildActionMask = 2147483647;
 					files = (
+						«(libMd2LibraryOutput + "_BuildFile").uuid» /* «libMd2LibraryOutput» in Frameworks */,
 						«FOR framework : fileStructure.Frameworks.keySet»
 							«uuidProvider.getUuid(framework + "_BuildFile")» /* «framework» in Frameworks */,
 						«ENDFOR»
@@ -90,12 +113,15 @@ class ProjectFile {
 		/* End PBXFrameworksBuildPhase section */
 	'''
 	
-	def static generatePBXGroupSection(UuidProvider uuidProvider, FileStructure fileStructure, String appName) '''
+	def protected generatePBXGroupSection(FileStructure fileStructure, String appName) '''
 		/* Begin PBXGroup section */
 				«FOR group : fileStructure.FolderStructure.entrySet»
 					«uuidProvider.getUuid(group.key + "_FileReference")» «IF !group.key.equals(fileStructure.RootGroupName)»/* «group.key» */ «ENDIF»= {
 						isa = PBXGroup;
 						children = (
+							«IF group.key.equals(fileStructure.RootGroupName)»
+								«(md2LibraryName+".xcodeproj_FileReference").uuid» /* «md2LibraryName».xcodeproj */,
+							«ENDIF»
 							«FOR fileName : group.value»
 								«uuidProvider.getUuid(fileName + "_FileReference")» /* «fileName» */,
 							«ENDFOR»
@@ -107,6 +133,14 @@ class ProjectFile {
 						sourceTree = "<group>";
 					};
 				«ENDFOR»
+				«"Products_Group"» /* Products */ = {
+					isa = PBXGroup;
+					children = (
+						«(libMd2LibraryOutput + "_ReferenceProxy").uuid» /* «libMd2LibraryOutput» */,
+					);
+					name = Products;
+					sourceTree = "<group>";
+				};
 		/* End PBXGroup section */
 	'''
 	
@@ -132,7 +166,7 @@ class ProjectFile {
 		/* End PBXNativeTarget section */
 	'''
 	
-	def static generatePBXProjectSection(UuidProvider uuidProvider, FileStructure fileStructure, String appName) '''
+	def protected generatePBXProjectSection(FileStructure fileStructure, String appName) '''
 		/* Begin PBXProject section */
 				«uuidProvider.getUuid("ProjectObject")» /* Project object */ = {
 					isa = PBXProject;
@@ -149,12 +183,30 @@ class ProjectFile {
 					mainGroup = «uuidProvider.getUuid(fileStructure.RootGroupName + "_FileReference")»;
 					productRefGroup = «uuidProvider.getUuid(fileStructure.ProductsGroupName + "_FileReference")» /* «fileStructure.ProductsGroupName» */;
 					projectDirPath = "";
+					projectReferences = (
+						{
+							ProductGroup = «"Products_Group".uuid» /* Products */;
+							ProjectRef = «(md2LibraryName+".xcodeproj_FileReference").uuid» /* «md2LibraryName».xcodeproj */;
+						},
+					);
 					projectRoot = "";
 					targets = (
 						«uuidProvider.getUuid("NativeTarget")» /* «appName» */,
 					);
 				};
 		/* End PBXProject section */
+	'''
+	
+	def protected generatePBXReferenceProxySection() '''
+		/* Begin PBXReferenceProxy section */
+				«(libMd2LibraryOutput + "_ReferenceProxy").uuid» /* «libMd2LibraryOutput» */ = {
+					isa = PBXReferenceProxy;
+					fileType = archive.ar;
+					path = «libMd2LibraryOutput»;
+					remoteRef = «"ContainerItemProxy".uuid» /* PBXContainerItemProxy */;
+					sourceTree = BUILT_PRODUCTS_DIR;
+				};
+		/* End PBXReferenceProxy section */
 	'''
 	
 	def static generatePBXResourcesBuildPhaseSection(UuidProvider uuidProvider, FileStructure fileStructure) '''
@@ -254,6 +306,7 @@ class ProjectFile {
 							"$(inherited)",
 							"\"$(SRCROOT)/«appName»\"",
 						);
+						OTHER_LDFLAGS = "-ObjC";
 						PRODUCT_NAME = "$(TARGET_NAME)";
 						WRAPPER_EXTENSION = app;
 					};
@@ -270,6 +323,7 @@ class ProjectFile {
 							"$(inherited)",
 							"\"$(SRCROOT)/«appName»\"",
 						);
+						OTHER_LDFLAGS = "-ObjC";
 						PRODUCT_NAME = "$(TARGET_NAME)";
 						WRAPPER_EXTENSION = app;
 					};

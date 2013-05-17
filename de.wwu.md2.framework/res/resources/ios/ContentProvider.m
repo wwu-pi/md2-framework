@@ -11,7 +11,7 @@
 #import "DatabaseAccess.h"
 #import "Utilities.h"
 #import "Filter.h"
-#import "DataTransferObject.h"
+#import "Md2Library/DataTransferObject.h"
 
 @implementation ContentProvider
 

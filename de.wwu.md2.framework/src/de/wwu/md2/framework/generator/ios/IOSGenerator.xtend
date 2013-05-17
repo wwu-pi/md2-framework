@@ -25,6 +25,9 @@ import static de.wwu.md2.framework.util.MD2Util.*
  */
 class IOSGenerator extends AbstractPlatformGenerator
 {
+	public static String md2LibraryName = "Md2Library"
+	public static String md2LibraryImport = md2LibraryName
+	
 	String appName
 	String projectFolder
 	

@@ -96,8 +96,6 @@ public class FileStructure
 		StaticFiles.put("DataConverter.m", "Converters");
 		StaticFiles.put("DataMapper.h", "DataMappers");
 		StaticFiles.put("DataMapper.m", "DataMappers");
-		StaticFiles.put("DataTransferObject.h", "DTOs");
-		StaticFiles.put("DataTransferObject.m", "DTOs");
 		StaticFiles.put("DatePickerButtonClickedEvent.h", "Events");
 		StaticFiles.put("DatePickerButtonClickedEvent.m", "Events");
 		StaticFiles.put("Dimensions.h", "\"Supporting Files\"");

@@ -24,7 +24,7 @@ class ModelClass {
 		//
 		
 		#import <CoreData/CoreData.h>
-		#import "DataTransferObject.h"
+		#import "«IOSGenerator::md2LibraryImport»/DataTransferObject.h"
 		«FOR attribute : entity.attributes»
 			«IF getEntityNames(entity, attribute) != null»#import "«getEntityNames(entity, attribute)».h"«ENDIF»
 		«ENDFOR»
