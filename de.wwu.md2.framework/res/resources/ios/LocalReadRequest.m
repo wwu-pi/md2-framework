@@ -9,6 +9,7 @@
 //  Copyright (c) 2012 Uni-Muenster. All rights reserved.
 //
 
+#import "Utilities.h"
 #import "LocalReadRequest.h"
 #import "DatabaseAccess.h"
 #import "DataTransferObject.h"
@@ -57,6 +58,10 @@
     [dataObjects setArray: [[DatabaseAccess context] executeFetchRequest: fetchRequest error: &error]];
     if (error != nil)
         [DatabaseAccess printDetailedErrorDescription];
+    
+    // Revert local changes for all fetched objects
+    for(NSManagedObject *cur in dataObjects)
+        [cur revertLocalChanges];
     
     NSManagedObject *foundObject = nil;
     if (dataObjectIdentifier != nil)

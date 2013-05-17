@@ -118,4 +118,13 @@
     return dictionary;
 }
 
+-(void) revertLocalChanges
+{
+    NSDictionary *changed = [self changedValues];
+    NSDictionary *original = [self committedValuesForKeys:[changed allKeys]];
+    for (id key in [changed keyEnumerator]) {
+        [self setValue:[original objectForKey:key] forKey:key];
+    }
+}
+
 @end

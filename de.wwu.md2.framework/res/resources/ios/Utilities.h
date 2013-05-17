@@ -9,10 +9,12 @@
 
 #import <CoreData/CoreData.h>
 
+// Category for ManagedObjects
 @interface NSManagedObject (Utilities)
 
 -(BOOL) containsAttributeForKey: (NSString *) key;
 -(NSManagedObject *) setAttributesByJSONData: (NSDictionary *) keyedValues;
 -(NSDictionary *) getDictionary;
+-(void) revertLocalChanges;
 
 @end
