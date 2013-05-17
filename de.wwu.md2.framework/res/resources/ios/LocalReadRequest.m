@@ -54,7 +54,7 @@
     }
     
     NSError *error;
-    [dataObjects addObjectsFromArray: [[DatabaseAccess context] executeFetchRequest: fetchRequest error: &error]];
+    [dataObjects setArray: [[DatabaseAccess context] executeFetchRequest: fetchRequest error: &error]];
     if (error != nil)
         [DatabaseAccess printDetailedErrorDescription];
     
