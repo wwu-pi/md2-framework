@@ -1,7 +1,0 @@
-//
-// Prefix header for all source files of the 'Md2Library' target in the 'Md2Library' project
-//
-
-#ifdef __OBJC__
-    #import <Foundation/Foundation.h>
-#endif

@@ -64,6 +64,9 @@ class IOSGenerator extends AbstractPlatformGenerator
 		// Copy resources
 		val fileNames = fsa.copyFileFromProject("resources/images", projectFolder)
 		
+		// Extract library archive
+		extractArchive(getSystemResource("/ios/Md2Library.zip"), projectFolder + "/../", fsa);
+		
 		// Copy static files
 		for(file : fileStructure.filesToCopy)
 			fsa.generateFileFromInputStream(getSystemResource("/ios/" + file), projectFolder + "/" + file)
