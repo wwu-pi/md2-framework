@@ -15,3 +15,8 @@ Thumbs.db
 /de.wwu.md2.framework.ui/src-gen
 /de.wwu.md2.framework/plugin.xml_gen
 /de.wwu.md2.framework.ui/plugin.xml_gen
+
+# User specific files and folders of Xcode
+project.xcworkspace/
+xcuserdata/
+
