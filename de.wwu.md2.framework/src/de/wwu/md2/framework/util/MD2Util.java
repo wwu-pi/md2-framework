@@ -1,5 +1,6 @@
 package de.wwu.md2.framework.util;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,6 +9,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -22,6 +25,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
+import de.wwu.md2.framework.generator.IExtendedFileSystemAccess;
 import de.wwu.md2.framework.mD2.MD2Model;
 
 /**
@@ -165,6 +169,54 @@ public class MD2Util {
 	 */
 	public static InputStream getSystemResource(final String file) {
 		return MD2Util.class.getResourceAsStream("/resources/" + file.replaceFirst("^(\\.)?/(resources/)?", new String()));
+	}
+	
+	/**
+	 * Extract the archive of the given input stream into the given directory.
+	 * @param archive Input stream containing a ZIP archive.
+	 * @param folder The folder into which the contents of the archive will be extracted. 
+	 *	Empty directories within the ZIP file will be ignored.
+	 * @param fsa Access to the file system.
+	 */
+	public static void extractArchive(InputStream archive, String folder, IExtendedFileSystemAccess fsa) {
+		ZipInputStream zip = new ZipInputStream(archive);
+		ZipEntry cur;
+		if(!folder.endsWith("/"))
+			folder = folder + "/";
+		try {
+			while((cur = zip.getNextEntry()) != null) {
+				extractEntry(cur, zip, folder, fsa);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
+	 * Extract a single entry from the zip archive of zipStream.
+	 * @param entry The entry to extract. If it is an directory, the entry will be skipped.
+	 * @param zipStream The stream currently positioned at the entry.
+	 * @param folder The target folder.
+	 * @param fsa Access to the file system, used to generate the file.
+	 */
+	private static void extractEntry(ZipEntry entry, final ZipInputStream zipStream, String folder, IExtendedFileSystemAccess fsa) {
+		if(entry.isDirectory())
+			// do not create empty directories, others will implicitly be created by contained files
+			return;
+		
+		// Input stream that acts as a proxy to the zip input stream, needed because generateFileFromInputStream will close the stream given as a parameter
+		InputStream entryStream = new InputStream() {
+			@Override
+			public int read() throws IOException {
+				return zipStream.read();
+			}
+			
+			@Override
+			public int read(byte[] b, int off, int len) throws IOException {
+				return zipStream.read(b, off, len);
+			}
+		};
+		fsa.generateFileFromInputStream(entryStream, folder + entry.getName());
 	}
 	
 	/**

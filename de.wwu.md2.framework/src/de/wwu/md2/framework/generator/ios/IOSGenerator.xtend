@@ -15,7 +15,6 @@ import static de.wwu.md2.framework.generator.ios.FilterClass.*
 import static de.wwu.md2.framework.generator.ios.InitializeApplicationAction.*
 import static de.wwu.md2.framework.generator.ios.LocalizableStrings.*
 import static de.wwu.md2.framework.generator.ios.ModelClass.*
-import static de.wwu.md2.framework.generator.ios.ProjectFile.*
 import static de.wwu.md2.framework.generator.ios.StylesheetClass.*
 import static de.wwu.md2.framework.generator.ios.ViewClass.*
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
@@ -26,6 +25,9 @@ import static de.wwu.md2.framework.util.MD2Util.*
  */
 class IOSGenerator extends AbstractPlatformGenerator
 {
+	public static String md2LibraryName = "Md2Library"
+	public static String md2LibraryImport = md2LibraryName
+	
 	String appName
 	String projectFolder
 	
@@ -61,6 +63,9 @@ class IOSGenerator extends AbstractPlatformGenerator
 		
 		// Copy resources
 		val fileNames = fsa.copyFileFromProject("resources/images", projectFolder)
+		
+		// Extract library archive
+		extractArchive(getSystemResource("/ios/Md2Library.zip"), projectFolder + "/../Md2Library/", fsa);
 		
 		// Copy static files
 		for(file : fileStructure.filesToCopy)
@@ -188,7 +193,7 @@ class IOSGenerator extends AbstractPlatformGenerator
 		
 		// Generate project file and string resources
 		fsa.generateFile(projectFolder + "/Localizable_de.strings", createLocalizableStrings(dataContainer))
-		fsa.generateFile(projectFolder + ".xcodeproj/project.pbxproj", generateProjectFile(new UuidProvider(24, appName), fileStructure, appName))
+		fsa.generateFile(projectFolder + ".xcodeproj/project.pbxproj", new ProjectFile().generateProjectFile(new UuidProvider(24, appName), fileStructure, appName))
 	}
 	
 	
