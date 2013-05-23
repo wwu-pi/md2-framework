@@ -155,9 +155,7 @@ class IOSGenerator extends AbstractPlatformGenerator
 		}
 		
 		// Generate initialize application action
-		fsa.generateFile(projectFolder + "/InitializeApplicationAction.h", createInitializeApplicationActionH)
 		fsa.generateFile(projectFolder + "/InitializeApplicationAction.m", createInitializeApplicationActionM(dataContainer))
-		fileStructure.addActionFile("InitializeApplicationAction.h")
 		fileStructure.addActionFile("InitializeApplicationAction.m")
 		
 		// Generate custom action event class
@@ -169,10 +167,8 @@ class IOSGenerator extends AbstractPlatformGenerator
 		// Generate stylesheet class
 		val styles = dataContainer.views.map(v | v.eAllContents.toIterable.filter(typeof(StyleAssignment))).flatten
 		fsa.generateFile(projectFolder + "/DefaultStyle.h", createStyleM(styles))
-		fsa.generateFile(projectFolder + "/Stylesheet.h", createStylesheetH)
 		fsa.generateFile(projectFolder + "/Stylesheet.m", createStylesheetM(styles))
 		fileStructure.addStylesheetFile("DefaultStyle.h")
-		fileStructure.addStylesheetFile("Stylesheet.h")
 		fileStructure.addStylesheetFile("Stylesheet.m")
 		
 		//Generate on condition events
