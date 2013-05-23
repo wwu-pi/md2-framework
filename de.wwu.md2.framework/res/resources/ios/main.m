@@ -7,7 +7,7 @@
 //  Copyright (c) 2012 Uni-Muenster. All rights reserved.
 //
 
-#import "AppDelegate.h"
+#import "Md2Library/AppDelegate.h"
 
 int main(int argc, char *argv[])
 {
