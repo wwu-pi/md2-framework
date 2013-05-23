@@ -4,4 +4,10 @@
 
 #ifdef __OBJC__
     #import <Foundation/Foundation.h>
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+    #import "Dimensions.h"
+    #import "LocalizedStringAccess.h"
+    #import "DataConverter.h"
+    #define isDebug NO
 #endif

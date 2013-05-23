@@ -9,7 +9,7 @@
 
 #import "LocalCreateRequest.h"
 #import "DatabaseAccess.h"
-#import "Md2Library/DataTransferObject.h"
+#import "DataTransferObject.h"
 
 @implementation LocalCreateRequest
 

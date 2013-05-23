@@ -12,6 +12,7 @@
 #import "RemoteReadRequest.h"
 #import "Utilities.h"
 #import "LocalReadRequest.h"
+#import "LocalCreateRequest.h"
 #import "DatabaseAccess.h"
 #import "Filter.h"
 

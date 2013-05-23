@@ -8,6 +8,7 @@
 //
 
 #import "Condition.h"
+#import "Controller.h"
 
 @interface WorkflowStep : NSObject
 {
