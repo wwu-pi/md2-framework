@@ -37,7 +37,7 @@ class ViewClass
 		//  Copyright (c) 2012 Uni-Muenster. All rights reserved.
 		//
 		
-		#import "View.h"
+		#import "«IOSGenerator::md2LibraryImport»/View.h"
 		
 		@interface «getName(e).toFirstUpper»View : View
 		@end'''
@@ -207,9 +207,9 @@ class ViewClass
 	/**
 	 * Returns the layout name as a string for a given container
 	 */
-	def private static getLayoutOfContainer(ContainerElement container)
+	def private static getLayoutPathOfContainer(ContainerElement container)
 	{
-		switch container
+		IOSGenerator::md2LibraryImport + "/" + switch container
 		{
 			GridLayoutPane: "GridLayout"
 			FlowLayoutPane: "FlowLayout"
@@ -222,8 +222,8 @@ class ViewClass
 	def private static preCalculateImports(ContainerElement container)
 	{
 		val resultSet = newHashSet
-		container.eAllContents.toIterable.filter(typeof(ContainerElement)).forEach [e | resultSet.add(getLayoutOfContainer(e))]
-		resultSet.add(getLayoutOfContainer(container))
+		container.eAllContents.toIterable.filter(typeof(ContainerElement)).forEach [e | resultSet.add(getLayoutPathOfContainer(e))]
+		resultSet.add(getLayoutPathOfContainer(container))
 		resultSet.remove(null)
 		return resultSet
 	}

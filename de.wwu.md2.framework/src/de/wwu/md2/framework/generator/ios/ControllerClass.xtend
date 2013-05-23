@@ -16,7 +16,7 @@ class ControllerClass
 		//  Copyright (c) 2012 Uni-Muenster. All rights reserved.
 		//
 		
-		#import "Controller.h"
+		#import "«IOSGenerator::md2LibraryImport»/Controller.h"
 
 		@interface «getName(e).toFirstUpper»Controller : Controller
 		@end'''

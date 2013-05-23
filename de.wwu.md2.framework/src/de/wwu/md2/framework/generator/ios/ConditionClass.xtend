@@ -33,7 +33,7 @@ class ConditionClass
 		//  Copyright (c) 2012 Uni-Muenster. All rights reserved.
 		//
 		
-		#import "Condition.h"
+		#import "«IOSGenerator::md2LibraryImport»/Condition.h"
 
 		@interface «name.toFirstUpper» : Condition
 		@end'''

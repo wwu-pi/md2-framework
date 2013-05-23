@@ -24,7 +24,7 @@ class FilterClass
 		//  Copyright (c) 2012 Uni-Muenster. All rights reserved.
 		//
 		
-		#import "Filter.h"
+		#import "«IOSGenerator::md2LibraryImport»/Filter.h"
 		
 		@interface «cp.name.toFirstUpper»Filter : Filter
 		@end'''

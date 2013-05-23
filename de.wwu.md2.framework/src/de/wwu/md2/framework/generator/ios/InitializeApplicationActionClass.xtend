@@ -38,11 +38,11 @@ class InitializeApplicationAction
 		//
 		
 		#import "InitializeApplicationAction.h"
-		#import "HelpController.h"
-		#import "PickerController.h"
-		#import "DataMapper.h"
-		#import "Workflow.h"
-		#import "WorkflowManagement.h"
+		#import "«IOSGenerator::md2LibraryImport»/HelpController.h"
+		#import "«IOSGenerator::md2LibraryImport»/PickerController.h"
+		#import "«IOSGenerator::md2LibraryImport»/DataMapper.h"
+		#import "«IOSGenerator::md2LibraryImport»/Workflow.h"
+		#import "«IOSGenerator::md2LibraryImport»/WorkflowManagement.h"
 		#import "«dataContainer.main.onInitializedEvent.name.toFirstUpper»Action.h"
 		«FOR container : dataContainer.viewContainers»
 			#import "«getName(container).toFirstUpper»Controller.h"

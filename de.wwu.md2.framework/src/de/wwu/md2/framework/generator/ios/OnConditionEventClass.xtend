@@ -20,7 +20,7 @@ class OnConditionEventClass
 		//  Copyright (c) 2012 Uni-Muenster. All rights reserved.
 		//
 		
-		#import "OnConditionEvent.h"
+		#import "«IOSGenerator::md2LibraryImport»/OnConditionEvent.h"
 
 		@interface «event.name.toFirstUpper»OnConditionEvent : OnConditionEvent
 		@end'''

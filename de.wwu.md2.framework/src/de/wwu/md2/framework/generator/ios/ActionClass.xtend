@@ -71,7 +71,7 @@ class ActionClass
 		//  Copyright (c) 2012 Uni-Muenster. All rights reserved.
 		//
 		
-		#import "Action.h"
+		#import "«IOSGenerator::md2LibraryImport»/Action.h"
 		
 		@interface «action.name.toFirstUpper»Action : Action
 		@end'''
@@ -84,17 +84,17 @@ class ActionClass
 		//  Copyright (c) 2012 Uni-Muenster. All rights reserved.
 		//
 		
-		#import "EventBindingAction.h"
-		#import "EventTrigger.h"
-		#import "RegisterMappingAction.h"
-		#import "UnregisterMappingAction.h"
-		#import "ValidatorBindingAction.h"
-		#import "ViewEvent.h"
+		#import "«IOSGenerator::md2LibraryImport»/EventBindingAction.h"
+		#import "«IOSGenerator::md2LibraryImport»/EventTrigger.h"
+		#import "«IOSGenerator::md2LibraryImport»/RegisterMappingAction.h"
+		#import "«IOSGenerator::md2LibraryImport»/UnregisterMappingAction.h"
+		#import "«IOSGenerator::md2LibraryImport»/ValidatorBindingAction.h"
+		#import "«IOSGenerator::md2LibraryImport»/ViewEvent.h"
 		#import "«action.name.toFirstUpper»Action.h"
-		«FOR name : getAllActionNames(action.codeFragments)»
+		«FOR name : getAllActionPaths(action.codeFragments)»
 			#import "«name».h"
 		«ENDFOR»
-		«FOR name : getAllValidatorNames(action.codeFragments)»
+		«FOR name : getAllValidatorPaths(action.codeFragments)»
 			#import "«name».h"
 		«ENDFOR»
 		«FOR name : getImportEvents(action.codeFragments)»
@@ -308,7 +308,7 @@ class ActionClass
 		}
 	}
 	
-	def private getActionClassName(ActionDef action)
+	def private getActionClassPath(ActionDef action)
 	{
 		switch action
 		{
@@ -316,7 +316,8 @@ class ActionClass
 			SimpleActionRef:
 			{
 				val a = action.action
-				switch a
+				// static files -> add library part to path
+				IOSGenerator::md2LibraryImport + "/" + switch a
 				{
 					GotoNextWorkflowStepAction: "GotoNextWorkflowStepAction"
 					GotoPreviousWorkflowStepAction: "GotoPreviousWorkflowStepAction"
@@ -340,38 +341,40 @@ class ActionClass
 		}
 	}
 	
-	def private getAllActionNames(List<CustomCodeFragment> fragments)
+	def private getAllActionPaths(List<CustomCodeFragment> fragments)
 	{
 		val Set<String> result = newHashSet
 		for(fragment : fragments)
 		{
 			switch fragment
 			{
-				EventBindingTask: fragment.actions.forEach [actionDef | result.add(getActionClassName(actionDef))]
-				EventUnbindTask: fragment.actions.forEach [actionDef | result.add(getActionClassName(actionDef))]
-				CallTask: result.add(getActionClassName(fragment.action))
+				EventBindingTask: fragment.actions.forEach [actionDef | result.add(getActionClassPath(actionDef))]
+				EventUnbindTask: fragment.actions.forEach [actionDef | result.add(getActionClassPath(actionDef))]
+				CallTask: result.add(getActionClassPath(fragment.action))
 			}
 		}
 		result
 	}
 	
-	def private getAllValidatorNames(List<CustomCodeFragment> fragments)
+	def private getAllValidatorPaths(List<CustomCodeFragment> fragments)
 	{
 		val Set<String> result = newHashSet
 		for(fragment : fragments)
 		{
 			switch fragment
 			{
-				ValidatorBindingTask: fragment.validators.forEach [validator | result.add(getValidatorName(validator))]
-				ValidatorUnbindTask: fragment.validators.forEach [validator | result.add(getValidatorName(validator))]
+				ValidatorBindingTask: fragment.validators.forEach [validator | result.add(getValidatorPath(validator))]
+				ValidatorUnbindTask: fragment.validators.forEach [validator | result.add(getValidatorPath(validator))]
 			}
 		}
 		result.remove(null)
 		result
 	}
 	
-	def private getValidatorName(ValidatorType validator)
+	def private getValidatorPath(ValidatorType validator)
 	{
+		// all validators are static
+		IOSGenerator::md2LibraryImport + "/" + 
 		// we are only interested in the standard validators here
 		// => the customized validators were replaced by parametrized standard validators during preprocessing (M2M)
 		if(validator instanceof StandardValidatorType)
@@ -500,7 +503,8 @@ class ActionClass
 				})
 			}
 		}
-		result.filterNull
+		// prefix non-empty entries with library path
+		result.filterNull.map[IOSGenerator::md2LibraryImport + "/" + it]
 	}
 	
 	def private static getAction(ActionDef actionDef)

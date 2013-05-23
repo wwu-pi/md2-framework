@@ -16,7 +16,7 @@ class ContentProviderClass
 		//  Copyright (c) 2012 Uni-Muenster. All rights reserved.
 		//
 		
-		#import "ContentProvider.h"
+		#import "«IOSGenerator::md2LibraryImport»/ContentProvider.h"
 		
 		@interface «cp.name.toFirstUpper»ContentProvider : ContentProvider
 		@end'''
