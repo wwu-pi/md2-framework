@@ -12,8 +12,6 @@ static AppData *instance;
 
 @synthesize window, tabBarController, popoverController;
 @synthesize currentController, controllers, pickerController, helpController;
-@synthesize simpleViewController;
-@synthesize localTestStoreContentProvider;
 @synthesize workflowManagement;
 @synthesize eventActionMapping, gpsContentProvider;
 
@@ -83,18 +81,6 @@ static AppData *instance;
     return [AppData instance].helpController;
 }
 
-+(SimpleViewController *) simpleViewController
-{
-    return [AppData instance].simpleViewController;
-}
-
-
-+(LocalTestStoreContentProvider *) localTestStoreContentProvider
-{
-    return [AppData instance].localTestStoreContentProvider;
-}
-
-
 +(WorkflowManagement *) workflowManagement
 {
 	return [AppData instance].workflowManagement;
@@ -146,18 +132,6 @@ static AppData *instance;
 {
     [AppData instance].helpController = helpController;
 }
-
-+(void) setSimpleViewController: (SimpleViewController *) simpleViewController
-{
-    [AppData instance].simpleViewController = simpleViewController;
-}
-
-
-+(void) setLocalTestStoreContentProvider: (LocalTestStoreContentProvider *) localTestStoreContentProvider
-{
-    [AppData instance].localTestStoreContentProvider = localTestStoreContentProvider;
-}
-
 
 +(void) setWorkflowManagement: (WorkflowManagement *) workflowManagement
 {

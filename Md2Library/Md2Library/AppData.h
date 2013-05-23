@@ -5,14 +5,10 @@
 //  Copyright (c) 2012 Uni-Muenster. All rights reserved.
 //
 
-#define ModelVersion @"0.1"
-
 #import "Event.h"
 #import "Controller.h"
 #import "PickerController.h"
 #import "HelpController.h"
-#import "SimpleViewController.h"
-#import "LocalTestStoreContentProvider.h"
 @class Workflow;
 @class WorkflowManagement;
 #import "GPSContentProvider.h"
@@ -26,9 +22,6 @@
     Controller *currentController;
     PickerController *pickerController;
     HelpController *helpController;
-	SimpleViewController *simpleViewController;
-	
-	LocalTestStoreContentProvider *localTestStoreContentProvider;
 	
 	WorkflowManagement *workflowManagement;
 	
@@ -44,9 +37,6 @@
 @property (retain, nonatomic) Controller *currentController;
 @property (retain, nonatomic) PickerController *pickerController;
 @property (retain, nonatomic) HelpController *helpController;
-@property (retain, nonatomic) SimpleViewController *simpleViewController;
-
-@property (retain, nonatomic) LocalTestStoreContentProvider *localTestStoreContentProvider;
 
 @property (retain, nonatomic) WorkflowManagement *workflowManagement;
 
@@ -60,8 +50,6 @@
 +(Controller *) currentController;
 +(PickerController *) pickerController;
 +(HelpController *) helpController;
-+(SimpleViewController *) simpleViewController;
-+(LocalTestStoreContentProvider *) localTestStoreContentProvider;
 +(WorkflowManagement *) workflowManagement;
 +(NSMutableDictionary *) eventActionMapping;
 +(GPSContentProvider *) gpsContentProvider;
@@ -73,8 +61,6 @@
 +(void) setCurrentController: (Controller *) currentController;
 +(void) setPickerController: (PickerController *) pickerController;
 +(void) setHelpController: (HelpController *) helpController;
-+(void) setSimpleViewController: (SimpleViewController *) simpleViewController;
-+(void) setLocalTestStoreContentProvider: (LocalTestStoreContentProvider *) localTestStoreContentProvider;
 +(void) setWorkflowManagement: (WorkflowManagement *) workflowManagement;
 +(void) setEventActionMapping: (NSMutableDictionary *) eventActionMapping;
 +(void) setGPSContentProvider: (GPSContentProvider *) gpsContentProvider;

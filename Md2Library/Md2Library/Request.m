@@ -8,7 +8,7 @@
 //
 
 #import "Request.h"
-#import "AppData.h"
+#define ModelVersion @"0.1" // TODO: Find a way to include from generated code
 
 @implementation Request
 
