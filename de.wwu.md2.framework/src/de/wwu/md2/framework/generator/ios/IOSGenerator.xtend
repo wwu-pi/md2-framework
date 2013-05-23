@@ -159,10 +159,10 @@ class IOSGenerator extends AbstractPlatformGenerator
 		fileStructure.addActionFile("InitializeApplicationAction.m")
 		
 		// Generate custom action event class
-		fsa.generateFile(projectFolder + "/AppData.h", createAppDataH(dataContainer))
-		fsa.generateFile(projectFolder + "/AppData.m", createAppDataM(dataContainer))
-		fileStructure.addDelegateFile("AppData.h")
-		fileStructure.addDelegateFile("AppData.m")
+		fsa.generateFile(projectFolder + "/SpecificAppData.h", createSpecificAppDataH(dataContainer))
+		fsa.generateFile(projectFolder + "/SpecificAppData.m", createSpecificAppDataM(dataContainer))
+		fileStructure.addDelegateFile("SpecificAppData.h")
+		fileStructure.addDelegateFile("SpecificAppData.m")
 		
 		// Generate stylesheet class
 		val styles = dataContainer.views.map(v | v.eAllContents.toIterable.filter(typeof(StyleAssignment))).flatten

@@ -22,6 +22,7 @@ class InitializeApplicationAction
 		//  Copyright (c) 2012 Uni-Muenster. All rights reserved.
 		//
 		
+		#import "SpecificAppData.h"
 		#import "«IOSGenerator::md2LibraryImport»/InitializeApplicationAction.h"
 		#import "«IOSGenerator::md2LibraryImport»/HelpController.h"
 		#import "«IOSGenerator::md2LibraryImport»/PickerController.h"
@@ -87,14 +88,14 @@ class InitializeApplicationAction
 			[AppData setPickerController: [[PickerController alloc] init]];
 			[AppData setHelpController: [[HelpController alloc] init]];
 			«FOR container : dataContainer.viewContainers»
-				[AppData set«getName(container).toFirstUpper»Controller: «getName(container).toFirstLower»Controller];
+				[SpecificAppData set«getName(container).toFirstUpper»Controller: «getName(container).toFirstLower»Controller];
 			«ENDFOR»
 			«FOR contentProvider : dataContainer.contentProviders»
-				[AppData set«contentProvider.name.toFirstUpper»ContentProvider: «contentProvider.name.toFirstLower»ContentProvider];
+				[SpecificAppData set«contentProvider.name.toFirstUpper»ContentProvider: «contentProvider.name.toFirstLower»ContentProvider];
 			«ENDFOR»
 			[AppData setWorkflowManagement: workflowManagement];
 			«FOR workflow : dataContainer.workflows»
-				[AppData set«workflow.name.toFirstUpper»Workflow: «workflow.name.toFirstLower»Workflow];
+				[SpecificAppData set«workflow.name.toFirstUpper»Workflow: «workflow.name.toFirstLower»Workflow];
 			«ENDFOR»
 			[AppData setEventActionMapping: [[NSMutableDictionary alloc] init]];
 			[AppData setGPSContentProvider: gpsContentProvider];

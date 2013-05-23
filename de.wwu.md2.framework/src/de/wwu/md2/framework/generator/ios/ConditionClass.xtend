@@ -48,6 +48,7 @@ class ConditionClass
 		//
 		
 		#import "«name.toFirstUpper».h"
+		#import "SpecificAppData.h"
 		
 		@implementation «name.toFirstUpper»
 			
@@ -171,7 +172,7 @@ class ConditionClass
 			StringVal: '''@"«expr.value»"'''
 			IntVal: '''«expr.value»'''
 			FloatVal: '''«expr.value»'''
-			AbstractViewGUIElementRef: '''[[AppData «getName(getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(expr))).toFirstLower»Controller] getWidgetDataByIdentifier: @"«getName(resolveViewGUIElement(expr))»"]'''
+			AbstractViewGUIElementRef: '''[[SpecificAppData «getName(getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(expr))).toFirstLower»Controller] getWidgetDataByIdentifier: @"«getName(resolveViewGUIElement(expr))»"]'''
 		}
 	}
 	
@@ -180,10 +181,10 @@ class ConditionClass
 		val state = expr.isState
 		switch state
 		{
-			case ViewElementState::VALID: '''[[AppData «getName(getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(expr.reference))).toFirstLower»Controller] checkWidgetValidityByIdentifier: @"«getName(resolveViewGUIElement(expr.reference))»"]'''
-			case ViewElementState::EMPTY: '''[[AppData «getName(getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(expr.reference))).toFirstLower»Controller] checkWidgetDataByIdentifier: @"«getName(resolveViewGUIElement(expr.reference))»" data: @""]'''
-			case ViewElementState::CHECKED: '''[[AppData «getName(getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(expr.reference))).toFirstLower»Controller] checkWidgetDataByIdentifier: @"«getName(resolveViewGUIElement(expr.reference))»" data: @"1"]'''
-			case ViewElementState::FILLED: '''![[AppData «getName(getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(expr.reference))).toFirstLower»Controller] checkWidgetDataByIdentifier: @"«getName(resolveViewGUIElement(expr.reference))»" data: @""]'''
+			case ViewElementState::VALID: '''[[SpecificAppData «getName(getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(expr.reference))).toFirstLower»Controller] checkWidgetValidityByIdentifier: @"«getName(resolveViewGUIElement(expr.reference))»"]'''
+			case ViewElementState::EMPTY: '''[[SpecificAppData «getName(getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(expr.reference))).toFirstLower»Controller] checkWidgetDataByIdentifier: @"«getName(resolveViewGUIElement(expr.reference))»" data: @""]'''
+			case ViewElementState::CHECKED: '''[[SpecificAppData «getName(getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(expr.reference))).toFirstLower»Controller] checkWidgetDataByIdentifier: @"«getName(resolveViewGUIElement(expr.reference))»" data: @"1"]'''
+			case ViewElementState::FILLED: '''![[SpecificAppData «getName(getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(expr.reference))).toFirstLower»Controller] checkWidgetDataByIdentifier: @"«getName(resolveViewGUIElement(expr.reference))»" data: @""]'''
 		}
 	}
 }

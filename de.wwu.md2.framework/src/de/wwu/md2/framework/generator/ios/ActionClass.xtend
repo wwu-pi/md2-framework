@@ -84,6 +84,7 @@ class ActionClass
 		//  Copyright (c) 2012 Uni-Muenster. All rights reserved.
 		//
 		
+		#import "SpecificAppData.h"
 		#import "«IOSGenerator::md2LibraryImport»/EventBindingAction.h"
 		#import "«IOSGenerator::md2LibraryImport»/EventTrigger.h"
 		#import "«IOSGenerator::md2LibraryImport»/RegisterMappingAction.h"
@@ -125,7 +126,7 @@ class ActionClass
 		//  Copyright (c) 2012 Uni-Muenster. All rights reserved.
 		//
 		
-		#import "Action.h"
+		#import "«IOSGenerator::md2LibraryImport»/Action.h"
 
 		@interface «workflowStep.name.toFirstUpper + eventType»WorkflowStepAction : Action
 		@end'''
@@ -138,10 +139,11 @@ class ActionClass
 		//  Copyright (c) 2012 Uni-Muenster. All rights reserved.
 		//
 		
-		#import "EventTrigger.h"
-		#import "EventBindingAction.h"
-		#import "GotoPreviousWorkflowStepAction.h"
-		#import "GotoNextWorkflowStepAction.h"
+		#import "SpecificAppData.h"
+		#import "«IOSGenerator::md2LibraryImport»/EventTrigger.h"
+		#import "«IOSGenerator::md2LibraryImport»/EventBindingAction.h"
+		#import "«IOSGenerator::md2LibraryImport»/GotoPreviousWorkflowStepAction.h"
+		#import "«IOSGenerator::md2LibraryImport»/GotoNextWorkflowStepAction.h"
 		#import "«workflowStep.name.toFirstUpper + eventType»WorkflowStepAction.h"
 
 		@implementation «workflowStep.name.toFirstUpper + eventType»WorkflowStepAction
@@ -199,7 +201,7 @@ class ActionClass
 		«FOR validator : task.validators»
 			«FOR input : task.referencedFields»
 				«IF validator instanceof StandardValidatorType && getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(input)) != null»
-					[ValidatorBindingAction performAction: [ValidatorBindingEvent eventWithController: [AppData «getName(getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(input))).toFirstLower»Controller] validator: «getValidator(validator)» identifier: @"«getName(resolveViewGUIElement(input)).toFirstLower»"]];
+					[ValidatorBindingAction performAction: [ValidatorBindingEvent eventWithController: [SpecificAppData «getName(getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(input))).toFirstLower»Controller] validator: «getValidator(validator)» identifier: @"«getName(resolveViewGUIElement(input)).toFirstLower»"]];
 				«ENDIF»
 			«ENDFOR»
 		«ENDFOR»
@@ -209,7 +211,7 @@ class ActionClass
 		«FOR validator : task.validators»
 			«FOR input : task.referencedFields»
 				«IF validator instanceof StandardValidatorType && getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(input)) != null»
-					[ValidatorUnbindingAction performAction: [ValidatorUnbindingEvent eventWithController: [AppData «getName(getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(input))).toFirstLower»Controller] validator: «getValidator(validator)» identifier: @"«getName(resolveViewGUIElement(input)).toFirstLower»"]];
+					[ValidatorUnbindingAction performAction: [ValidatorUnbindingEvent eventWithController: [SpecificAppData «getName(getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(input))).toFirstLower»Controller] validator: «getValidator(validator)» identifier: @"«getName(resolveViewGUIElement(input)).toFirstLower»"]];
 				«ENDIF»
 			«ENDFOR»
 		«ENDFOR»
@@ -230,19 +232,19 @@ class ActionClass
 				GotoNextWorkflowStepAction: '''[GotoNextWorkflowStepAction performAction: [[GotoNextWorkflowStepEvent alloc] init]];'''
 				GotoPreviousWorkflowStepAction: '''[GotoPreviousWorkflowStepAction performAction: [[GotoPreviousWorkflowStepEvent alloc] init]];'''
 				GotoWorkflowStepAction: '''[GotoWorkflowStepAction performAction: [GotoWorkflowStepEvent eventWithWorkflowStepName: @"«action.wfStep.name»"]];'''
-				GotoViewAction: '''[GotoControllerAction performAction: [GotoControllerEvent eventWithWindow: [AppData window] tabBarController: [AppData tabBarController] currentController: [AppData currentController] nextController: [AppData «getName(resolveViewGUIElement(action.view)).toFirstLower»Controller]]];'''
+				GotoViewAction: '''[GotoControllerAction performAction: [GotoControllerEvent eventWithWindow: [AppData window] tabBarController: [AppData tabBarController] currentController: [AppData currentController] nextController: [SpecificAppData «getName(resolveViewGUIElement(action.view)).toFirstLower»Controller]]];'''
 				DataAction:
 				{
 					switch (action as DataAction).operation
 					{
-						case AllowedOperation::CREATE_OR_UPDATE: '''[PersistAction performAction: [PersistEvent eventWithContentProvider: [AppData «action.contentProvider.name.toFirstLower»ContentProvider]]];'''
-						case AllowedOperation::READ: '''[LoadAction performAction: [LoadEvent eventWithContentProvider: [AppData «action.contentProvider.name.toFirstLower»ContentProvider]]];'''
-						case AllowedOperation::DELETE: '''[RemoveAction performAction: [RemoveEvent eventWithContentProvider: [AppData «action.contentProvider.name.toFirstLower»ContentProvider]]];'''
+						case AllowedOperation::CREATE_OR_UPDATE: '''[PersistAction performAction: [PersistEvent eventWithContentProvider: [SpecificAppData «action.contentProvider.name.toFirstLower»ContentProvider]]];'''
+						case AllowedOperation::READ: '''[LoadAction performAction: [LoadEvent eventWithContentProvider: [SpecificAppData «action.contentProvider.name.toFirstLower»ContentProvider]]];'''
+						case AllowedOperation::DELETE: '''[RemoveAction performAction: [RemoveEvent eventWithContentProvider: [SpecificAppData «action.contentProvider.name.toFirstLower»ContentProvider]]];'''
 					}
 				}
-				GPSUpdateAction: '''[GPSUpdateAction performAction: [GPSUpdateEvent eventWithBindings: [NSArray arrayWithObjects: «FOR binding : (action as GPSUpdateAction).bindings»[GPSActionBinding bindingWithContentProvider: [AppData «binding.path.contentProviderRef.name.toFirstLower»ContentProvider] dataKey: @"«getPathTailAsString(binding.path.tail)»" formattedString: @"«FOR entry : binding.entries»«IF entry.gpsField != null»%@«ELSE»«entry.string»«ENDIF»«ENDFOR»" identifiers: [NSArray arrayWithObjects: «FOR entry : binding.entries»«IF entry.gpsField != null»@"«entry.gpsField.literal»", «ENDIF»«ENDFOR»nil]]«ENDFOR», nil]]];'''
-				NewObjectAtContentProviderAction: '''[CreateAction performAction: [CreateEvent eventWithContentProvider: [AppData «action.contentProvider.name.toFirstLower»ContentProvider]]];'''
-				AssignObjectAtContentProviderAction: '''[AssignObjectAtContentProviderAction performAction: [AssignObjectAtContentProviderEvent eventWithBindings: [NSDictionary dictionaryWithObjectsAndKeys: «FOR binding : action.bindings»[AppData «binding.contentProvider.name.toFirstLower»ContentProvider], @"«getPathTailAsString(binding.path.tail)»", «ENDFOR»nil]]];'''
+				GPSUpdateAction: '''[GPSUpdateAction performAction: [GPSUpdateEvent eventWithBindings: [NSArray arrayWithObjects: «FOR binding : (action as GPSUpdateAction).bindings»[GPSActionBinding bindingWithContentProvider: [SpecificAppData «binding.path.contentProviderRef.name.toFirstLower»ContentProvider] dataKey: @"«getPathTailAsString(binding.path.tail)»" formattedString: @"«FOR entry : binding.entries»«IF entry.gpsField != null»%@«ELSE»«entry.string»«ENDIF»«ENDFOR»" identifiers: [NSArray arrayWithObjects: «FOR entry : binding.entries»«IF entry.gpsField != null»@"«entry.gpsField.literal»", «ENDIF»«ENDFOR»nil]]«ENDFOR», nil]]];'''
+				NewObjectAtContentProviderAction: '''[CreateAction performAction: [CreateEvent eventWithContentProvider: [SpecificAppData «action.contentProvider.name.toFirstLower»ContentProvider]]];'''
+				AssignObjectAtContentProviderAction: '''[AssignObjectAtContentProviderAction performAction: [AssignObjectAtContentProviderEvent eventWithBindings: [NSDictionary dictionaryWithObjectsAndKeys: «FOR binding : action.bindings»[SpecificAppData «binding.contentProvider.name.toFirstLower»ContentProvider], @"«getPathTailAsString(binding.path.tail)»", «ENDFOR»nil]]];'''
 				SetActiveWorkflowAction: '''[GotoWorkflowAction performAction: [GotoWorkflowEvent eventWithWorkflowName: @"«action.workflow.name.toFirstLower»Workflow"]];'''
 			}
 		}
@@ -251,13 +253,13 @@ class ActionClass
 	// TODO get attribute from content provider
 	def dispatch generateCodeFragment(MappingTask task) '''
 		«IF getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(task.referencedViewField)) != null»
-			[RegisterMappingAction performAction: [RegisterMappingEvent eventWithDataMapper: [AppData «getName(getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(task.referencedViewField))).toFirstLower»Controller].dataMapper contentProvider: [AppData «task.pathDefinition.contentProviderRef.name.toFirstLower»ContentProvider] dataKey: @"«getPathTailAsString(task.pathDefinition.tail)»" identifier: @"«getName(resolveViewGUIElement(task.referencedViewField))»"]];
+			[RegisterMappingAction performAction: [RegisterMappingEvent eventWithDataMapper: [SpecificAppData «getName(getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(task.referencedViewField))).toFirstLower»Controller].dataMapper contentProvider: [SpecificAppData «task.pathDefinition.contentProviderRef.name.toFirstLower»ContentProvider] dataKey: @"«getPathTailAsString(task.pathDefinition.tail)»" identifier: @"«getName(resolveViewGUIElement(task.referencedViewField))»"]];
 		«ENDIF»
 	'''
 	
 	def dispatch generateCodeFragment(UnmappingTask task) '''
 		«IF getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(task.referencedViewField)) != null»
-			[UnregisterMappingAction performAction: [UnregisterMappingEvent eventWithDataMapper: [AppData «getName(getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(task.referencedViewField))).toFirstLower»Controller].dataMapper identifier: @"«getName(resolveViewGUIElement(task.referencedViewField))»"]];
+			[UnregisterMappingAction performAction: [UnregisterMappingEvent eventWithDataMapper: [SpecificAppData «getName(getViewOfGUIElement(dataContainer.viewContainers, resolveViewGUIElement(task.referencedViewField))).toFirstLower»Controller].dataMapper identifier: @"«getName(resolveViewGUIElement(task.referencedViewField))»"]];
 		«ENDIF»
 	'''
 	
@@ -517,20 +519,20 @@ class ActionClass
 				GotoNextWorkflowStepAction: '''[GotoNextWorkflowStepAction action]'''
 				GotoPreviousWorkflowStepAction: '''[GotoPreviousWorkflowStepAction action]'''
 				GotoWorkflowStepAction: '''[GotoWorkflowStepAction actionWithEvent: [GotoWorkflowStepEvent eventWithWorkflowStepName: @"«action.wfStep.name»"]]'''
-				GotoViewAction: '''[GotoControllerAction actionWithEvent: [GotoControllerEvent eventWithWindow: [AppData window] tabBarController: [AppData tabBarController] currentController: [AppData currentController] nextController: [AppData «getName(resolveViewGUIElement(action.view)).toFirstLower»Controller]]]'''
+				GotoViewAction: '''[GotoControllerAction actionWithEvent: [GotoControllerEvent eventWithWindow: [AppData window] tabBarController: [AppData tabBarController] currentController: [AppData currentController] nextController: [SpecificAppData «getName(resolveViewGUIElement(action.view)).toFirstLower»Controller]]]'''
 				DataAction:
 				{
 					var operation = action.operation
 					switch operation
 					{
-						case AllowedOperation::CREATE_OR_UPDATE: '''[PersistAction actionWithEvent: [PersistEvent eventWithContentProvider: [AppData «action.contentProvider.name.toFirstLower»ContentProvider]]]'''
-						case AllowedOperation::READ: '''[LoadAction actionWithEvent: [LoadEvent eventWithContentProvider: [AppData «action.contentProvider.name.toFirstLower»ContentProvider]]]'''
-						case AllowedOperation::DELETE: '''[RemoveAction actionWithEvent: [RemoveEvent eventWithContentProvider: [AppData «action.contentProvider.name.toFirstLower»ContentProvider]]]'''
+						case AllowedOperation::CREATE_OR_UPDATE: '''[PersistAction actionWithEvent: [PersistEvent eventWithContentProvider: [SpecificAppData «action.contentProvider.name.toFirstLower»ContentProvider]]]'''
+						case AllowedOperation::READ: '''[LoadAction actionWithEvent: [LoadEvent eventWithContentProvider: [SpecificAppData «action.contentProvider.name.toFirstLower»ContentProvider]]]'''
+						case AllowedOperation::DELETE: '''[RemoveAction actionWithEvent: [RemoveEvent eventWithContentProvider: [SpecificAppData «action.contentProvider.name.toFirstLower»ContentProvider]]]'''
 					}
 				}
-				GPSUpdateAction: '''[GPSUpdateAction actionWithEvent: [GPSUpdateEvent eventWithBindings: [NSArray arrayWithObjects: «FOR binding : (action as GPSUpdateAction).bindings»[GPSActionBinding bindingWithContentProvider: [AppData «binding.path.contentProviderRef.name.toFirstLower»ContentProvider] dataKey: @"«getPathTailAsString(binding.path.tail)»" formattedString: @"«FOR entry : binding.entries»«IF entry.gpsField != null»%@«ELSE»«entry.string»«ENDIF»«ENDFOR»" identifiers: [NSArray arrayWithObjects: «FOR entry : binding.entries»«IF entry.gpsField != null»@"«entry.gpsField.literal»", «ENDIF»«ENDFOR»nil]]«ENDFOR», nil]]]'''
-				NewObjectAtContentProviderAction: '''[CreateAction actionWithEvent: [CreateEvent eventWithContentProvider: [AppData «action.contentProvider.name.toFirstLower»ContentProvider]]]'''
-				AssignObjectAtContentProviderAction: '''[AssignObjectAtContentProviderAction actionWithEvent: [AssignObjectAtContentProviderEvent eventWithBindings: [NSDictionary dictionaryWithObjectsAndKeys: «FOR binding : action.bindings»[AppData «binding.contentProvider.name.toFirstLower»ContentProvider], «getPathTailAsString(binding.path.tail)», «ENDFOR»nil]]]'''
+				GPSUpdateAction: '''[GPSUpdateAction actionWithEvent: [GPSUpdateEvent eventWithBindings: [NSArray arrayWithObjects: «FOR binding : (action as GPSUpdateAction).bindings»[GPSActionBinding bindingWithContentProvider: [SpecificAppData «binding.path.contentProviderRef.name.toFirstLower»ContentProvider] dataKey: @"«getPathTailAsString(binding.path.tail)»" formattedString: @"«FOR entry : binding.entries»«IF entry.gpsField != null»%@«ELSE»«entry.string»«ENDIF»«ENDFOR»" identifiers: [NSArray arrayWithObjects: «FOR entry : binding.entries»«IF entry.gpsField != null»@"«entry.gpsField.literal»", «ENDIF»«ENDFOR»nil]]«ENDFOR», nil]]]'''
+				NewObjectAtContentProviderAction: '''[CreateAction actionWithEvent: [CreateEvent eventWithContentProvider: [SpecificAppData «action.contentProvider.name.toFirstLower»ContentProvider]]]'''
+				AssignObjectAtContentProviderAction: '''[AssignObjectAtContentProviderAction actionWithEvent: [AssignObjectAtContentProviderEvent eventWithBindings: [NSDictionary dictionaryWithObjectsAndKeys: «FOR binding : action.bindings»[SpecificAppData «binding.contentProvider.name.toFirstLower»ContentProvider], «getPathTailAsString(binding.path.tail)», «ENDFOR»nil]]]'''
 				SetActiveWorkflowAction: '''[GotoWorkflowAction actionWithEvent: [GotoWorkflowEvent eventWithWorkflowName: @"«action.workflow.name.toFirstLower»Workflow"]]'''
 			}
 		}

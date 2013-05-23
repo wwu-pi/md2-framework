@@ -38,6 +38,7 @@ class FilterClass
 		//  Copyright (c) 2012 Uni-Muenster. All rights reserved.
 		//
 		
+		#import "SpecificAppData.h"
 		#import "«cp.name.toFirstUpper»Filter.h"
 		
 		@implementation «cp.name.toFirstUpper»Filter
@@ -79,8 +80,8 @@ class FilterClass
 						val viewElem = resolveViewGUIElement(subCondition.eqRight as AbstractViewGUIElementRef)
 						val str = switch (viewElem)
 						{
-							CheckBox: '''([[[AppData «getName(getViewOfGUIElement(dataContainer.viewContainers, viewElem)).toFirstLower»Controller] getWidgetDataByIdentifier: @"«getName(viewElem)»"] isEqualToString: @"1"]? @"true": @"false")'''
-							default: '''[[AppData «getName(getViewOfGUIElement(dataContainer.viewContainers, viewElem)).toFirstLower»Controller] getWidgetDataByIdentifier: @"«getName(viewElem)»"]'''
+							CheckBox: '''([[[SpecificAppData «getName(getViewOfGUIElement(dataContainer.viewContainers, viewElem)).toFirstLower»Controller] getWidgetDataByIdentifier: @"«getName(viewElem)»"] isEqualToString: @"1"]? @"true": @"false")'''
+							default: '''[[SpecificAppData «getName(getViewOfGUIElement(dataContainer.viewContainers, viewElem)).toFirstLower»Controller] getWidgetDataByIdentifier: @"«getName(viewElem)»"]'''
 						}.toString
 						
 						parameters.add(str)
