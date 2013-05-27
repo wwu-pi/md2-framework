@@ -126,9 +126,9 @@ class ProjectFile {
 		/* End PBXFrameworksBuildPhase section */
 	'''
 	
-	def protected generatePBXGroupSection(FileStructure fileStructure, String appName) '''
-		/* Begin PBXGroup section */
-				«FOR group : fileStructure.FolderStructure.entrySet»
+	def protected generatePBXGroupSection(FileStructure fileStructure, String appName) {
+		val lines = <String>newArrayList()
+		lines += fileStructure.FolderStructure.entrySet.map[ group | '''
 					«uuidProvider.getUuid(group.key + "_FileReference")» «IF !group.key.equals(fileStructure.RootGroupName)»/* «group.key» */ «ENDIF»= {
 						isa = PBXGroup;
 						children = (
@@ -145,17 +145,25 @@ class ProjectFile {
 						«IF group.key.equals(appName)»path = «appName»;«ELSEIF !group.key.equals(fileStructure.RootGroupName)»name = «group.key»;«ENDIF»
 						sourceTree = "<group>";
 					};
+				''']
+		lines += '''
+					«"Products_Group".uuid» /* Products */ = {
+						isa = PBXGroup;
+						children = (
+							«(libMd2LibraryOutput + "_ReferenceProxy").uuid» /* «libMd2LibraryOutput» */,
+						);
+						name = Products;
+						sourceTree = "<group>";
+					};
+				'''
+		'''
+		/* Begin PBXGroup section */
+				«FOR curLine : lines.sort»
+					«curLine»
 				«ENDFOR»
-				«"Products_Group"» /* Products */ = {
-					isa = PBXGroup;
-					children = (
-						«(libMd2LibraryOutput + "_ReferenceProxy").uuid» /* «libMd2LibraryOutput» */,
-					);
-					name = Products;
-					sourceTree = "<group>";
-				};
 		/* End PBXGroup section */
-	'''
+		'''
+	}
 	
 	def static generatePBXNativeTargetSection(UuidProvider uuidProvider, String appName) '''
 		/* Begin PBXNativeTarget section */
@@ -256,117 +264,143 @@ class ProjectFile {
 		/* End PBXSourcesBuildPhase section */
 	'''
 	
-	def static generateXCBuildConfigurationSection(UuidProvider uuidProvider, FileStructure fileStructure, String appName) '''
+	def static generateXCBuildConfigurationSection(UuidProvider uuidProvider, FileStructure fileStructure, String appName) {
+		val lines = <String>newArrayList();
+		lines += '''
+					«uuidProvider.getUuid("BuildConfigurationDebugiPhone")» /* Debug */ = {
+						isa = XCBuildConfiguration;
+						buildSettings = {
+							ALWAYS_SEARCH_USER_PATHS = NO;
+							ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+							CLANG_ENABLE_OBJC_ARC = YES;
+							"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+							COPY_PHASE_STRIP = NO;
+							GCC_C_LANGUAGE_STANDARD = gnu99;
+							GCC_DYNAMIC_NO_PIC = NO;
+							GCC_OPTIMIZATION_LEVEL = 0;
+							GCC_PREPROCESSOR_DEFINITIONS = (
+								"DEBUG=1",
+								"$(inherited)",
+							);
+							GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+							GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+							GCC_WARN_ABOUT_RETURN_TYPE = YES;
+							GCC_WARN_UNINITIALIZED_AUTOS = YES;
+							GCC_WARN_UNUSED_VARIABLE = YES;
+							IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+							MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
+							SDKROOT = iphoneos;
+							TARGETED_DEVICE_FAMILY = "1,2";
+						};
+						name = Debug;
+					};
+				'''
+		lines += '''
+					«uuidProvider.getUuid("BuildConfigurationReleaseiPhone")» /* Release */ = {
+						isa = XCBuildConfiguration;
+						buildSettings = {
+							ALWAYS_SEARCH_USER_PATHS = NO;
+							ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+							CLANG_ENABLE_OBJC_ARC = YES;
+							"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+							COPY_PHASE_STRIP = YES;
+							GCC_C_LANGUAGE_STANDARD = gnu99;
+							GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+							GCC_WARN_ABOUT_RETURN_TYPE = YES;
+							GCC_WARN_UNINITIALIZED_AUTOS = YES;
+							GCC_WARN_UNUSED_VARIABLE = YES;
+							IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+							MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
+							OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+							SDKROOT = iphoneos;
+							TARGETED_DEVICE_FAMILY = "1,2";
+							VALIDATE_PRODUCT = YES;
+						};
+						name = Release;
+					};
+				'''
+		lines += '''
+					«uuidProvider.getUuid("BuildConfigurationDebugiPad")» /* Debug */ = {
+						isa = XCBuildConfiguration;
+						buildSettings = {
+							CLANG_ENABLE_OBJC_ARC = YES;
+							GCC_PRECOMPILE_PREFIX_HEADER = YES;
+							GCC_PREFIX_HEADER = "«appName»/«fileStructure.PrefixHeader»";
+							INFOPLIST_FILE = "«appName»/«fileStructure.InfoFile»";
+							LIBRARY_SEARCH_PATHS = (
+								"$(inherited)",
+								"\"$(SRCROOT)/«appName»\"",
+							);
+							MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
+							OTHER_LDFLAGS = "-ObjC";
+							PRODUCT_NAME = "$(TARGET_NAME)";
+							WRAPPER_EXTENSION = app;
+						};
+						name = Debug;
+					};
+				'''
+		lines += '''
+					«uuidProvider.getUuid("BuildConfigurationReleaseiPad")» /* Release */ = {
+						isa = XCBuildConfiguration;
+						buildSettings = {
+							GCC_PRECOMPILE_PREFIX_HEADER = YES;
+							GCC_PREFIX_HEADER = "«appName»/«fileStructure.PrefixHeader»";
+							INFOPLIST_FILE = "«appName»/«fileStructure.InfoFile»";
+							LIBRARY_SEARCH_PATHS = (
+								"$(inherited)",
+								"\"$(SRCROOT)/«appName»\"",
+							);
+							MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
+							OTHER_LDFLAGS = "-ObjC";
+							PRODUCT_NAME = "$(TARGET_NAME)";
+							WRAPPER_EXTENSION = app;
+						};
+						name = Release;
+					};
+				'''
+		
+		'''
 		/* Begin XCBuildConfiguration section */
-				«uuidProvider.getUuid("BuildConfigurationDebugiPhone")» /* Debug */ = {
-					isa = XCBuildConfiguration;
-					buildSettings = {
-						ALWAYS_SEARCH_USER_PATHS = NO;
-						ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-						CLANG_ENABLE_OBJC_ARC = YES;
-						"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-						COPY_PHASE_STRIP = NO;
-						GCC_C_LANGUAGE_STANDARD = gnu99;
-						GCC_DYNAMIC_NO_PIC = NO;
-						GCC_OPTIMIZATION_LEVEL = 0;
-						GCC_PREPROCESSOR_DEFINITIONS = (
-							"DEBUG=1",
-							"$(inherited)",
-						);
-						GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-						GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-						GCC_WARN_ABOUT_RETURN_TYPE = YES;
-						GCC_WARN_UNINITIALIZED_AUTOS = YES;
-						GCC_WARN_UNUSED_VARIABLE = YES;
-						IPHONEOS_DEPLOYMENT_TARGET = 5.1;
-						MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
-						SDKROOT = iphoneos;
-						TARGETED_DEVICE_FAMILY = "1,2";
-					};
-					name = Debug;
-				};
-				«uuidProvider.getUuid("BuildConfigurationReleaseiPhone")» /* Release */ = {
-					isa = XCBuildConfiguration;
-					buildSettings = {
-						ALWAYS_SEARCH_USER_PATHS = NO;
-						ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-						CLANG_ENABLE_OBJC_ARC = YES;
-						"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-						COPY_PHASE_STRIP = YES;
-						GCC_C_LANGUAGE_STANDARD = gnu99;
-						GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-						GCC_WARN_ABOUT_RETURN_TYPE = YES;
-						GCC_WARN_UNINITIALIZED_AUTOS = YES;
-						GCC_WARN_UNUSED_VARIABLE = YES;
-						IPHONEOS_DEPLOYMENT_TARGET = 5.1;
-						MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
-						OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-						SDKROOT = iphoneos;
-						TARGETED_DEVICE_FAMILY = "1,2";
-						VALIDATE_PRODUCT = YES;
-					};
-					name = Release;
-				};
-				«uuidProvider.getUuid("BuildConfigurationDebugiPad")» /* Debug */ = {
-					isa = XCBuildConfiguration;
-					buildSettings = {
-						CLANG_ENABLE_OBJC_ARC = YES;
-						GCC_PRECOMPILE_PREFIX_HEADER = YES;
-						GCC_PREFIX_HEADER = "«appName»/«fileStructure.PrefixHeader»";
-						INFOPLIST_FILE = "«appName»/«fileStructure.InfoFile»";
-						LIBRARY_SEARCH_PATHS = (
-							"$(inherited)",
-							"\"$(SRCROOT)/«appName»\"",
-						);
-						MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
-						OTHER_LDFLAGS = "-ObjC";
-						PRODUCT_NAME = "$(TARGET_NAME)";
-						WRAPPER_EXTENSION = app;
-					};
-					name = Debug;
-				};
-				«uuidProvider.getUuid("BuildConfigurationReleaseiPad")» /* Release */ = {
-					isa = XCBuildConfiguration;
-					buildSettings = {
-						GCC_PRECOMPILE_PREFIX_HEADER = YES;
-						GCC_PREFIX_HEADER = "«appName»/«fileStructure.PrefixHeader»";
-						INFOPLIST_FILE = "«appName»/«fileStructure.InfoFile»";
-						LIBRARY_SEARCH_PATHS = (
-							"$(inherited)",
-							"\"$(SRCROOT)/«appName»\"",
-						);
-						MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
-						OTHER_LDFLAGS = "-ObjC";
-						PRODUCT_NAME = "$(TARGET_NAME)";
-						WRAPPER_EXTENSION = app;
-					};
-					name = Release;
-				};
+				«FOR curLine : lines.sort»
+					«curLine»
+				«ENDFOR»
 		/* End XCBuildConfiguration section */
-	'''
+		'''
+	}
 	
-	def static generateXCConfigurationListSection(UuidProvider uuidProvider, String appName) '''
+	def static generateXCConfigurationListSection(UuidProvider uuidProvider, String appName) {
+		val lines = <String>newArrayList()
+		lines += '''
+					«uuidProvider.getUuid("ProjectBuildConfigurationList")» /* Build configuration list for PBXProject "«appName»" */ = {
+						isa = XCConfigurationList;
+						buildConfigurations = (
+							«uuidProvider.getUuid("BuildConfigurationDebugiPhone")» /* Debug */,
+							«uuidProvider.getUuid("BuildConfigurationReleaseiPhone")» /* Release */,
+						);
+						defaultConfigurationIsVisible = 0;
+						defaultConfigurationName = Release;
+					};
+				'''
+		lines += '''
+					«uuidProvider.getUuid("NativeTargetBuildConfigurationList")» /* Build configuration list for PBXNativeTarget "«appName»" */ = {
+						isa = XCConfigurationList;
+						buildConfigurations = (
+							«uuidProvider.getUuid("BuildConfigurationDebugiPad")» /* Debug */,
+							«uuidProvider.getUuid("BuildConfigurationReleaseiPad")» /* Release */,
+						);
+						defaultConfigurationIsVisible = 0;
+						defaultConfigurationName = Release;
+					};
+				'''
+		
+		'''
 		/* Begin XCConfigurationList section */
-				«uuidProvider.getUuid("ProjectBuildConfigurationList")» /* Build configuration list for PBXProject "«appName»" */ = {
-					isa = XCConfigurationList;
-					buildConfigurations = (
-						«uuidProvider.getUuid("BuildConfigurationDebugiPhone")» /* Debug */,
-						«uuidProvider.getUuid("BuildConfigurationReleaseiPhone")» /* Release */,
-					);
-					defaultConfigurationIsVisible = 0;
-					defaultConfigurationName = Release;
-				};
-				«uuidProvider.getUuid("NativeTargetBuildConfigurationList")» /* Build configuration list for PBXNativeTarget "«appName»" */ = {
-					isa = XCConfigurationList;
-					buildConfigurations = (
-						«uuidProvider.getUuid("BuildConfigurationDebugiPad")» /* Debug */,
-						«uuidProvider.getUuid("BuildConfigurationReleaseiPad")» /* Release */,
-					);
-					defaultConfigurationIsVisible = 0;
-					defaultConfigurationName = Release;
-				};
+				«FOR curLine : lines.sort»
+					«curLine»
+				«ENDFOR»
 		/* End XCConfigurationList section */
-	'''
+		'''
+	}
 	
 	def static generateXCVersionGroupSection(UuidProvider uuidProvider) '''
 		/* Begin XCVersionGroup section */
