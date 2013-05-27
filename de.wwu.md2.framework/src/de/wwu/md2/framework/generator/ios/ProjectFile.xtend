@@ -54,48 +54,61 @@ class ProjectFile {
 		}
 	'''
 	
-	def static generatePBXBuildFileSection(UuidProvider uuidProvider, FileStructure fileStructure) '''
+	def static generatePBXBuildFileSection(UuidProvider uuidProvider, FileStructure fileStructure) {
+		val lines = <String>newArrayList()
+		lines += fileStructure.getSourceFilesToBuild(false).map[curFile | 
+					'''«uuidProvider.getUuid(curFile + "_BuildFile")» /* «curFile» in Sources */ = {isa = PBXBuildFile; fileRef = «uuidProvider.getUuid(curFile + "_FileReference")» /* «curFile» */; };'''
+				]
+		lines +=	'''«uuidProvider.getUuid(libMd2LibraryOutput + "_BuildFile")» /* «libMd2LibraryOutput» in Frameworks */ = {isa = PBXBuildFile; fileRef = «uuidProvider.getUuid(libMd2LibraryOutput + "_ReferenceProxy")» /* «libMd2LibraryOutput» */; };'''
+		lines +=	'''«uuidProvider.getUuid("DataModel.xcdatamodeld_BuildFile")» /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = «uuidProvider.getUuid("DataModel.xcdatamodeld_FileReference_to_build")» /* DataModel.xcdatamodeld */; };'''
+		'''
 		/* Begin PBXBuildFile section */
-				«FOR curFile : fileStructure.getSourceFilesToBuild(false)»
-					«uuidProvider.getUuid(curFile + "_BuildFile")» /* «curFile» in Sources */ = {isa = PBXBuildFile; fileRef = «uuidProvider.getUuid(curFile + "_FileReference")» /* «curFile» */; };
+				«FOR curLine : lines.sort»
+					«curLine»
 				«ENDFOR»
-				«uuidProvider.getUuid(libMd2LibraryOutput + "_BuildFile")» /* «libMd2LibraryOutput» in Frameworks */ = {isa = PBXBuildFile; fileRef = «uuidProvider.getUuid(libMd2LibraryOutput + "_ReferenceProxy")» /* «libMd2LibraryOutput» */; };
-				«uuidProvider.getUuid("DataModel.xcdatamodeld_BuildFile")» /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = «uuidProvider.getUuid("DataModel.xcdatamodeld_FileReference_to_build")» /* DataModel.xcdatamodeld */; };
 		/* End PBXBuildFile section */
-	'''
+		'''
+	}
 	
 	def protected generatePBXContainerItemProxySection() '''
 		/* Begin PBXContainerItemProxy section */
-		«"ContainerItemProxy".uuid» /* PBXContainerItemProxy */ = {
-				isa = PBXContainerItemProxy;
-				containerPortal = «(md2LibraryName + ".xcodeproj_FileReference").uuid» /* «md2LibraryName».xcodeproj */;
-				proxyType = 2;
-				remoteGlobalIDString = «libMd2LibraryOutputId»;«««refers to id of libMd2Library.a file reference in Md2Library project file»»
-				remoteInfo = «md2LibraryName»;
-		};
+				«"ContainerItemProxy".uuid» /* PBXContainerItemProxy */ = {
+					isa = PBXContainerItemProxy;
+					containerPortal = «(md2LibraryName + ".xcodeproj_FileReference").uuid» /* «md2LibraryName».xcodeproj */;
+					proxyType = 2;
+«««refers to id of libMd2Library.a file reference in Md2Library project file»»»
+					remoteGlobalIDString = «libMd2LibraryOutputId»;
+					remoteInfo = «md2LibraryName»;
+				};
 		/* End PBXContainerItemProxy section */
 	'''
 	
-	def protected generatePBXFileReferenceSection(FileStructure fileStructure, String appName) '''
+	def protected generatePBXFileReferenceSection(FileStructure fileStructure, String appName) {
+		val lines = <String>newArrayList()
+		lines +=	'''«uuidProvider.getUuid(appName + ".app_FileReference")» /* «appName».app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = «appName».app; sourceTree = BUILT_PRODUCTS_DIR; };'''
+		lines += fileStructure.projectCodeFiles.map[ curFile |
+					'''«uuidProvider.getUuid(curFile + "_FileReference")» /* «curFile» */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = «IF curFile.endsWith(".h")»sourcecode.c.h«ELSEIF curFile.endsWith(".m")»sourcecode.c.objc«ENDIF»; path = «curFile»; sourceTree = "<group>"; };'''
+				]
+		lines += fileStructure.Frameworks.entrySet.map[ curFrameworkEntry |
+					'''«uuidProvider.getUuid(curFrameworkEntry.key + "_FileReference")» /* «curFrameworkEntry.key» */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = «curFrameworkEntry.key»; path = «curFrameworkEntry.value»; sourceTree = SDKROOT; };'''
+				]
+		lines += fileStructure.LocalizableStrings.map[ curLocFile |
+					'''«uuidProvider.getUuid(curLocFile + "_FileReference")» /* «curLocFile» */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = «curLocFile»; sourceTree = "<group>"; };'''
+				]
+		lines +=	'''«uuidProvider.getUuid(fileStructure.PrefixHeader + "_FileReference")» /* «fileStructure.PrefixHeader» */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "«fileStructure.PrefixHeader»"; sourceTree = "<group>"; };'''
+		lines += fileStructure.Images.map[ curImage |
+					'''«uuidProvider.getUuid(curImage + "_FileReference")» /* «curImage» */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = «curImage»; sourceTree = "<group>"; };'''
+				]
+		lines +=	'''«(md2LibraryName+".xcodeproj_FileReference").uuid» /* «md2LibraryName».xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = «md2LibraryName».xcodeproj; path = «md2LibraryName»/«md2LibraryName».xcodeproj; sourceTree = "<group>"; };'''
+		lines +=	'''«uuidProvider.getUuid("DataModel.xcdatamodeld_FileReference")» /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };'''
+		'''
 		/* Begin PBXFileReference section */
-				«uuidProvider.getUuid(appName + ".app_FileReference")» /* «appName».app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = «appName».app; sourceTree = BUILT_PRODUCTS_DIR; };
-				«FOR curFile : fileStructure.projectCodeFiles»
-					«uuidProvider.getUuid(curFile + "_FileReference")» /* «curFile» */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = «IF curFile.endsWith(".h")»sourcecode.c.h«ELSEIF curFile.endsWith(".m")»sourcecode.c.objc«ENDIF»; path = «curFile»; sourceTree = "<group>"; };
+				«FOR curLine : lines.sort»
+					«curLine»
 				«ENDFOR»
-				«FOR curFrameworkEntry : fileStructure.Frameworks.entrySet»
-					«uuidProvider.getUuid(curFrameworkEntry.key + "_FileReference")» /* «curFrameworkEntry.key» */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = «curFrameworkEntry.key»; path = «curFrameworkEntry.value»; sourceTree = SDKROOT; };
-				«ENDFOR»
-				«FOR curLocFile : fileStructure.LocalizableStrings»
-					«uuidProvider.getUuid(curLocFile + "_FileReference")» /* «curLocFile» */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = «curLocFile»; sourceTree = "<group>"; };
-				«ENDFOR»
-				«uuidProvider.getUuid(fileStructure.PrefixHeader + "_FileReference")» /* «fileStructure.PrefixHeader» */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "«fileStructure.PrefixHeader»"; sourceTree = "<group>"; };
-				«FOR curImage : fileStructure.Images»
-					«uuidProvider.getUuid(curImage + "_FileReference")» /* «curImage» */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = «curImage»; sourceTree = "<group>"; };
-				«ENDFOR»
-				«(md2LibraryName+".xcodeproj_FileReference").uuid» /* «md2LibraryName».xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = «md2LibraryName».xcodeproj; path = «md2LibraryName»/«md2LibraryName».xcodeproj; sourceTree = "<group>"; };
-				«uuidProvider.getUuid("DataModel.xcdatamodeld_FileReference")» /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 		/* End PBXFileReference section */
-	'''
+		'''
+	}
 	
 	def protected generatePBXFrameworksBuildPhaseSection(FileStructure fileStructure) '''
 		/* Begin PBXFrameworksBuildPhase section */
