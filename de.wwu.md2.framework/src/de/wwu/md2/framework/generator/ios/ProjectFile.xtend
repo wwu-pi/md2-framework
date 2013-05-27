@@ -278,8 +278,8 @@ class ProjectFile {
 						GCC_WARN_ABOUT_RETURN_TYPE = YES;
 						GCC_WARN_UNINITIALIZED_AUTOS = YES;
 						GCC_WARN_UNUSED_VARIABLE = YES;
-						MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 						IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+						MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 						SDKROOT = iphoneos;
 						TARGETED_DEVICE_FAMILY = "1,2";
 					};
@@ -298,8 +298,8 @@ class ProjectFile {
 						GCC_WARN_ABOUT_RETURN_TYPE = YES;
 						GCC_WARN_UNINITIALIZED_AUTOS = YES;
 						GCC_WARN_UNUSED_VARIABLE = YES;
-						MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 						IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+						MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 						OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 						SDKROOT = iphoneos;
 						TARGETED_DEVICE_FAMILY = "1,2";
@@ -313,12 +313,12 @@ class ProjectFile {
 						CLANG_ENABLE_OBJC_ARC = YES;
 						GCC_PRECOMPILE_PREFIX_HEADER = YES;
 						GCC_PREFIX_HEADER = "«appName»/«fileStructure.PrefixHeader»";
-						MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 						INFOPLIST_FILE = "«appName»/«fileStructure.InfoFile»";
 						LIBRARY_SEARCH_PATHS = (
 							"$(inherited)",
 							"\"$(SRCROOT)/«appName»\"",
 						);
+						MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 						OTHER_LDFLAGS = "-ObjC";
 						PRODUCT_NAME = "$(TARGET_NAME)";
 						WRAPPER_EXTENSION = app;
@@ -330,12 +330,12 @@ class ProjectFile {
 					buildSettings = {
 						GCC_PRECOMPILE_PREFIX_HEADER = YES;
 						GCC_PREFIX_HEADER = "«appName»/«fileStructure.PrefixHeader»";
-						MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 						INFOPLIST_FILE = "«appName»/«fileStructure.InfoFile»";
 						LIBRARY_SEARCH_PATHS = (
 							"$(inherited)",
 							"\"$(SRCROOT)/«appName»\"",
 						);
+						MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 						OTHER_LDFLAGS = "-ObjC";
 						PRODUCT_NAME = "$(TARGET_NAME)";
 						WRAPPER_EXTENSION = app;
