@@ -99,7 +99,7 @@ class InitializeApplicationAction
 			«ENDFOR»
 			[AppData setEventActionMapping: [[NSMutableDictionary alloc] init]];
 			[AppData setGPSContentProvider: gpsContentProvider];
-			
+			[AppData setModelVersion: @"«dataContainer.main.modelVersion»"];
 			
 			// configure popover and tab bar controller
 		    [AppData popoverController].delegate = _event.appDelegate;

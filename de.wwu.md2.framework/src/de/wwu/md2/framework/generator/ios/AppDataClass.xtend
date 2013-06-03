@@ -15,8 +15,6 @@ class ActionEventClass
 		//  Copyright (c) 2012 Uni-Muenster. All rights reserved.
 		//
 		
-		#define ModelVersion @"«dataContainer.main.modelVersion»"
-		
 		«FOR container : dataContainer.viewContainers»
 			#import "«getName(container).toFirstUpper»Controller.h"
 		«ENDFOR»
