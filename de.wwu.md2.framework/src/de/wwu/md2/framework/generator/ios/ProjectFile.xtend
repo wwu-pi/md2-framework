@@ -99,6 +99,9 @@ class ProjectFile {
 		lines += fileStructure.Images.map[ curImage |
 					'''«uuidProvider.getUuid(curImage + "_FileReference")» /* «curImage» */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = «curImage»; sourceTree = "<group>"; };'''
 				]
+		lines += fileStructure.ImagesFromLibrary.map[ curLibImage |
+					'''«uuidProvider.getUuid(curLibImage + "_FileReference")» /* «curLibImage» */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = «curLibImage»; path = "../Md2Library/Md2Library/«curLibImage»"; sourceTree = "<group>"; };'''
+				]
 		lines +=	'''«(md2LibraryName+".xcodeproj_FileReference").uuid» /* «md2LibraryName».xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = «md2LibraryName».xcodeproj; path = «md2LibraryName»/«md2LibraryName».xcodeproj; sourceTree = "<group>"; };'''
 		lines +=	'''«uuidProvider.getUuid("DataModel.xcdatamodeld_FileReference")» /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };'''
 		'''
@@ -236,7 +239,7 @@ class ProjectFile {
 					isa = PBXResourcesBuildPhase;
 					buildActionMask = 2147483647;
 					files = (
-						«FOR currentResource : fileStructure.Images»
+						«FOR currentResource : (fileStructure.Images+fileStructure.ImagesFromLibrary)»
 							«uuidProvider.getUuid(currentResource + "_BuildFile")» /* «currentResource» in Resources */,
 						«ENDFOR»
 						«FOR currentLoc : fileStructure.LocalizableStrings»

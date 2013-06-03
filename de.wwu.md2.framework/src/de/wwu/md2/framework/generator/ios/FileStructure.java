@@ -21,7 +21,8 @@ public class FileStructure
 	 */
 	public final Map<String, Collection<String>> FolderStructure = Maps.newLinkedHashMap();
 	public final Map<String, String> StaticFiles = Maps.newLinkedHashMap();
-	public final Collection<String> Images = Lists.newArrayList(	"arrow.png",
+	public final Collection<String> Images = Lists.newArrayList();
+	public final Collection<String> ImagesFromLibrary = Lists.newArrayList(	"arrow.png",
 																	"first.png",
 																	"second.png",
 																	"add.png",
@@ -99,6 +100,7 @@ public class FileStructure
 			FolderStructure.get(currentFile.getValue()).add(currentFile.getKey());
 		
 		FolderStructure.get("Images").addAll(Images);
+		FolderStructure.get("Images").addAll(ImagesFromLibrary);
 		FolderStructure.get("Frameworks").addAll(Frameworks.keySet());
 		FolderStructure.get("Strings").addAll(LocalizableStrings);
 		
@@ -193,6 +195,7 @@ public class FileStructure
 			sourceFilesToBuild.addAll(Frameworks.keySet());
 			sourceFilesToBuild.addAll(LocalizableStrings);
 			sourceFilesToBuild.addAll(Images);
+			sourceFilesToBuild.addAll(ImagesFromLibrary);
 		}
 		
 		return sourceFilesToBuild;
