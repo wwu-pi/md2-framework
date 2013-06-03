@@ -14,6 +14,7 @@ static AppData *instance;
 @synthesize currentController, controllers, pickerController, helpController;
 @synthesize workflowManagement;
 @synthesize eventActionMapping, gpsContentProvider;
+@synthesize modelVersion;
 
 #pragma mark Initialization Methods
 
@@ -96,6 +97,11 @@ static AppData *instance;
     return [AppData instance].gpsContentProvider;
 }
 
++(NSString *) modelVersion
+{
+    return [AppData instance].modelVersion;
+}
+
 #pragma mark Static Manipulation Methods
 
 +(void) setWindow: (UIWindow *) window
@@ -146,6 +152,11 @@ static AppData *instance;
 +(void) setGPSContentProvider: (GPSContentProvider *) gpsContentProvider
 {
     [AppData instance].gpsContentProvider = gpsContentProvider;
+}
+
++(void) setModelVersion:(NSString *)modelVersion
+{
+    [AppData instance].modelVersion = modelVersion;
 }
 
 @end

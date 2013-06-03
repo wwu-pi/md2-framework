@@ -8,7 +8,7 @@
 //
 
 #import "Request.h"
-#define ModelVersion @"0.1" // TODO: Find a way to include from generated code
+#import "AppData.h"
 
 @implementation Request
 
@@ -22,7 +22,7 @@
 -(BOOL) isModelVersionValid
 {
     NSError* error;
-    NSURL *modelVersionURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/md2_model_version/is_valid?version=%@", remoteURL.description, ModelVersion]];
+    NSURL *modelVersionURL = [NSURL URLWithString: [NSString stringWithFormat: @"%@/md2_model_version/is_valid?version=%@", remoteURL.description, [AppData modelVersion]]];
     NSData* data = [NSData dataWithContentsOfURL: modelVersionURL];
     NSDictionary* jsonData = [NSJSONSerialization JSONObjectWithData: data options: kNilOptions error: &error];
     

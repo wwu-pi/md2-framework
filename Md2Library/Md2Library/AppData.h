@@ -27,6 +27,8 @@
 	
 	NSMutableDictionary *eventActionMapping;
 	GPSContentProvider *gpsContentProvider;
+    
+    NSString *modelVersion;
 }
 
 @property (retain, nonatomic) UIWindow *window;
@@ -43,6 +45,8 @@
 @property (retain, nonatomic) NSMutableDictionary *eventActionMapping;
 @property (retain, nonatomic) GPSContentProvider *gpsContentProvider;
 
+@property (retain, nonatomic) NSString *modelVersion;
+
 +(UIWindow *) window;
 +(UITabBarController *) tabBarController;
 +(UIPopoverController *) popoverController;
@@ -53,6 +57,7 @@
 +(WorkflowManagement *) workflowManagement;
 +(NSMutableDictionary *) eventActionMapping;
 +(GPSContentProvider *) gpsContentProvider;
++(NSString *) modelVersion;
 
 +(void) setWindow: (UIWindow *) window;
 +(void) setTabBarController: (UITabBarController *) tabBarController;
@@ -64,5 +69,6 @@
 +(void) setWorkflowManagement: (WorkflowManagement *) workflowManagement;
 +(void) setEventActionMapping: (NSMutableDictionary *) eventActionMapping;
 +(void) setGPSContentProvider: (GPSContentProvider *) gpsContentProvider;
++(void) setModelVersion: (NSString *) modelVersion;
 
 @end
