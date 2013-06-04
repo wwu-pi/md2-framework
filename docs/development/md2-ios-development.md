@@ -20,7 +20,8 @@ This is possible by replacing the reference to the copied library project with a
 1. Open the generated app in Xcode.
 2. Ensure that the project file of the generated app is not opened in Xcode (close it via File > Close "NameOfApp.xcodeproj").
 3. Open the project file Md2Library.xcodeproj that is a child element of the generated app.
-4. In the File Inspector (usually in the right column), click on the icon behind the location path (see screenshot, if it is greyed out, the project file of the whole app is likely opened - see step 2).
+4. In the File Inspector (usually in the right column), click on the icon behind the location path (see screenshot; if it is greyed out, the project file of the whole app is likely opened - see step 2).
+	![Screenshot of project file in Xcode](change-library-location.png)
 5. In the "Choose project file and location" dialog that appears, navigate to your clone of the MD2 repository and select the `Md2Library.xcodeproj` file in the folder `Md2Library`.
 6. Now open the top-level project file of the generated app, switch to the "Build Phases" tab, and add `libMd2Library.a` to the list of "Linked Frameworks and Libraries" (using the "plus" icon).
 
