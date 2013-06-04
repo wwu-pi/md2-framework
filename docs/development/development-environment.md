@@ -20,3 +20,9 @@ Set-up
 	* Add (or select) update site for URL http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/.
 	* Select Xtend-2.4.1 and Xtext-2.4.1 and install them.
 4. (optional) Install the Android Developer Tools plugin for Eclipse as document at http://developer.android.com/sdk/installing/installing-adt.html.
+
+Further information
+-------------------
+
+* [Getting Started with Development](getting-started-dev.md)
+* [Developing MD2 for iOS – Particularities](md2-ios-development.md)
