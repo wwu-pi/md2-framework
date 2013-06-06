@@ -4,6 +4,7 @@ import de.wwu.md2.framework.generator.util.DataContainer
 import de.wwu.md2.framework.generator.util.PreprocessModel
 
 import static de.wwu.md2.framework.generator.android.util.MD2AndroidUtil.*
+import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
 class ProjectApplication {
 	def static generateApplication(String basePackage, String projectAppClassName, DataContainer dataContainer) '''
@@ -22,7 +23,7 @@ class ProjectApplication {
 				
 				// Register all actions
 				«FOR action : dataContainer.customActions»
-					registerAction(new «basePackage».actions.«action.name.toFirstUpper»(this));
+					registerAction(new «basePackage».actions.«getName(action).toFirstUpper»(this));
 				«ENDFOR»
 				
 				// Register all content providers

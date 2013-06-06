@@ -183,7 +183,7 @@ class CustomActionTemplate {
 			public void execute(MD2Application app) {
 				«val action = task.action»
 				«switch action {
-					ActionReference: '''app.executeAction(«basePackage».actions.«action.actionRef.name.toFirstUpper».class);'''
+					ActionReference: '''app.executeAction(«basePackage».actions.«getName(action.actionRef).toFirstUpper».class);'''
 					SimpleActionRef: getSimpleActionCode(action.action)
 				}»
 			}
@@ -209,7 +209,7 @@ class CustomActionTemplate {
 						«var actionInitialization = ''''''»
 						«switch action {
 							ActionReference: {
-								actionName = action.actionRef.name.toFirstUpper
+								actionName = getName(action.actionRef).toFirstUpper
 								actionInitialization = '''app.findActionByType(«actionName».class)'''
 								null
 							}
@@ -244,7 +244,7 @@ class CustomActionTemplate {
 					
 					«FOR action : task.actions»
 						«val actionName = switch action {
-							ActionReference: action.actionRef.name.toFirstUpper
+							ActionReference: getName(action.actionRef).toFirstUpper
 							SimpleActionRef: action.action.eClass.name + getUniqueSimpleActionIdentifier(action.action)
 						}»
 						

@@ -85,7 +85,7 @@ class ContentProviderClass {
 							
 							@Override
 							public String getActivityName() {
-								return "«mainActivity.name.toFirstUpper»Activity";
+								return "«getName(mainActivity).toFirstUpper»Activity";
 							}
 							
 							@Override

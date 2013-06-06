@@ -157,7 +157,7 @@ class AndroidGenerator extends AbstractPlatformGenerator {
 		
 		// Generate actions
 		dataContainer.customActions.forEach [
-			fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/actions/" + it.name.toFirstUpper + ".java", 
+			fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/actions/" + getName(it).toFirstUpper + ".java", 
 				new CustomActionTemplate(basePackageName, it, dataContainer, topLevelViewContainers, activities, fragments).generateCustomAction
 			)
 		]
