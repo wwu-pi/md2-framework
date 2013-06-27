@@ -20,6 +20,7 @@ Set-up
 	* Add (or select) update site for URL http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/.
 	* Select Xtend-2.4.1 and Xtext-2.4.1 and install them.
 4. (optional) Install the Android Developer Tools plugin for Eclipse as document at http://developer.android.com/sdk/installing/installing-adt.html.
+5. (recommended) Set the default encoding of the workspace to "UTF-8" and default line endings to "Unix" (Window > Preferences, category General > Workspace).
 
 Further information
 -------------------
