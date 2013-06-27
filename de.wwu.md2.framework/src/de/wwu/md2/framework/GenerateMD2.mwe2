@@ -29,6 +29,7 @@ Workflow {
         pathTestProject = "${runtimeProject}.tests"
         projectNameRt = projectName
         projectNameUi = "${projectName}.ui"
+        encoding = "UTF-8"
         language = {
             uri = grammarURI
             fileExtensions = file.extensions
