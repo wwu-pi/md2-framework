@@ -242,7 +242,7 @@ class PreprocessModel {
 									val obj = iter.next
 									var continue = false
 									for (includePathDefinition : autoGenerator.filteredAttributes) {
-										if (!continue && obj.equals(includePathDefinition)) {
+										if (!continue && MD2GeneratorUtil::equals(obj, includePathDefinition)) {
 											iter.remove
 											continue = true
 										} 
@@ -669,7 +669,7 @@ class PreprocessModel {
 				else getLastPathTail(pathDefinitionIter).setTail(pathTail)
 				var boolean skip = false
 				for (filterPathDefinition : filteredAttributes) {
-					if (pathDefinitionIter.equals(filterPathDefinition)) skip = true
+					if (MD2GeneratorUtil::equals(pathDefinitionIter, filterPathDefinition)) skip = true
 				}
 				if (!skip) {
 //					if (a.type.many) {
