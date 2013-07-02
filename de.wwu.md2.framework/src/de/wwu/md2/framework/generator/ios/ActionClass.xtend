@@ -245,12 +245,12 @@ class ActionClass
 				GPSUpdateAction: '''
 					[GPSUpdateAction performAction: [GPSUpdateEvent eventWithBindings:
 						[NSArray arrayWithObjects: 
-							«FOR binding : (action as GPSUpdateAction).bindings»
+							«FOR binding : (action as GPSUpdateAction).bindings SEPARATOR ','»
 								[GPSActionBinding bindingWithContentProvider: [SpecificAppData «binding.path.contentProviderRef.name.toFirstLower»ContentProvider] dataKey: @"«getPathTailAsString(binding.path.tail)»"
 									formattedString: @"«binding.entries.map[string ?: '%@'].join»"
-									identifiers: [NSArray arrayWithObjects: «binding.entries.filter[string == null].map['''@"«gpsField.literal»", '''].join»nil]],
+									identifiers: [NSArray arrayWithObjects: «binding.entries.filter[string == null].map['''@"«gpsField.literal»"'''].join(', ')»]]
 							«ENDFOR»
-							nil]]];
+							]]];
 					'''
 				NewObjectAtContentProviderAction: '''[CreateAction performAction: [CreateEvent eventWithContentProvider: [SpecificAppData «action.contentProvider.name.toFirstLower»ContentProvider]]];'''
 				AssignObjectAtContentProviderAction: '''[AssignObjectAtContentProviderAction performAction: [AssignObjectAtContentProviderEvent eventWithBindings: [NSDictionary dictionaryWithObjectsAndKeys: «FOR binding : action.bindings»[SpecificAppData «binding.contentProvider.name.toFirstLower»ContentProvider], @"«getPathTailAsString(binding.path.tail)»", «ENDFOR»nil]]];'''
