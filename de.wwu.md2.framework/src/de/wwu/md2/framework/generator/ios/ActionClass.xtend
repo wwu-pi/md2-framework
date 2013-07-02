@@ -247,8 +247,8 @@ class ActionClass
 						[NSArray arrayWithObjects: 
 							«FOR binding : (action as GPSUpdateAction).bindings»
 								[GPSActionBinding bindingWithContentProvider: [SpecificAppData «binding.path.contentProviderRef.name.toFirstLower»ContentProvider] dataKey: @"«getPathTailAsString(binding.path.tail)»"
-									formattedString: @"«binding.entries.map[entry | if(entry.gpsField != null) '%@' else entry.string].join»"
-									identifiers: [NSArray arrayWithObjects: «binding.entries.filter[gpsField != null].map['''@"«gpsField.literal»", '''].join»nil]],
+									formattedString: @"«binding.entries.map[string ?: '%@'].join»"
+									identifiers: [NSArray arrayWithObjects: «binding.entries.filter[string == null].map['''@"«gpsField.literal»", '''].join»nil]],
 							«ENDFOR»
 							nil]]];
 					'''
