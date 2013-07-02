@@ -242,7 +242,16 @@ class ActionClass
 						case AllowedOperation::DELETE: '''[RemoveAction performAction: [RemoveEvent eventWithContentProvider: [SpecificAppData «action.contentProvider.name.toFirstLower»ContentProvider]]];'''
 					}
 				}
-				GPSUpdateAction: '''[GPSUpdateAction performAction: [GPSUpdateEvent eventWithBindings: [NSArray arrayWithObjects: «FOR binding : (action as GPSUpdateAction).bindings»[GPSActionBinding bindingWithContentProvider: [SpecificAppData «binding.path.contentProviderRef.name.toFirstLower»ContentProvider] dataKey: @"«getPathTailAsString(binding.path.tail)»" formattedString: @"«FOR entry : binding.entries»«IF entry.gpsField != null»%@«ELSE»«entry.string»«ENDIF»«ENDFOR»" identifiers: [NSArray arrayWithObjects: «FOR entry : binding.entries»«IF entry.gpsField != null»@"«entry.gpsField.literal»", «ENDIF»«ENDFOR»nil]]«ENDFOR», nil]]];'''
+				GPSUpdateAction: '''
+					[GPSUpdateAction performAction: [GPSUpdateEvent eventWithBindings:
+						[NSArray arrayWithObjects: 
+							«FOR binding : (action as GPSUpdateAction).bindings»
+								[GPSActionBinding bindingWithContentProvider: [SpecificAppData «binding.path.contentProviderRef.name.toFirstLower»ContentProvider] dataKey: @"«getPathTailAsString(binding.path.tail)»"
+									formattedString: @"«binding.entries.map[entry | if(entry.gpsField != null) '%@' else entry.string].join»"
+									identifiers: [NSArray arrayWithObjects: «binding.entries.filter[gpsField != null].map['''@"«gpsField.literal»", '''].join»nil]],
+							«ENDFOR»
+							nil]]];
+					'''
 				NewObjectAtContentProviderAction: '''[CreateAction performAction: [CreateEvent eventWithContentProvider: [SpecificAppData «action.contentProvider.name.toFirstLower»ContentProvider]]];'''
 				AssignObjectAtContentProviderAction: '''[AssignObjectAtContentProviderAction performAction: [AssignObjectAtContentProviderEvent eventWithBindings: [NSDictionary dictionaryWithObjectsAndKeys: «FOR binding : action.bindings»[SpecificAppData «binding.contentProvider.name.toFirstLower»ContentProvider], @"«getPathTailAsString(binding.path.tail)»", «ENDFOR»nil]]];'''
 				SetActiveWorkflowAction: '''[GotoWorkflowAction performAction: [GotoWorkflowEvent eventWithWorkflowName: @"«action.workflow.name.toFirstLower»Workflow"]];'''
