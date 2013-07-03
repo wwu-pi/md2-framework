@@ -1,6 +1,7 @@
 package de.wwu.md2.framework.generator.android
 
 import de.wwu.md2.framework.generator.util.DataContainer
+import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import de.wwu.md2.framework.mD2.ActionReference
 import de.wwu.md2.framework.mD2.AllowedOperation
 import de.wwu.md2.framework.mD2.AssignObjectAtContentProviderAction
@@ -126,27 +127,28 @@ class CustomActionTemplate {
 			@Override
 			protected void initializeCodeFragments() {
 				
-				«FOR codeFragment : action.codeFragments»
-					«generateCodeFragment(codeFragment)»
-					
-				«ENDFOR»
+				«action.codeFragments.map[codeFragment | generateCodeFragment(codeFragment)].filter[it!=null && it.length > 0].join('\n')»
+				
 			}
 		}
-		
 	'''
 	
-	def private dispatch generateCodeFragment(MappingTask task) '''
-		«val topLevelView = getViewOfGUIElement(topLevelViewContainers, resolveViewGUIElement(task.referencedViewField))»
-		«val activityName = if(topLevelView == null) null else getName(topLevelView).toFirstUpper»
-		addCodeFragment(new CodeFragment() {
-			@Override
-			public String getActivityName() {
-				return «IF activityName != null && activityName.length != 0»"«activityName»"«ELSE»null«ENDIF»;
-			}
-			
-			@Override
-			public void execute(MD2Application app) {
-				«IF activityName != null && activityName.length != 0»
+	def private dispatch generateCodeFragment(MappingTask task) {
+		val topLevelView = getViewOfGUIElement(topLevelViewContainers, resolveViewGUIElement(task.referencedViewField))
+		val activityName = if(topLevelView == null) null else getName(topLevelView).toFirstUpper
+		/*
+		 * Check if this code fragment is related to a view element contained in an activity or fragment that has not been generated (empty name),
+		 * because it will never be used (usually view containers that are defined on the top level and are referenced inside other view containers)
+		 */
+		if(activityName != null && activityName.length != 0) '''
+			addCodeFragment(new CodeFragment() {
+				@Override
+				public String getActivityName() {
+					return "«activityName»";
+				}
+				
+				@Override
+				public void execute(MD2Application app) {
 					«val widget = resolveViewGUIElement(task.referencedViewField)»
 					«val attributePath = getPathTailAsList(task.pathDefinition.tail)»
 					«val entityClass = getTypeName(task.pathDefinition.contentProviderRef.type)»
@@ -156,14 +158,10 @@ class CustomActionTemplate {
 						CheckBox: checkBoxMapTask(task.pathDefinition.contentProviderRef, entityClass, widget, attributePath)
 						default: "// TODO Mapper for " + widget.eClass.name
 					}»
-				«ELSE»
-					// This code fragment is related to a view element contained in an activity or fragment
-					// that has not been generated, because it will never be used (usually view containers
-					// that are defined on the top level and are referenced inside other view containers)
-				«ENDIF»
-			}
-		});
-	'''
+				}
+			});
+		'''
+	}
 	
 	def private dispatch generateCodeFragment(UnmappingTask task) '''
 		// TODO UnmappingTask
@@ -243,37 +241,39 @@ class CustomActionTemplate {
 		«ENDFOR»
 	'''
 	
-	def private dispatch generateCodeFragment(ValidatorBindingTask task) '''
-		«FOR abstractView : task.referencedFields»
-			«val topLevelView = getViewOfGUIElement(topLevelViewContainers, resolveViewGUIElement(abstractView))»
-			«val activityName = if(topLevelView == null) null else getName(topLevelView).toFirstUpper»
+	def private dispatch generateCodeFragment(ValidatorBindingTask task) {
+		task.referencedFields.map[abstractView | generateValidatorBindingFragment(task, abstractView)].filter[it!=null].join('\n')
+	}
+	
+	def private generateValidatorBindingFragment(ValidatorBindingTask task, AbstractViewGUIElementRef abstractView) {
+		val topLevelView = getViewOfGUIElement(topLevelViewContainers, resolveViewGUIElement(abstractView))
+		val activityName = if(topLevelView == null) null else getName(topLevelView).toFirstUpper
+		/*
+		 * Check if this code fragment is related to a view element contained in an activity or fragment that has not been generated (empty name),
+		 * because it will never be used (usually view containers that are defined on the top level and are referenced inside other view containers)
+		 */
+		if(activityName != null && activityName.length != 0) '''
 			addCodeFragment(new CodeFragment() {
 				@Override
 				public String getActivityName() {
-					return «IF activityName != null && activityName.length != 0»"«activityName»"«ELSE»null«ENDIF»;
+					return "«activityName»";
 				}
 				
 				@Override
 				public void execute(MD2Application app) {
-					«IF activityName != null && activityName.length != 0»
-						«val viewElem = resolveViewGUIElement(abstractView)»
-						«FOR validatorType : task.validators»
-							«IF validatorType instanceof StandardValidatorType»
-								«val validator = (validatorType as StandardValidatorType).validator»
-								«generateStandardValidator(validator, viewElem)»
-							«ELSE»
-								// TODO Generate custom validators
-							«ENDIF»
-						«ENDFOR»
-					«ELSE»
-						// This code fragment is related to a view element contained in an activity or fragment
-						// that has not been generated, because it will never be used (usually view containers
-						// that are defined on the top level and are referenced inside other view containers)
-					«ENDIF»
+					«val viewElem = resolveViewGUIElement(abstractView)»
+					«FOR validatorType : task.validators»
+						«IF validatorType instanceof StandardValidatorType»
+							«val validator = (validatorType as StandardValidatorType).validator»
+							«generateStandardValidator(validator, viewElem)»
+						«ELSE»
+							// TODO Generate custom validators
+						«ENDIF»
+					«ENDFOR»
 				}
 			});
-		«ENDFOR»
-	'''
+		'''
+	}
 	
 	def private dispatch generateCodeFragment(ValidatorUnbindTask task) '''
 		// TODO ValidatorUnbindTask
