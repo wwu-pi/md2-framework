@@ -12,4 +12,5 @@ This guide briefly sketches how to get started with developing MD2. It assumes t
 5. Clean the MD2 projects (Project > Clean...) to trigger a full rebuild, which should resolve all remaining errors.
 6. Select the main project `de.wwu.md2.framework` and run it as an "Eclipse Application" in order to start a new Eclipse instance that contains the MD2 plugins.
 
+The repository already contains pre-configured launch configurations for steps 4 and 6 (see `de.wwu.md2.framework/.settings/`), which Eclipse should offer in the Run menu.
 Development should happen in the original Eclipse instance, mostly in the `src` folder of the project `de.wwu.md2.framework`.
