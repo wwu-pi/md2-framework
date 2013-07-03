@@ -139,7 +139,6 @@ class CustomActionTemplate {
 		«val topLevelView = getViewOfGUIElement(topLevelViewContainers, resolveViewGUIElement(task.referencedViewField))»
 		«val activityName = if(topLevelView == null) null else getName(topLevelView).toFirstUpper»
 		addCodeFragment(new CodeFragment() {
-			
 			@Override
 			public String getActivityName() {
 				return «IF activityName != null && activityName.length != 0»"«activityName»"«ELSE»null«ENDIF»;
@@ -163,7 +162,6 @@ class CustomActionTemplate {
 					// that are defined on the top level and are referenced inside other view containers)
 				«ENDIF»
 			}
-			
 		});
 	'''
 	
@@ -173,7 +171,6 @@ class CustomActionTemplate {
 	
 	def private dispatch generateCodeFragment(CallTask task) '''
 		addCodeFragment(new CodeFragment() {
-			
 			@Override
 			public String getActivityName() {
 				return null;
@@ -187,7 +184,6 @@ class CustomActionTemplate {
 					SimpleActionRef: getSimpleActionCode(action.action)
 				}»
 			}
-			
 		});
 	'''
 	
@@ -195,7 +191,6 @@ class CustomActionTemplate {
 		«FOR event : task.events»
 			«val eventName = getEventName(event)»
 			addCodeFragment(new CodeFragment() {
-				
 				@Override
 				public String getActivityName() {
 					return null;
@@ -203,7 +198,6 @@ class CustomActionTemplate {
 				
 				@Override
 				public void execute(final MD2Application app) {
-					
 					«FOR action : task.actions»
 						«var actionName = ""»
 						«var actionInitialization = ''''''»
@@ -219,12 +213,9 @@ class CustomActionTemplate {
 								null
 							}
 						}»
-						
 						app.getEventBus().subscribe("«eventName»", "«eventName»_«actionName»", «actionInitialization»);
 					«ENDFOR»
-			
 				}
-				
 			});
 		«ENDFOR»
 	'''
@@ -233,7 +224,6 @@ class CustomActionTemplate {
 		«FOR event : task.events»
 			«val eventName = getEventName(event)»
 			addCodeFragment(new CodeFragment() {
-				
 				@Override
 				public String getActivityName() {
 					return null;
@@ -241,18 +231,14 @@ class CustomActionTemplate {
 				
 				@Override
 				public void execute(MD2Application app) {
-					
 					«FOR action : task.actions»
 						«val actionName = switch action {
 							ActionReference: getName(action.actionRef).toFirstUpper
 							SimpleActionRef: action.action.eClass.name + getUniqueSimpleActionIdentifier(action.action)
 						}»
-						
 						app.getEventBus().unsubscribe("«eventName»", "«eventName»_«actionName»");
 					«ENDFOR»
-			
 				}
-				
 			});
 		«ENDFOR»
 	'''
@@ -262,7 +248,6 @@ class CustomActionTemplate {
 			«val topLevelView = getViewOfGUIElement(topLevelViewContainers, resolveViewGUIElement(abstractView))»
 			«val activityName = if(topLevelView == null) null else getName(topLevelView).toFirstUpper»
 			addCodeFragment(new CodeFragment() {
-				
 				@Override
 				public String getActivityName() {
 					return «IF activityName != null && activityName.length != 0»"«activityName»"«ELSE»null«ENDIF»;
@@ -270,14 +255,12 @@ class CustomActionTemplate {
 				
 				@Override
 				public void execute(MD2Application app) {
-					
 					«IF activityName != null && activityName.length != 0»
 						«val viewElem = resolveViewGUIElement(abstractView)»
 						«FOR validatorType : task.validators»
 							«IF validatorType instanceof StandardValidatorType»
 								«val validator = (validatorType as StandardValidatorType).validator»
 								«generateStandardValidator(validator, viewElem)»
-								
 							«ELSE»
 								// TODO Generate custom validators
 							«ENDIF»
@@ -288,7 +271,6 @@ class CustomActionTemplate {
 						// that are defined on the top level and are referenced inside other view containers)
 					«ENDIF»
 				}
-				
 			});
 		«ENDFOR»
 	'''
@@ -416,7 +398,6 @@ class CustomActionTemplate {
 	
 	def private getGPSUpdateCode(GPSUpdateAction action) '''
 		GPSAddressReceiver receiver = new GPSAddressReceiver() {
-			
 			@Override
 			public void receiveGPSAddress(MD2Application app, Address address, Location location) {
 				StringBuilder sb;
@@ -496,7 +477,6 @@ class CustomActionTemplate {
 	
 	def private CharSequence getSimpleActionAsEventHandler(SimpleAction simpleAction) '''
 		new MD2EventHandler() {
-			
 			@Override
 			public void eventOccured() {
 				«getSimpleActionCode(simpleAction)»
