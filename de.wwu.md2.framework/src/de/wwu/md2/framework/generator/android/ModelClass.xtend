@@ -3,7 +3,6 @@ package de.wwu.md2.framework.generator.android
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.Enum
 import de.wwu.md2.framework.mD2.ReferencedType
-import java.security.InvalidParameterException
 
 import static de.wwu.md2.framework.generator.android.util.MD2AndroidUtil.*
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
@@ -80,8 +79,8 @@ class ModelClass {
 	'''
 	
 	def static dispatch createClass(Enum md2Enum, String basePackage) {
-		if (md2Enum == null) throw new InvalidParameterException("md2Enum cannot be nil")
-		if (md2Enum.enumBody == null) throw new InvalidParameterException("Enum "+md2Enum.name+"'s enumBody cannot be empty")
+		if (md2Enum == null) throw new IllegalArgumentException("md2Enum cannot be nil")
+		if (md2Enum.enumBody == null) throw new IllegalArgumentException("Enum "+md2Enum.name+"'s enumBody cannot be empty")
 		
 		'''
 		package «basePackage».models;
