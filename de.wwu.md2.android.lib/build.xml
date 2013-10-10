@@ -4,6 +4,7 @@
 	<property name="src" location="src"/>	
 	<property name="build" location="build"/>	
 	<property name="dist" location="dist"/>
+	<property name="release" location="../de.wwu.md2.framework/res/resources/android">
 	
 	<!-- Variables -->
 	<property name="jarname" location="md2-framework-lib.jar"/>
@@ -35,6 +36,6 @@
 	</target>
 	
 	<target name="release" depends="package">
-		<copyfile dest="../framework/de.wwu.md2.framework/res/resources/android/md2-android-lib.jar" src="${dist}/md2-framework-lib.jar"/>	
+        <copy dest="${release}/{jarname}" src="${dist}/{jarname}"/>  
 	</target>
 </project>
