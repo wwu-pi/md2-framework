@@ -4,9 +4,10 @@
 	<property name="src" location="src"/>	
 	<property name="build" location="build"/>	
 	<property name="dist" location="dist"/>
+	<property name="release" location="../de.wwu.md2.framework/res/resources/android"/>
 	
 	<!-- Variables -->
-	<property name="jarname" location="md2-framework-lib.jar"/>
+	<property name="jarname" value="md2-android-lib.jar"/>
 	
 	<!-- targets -->
 	<target name="clean">
@@ -28,13 +29,13 @@
 	</target>
 	
 	<target name="package" depends="compile"> 
-		<jar destfile="${dist}/md2-framework-lib.jar">
+		<jar destfile="${dist}/${jarname}">
 			<fileset dir="${src}" includes="**/*.java"/>
 			<fileset dir="${build}" includes="**/*.class"/>
 		</jar>
 	</target>
 	
 	<target name="release" depends="package">
-		<copyfile dest="../framework/de.wwu.md2.framework/res/resources/android/md2-android-lib.jar" src="${dist}/md2-framework-lib.jar"/>	
+        <copy tofile="${release}/${jarname}" file="${dist}/${jarname}"/>  
 	</target>
 </project>
