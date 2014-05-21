@@ -119,7 +119,7 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		fsa.generateFile(basePackageName + "/WebContent/WEB-INF/web.xml", webXml(basePackageName))
 		
 		// Copy static jar libs
-		fsa.generateFileFromInputStream(getSystemResource("/backend/jersey-bundle-1.12.jar"), basePackageName + "/WebContent/WEB-INF/lib/jersey-bundle-1.12.jar")
+		fsa.generateFileFromInputStream(getSystemResource("/backend/jersey-bundle-1.18.1.jar"), basePackageName + "/WebContent/WEB-INF/lib/jersey-bundle-1.18.1.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/guava-13.0.jar"), basePackageName + "/WebContent/WEB-INF/lib/guava-13.0.jar")
 		
 	}
