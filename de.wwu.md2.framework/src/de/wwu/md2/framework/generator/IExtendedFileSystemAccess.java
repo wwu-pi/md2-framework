@@ -1,5 +1,6 @@
 package de.wwu.md2.framework.generator;
 
+import java.io.File;
 import java.io.InputStream;
 
 import org.eclipse.xtext.generator.IFileSystemAccess;
@@ -30,4 +31,21 @@ public interface IExtendedFileSystemAccess extends IFileSystemAccess {
 	 * @return A list of all copied file names.
 	 */
 	Iterable<String> copyFileFromProject(String fileName, String targetFolderName);
+	
+	/**
+	 * Returns a file object including the path of the current output environment.
+	 * 
+	 * @param file A file name relative to the current output environment.
+	 * @return A file object with the absolute path to the file.
+	 */
+	File getFileWithAbsolutePath(String file);
+	
+	/**
+     * Zips all files in a given directory and stores the resulting zip file as
+     * zipFileName. 
+     * 
+     * @param dirName Name and path of the directory that should to be zipped.
+     * @param zipFileName Name of the output zip file.
+     */
+	void zipDirectory(String dirName, String zipFileName);
 }

@@ -21,7 +21,6 @@ import java.util.List
 import java.util.Map
 import java.util.Set
 import org.eclipse.emf.ecore.resource.ResourceSet
-import org.eclipse.xtend.lib.Property
 
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 

@@ -6,7 +6,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess;
 
 import de.wwu.md2.framework.generator.util.DataContainer;
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil;
-import de.wwu.md2.framework.generator.util.PreprocessModel;
+import de.wwu.md2.framework.generator.util.preprocessor.PreprocessModel;
 import de.wwu.md2.framework.mD2.MD2Factory;
 import de.wwu.md2.framework.mD2.impl.MD2FactoryImpl;
 
@@ -55,6 +55,11 @@ public abstract class AbstractPlatformGenerator implements IPlatformGenerator {
 		
 		// Extract base package name
 		basePackageName = MD2GeneratorUtil.getBasePackageName(processedInput) + '.' + getPlatformPrefix();
+		
+		// trigger actual generation process
+		doGenerate(fsa);
 	}
+	
+	public abstract void doGenerate(IExtendedFileSystemAccess fsa);
 	
 }

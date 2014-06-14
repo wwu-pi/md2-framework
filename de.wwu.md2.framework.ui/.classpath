@@ -4,5 +4,11 @@
 	<classpathentry kind="src" path="src-gen"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="lib" path="/de.wwu.md2.framework/libs/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="/de.wwu.md2.framework/libs/guice-3.0.jar"/>
+	<classpathentry kind="lib" path="/de.wwu.md2.framework/libs/guice-multibindings-3.0.jar"/>
+	<classpathentry kind="lib" path="/de.wwu.md2.framework/libs/slf4j-api-1.7.7.jar"/>
+	<classpathentry kind="lib" path="/de.wwu.md2.framework/libs/slf4j-jdk14-1.7.7.jar"/>
+	<classpathentry kind="lib" path="/de.wwu.md2.framework/libs/zt-zip-1.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

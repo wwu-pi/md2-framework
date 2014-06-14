@@ -1,7 +1,18 @@
 package de.wwu.md2.framework.ui.generator;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -14,6 +25,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
 import org.eclipse.xtext.generator.OutputConfiguration;
+import org.zeroturnaround.zip.ZipUtil;
 
 import com.google.common.collect.Sets;
 
@@ -40,6 +52,22 @@ public class ExtendedEclipseResourceFileSystemAccess2
 	@Override
 	public void generateFileFromInputStream(InputStream inputStream, String targetFileName) {
 		generateFileFromInputStream(inputStream, targetFileName, DEFAULT_OUTPUT);
+	}
+	
+	@Override
+	public File getFileWithAbsolutePath(String file) {
+		return getFile(file, DEFAULT_OUTPUT).getLocation().toFile();
+	}
+	
+	@Override
+	public void zipDirectory(String dirName, String zipFileName) {
+		try {
+			// refresh after direct file system access in order to ensure that project is not out of sync
+			ZipUtil.pack(getFileWithAbsolutePath(dirName), getFileWithAbsolutePath(zipFileName));
+			project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**

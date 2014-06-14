@@ -5,7 +5,6 @@ import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.StyleAssignment
 import de.wwu.md2.framework.util.UuidProvider
-import org.eclipse.emf.ecore.resource.ResourceSet
 
 import static de.wwu.md2.framework.generator.ios.ActionEventClass.*
 import static de.wwu.md2.framework.generator.ios.ContentProviderClass.*
@@ -31,17 +30,14 @@ class IOSGenerator extends AbstractPlatformGenerator
 	String appName
 	String projectFolder
 	
-	override doGenerate(ResourceSet input, IExtendedFileSystemAccess fsa)
-	{
-		super.doGenerate(input, fsa)
+	override doGenerate(IExtendedFileSystemAccess fsa) {
 		
 		/////////////////////////////////////////
 		// Feasibility check
 		/////////////////////////////////////////
 		
 		// Check whether a main block has been defined. Otherwise do not run the generator.
-		if(dataContainer.main == null)
-		{
+		if(dataContainer.main == null) {
 			System::out.println("iOS: No main block found. Quit gracefully.")
 			return
 		}
