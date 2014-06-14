@@ -1,7 +1,7 @@
 package de.wwu.md2.framework.generator.ios
 
 import de.wwu.md2.framework.generator.util.DataContainer
-import de.wwu.md2.framework.generator.util.PreprocessModel
+import de.wwu.md2.framework.generator.util.preprocessor.PreprocessModel
 import de.wwu.md2.framework.mD2.AlternativesPane
 import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.CustomAction

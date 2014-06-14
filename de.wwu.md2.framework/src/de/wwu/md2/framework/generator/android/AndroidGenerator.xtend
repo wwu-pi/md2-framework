@@ -11,7 +11,6 @@ import de.wwu.md2.framework.mD2.TabbedAlternativesPane
 import java.util.List
 import java.util.Queue
 import java.util.Set
-import org.eclipse.emf.ecore.resource.ResourceSet
 
 import static com.google.common.collect.Lists.*
 import static de.wwu.md2.framework.generator.android.ArraysXml.*
@@ -33,10 +32,7 @@ class AndroidGenerator extends AbstractPlatformGenerator {
 	
 	int minAppVersion = 11
 	
-	override doGenerate(ResourceSet input, IExtendedFileSystemAccess fsa) {
-		
-		super.doGenerate(input, fsa)
-		
+	override doGenerate(IExtendedFileSystemAccess fsa) {
 		
 		/////////////////////////////////////////
 		// Feasibility check

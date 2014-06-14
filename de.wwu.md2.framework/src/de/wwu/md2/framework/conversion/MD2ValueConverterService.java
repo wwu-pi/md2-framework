@@ -33,4 +33,13 @@ public class MD2ValueConverterService extends DefaultTerminalConverters {
 	public IValueConverter<Date> getDateTimeConverter() {
 		return dateTimeValueConverter;
 	}
+	
+	@Inject
+	private PercentValueConverter percentValueConverter;
+	
+	@ValueConverter(rule = "PERCENT")
+	public IValueConverter<Integer> getPercentConverter() {
+		return percentValueConverter;
+	}
+	
 }

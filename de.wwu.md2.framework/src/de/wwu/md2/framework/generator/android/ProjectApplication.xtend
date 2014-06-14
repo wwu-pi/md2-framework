@@ -1,7 +1,7 @@
 package de.wwu.md2.framework.generator.android
 
 import de.wwu.md2.framework.generator.util.DataContainer
-import de.wwu.md2.framework.generator.util.PreprocessModel
+import de.wwu.md2.framework.generator.util.preprocessor.PreprocessModel
 
 import static de.wwu.md2.framework.generator.android.util.MD2AndroidUtil.*
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*

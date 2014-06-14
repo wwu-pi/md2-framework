@@ -1,5 +1,6 @@
 package de.wwu.md2.framework.generator.util
 
+import de.wwu.md2.framework.generator.util.preprocessor.ProcessAutoGenerator
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import de.wwu.md2.framework.mD2.Action
 import de.wwu.md2.framework.mD2.ActionReference
@@ -206,7 +207,7 @@ class MD2GeneratorUtil {
 	}
 	
 	def static isCalledAtStartup(CustomCodeFragment codeFragment) {
-		if ((codeFragment.eContainer as CustomAction).name == PreprocessModel::autoGenerationActionName) return true		
+		if ((codeFragment.eContainer as CustomAction).name == ProcessAutoGenerator::autoGenerationActionName) return true		
 		val Action startupAction = codeFragment.eResource.allContents.filter(typeof(Main)).last.onInitializedEvent
 		if (startupAction == null) return false
 		return traverseAction(startupAction).filter(typeof(CustomAction)).exists(customAction | customAction.codeFragments.contains(codeFragment))

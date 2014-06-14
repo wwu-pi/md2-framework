@@ -5,7 +5,6 @@ import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.ModelElement
 import de.wwu.md2.framework.mD2.ReferencedModelType
-import org.eclipse.emf.ecore.resource.ResourceSet
 
 import static de.wwu.md2.framework.generator.backend.BeanClass.*
 import static de.wwu.md2.framework.generator.backend.CommonClasses.*
@@ -25,10 +24,7 @@ import static de.wwu.md2.framework.util.MD2Util.*
  */
 class BackendGenerator extends AbstractPlatformGenerator {
 	
-	override doGenerate(ResourceSet input, IExtendedFileSystemAccess fsa) {
-		
-		super.doGenerate(input, fsa)
-		
+	override doGenerate(IExtendedFileSystemAccess fsa) {
 		
 		/////////////////////////////////////////
 		// Feasibility check

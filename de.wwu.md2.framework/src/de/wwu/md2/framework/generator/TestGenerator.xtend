@@ -10,11 +10,10 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.Scanner
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 
-import static extension de.wwu.md2.framework.generator.util.PreprocessModel.*
+import static extension de.wwu.md2.framework.generator.util.preprocessor.Util.*
 
 /**
  * XMI model generator
@@ -25,10 +24,7 @@ class TestGenerator extends AbstractPlatformGenerator {
 	// Provides extension methods, e.g. getfullyQualifiedName for EObjects 
 	@Inject extension IQualifiedNameProvider nameProvider
 	
-	override doGenerate(ResourceSet input, IExtendedFileSystemAccess fsa) {
-		
-		super.doGenerate(input, fsa)
-		
+	override doGenerate(IExtendedFileSystemAccess fsa) {
 		
 		/////////////////////////////////////////
 		// Feasibility check
@@ -36,7 +32,7 @@ class TestGenerator extends AbstractPlatformGenerator {
 		
 		// Check whether a main block has been defined. Otherwise do not run the generator.
 		if(dataContainer.main == null) {
-			System::out.println("Android: No main block found. Quit gracefully.")
+			System::out.println("TestGenerator: No main block found. Quit gracefully.")
 			return
 		}
 		

@@ -11,10 +11,20 @@ process(EPackage this) :
 process(EClass this) :
 	switch (name) {
 		case "Spacer": eAttributes.processSpacer()
+		case "WidthParam": eAttributes.processWidthParam()
+		case "ContentElement": eAttributes.processContentElement()
 		default: null
 	}
 ;
 
 processSpacer(EAttribute this) :
 	if name == "number" then setDefaultValueLiteral('1')
+;
+
+processWidthParam(EAttribute this) :
+	if name == "width" then setDefaultValueLiteral('-1')
+;
+
+processContentElement(EAttribute this) :
+	if name == "width" then setDefaultValueLiteral('-1')
 ;
