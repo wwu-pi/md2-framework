@@ -788,7 +788,16 @@ CustomCodeFragment:
 	{CallTask} ('call' action = ActionDef) |
 	{MappingTask} ('map' referencedViewField = AbstractViewGUIElementRef 'to' pathDefinition = ContentProviderPathDefinition) |
 	{UnmappingTask} ('unmap' referencedViewField = AbstractViewGUIElementRef 'from' pathDefinition = ContentProviderPathDefinition) |
-	{SetTask} ('set' newValue = Value 'to' (pathDefinition = ContentProviderPathDefinition | referencedViewField = AbstractViewGUIElementRef))
+	{SetTask} ('set' newValue = Value 'to' (pathDefinition = ContentProviderPathDefinition | referencedViewField = AbstractViewGUIElementRef)) |
+	{ConditionalCodeFragment} 'if' if = IfCodeBlock ('elseif' elseifs += IfCodeBlock)* ('else' else = ElseCodeBlock)?
+;
+
+IfCodeBlock:
+	'(' condition = Condition ')' '{' codeFragments += CustomCodeFragment* '}'
+;
+
+ElseCodeBlock:
+	{ElseCodeBlock} '{' codeFragments += CustomCodeFragment* '}'
 ;
 
 /*
@@ -796,10 +805,10 @@ CustomCodeFragment:
  * Used to assign any MD2-supported data type to an attribute.
  */
 Value:
-	{IntValue} value = INT |
-	{FloatValue} value = FLOAT |
-	{StringValue} value = STRING |
-	{BoolenVal} value = Boolean |
+	{IntVal} value = INT |
+	{FloatVal} value = FLOAT |
+	{StringVal} value = STRING |
+	{BooleanVal} value = Boolean |
 	{DateVal} value = DATE |
 	{TimeVal} value = TIME |
 	{DateTimeVal} value = DATE_TIME
@@ -1236,17 +1245,16 @@ enum Boolean:
  * possible ViewElementStates.
  */
 enum ViewElementState:
-	VALID='valid' | EMPTY='empty' | CHECKED='checked' | FILLED='filled'
+	VALID='valid' | EMPTY='empty' | FILLED='filled'
 ;
 
 /*
- * A SimpleExpression contains either a
- * simple data type value of STRING, INT,
- * FLOAT, DATE, TIME, DATE_TIME or a
- * reference to the value of a ViewGUIElement.
+ * A SimpleExpression contains either a simple data type value of STRING, INT,
+ * FLOAT, DATE, TIME, DATE_TIME or a reference to the value of a ViewGUIElement
+ * or a reference to an attribute of an entity that is managed by a content provider.
  */
 SimpleExpression:
-	Value |	AbstractViewGUIElementRef
+	Value |	AbstractViewGUIElementRef | ContentProviderPathDefinition
 ;
 
 
@@ -1374,7 +1382,7 @@ EntityPathDefinition:
  * an entity stored in a ContentProvider.
  */
 ContentProviderPathDefinition:
-	'$' contentProviderRef = [ContentProvider] (tail = PathTail)?
+	':' contentProviderRef = [ContentProvider] (tail = PathTail)?
 ;
 
 /*

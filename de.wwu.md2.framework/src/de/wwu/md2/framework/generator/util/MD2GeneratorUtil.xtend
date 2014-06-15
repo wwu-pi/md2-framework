@@ -8,6 +8,7 @@ import de.wwu.md2.framework.mD2.AlternativesPane
 import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.AttributeEqualsExpression
 import de.wwu.md2.framework.mD2.BooleanExpression
+import de.wwu.md2.framework.mD2.BooleanVal
 import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.CombinedAction
 import de.wwu.md2.framework.mD2.ContainerElement
@@ -15,6 +16,8 @@ import de.wwu.md2.framework.mD2.ContentProviderPathDefinition
 import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.CustomCodeFragment
+import de.wwu.md2.framework.mD2.DateTimeVal
+import de.wwu.md2.framework.mD2.DateVal
 import de.wwu.md2.framework.mD2.EntityPathDefinition
 import de.wwu.md2.framework.mD2.FloatVal
 import de.wwu.md2.framework.mD2.FlowLayoutPane
@@ -32,6 +35,7 @@ import de.wwu.md2.framework.mD2.SimpleExpression
 import de.wwu.md2.framework.mD2.SimpleType
 import de.wwu.md2.framework.mD2.StringVal
 import de.wwu.md2.framework.mD2.TabTitleParam
+import de.wwu.md2.framework.mD2.TimeVal
 import de.wwu.md2.framework.mD2.View
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.WhereClauseCondition
@@ -207,7 +211,11 @@ class MD2GeneratorUtil {
 	}
 	
 	def static isCalledAtStartup(CustomCodeFragment codeFragment) {
-		if ((codeFragment.eContainer as CustomAction).name == ProcessAutoGenerator::autoGenerationActionName) return true		
+		if (codeFragment.eContainer instanceof CustomAction &&
+			(codeFragment.eContainer as CustomAction).name == ProcessAutoGenerator::autoGenerationActionName
+		) {
+			return true
+		}	
 		val Action startupAction = codeFragment.eResource.allContents.filter(typeof(Main)).last.onInitializedEvent
 		if (startupAction == null) return false
 		return traverseAction(startupAction).filter(typeof(CustomAction)).exists(customAction | customAction.codeFragments.contains(codeFragment))
@@ -324,14 +332,17 @@ class MD2GeneratorUtil {
 		str.toString.trim
 	}
 	
-	def private static getSimpleExpression(SimpleExpression expr, (ViewGUIElement)=>String resolveFieldContentStrategy)
-	{
-		switch expr
-		{
-			StringVal: "'" + expr.value + "'"
+	def private static getSimpleExpression(SimpleExpression expr, (ViewGUIElement)=>String resolveFieldContentStrategy)	{
+		switch (expr) {
+			StringVal: '"' + expr.value + '"'
 			IntVal: expr.value.toString
 			FloatVal: expr.value.toString
+			BooleanVal: expr.value.toString
+			DateVal: '"' + expr.value.toString + '"'
+			TimeVal: '"' + expr.value.toString + '"'
+			DateTimeVal: '"' + expr.value.toString + '"'
 			AbstractViewGUIElementRef: resolveFieldContentStrategy.apply(resolveViewGUIElement(expr))
+			ContentProviderPathDefinition: "" // TODO
 		}
 	}
 }

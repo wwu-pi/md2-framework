@@ -7,15 +7,23 @@ import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.ContainerElementRef
 import de.wwu.md2.framework.mD2.ContainerElementType
 import de.wwu.md2.framework.mD2.CustomAction
+import de.wwu.md2.framework.mD2.CustomCodeFragment
+import de.wwu.md2.framework.mD2.ElseCodeBlock
+import de.wwu.md2.framework.mD2.EventBindingTask
+import de.wwu.md2.framework.mD2.EventUnbindTask
 import de.wwu.md2.framework.mD2.FlowLayoutPane
 import de.wwu.md2.framework.mD2.GridLayoutPane
+import de.wwu.md2.framework.mD2.IfCodeBlock
 import de.wwu.md2.framework.mD2.MD2Factory
 import de.wwu.md2.framework.mD2.MappingTask
 import de.wwu.md2.framework.mD2.SimpleType
 import de.wwu.md2.framework.mD2.StyleBody
 import de.wwu.md2.framework.mD2.StyleReference
 import de.wwu.md2.framework.mD2.TabSpecificParam
+import de.wwu.md2.framework.mD2.UnmappingTask
 import de.wwu.md2.framework.mD2.ValidatorBindingTask
+import de.wwu.md2.framework.mD2.ValidatorUnbindTask
+import de.wwu.md2.framework.mD2.ViewElementEventRef
 import de.wwu.md2.framework.mD2.ViewElementRef
 import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewGUIElement
@@ -31,12 +39,6 @@ import static de.wwu.md2.framework.generator.util.preprocessor.Util.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
-import de.wwu.md2.framework.mD2.EventBindingTask
-import de.wwu.md2.framework.mD2.ViewElementEventRef
-import de.wwu.md2.framework.mD2.CustomCodeFragment
-import de.wwu.md2.framework.mD2.EventUnbindTask
-import de.wwu.md2.framework.mD2.ValidatorUnbindTask
-import de.wwu.md2.framework.mD2.UnmappingTask
 
 class ProcessViewReferences {
 	
@@ -109,12 +111,15 @@ class ProcessViewReferences {
 	 * Set ViewGUIElement to head ref
 	 */
 	def static void simplifyReferencesToAbstractViewGUIElements(MD2Factory factory, ResourceSet workingInput, HashMap<EObject, EObject> clonedElements) {
-		val Iterable<AbstractViewGUIElementRef> abstractRefs = workingInput.resources.map(r|r.allContents.toIterable.filter(typeof(AbstractViewGUIElementRef)).filter([!(it.eContainer instanceof AbstractViewGUIElementRef)])).flatten
-		abstractRefs.forEach [ abstractRef |
-				abstractRef.ref = resolveAbstractViewGUIElementRef(workingInput, abstractRef, null, clonedElements)
-				abstractRef.tail?.remove
-				abstractRef.path?.remove
-				abstractRef.simpleType?.remove
+		val Iterable<AbstractViewGUIElementRef> abstractRefs = workingInput.resources.map[ r |
+			r.allContents.toIterable.filter(typeof(AbstractViewGUIElementRef)).filter([!(it.eContainer instanceof AbstractViewGUIElementRef)])
+		].flatten
+		
+		abstractRefs.forEach[ abstractRef |
+			abstractRef.ref = resolveAbstractViewGUIElementRef(workingInput, abstractRef, null, clonedElements)
+			abstractRef.tail?.remove
+			abstractRef.path?.remove
+			abstractRef.simpleType?.remove
 		]
 	}
 	
@@ -140,8 +145,7 @@ class ProcessViewReferences {
 						val newAbstractRef = factory.createAbstractViewGUIElementRef()
 						newAbstractRef.ref = entry.key
 						newTask.referencedFields.add(newAbstractRef)
-						val validatorAction = validatorBindingTask.eContainer as CustomAction
-						validatorAction.codeFragments.add(newTask)
+						validatorBindingTask.eContainer.addCodeFragmentToParentCodeContainer(newTask)
 						userValidatorBindingTasks.add(newTask)
 					}
 				}
@@ -155,9 +159,12 @@ class ProcessViewReferences {
 	 * Restricted to StartupActions.
 	 */
 	def static void copyEventsToClonedGUIElements(MD2Factory factory, ResourceSet workingInput, HashMap<EObject, EObject> clonedElements) {
-		val Iterable<EventBindingTask> eventBindingTasks = workingInput.resources.map(r|r.allContents.toIterable.filter(typeof(EventBindingTask)).filter([isCalledAtStartup(it)])).flatten.toList
-		eventBindingTasks.forEach [ eventBindingTask |
-			eventBindingTask.events.filter(typeof(ViewElementEventRef)).forEach [ eventRef |
+		val Iterable<EventBindingTask> eventBindingTasks = workingInput.resources.map[ r |
+			r.allContents.toIterable.filter(typeof(EventBindingTask)).filter([isCalledAtStartup(it)])
+		].flatten.toList
+		
+		eventBindingTasks.forEach[ eventBindingTask |
+			eventBindingTask.events.filter(typeof(ViewElementEventRef)).forEach[ eventRef |
 				for (entry : clonedElements.entrySet) {
 					if (entry.value == eventRef.referencedField.resolveViewGUIElement) {
 						val newTask = copyElement(eventBindingTask) as EventBindingTask
@@ -168,8 +175,7 @@ class ProcessViewReferences {
 						newEventRef.referencedField = newAbstractRef
 						newEventRef.event = eventRef.event
 						newTask.events.add(newEventRef)
-						val eventBindingAction = eventBindingTask.eContainer as CustomAction
-						eventBindingAction.codeFragments.add(newTask)
+						eventBindingTask.eContainer.addCodeFragmentToParentCodeContainer(newTask)
 					}
 				}				
 			]
@@ -188,7 +194,7 @@ class ProcessViewReferences {
 		].flatten.toList
 		
 		nonStartupCodeFragments.forEach [ codeFragment |
-			val codeFragmentAction = codeFragment.eContainer as CustomAction
+			val codeFragmentAction = codeFragment.eContainer
 			switch (codeFragment) {
 				EventBindingTask: {
 					codeFragment.events.filter(typeof(ViewElementEventRef)).forEach [ eventRef |
@@ -202,7 +208,7 @@ class ProcessViewReferences {
 								newEventRef.referencedField = newAbstractRef
 								newEventRef.event = eventRef.event
 								newTask.events.add(newEventRef)
-								codeFragmentAction.codeFragments.add(newTask)
+								codeFragmentAction.addCodeFragmentToParentCodeContainer(newTask)
 							}
 						}				
 					]
@@ -219,7 +225,7 @@ class ProcessViewReferences {
 								newEventRef.referencedField = newAbstractRef
 								newEventRef.event = eventRef.event
 								newTask.events.add(newEventRef)
-								codeFragmentAction.codeFragments.add(newTask)
+								codeFragmentAction.addCodeFragmentToParentCodeContainer(newTask)
 							}
 						}				
 					]
@@ -233,7 +239,7 @@ class ProcessViewReferences {
 								val newAbstractRef = factory.createAbstractViewGUIElementRef()
 								newAbstractRef.ref = entry.key
 								newTask.referencedFields.add(newAbstractRef)
-								codeFragmentAction.codeFragments.add(newTask)
+								codeFragmentAction.addCodeFragmentToParentCodeContainer(newTask)
 							}
 						}
 					}
@@ -247,7 +253,7 @@ class ProcessViewReferences {
 								val newAbstractRef = factory.createAbstractViewGUIElementRef()
 								newAbstractRef.ref = entry.key
 								newTask.referencedFields.add(newAbstractRef)
-								codeFragmentAction.codeFragments.add(newTask)
+								codeFragmentAction.addCodeFragmentToParentCodeContainer(newTask)
 							}
 						}
 					}
@@ -259,7 +265,7 @@ class ProcessViewReferences {
 							val newAbstractRef = factory.createAbstractViewGUIElementRef()
 							newAbstractRef.ref = entry.key
 							newTask.referencedViewField = newAbstractRef
-							codeFragmentAction.codeFragments.add(newTask)
+							codeFragmentAction.addCodeFragmentToParentCodeContainer(newTask)
 						}
 					}
 				}
@@ -270,12 +276,32 @@ class ProcessViewReferences {
 							val newAbstractRef = factory.createAbstractViewGUIElementRef()
 							newAbstractRef.ref = entry.key
 							newTask.referencedViewField = newAbstractRef
-							codeFragmentAction.codeFragments.add(newTask)
+							codeFragmentAction.addCodeFragmentToParentCodeContainer(newTask)
 						}
 					}
 				}						
 			}
 		]
+	}
+	
+	/**
+	 * Add a CustomCodeFragment to a block of code.
+	 * 
+	 * Helper method to distinguish on whether a CustomCodeFragment is the direct child of a CustomAction or whether it is part of a
+	 * ConditionalCodeFragment (if-else-conditions).
+	 */
+	def private static addCodeFragmentToParentCodeContainer(EObject codeFragmentContainer, CustomCodeFragment fragment) {
+		switch (codeFragmentContainer) {
+			CustomAction: {
+				codeFragmentContainer.codeFragments.add(fragment)
+			}
+			IfCodeBlock: {
+				codeFragmentContainer.codeFragments.add(fragment)
+			}
+			ElseCodeBlock: {
+				codeFragmentContainer.codeFragments.add(fragment)
+			}
+		}
 	}
 	
 	/**
