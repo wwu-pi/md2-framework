@@ -132,6 +132,8 @@ class PreprocessModel {
 		
 		copyAllCustomCodeFragmentsToClonedGUIElements(factory, workingInput, clonedElements)
 		
+		transformInputsWithLabelsAndTooltipsToLayouts(factory, workingInput) // new
+		
 		// Remove redundant elements
 		val Collection<EObject> objectsToRemove = newHashSet()
 		objectsToRemove.addAll(autoGenerators)

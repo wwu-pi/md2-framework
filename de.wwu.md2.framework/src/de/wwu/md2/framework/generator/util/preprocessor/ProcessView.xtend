@@ -3,7 +3,6 @@ package de.wwu.md2.framework.generator.util.preprocessor
 import de.wwu.md2.framework.mD2.AlternativesPane
 import de.wwu.md2.framework.mD2.CommonContainerParam
 import de.wwu.md2.framework.mD2.ContainerElement
-import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.ContentElement
 import de.wwu.md2.framework.mD2.FlowDirection
 import de.wwu.md2.framework.mD2.FlowLayoutPane
@@ -11,7 +10,9 @@ import de.wwu.md2.framework.mD2.FlowLayoutPaneFlowDirectionParam
 import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam
 import de.wwu.md2.framework.mD2.GridLayoutPaneRowsParam
+import de.wwu.md2.framework.mD2.InputElement
 import de.wwu.md2.framework.mD2.MD2Factory
+import de.wwu.md2.framework.mD2.MD2Package
 import de.wwu.md2.framework.mD2.NamedColor
 import de.wwu.md2.framework.mD2.NamedColorDef
 import de.wwu.md2.framework.mD2.Spacer
@@ -65,11 +66,13 @@ class ProcessView {
 				// if we found a spacer, get the list of its containing feature and replace the single spacer by
 				// the specified number of spacers
 				val lst = spacer.eContainer.eContainer.eGet(spacer.eContainer.eContainingFeature) as EList<Object>
+				val width = spacer.width
 				val idx = lst.indexOf(spacer.eContainer)
 				var i = 0
 				while (i < spacer.number) {
 					val newSpacer = factory.createSpacer
 					newSpacer.setNumber(1)
+					newSpacer.setWidth(width)
 					val newViewElementType = factory.createViewElementDef
 					newViewElementType.value = newSpacer
 					lst.add(idx, newViewElementType)
@@ -181,7 +184,7 @@ class ProcessView {
 		for (gridLayoutPane : gridLayoutPanes) {
 			var numberOfContainedElements = gridLayoutPane.elements.size
 			val columnsParams = gridLayoutPane.params.filter(typeof(GridLayoutPaneColumnsParam))
-			val rowsParams = gridLayoutPane.params.filter(typeof(GridLayoutPaneColumnsParam))
+			val rowsParams = gridLayoutPane.params.filter(typeof(GridLayoutPaneRowsParam))
 			
 			// enforce minimum grid size
 			if (numberOfContainedElements == 0) {
@@ -250,7 +253,7 @@ class ProcessView {
 	 * Calculate the width of all view elements. If the width of a view element is not explicitly defined it is calculated by the following
 	 * algorithm:
 	 * <ol>
-	 *   <li>Find all view container elements. For each view container:</li>
+	 *   <li>Find all view container elements. For each view container, so row-wise:</li>
 	 *     <li>Find all view elements in the parent container and sum up the widths of all view elements for which it is explicitly defined (!= -1).</li>
 	 *     <li>If the summed up width of all elements is > 100% or all elements have the width value explicitly set, all widths are normalized so that they sum up to 100%.</li>
 	 *     <li>The remaining space is distributed evenly over all other elements without an explicitly defined width. E.g. there are three view elements
@@ -261,8 +264,26 @@ class ProcessView {
 	 * If the parent of the container element is the View itself or a Tab-/AlternativesPane, set the width to 100%.
 	 * 
 	 * <p>
-	 *   DEPENDENCIES: None
+	 *   DEPENDENCIES:
 	 * </p>
+	 * <ul>
+	 *   <li>
+	 *     <i>cloneViewElementReferencesIntoParentContainer</i> - It is presumed that there are no references to other view elements (ViewElementRef) in the containers
+	 *     anymore, but that all references were explicitly cloned. Presumes that there are only child elements of type ViewElementDef.
+	 *   </li>
+	 *   <li>
+	 *     <i>calculateNumRowsAndNumColumnsParameters</i> - This step presumes that there are no flow layouts to check anymore and that all row and column parameters
+	 *     are calculated explicitly, because this method calculates the widths row-wise.
+	 *   </li>
+	 *   <li>
+	 *     <i>fillUpGridLayoutsWithSpacers</i> - As the width calculation is based on the number of elements in each row, it is required that all rows are filled up
+	 *     with spacers properly.
+	 *   </li>
+	 *   <li>
+	 *     <i>createViewElementsForAutoGeneratorAction</i> - As the width calculation is based on the number of elements in each row, it is required that all
+	 *     auto-generated fields are already present.
+	 *   </li>
+	 * </ul>
 	 */
 	def static void calculateAllViewElementWidths(MD2Factory factory, ResourceSet workingInput) {
 		
@@ -271,98 +292,217 @@ class ProcessView {
 			r.allContents.toIterable.filter(typeof(ContainerElement)).filter(containerElem | !(containerElem instanceof TabbedAlternativesPane))
 		].flatten
 		
-		for (contentContainer : containerElements.filter(typeof(ContentContainer))) {
-			val allChilds = contentContainer.elements.filter(typeof(ViewElementDef))
-			var sumOfWidths = 0
-			val elementsWithImplicitWidthMap = newLinkedHashMap
-			val elementsWithExplicitWidthMap = newLinkedHashMap
+		for (contentContainer : containerElements.filter(typeof(GridLayoutPane))) {
+			val allChilds = contentContainer.elements.filter(typeof(ViewElementDef)).toList
 			
-			// step 2 - calculate overall width and collect child elements
-			for (child : allChilds) {
-				val childElement = child.value
-				switch(childElement) {
-					ContentElement: {
-						if (childElement.width == -1) {
-							elementsWithImplicitWidthMap.put(childElement, -1)
-						} else {
-							sumOfWidths = sumOfWidths + childElement.width
-							elementsWithExplicitWidthMap.put(childElement, childElement.width)
+			// get a sublist of elements for each row
+			val rowWiseList = newArrayList
+			val rows = contentContainer.params.filter(typeof(GridLayoutPaneRowsParam)).last.value
+			val cols = contentContainer.params.filter(typeof(GridLayoutPaneColumnsParam)).last.value
+			var i = 0
+			while (i < rows) {
+				rowWiseList.add(allChilds.subList(i, i + cols))
+				i = i + 1
+			}
+			
+			// row-wise width calculation of the elements in the list
+			for (rowChilds : rowWiseList) {
+				var sumOfWidths = 0
+				val elementsWithImplicitWidthMap = newLinkedHashMap
+				val elementsWithExplicitWidthMap = newLinkedHashMap
+				
+				// step 2 - calculate overall width and collect child elements
+				for (child : rowChilds) {
+					val childElement = child.value
+					switch(childElement) {
+						ContentElement: {
+							if (childElement.width == -1) {
+								elementsWithImplicitWidthMap.put(childElement, -1)
+							} else {
+								sumOfWidths = sumOfWidths + childElement.width
+								elementsWithExplicitWidthMap.put(childElement, childElement.width)
+							}
 						}
-					}
-					ContainerElement: {
-						val widthParam = switch(childElement) {
-							GridLayoutPane: childElement.params.filter(typeof(WidthParam)).last
-							FlowLayoutPane: childElement.params.filter(typeof(WidthParam)).last
-							AlternativesPane: childElement.params.filter(typeof(WidthParam)).last
-						}
-						if (widthParam.width == -1) {
-							elementsWithImplicitWidthMap.put(widthParam, -1)
-						} else {
-							sumOfWidths = sumOfWidths + widthParam.width
-							elementsWithExplicitWidthMap.put(widthParam, widthParam.width)
+						ContainerElement: {
+							var widthParam = switch(childElement) {
+								GridLayoutPane: childElement.params.filter(typeof(WidthParam)).last
+								AlternativesPane: childElement.params.filter(typeof(WidthParam)).last
+							}
+							if (widthParam == null) {
+								widthParam = factory.createWidthParam
+								switch(childElement) {
+									GridLayoutPane: childElement.params.add(widthParam)
+									AlternativesPane: childElement.params.add(widthParam)
+								}
+							}
+							if (widthParam.width == -1) {
+								elementsWithImplicitWidthMap.put(widthParam, -1)
+							} else {
+								sumOfWidths = sumOfWidths + widthParam.width
+								elementsWithExplicitWidthMap.put(widthParam, widthParam.width)
+							}
 						}
 					}
 				}
-			}
-			
-			// step 3 - normalize widths
-			if(sumOfWidths > 100 || elementsWithImplicitWidthMap.empty) {
-				// reduce or increase all width values 
-				val factor = 100d / sumOfWidths
-				elementsWithExplicitWidthMap.forEach[k, v |
-					elementsWithExplicitWidthMap.put(k, Math.round(v * factor).intValue)
-				]
-				distributeTotalErrorOfElements(elementsWithExplicitWidthMap.entrySet, 100)
 				
-				// set value
-				elementsWithExplicitWidthMap.forEach[element, widthValue |
+				// step 3 - normalize widths
+				if(sumOfWidths > 100 || elementsWithImplicitWidthMap.empty) {
+					// reduce or increase all width values 
+					val factor = 100d / sumOfWidths
+					elementsWithExplicitWidthMap.forEach[k, v |
+						elementsWithExplicitWidthMap.put(k, Math.round(v * factor).intValue)
+					]
+					distributeTotalErrorOfElements(elementsWithExplicitWidthMap.entrySet, 100)
+					
+					// set value
+					elementsWithExplicitWidthMap.forEach[element, widthValue |
+						switch(element) {
+							WidthParam: element.setWidth(widthValue)
+							ContentElement: element.setWidth(widthValue)
+						}
+					]
+					
+					sumOfWidths = 100
+				}
+				
+				// step 4 - calculate widths
+				if(sumOfWidths == 100) {
+					elementsWithImplicitWidthMap.forEach[ k, v | elementsWithImplicitWidthMap.put(k, 0) ]
+				} else {
+					// sumOfWidths < 100 as the case > 100 was already handled in step 3
+					val remainingSpace = 100 - sumOfWidths
+					val sizePerElement = Math.round(remainingSpace.doubleValue / elementsWithImplicitWidthMap.size).intValue
+					elementsWithImplicitWidthMap.forEach[ k, v | elementsWithImplicitWidthMap.put(k, sizePerElement) ]
+					distributeTotalErrorOfElements(elementsWithImplicitWidthMap.entrySet, remainingSpace)
+				}
+				
+				// step 4 - set value
+				elementsWithImplicitWidthMap.forEach[element, widthValue |
 					switch(element) {
 						WidthParam: element.setWidth(widthValue)
 						ContentElement: element.setWidth(widthValue)
 					}
 				]
-				
-				sumOfWidths = 100
 			}
-			
-			// step 4 - calculate widths
-			if(sumOfWidths == 100) {
-				elementsWithImplicitWidthMap.forEach[ k, v | elementsWithImplicitWidthMap.put(k, 0) ]
-			} else {
-				// sumOfWidths < 100 as the case > 100 was already handled in step 3
-				val remainingSpace = 100 - sumOfWidths
-				val sizePerElement = Math.round(remainingSpace.doubleValue / elementsWithImplicitWidthMap.size).intValue
-				elementsWithImplicitWidthMap.forEach[ k, v | elementsWithImplicitWidthMap.put(k, sizePerElement) ]
-				distributeTotalErrorOfElements(elementsWithImplicitWidthMap.entrySet, remainingSpace)
-			}
-			
-			// step 4 - set value
-			elementsWithImplicitWidthMap.forEach[element, widthValue |
-				switch(element) {
-					WidthParam: element.setWidth(widthValue)
-					ContentElement: element.setWidth(widthValue)
-				}
-			]
-			
 		}
 		
 		// If the parent of the container element is the View itself or a Tab-/AlternativesPane, set the width to 100%
 		for (containerElement : containerElements) {
-			if(containerElement.eContainer instanceof View || containerElement.eContainer instanceof SubViewContainer) {
+			// two times .eContainer, because we have to navigate out of the wrapping ContainerElementType
+			if(containerElement.eContainer instanceof View || containerElement.eContainer.eContainer instanceof SubViewContainer) {
 				var widthParam = switch(containerElement) {
 					GridLayoutPane: containerElement.params.filter(typeof(WidthParam)).last
-					FlowLayoutPane: containerElement.params.filter(typeof(WidthParam)).last
 					AlternativesPane: containerElement.params.filter(typeof(WidthParam)).last
 				}
 				if(widthParam == null) {
 					widthParam = factory.createWidthParam
 					switch(containerElement) {
 						GridLayoutPane: containerElement.params.add(widthParam)
-						FlowLayoutPane: containerElement.params.add(widthParam)
 						AlternativesPane: containerElement.params.add(widthParam)
 					}
 				}
 				widthParam.setWidth(100)
+			}
+		}
+	}
+	
+	/**
+	 * If the the <i>label</i> or the <i>tooltip</i> attributes are set for an input element, it is wrapped with a grid layout of the following format.
+	 * 
+	 * If both a label and a tooltip are defined, the grid has the following format:
+	 * <pre>
+	 *  --------------------------------------------------------------
+	 * |     Label 40%      |        Input 50%          | Tooltip 10% |
+	 *  --------------------------------------------------------------
+	 * </pre>
+	 * 
+	 * If only the tooltip is set, the grid has the following format:
+	 * <pre>
+	 *  --------------------------------------------------------------
+	 * |                    Input 90%                   | Tooltip 10% |
+	 *  --------------------------------------------------------------
+	 * </pre>
+	 * 
+	 * If only the label is set, a spacer is placed in lieu of the tooltip element.
+	 * <pre>
+	 *  --------------------------------------------------------------
+	 * |     Label 40%      |        Input 50%          |  Spacer 10% |
+	 *  --------------------------------------------------------------
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 *   DEPENDENCIES:
+	 * </p>
+	 * <ul>
+	 *   <li>
+	 *     <i>createViewElementsForAutoGeneratorAction</i> - The AutoGenerator creates inputs with labels and tooltips. Thus, they have to be created before the
+	 *     transformation in this step.
+	 *   </li>
+	 * </ul>
+	 */
+	def static void transformInputsWithLabelsAndTooltipsToLayouts(MD2Factory factory, ResourceSet workingInput) {
+		val Iterable<InputElement> inputs = workingInput.resources.map[r |
+			r.allContents.toIterable.filter(typeof(InputElement))
+		].flatten
+		
+		for (input : inputs) {
+			if(input.eIsSet(MD2Package.eINSTANCE.inputElement_LabelText) || input.eIsSet(MD2Package.eINSTANCE.inputElement_TooltipText)) {
+				
+				val inputContext = input.eContainer as ViewElementDef
+				
+				// configure layout panel
+				val gridLayout = factory.createGridLayoutPane
+				val columnsParam = factory.createGridLayoutPaneColumnsParam
+				val rowsParam = factory.createGridLayoutPaneRowsParam
+				val numOfCols = if (input.eIsSet(MD2Package.eINSTANCE.inputElement_LabelText)) 3 else 2
+				gridLayout.setName("__Container" + input.name)
+				columnsParam.setValue(numOfCols)
+				rowsParam.setValue(1)
+				gridLayout.params.addAll(columnsParam, rowsParam)
+				if (input.eIsSet(MD2Package.eINSTANCE.contentElement_Width)) {
+					val widthParam = factory.createWidthParam
+					val width = input.width
+					widthParam.setWidth(width)
+					gridLayout.params.add(widthParam)
+				}
+				
+				// add label
+				if (input.eIsSet(MD2Package.eINSTANCE.inputElement_LabelText)) {
+					val label = factory.createLabel
+					label.setName("__Label" + input.name)
+					label.setText(input.labelText)
+					label.setWidth(40)
+					
+					val labelElementDef = factory.createViewElementDef
+					labelElementDef.setValue(label)
+					gridLayout.elements.add(labelElementDef)
+				}
+				
+				// add this input
+				val width = if (input.eIsSet(MD2Package.eINSTANCE.inputElement_LabelText)) 50 else 90
+				input.setWidth(width)
+				val inputElementDef = factory.createViewElementDef
+				inputElementDef.setValue(input)
+				gridLayout.elements.add(inputElementDef)
+				
+				// add tooltip or spacer if no tooltip is set
+				val tooltipElementDef = factory.createViewElementDef
+				gridLayout.elements.add(tooltipElementDef)
+				if (input.eIsSet(MD2Package.eINSTANCE.inputElement_TooltipText)) {
+					val tooltip = factory.createTooltip
+					tooltip.setName("__Tooltip" + input.name)
+					tooltip.setText(input.tooltipText)
+					tooltip.setWidth(10)
+					tooltipElementDef.setValue(tooltip)
+				} else {
+					val spacer = factory.createSpacer
+					spacer.setNumber(1)
+					spacer.setWidth(10)
+					tooltipElementDef.setValue(spacer)
+				}
+				
+				inputContext.setValue(gridLayout)
 			}
 		}
 	}
