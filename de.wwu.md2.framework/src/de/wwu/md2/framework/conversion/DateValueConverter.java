@@ -21,14 +21,16 @@ public class DateValueConverter extends AbstractNullSafeConverter<Date> {
 	protected String internalToString(Date date) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(PATTERN);
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-		return '"' + dateFormat.format(date) + '"';
+		return dateFormat.format(date);
 	}
 	
 	@Override
 	protected Date internalToValue(String dateString, INode node) throws ValueConverterException {
 		
 		// get rid of quotes
-		dateString = dateString.substring(1, dateString.length() - 1);
+		if(dateString.indexOf("\"") != -1 || dateString.indexOf("'") != -1) {
+			dateString = dateString.substring(1, dateString.length() - 1);
+		}
 		
 		try {
 			SimpleDateFormat dateFormat = new SimpleDateFormat(PATTERN);

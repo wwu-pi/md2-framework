@@ -787,7 +787,22 @@ CustomCodeFragment:
 	{ValidatorUnbindTask} ('unbind' ('validator' | 'validators') (validators+=ValidatorType+ | allTypes ?= 'all') 'from' (referencedFields += AbstractViewGUIElementRef)+) |
 	{CallTask} ('call' action = ActionDef) |
 	{MappingTask} ('map' referencedViewField = AbstractViewGUIElementRef 'to' pathDefinition = ContentProviderPathDefinition) |
-	{UnmappingTask} ('unmap' referencedViewField = AbstractViewGUIElementRef 'from' pathDefinition = ContentProviderPathDefinition)
+	{UnmappingTask} ('unmap' referencedViewField = AbstractViewGUIElementRef 'from' pathDefinition = ContentProviderPathDefinition) |
+	{SetTask} ('set' newValue = Value 'to' (pathDefinition = ContentProviderPathDefinition | referencedViewField = AbstractViewGUIElementRef))
+;
+
+/*
+ * Helper rule that returns a value object which corresponds to a certain data type.
+ * Used to assign any MD2-supported data type to an attribute.
+ */
+Value:
+	{IntValue} value = INT |
+	{FloatValue} value = FLOAT |
+	{StringValue} value = STRING |
+	{BoolenVal} value = Boolean |
+	{DateVal} value = DATE |
+	{TimeVal} value = TIME |
+	{DateTimeVal} value = DATE_TIME
 ;
 
 /*
@@ -845,7 +860,7 @@ EventDef:
  * events supported by ViewGUIElements
  */
 enum ElementEventType:
-	ON_TOUCH = "onTouch" |
+	ON_TOUCH = "onClick" |
 	ON_LEFT_SWIPE = "onLeftSwipe" |
 	ON_RIGHT_SWIPE = "onRightSwipe" |
 	ON_WRONG_VALIDATION = "onWrongValidation"
@@ -1226,15 +1241,12 @@ enum ViewElementState:
 
 /*
  * A SimpleExpression contains either a
- * simple data type value of STRING, INT
- * or FLOAT or a Reference to the value
- * of a ViewGUIElement.
+ * simple data type value of STRING, INT,
+ * FLOAT, DATE, TIME, DATE_TIME or a
+ * reference to the value of a ViewGUIElement.
  */
 SimpleExpression:
-	{StringVal} value = STRING |
-	{IntVal} value = INT |
-	{FloatVal} value = FLOAT |
-	AbstractViewGUIElementRef
+	Value |	AbstractViewGUIElementRef
 ;
 
 
@@ -1362,7 +1374,7 @@ EntityPathDefinition:
  * an entity stored in a ContentProvider.
  */
 ContentProviderPathDefinition:
-	contentProviderRef = [ContentProvider] (tail = PathTail)?
+	'$' contentProviderRef = [ContentProvider] (tail = PathTail)?
 ;
 
 /*
@@ -1520,24 +1532,24 @@ EnumTypeParam:
  * YYYY-MM-DD
  */
 DATE returns ecore::EDate:
-	STRING
+	DATE_FORMAT
 ;
 
 /**
  * Definition of the time. A string that conforms of the following format is expected:
- * hh:mm:ss[.nnnnnnn][(+|-)hh[:mm]] or hh:mm:ss[.nnnnnnn][Z]
+ * hh:mm:ss[(+|-)hh[:mm]] or hh:mm:ss[Z]
  */
 TIME returns ecore::EDate:
-	STRING
+	TIME_FORMAT
 ;
 
 /**
  * Definition of date and time. A string that conforms ISO 8601 is expected.
- * YYYY-MM-DDThh:mm:ss[.nnnnnnn][(+|-)hh[:mm]] or
- * YYYY-MM-DDThh:mm:ss[.nnnnnnn][Z]
+ * YYYY-MM-DDThh:mm:ss[(+|-)hh[:mm]] or
+ * YYYY-MM-DDThh:mm:ss[Z]
  */
 DATE_TIME returns ecore::EDate:
-	STRING
+	DATE_TIME_FORMAT
 ;
 
 /**
@@ -1601,4 +1613,27 @@ terminal HEX_COLOR:
 	('0'..'9'|'A'..'F'|'a'..'f') ('0'..'9'|'A'..'F'|'a'..'f')
 	('0'..'9'|'A'..'F'|'a'..'f') ('0'..'9'|'A'..'F'|'a'..'f')
 	('0'..'9'|'A'..'F'|'a'..'f') ('0'..'9'|'A'..'F'|'a'..'f')
+;
+
+/**
+ * Definition of a date that conforms the format YYYY-MM-dd
+ */
+terminal DATE_FORMAT:
+	('0'..'9')('0'..'9')('0'..'9')('0'..'9')'-'('0'..'9')('0'..'9')'-'('0'..'9')('0'..'9')
+;
+
+/**
+ * Definition of a time that conforms the format
+ * hh:mm:ss[(+|-)hh[:mm]] or hh:mm:ss[Z]
+ */
+terminal TIME_FORMAT:
+	('0'..'9')('0'..'9')':'('0'..'9')('0'..'9')':'('0'..'9')('0'..'9') ('Z' | (('+'|'-')('0'..'9')('0'..'9') (':'('0'..'9')('0'..'9'))?))?
+;
+
+/**
+ * Definition of a time that conforms the format
+ * YYYY-MM-ddThh:mm:ss[(+|-)hh[:mm]] or YYYY-MM-ddThh:mm:ss[Z]
+ */
+terminal DATE_TIME_FORMAT:
+	DATE_FORMAT 'T' TIME_FORMAT
 ;

@@ -24,14 +24,16 @@ public class TimeValueConverter extends AbstractNullSafeConverter<Date> {
 	@Override
 	protected String internalToString(Date date) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_PATTERN);
-		return '"' + dateFormat.format(date) + '"';
+		return dateFormat.format(date);
 	}
 	
 	@Override
 	protected Date internalToValue(String dateString, INode node) throws ValueConverterException {
 		
 		// get rid of quotes
-		dateString = dateString.substring(1, dateString.length() - 1);
+		if(dateString.indexOf("\"") != -1 || dateString.indexOf("'") != -1) {
+			dateString = dateString.substring(1, dateString.length() - 1);
+		}
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat();
 		dateFormat.setLenient(false);
