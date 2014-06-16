@@ -17,6 +17,7 @@ import com.google.common.collect.Sets;
 import de.wwu.md2.framework.mD2.AllowedOperation;
 import de.wwu.md2.framework.mD2.ConditionalEventRef;
 import de.wwu.md2.framework.mD2.ContentProvider;
+import de.wwu.md2.framework.mD2.ContentProviderEventType;
 import de.wwu.md2.framework.mD2.ElementEventType;
 import de.wwu.md2.framework.mD2.FilterType;
 import de.wwu.md2.framework.mD2.GPSField;
@@ -49,7 +50,7 @@ public class MD2HighlightingCalculator implements ISemanticHighlightingCalculato
 			// predefined events
 			if (node.getGrammarElement() instanceof EnumLiteralDeclaration) {
 				Enumerator inst = ((EnumLiteralDeclaration)node.getGrammarElement()).getEnumLiteral().getInstance();
-				if (inst instanceof ElementEventType || inst instanceof GlobalEventType) {
+				if (inst instanceof ElementEventType || inst instanceof GlobalEventType || inst instanceof ContentProviderEventType) {
 					acceptor.addPosition(node.getOffset(), node.getLength(), MD2HighlightingConfiguration.EVENT);
 				}
 			}
