@@ -1114,11 +1114,7 @@ WhereClauseConditionalExpression returns WhereClauseCondition:
  * that can be used to compare values.
  */
 enum Operator:
-	EQUALS = 'equals' | GREATER='greater' | SMALLER = 'smaller' |
-	GREATER_OR_EQUAL = '>=' | SMALLER_OR_EQUAL = '<='
-	// EQUALS = '==' | GREATER = '>' | SMALLER = '<'
-	// By now, do not support these equivalents
-	// as they lead to an unsupressable warning
+	EQUALS = 'equals' | GREATER='>' | SMALLER = '<' | GREATER_OR_EQUAL = '>=' | SMALLER_OR_EQUAL = '<='
 ;
 
 /*
@@ -1233,13 +1229,13 @@ ConditionalExpression:
 
 ComplexConditionalExpression returns ConditionalExpression:
 		/* 
-		 * AbstractViewGUIElementRef is hereby unwantedly a subclass of ConditionalExpression, because Xtext does not remove
-		 * the type of the rule call preceding an assigned action (AbstractViewGUIElementRef) from the list of possible return types,
+		 * SimpleExpression is hereby unwantedly a subclass of ConditionalExpression, because Xtext does not remove
+		 * the type of the rule call preceding an assigned action (SimpleExpression) from the list of possible return types,
 		 * which then become subtypes of this rule's overall return type (ConditionalExpression). 
 		 */
-	AbstractViewGUIElementRef
-	(=>({EqualsExpression.eqLeft=current} 'equals') (not ?= 'not')? eqRight = SimpleExpression | 
-	=>({GuiElementStateExpression.reference=current} 'is') (not ?= 'not')? isState = ViewElementState)
+	SimpleExpression
+	(=>({EqualsExpression.eqLeft=current} op = Operator) eqRight = SimpleExpression | 
+	=>({GuiElementStateExpression.reference=current} 'is') isState = ViewElementState)
 ;
 
 /*
@@ -1251,11 +1247,11 @@ enum Boolean:
 ;
 
 /*
- * ViewElementState lists all
- * possible ViewElementStates.
+ * ViewElementState lists all possible ViewElementStates.
  */
 enum ViewElementState:
-	VALID='valid' | EMPTY='empty' | FILLED='filled'
+	VALID='valid' | EMPTY='empty' | FILLED='filled' | DEFAULT='default' |
+	DISABLED='disabled' | ENABLED='enabled'
 ;
 
 /*
