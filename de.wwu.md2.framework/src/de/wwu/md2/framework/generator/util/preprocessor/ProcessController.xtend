@@ -1,8 +1,6 @@
 package de.wwu.md2.framework.generator.util.preprocessor
 
-import de.wwu.md2.framework.mD2.ActionReference
 import de.wwu.md2.framework.mD2.CombinedAction
-import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.CustomizedValidatorType
 import de.wwu.md2.framework.mD2.DateRangeValidator
 import de.wwu.md2.framework.mD2.DateTimeRangeValidator
@@ -15,29 +13,44 @@ import de.wwu.md2.framework.mD2.StandardValidatorType
 import de.wwu.md2.framework.mD2.StringRangeValidator
 import de.wwu.md2.framework.mD2.TimeRangeValidator
 import org.eclipse.emf.ecore.resource.ResourceSet
+import org.eclipse.emf.ecore.util.EcoreUtil
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 class ProcessController {
 	
 	/**
-	 * Replace CombinedAction with CustomAction that contains calls to each of is child tasks.
+	 * Replaces CombinedActions with CustomActions that contain calls to each child action declared in the CombinedAction.
+	 * Replaces all references to to the CombinedAction with references to the newly created CustomAction.
+	 * 
+	 * <p>
+	 *   DEPENDENCIES: None
+	 * </p>
 	 */
 	def static void replaceCombinedActionWithCustomAction(MD2Factory factory, ResourceSet workingInput) {
-		val Iterable<CombinedAction> combinedActions = workingInput.resources.map(r|r.allContents.toIterable.filter(typeof(CombinedAction))).flatten
-		combinedActions.forEach [ combinedAction |
-			// Assume structue: Controller -> Action
-			val parentController = combinedAction.eContainer as Controller
+		val Iterable<CombinedAction> combinedActions = workingInput.resources.map[ r | 
+			r.allContents.toIterable.filter(typeof(CombinedAction))
+		].flatten
+		
+		combinedActions.forEach[ combinedAction |
 			val custAction = factory.createCustomAction()
-			custAction.name = combinedAction.name
+			custAction.name = "__combined_" + combinedAction.name
+			
+			// create call tasks for each referenced task
 			combinedAction.actions.forEach [ actionRef |
-				val callTask =  factory.createCallTask()
-				callTask.action = factory.createActionReference()
-				(callTask.action as ActionReference).actionRef = actionRef
+				val callTask = factory.createCallTask
+				val newActionRef = factory.createActionReference
+				newActionRef.setActionRef(actionRef)
+				callTask.setAction(newActionRef)
 				custAction.codeFragments.add(callTask)
 			]
-			parentController.controllerElements.add(custAction)
-			//combinedAction.remove()
+			combinedAction.replace(custAction)
+			
+			// Change all cross references to the new custom action
+			val usageReferences = EcoreUtil.UsageCrossReferencer.find(combinedAction, workingInput)
+			usageReferences.forEach[ crossReference |
+				crossReference.replace(combinedAction, custAction)
+			]
 		]
 	}
 	

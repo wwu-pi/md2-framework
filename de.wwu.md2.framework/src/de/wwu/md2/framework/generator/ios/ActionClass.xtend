@@ -310,7 +310,7 @@ class ActionClass
 			{
 				switch event.event
 				{
-					case ElementEventType::ON_TOUCH: "OnTouch"
+					case ElementEventType::ON_CLICK: "OnTouch"
 					case ElementEventType::ON_LEFT_SWIPE: "LeftSwipe"
 					case ElementEventType::ON_RIGHT_SWIPE: "RightSwipe"
 					case ElementEventType::ON_WRONG_VALIDATION: 0 //TODO

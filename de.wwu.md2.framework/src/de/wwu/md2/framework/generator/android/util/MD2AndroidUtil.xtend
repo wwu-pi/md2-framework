@@ -96,7 +96,7 @@ class MD2AndroidUtil {
 	
 	def private static getEventType(ElementEventType type) {
 		switch type {
-			case ElementEventType::ON_TOUCH: "Touched"
+			case ElementEventType::ON_CLICK: "Touched"
 			case ElementEventType::ON_LEFT_SWIPE: "LeftSwipe"
 			case ElementEventType::ON_RIGHT_SWIPE: "RightSwipe"
 			case ElementEventType::ON_WRONG_VALIDATION: "WrongValidation"

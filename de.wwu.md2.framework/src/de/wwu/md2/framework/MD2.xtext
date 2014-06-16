@@ -711,7 +711,7 @@ CustomAction:
 	'}'
 ;
 
-/* 
+/*
  * CombinedActions allow the composition of Actions.
  */
 CombinedAction:
@@ -856,10 +856,11 @@ ActionDef:
 ;
 
 /*
- * The EventDef allows the user to refer to one of the three possible events.
+ * The EventDef allows the user to refer to one of the four possible event types.
  */
 EventDef:
 	{ViewElementEventRef} (referencedField = AbstractViewGUIElementRef '.' event = ElementEventType) |
+	{ContentProviderEventRef} (pathDefinition = ContentProviderPathDefinition '.' event = ContentProviderEventType) |
 	{GlobalEventRef} event = GlobalEventType |
 	{ConditionalEventRef} eventReference = [OnConditionEvent | QUALIFIED_NAME]
 ;
@@ -869,10 +870,19 @@ EventDef:
  * events supported by ViewGUIElements
  */
 enum ElementEventType:
-	ON_TOUCH = "onClick" |
+	ON_CLICK = "onClick" |
+	ON_CHANGE = "onChange" |
 	ON_LEFT_SWIPE = "onLeftSwipe" |
 	ON_RIGHT_SWIPE = "onRightSwipe" |
 	ON_WRONG_VALIDATION = "onWrongValidation"
+;
+
+/*
+ * ContentProviderEventType lists all possible
+ * events supported by ContentProviders
+ */
+enum ContentProviderEventType:
+	ON_CHANGE = "onChange"
 ;
 
 /*

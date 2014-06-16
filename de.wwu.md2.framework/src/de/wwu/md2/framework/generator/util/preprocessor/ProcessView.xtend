@@ -65,7 +65,7 @@ class ProcessView {
 			if (spacer.number > 1) {
 				// if we found a spacer, get the list of its containing feature and replace the single spacer by
 				// the specified number of spacers
-				val lst = spacer.eContainer.eContainer.eGet(spacer.eContainer.eContainingFeature) as EList<Object>
+				val lst = spacer.eContainer.eContainer.eGet(spacer.eContainer.eContainingFeature) as EList<EObject>
 				val width = spacer.width
 				val idx = lst.indexOf(spacer.eContainer)
 				var i = 0
