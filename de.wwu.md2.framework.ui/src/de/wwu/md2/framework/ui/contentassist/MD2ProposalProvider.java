@@ -1,6 +1,7 @@
 package de.wwu.md2.framework.ui.contentassist;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.Keyword;
@@ -43,20 +44,89 @@ public class MD2ProposalProvider extends AbstractMD2ProposalProvider {
 		String proposal = util.getPackageNameFromPath(model.eResource().getURI());
 		acceptor.accept(createCompletionProposal(proposal, context));
 	}
-
+	
+	@Override
+	public void complete_STRING(EObject model, RuleCall ruleCall,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		
+		StyledString displayString = new StyledString("\"\" [string]");
+		displayString.setStyle(2, 9, StyledString.createColorRegistryStyler(JFacePreferences.QUALIFIER_COLOR, null));
+		acceptor.accept(createCompletionProposal("\"\"", displayString, null, 1000, "", context));
+	}
+	
+	@Override
+	public void complete_INT(EObject model, RuleCall ruleCall,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		
+		StyledString displayString = new StyledString("1 [integer]");
+		displayString.setStyle(1, 10, StyledString.createColorRegistryStyler(JFacePreferences.QUALIFIER_COLOR, null));
+		acceptor.accept(createCompletionProposal("1", displayString, null, 999, "", context));
+	}
+	
 	@Override
 	public void complete_FLOAT(EObject model, RuleCall ruleCall,
 			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		
-		super.complete_FLOAT(model, ruleCall, context, acceptor);
-		acceptor.accept(createCompletionProposal("1.0", context));
+		StyledString displayString = new StyledString("1.0 [number]");
+		displayString.setStyle(3, 9, StyledString.createColorRegistryStyler(JFacePreferences.QUALIFIER_COLOR, null));
+		acceptor.accept(createCompletionProposal("1.0", displayString, null, 998, "", context));
 	}
-
+	
+	@Override
+	public void complete_Boolean(EObject model, RuleCall ruleCall,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		
+		StyledString displayStringFalse = new StyledString("true [boolean]");
+		displayStringFalse.setStyle(4, 11, StyledString.createColorRegistryStyler(JFacePreferences.QUALIFIER_COLOR, null));
+		acceptor.accept(createCompletionProposal("false", displayStringFalse, null, 997, "", context));
+		
+		StyledString displayStringTrue = new StyledString("true [boolean]");
+		displayStringTrue.setStyle(4, 10, StyledString.createColorRegistryStyler(JFacePreferences.QUALIFIER_COLOR, null));
+		acceptor.accept(createCompletionProposal("true", displayStringTrue, null, 997, "", context));
+	}
+	
+	@Override
+	public void complete_DATE(EObject model, RuleCall ruleCall,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		
+		StyledString displayString = new StyledString("2000-01-01 [date]");
+		displayString.setStyle(10, 7, StyledString.createColorRegistryStyler(JFacePreferences.QUALIFIER_COLOR, null));
+		acceptor.accept(createCompletionProposal("2000-01-01", displayString, null, 996, "", context));
+	}
+	
+	@Override
+	public void complete_TIME(EObject model, RuleCall ruleCall,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		
+		StyledString displayString = new StyledString("00:00:00Z [time]");
+		displayString.setStyle(10, 7, StyledString.createColorRegistryStyler(JFacePreferences.QUALIFIER_COLOR, null));
+		acceptor.accept(createCompletionProposal("00:00:00Z", displayString, null, 995, "", context));
+	}
+	
+	@Override
+	public void complete_DATE_TIME(EObject model, RuleCall ruleCall,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		
+		StyledString displayString = new StyledString("2000-01-01T00:00:00Z [datetime]");
+		displayString.setStyle(20, 11, StyledString.createColorRegistryStyler(JFacePreferences.QUALIFIER_COLOR, null));
+		acceptor.accept(createCompletionProposal("2000-01-01T00:00:00Z", displayString, null, 994, "", context));
+	}
+	
 	@Override
 	public void completeKeyword(Keyword keyword, ContentAssistContext contentAssistContext, ICompletionProposalAcceptor acceptor) {
 		
 		if(keyword.getValue().equals("__Dummy")) {
 			return;
+		}
+		
+		// Prevent true and false from being suggested for boolean values. This is already handled by the explicite
+		// method complete_Boolean(...)
+		for (EObject eObject : contentAssistContext.getFirstSetGrammarElements()) {
+			if(eObject instanceof RuleCall && ((RuleCall)eObject).getRule().getName().equals("Boolean")
+				&& (keyword.getValue().equals("true") || keyword.getValue().equals("false"))) {
+				
+				return;
+			}
 		}
 		
 		// Guide content assist before the first element is set. In this state it is only implicitly known (defined by package name)
