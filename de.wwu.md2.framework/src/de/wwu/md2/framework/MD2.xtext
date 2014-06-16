@@ -1218,7 +1218,7 @@ Condition:
 
 /*
  * A ConditionalExpression defines an expression that evaluates to either true or false.
- * It is possible to set a BooleanExpression, an EqualsExpression, that compares to values,
+ * It is possible to set a BooleanExpression, an EqualsExpression that compares to values,
  * or a GuiElementStateExpression that proofs the state of a ViewGUIElement.
  */
 ConditionalExpression:
@@ -1239,8 +1239,7 @@ ComplexConditionalExpression returns ConditionalExpression:
 ;
 
 /*
- * Boolean lists all
- * possible Boolean values.
+ * Boolean lists all possible Boolean values.
  */
 enum Boolean:
 	TRUE='true' | FALSE='false'
@@ -1250,7 +1249,7 @@ enum Boolean:
  * ViewElementState lists all possible ViewElementStates.
  */
 enum ViewElementState:
-	VALID='valid' | EMPTY='empty' | FILLED='filled' | DEFAULT='default' |
+	VALID='valid' | EMPTY='empty' | FILLED='filled' | DEFAULT_VALUE='defaultValue' |
 	DISABLED='disabled' | ENABLED='enabled'
 ;
 
