@@ -93,6 +93,7 @@ class PreprocessModel {
 		//                                                                         //
 		/////////////////////////////////////////////////////////////////////////////
 		
+		createStartUpActionAndRegisterAsOnInitializedEvent(factory, workingInput) // new
 		
 		transformImplicitEnums(factory, workingInput)
 		

@@ -1,10 +1,12 @@
 package de.wwu.md2.framework.generator.util.preprocessor
 
 import de.wwu.md2.framework.mD2.CombinedAction
+import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.CustomizedValidatorType
 import de.wwu.md2.framework.mD2.DateRangeValidator
 import de.wwu.md2.framework.mD2.DateTimeRangeValidator
 import de.wwu.md2.framework.mD2.MD2Factory
+import de.wwu.md2.framework.mD2.Main
 import de.wwu.md2.framework.mD2.NotNullValidator
 import de.wwu.md2.framework.mD2.NumberRangeValidator
 import de.wwu.md2.framework.mD2.RegExValidator
@@ -18,6 +20,44 @@ import org.eclipse.emf.ecore.util.EcoreUtil
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 class ProcessController {
+	
+	public static String startupActionName = "__startupAction"
+	
+	/**
+	 * A <i>__startupAction</i> is created and registered in the main block for the onInitialized event. The actual startup action
+	 * that was originally declared for the onInitialized event is added to this <i>__startupAction</i>. Other start-up tasks such as the
+	 * autoGenerationAction or registerOnConditionalEventActions can be later added here.
+	 * 
+	 * <p>
+	 *   DEPENDENCIES: None
+	 * </p>
+	 */
+	def static void createStartUpActionAndRegisterAsOnInitializedEvent(MD2Factory factory, ResourceSet workingInput) {
+		
+		val ctrl = workingInput.resources.map[ r |
+			r.allContents.toIterable.filter(typeof(Controller))
+		].flatten.last
+		
+		if (ctrl != null) {
+			
+			// create __startupAction
+			val startupAction = factory.createCustomAction();
+			startupAction.setName(startupActionName)
+			ctrl.controllerElements.add(startupAction)
+			
+			// register __startupAction as onInitializedEvent in main block
+			val main = ctrl.eAllContents.toIterable.filter(typeof(Main)).last
+			val originalStartupAction = main.onInitializedEvent
+			main.setOnInitializedEvent(startupAction)
+			
+			// add original startup action to __startupAction
+			val originalCallTask = factory.createCallTask
+			val originalActionReference = factory.createActionReference
+			originalActionReference.setActionRef(originalStartupAction)
+			originalCallTask.setAction(originalActionReference)
+			startupAction.codeFragments.add(originalCallTask);
+		}
+	}
 	
 	/**
 	 * Replaces CombinedActions with CustomActions that contain calls to each child action declared in the CombinedAction.
