@@ -138,7 +138,7 @@ class DataContainer
 		contentProviders = newHashSet
 		workflows = newHashSet
 		onConditionEvents = newHashSet
-		conditions = newHashMap
+//		conditions = newHashMap
 		remoteValidators = newHashSet
 		
 		viewContainers.add(resolveContainerElement(main.startView));
@@ -157,14 +157,14 @@ class DataContainer
 						workflows.add(controllerElement)
 						
 						// Store conditions
-						controllerElement.workflowSteps.forEach [step |
-							if(step.forwardCondition != null) {
-								conditions.put(step.name + "_ForwardCondition", step.forwardCondition)
-							}
-							if(step.backwardCondition != null) {
-								conditions.put(step.name + "_BackwardCondition", step.backwardCondition)
-							}
-						]
+//						controllerElement.workflowSteps.forEach [step |
+//							if(step.forwardCondition != null) {
+//								conditions.put(step.name + "_ForwardCondition", step.forwardCondition)
+//							}
+//							if(step.backwardCondition != null) {
+//								conditions.put(step.name + "_BackwardCondition", step.backwardCondition)
+//							}
+//						]
 					}
 					
 					CustomAction: {
@@ -185,9 +185,9 @@ class DataContainer
 						onConditionEvents.add(controllerElement)
 						
 						// Store condition
-						if(controllerElement.condition != null) {
-							conditions.put(controllerElement.name, controllerElement.condition)
-						}
+//						if(controllerElement.condition != null) {
+//							conditions.put(controllerElement.name, controllerElement.condition)
+//						}
 					}
 					
 					RemoteValidator: {

@@ -1182,19 +1182,29 @@ Workflow:
  */
 WorkflowStep:
 	'step' name = EID ':' (
-		('view' view = AbstractViewGUIElementRef &
-		('forwardCondition' '{'
-			forwardCondition = Condition
-		'}')? &
-		('forwardMessage' forwardMessage = STRING)? &
-		('backwardCondition' '{'
-			backwardCondition = Condition
-		'}')? &
-		('backwardMessage' backwardMessage = STRING)? &
-		('forwardOnEvent' forwardEvents += EventDef+)? &
-		('backwardOnEvent' backwardEvents += EventDef+)?) |
-		'subworkflow' subworkflow = [Workflow]
+		(
+			('view' view = AbstractViewGUIElementRef) &
+			(goto = WorkflowGoTo spec = WorkflowGoToSpec) &
+			('message' message = STRING)?
+		) |
+		'subworkflow' subworkflow = [Workflow]  // TODO consider to remove!!
 	)
+;
+
+WorkflowGoTo:
+	{WorkflowGoToNext} 'proceed' |
+	{WorkflowGoToPrevious} 'reverse' |
+	{WorkflowGoToPrevious} 'return' |
+	{WorkflowGoToStep} 'goto' step = [WorkflowStep | QUALIFIED_NAME] ('(' 'returnFrom' returnFrom = [WorkflowStep | QUALIFIED_NAME] ')')?
+;
+
+WorkflowGoToSpec:
+	{WorkflowGoToSpecShorthand} ('on' events += EventDef+) |
+	{WorkflowGoToSpecExtended} '{' (
+		('on' events += EventDef+) &
+		('given' (condition = Condition | '{' condition = Condition '}'))? &
+		('then' action = [Action])?
+	) '}'
 ;
 
 /*
