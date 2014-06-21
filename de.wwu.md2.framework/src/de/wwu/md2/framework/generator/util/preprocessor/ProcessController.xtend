@@ -1,15 +1,19 @@
 package de.wwu.md2.framework.generator.util.preprocessor
 
 import de.wwu.md2.framework.mD2.CombinedAction
+import de.wwu.md2.framework.mD2.ConatinsCodeFragments
 import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.CustomizedValidatorType
 import de.wwu.md2.framework.mD2.DateRangeValidator
 import de.wwu.md2.framework.mD2.DateTimeRangeValidator
+import de.wwu.md2.framework.mD2.EventBindingTask
+import de.wwu.md2.framework.mD2.EventUnbindTask
 import de.wwu.md2.framework.mD2.MD2Factory
 import de.wwu.md2.framework.mD2.Main
 import de.wwu.md2.framework.mD2.NotNullValidator
 import de.wwu.md2.framework.mD2.NumberRangeValidator
 import de.wwu.md2.framework.mD2.RegExValidator
+import de.wwu.md2.framework.mD2.SimpleAction
 import de.wwu.md2.framework.mD2.StandardValidator
 import de.wwu.md2.framework.mD2.StandardValidatorType
 import de.wwu.md2.framework.mD2.StringRangeValidator
@@ -17,6 +21,7 @@ import de.wwu.md2.framework.mD2.TimeRangeValidator
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.util.EcoreUtil
 
+import static extension de.wwu.md2.framework.generator.util.preprocessor.Util.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 class ProcessController {
@@ -61,7 +66,7 @@ class ProcessController {
 	
 	/**
 	 * Replaces CombinedActions with CustomActions that contain calls to each child action declared in the CombinedAction.
-	 * Replaces all references to to the CombinedAction with references to the newly created CustomAction.
+	 * Replaces all references to the CombinedAction with references to the newly created CustomAction.
 	 * 
 	 * <p>
 	 *   DEPENDENCIES: None
@@ -92,6 +97,101 @@ class ProcessController {
 				crossReference.replace(combinedAction, custAction)
 			]
 		]
+	}
+	
+	/**
+	 * Calculate an MD5 hash for each SimpleAction and assign it to the parameterSignature attribute of the according
+	 * SimpleActions. If all attribute values are equal, the assigned parameter signature is the same as well.
+	 * 
+	 * <p>
+	 *   DEPENDENCIES: None
+	 * </p>
+	 */
+	def static void calculateParameterSignatureForAllSimpleActions(MD2Factory factory, ResourceSet workingInput) {
+		val Iterable<SimpleAction> simpleActions = workingInput.resources.map[ r | 
+			r.allContents.toIterable.filter(typeof(SimpleAction))
+		].flatten
+		
+		for (simpleAction : simpleActions) {
+			simpleAction.setParameterSignature(simpleAction.calculateParameterSignatureHash)
+		}
+	}
+	
+	/**
+	 * In the MD2 language it is allowed to bind a list of actions to a list of events. That is comfortable for the developer, however
+	 * for the generation process it is preferable to not have combined statements. Therefore, transform all event binding and unbinding
+	 * tasks to multiple tasks that only contain one-to-one mappings. E.g.
+	 * <pre>
+	 *   bind action myAction1 myAction2 on myEvent1 myEvent2
+	 * </pre>
+	 * 
+	 * is transformed to
+	 * <pre>
+	 *   bind action myAction1 on myEvent1
+	 *   bind action myAction1 on myEvent2
+	 *   bind action myAction2 on myEvent1
+	 *   bind action myAction2 on myEvent2
+	 * </pre>
+	 * 
+	 * Be aware: Due to the language model the actions and events are still represented by lists. However, each list always contains exactly one
+	 * element. So that one can rely on statements such as binding.events.get(0).
+	 * 
+	 * <p>
+	 *   DEPENDENCIES: None
+	 * </p>
+	 */
+	def static void transformEventBindingAndUnbindingTasksToOneToOneRelations(MD2Factory factory, ResourceSet workingInput) {
+		
+		////////////////////////////////////////////////////
+		// transform all binding tasks
+		////////////////////////////////////////////////////
+		
+		val bindingTasks = workingInput.resources.map[ r |
+			r.allContents.toIterable.filter(typeof(EventBindingTask))
+		].flatten.toList
+		
+		for (bindingTask : bindingTasks) {
+			val actions = bindingTask.actions
+			val events = bindingTask.events
+			val codeFragmentContainer = bindingTask.eContainer as ConatinsCodeFragments
+			val indexOfBindingTask = codeFragmentContainer.codeFragments.indexOf(bindingTask)
+			
+			for (action : actions) {
+				for (event : events) {
+					val newBindingTask = factory.createEventBindingTask
+					newBindingTask.actions.add(action.copy)
+					newBindingTask.events.add(event.copy)
+					codeFragmentContainer.codeFragments.add(indexOfBindingTask, newBindingTask)
+				}
+			}
+			bindingTask.remove
+		}
+		
+		
+		////////////////////////////////////////////////////
+		// transform all unbinding tasks
+		////////////////////////////////////////////////////
+		
+		val unbindingTasks = workingInput.resources.map[ r |
+			r.allContents.toIterable.filter(typeof(EventUnbindTask))
+		].flatten
+		
+		for (unbindingTask : unbindingTasks) {
+			val actions = unbindingTask.actions
+			val events = unbindingTask.events
+			val codeFragmentContainer = unbindingTask.eContainer as ConatinsCodeFragments
+			val indexOfUnbindingTask = codeFragmentContainer.codeFragments.indexOf(unbindingTask)
+			
+			for (action : actions) {
+				for (event : events) {
+					val newUnbindingTask = factory.createEventUnbindTask
+					newUnbindingTask.actions.add(action.copy)
+					newUnbindingTask.events.add(event.copy)
+					codeFragmentContainer.codeFragments.add(indexOfUnbindingTask, newUnbindingTask)
+				}
+			}
+			unbindingTask.remove
+		}
 	}
 	
 	/**

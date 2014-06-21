@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static de.wwu.md2.framework.generator.util.preprocessor.ProcessAutoGenerator.*
 import static de.wwu.md2.framework.generator.util.preprocessor.ProcessController.*
+import static de.wwu.md2.framework.generator.util.preprocessor.ProcessCustomEvents.*
 import static de.wwu.md2.framework.generator.util.preprocessor.ProcessMappings.*
 import static de.wwu.md2.framework.generator.util.preprocessor.ProcessModel.*
 import static de.wwu.md2.framework.generator.util.preprocessor.ProcessView.*
@@ -94,6 +95,12 @@ class PreprocessModel {
 		/////////////////////////////////////////////////////////////////////////////
 		
 		createStartUpActionAndRegisterAsOnInitializedEvent(factory, workingInput) // new
+		
+		transformEventBindingAndUnbindingTasksToOneToOneRelations(factory, workingInput) // new
+		
+		calculateParameterSignatureForAllSimpleActions(factory, workingInput) // new
+		
+		transformAllCustomEventsToBasicLanguageStructures(factory, workingInput) // new
 		
 		transformImplicitEnums(factory, workingInput)
 		

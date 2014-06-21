@@ -801,6 +801,14 @@ ElseCodeBlock:
 ;
 
 /*
+ * Helper Rule. Each element that can contain codeFragments should inherit from ConatinsCodeFragments. So, the code of the generators and
+ * the preprocessing does not have to be adapted each time a new element that has a codeFragments attribute is added.
+ */
+ConatinsCodeFragments:
+	CustomAction | IfCodeBlock | ElseCodeBlock
+;
+
+/*
  * Helper rule that returns a value object which corresponds to a certain data type.
  * Used to assign any MD2-supported data type to an attribute.
  */
@@ -846,8 +854,7 @@ NestedAbstractViewGUIElementRef returns AbstractViewGUIElementRef:
 ;
 
 /*
- * The ActionDef allows the user to
- * either define a new Action or
+ * The ActionDef allows the user to either define a new Action or
  * directly a SimpleAction
  */
 ActionDef:
@@ -1184,18 +1191,22 @@ WorkflowStep:
 	'step' name = EID ':' (
 		(
 			('view' view = AbstractViewGUIElementRef) &
-			(goto = WorkflowGoTo spec = WorkflowGoToSpec) &
+			(gotos += WorkflowGoToDefinition)* &
 			('message' message = STRING)?
 		) |
 		'subworkflow' subworkflow = [Workflow]  // TODO consider to remove!!
 	)
 ;
 
+WorkflowGoToDefinition:
+	goto = WorkflowGoTo spec = WorkflowGoToSpec
+;
+
 WorkflowGoTo:
 	{WorkflowGoToNext} 'proceed' |
 	{WorkflowGoToPrevious} 'reverse' |
-	{WorkflowGoToPrevious} 'return' |
-	{WorkflowGoToStep} 'goto' step = [WorkflowStep | QUALIFIED_NAME] ('(' 'returnFrom' returnFrom = [WorkflowStep | QUALIFIED_NAME] ')')?
+	{WorkflowReturn} 'return' 'and' (proceed ?= 'proceed' | 'reverse') |
+	{WorkflowGoToStep} 'goto' workflow = [Workflow] ('(' 'returnTo' returnTo = [WorkflowStep] ')')?
 ;
 
 WorkflowGoToSpec:

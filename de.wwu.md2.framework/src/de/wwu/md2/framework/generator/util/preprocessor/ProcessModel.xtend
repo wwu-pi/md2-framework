@@ -76,6 +76,8 @@ class ProcessModel {
 	/**
 	 * Create validators according to model constraints for mapped GUI elements if no user-specified validator with same type is found.
 	 * Restricted to StartupActions.
+	 * 
+	 * TODO change => each time an entity is mapped, the according validator is mapped as well!!
 	 */
 	def static void createValidatorsForModelConstraints(
 		MD2Factory factory, ResourceSet workingInput, Collection<MappingTask> autoMappingTasks,

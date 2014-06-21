@@ -1,10 +1,14 @@
 package de.wwu.md2.framework.generator.util.preprocessor
 
 import java.util.HashMap
+import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.emf.ecore.util.EcoreUtil
+
+import static extension org.apache.commons.codec.digest.DigestUtils.*
 
 class Util {
 	
@@ -43,6 +47,46 @@ class Util {
 		} else {
 			return i;
 		} 
+	}
+	
+	/**
+	 * Create a string representation for a given EObject. All features (attributes and cross-references) of the EObject itself
+	 * and all contained EObjects is calculated.
+	 */
+	def static String eObjectRecusriveStringRepresentation(EObject eObject) {
+		
+		val signature = new StringBuilder
+		eObject.eAllContents.forEach[ o |
+			signature.append(o.eClass.name).append("(")
+			val features = newArrayList
+			o.eClass.getEAllStructuralFeatures.forEach[ a |
+				val value = switch (a) {
+					EAttribute: o.eGet(a)
+					EReference: {
+						val eobj = (o.eGet(a) as EObject)
+						val className = eobj.eClass.name
+						val name = if (eobj.eClass.EAllAttributes.exists[ x | x.name.equals("name") ])
+							         "[" + eobj.eGet(eobj.eClass.EAllAttributes.filter[ x | x.name.equals("name") ].last) + "]"
+							       else "[]"
+						className + name
+					}
+				}
+				features.add(a.name + "=" + value)
+			]
+			signature.append(features.toArray().join(",")).append("); ")
+		]
+		
+		return signature.toString
+	}
+	
+	/**
+	 * Calculate an MD5 hash of the string representation (@see eObjectRecusriveStringRepresentation) of an EObject.
+	 * This is for example useful to generate unique names for different SimpleActions or Validators. If an EObject (e.g.
+	 * a Validator with the same message as parameter) exists multiple times it gets assigned the same hash value and thus
+	 * has to be generated only once.
+	 */
+	def static String calculateParameterSignatureHash(EObject eObject) {
+		eObjectRecusriveStringRepresentation(eObject).md5Hex
 	}
 	
 }
