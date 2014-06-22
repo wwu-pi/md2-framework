@@ -76,8 +76,8 @@ public class MD2ProposalProvider extends AbstractMD2ProposalProvider {
 	public void complete_Boolean(EObject model, RuleCall ruleCall,
 			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		
-		StyledString displayStringFalse = new StyledString("true [boolean]");
-		displayStringFalse.setStyle(4, 11, StyledString.createColorRegistryStyler(JFacePreferences.QUALIFIER_COLOR, null));
+		StyledString displayStringFalse = new StyledString("false [boolean]");
+		displayStringFalse.setStyle(5, 10, StyledString.createColorRegistryStyler(JFacePreferences.QUALIFIER_COLOR, null));
 		acceptor.accept(createCompletionProposal("false", displayStringFalse, null, 997, "", context));
 		
 		StyledString displayStringTrue = new StyledString("true [boolean]");
@@ -99,7 +99,7 @@ public class MD2ProposalProvider extends AbstractMD2ProposalProvider {
 			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		
 		StyledString displayString = new StyledString("00:00:00Z [time]");
-		displayString.setStyle(10, 7, StyledString.createColorRegistryStyler(JFacePreferences.QUALIFIER_COLOR, null));
+		displayString.setStyle(10, 6, StyledString.createColorRegistryStyler(JFacePreferences.QUALIFIER_COLOR, null));
 		acceptor.accept(createCompletionProposal("00:00:00Z", displayString, null, 995, "", context));
 	}
 	

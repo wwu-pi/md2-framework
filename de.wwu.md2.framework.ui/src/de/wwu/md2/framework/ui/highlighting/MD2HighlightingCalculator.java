@@ -20,9 +20,9 @@ import de.wwu.md2.framework.mD2.ContentProvider;
 import de.wwu.md2.framework.mD2.ContentProviderEventType;
 import de.wwu.md2.framework.mD2.ElementEventType;
 import de.wwu.md2.framework.mD2.FilterType;
-import de.wwu.md2.framework.mD2.GPSField;
 import de.wwu.md2.framework.mD2.GlobalEventType;
 import de.wwu.md2.framework.mD2.HexColorDef;
+import de.wwu.md2.framework.mD2.LocationField;
 import de.wwu.md2.framework.mD2.NamedColor;
 import de.wwu.md2.framework.mD2.TextInput;
 import de.wwu.md2.framework.mD2.TextInputType;
@@ -104,8 +104,14 @@ public class MD2HighlightingCalculator implements ISemanticHighlightingCalculato
 					&& node.getSemanticElement() != null && node.getSemanticElement() instanceof TextInput) {
 				acceptor.addPosition(node.getOffset(), node.getLength(), MD2HighlightingConfiguration.PARAMETER_VALUE);
 			} else if(node.getGrammarElement() != null && node.getGrammarElement() instanceof EnumLiteralDeclaration
-					&& ((EnumLiteralDeclaration)node.getGrammarElement()).getEnumLiteral().getInstance() instanceof GPSField) {
+					&& ((EnumLiteralDeclaration)node.getGrammarElement()).getEnumLiteral().getInstance() instanceof LocationField) {
 				acceptor.addPosition(node.getOffset(), node.getLength(), MD2HighlightingConfiguration.PARAMETER_VALUE);
+			}
+			
+			// fake cross-reference style for 'location' keyword that represents a content provider
+			if(node.getGrammarElement() != null && node.getGrammarElement() instanceof Keyword
+					&& ((Keyword) node.getGrammarElement()).getValue().equals("location")) {
+				acceptor.addPosition(node.getOffset(), node.getLength(), MD2HighlightingConfiguration.CROSS_REF);
 			}
 		}
 	}
