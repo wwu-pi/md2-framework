@@ -25,6 +25,9 @@ import org.eclipse.emf.ecore.resource.ResourceSet
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
+/**
+ * TODO documentation
+ */
 class ProcessCustomEvents {
 	
 	/**
