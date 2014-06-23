@@ -14,6 +14,45 @@ import org.eclipse.emf.ecore.resource.ResourceSet
 
 class ProcessWorkflow {
 	
+	def static void transformWorkflowsToSequenceOfCoreLanguageElements(MD2Factory factory, ResourceSet workingInput) {
+		
+	}
+	
+	def private static void createWorkflowProcessAction() {
+		
+	}
+	
+	def private static void createWorkflowActionTriggerEvents() {
+		
+	}
+	
+	def private static void createWorkflowControllerEntity() {
+		
+	}
+	
+	def private static void createWorkflowControllerContentProvider() {
+		
+	}
+	
+	
+	////////////////////////////////////////////////
+	// Helper methods
+	////////////////////////////////////////////////
+	
+	def private static void getStringRepresentationOfEvent() {
+		
+	}
+	
+	def private static void getStringRepresentationOfStep() {
+		
+	}
+	
+	
+	
+	////////////////////////////////////////////////
+	// Subworkflow merging
+	////////////////////////////////////////////////
+	
 	/**
 	 * Merge nested workflows.
 	 */
@@ -60,7 +99,6 @@ class ProcessWorkflow {
 				for (action : gotoWfStepAction.filter(a | a.wfStep.eContainer.equals(step.subworkflow))) {
 					// build new action
 					val newGotoWfStepAction = factory.createGotoWorkflowStepAction
-					newGotoWfStepAction.setSilentFails(true)
 					newGotoWfStepAction.setWfStep(workflow.workflowSteps.filter(s | s.name.equals(step.name + "_" + action.wfStep.name)).last)
 					val newSimpleActionRef = factory.createSimpleActionRef
 					newSimpleActionRef.setAction(newGotoWfStepAction)

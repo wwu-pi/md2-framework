@@ -725,15 +725,16 @@ CombinedAction:
  */
 SimpleAction:
 	// virtual actions that are replaced during preprocessing
-	{GotoNextWorkflowStepAction} 'NextStepAction' |
-	{GotoPreviousWorkflowStepAction} 'PreviousStepAction' |
-	{GotoWorkflowStepAction} ('GotoStepAction' '(' wfStep = [WorkflowStep | QUALIFIED_NAME] (',' silentFails ?= 'silent')? ')') |
-	{SetActiveWorkflowAction} 'SetActiveWorkflowAction' '(' workflow = [Workflow] ')' |
+	{GotoNextWorkflowStepAction} 'NextStep' |
+	{GotoPreviousWorkflowStepAction} 'PreviousStep' |
+	{GotoWorkflowStepAction} 'GotoStep' '(' wfStep = [WorkflowStep | QUALIFIED_NAME] ')' |
+	{SetWorkflowAction} 'SetWorkflow' '(' workflow = [Workflow] ')' |
 	
 	// core actions that have to be supported by the platform
 	{GotoViewAction} ('GotoView' '(' view = AbstractViewGUIElementRef ')' ) |
 	{DisableAction} ('Disable' '(' inputField = AbstractViewGUIElementRef ')' ) |
 	{EnableAction} ('Enable' '(' inputField = AbstractViewGUIElementRef ')' ) |
+	{DisplayMessageAction} ('DisplayMessage' '(' message = STRING ')' ) |
 	{ContentProviderOperationAction} ('ContentProviderOperation' '(' operation = AllowedOperation contentProvider = ContentProviderReference ')') |
 	{ContentProviderResetAction} ('ContentProviderReset' '('contentProvider = ContentProviderReference ')') |
 	{ContentProviderAddAction} ('ContentProviderAdd' '('contentProvider = ContentProviderReference ')') |
