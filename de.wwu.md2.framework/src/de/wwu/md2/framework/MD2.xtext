@@ -1203,7 +1203,7 @@ WorkflowGoToSpec:
 	{WorkflowGoToSpecExtended} '{' (
 		('on' events += EventDef+) &
 		('given' (condition = Condition | '{' condition = Condition '}'))? &
-		('then' action = [Action])?
+		('then' action = ActionDef)?
 	) '}'
 ;
 

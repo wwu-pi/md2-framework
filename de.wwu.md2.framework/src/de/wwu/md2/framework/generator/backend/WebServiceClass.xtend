@@ -201,14 +201,14 @@ class WebServiceClass {
 			RemoteValidationBean validatorBean;
 			
 			«FOR validator : remoteValidators»
-				«IF validator.contentProvider != null && validator.contentProvider.type instanceof ReferencedModelType»
+				«IF validator.contentProvider != null && validator.contentProvider.contentProvider.type instanceof ReferencedModelType»
 					@GET
 					@Path(value = "«validator.name.toFirstLower»")
 					@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 					@Consumes(MediaType.APPLICATION_JSON)
-					public Response json«validator.name.toFirstUpper»(«(validator.contentProvider.type as ReferencedModelType).entity.name.toFirstUpper» «(validator.contentProvider.type as ReferencedModelType).entity.name.toFirstLower») {
+					public Response json«validator.name.toFirstUpper»(«(validator.contentProvider.contentProvider.type as ReferencedModelType).entity.name.toFirstUpper» «(validator.contentProvider.contentProvider.type as ReferencedModelType).entity.name.toFirstLower») {
 						
-						ValidationResult result = validatorBean.validate«validator.name.toFirstUpper»(«(validator.contentProvider.type as ReferencedModelType).entity.name.toFirstLower»);
+						ValidationResult result = validatorBean.validate«validator.name.toFirstUpper»(«(validator.contentProvider.contentProvider.type as ReferencedModelType).entity.name.toFirstLower»);
 						
 						Response response = Response
 								.ok()
