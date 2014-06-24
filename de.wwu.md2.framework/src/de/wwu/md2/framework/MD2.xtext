@@ -764,7 +764,14 @@ CustomCodeFragment:
 	{MappingTask} ('map' referencedViewField = AbstractViewGUIElementRef 'to' pathDefinition = AbstractContentProvider) |
 	{UnmappingTask} ('unmap' referencedViewField = AbstractViewGUIElementRef 'from' pathDefinition = AbstractContentProvider) |
 	{SetTask} ('set' newValue = SimpleExpression 'to' (pathDefinition = ContentProviderPathDefinition | referencedViewField = AbstractViewGUIElementRef)) |
-	{ConditionalCodeFragment} 'if' if = IfCodeBlock ('elseif' elseifs += IfCodeBlock)* ('else' else = ElseCodeBlock)?
+	{ConditionalCodeFragment} 'if' if = IfCodeBlock ('elseif' elseifs += IfCodeBlock)* ('else' else = ElseCodeBlock)? |
+	WhileLoopCodeFragment |
+	{VariableDeclaration} 'var' name = EID '=' value = SimpleExpression (mathOps += MathOperator values += SimpleExpression)* |
+	{Variable} var = [VariableDeclaration] '=' value = SimpleExpression (mathOps += MathOperator values += SimpleExpression)*
+;
+
+MathOperator:
+	PLUS = '+' | MINUS = '-' | MULT = '*' | DIV = '/'
 ;
 
 IfCodeBlock:
@@ -775,12 +782,16 @@ ElseCodeBlock:
 	{ElseCodeBlock} '{' codeFragments += CustomCodeFragment* '}'
 ;
 
+WhileLoopCodeFragment:
+	'while' '(' condition = Condition ')' '{' codeFragments += CustomCodeFragment* '}'
+;
+
 /*
  * Helper Rule. Each element that can contain codeFragments should inherit from ConatinsCodeFragments. So, the code of the generators and
  * the preprocessing does not have to be adapted each time a new element that has a codeFragments attribute is added.
  */
 ConatinsCodeFragments:
-	CustomAction | IfCodeBlock | ElseCodeBlock
+	CustomAction | IfCodeBlock | ElseCodeBlock | WhileLoopCodeFragment
 ;
 
 /*
