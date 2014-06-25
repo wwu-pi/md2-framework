@@ -763,8 +763,8 @@ CustomCodeFragment:
 	{CallTask} ('call' action = ActionDef) |
 	{MappingTask} ('map' referencedViewField = AbstractViewGUIElementRef 'to' pathDefinition = AbstractContentProvider) |
 	{UnmappingTask} ('unmap' referencedViewField = AbstractViewGUIElementRef 'from' pathDefinition = AbstractContentProvider) |
-	{SetTask} ('set' newValue = SimpleExpression 'to' (pathDefinition = ContentProviderPathDefinition | referencedViewField = AbstractViewGUIElementRef)) |
-	{ConditionalCodeFragment} 'if' if = IfCodeBlock ('elseif' elseifs += IfCodeBlock)* ('else' else = ElseCodeBlock)?
+	{ConditionalCodeFragment} 'if' if = IfCodeBlock ('elseif' elseifs += IfCodeBlock)* ('else' else = ElseCodeBlock)? |
+	{SetTask} (referencedViewField = AbstractViewGUIElementRef | pathDefinition = ContentProviderPathDefinition) '=' newValue = SimpleExpression
 ;
 
 IfCodeBlock:
@@ -796,6 +796,31 @@ Value:
 	{TimeVal} value = TIME |
 	{DateTimeVal} value = DATE_TIME
 ;
+
+MathOperator:
+	PLUS = '+' | MINUS = '-' | MULT = '*' | DIV = '/'
+;
+
+StringOperator:
+	CONCAT = '&'
+;
+
+MathToken:
+	{IntVal} value = INT |
+	{FloatVal} value = FLOAT |
+	AbstractViewGUIElementRef |
+	AbstractContentProvider
+;
+
+MathExpression:
+	'%' (leftOperand = MathToken) //operator = MathOperator (rightOperand = MathToken)
+;
+// | '(' leftOperand = MathExpression ')'
+// | '(' rightOperand = MathExpression ')'
+
+//SimpleExpression
+//	(=>({EqualsExpression.eqLeft=current} op = Operator) eqRight = SimpleExpression | 
+//	=>({GuiElementStateExpression.reference=current} 'is') isState = ViewElementState)
 
 /*
  * The AbstractViewGUIElementRef allows to reference any defined ViewGUIElement.
@@ -1022,11 +1047,10 @@ Main:
 		(
 			('appName' appName = STRING) &
 			('appVersion' appVersion = STRING) &
-			('defaultConnection' defaultConnection = [RemoteConnection])? &
-			('startView' startView = AbstractViewGUIElementRef) &
+			('startView' startView = AbstractViewGUIElementRef | 'startWorkflow' startWorkflow = [Workflow]) &
 			('modelVersion' modelVersion = STRING) &
 			('onInitialized' onInitializedEvent = [Action]) &
-			('defaultWorkflow' defaultWorkflow = [Workflow])?
+			('defaultConnection' defaultConnection = [RemoteConnection])?
 		)
 	'}'
 ;
@@ -1203,7 +1227,7 @@ WorkflowGoToSpec:
 	{WorkflowGoToSpecExtended} '{' (
 		('on' events += EventDef+) &
 		('given' (condition = Condition | '{' condition = Condition '}'))? &
-		('then' action = [Action])?
+		('then' action = ActionDef)?
 	) '}'
 ;
 
@@ -1269,7 +1293,7 @@ enum ViewElementState:
  * or a reference to an attribute of an entity that is managed by a content provider.
  */
 SimpleExpression:
-	Value |	AbstractViewGUIElementRef | AbstractContentProvider
+	Value |	AbstractViewGUIElementRef | AbstractContentProvider //| MathExpression
 ;
 
 

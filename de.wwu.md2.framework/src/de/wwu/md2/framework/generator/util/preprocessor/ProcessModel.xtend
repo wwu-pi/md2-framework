@@ -118,12 +118,18 @@ class ProcessModel {
 	}
 	
 	def private static ValidatorBindingTask modelConstraintToValidator(MD2Factory factory, ResourceSet input, MappingTask mappingTask) {
+		
+		if (!(mappingTask.pathDefinition instanceof ContentProviderPathDefinition)) {
+			System::err.println("[ProcessModel] MappingTask is not instance of ContentProviderPathDefinition!")
+			return null
+		}
+		
 		val autoGenAction = getAutoGenAction(input)
 		val ctrl = input.resources.map(r|r.allContents.toIterable.filter(typeof(Controller))).flatten.last
 		if (autoGenAction == null || ctrl == null) return null
 		val validatorBindingTask = factory.createValidatorBindingTask()
 		validatorBindingTask.referencedFields.add(copyElement(mappingTask.referencedViewField) as AbstractViewGUIElementRef)
-		val attr = mappingTask.pathDefinition.getReferencedAttribute
+		val attr = (mappingTask.pathDefinition as ContentProviderPathDefinition).getReferencedAttribute
 		
 		// Add IsNotNullValidator
 		if (!attr.type.eAllContents.toIterable.filter(typeof(AttrIsOptional)).exists(attrIsOptional | attrIsOptional.optional)) {

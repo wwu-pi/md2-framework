@@ -100,6 +100,8 @@ class PreprocessModel {
 		
 		calculateParameterSignatureForAllSimpleActions(factory, workingInput) // new
 		
+		transformWorkflowsToSequenceOfCoreLanguageElements(factory, workingInput) // new
+		
 		transformAllCustomEventsToBasicLanguageStructures(factory, workingInput) // new
 		
 		transformImplicitEnums(factory, workingInput)

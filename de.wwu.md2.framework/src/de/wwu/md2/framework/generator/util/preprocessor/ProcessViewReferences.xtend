@@ -39,6 +39,7 @@ import static de.wwu.md2.framework.generator.util.preprocessor.Util.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
+import de.wwu.md2.framework.mD2.ContentProviderPathDefinition
 
 class ProcessViewReferences {
 	
@@ -335,10 +336,10 @@ class ProcessViewReferences {
 			var Iterable<MappingTask> mappingTasks = getAutoGenAction(input).codeFragments.filter(typeof(MappingTask))
 			if (abstractRef.path != null) {
 				// ReferencedModelType
-				mappingTasks = mappingTasks.toList.filter([it.pathDefinition.referencedAttribute == abstractRef.path.referencedAttribute])
+				mappingTasks = mappingTasks.toList.filter([(it.pathDefinition as ContentProviderPathDefinition).referencedAttribute == abstractRef.path.referencedAttribute])
 			} else {
 				// SimpleType
-				mappingTasks = mappingTasks.toList.filter([it.pathDefinition.contentProviderRef.type instanceof SimpleType]).filter([(it.pathDefinition.contentProviderRef.type as SimpleType).type == abstractRef.simpleType.type])
+				mappingTasks = mappingTasks.toList.filter([(it.pathDefinition as ContentProviderPathDefinition).contentProviderRef.type instanceof SimpleType]).filter([((it.pathDefinition as ContentProviderPathDefinition).contentProviderRef.type as SimpleType).type == abstractRef.simpleType.type])
 			}
 			val Collection<EObject> candidates = newArrayList
 			mappingTasks.map([it.referencedViewField.ref]).forEach [ mappedGuiElem |

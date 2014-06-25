@@ -32,6 +32,8 @@ class ProcessCustomEvents {
 	
 	/**
 	 * main step that calls all substeps
+	 * 
+	 * dependencies: transformWorkflowsToSequenceOfCoreLanguageElements - This step night create new customEvents that have to be transformed
 	 */
 	def static void transformAllCustomEventsToBasicLanguageStructures(MD2Factory factory, ResourceSet workingInput) {
 		
