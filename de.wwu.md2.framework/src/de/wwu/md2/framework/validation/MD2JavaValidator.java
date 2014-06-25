@@ -518,11 +518,11 @@ public class MD2JavaValidator extends AbstractMD2JavaValidator {
 	 */
 	@Check
 	public void checkThatStartViewReferencesOnFirstWorkflowStep(Main main) {
-		if(main.getDefaultWorkflow() == null)
+		if(main.getStartWorkflow() == null)
 			return;
 		
 		int i = 0;
-		for(WorkflowStep step : main.getDefaultWorkflow().getWorkflowSteps()) {
+		for(WorkflowStep step : main.getStartWorkflow().getWorkflowSteps()) {
 			if(i > 0 && step.getView() != null && step.getView().getRef().equals(main.getStartView().getRef())) {
 				acceptError("The defined start view relates to workflow step no. " + (i + 1) + " of the default workflow. It has to " +
 						"point to the first step or any view that is not associated with the default workflow.",
