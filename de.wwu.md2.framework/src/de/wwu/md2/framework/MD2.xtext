@@ -784,45 +784,6 @@ ConatinsCodeFragments:
 ;
 
 /*
- * Helper rule that returns a value object which corresponds to a certain data type.
- * Used to assign any MD2-supported data type to an attribute.
- */
-Value:
-	{IntVal} value = INT |
-	{FloatVal} value = FLOAT |
-	{StringVal} value = STRING |
-	{BooleanVal} value = Boolean |
-	{DateVal} value = DATE |
-	{TimeVal} value = TIME |
-	{DateTimeVal} value = DATE_TIME
-;
-
-MathOperator:
-	PLUS = '+' | MINUS = '-' | MULT = '*' | DIV = '/'
-;
-
-StringOperator:
-	CONCAT = '&'
-;
-
-MathToken:
-	{IntVal} value = INT |
-	{FloatVal} value = FLOAT |
-	AbstractViewGUIElementRef |
-	AbstractContentProvider
-;
-
-MathExpression:
-	'%' (leftOperand = MathToken) //operator = MathOperator (rightOperand = MathToken)
-;
-// | '(' leftOperand = MathExpression ')'
-// | '(' rightOperand = MathExpression ')'
-
-//SimpleExpression
-//	(=>({EqualsExpression.eqLeft=current} op = Operator) eqRight = SimpleExpression | 
-//	=>({GuiElementStateExpression.reference=current} 'is') isState = ViewElementState)
-
-/*
  * The AbstractViewGUIElementRef allows to reference any defined ViewGUIElement.
  * First a top level element has to be defined in ref. In tail a recursive navigation
  * to nested elements can be specified. If the last tail points to an
@@ -1162,7 +1123,7 @@ SimpleDataTypeWrapper:
  */
 enum SimpleDataType:
 	INTEGER = 'integer' | FLOAT = 'float' | STRING = 'string' | BOOLEAN = 'boolean' |
-	DATE = 'date' | TIME = 'time' | DATE_TIME = 'timestamp'
+	DATE = 'date' | TIME = 'time' | DATE_TIME = 'datetime'
 ;
 
 /*
@@ -1173,9 +1134,9 @@ enum AllowedOperation:
 ;
 
 
-/////////////////////////////////////
+/////////////////////////////////////////
 // Controller layer => Workflows
-/////////////////////////////////////
+/////////////////////////////////////////
 
 /*
  * A Workflow is used to define several steps in which the
@@ -1218,8 +1179,8 @@ WorkflowGoToDefinition:
 WorkflowGoTo:
 	{WorkflowGoToNext} 'proceed' |
 	{WorkflowGoToPrevious} 'reverse' |
-	{WorkflowReturn} 'return' 'and' (proceed ?= 'proceed' | 'reverse') |
-	{WorkflowGoToStep} 'goto' workflow = [Workflow] ('(' 'returnTo' returnTo = [WorkflowStep] ')')?
+	{WorkflowReturn} 'return' (changeStep ?= 'and' (changeDirection = 'proceed' | 'reverse'))? |
+	{WorkflowGoToStep} 'goto' workflowStep = [WorkflowStep | QUALIFIED_NAME] ('(' 'returnTo' returnTo = [WorkflowStep | QUALIFIED_NAME] ')')?
 ;
 
 WorkflowGoToSpec:
@@ -1230,6 +1191,11 @@ WorkflowGoToSpec:
 		('then' action = ActionDef)?
 	) '}'
 ;
+
+
+/////////////////////////////////////////////
+// Controller layer => OnConditionEvent
+/////////////////////////////////////////////
 
 /*
  * The OnConditionEvent provides the user the possibility
@@ -1242,6 +1208,11 @@ OnConditionEvent:
 		condition = Condition
 	'}'
 ;
+
+
+/////////////////////////////////////////////
+// Controller layer => Condition
+/////////////////////////////////////////////
 
 /*
  * A Condition allows to compose ConditionalExpressions with the operators 'not', 'and' and 'or'.
@@ -1291,9 +1262,93 @@ enum ViewElementState:
  * A SimpleExpression contains either a simple data type value of STRING, INT,
  * FLOAT, DATE, TIME, DATE_TIME or a reference to the value of a ViewGUIElement
  * or a reference to an attribute of an entity that is managed by a content provider.
+ * Furthermore, it can be a mathematical expression or a string concatenation. Validators
+ * have to be implemented to ensure that all assignments match the data type of the
+ * target (input field / content provider).
  */
 SimpleExpression:
-	Value |	AbstractViewGUIElementRef | AbstractContentProvider //| MathExpression
+	// the order of the rules matter, as they are tried by the parser from left to right,
+	// i.e. an atomic value or reference is considered as long as no mathematical or string concatenation
+	// operator appears.
+	ConcatenatedString | MathExpression | Value | AbstractViewGUIElementRef | AbstractContentProvider
+;
+
+/*
+ * Helper rule that returns a value object which corresponds to a certain data type.
+ * Used to assign any MD2-supported data type to an attribute.
+ */
+Value:
+	{IntVal} value = INT |
+	{FloatVal} value = FLOAT |
+	{StringVal} value = STRING |
+	{BooleanVal} value = Boolean |
+	{DateVal} value = DATE |
+	{TimeVal} value = TIME |
+	{DateTimeVal} value = DATE_TIME
+;
+
+
+/////////////////////////////////////////////
+// Controller layer => Math expressions
+/////////////////////////////////////////////
+
+MathLiteral:
+	{IntVal} value = INT |
+	{FloatVal} value = FLOAT |
+	AbstractViewGUIElementRef |
+	AbstractContentProvider
+;
+
+AdditionSubtraction returns MathSubExpression:
+	MultiplicationDivision (({Plus.leftOperand=current} OP_MATH_PLUS | {Minus.leftOperand=current} OP_MATH_MINUS) rightOperand=MultiplicationDivision)*
+;
+
+MultiplicationDivision returns MathSubExpression:
+	MathSubExpression (({Mult.leftOperand=current} OP_MATH_MULT | {Div.leftOperand=current} OP_MATH_DIV) rightOperand=MathSubExpression)*
+;
+
+ MathSubExpression returns MathSubExpression:
+	MathLiteral | '(' AdditionSubtraction ')'
+;
+
+MathExpression:
+	AdditionSubtraction | '(' AdditionSubtraction ')'
+;
+
+StringLiteral:
+	Value |
+	AbstractViewGUIElementRef |
+	AbstractContentProvider |
+	MathExpression
+;
+
+
+/////////////////////////////////////////////
+// Controller layer => String concatenation
+/////////////////////////////////////////////
+
+/**
+ * Each Value has a string representation:
+ * <ul>
+ *   <li>INT: 1 => "1"</li>
+ *   <li>FLOAT: 1.0 => "1.0"</li>
+ *   <li>STRING: "str" => "str"</li>
+ *   <li>BOOLEAN: true => "true"</li>
+ *   <li>DATE: 2000-01-01 => "2000-01-01"</li>
+ *   <li>TIME: 00:00:00Z => "00:00:00Z"</li>
+ *   <li>DATE_TIME: 2000-01-01T00:00:00Z => "2000-01-01T00:00:00Z"</li>
+ *   <li>Entity => "Entity"</li>
+ * </ul>
+ * 
+ * TODO - consider to use a human readable format for the string representation of DATE, TIME and DATE_TIME
+ */
+StringPartial returns ConcatenatedString:
+	// At least two values have to be concatenated. Otherwise a concatenated string cannot be distinguished from an atomic value.
+	literals += StringLiteral (OP_STRING_CONCAT literals += StringLiteral)+
+;
+
+ConcatenatedString:
+	StringPartial | '(' StringPartial ')'
 ;
 
 
@@ -1706,4 +1761,29 @@ terminal TIME_FORMAT:
  */
 terminal DATE_TIME_FORMAT:
 	DATE_FORMAT 'T' TIME_FORMAT
+;
+
+
+//////////////////////////////////////////////////////////
+// Operators
+//////////////////////////////////////////////////////////
+
+OP_MATH_PLUS:
+	'+'
+;
+
+OP_MATH_MINUS:
+	'-'
+;
+
+OP_MATH_MULT:
+	'*'
+;
+
+OP_MATH_DIV:
+	'/'
+;
+
+OP_STRING_CONCAT:
+	'&'
 ;

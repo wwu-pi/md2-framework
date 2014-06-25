@@ -218,7 +218,7 @@ class ProcessWorkflow {
 						WorkflowGoToPrevious: steps.get(stepIndex - 1).view
 						WorkflowGoToStep: workflowGoTo.workflow.workflowSteps.head.view
 					}
-															
+					
 					// create and add GotoViewAction
 					{
 						val callTask = factory.createCallTask
