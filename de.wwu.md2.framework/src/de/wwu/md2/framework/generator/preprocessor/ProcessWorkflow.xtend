@@ -33,6 +33,7 @@ import static extension de.wwu.md2.framework.generator.preprocessor.util.Util.*
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension org.apache.commons.codec.digest.DigestUtils.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
+import de.wwu.md2.framework.generator.preprocessor.util.MD2ComplexElementFactory
 
 class ProcessWorkflow {
 	
@@ -43,7 +44,7 @@ class ProcessWorkflow {
 	/**
 	 * TODO - documentation + dependencies
 	 */
-	def static void transformWorkflowsToSequenceOfCoreLanguageElements(MD2Factory factory, ResourceSet workingInput) {
+	def static void transformWorkflowsToSequenceOfCoreLanguageElements(MD2ComplexElementFactory factory, ResourceSet workingInput) {
 		val controllerStateEntity = createWorkflowControllerStateEntity(factory, workingInput)
 		val controllerStateCP = createWorkflowControllerStateContentProvider(factory, workingInput, controllerStateEntity)
 		val workflowAction = createWorkflowProcessAction(factory, workingInput, controllerStateEntity, controllerStateCP)
@@ -58,32 +59,18 @@ class ProcessWorkflow {
 	 * stores the current workflow name and stepname in the form <i>workflow__step</i>. <code>lastEventFired</code> always keeps
 	 * the name of the last event that was fired (should be the event that triggered the <code>__WorkflowProcessAction</code>).
 	 */
-	def private static createWorkflowControllerStateEntity(MD2Factory factory, ResourceSet workingInput) {
+	def private static createWorkflowControllerStateEntity(MD2ComplexElementFactory factory, ResourceSet workingInput) {
 		val model = workingInput.resources.map[ r |
 			r.allContents.toIterable.filter(typeof(Model))
 		].flatten.last
 		
 		// Create entity
-		val controllerStateEntity = factory.createEntity
-		controllerStateEntity.setName("__WorkflowControllerState")
-		
-		{
-			// Add attribute => currentWorkflowStep : STRING
-			val attribute = factory.createAttribute
-			val stringType = factory.createStringType
-			attribute.setName("currentWorkflowStep")
-			attribute.setType(stringType)
-			controllerStateEntity.attributes.add(attribute)
-		}
-		
-		{
-			// Add attribute => lastEventFired : STRING
-			val attribute = factory.createAttribute
-			val stringType = factory.createStringType
-			attribute.setName("lastEventFired")
-			attribute.setType(stringType)
-			controllerStateEntity.attributes.add(attribute)
-		}
+		val stringType = factory.createStringType
+		val controllerStateEntity = factory.createComplexEntity(
+			"__WorkflowControllerState",
+			"currentWorkflowStep" -> stringType,
+			"lastEventFired" -> stringType
+		)
 		
 		model.modelElements.add(controllerStateEntity)
 		
@@ -93,18 +80,20 @@ class ProcessWorkflow {
 	/**
 	 * Create content provider for <code>__WorkflowControllerState</code> entity.
 	 */
-	def private static createWorkflowControllerStateContentProvider(MD2Factory factory, ResourceSet workingInput, Entity controllerStateEntity) {
+	def private static createWorkflowControllerStateContentProvider(
+		MD2ComplexElementFactory factory, ResourceSet workingInput, Entity controllerStateEntity
+	) {
 		val controller = workingInput.resources.map[ r |
 			r.allContents.toIterable.filter(typeof(Controller))
 		].flatten.last
 		
-		val referencedModelType = factory.createReferencedModelType
-		referencedModelType.setEntity(controllerStateEntity)
-		
-		val contentProvider = factory.createContentProvider
-		contentProvider.setName("__workflowControllerStateProvider")
-		contentProvider.setLocal(true)
-		contentProvider.setType(referencedModelType)
+		// Create content provider
+		val contentProvider = factory.createComplexContentProvider(
+			controllerStateEntity,
+			"__workflowControllerStateProvider",
+			true,
+			false
+		)
 		
 		controller.controllerElements.add(contentProvider)
 		
@@ -114,7 +103,9 @@ class ProcessWorkflow {
 	/**
 	 * TODO - documentation
 	 */
-	def private static createWorkflowProcessAction(MD2Factory factory, ResourceSet workingInput, Entity entity, ContentProvider contentProvider) {
+	def private static createWorkflowProcessAction(
+		MD2Factory factory, ResourceSet workingInput, Entity entity, ContentProvider contentProvider
+	) {
 		val workflows = workingInput.resources.map[ r |
 			r.allContents.toIterable.filter(typeof(Workflow))
 		].flatten
@@ -216,7 +207,7 @@ class ProcessWorkflow {
 						// no check for indexOutOfBounds => validator required at programming time
 						WorkflowGoToNext: steps.get(stepIndex + 1).view
 						WorkflowGoToPrevious: steps.get(stepIndex - 1).view
-						WorkflowGoToStep: workflowGoTo.workflow.workflowSteps.head.view
+						WorkflowGoToStep: workflowGoTo.workflowStep.view
 					}
 					
 					// create and add GotoViewAction
@@ -311,7 +302,7 @@ class ProcessWorkflow {
 			customAction.setName("__workflowActionEventTrigger_" + str.sha1Hex)
 			
 			// set task
-			val setTask = factory.createSetTask
+			val setTask = factory.createAttributeSetTask
 			customAction.codeFragments.add(setTask)
 			
 			val stringVal = factory.createStringVal

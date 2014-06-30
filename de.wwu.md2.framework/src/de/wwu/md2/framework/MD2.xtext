@@ -764,7 +764,9 @@ CustomCodeFragment:
 	{MappingTask} ('map' referencedViewField = AbstractViewGUIElementRef 'to' pathDefinition = AbstractContentProvider) |
 	{UnmappingTask} ('unmap' referencedViewField = AbstractViewGUIElementRef 'from' pathDefinition = AbstractContentProvider) |
 	{ConditionalCodeFragment} 'if' if = IfCodeBlock ('elseif' elseifs += IfCodeBlock)* ('else' else = ElseCodeBlock)? |
-	{SetTask} (referencedViewField = AbstractViewGUIElementRef | pathDefinition = ContentProviderPathDefinition) '=' newValue = SimpleExpression
+	{ViewElementSetTask} referencedViewField = AbstractViewGUIElementRef '=' newValue = SimpleExpression |
+	{AttributeSetTask} pathDefinition = ContentProviderPathDefinition '=' (newValue = SimpleExpression | sourceContentProvider = ContentProviderReference) |
+	{ContentProviderSetTask} targetContentProvider = ContentProviderReference '=' (newValue = SimpleExpression | sourceContentProvider = ContentProviderReference)
 ;
 
 IfCodeBlock:
@@ -1483,7 +1485,7 @@ AbstractContentProvider:
  * an entity stored in a ContentProvider.
  */
 ContentProviderPathDefinition:
-	':' contentProviderRef = [ContentProvider] (tail = PathTail)?
+	':' contentProviderRef = [ContentProvider] tail = PathTail
 ;
 
 /*

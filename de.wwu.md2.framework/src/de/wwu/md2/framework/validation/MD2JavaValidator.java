@@ -421,7 +421,7 @@ public class MD2JavaValidator extends AbstractMD2JavaValidator {
 	
 	/**
 	 * Make sure the the ContentProviderPathDefinition for a ReferencedModelType-ContentProvider provides at least one attribute
-	 * Mainly used for MappingTasks
+	 * Mainly used for MappingTasks.
 	 * @param pathDef
 	 */
 	@Check

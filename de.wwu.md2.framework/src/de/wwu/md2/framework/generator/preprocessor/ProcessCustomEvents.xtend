@@ -317,7 +317,7 @@ class ProcessCustomEvents {
 		ContentProvider contentProvider, Entity mappingEntity
 	) {
 		for (customEventBinding : customEventBindings) {
-			val setTask = factory.createSetTask
+			val setTask = factory.createAttributeSetTask
 			
 			val booleanVal = factory.createBooleanVal
 			booleanVal.setValue(Boolean::TRUE)
@@ -336,7 +336,7 @@ class ProcessCustomEvents {
 		}
 		
 		for (customEventUnbinding : customEventUnbindings) {
-			val setTask = factory.createSetTask
+			val setTask = factory.createAttributeSetTask
 			
 			val booleanVal = factory.createBooleanVal
 			booleanVal.setValue(Boolean::FALSE)
