@@ -1,6 +1,6 @@
 package de.wwu.md2.framework.generator.util
 
-import de.wwu.md2.framework.generator.util.preprocessor.ProcessAutoGenerator
+import de.wwu.md2.framework.generator.preprocessor.ProcessAutoGenerator
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import de.wwu.md2.framework.mD2.Action
 import de.wwu.md2.framework.mD2.ActionReference

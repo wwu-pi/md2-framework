@@ -4,11 +4,9 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 
+import de.wwu.md2.framework.generator.preprocessor.MD2Preprocessor;
 import de.wwu.md2.framework.generator.util.DataContainer;
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil;
-import de.wwu.md2.framework.generator.util.preprocessor.PreprocessModel;
-import de.wwu.md2.framework.mD2.MD2Factory;
-import de.wwu.md2.framework.mD2.impl.MD2FactoryImpl;
 
 /**
  * Abstract platform generator.
@@ -23,7 +21,6 @@ public abstract class AbstractPlatformGenerator implements IPlatformGenerator {
 	protected ResourceSet processedInput;
 
 	protected String basePackageName;
-	protected MD2Factory factory;
 	
 	@Override
 	public String getPlatformPrefix() {
@@ -43,12 +40,9 @@ public abstract class AbstractPlatformGenerator implements IPlatformGenerator {
 		// Setup
 		/////////////////////////////////////////
 		
-		// Set factory
-		factory = new MD2FactoryImpl();
-		
 		// Pre process model (M2M transformation)
 		// Note: input is not being passed back to concrete Xtend generator classes (parameters are final by default)
-		processedInput = PreprocessModel.preprocessModel(factory, input);
+		processedInput = MD2Preprocessor.getPreprocessedModel(input);
 		
 		// Initialize DataContainer
 		dataContainer = new DataContainer(processedInput);

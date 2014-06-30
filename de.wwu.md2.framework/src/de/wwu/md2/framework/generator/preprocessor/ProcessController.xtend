@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.generator.util.preprocessor
+package de.wwu.md2.framework.generator.preprocessor
 
 import de.wwu.md2.framework.mD2.CombinedAction
 import de.wwu.md2.framework.mD2.ConatinsCodeFragments
@@ -21,7 +21,7 @@ import de.wwu.md2.framework.mD2.TimeRangeValidator
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.util.EcoreUtil
 
-import static extension de.wwu.md2.framework.generator.util.preprocessor.Util.*
+import static extension de.wwu.md2.framework.generator.preprocessor.util.Util.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 class ProcessController {

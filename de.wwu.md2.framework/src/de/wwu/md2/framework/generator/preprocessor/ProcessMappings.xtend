@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.generator.util.preprocessor
+package de.wwu.md2.framework.generator.preprocessor
 
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.MD2Factory
@@ -9,8 +9,8 @@ import java.util.HashMap
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 
-import static de.wwu.md2.framework.generator.util.preprocessor.ProcessAutoGenerator.*
-import static de.wwu.md2.framework.generator.util.preprocessor.Util.*
+import static de.wwu.md2.framework.generator.preprocessor.ProcessAutoGenerator.*
+import static de.wwu.md2.framework.generator.preprocessor.util.Util.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*

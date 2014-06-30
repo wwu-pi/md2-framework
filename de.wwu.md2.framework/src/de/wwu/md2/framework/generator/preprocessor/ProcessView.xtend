@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.generator.util.preprocessor
+package de.wwu.md2.framework.generator.preprocessor
 
 import de.wwu.md2.framework.mD2.AlternativesPane
 import de.wwu.md2.framework.mD2.CommonContainerParam

@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.generator.util.preprocessor
+package de.wwu.md2.framework.generator.preprocessor
 
 import com.google.common.collect.Lists
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
@@ -37,7 +37,7 @@ import java.util.Collection
 import java.util.List
 import org.eclipse.emf.ecore.resource.ResourceSet
 
-import static de.wwu.md2.framework.generator.util.preprocessor.Util.*
+import static de.wwu.md2.framework.generator.preprocessor.util.Util.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 

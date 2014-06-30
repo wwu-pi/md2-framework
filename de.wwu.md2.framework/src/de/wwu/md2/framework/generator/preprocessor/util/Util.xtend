@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.generator.util.preprocessor
+package de.wwu.md2.framework.generator.preprocessor.util
 
 import java.util.HashMap
 import org.eclipse.emf.ecore.EAttribute

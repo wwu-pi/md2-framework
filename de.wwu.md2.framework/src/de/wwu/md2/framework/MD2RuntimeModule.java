@@ -52,4 +52,6 @@ public class MD2RuntimeModule extends de.wwu.md2.framework.AbstractMD2RuntimeMod
 		// needs any binding. Just provide any implementing class here to make Guice happy...
 		return AndroidGenerator.class;
 	}
+	
+	
 }

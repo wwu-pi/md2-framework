@@ -13,7 +13,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 
-import static extension de.wwu.md2.framework.generator.util.preprocessor.Util.*
+import static extension de.wwu.md2.framework.generator.preprocessor.util.Util.*
 
 /**
  * XMI model generator

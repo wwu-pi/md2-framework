@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.generator.util.preprocessor
+package de.wwu.md2.framework.generator.preprocessor
 
 import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.ConditionalEventRef
@@ -29,8 +29,8 @@ import de.wwu.md2.framework.mD2.WorkflowStep
 import java.util.HashMap
 import org.eclipse.emf.ecore.resource.ResourceSet
 
+import static extension de.wwu.md2.framework.generator.preprocessor.util.Util.*
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
-import static extension de.wwu.md2.framework.generator.util.preprocessor.Util.*
 import static extension org.apache.commons.codec.digest.DigestUtils.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
