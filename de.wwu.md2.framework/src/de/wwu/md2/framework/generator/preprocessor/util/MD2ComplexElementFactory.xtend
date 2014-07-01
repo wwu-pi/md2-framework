@@ -95,9 +95,9 @@ class MD2ComplexElementFactory extends MD2FactoryImpl {
 		}
 		
 		// change first character that is no underscore to lower case
-		val pattern = Pattern.compile("[^_]")
+		val pattern = Pattern.compile("^(_*)([^_]*)$")
 		val matcher = pattern.matcher(name)
-		val contentProviderName = matcher.replaceFirst(name.substring(matcher.start, matcher.start + matcher.end).toLowerCase) + "Provider"
+		val contentProviderName = matcher.replaceFirst("$1") + matcher.replaceFirst("$2").toFirstLower + "Provider"
 		val contentProvider = this.createComplexContentProvider(entity, contentProviderName, true, false)
 		
 		return newHashMap("entity"->entity, "contentProvider"->contentProvider)
@@ -115,7 +115,7 @@ class MD2ComplexElementFactory extends MD2FactoryImpl {
 	 * @param name - Name of the entity.
 	 * @param attributes - Arbitrary number of pairs with the attribute name as the key and the attribute type.
 	 * @return A set with key-value pairs of the form {<"entity", Entity>, <"contentProvider", ContentProvider>,
-	 *         <"addToHeadTask", AttributeSetTask>, , <"removeHeadTask", ContentProviderSetTask>}.
+	 *         <"addToHeadTask", AttributeSetTask>, <"removeHeadTask", ContentProviderSetTask>}.
 	 */
 	def createComplexStack(String name, Pair<String, AttributeType>... attributes) {
 		val md2list = createComplexRecursiveList(name, attributes)

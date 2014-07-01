@@ -1181,7 +1181,7 @@ WorkflowGoToDefinition:
 WorkflowGoTo:
 	{WorkflowGoToNext} 'proceed' |
 	{WorkflowGoToPrevious} 'reverse' |
-	{WorkflowReturn} 'return' (changeStep ?= 'and' (changeDirection = 'proceed' | 'reverse'))? |
+	{WorkflowReturn} 'return' (changeStep ?= 'and' changeDirection = ('proceed' | 'reverse'))? |
 	{WorkflowGoToStep} 'goto' workflowStep = [WorkflowStep | QUALIFIED_NAME] ('(' 'returnTo' returnTo = [WorkflowStep | QUALIFIED_NAME] ')')?
 ;
 

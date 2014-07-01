@@ -1,5 +1,6 @@
 package de.wwu.md2.framework.generator.preprocessor
 
+import de.wwu.md2.framework.generator.preprocessor.util.MD2ComplexElementFactory
 import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.ConditionalEventRef
 import de.wwu.md2.framework.mD2.ContentProvider
@@ -27,13 +28,15 @@ import de.wwu.md2.framework.mD2.WorkflowGoToSpecExtended
 import de.wwu.md2.framework.mD2.WorkflowGoToStep
 import de.wwu.md2.framework.mD2.WorkflowStep
 import java.util.HashMap
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 
 import static extension de.wwu.md2.framework.generator.preprocessor.util.Util.*
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension org.apache.commons.codec.digest.DigestUtils.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
-import de.wwu.md2.framework.generator.preprocessor.util.MD2ComplexElementFactory
+import de.wwu.md2.framework.mD2.WorkflowReturn
+import de.wwu.md2.framework.mD2.AttributeSetTask
 
 class ProcessWorkflow {
 	
@@ -45,10 +48,17 @@ class ProcessWorkflow {
 	 * TODO - documentation + dependencies
 	 */
 	def static void transformWorkflowsToSequenceOfCoreLanguageElements(MD2ComplexElementFactory factory, ResourceSet workingInput) {
+		val returnStepStack = createReturnStepStack(factory, workingInput)
+		
 		val controllerStateEntity = createWorkflowControllerStateEntity(factory, workingInput)
 		val controllerStateCP = createWorkflowControllerStateContentProvider(factory, workingInput, controllerStateEntity)
-		val workflowAction = createWorkflowProcessAction(factory, workingInput, controllerStateEntity, controllerStateCP)
+		
+		val workflowExecuteStepAction = createExecuteStepCustomAction(factory, workingInput, controllerStateEntity, controllerStateCP)
+		
+		
+		val workflowAction = createWorkflowProcessAction(factory, workingInput, controllerStateEntity, controllerStateCP, workflowExecuteStepAction, returnStepStack)
 		val eventActionMap = createWorkflowActionTriggerActions(factory, workingInput, controllerStateEntity, controllerStateCP, workflowAction)
+		
 		registerWorkflowActionTriggerActionsOnStartup(factory, workingInput, eventActionMap)
 		removeWorkflows(factory, workingInput)
 	}
@@ -104,7 +114,8 @@ class ProcessWorkflow {
 	 * TODO - documentation
 	 */
 	def private static createWorkflowProcessAction(
-		MD2Factory factory, ResourceSet workingInput, Entity entity, ContentProvider contentProvider
+		MD2ComplexElementFactory factory, ResourceSet workingInput, Entity entity,
+		ContentProvider contentProvider, CustomAction workflowExecuteStepAction, HashMap<String, EObject> stack
 	) {
 		val workflows = workingInput.resources.map[ r |
 			r.allContents.toIterable.filter(typeof(Workflow))
@@ -198,26 +209,154 @@ class ProcessWorkflow {
 					
 					innerIfCodeBlock.setCondition(condition)
 					
+					
 					//////////////////////////////////////////////////////////
 					// Create code fragment for inner if code block
 					//////////////////////////////////////////////////////////
 					
 					val workflowGoTo = goto.goto
-					val targetView = switch(workflowGoTo) {
-						// no check for indexOutOfBounds => validator required at programming time
-						WorkflowGoToNext: steps.get(stepIndex + 1).view
-						WorkflowGoToPrevious: steps.get(stepIndex - 1).view
-						WorkflowGoToStep: workflowGoTo.workflowStep.view
+					
+					// set current workflow step
+					{
+						val currentWorkflowStepVal = switch(workflowGoTo) {
+							// no check for indexOutOfBounds => validator required at programming time
+							WorkflowGoToNext: {
+								val stringVal = factory.createStringVal
+								val targetStep = steps.get(stepIndex + 1).stringRepresentationOfStep
+								stringVal.setValue(targetStep)
+								stringVal
+							}
+							WorkflowGoToPrevious: {
+								val stringVal = factory.createStringVal
+								val targetStep = steps.get(stepIndex - 1).stringRepresentationOfStep
+								stringVal.setValue(targetStep)
+								stringVal
+							}
+							WorkflowGoToStep: {
+								val stringVal = factory.createStringVal
+								val targetStep = workflowGoTo.workflowStep.stringRepresentationOfStep
+								stringVal.setValue(targetStep)
+								stringVal
+							}
+							WorkflowReturn: {
+								val stackEntity = stack.get("entity") as Entity
+								val stackProvider = stack.get("contentProvider") as ContentProvider
+								
+								val attribute =
+									if (workflowGoTo.changeStep && workflowGoTo.changeDirection.equals("proceed")) {
+										stackEntity.attributes.findFirst[ a | a.name.equals("returnAndProceedStep")]
+									} else if (workflowGoTo.changeStep && workflowGoTo.changeDirection.equals("reverse")) {
+										stackEntity.attributes.findFirst[ a | a.name.equals("returnAndReverseStep")]
+									} else {
+										stackEntity.attributes.findFirst[ a | a.name.equals("returnStep")]
+									}
+								
+								factory.createComplexContentProviderPathDefinition(stackProvider, attribute)
+							}
+						}
+						
+						val attributeSetTask = factory.createAttributeSetTask
+						val attribute = entity.attributes.findFirst[ a | a.name.equals("currentWorkflowStep")]
+						val targetPathDefinition = factory.createComplexContentProviderPathDefinition(contentProvider, attribute)
+						attributeSetTask.setPathDefinition(targetPathDefinition)
+						
+						attributeSetTask.setNewValue(currentWorkflowStepVal)
+						
+						innerIfCodeBlock.codeFragments.add(attributeSetTask)
 					}
 					
-					// create and add GotoViewAction
+					// if this is a 'goto' statement => put current step on stack to allow to return
+					if (workflowGoTo instanceof WorkflowGoToStep) {
+						val workflowGoToStep = workflowGoTo as WorkflowGoToStep
+						
+						var currentStep = ""
+						var nextStep = ""
+						var previousStep = ""
+						
+						if (workflowGoToStep.returnTo != null) {
+							val returnToStep = workflowGoToStep.returnTo
+							val returnToStepWorkflow = returnToStep.eContainer as Workflow
+							val currentStepIndex = returnToStepWorkflow.workflowSteps.indexOf(returnToStep)
+							
+							currentStep = returnToStep.stringRepresentationOfStep
+							nextStep = 
+								if(currentStepIndex + 1 >= returnToStepWorkflow.workflowSteps.size) ""
+								else returnToStepWorkflow.workflowSteps.get(stepIndex + 1).stringRepresentationOfStep
+							previousStep =
+								if(currentStepIndex - 1 < 0) ""
+								else returnToStepWorkflow.workflowSteps.get(stepIndex - 1).stringRepresentationOfStep
+						} else {
+							currentStep = step.stringRepresentationOfStep
+							nextStep = if(stepIndex + 1 >= steps.size) "" else steps.get(stepIndex + 1).stringRepresentationOfStep
+							previousStep = if(stepIndex - 1 < 0) "" else steps.get(stepIndex - 1).stringRepresentationOfStep
+						}
+						
+						val stackEntity = stack.get("entity") as Entity
+						val stackProvider = stack.get("contentProvider") as ContentProvider
+								
+						val proceedAttribute = stackEntity.attributes.findFirst[ a | a.name.equals("returnAndProceedStep")]
+						val reverseAttribute = stackEntity.attributes.findFirst[ a | a.name.equals("returnAndReverseStep")]
+						val returnAttribute = stackEntity.attributes.findFirst[ a | a.name.equals("returnStep")]
+						
+						val proceedAttributePath = factory.createComplexContentProviderPathDefinition(stackProvider, proceedAttribute)
+						val reverseAttributePath = factory.createComplexContentProviderPathDefinition(stackProvider, reverseAttribute)
+						val returnAttributePath = factory.createComplexContentProviderPathDefinition(stackProvider, returnAttribute)
+						
+						// add new entity instance to head
+						{
+							val attributeSetTask = stack.get("addToHead") as AttributeSetTask
+							innerIfCodeBlock.codeFragments.add(attributeSetTask)
+						}
+						
+						// set returnAndProceedStep attribute
+						{
+							val attributeSetTask = factory.createAttributeSetTask
+							attributeSetTask.setPathDefinition(proceedAttributePath)
+							
+							val stringVal = factory.createStringVal
+							stringVal.setValue(nextStep)
+							attributeSetTask.setNewValue(stringVal)
+							
+							innerIfCodeBlock.codeFragments.add(attributeSetTask)
+						}
+						
+						// set returnAndReverseStep attribute
+						{
+							val attributeSetTask = factory.createAttributeSetTask
+							attributeSetTask.setPathDefinition(reverseAttributePath)
+							
+							val stringVal = factory.createStringVal
+							stringVal.setValue(previousStep)
+							attributeSetTask.setNewValue(stringVal)
+							
+							innerIfCodeBlock.codeFragments.add(attributeSetTask)
+						}
+						
+						// set returnStep attribute
+						{
+							val attributeSetTask = factory.createAttributeSetTask
+							attributeSetTask.setPathDefinition(returnAttributePath)
+							
+							val stringVal = factory.createStringVal
+							stringVal.setValue(currentStep)
+							attributeSetTask.setNewValue(stringVal)
+							
+							innerIfCodeBlock.codeFragments.add(attributeSetTask)
+						}
+					}
+					
+					// if this is a 'return' statement => remove current head step from stack
+					if (workflowGoTo instanceof WorkflowReturn) {
+						val attributeSetTask = stack.get("removeHead") as AttributeSetTask
+						innerIfCodeBlock.codeFragments.add(attributeSetTask)
+					}
+					
+					// create call task for the __workflowExecuteStepAction (that changes the actual view)
 					{
 						val callTask = factory.createCallTask
-						val simpleActionRef = factory.createSimpleActionRef
-						val gotoViewAction = factory.createGotoViewAction
-						callTask.setAction(simpleActionRef)
-						simpleActionRef.setAction(gotoViewAction)
-						gotoViewAction.setView(targetView.copy)
+						val actionDef = factory.createActionReference
+						actionDef.setActionRef(workflowExecuteStepAction)
+						callTask.setAction(actionDef)
 						innerIfCodeBlock.codeFragments.add(callTask)
 					}
 					
@@ -369,6 +508,85 @@ class ProcessWorkflow {
 		startupAction.codeFragments.add(0, callTask);
 	}
 	
+	def static createReturnStepStack(MD2ComplexElementFactory factory, ResourceSet workingInput) {
+		
+		val controller = workingInput.resources.map[ r |
+			r.allContents.toIterable.filter(typeof(Controller))
+		].flatten.last
+		
+		val model = workingInput.resources.map[ r |
+			r.allContents.toIterable.filter(typeof(Model))
+		].flatten.last
+		
+		val stringType = factory.createStringType
+		val stack = factory.createComplexStack(
+			"__ReturnStepStack",
+			"returnStep" -> stringType,
+			"returnAndReverseStep" -> stringType,
+			"returnAndProceedStep" -> stringType
+		)
+		
+		controller.controllerElements.add(stack.get("contentProvider") as ContentProvider)
+		model.modelElements.add(stack.get("entity") as Entity)
+		
+		return stack
+	}
+	
+	def static createExecuteStepCustomAction(
+		MD2ComplexElementFactory factory, ResourceSet workingInput, Entity entity,
+		ContentProvider contentProvider
+	) {
+		
+		val workflowSteps = workingInput.resources.map[ r |
+			r.allContents.toIterable.filter(typeof(Workflow)).map[ w |
+				w.workflowSteps
+			].flatten
+		].flatten
+		
+		val controller = workingInput.resources.map[ r |
+			r.allContents.toIterable.filter(typeof(Controller))
+		].flatten.last
+		
+		
+		val customAction = factory.createCustomAction
+		customAction.setName("__workflowExecuteStepAction")
+		controller.controllerElements.add(customAction)
+		
+		val conditionalCodeFragment = factory.createConditionalCodeFragment
+		customAction.codeFragments.add(conditionalCodeFragment)
+		
+		workflowSteps.forEach[ step, index |
+			val ifCodeBlock = factory.createIfCodeBlock
+			
+			val condition = factory.createCondition
+			val stepStr = step.stringRepresentationOfStep
+			val conditionalExpression = factory.createEqualsExpression(entity, contentProvider, "currentWorkflowStep", stepStr)
+			
+			condition.subConditions.add(conditionalExpression)
+			ifCodeBlock.setCondition(condition)
+			
+			// create and add GotoViewAction for current step
+			{
+				val callTask = factory.createCallTask
+				val simpleActionRef = factory.createSimpleActionRef
+				val gotoViewAction = factory.createGotoViewAction
+				callTask.setAction(simpleActionRef)
+				simpleActionRef.setAction(gotoViewAction)
+				gotoViewAction.setView(step.view)
+				ifCodeBlock.codeFragments.add(callTask)
+			}
+			
+			// add outer ifCodeBlock => first element if(...); all other elements elseif(...)
+			if (index == 0) {
+				conditionalCodeFragment.setIf(ifCodeBlock)
+			} else {
+				conditionalCodeFragment.elseifs.add(ifCodeBlock)
+			}
+		]
+		
+		return customAction
+	}
+	
 	def static void removeWorkflows(MD2Factory factory, ResourceSet workingInput) {
 		val workflows = workingInput.resources.map[ r |
 			r.allContents.toIterable.filter(typeof(Workflow))
@@ -441,14 +659,13 @@ class ProcessWorkflow {
 	/**
 	 * Helper to build a conditional expression of the form <code>contentProvider.attributeName equals "compareWith"</code>.
 	 */
-	def private static createEqualsExpression(MD2Factory factory, Entity entity, ContentProvider contentProvider, String attributeName, String compareWith) {
+	def private static createEqualsExpression(
+		MD2ComplexElementFactory factory, Entity entity, ContentProvider contentProvider, String attributeName, String compareWith
+	) {
 		
 		// eqLeft composition
-		val contentProviderPathDefinition = factory.createContentProviderPathDefinition
-		val pathTail = factory.createPathTail
-		pathTail.setAttributeRef(entity.attributes.filter( a | a.name.equals(attributeName)).last)
-		contentProviderPathDefinition.setContentProviderRef(contentProvider)
-		contentProviderPathDefinition.setTail(pathTail)
+		val attribute = entity.attributes.findFirst[ a | a.name.equals(attributeName)]
+		val contentProviderPathDefinition = factory.createComplexContentProviderPathDefinition(contentProvider, attribute)
 		
 		// op composition
 		val operator = Operator::EQUALS
