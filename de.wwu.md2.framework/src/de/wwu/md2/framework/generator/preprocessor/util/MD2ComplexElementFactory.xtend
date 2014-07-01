@@ -1,8 +1,13 @@
 package de.wwu.md2.framework.generator.preprocessor.util
 
-import de.wwu.md2.framework.mD2.impl.MD2FactoryImpl
-import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.AttributeType
+import de.wwu.md2.framework.mD2.ContentProvider
+import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.PathTail
+import de.wwu.md2.framework.mD2.impl.MD2FactoryImpl
+import java.util.regex.Pattern
+import org.eclipse.xtext.xbase.lib.Pair
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
@@ -64,9 +69,114 @@ class MD2ComplexElementFactory extends MD2FactoryImpl {
 	}
 	
 	/**
+	 * Creates a recursively defined linked list. An entity with the given attributes and the given Name is created. The entity is enriched with
+	 * an extra attribute <code>tail</code> that references another instance of the given list. Furthermore, a content provider is created. The
+	 * content provider's name is derived from the entity name. E.g., given the entity name <i>__ExampleList</i>, a corresponding content provider
+	 * <i>__exmapleListProvider</i> is created.
 	 * 
+	 * The return value is a map with key-value pairs of the form {<"entity", Entity>, <"contentProvider", ContentProvider>}.
+	 * 
+	 * @param name - Name of the entity.
+	 * @param attributes - Arbitrary number of pairs with the attribute name as the key and the attribute type.
+	 * @return A map with key-value pairs of the form {<"entity", Entity>, <"contentProvider", ContentProvider>}.
 	 */
-	def createComplexRecursiveList(String name, Entity entity) {
+	def createComplexRecursiveList(String name, Pair<String, AttributeType>... attributes) {
 		
+		val entity = this.createComplexEntity(name, attributes)
+		
+		// add tail attribute
+		{
+			val attribute = this.createAttribute
+			val type = this.createReferencedType
+			type.setEntity(entity)
+			attribute.setName("tail")
+			attribute.setType(type)
+			entity.attributes.add(attribute)
+		}
+		
+		// change first character that is no underscore to lower case
+		val pattern = Pattern.compile("[^_]")
+		val matcher = pattern.matcher(name)
+		val contentProviderName = matcher.replaceFirst(name.substring(matcher.start, matcher.start + matcher.end).toLowerCase) + "Provider"
+		val contentProvider = this.createComplexContentProvider(entity, contentProviderName, true, false)
+		
+		return newHashMap("entity"->entity, "contentProvider"->contentProvider)
+	}
+	
+	/**
+	 * Calls <code>createComplexRecursiveList</code>. Furthermore, two SetTasks to add an element to the head of the list and to
+	 * remove the first element, are built.
+	 * 
+	 * <p>
+	 *   addToHead: <code>:contentProvider.tail = :contentProvider</code><br>
+	 *   removeHead: <code>:contentProvider = :contentProvider.tail</code>
+	 * </p>
+	 * 
+	 * @param name - Name of the entity.
+	 * @param attributes - Arbitrary number of pairs with the attribute name as the key and the attribute type.
+	 * @return A set with key-value pairs of the form {<"entity", Entity>, <"contentProvider", ContentProvider>,
+	 *         <"addToHeadTask", AttributeSetTask>, , <"removeHeadTask", ContentProviderSetTask>}.
+	 */
+	def createComplexStack(String name, Pair<String, AttributeType>... attributes) {
+		val md2list = createComplexRecursiveList(name, attributes)
+		val contentProvider = md2list.get("contentProvider") as ContentProvider
+		val entity = md2list.get("entity") as Entity
+		
+		// construct addToHeadTask
+		{
+			val addToHeadTask = this.createAttributeSetTask
+			
+			val tailAttribute = entity.attributes.findFirst[ a | a.name.equals("tail")]
+			val pathDefinition = this.createComplexContentProviderPathDefinition(contentProvider, tailAttribute)
+			addToHeadTask.setPathDefinition(pathDefinition)
+			
+			val contentProviderReference = this.createContentProviderReference
+			contentProviderReference.setContentProvider(contentProvider)
+			addToHeadTask.setSourceContentProvider(contentProviderReference)
+			
+			md2list.put("addToHeadTask", addToHeadTask)
+		}
+		
+		// construct removeHeadTask
+		{
+			val removeHeadTask = this.createContentProviderSetTask
+			
+			val contentProviderReference = this.createContentProviderReference
+			contentProviderReference.setContentProvider(contentProvider)
+			removeHeadTask.setTargetContentProvider(contentProviderReference)
+			
+			val tailAttribute = entity.attributes.findFirst[ a | a.name.equals("tail")]
+			val pathDefinition = this.createComplexContentProviderPathDefinition(contentProvider, tailAttribute)
+			removeHeadTask.setNewValue(pathDefinition)
+			
+			md2list.put("removeHeadTask", removeHeadTask)
+		}
+		
+		return md2list
+	}
+	
+	/**
+	 * Creates a ContentProviderPathDefinition for a given content provider and a list of attributes that describe the tail.
+	 * i.e., <code>contentProvider.attribute1.attribute2...attributeN</code>
+	 * 
+	 * @param contentProvider - ContentProvider of the path definition.
+	 * @param attributes - A list of attributes to construct the tail.
+	 */
+	def createComplexContentProviderPathDefinition(ContentProvider contentProvider, Attribute... attributes) {
+		
+		// construct tail
+		var PathTail lastTailSegement = null
+		for (attribute : attributes.reverse) {
+			val tail = this.createPathTail
+			tail.setAttributeRef(attribute)
+			tail.setTail(lastTailSegement)
+			lastTailSegement = tail
+		}
+		
+		val pathDefinition = this.createContentProviderPathDefinition
+		pathDefinition.setContentProviderRef(contentProvider)
+		pathDefinition.setTail(lastTailSegement)
+		
+		return pathDefinition
 	}
 }
