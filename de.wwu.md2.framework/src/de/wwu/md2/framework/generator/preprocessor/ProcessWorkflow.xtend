@@ -1,11 +1,13 @@
 package de.wwu.md2.framework.generator.preprocessor
 
 import de.wwu.md2.framework.generator.preprocessor.util.MD2ComplexElementFactory
+import de.wwu.md2.framework.mD2.AttributeSetTask
 import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.ConditionalEventRef
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ContentProviderEventRef
 import de.wwu.md2.framework.mD2.ContentProviderPathDefinition
+import de.wwu.md2.framework.mD2.ContentProviderSetTask
 import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.Entity
@@ -26,6 +28,7 @@ import de.wwu.md2.framework.mD2.WorkflowGoToNext
 import de.wwu.md2.framework.mD2.WorkflowGoToPrevious
 import de.wwu.md2.framework.mD2.WorkflowGoToSpecExtended
 import de.wwu.md2.framework.mD2.WorkflowGoToStep
+import de.wwu.md2.framework.mD2.WorkflowReturn
 import de.wwu.md2.framework.mD2.WorkflowStep
 import java.util.HashMap
 import org.eclipse.emf.ecore.EObject
@@ -35,8 +38,6 @@ import static extension de.wwu.md2.framework.generator.preprocessor.util.Util.*
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension org.apache.commons.codec.digest.DigestUtils.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
-import de.wwu.md2.framework.mD2.WorkflowReturn
-import de.wwu.md2.framework.mD2.AttributeSetTask
 
 class ProcessWorkflow {
 	
@@ -304,7 +305,7 @@ class ProcessWorkflow {
 						
 						// add new entity instance to head
 						{
-							val attributeSetTask = stack.get("addToHead") as AttributeSetTask
+							val attributeSetTask = stack.get("addToHeadTask") as AttributeSetTask
 							innerIfCodeBlock.codeFragments.add(attributeSetTask)
 						}
 						
@@ -347,8 +348,8 @@ class ProcessWorkflow {
 					
 					// if this is a 'return' statement => remove current head step from stack
 					if (workflowGoTo instanceof WorkflowReturn) {
-						val attributeSetTask = stack.get("removeHead") as AttributeSetTask
-						innerIfCodeBlock.codeFragments.add(attributeSetTask)
+						val contentProviderSetTask = stack.get("removeHeadTask") as ContentProviderSetTask
+						innerIfCodeBlock.codeFragments.add(contentProviderSetTask)
 					}
 					
 					// create call task for the __workflowExecuteStepAction (that changes the actual view)
