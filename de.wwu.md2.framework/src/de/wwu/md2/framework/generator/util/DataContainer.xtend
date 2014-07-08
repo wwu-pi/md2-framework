@@ -1,24 +1,22 @@
 package de.wwu.md2.framework.generator.util
 
 import de.wwu.md2.framework.mD2.AlternativesPane
-import de.wwu.md2.framework.mD2.Condition
 import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.ContainerElementDef
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.CustomAction
+import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.Enum
 import de.wwu.md2.framework.mD2.GotoViewAction
 import de.wwu.md2.framework.mD2.MD2Model
 import de.wwu.md2.framework.mD2.Main
 import de.wwu.md2.framework.mD2.Model
-import de.wwu.md2.framework.mD2.OnConditionEvent
 import de.wwu.md2.framework.mD2.RemoteValidator
 import de.wwu.md2.framework.mD2.TabbedAlternativesPane
 import de.wwu.md2.framework.mD2.View
-import de.wwu.md2.framework.mD2.Workflow
 import java.util.Collection
 import java.util.List
-import java.util.Map
 import java.util.Set
 import org.eclipse.emf.ecore.resource.ResourceSet
 
@@ -43,32 +41,30 @@ class DataContainer
 	@Property
 	private Collection<Model> models
 	
-	@Property
-	private Main main
+	
+	///////////////////////////////////////
+	// Controller Elements
+	///////////////////////////////////////
 	
 	@Property
-	private Set<ContainerElement> viewContainers
+	private Main main
 	
 	@Property
 	private Collection<ContentProvider> contentProviders
 	
 	@Property
-	private Collection<Workflow> workflows
-	
-	@Property
 	private Collection<CustomAction> customActions
-	
-	@Property
-	private Collection<OnConditionEvent> onConditionEvents
 	
 	@Property
 	private Collection<RemoteValidator> remoteValidators
 	
-	/*
-	 * Contains a collection of all conditions, where the key represents the name of the condition
-	 */
+	
+	///////////////////////////////////////
+	// View Elements
+	///////////////////////////////////////
+	
 	@Property
-	private Map<String, Condition> conditions
+	private Set<ContainerElement> rootViewContainers
 	
 	@Property
 	private TabbedAlternativesPane tabbedAlternativesPane
@@ -81,6 +77,18 @@ class DataContainer
 	
 	@Property
 	private Set<ContainerElement> viewContainersNotInAnyAlternativesPane
+	
+	
+	///////////////////////////////////////
+	// Model Elements
+	///////////////////////////////////////
+	
+	@Property
+	private Collection<Entity> entities
+	
+	@Property
+	private Collection<Enum> enums
+	
 	
 	
 	/**
@@ -96,6 +104,8 @@ class DataContainer
 		}
 		
 		extractElementsFromControllers
+		
+		extractElementsFromModels
 		
 		postProcessViewCollection
 	}
@@ -129,48 +139,26 @@ class DataContainer
 		}
 	}
 	
+	/**
+	 * Iterate over all controllers and collect relevant information:
+	 * About the views that have to be generated:
+	 *    Generate views => get start view and all called views in work flow steps and change view actions
+	 */
 	def private extractElementsFromControllers() {
-		// Iterate over all controllers and collect relevant information:
-		// About the views that have to be generated:
-		//    Generate views => get start view and all called views in work flow steps and change view actions
-		viewContainers = newHashSet
+		
+		rootViewContainers = newHashSet
 		customActions = newHashSet
 		contentProviders = newHashSet
-		workflows = newHashSet
-		onConditionEvents = newHashSet
-//		conditions = newHashMap
 		remoteValidators = newHashSet
 		
-		viewContainers.add(resolveContainerElement(main.startView));
+		rootViewContainers.add(resolveContainerElement(main.startView));
 		for (controller : controllers) {
 			for (controllerElement : controller.controllerElements) {
 				switch controllerElement {
-					Workflow: {
-						// Filter relevant views that may be root views
-						controllerElement.workflowSteps.forEach [step |
-							if(step.view != null) {
-								viewContainers.add(resolveContainerElement(step.view))
-							}
-						]
-						
-						// Store work flow
-						workflows.add(controllerElement)
-						
-						// Store conditions
-//						controllerElement.workflowSteps.forEach [step |
-//							if(step.forwardCondition != null) {
-//								conditions.put(step.name + "_ForwardCondition", step.forwardCondition)
-//							}
-//							if(step.backwardCondition != null) {
-//								conditions.put(step.name + "_BackwardCondition", step.backwardCondition)
-//							}
-//						]
-					}
-					
 					CustomAction: {
-						// Filter relevant views that may be root views
+						// Get all root views (all views that are accessed by GotoViewActions at some time)
 						controllerElement.eAllContents.toIterable.filter(typeof(GotoViewAction)).forEach [gotoViewAction |
-							viewContainers.add(resolveContainerElement(gotoViewAction.view))
+							rootViewContainers.add(resolveContainerElement(gotoViewAction.view))
 						]
 						
 						// Store custom actions to generate
@@ -181,17 +169,31 @@ class DataContainer
 						contentProviders.add(controllerElement)
 					}
 					
-					OnConditionEvent: {
-						onConditionEvents.add(controllerElement)
-						
-						// Store condition
-//						if(controllerElement.condition != null) {
-//							conditions.put(controllerElement.name, controllerElement.condition)
-//						}
-					}
-					
 					RemoteValidator: {
 						remoteValidators.add(controllerElement)
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Extract all entities and enums.
+	 */
+	def private extractElementsFromModels() {
+		
+		entities = newHashSet
+		enums = newHashSet
+		
+		for (model : models) {
+			for (modelElement : model.modelElements) {
+				switch modelElement {
+					Entity: {
+						entities.add(modelElement)
+					}
+					
+					Enum: {
+						enums.add(modelElement)
 					}
 				}
 			}
@@ -211,20 +213,20 @@ class DataContainer
 				// Add all tabs to the respective list
 				tabbedViewContent.addAll(tabbedPane.elements.filter(typeof(ContainerElementDef)).map(c | c.value))
 				// Additionally add the tabs to the set of view containers (if they are already in there, they will not be added again since viewContainers is a set)
-				viewContainers.addAll(tabbedPane.elements.filter(typeof(ContainerElementDef)).map(c | c.value))
+				rootViewContainers.addAll(tabbedPane.elements.filter(typeof(ContainerElementDef)).map(c | c.value))
 			}
 		]
 		
 		// => 2. extract all views that are direct children of an alternatives pane or tabbed alternatives pane from the set of views to generate
 		viewContainersInAnyAlternativesPane = newHashSet
-		viewContainersInAnyAlternativesPane.addAll(viewContainers.filter(c | c.eContainer.eContainer instanceof AlternativesPane))
+		viewContainersInAnyAlternativesPane.addAll(rootViewContainers.filter(c | c.eContainer.eContainer instanceof AlternativesPane))
 		if(tabbedViewContent != null) {
 			viewContainersInAnyAlternativesPane.addAll(tabbedViewContent)
 		}
 		
 		// => 3. get set difference of (2.) and the set of views to generate
 		viewContainersNotInAnyAlternativesPane = newHashSet
-		viewContainersNotInAnyAlternativesPane.addAll(viewContainers)
+		viewContainersNotInAnyAlternativesPane.addAll(rootViewContainers)
 		viewContainersNotInAnyAlternativesPane.removeAll(viewContainersInAnyAlternativesPane)
 	}
 }

@@ -860,6 +860,7 @@ enum ContentProviderEventType:
  */
 enum GlobalEventType:
 	ON_CONNECTION_LOST = 'onConnectionLost' |
+	ON_CONNECTION_REGAINED = 'onConnectionRegained' |
 	ON_LOCATION_UPDATE = 'onLocationUpdate'
 ;
 
@@ -1516,8 +1517,6 @@ PathTail:
 // Attribute parameter definitions
 /////////////////////////////////////
 
-// TODO Support default values?
-
 /*
  * AttributeTypeParam is used to define a common super type of all specific AttributeTypeParams.
  * 
@@ -1549,7 +1548,8 @@ ReferencedTypeParam:
  */
 IntegerTypeParam:
 	{AttrIsOptional} optional ?= 'optional' |
-	{AttrIdentifier} identifier ?= 'identifier' |	
+	{AttrIdentifier} identifier ?= 'identifier' |
+	{AttrIntDefault} 'default' value = INT |
 	{AttrIntMax} 'max' max = INT |
 	{AttrIntMin} 'min' min = INT
 ;
@@ -1563,6 +1563,7 @@ IntegerTypeParam:
  */
 FloatTypeParam:
 	{AttrIsOptional} optional ?= 'optional' |
+	{AttrFloatDefault} 'default' value = FLOAT |
 	{AttrFloatMax} 'max' max = FLOAT |
 	{AttrFloatMin} 'min' min = FLOAT
 ;
@@ -1578,6 +1579,7 @@ FloatTypeParam:
 StringTypeParam:
 	{AttrIsOptional} optional ?= 'optional' |
 	{AttrIdentifier} identifier ?= 'identifier' |
+	{AttrStringDefault} 'default' value = STRING |
 	{AttrStringMax} 'maxLength' max = INT |
 	{AttrStringMin} 'minLength' min = INT
 ;
@@ -1590,7 +1592,8 @@ StringTypeParam:
  * to generate a validator.
  */
 BooleanTypeParam:
-	{AttrIsOptional} optional ?= 'optional'
+	{AttrIsOptional} optional ?= 'optional' |
+	{AttrBooleanDefault} 'default' value = Boolean
 ;
 
 /*
@@ -1603,6 +1606,7 @@ BooleanTypeParam:
  */
 DateTypeParam:
 	{AttrIsOptional} optional ?= 'optional' |
+	{AttrDateDefault} 'default' value = DATE |
 	{AttrDateMax} 'max' max = DATE |
 	{AttrDateMin} 'min' min = DATE
 ;
@@ -1617,6 +1621,7 @@ DateTypeParam:
  */
 TimeTypeParam:
 	{AttrIsOptional} optional ?= 'optional' |
+	{AttrTimeDefault} 'default' value = TIME |
 	{AttrTimeMax} 'max' max = TIME |
 	{AttrTimeMin} 'min' min = TIME
 ;
@@ -1632,6 +1637,7 @@ TimeTypeParam:
  */
 DateTimeTypeParam:
 	{AttrIsOptional} optional ?= 'optional' |
+	{AttrDateTimeDefault} 'default' value = DATE_TIME |
 	{AttrDateTimeMax} 'max' max = DATE_TIME |
 	{AttrDateTimeMin} 'min' min = DATE_TIME
 ;
@@ -1644,7 +1650,8 @@ DateTimeTypeParam:
  * will be used to generate a validator.
  */
 EnumTypeParam:
-	{AttrIsOptional} optional ?= 'optional'
+	{AttrIsOptional} optional ?= 'optional' |
+	{AttrEnumDefault} 'default' value = STRING
 ;
 
 

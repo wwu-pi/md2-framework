@@ -4,10 +4,11 @@ import de.wwu.md2.framework.generator.AbstractPlatformGenerator
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 
 import static de.wwu.md2.framework.generator.mapapps.AppJsonBuilder.*
+import static de.wwu.md2.framework.generator.mapapps.ManifestJson.*
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import java.util.Collection
 
-class MapAppsBundleGenerator extends AbstractPlatformGenerator {
+class MapAppsGenerator extends AbstractPlatformGenerator {
 	
 	override doGenerate(IExtendedFileSystemAccess fsa) {
 		
@@ -44,7 +45,8 @@ class MapAppsBundleGenerator extends AbstractPlatformGenerator {
 		fsa.deleteDirectory(basePackageName)
 		
 		// Generate common base elements
-		fsa.generateFile(basePackageName + "/app.json", generateAppJson(dataContainer, requiredBundles))
+//		fsa.generateFile(basePackageName + "/app.json", generateAppJson(dataContainer, requiredBundles))
+		fsa.generateFile(basePackageName + "/manifest.json", generateManifestJson(dataContainer, requiredBundles))
 		
 		
 		/////////////////////////////////////////
@@ -69,8 +71,8 @@ class MapAppsBundleGenerator extends AbstractPlatformGenerator {
 		// Build app (zip file)
 		/////////////////////////////////////////
 		
-		fsa.deleteFile(createAppName(dataContainer) + ".zip")
-		fsa.zipDirectory(basePackageName, createAppName(dataContainer) + ".zip");
+//		fsa.deleteFile(createAppName(dataContainer) + ".zip")
+//		fsa.zipDirectory(basePackageName, createAppName(dataContainer) + ".zip");
 		
 	}
 	
