@@ -1020,9 +1020,9 @@ Main:
 ;
 
 
-/////////////////////////////////////
+/////////////////////////////////////////
 // Controller layer => ContentProvider
-/////////////////////////////////////
+/////////////////////////////////////////
 
 /*
  * The RemoteConnection allows to specify
@@ -1054,14 +1054,26 @@ ContentProvider:
 	) '}'
 ;
 
+/*
+ * A reference to a normal content provider. Never, create direct cross-links to a content provider, as this
+ * rule provides the right formatting (colon in front of all content provider references)
+ */
 ContentProviderReference:
 	':' contentProvider = [ContentProvider | QUALIFIED_NAME]
 ;
 
+/*
+ * A 'virtual' content provider that can be used as it were a normal read-only content provider with the name 'location'
+ * that provides fields such as street, country etc. The formatting highlights the location keyword as it were a cross-reference.
+ */
 LocationProviderReference:
 	{LocationProviderReference} ':' 'location'
 ;
 
+/*
+ * Super class for all kind of content providers. Up to now just normal content providers
+ * and location content providers are supported.
+ */
 AbstractProviderReference:
 	ContentProviderReference | LocationProviderReference
 ;
@@ -1071,29 +1083,6 @@ AbstractProviderReference:
  */
 enum FilterType:
 	ALL = 'all' | FIRST = 'first'
-;
-
-/*
- * The WhereClauseCondition allows to composite criteria that
- * have to be fulfilled by instances to be loaded.
- */
-WhereClauseCondition:
-	subConditions += WhereClauseSubCondition
-	(ops += ConditionalOperator subConditions += WhereClauseSubCondition)*
-;
-
-WhereClauseSubCondition:
-	(not ?= OP_CONDITION_NOT)? condition = WhereClauseConditionalExpression
-;
-
-/*
- * The WhereClauseCondition summarizes all possible criteria that
- * have to be fulfilled by instances to be loaded. It resolves to
- * a WhereClauseCondition and is required to allow recursive definition.
- */
-WhereClauseConditionalExpression returns WhereClauseCondition:
-	'(' WhereClauseCondition ')' |
-	{AttributeEqualsExpression} eqLeft = EntityPathDefinition op = Operator eqRight = SimpleExpression
 ;
 
 /*
@@ -1129,6 +1118,46 @@ enum SimpleDataType:
  */
 enum AllowedOperation:
 	CREATE_OR_UPDATE = 'save' | READ = 'load' | DELETE = 'remove'
+;
+
+
+//////////////////////////////////////////////////////////////
+// Controller layer => ContentProvider => Filter Conditions
+//////////////////////////////////////////////////////////////
+
+/*
+ * The WhereClauseCondition allows to composite criteria that
+ * have to be fulfilled by instances to be loaded.
+ */
+WhereClauseCondition:
+	WhereClauseOr
+;
+
+/**
+ * Representation of an arbitrary number of conditional expressions connected by OR.
+ * Explicitly model precedence of AND over OR.
+ */
+WhereClauseOr returns WhereClauseConditionalExpression:
+	WhereClauseAnd ({WhereClauseOr.leftExpression=current} OP_CONDITION_OR rightExpression=WhereClauseAnd)*
+;
+
+/**
+ * Representation of an arbitrary number of conditional expressions connected by AND.
+ * Explicitly model precedence of AND over OR.
+ */
+WhereClauseAnd returns WhereClauseConditionalExpression:
+	WhereClauseConditionalExpression ({WhereClauseAnd.leftExpression=current} OP_CONDITION_AND rightExpression=WhereClauseConditionalExpression)*
+;
+
+/*
+ * The WhereClauseCondition summarizes all possible criteria that
+ * have to be fulfilled by instances to be loaded. It resolves to
+ * a WhereClauseCondition and is required to allow recursive definition.
+ */
+WhereClauseConditionalExpression returns WhereClauseConditionalExpression:
+	'(' WhereClauseOr ')' |
+	{WhereClauseNot} OP_CONDITION_NOT expression = WhereClauseConditionalExpression |
+	{WhereClauseCompareExpression} eqLeft = EntityPathDefinition op = Operator eqRight = SimpleExpression
 ;
 
 
@@ -1792,6 +1821,14 @@ OP_STRING_CONCAT:
 	'&'
 ;
 
+OP_CONDITION_AND:
+	'and'
+;
+
+OP_CONDITION_OR:
+	'or'
+;
+
 OP_CONDITION_NOT:
 	'not'
 ;
@@ -1801,11 +1838,4 @@ OP_CONDITION_NOT:
  */
 enum Operator:
 	EQUALS = 'equals' | GREATER = '>' | SMALLER = '<' | GREATER_OR_EQUAL = '>=' | SMALLER_OR_EQUAL = '<='
-;
-
-/*
- * Conditional operators.
- */
-enum ConditionalOperator:
-	AND = 'and' | OR = 'or'
 ;

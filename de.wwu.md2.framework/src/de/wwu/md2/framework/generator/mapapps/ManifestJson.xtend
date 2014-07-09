@@ -41,6 +41,9 @@ import de.wwu.md2.framework.mD2.ViewElementDef
 import java.util.Collection
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
+import de.wwu.md2.framework.mD2.ReferencedModelType
+import de.wwu.md2.framework.mD2.WhereClauseCondition
+import de.wwu.md2.framework.mD2.AttributeEqualsExpression
 
 class ManifestJson {
 	
@@ -61,21 +64,31 @@ class ManifestJson {
 						"windowTitle": "«dataContainer.main.appName»",
 						"serviceUri": "«dataContainer.main.defaultConnection.uri»",
 						"onInitialized": "«dataContainer.main.onInitializedEvent.name»",
-						"contentProviders": [{
-							"name": "customerProvider",
-							"configuration": {
-								"type": "remote",
-								"entity": "customer",
-								"serviceUri": "http://localhost:8080/testProject.backend/service/",
-								"filter": {
-									"count": "first",
-									"query": {
-										"customerId": { "$lt": 50 },
-										"firstName": "@startView$outerPanel$firstName"
+						"contentProviders": [
+							«FOR contentProvider : dataContainer.contentProviders SEPARATOR ","»
+								{
+									"name": "«contentProvider.name»",
+									"configuration": {
+										"entity": "«(contentProvider.type as ReferencedModelType).entity.name»",
+										«IF !contentProvider.local»
+											"serviceUri": "«contentProvider.connection.uri»",
+										«ENDIF»
+										«IF contentProvider.filter»
+											"filter": {
+												«IF contentProvider.whereClause != null»
+													"query": {
+														"customerId": { "$lt": 50 },
+														"firstName": "@startView$outerPanel$firstName"
+													},
+												«ENDIF»
+												"count": "«contentProvider.filterType.toString»"
+											},
+										«ENDIF»
+										"type": "«if (contentProvider.local) "local" else "remote"»"
 									}
 								}
-							}
-						}],
+							«ENDFOR»
+						],
 						"entities": {
 							«FOR entity : dataContainer.entities SEPARATOR ","»
 								"«entity.name»": {
@@ -112,6 +125,58 @@ class ManifestJson {
 			]
 		}
 	'''
+	
+	/**
+	 * Creates a query in MongoDB syntax from specified whereCondition in MD2.
+	 */
+	def private static buildContentProviderQuery(WhereClauseCondition condition) {
+		
+		val str = new StringBuilder
+		var opsPosition = 0
+		
+		for(subCondition : condition.subConditions) {
+			
+			val conditionalExpression = subCondition.condition
+			
+			// has not operator?
+			if (subCondition.not) {
+				str.append("!")
+			}
+			
+			// sub condition
+			switch (conditionalExpression) {
+				AttributeEqualsExpression: {
+					val op = conditionalExpression.op
+					var opString = switch op {
+						case Operator::EQUALS: "="
+						case Operator::GREATER: ">"
+						case Operator::SMALLER: "<"
+						case Operator::GREATER_OR_EQUAL: ">="
+						case Operator::SMALLER_OR_EQUAL: "<="
+					}
+					str.append("(")
+					str.append(getPathTailAsString(conditionalExpression.eqLeft.tail))
+					str.append(opString)
+					str.append(getSimpleExpression(conditionalExpression.eqRight, resolveFieldContentStrategy))
+					str.append(")")
+				}
+				WhereClauseCondition: {
+					str.append("(")
+					str.append(generateLocalFilterString(conditionalExpression, resolveFieldContentStrategy))
+					str.append(")")
+				}
+			}
+			str.append(" ")
+			
+			// operator
+			if (opsPosition < cond.ops.size) {
+				str.append(cond.ops.get(opsPosition).toString + " ")
+				opsPosition = opsPosition + 1
+			}
+		}
+		
+		return str.toString.trim
+	}
 	
 	/**
 	 * Get a string representation of the default value for each attribute
@@ -183,6 +248,11 @@ class ManifestJson {
 		// TODO
 	'''
 	
+	/**
+	 * TODO If there is a warning "Cannot infer type from recursive usage. Type 'Object' is used.", this is related to
+	 *      Eclipse Bug 404817 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=404817).
+	 *      This todo can be removed when the bug is fixed!
+	 */
 	def private static dispatch getViewElement(AlternativesPane alternativesPane) '''
 		// TODO
 	'''

@@ -284,7 +284,8 @@ class MD2GeneratorUtil {
 				opsPosition = opsPosition + 1
 			}
 		}
-		str.toString.trim
+		
+		return str.toString.trim
 	}
 	
 	/**
@@ -344,7 +345,8 @@ class MD2GeneratorUtil {
 				opsPosition = opsPosition + 1
 			}
 		}
-		str.toString.trim
+		
+		return str.toString.trim
 	}
 	
 	def private static getSimpleExpression(SimpleExpression expr, (ViewGUIElement)=>String resolveFieldContentStrategy)	{
