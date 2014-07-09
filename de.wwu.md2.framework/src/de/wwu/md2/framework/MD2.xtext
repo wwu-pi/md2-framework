@@ -1078,8 +1078,12 @@ enum FilterType:
  * have to be fulfilled by instances to be loaded.
  */
 WhereClauseCondition:
-	(ops += 'not')? subConditions += WhereClauseConditionalExpression
-	(ops += ('and' | 'or') (ops += 'not')? subConditions += WhereClauseConditionalExpression)*
+	subConditions += WhereClauseSubCondition
+	(ops += ConditionalOperator subConditions += WhereClauseSubCondition)*
+;
+
+WhereClauseSubCondition:
+	(not ?= OP_CONDITION_NOT)? condition = WhereClauseConditionalExpression
 ;
 
 /*
@@ -1088,17 +1092,8 @@ WhereClauseCondition:
  * a WhereClauseCondition and is required to allow recursive definition.
  */
 WhereClauseConditionalExpression returns WhereClauseCondition:
-	('(' WhereClauseCondition ')') |
-	{BooleanExpression} value = Boolean |
+	'(' WhereClauseCondition ')' |
 	{AttributeEqualsExpression} eqLeft = EntityPathDefinition op = Operator eqRight = SimpleExpression
-;
-
-/*
- * The Operator defines all Operators
- * that can be used to compare values.
- */
-enum Operator:
-	EQUALS = 'equals' | GREATER='>' | SMALLER = '<' | GREATER_OR_EQUAL = '>=' | SMALLER_OR_EQUAL = '<='
 ;
 
 /*
@@ -1795,4 +1790,22 @@ OP_MATH_DIV:
 
 OP_STRING_CONCAT:
 	'&'
+;
+
+OP_CONDITION_NOT:
+	'not'
+;
+
+/*
+ * Define all operators that can be used to compare values in conditional expressions.
+ */
+enum Operator:
+	EQUALS = 'equals' | GREATER = '>' | SMALLER = '<' | GREATER_OR_EQUAL = '>=' | SMALLER_OR_EQUAL = '<='
+;
+
+/*
+ * Conditional operators.
+ */
+enum ConditionalOperator:
+	AND = 'and' | OR = 'or'
 ;

@@ -7,7 +7,6 @@ import de.wwu.md2.framework.mD2.ActionReference
 import de.wwu.md2.framework.mD2.AlternativesPane
 import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.AttributeEqualsExpression
-import de.wwu.md2.framework.mD2.BooleanExpression
 import de.wwu.md2.framework.mD2.BooleanVal
 import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.CombinedAction
@@ -239,94 +238,110 @@ class MD2GeneratorUtil {
 		if (param != null) (param as TabTitleParam).tabTitle else container.name.toFirstUpper
 	}
 	
-	def static String generateRemoteFilterString(WhereClauseCondition cond, (ViewGUIElement)=>String resolveFieldContentStrategy)
-	{
-		if (cond == null)
+	/**
+	 * Generates the filter string for the remote content provider.
+	 * 
+	 * TODO If there is a warning "Cannot infer type from recursive usage. Type 'Object' is used.", this is related to
+	 *      Eclipse Bug 404817 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=404817).
+	 *      This todo can be removed when the bug is fixed!
+	 */
+	def static generateRemoteFilterString(WhereClauseCondition cond, (ViewGUIElement)=>String resolveFieldContentStrategy) {
+		if (cond == null) {
 			return null;
-		val StringBuilder str = new StringBuilder
+		}
+		val str = new StringBuilder
 		var opsPosition = 0
 		
-		if(opsPosition < cond.ops.size && cond.ops.get(opsPosition).equals("not"))
-		{
-			str.append("not ")
-			opsPosition = opsPosition + 1
-		}
-		
-		for(subCondition : cond.subConditions)
-		{
+		for(subCondition : cond.subConditions) {
+			
+			val conditionalExpression = subCondition.condition
+			
+			// has not operator?
+			if (subCondition.not) {
+				str.append("not")
+			}
+			
 			// sub condition
-			switch (subCondition)
-			{
-				BooleanExpression: str.append(subCondition.value)
-				AttributeEqualsExpression: str.append(getPathTailAsString(subCondition.eqLeft.tail) + " " + subCondition.op.literal + " " + getSimpleExpression(subCondition.eqRight, resolveFieldContentStrategy))
-				default: str.append("(" + generateRemoteFilterString(subCondition, resolveFieldContentStrategy) + ")")
+			switch (conditionalExpression) {
+				AttributeEqualsExpression: {
+					str.append("(")
+					str.append(getPathTailAsString(conditionalExpression.eqLeft.tail))
+					str.append(conditionalExpression.op.toString)
+					str.append(getSimpleExpression(conditionalExpression.eqRight, resolveFieldContentStrategy))
+					str.append(")")
+				}
+				default: {
+					str.append("(")
+					str.append(generateRemoteFilterString(conditionalExpression, resolveFieldContentStrategy))
+					str.append(")")
+				}
 			}
 			str.append(" ")
 			
 			// operator
-			if(opsPosition < cond.ops.size)
-			{
-				str.append(cond.ops.get(opsPosition) + " ")
+			if (opsPosition < cond.ops.size) {
+				str.append(cond.ops.get(opsPosition).toString + " ")
 				opsPosition = opsPosition + 1
-				
-				if(opsPosition < cond.ops.size && cond.ops.get(opsPosition).equals("not"))
-				{
-					str.append("not ")
-					opsPosition = opsPosition + 1
-				}
 			}
 		}
 		str.toString.trim
 	}
 	
-	def static generateLocalFilterString(WhereClauseCondition cond, (ViewGUIElement)=>String resolveFieldContentStrategy)
-	{
-		if (cond == null)
+	/**
+	 * Generates a filter string for the local content provider.
+	 * 
+	 * TODO This code should not be part of the utils as it is dependent on the actual platform generator (was originally written
+	 *      for the Android generator and is used only there!)
+	 * 
+	 * TODO If there is a warning "Cannot infer type from recursive usage. Type 'Object' is used.", this is related to
+	 *      Eclipse Bug 404817 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=404817).
+	 *      This todo can be removed when the bug is fixed!
+	 */
+	def static generateLocalFilterString(WhereClauseCondition cond, (ViewGUIElement)=>String resolveFieldContentStrategy) {
+		if (cond == null) {
 			return null;
-		val StringBuilder str = new StringBuilder
+		}
+		val str = new StringBuilder
 		var opsPosition = 0
 		
-		if(opsPosition < cond.ops.size && cond.ops.get(opsPosition).equals("!"))
-		{
-			str.append("! ")
-			opsPosition = opsPosition + 1
-		}
-		
-		for(subCondition : cond.subConditions)
-		{
+		for(subCondition : cond.subConditions) {
+			
+			val conditionalExpression = subCondition.condition
+			
+			// has not operator?
+			if (subCondition.not) {
+				str.append("!")
+			}
+			
 			// sub condition
-			switch (subCondition)
-			{
-				BooleanExpression: str.append(subCondition.value)
-				AttributeEqualsExpression:
-				{
-					val op = subCondition.op
-					var String opString
-					switch op
-					{
-						case Operator::EQUALS: opString = "="
-						case Operator::GREATER: opString = ">"
-						case Operator::SMALLER: opString = "<"
-						case Operator::GREATER_OR_EQUAL: opString = ">="
-						case Operator::SMALLER_OR_EQUAL: opString = "<="
+			switch (conditionalExpression) {
+				AttributeEqualsExpression: {
+					val op = conditionalExpression.op
+					var opString = switch op {
+						case Operator::EQUALS: "="
+						case Operator::GREATER: ">"
+						case Operator::SMALLER: "<"
+						case Operator::GREATER_OR_EQUAL: ">="
+						case Operator::SMALLER_OR_EQUAL: "<="
 					}
-					str.append(getPathTailAsString(subCondition.eqLeft.tail) + opString + getSimpleExpression(subCondition.eqRight, resolveFieldContentStrategy))
+					str.append("(")
+					str.append(getPathTailAsString(conditionalExpression.eqLeft.tail))
+					str.append(opString)
+					str.append(getSimpleExpression(conditionalExpression.eqRight, resolveFieldContentStrategy))
+					str.append(")")
 				}
-				default: str.append("(" + generateRemoteFilterString(subCondition, resolveFieldContentStrategy) + ")")
+				default: {
+					str.append("(")
+					str.append(generateLocalFilterString(conditionalExpression, resolveFieldContentStrategy))
+					str.append(")")
+				}
 			}
 			str.append(" ")
 			
 			// operator
-			if(opsPosition < cond.ops.size)
-			{
-				str.append(cond.ops.get(opsPosition) + " ")
+			if (opsPosition < cond.ops.size) {
+				str.append(cond.ops.get(opsPosition).toString + " ")
 				opsPosition = opsPosition + 1
-				
-				if(opsPosition < cond.ops.size && cond.ops.get(opsPosition).equals("!"))
-				{
-					str.append("! ")
-					opsPosition = opsPosition + 1
-				}
 			}
 		}
 		str.toString.trim
