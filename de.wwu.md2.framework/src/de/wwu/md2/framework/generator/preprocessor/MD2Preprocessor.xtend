@@ -128,6 +128,8 @@ class MD2Preprocessor {
 		//                                                                         //
 		/////////////////////////////////////////////////////////////////////////////
 		
+		replaceDefaultProviderTypeWithConcreteDefinition(factory, workingInput) // new
+		
 		createStartUpActionAndRegisterAsOnInitializedEvent(factory, workingInput) // new
 		
 		transformEventBindingAndUnbindingTasksToOneToOneRelations(factory, workingInput) // new

@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil
 
 import static extension de.wwu.md2.framework.generator.preprocessor.util.Util.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
+import de.wwu.md2.framework.mD2.ContentProvider
 
 class ProcessController {
 	
@@ -61,6 +62,33 @@ class ProcessController {
 			originalActionReference.setActionRef(originalStartupAction)
 			originalCallTask.setAction(originalActionReference)
 			startupAction.codeFragments.add(originalCallTask);
+		}
+	}
+	
+	/**
+	 * The providerType of a contentProvider can either be remote, local or default. Default is 'local' if no default remoteConnection
+	 * is specified in main block, otherwise it is remote with the connection specified in the main block of the controller. This step
+	 * explicitly sets the 'local' or 'connection' properties of the contentProvider if 'default' was specified.
+	 * 
+	 * <p>
+	 *   DEPENDENCIES: None
+	 * </p>
+	 */
+	def static void replaceDefaultProviderTypeWithConcreteDefinition(MD2Factory factory, ResourceSet workingInput) {
+		val contentProviders = workingInput.resources.map[ r |
+			r.allContents.toIterable.filter(typeof(ContentProvider))
+		].flatten
+		
+		val main = workingInput.resources.map[ r |
+			r.allContents.toIterable.filter(typeof(Main))
+		].flatten.head
+		
+		for (contentProvider : contentProviders) {
+			if (contentProvider.^default && main.defaultConnection == null) {
+				contentProvider.setLocal(true)
+			} else if (contentProvider.^default && main.defaultConnection != null) {
+				contentProvider.setConnection(main.defaultConnection)
+			}
 		}
 	}
 	
