@@ -879,7 +879,8 @@ ValidatorType:
 /////////////////////////////////////
 
 /*
- * Validator allows to declare one of the supported Validators.
+ * Validator allows to declare one of the supported Validators. Apart from the RemoteValidator, all validators are transformed into
+ * StandardValidators during the pre-processing.
  */
 Validator:
 	'validator' (

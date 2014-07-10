@@ -5,6 +5,7 @@ import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 
 import static de.wwu.md2.framework.generator.mapapps.AppJsonBuilder.*
 import static de.wwu.md2.framework.generator.mapapps.ManifestJson.*
+import static de.wwu.md2.framework.generator.mapapps.CustomActionClass.*
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import java.util.Collection
 
@@ -46,7 +47,11 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		
 		// Generate common base elements
 //		fsa.generateFile(basePackageName + "/app.json", generateAppJson(dataContainer, requiredBundles))
-		fsa.generateFile(basePackageName + "/manifest.json", generateManifestJson(dataContainer, requiredBundles))
+		fsa.generateFile(basePackageName + "/manifest.json", generateManifestJson(dataContainer))
+		
+		for (customAction : dataContainer.customActions) {
+			fsa.generateFile(basePackageName + "/actions/" + customAction.name.toFirstUpper + ".js", generateCustomAction(customAction, dataContainer))
+		}
 		
 		
 		/////////////////////////////////////////

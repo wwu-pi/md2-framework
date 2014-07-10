@@ -50,13 +50,24 @@ import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 
-import static extension de.wwu.md2.framework.util.StringExtensions.*
+import static extension de.wwu.md2.framework.util.StringExtensions.*import java.util.concurrent.atomic.AtomicInteger
+import java.util.HashSet
+import de.wwu.md2.framework.mD2.AbstractContentProvider
+import de.wwu.md2.framework.mD2.LocationProvider
+import de.wwu.md2.framework.mD2.ValidatorParam
+import de.wwu.md2.framework.mD2.StandardValidator
 
 class MD2GeneratorUtil {
 		
 	private static IQualifiedNameProvider qualifiedNameProvider
 	private static HashMap<String, String> qualifiedNameToNameMapping
-	private static int anonymousNameCounter = 0
+	
+	private static AtomicInteger atomicInteger = new AtomicInteger
+	
+	/**
+	 * Stores all names that were already delivered by getUnifiedName#name.
+	 */
+	private static HashSet<String> uniqueNames = newHashSet
 	
 	/**
 	 * Get the base package name of the current project.
@@ -115,8 +126,19 @@ class MD2GeneratorUtil {
 	 * source code, but do not have any name in the MD2 language
 	 */
 	def static getAnonymousName() {
-		anonymousNameCounter = anonymousNameCounter + 1
-		"__anonymousName" + anonymousNameCounter
+		getUnifiedName("__anonymous")
+	}
+	
+	/**
+	 * Appends a number with radix 36 to a given string, e.g. to make an object name unique.
+	 */
+	def static getUnifiedName(String name) {
+		var uniqueName = name
+		if (uniqueNames.contains(uniqueName)) {
+			uniqueName = '''«name»0«Integer.toString(atomicInteger.getAndIncrement, 36)»'''
+		}
+		uniqueNames.add(uniqueName)
+		return uniqueName
 	}
 	
 	/**
@@ -127,6 +149,32 @@ class MD2GeneratorUtil {
 		var EObject obj = guiElement
 		while(!views.contains(obj) && obj != null) { obj = obj.eContainer }
 		obj as ContainerElement
+	}
+	
+	/**
+	 * Helper method to simplify the handling of 'virtual' content providers such as the location provider.
+	 * Returns the name of the contentProvider.
+	 */
+	def static resolveContentProviderName(AbstractContentProvider abstractContentProvider) {
+		switch (abstractContentProvider) {
+			ContentProviderPathDefinition: abstractContentProvider.contentProviderRef.name
+			LocationProvider: "location"
+		}
+	}
+	
+	/**
+	 * Helper method to simplify the handling of 'virtual' content providers such as the location provider.
+	 * Returns a string representation of the fully qualified name of the attribute.
+	 */
+	def static resolveContentProviderPathAttribute(AbstractContentProvider abstractContentProvider) {
+		switch (abstractContentProvider) {
+			ContentProviderPathDefinition: getPathTailAsString(abstractContentProvider.tail)
+			LocationProvider: abstractContentProvider.locationField.toString
+		}
+	}
+	
+	def static <T> resolveValidatorParam(StandardValidator validator, Class<T> type) {
+		validator.params.filter(type).head
 	}
 	
 	def static Attribute getReferencedAttribute(PathDefinition pathDefinition) {
@@ -194,21 +242,15 @@ class MD2GeneratorUtil {
 		}
 		return result
 	}
-
+	
 	// Relies on simplified AbstractViewGUIElementRef from Preprocessing
 	def static ViewGUIElement resolveViewGUIElement(AbstractViewGUIElementRef abstractRef) {
 		if (abstractRef == null) return null
 		// @TODO Implement some checking and error handling
 		return abstractRef.ref as ViewGUIElement
 	}
-
+	
 	def static ContainerElement resolveContainerElement(AbstractViewGUIElementRef abstractRef) {
-		if (abstractRef == null) return null
-		// @TODO Implement some checking and error handling
-		return abstractRef.ref as ContainerElement
-	}
-
-	def static ContainerElement resolveElementContainerElement(AbstractViewGUIElementRef abstractRef) {
 		if (abstractRef == null) return null
 		// @TODO Implement some checking and error handling
 		return abstractRef.ref as ContainerElement

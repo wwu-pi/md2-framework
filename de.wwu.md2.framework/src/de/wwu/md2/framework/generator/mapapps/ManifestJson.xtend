@@ -59,13 +59,12 @@ import de.wwu.md2.framework.mD2.WhereClauseCondition
 import de.wwu.md2.framework.mD2.WhereClauseNot
 import de.wwu.md2.framework.mD2.WhereClauseOr
 import java.text.SimpleDateFormat
-import java.util.Collection
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
 class ManifestJson {
 	
-	def static generateManifestJson(DataContainer dataContainer, Collection<String> requiredBundles) '''
+	def static generateManifestJson(DataContainer dataContainer) '''
 		{
 			"Bundle-SymbolicName": "md2_«dataContainer.createAppName.toString.toFirstLower»",
 			"Bundle-Version": "«dataContainer.main.appVersion»",
