@@ -1342,13 +1342,6 @@ MathExpression:
 	AdditionSubtraction | '(' AdditionSubtraction ')'
 ;
 
-StringLiteral:
-	Value |
-	AbstractViewGUIElementRef |
-	AbstractContentProvider |
-	MathExpression
-;
-
 
 /////////////////////////////////////////////
 // Controller layer => String concatenation
@@ -1372,6 +1365,13 @@ StringLiteral:
 StringPartial returns ConcatenatedString:
 	// At least two values have to be concatenated. Otherwise a concatenated string cannot be distinguished from an atomic value.
 	literals += StringLiteral (OP_STRING_CONCAT literals += StringLiteral)+
+;
+
+StringLiteral:
+	Value |
+	AbstractViewGUIElementRef |
+	AbstractContentProvider |
+	MathExpression
 ;
 
 ConcatenatedString:

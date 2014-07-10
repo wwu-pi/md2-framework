@@ -6,7 +6,6 @@ import de.wwu.md2.framework.mD2.Action
 import de.wwu.md2.framework.mD2.ActionReference
 import de.wwu.md2.framework.mD2.AlternativesPane
 import de.wwu.md2.framework.mD2.Attribute
-import de.wwu.md2.framework.mD2.AttributeEqualsExpression
 import de.wwu.md2.framework.mD2.BooleanVal
 import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.CombinedAction
@@ -37,7 +36,11 @@ import de.wwu.md2.framework.mD2.TabTitleParam
 import de.wwu.md2.framework.mD2.TimeVal
 import de.wwu.md2.framework.mD2.View
 import de.wwu.md2.framework.mD2.ViewGUIElement
+import de.wwu.md2.framework.mD2.WhereClauseAnd
+import de.wwu.md2.framework.mD2.WhereClauseCompareExpression
 import de.wwu.md2.framework.mD2.WhereClauseCondition
+import de.wwu.md2.framework.mD2.WhereClauseNot
+import de.wwu.md2.framework.mD2.WhereClauseOr
 import java.util.Collection
 import java.util.HashMap
 import java.util.LinkedList
@@ -46,6 +49,8 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameProvider
+
+import static extension de.wwu.md2.framework.util.StringExtensions.*
 
 class MD2GeneratorUtil {
 		
@@ -241,47 +246,40 @@ class MD2GeneratorUtil {
 	/**
 	 * Generates the filter string for the remote content provider.
 	 * 
-	 * TODO If there is a warning "Cannot infer type from recursive usage. Type 'Object' is used.", this is related to
+	 * TODO Explicitly define return value String!
+	 *      Otherwise there is a warning "Cannot infer type from recursive usage. Type 'Object' is used.". This is related to
 	 *      Eclipse Bug 404817 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=404817).
-	 *      This todo can be removed when the bug is fixed!
+	 *      The explicit return value can be removed when the bug is fixed!
 	 */
-	def static generateRemoteFilterString(WhereClauseCondition cond, (ViewGUIElement)=>String resolveFieldContentStrategy) {
-		if (cond == null) {
-			return null;
-		}
-		val str = new StringBuilder
-		var opsPosition = 0
+	def static String generateRemoteFilterString(WhereClauseCondition expression, (ViewGUIElement)=>String resolveFieldContentStrategy) {
 		
-		for(subCondition : cond.subConditions) {
-			
-			val conditionalExpression = subCondition.condition
-			
-			// has not operator?
-			if (subCondition.not) {
+		val str = new StringBuilder
+		
+		switch (expression) {
+			WhereClauseOr: {
+				str.append("(")
+				str.append(generateRemoteFilterString(expression.leftExpression, resolveFieldContentStrategy))
+				str.append(" or ")
+				str.append(generateRemoteFilterString(expression.rightExpression, resolveFieldContentStrategy))
+				str.append(")")
+			}
+			WhereClauseAnd: {
+				str.append(generateRemoteFilterString(expression.leftExpression, resolveFieldContentStrategy))
+				str.append(" and ")
+				str.append(generateRemoteFilterString(expression.rightExpression, resolveFieldContentStrategy))
+			}
+			WhereClauseNot: {
 				str.append("not")
+				str.append("(")
+				str.append(generateRemoteFilterString(expression.expression, resolveFieldContentStrategy).trimParentheses)
+				str.append(")")
 			}
-			
-			// sub condition
-			switch (conditionalExpression) {
-				AttributeEqualsExpression: {
-					str.append("(")
-					str.append(getPathTailAsString(conditionalExpression.eqLeft.tail))
-					str.append(conditionalExpression.op.toString)
-					str.append(getSimpleExpression(conditionalExpression.eqRight, resolveFieldContentStrategy))
-					str.append(")")
-				}
-				default: {
-					str.append("(")
-					str.append(generateRemoteFilterString(conditionalExpression, resolveFieldContentStrategy))
-					str.append(")")
-				}
-			}
-			str.append(" ")
-			
-			// operator
-			if (opsPosition < cond.ops.size) {
-				str.append(cond.ops.get(opsPosition).toString + " ")
-				opsPosition = opsPosition + 1
+			WhereClauseCompareExpression: {
+				str.append(getPathTailAsString(expression.eqLeft.tail))
+				str.append(" ")
+				str.append(expression.op.toString)
+				str.append(" ")
+				str.append(getSimpleExpression(expression.eqRight, resolveFieldContentStrategy))
 			}
 		}
 		
@@ -294,55 +292,47 @@ class MD2GeneratorUtil {
 	 * TODO This code should not be part of the utils as it is dependent on the actual platform generator (was originally written
 	 *      for the Android generator and is used only there!)
 	 * 
-	 * TODO If there is a warning "Cannot infer type from recursive usage. Type 'Object' is used.", this is related to
+	 * TODO Explicitly define return value String!
+	 *      Otherwise there is a warning "Cannot infer type from recursive usage. Type 'Object' is used.". This is related to
 	 *      Eclipse Bug 404817 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=404817).
-	 *      This todo can be removed when the bug is fixed!
+	 *      The explicit return value can be removed when the bug is fixed!
 	 */
-	def static generateLocalFilterString(WhereClauseCondition cond, (ViewGUIElement)=>String resolveFieldContentStrategy) {
-		if (cond == null) {
-			return null;
-		}
-		val str = new StringBuilder
-		var opsPosition = 0
+	def static String generateLocalFilterString(WhereClauseCondition expression, (ViewGUIElement)=>String resolveFieldContentStrategy) {
 		
-		for(subCondition : cond.subConditions) {
-			
-			val conditionalExpression = subCondition.condition
-			
-			// has not operator?
-			if (subCondition.not) {
+		val str = new StringBuilder
+		
+		switch (expression) {
+			WhereClauseOr: {
+				str.append("(")
+				str.append(generateLocalFilterString(expression.leftExpression, resolveFieldContentStrategy))
+				str.append(" || ")
+				str.append(generateLocalFilterString(expression.rightExpression, resolveFieldContentStrategy))
+				str.append(")")
+			}
+			WhereClauseAnd: {
+				str.append(generateLocalFilterString(expression.leftExpression, resolveFieldContentStrategy))
+				str.append(" && ")
+				str.append(generateLocalFilterString(expression.rightExpression, resolveFieldContentStrategy))
+			}
+			WhereClauseNot: {
 				str.append("!")
+				str.append("(")
+				str.append(generateLocalFilterString(expression.expression, resolveFieldContentStrategy).trimParentheses)
+				str.append(")")
 			}
-			
-			// sub condition
-			switch (conditionalExpression) {
-				AttributeEqualsExpression: {
-					val op = conditionalExpression.op
-					var opString = switch op {
-						case Operator::EQUALS: "="
-						case Operator::GREATER: ">"
-						case Operator::SMALLER: "<"
-						case Operator::GREATER_OR_EQUAL: ">="
-						case Operator::SMALLER_OR_EQUAL: "<="
-					}
-					str.append("(")
-					str.append(getPathTailAsString(conditionalExpression.eqLeft.tail))
-					str.append(opString)
-					str.append(getSimpleExpression(conditionalExpression.eqRight, resolveFieldContentStrategy))
-					str.append(")")
+			WhereClauseCompareExpression: {
+				val operator = switch expression.op {
+					case Operator::EQUALS: "=="
+					case Operator::GREATER: ">"
+					case Operator::SMALLER: "<"
+					case Operator::GREATER_OR_EQUAL: ">="
+					case Operator::SMALLER_OR_EQUAL: "<="
 				}
-				default: {
-					str.append("(")
-					str.append(generateLocalFilterString(conditionalExpression, resolveFieldContentStrategy))
-					str.append(")")
-				}
-			}
-			str.append(" ")
-			
-			// operator
-			if (opsPosition < cond.ops.size) {
-				str.append(cond.ops.get(opsPosition).toString + " ")
-				opsPosition = opsPosition + 1
+				str.append(getPathTailAsString(expression.eqLeft.tail))
+				str.append(" ")
+				str.append(operator)
+				str.append(" ")
+				str.append(getSimpleExpression(expression.eqRight, resolveFieldContentStrategy))
 			}
 		}
 		
