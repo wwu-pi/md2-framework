@@ -19,8 +19,8 @@ import de.wwu.md2.framework.util.MD2Util;
  */
 public class DateTimeValueConverter extends AbstractNullSafeConverter<Date> {
 	
-	private final Collection<String> PATTERNS = Sets.newHashSet("yyyy-MM-dd'T'HH:mm:ssZ", "yyyy-MM-dd'T'HH:mm:ss");
-	private final String DEFAULT_PATTERN = "yyyy-MM-dd'T'HH:mm:ssZ";
+	private final Collection<String> PATTERNS = Sets.newHashSet("yyyy-MM-dd'T'HH:mm:ssZ", "yyyy-MM-dd'T'HH:mm:ssXXX", "yyyy-MM-dd'T'HH:mm:ss");
+	private final String DEFAULT_PATTERN = "yyyy-MM-dd'T'HH:mm:ssXXX";
 	
 	@Override
 	protected String internalToString(Date date) {

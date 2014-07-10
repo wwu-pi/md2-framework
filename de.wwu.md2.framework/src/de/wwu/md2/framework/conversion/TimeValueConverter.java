@@ -18,8 +18,8 @@ import de.wwu.md2.framework.util.MD2Util;
  */
 public class TimeValueConverter extends AbstractNullSafeConverter<Date> {
 	
-	private final Collection<String> PATTERNS = Sets.newHashSet("HH:mm:ssZ", "HH:mm:ss");
-	private final String DEFAULT_PATTERN = "HH:mm:ssZ";
+	private final Collection<String> PATTERNS = Sets.newHashSet("HH:mm:ssZ", "HH:mm:ssXXX", "HH:mm:ss");
+	private final String DEFAULT_PATTERN = "HH:mm:ssXXX";
 	
 	@Override
 	protected String internalToString(Date date) {

@@ -1,6 +1,7 @@
 package de.wwu.md2.framework.generator.mapapps
 
 import de.wwu.md2.framework.generator.util.DataContainer
+import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import de.wwu.md2.framework.mD2.AlternativesPane
 import de.wwu.md2.framework.mD2.AttrBooleanDefault
 import de.wwu.md2.framework.mD2.AttrDateDefault
@@ -13,37 +14,54 @@ import de.wwu.md2.framework.mD2.AttrTimeDefault
 import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.BooleanInput
 import de.wwu.md2.framework.mD2.BooleanType
+import de.wwu.md2.framework.mD2.BooleanVal
 import de.wwu.md2.framework.mD2.Button
+import de.wwu.md2.framework.mD2.ConcatenatedString
+import de.wwu.md2.framework.mD2.ContentProviderPathDefinition
 import de.wwu.md2.framework.mD2.DateInput
 import de.wwu.md2.framework.mD2.DateTimeInput
 import de.wwu.md2.framework.mD2.DateTimeType
+import de.wwu.md2.framework.mD2.DateTimeVal
 import de.wwu.md2.framework.mD2.DateType
+import de.wwu.md2.framework.mD2.DateVal
 import de.wwu.md2.framework.mD2.EntitySelector
 import de.wwu.md2.framework.mD2.EnumType
 import de.wwu.md2.framework.mD2.FloatType
+import de.wwu.md2.framework.mD2.FloatVal
 import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam
 import de.wwu.md2.framework.mD2.Image
+import de.wwu.md2.framework.mD2.IntVal
 import de.wwu.md2.framework.mD2.IntegerInput
 import de.wwu.md2.framework.mD2.IntegerType
 import de.wwu.md2.framework.mD2.Label
+import de.wwu.md2.framework.mD2.LocationProvider
+import de.wwu.md2.framework.mD2.MathExpression
 import de.wwu.md2.framework.mD2.NumberInput
+import de.wwu.md2.framework.mD2.Operator
 import de.wwu.md2.framework.mD2.OptionInput
+import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.ReferencedType
+import de.wwu.md2.framework.mD2.SimpleExpression
 import de.wwu.md2.framework.mD2.Spacer
 import de.wwu.md2.framework.mD2.StringType
+import de.wwu.md2.framework.mD2.StringVal
 import de.wwu.md2.framework.mD2.TabbedAlternativesPane
 import de.wwu.md2.framework.mD2.TextInput
 import de.wwu.md2.framework.mD2.TimeInput
 import de.wwu.md2.framework.mD2.TimeType
+import de.wwu.md2.framework.mD2.TimeVal
 import de.wwu.md2.framework.mD2.Tooltip
 import de.wwu.md2.framework.mD2.ViewElementDef
+import de.wwu.md2.framework.mD2.WhereClauseAnd
+import de.wwu.md2.framework.mD2.WhereClauseCompareExpression
+import de.wwu.md2.framework.mD2.WhereClauseCondition
+import de.wwu.md2.framework.mD2.WhereClauseNot
+import de.wwu.md2.framework.mD2.WhereClauseOr
+import java.text.SimpleDateFormat
 import java.util.Collection
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
-import de.wwu.md2.framework.mD2.ReferencedModelType
-import de.wwu.md2.framework.mD2.WhereClauseCondition
-import de.wwu.md2.framework.mD2.AttributeEqualsExpression
 
 class ManifestJson {
 	
@@ -76,10 +94,7 @@ class ManifestJson {
 										«IF contentProvider.filter»
 											"filter": {
 												«IF contentProvider.whereClause != null»
-													"query": {
-														"customerId": { "$lt": 50 },
-														"firstName": "@startView$outerPanel$firstName"
-													},
+													"query": «contentProvider.whereClause.buildContentProviderQuery»,
 												«ENDIF»
 												"count": "«contentProvider.filterType.toString»"
 											},
@@ -129,53 +144,67 @@ class ManifestJson {
 	/**
 	 * Creates a query in MongoDB syntax from specified whereCondition in MD2.
 	 */
-	def private static buildContentProviderQuery(WhereClauseCondition condition) {
+	def private static String buildContentProviderQuery(WhereClauseCondition condition) {
 		
-		val str = new StringBuilder
-		var opsPosition = 0
-		
-		for(subCondition : condition.subConditions) {
-			
-			val conditionalExpression = subCondition.condition
-			
-			// has not operator?
-			if (subCondition.not) {
-				str.append("!")
-			}
-			
-			// sub condition
-			switch (conditionalExpression) {
-				AttributeEqualsExpression: {
-					val op = conditionalExpression.op
-					var opString = switch op {
-						case Operator::EQUALS: "="
-						case Operator::GREATER: ">"
-						case Operator::SMALLER: "<"
-						case Operator::GREATER_OR_EQUAL: ">="
-						case Operator::SMALLER_OR_EQUAL: "<="
-					}
-					str.append("(")
-					str.append(getPathTailAsString(conditionalExpression.eqLeft.tail))
-					str.append(opString)
-					str.append(getSimpleExpression(conditionalExpression.eqRight, resolveFieldContentStrategy))
-					str.append(")")
+		switch (condition) {
+			WhereClauseOr: '''
+				{
+					$or: [
+						«IF condition.leftExpression instanceof WhereClauseCompareExpression»
+							{ «buildContentProviderQuery(condition.leftExpression)» },
+						«ELSE»
+							«buildContentProviderQuery(condition.leftExpression)»,
+						«ENDIF»
+						«IF condition.rightExpression instanceof WhereClauseCompareExpression»
+							{ «buildContentProviderQuery(condition.rightExpression)» }
+						«ELSE»
+							«buildContentProviderQuery(condition.rightExpression)»
+						«ENDIF»
+					]
+				}'''
+			WhereClauseAnd: '''
+				{
+					«buildContentProviderQuery(condition.leftExpression)»,
+					«buildContentProviderQuery(condition.rightExpression)»
+				}'''
+			WhereClauseNot: '''
+				{
+					$not: «buildContentProviderQuery(condition.expression)»
+				}'''
+			WhereClauseCompareExpression: {
+				val simpleExpression = condition.eqRight.resolveSimpleExpression
+				val attribute = getPathTailAsString(condition.eqLeft.tail)
+				val rightHand = switch condition.op {
+					case Operator::EQUALS: '''«simpleExpression»'''
+					case Operator::GREATER: '''{ $gt: «simpleExpression» }'''
+					case Operator::SMALLER: '''{ $lt: «simpleExpression» }'''
+					case Operator::GREATER_OR_EQUAL: '''{ $gte: «simpleExpression» }'''
+					case Operator::SMALLER_OR_EQUAL: '''{ $lte: «simpleExpression» }'''
 				}
-				WhereClauseCondition: {
-					str.append("(")
-					str.append(generateLocalFilterString(conditionalExpression, resolveFieldContentStrategy))
-					str.append(")")
-				}
-			}
-			str.append(" ")
-			
-			// operator
-			if (opsPosition < cond.ops.size) {
-				str.append(cond.ops.get(opsPosition).toString + " ")
-				opsPosition = opsPosition + 1
+				'''«attribute»: «rightHand»'''
 			}
 		}
+	}
+	
+	def private static resolveSimpleExpression(SimpleExpression expression) {
+		val dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		val timeFormatter = new SimpleDateFormat("HH:mm:ssXXX");
+		val dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
 		
-		return str.toString.trim
+		switch (expression) {
+			StringVal: '''"«expression.value»"'''
+			IntVal: '''«expression.value»'''
+			FloatVal: '''«expression.value»'''
+			BooleanVal: '''«expression.value.toString»'''
+			DateVal: '''"«dateFormatter.format(expression.value)»"'''
+			TimeVal: '''"«timeFormatter.format(expression.value)»"'''
+			DateTimeVal: '''"«dateTimeFormatter.format(expression.value)»"'''
+			AbstractViewGUIElementRef: '''"@«getName(expression.ref)»"'''
+			ConcatenatedString: '''//TODO'''
+			ContentProviderPathDefinition: '''//TODO'''
+			LocationProvider: '''//TODO'''
+			MathExpression: '''//TODO'''
+		}
 	}
 	
 	/**
