@@ -761,8 +761,8 @@ CustomCodeFragment:
 	{ValidatorBindingTask} ('bind' ('validator' | 'validators') validators+=ValidatorType+ 'on' (referencedFields += AbstractViewGUIElementRef)+) |
 	{ValidatorUnbindTask} ('unbind' ('validator' | 'validators') (validators+=ValidatorType+ | allTypes ?= 'all') 'from' (referencedFields += AbstractViewGUIElementRef)+) |
 	{CallTask} ('call' action = ActionDef) |
-	{MappingTask} ('map' referencedViewField = AbstractViewGUIElementRef 'to' pathDefinition = AbstractContentProvider) |
-	{UnmappingTask} ('unmap' referencedViewField = AbstractViewGUIElementRef 'from' pathDefinition = AbstractContentProvider) |
+	{MappingTask} ('map' referencedViewField = AbstractViewGUIElementRef 'to' pathDefinition = AbstractContentProviderPath) |
+	{UnmappingTask} ('unmap' referencedViewField = AbstractViewGUIElementRef 'from' pathDefinition = AbstractContentProviderPath) |
 	{ConditionalCodeFragment} 'if' if = IfCodeBlock ('elseif' elseifs += IfCodeBlock)* ('else' else = ElseCodeBlock)? |
 	{ViewElementSetTask} referencedViewField = AbstractViewGUIElementRef '=' newValue = SimpleExpression |
 	{AttributeSetTask} pathDefinition = ContentProviderPathDefinition '=' (newValue = SimpleExpression | sourceContentProvider = ContentProviderReference) |
@@ -830,7 +830,7 @@ ActionDef:
  */
 EventDef:
 	{ViewElementEventRef} (referencedField = AbstractViewGUIElementRef '.' event = ElementEventType) |
-	{ContentProviderEventRef} (pathDefinition = AbstractContentProvider '.' event = ContentProviderEventType) |
+	{ContentProviderEventRef} (pathDefinition = AbstractContentProviderPath '.' event = ContentProviderEventType) |
 	{GlobalEventRef} event = GlobalEventType |
 	{ConditionalEventRef} eventReference = [OnConditionEvent | QUALIFIED_NAME]
 ;
@@ -1279,11 +1279,8 @@ ConditionalExpression:
 ;
 
 ComplexConditionalExpression:
-	SimpleExpression
-	(
-		=>({CompareExpression.eqLeft=current} op = Operator) eqRight = SimpleExpression | 
-		=>({GuiElementStateExpression.reference=current} 'is') isState = ViewElementState
-	)
+		SimpleExpression =>({CompareExpression.eqLeft=current} op = Operator) eqRight = SimpleExpression | 
+		AbstractViewGUIElementRef =>({GuiElementStateExpression.reference=current} 'is') isState = ViewElementState
 ;
 
 /*
@@ -1297,7 +1294,7 @@ enum Boolean:
  * ViewElementState lists all possible ViewElementStates.
  */
 enum ViewElementState:
-	VALID='valid' | EMPTY='empty' | FILLED='filled' | DEFAULT_VALUE='defaultValue' |
+	VALID='valid' | EMPTY='empty' | SET='set' | DEFAULT_VALUE='defaultValue' |
 	DISABLED='disabled' | ENABLED='enabled'
 ;
 
@@ -1313,10 +1310,10 @@ SimpleExpression:
 	// the order of the rules matter, as they are tried by the parser from left to right,
 	// i.e. an atomic value or reference is considered as long as no mathematical or string concatenation
 	// operator appears.
-	// AbstractViewGUIElementRef and AbstractContentProvider are already implicitly matched in MathExpression.
+	// AbstractViewGUIElementRef and AbstractContentProviderPath are already implicitly matched in MathExpression.
 	// However, even though they are never matched, they are listed here to make the grammar better understandable and
 	// to see at a glance which grammar elements are supported in SimpleExpressions.
-	ConcatenatedString | MathExpression | Value | AbstractViewGUIElementRef | AbstractContentProvider
+	ConcatenatedString | MathExpression | Value | AbstractViewGUIElementRef | AbstractContentProviderPath
 ;
 
 /*
@@ -1342,7 +1339,7 @@ MathLiteral:
 	{IntVal} value = INT |
 	{FloatVal} value = FLOAT |
 	AbstractViewGUIElementRef |
-	AbstractContentProvider
+	AbstractContentProviderPath
 ;
 
 AdditionSubtraction returns MathSubExpression:
@@ -1358,7 +1355,7 @@ MultiplicationDivision returns MathSubExpression:
 ;
 
 MathExpression:
-	AdditionSubtraction | '(' AdditionSubtraction ')'
+	AdditionSubtraction
 ;
 
 
@@ -1389,7 +1386,7 @@ StringPartial returns ConcatenatedString:
 StringLiteral:
 	Value |
 	AbstractViewGUIElementRef |
-	AbstractContentProvider |
+	AbstractContentProviderPath |
 	MathExpression
 ;
 
@@ -1519,7 +1516,7 @@ EntityPathDefinition:
 /*
  * Super class for normal content providers and fake content providers such as the location content provider.
  */
-AbstractContentProvider:
+AbstractContentProviderPath:
 	ContentProviderPathDefinition | LocationProvider
 ;
 

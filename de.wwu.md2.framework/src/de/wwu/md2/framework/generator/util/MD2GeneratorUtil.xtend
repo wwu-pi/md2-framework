@@ -1,6 +1,7 @@
 package de.wwu.md2.framework.generator.util
 
 import de.wwu.md2.framework.generator.preprocessor.ProcessAutoGenerator
+import de.wwu.md2.framework.mD2.AbstractContentProviderPath
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import de.wwu.md2.framework.mD2.Action
 import de.wwu.md2.framework.mD2.ActionReference
@@ -21,6 +22,7 @@ import de.wwu.md2.framework.mD2.FloatVal
 import de.wwu.md2.framework.mD2.FlowLayoutPane
 import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.IntVal
+import de.wwu.md2.framework.mD2.LocationProvider
 import de.wwu.md2.framework.mD2.MD2Model
 import de.wwu.md2.framework.mD2.Main
 import de.wwu.md2.framework.mD2.Model
@@ -31,6 +33,7 @@ import de.wwu.md2.framework.mD2.PathTail
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.SimpleExpression
 import de.wwu.md2.framework.mD2.SimpleType
+import de.wwu.md2.framework.mD2.StandardValidator
 import de.wwu.md2.framework.mD2.StringVal
 import de.wwu.md2.framework.mD2.TabTitleParam
 import de.wwu.md2.framework.mD2.TimeVal
@@ -43,19 +46,16 @@ import de.wwu.md2.framework.mD2.WhereClauseNot
 import de.wwu.md2.framework.mD2.WhereClauseOr
 import java.util.Collection
 import java.util.HashMap
+import java.util.HashSet
 import java.util.LinkedList
 import java.util.List
+import java.util.concurrent.atomic.AtomicInteger
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 
-import static extension de.wwu.md2.framework.util.StringExtensions.*import java.util.concurrent.atomic.AtomicInteger
-import java.util.HashSet
-import de.wwu.md2.framework.mD2.AbstractContentProvider
-import de.wwu.md2.framework.mD2.LocationProvider
-import de.wwu.md2.framework.mD2.ValidatorParam
-import de.wwu.md2.framework.mD2.StandardValidator
+import static extension de.wwu.md2.framework.util.StringExtensions.*
 
 class MD2GeneratorUtil {
 		
@@ -155,9 +155,9 @@ class MD2GeneratorUtil {
 	 * Helper method to simplify the handling of 'virtual' content providers such as the location provider.
 	 * Returns the name of the contentProvider.
 	 */
-	def static resolveContentProviderName(AbstractContentProvider abstractContentProvider) {
-		switch (abstractContentProvider) {
-			ContentProviderPathDefinition: abstractContentProvider.contentProviderRef.name
+	def static resolveContentProviderName(AbstractContentProviderPath abstractPath) {
+		switch (abstractPath) {
+			ContentProviderPathDefinition: abstractPath.contentProviderRef.name
 			LocationProvider: "location"
 		}
 	}
@@ -166,10 +166,10 @@ class MD2GeneratorUtil {
 	 * Helper method to simplify the handling of 'virtual' content providers such as the location provider.
 	 * Returns a string representation of the fully qualified name of the attribute.
 	 */
-	def static resolveContentProviderPathAttribute(AbstractContentProvider abstractContentProvider) {
-		switch (abstractContentProvider) {
-			ContentProviderPathDefinition: getPathTailAsString(abstractContentProvider.tail)
-			LocationProvider: abstractContentProvider.locationField.toString
+	def static resolveContentProviderPathAttribute(AbstractContentProviderPath abstractPath) {
+		switch (abstractPath) {
+			ContentProviderPathDefinition: getPathTailAsString(abstractPath.tail)
+			LocationProvider: abstractPath.locationField.toString
 		}
 	}
 	

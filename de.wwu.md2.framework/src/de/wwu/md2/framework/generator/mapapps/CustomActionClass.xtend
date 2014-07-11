@@ -1,7 +1,7 @@
 package de.wwu.md2.framework.generator.mapapps
 
 import de.wwu.md2.framework.generator.util.DataContainer
-import de.wwu.md2.framework.mD2.AbstractContentProvider
+import de.wwu.md2.framework.mD2.AbstractContentProviderPath
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import de.wwu.md2.framework.mD2.ActionDef
 import de.wwu.md2.framework.mD2.ActionReference
@@ -74,6 +74,13 @@ import de.wwu.md2.framework.mD2.ViewGUIElement
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
+import de.wwu.md2.framework.mD2.ViewElementState
+import de.wwu.md2.framework.mD2.MathSubExpression
+import de.wwu.md2.framework.mD2.Plus
+import de.wwu.md2.framework.mD2.Minus
+import de.wwu.md2.framework.mD2.Mult
+import de.wwu.md2.framework.mD2.Div
+import de.wwu.md2.framework.mD2.MathLiteral
 
 class CustomActionClass {
 	
@@ -292,8 +299,8 @@ class CustomActionClass {
 		var «varName» = this.$.contentProviderRegistry.getContentProvider("«contentProvider.name»");
 	'''
 	
-	def private static dispatch generateContentProviderCodeFragment(AbstractContentProvider contentProvider, String varName) '''
-		var «varName» = this.$.contentProviderRegistry.getContentProvider("«contentProvider.resolveContentProviderName»");
+	def private static dispatch generateContentProviderCodeFragment(AbstractContentProviderPath contentProviderPath, String varName) '''
+		var «varName» = this.$.contentProviderRegistry.getContentProvider("«contentProviderPath.resolveContentProviderName»");
 	'''
 	
 	
@@ -398,27 +405,33 @@ class CustomActionClass {
 			BooleanExpression: '''«expression.value.toString»'''
 			CompareExpression: {
 				val operator = switch expression.op {
-					case Operator::EQUALS: "==="
-					case Operator::GREATER: ">"
-					case Operator::SMALLER: "<"
-					case Operator::GREATER_OR_EQUAL: ">="
-					case Operator::SMALLER_OR_EQUAL: "<="
+					case Operator::EQUALS: "equals"
+					case Operator::GREATER: "gt"
+					case Operator::SMALLER: "lt"
+					case Operator::GREATER_OR_EQUAL: "gte"
+					case Operator::SMALLER_OR_EQUAL: "lte"
 				}
-				'''«generateSimpleExpression(expression.eqLeft)» «operator» «generateSimpleExpression(expression.eqRight)»'''
+				'''«generateSimpleExpression(expression.eqLeft)».«operator»(«generateSimpleExpression(expression.eqRight)»)'''
 			}
-			GuiElementStateExpression: '''<StateExpr>'''
+			GuiElementStateExpression: '''«generateGUIElementStateExpression(expression)»'''
 		}
 	}
 	
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	// Simple Expressions
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	def private static dispatch generateSimpleExpression(ConcatenatedString expression) {
-		'''«FOR literal : expression.literals»«generateStringLiteral(literal)»«ENDFOR»'''
+		'''(«FOR literal : expression.literals SEPARATOR(" + ")»«generateStringLiteral(literal)»«ENDFOR»)'''
 	}
 	
-	def private static dispatch generateSimpleExpression(MathExpression expression) {
-		'''<SimpleExpr>'''
+	def private static dispatch generateSimpleExpression(MathSubExpression expression) {
+		'''(«generateMathExpression(expression).trimParentheses»)'''
 	}
 	
 	def private static dispatch generateSimpleExpression(Value expression) {
+		// TODO change to MD2 datatypes
 		switch (expression) {
 			StringVal: '''"«expression.value»"'''
 			IntVal: '''«expression.value»'''
@@ -431,11 +444,28 @@ class CustomActionClass {
 	}
 	
 	def private static dispatch generateSimpleExpression(AbstractViewGUIElementRef expression) {
-		'''<SimpleExpr>'''
+		'''this.$.widgetRegistry.getWidget("«getName(resolveViewGUIElement(expression))»").getValue()'''
 	}
 	
-	def private static dispatch generateSimpleExpression(AbstractContentProvider expression) {
-		'''<SimpleExpr>'''
+	def private static dispatch generateSimpleExpression(AbstractContentProviderPath expression) {
+		'''this.$.contentProviderRegistry.getContentProvider("«expression.resolveContentProviderName»").getValue("«expression.resolveContentProviderPathAttribute»")'''
+	}
+	
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	// GUI Element State Expressions
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	def private static generateGUIElementStateExpression(GuiElementStateExpression expression) {
+		val widget = '''this.$.widgetRegistry.getWidget("«getName(resolveViewGUIElement(expression.reference))»")'''
+		switch (expression.isState) {
+			case ViewElementState::VALID: '''«widget».isValid()'''
+			case ViewElementState::EMPTY: '''(!«widget».getValue() || !«widget».getValue().isSet())'''
+			case ViewElementState::SET: '''(«widget».getValue() && «widget».getValue().isSet())'''
+			case ViewElementState::DEFAULT_VALUE: '''(«widget».getDefaultValue() && «widget».getDefaultValue().equals(«widget».getValue()))'''
+			case ViewElementState::DISABLED: '''«widget».isDisabled()'''
+			case ViewElementState::ENABLED: '''!«widget».isDisabled()'''
+		}
 	}
 	
 	
@@ -444,18 +474,43 @@ class CustomActionClass {
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	def private static dispatch generateStringLiteral(Value literal) {
-		'''<Literal>'''
+		'''«generateSimpleExpression(literal)».toString()'''
 	}
 	
 	def private static dispatch generateStringLiteral(AbstractViewGUIElementRef literal) {
-		'''<Literal>'''
+		'''«generateSimpleExpression(literal)».toString()'''
 	}
 	
-	def private static dispatch generateStringLiteral(AbstractContentProvider literal) {
-		'''<Literal>'''
+	def private static dispatch generateStringLiteral(AbstractContentProviderPath literal) {
+		'''«generateSimpleExpression(literal)».toString()'''
 	}
 	
-	def private static dispatch generateStringLiteral(MathExpression literal) {
-		'''<Literal>'''
+	def private static dispatch generateStringLiteral(MathSubExpression literal) {
+		'''(«generateMathExpression(literal)»).toString()'''
 	}
+	
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	// Math Expressions
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	def private static String generateMathExpression(MathSubExpression expression) {
+		switch (expression) {
+			Plus: '''(«expression.leftOperand» + «expression.rightOperand»)'''
+			Minus: '''(«expression.leftOperand» - «expression.rightOperand»)'''
+			Mult: '''«expression.leftOperand» * «expression.rightOperand»'''
+			Div: '''«expression.leftOperand» / «expression.rightOperand»'''
+			MathLiteral: '''«generateMathLiteral(expression)»'''
+		}
+	}
+	
+	def private static String generateMathLiteral(MathLiteral literal) {
+		switch (literal) {
+			IntVal: '''«literal.value»'''
+			FloatVal: '''«literal.value»'''
+			AbstractViewGUIElementRef: '''this.$.widgetRegistry.getWidget("«getName(resolveViewGUIElement(literal))»").getValue().getPlatformValue()'''
+			AbstractContentProviderPath: '''this.$.contentProviderRegistry.getContentProvider("«literal.resolveContentProviderName»").getValue("«literal.resolveContentProviderPathAttribute»").getPlatformValue()'''
+		}
+	}
+	
 }
