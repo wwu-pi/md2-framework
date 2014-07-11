@@ -25,6 +25,8 @@ import de.wwu.md2.framework.mD2.ContentProviderResetAction
 
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
+import static extension de.wwu.md2.framework.util.StringExtensions.*
+import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ViewElementEventRef
 import de.wwu.md2.framework.mD2.ContentProviderEventRef
@@ -43,7 +45,27 @@ import de.wwu.md2.framework.mD2.StandardStringRangeValidator
 import de.wwu.md2.framework.mD2.StandardNumberRangeValidator
 import de.wwu.md2.framework.mD2.StandardNotNullValidator
 import de.wwu.md2.framework.mD2.ValidatorMaxParam
-import de.wwu.md2.framework.mD2.ValidatorMinParam
+import de.wwu.md2.framework.mD2.ValidatorMinParamimport de.wwu.md2.framework.mD2.ValidatorMinLengthParam
+import de.wwu.md2.framework.mD2.ValidatorMaxLengthParam
+import de.wwu.md2.framework.mD2.ValidatorMinDateParam
+import de.wwu.md2.framework.mD2.ValidatorMaxDateParam
+import de.wwu.md2.framework.mD2.ValidatorMinTimeParam
+import de.wwu.md2.framework.mD2.ValidatorMaxTimeParam
+import de.wwu.md2.framework.mD2.ValidatorMinDateTimeParam
+import de.wwu.md2.framework.mD2.ValidatorMaxDateTimeParam
+import de.wwu.md2.framework.mD2.RemoteValidator
+import de.wwu.md2.framework.mD2.StandardValidatorType
+import de.wwu.md2.framework.mD2.ValidatorType
+import de.wwu.md2.framework.mD2.CustomizedValidatorType
+import de.wwu.md2.framework.mD2.ConditionalExpression
+import de.wwu.md2.framework.mD2.Or
+import de.wwu.md2.framework.mD2.And
+import de.wwu.md2.framework.mD2.Not
+import de.wwu.md2.framework.mD2.CompareExpression
+import de.wwu.md2.framework.mD2.Operator
+import de.wwu.md2.framework.mD2.BooleanExpression
+import de.wwu.md2.framework.mD2.GuiElementStateExpression
+import de.wwu.md2.framework.mD2.SimpleExpression
 
 class CustomActionClass {
 	
@@ -93,11 +115,27 @@ class CustomActionClass {
 	'''
 	
 	def private static dispatch generateCodeFragment(ValidatorBindingTask task) '''
-		
+		«FOR validator : task.validators»
+			«FOR field : task.referencedFields»
+				«val validatorVar = getUnifiedName("validator")»
+				«generateValidatorCodeFragment(validator, validatorVar)»
+				«val widgetVar = getUnifiedName("widget")»
+				«generateWidgetCodeFragment(resolveViewGUIElement(field), widgetVar)»
+				«widgetVar».addValidator(«validatorVar»);
+			«ENDFOR»
+		«ENDFOR»
 	'''
 	
 	def private static dispatch generateCodeFragment(ValidatorUnbindTask task) '''
-		
+		«FOR validator : task.validators»
+			«FOR field : task.referencedFields»
+				«val validatorVar = getUnifiedName("validator")»
+				«generateValidatorCodeFragment(validator, validatorVar)»
+				«val widgetVar = getUnifiedName("widget")»
+				«generateWidgetCodeFragment(resolveViewGUIElement(field), widgetVar)»
+				«widgetVar».removeValidator(«validatorVar»);
+			«ENDFOR»
+		«ENDFOR»
 	'''
 	
 	def private static dispatch generateCodeFragment(CallTask task) '''
@@ -123,7 +161,28 @@ class CustomActionClass {
 	'''
 	
 	def private static dispatch generateCodeFragment(ConditionalCodeFragment task) '''
-		
+		if («generateCondition(task.^if.condition).trimParentheses») {
+			«FOR codeFragment : task.^if.codeFragments»
+				«generateCodeFragment(codeFragment)»
+				
+			«ENDFOR»
+		}
+		«FOR elseif : task.elseifs»
+			else if («generateCondition(elseif.condition).trimParentheses») {
+				«FOR codeFragment : elseif.codeFragments»
+					«generateCodeFragment(codeFragment)»
+					
+				«ENDFOR»
+			}
+		«ENDFOR»
+		«IF task.^else != null»
+			else {
+				«FOR codeFragment : task.^else.codeFragments»
+					«generateCodeFragment(codeFragment)»
+					
+				«ENDFOR»
+			}
+		«ENDIF»
 	'''
 	
 	def private static dispatch generateCodeFragment(ViewElementSetTask task) '''
@@ -239,59 +298,108 @@ class CustomActionClass {
 	// Validator
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
+	def private static dispatch generateValidatorCodeFragment(ValidatorType validator, String varName) {
+		switch (validator) {
+			StandardValidatorType: {
+				generateValidatorCodeFragment(validator.validator, varName)
+			}
+			CustomizedValidatorType: {
+				generateValidatorCodeFragment(validator.validator, varName)
+			}
+		}
+	}
+	
 	def private static dispatch generateValidatorCodeFragment(StandardRegExValidator validator, String varName) {
-		val regEx = validator.resolveValidatorParam(typeof(ValidatorRegExParam)).regEx
-		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam)).message
+		val regEx = validator.resolveValidatorParam(typeof(ValidatorRegExParam))?.regEx ?: ".*"
+		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message
 		'''
-			var «varName» = this.$.validatorFactory.getRegExValidator("«regEx», «message»");
+			var «varName» = this.$.validatorFactory.getRegExValidator("«regEx»"«IF message != null», "«message»"«ENDIF»);
 		'''
 	}
 	
 	def private static dispatch generateValidatorCodeFragment(StandardNotNullValidator validator, String varName) {
-		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam)).message
+		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message
 		'''
-			var «varName» = this.$.validatorFactory.getNotNullValidator("«message»");
+			var «varName» = this.$.validatorFactory.getNotNullValidator(«IF message != null»"«message»"«ENDIF»);
 		'''
 	}
 	
 	def private static dispatch generateValidatorCodeFragment(StandardNumberRangeValidator validator, String varName) {
-		val min = validator.resolveValidatorParam(typeof(ValidatorMinParam)) ?: "null"
-		val max = validator.resolveValidatorParam(typeof(ValidatorMaxParam)).max
-		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam)).message
+		val min = validator.resolveValidatorParam(typeof(ValidatorMinParam))?.min.toString ?: "null"
+		val max = validator.resolveValidatorParam(typeof(ValidatorMaxParam))?.max.toString ?: "null"
+		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message.quotify
 		'''
-			var «varName» = this.$.validatorFactory.getNumberRangeValidator("«min», «max», «message»");
+			var «varName» = this.$.validatorFactory.getNumberRangeValidator(«min», «max»«IF message != null», "«message»"«ENDIF»);
 		'''
 	}
 	
 	def private static dispatch generateValidatorCodeFragment(StandardStringRangeValidator validator, String varName) {
-		val regEx = validator.resolveValidatorParam(typeof(ValidatorRegExParam)).regEx
-		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam)).message
+		val min = validator.resolveValidatorParam(typeof(ValidatorMinLengthParam))?.minLength.toString ?: "null"
+		val max = validator.resolveValidatorParam(typeof(ValidatorMaxLengthParam))?.maxLength.toString ?: "null"
+		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message.quotify
 		'''
-			var «varName» = this.$.validatorFactory.getRegExValidator("«regEx», «message»");
+			var «varName» = this.$.validatorFactory.getStringRangeValidator(«min», «max»«IF message != null», "«message»"«ENDIF»);
 		'''
 	}
 	
 	def private static dispatch generateValidatorCodeFragment(StandardDateRangeValidator validator, String varName) {
-		val regEx = validator.resolveValidatorParam(typeof(ValidatorRegExParam)).regEx
-		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam)).message
+		val min = validator.resolveValidatorParam(typeof(ValidatorMinDateParam))?.min.toISODate.quotify ?: "null"
+		val max = validator.resolveValidatorParam(typeof(ValidatorMaxDateParam))?.max.toISODate.quotify ?: "null"
+		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message.quotify
 		'''
-			var «varName» = this.$.validatorFactory.getRegExValidator("«regEx», «message»");
+			var «varName» = this.$.validatorFactory.getDateRangeValidator(«min», «max»«IF message != null», "«message»"«ENDIF»);
 		'''
 	}
 	
 	def private static dispatch generateValidatorCodeFragment(StandardTimeRangeValidator validator, String varName) {
-		val regEx = validator.resolveValidatorParam(typeof(ValidatorRegExParam)).regEx
-		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam)).message
+		val min = validator.resolveValidatorParam(typeof(ValidatorMinTimeParam))?.min.toISOTime.quotify ?: "null"
+		val max = validator.resolveValidatorParam(typeof(ValidatorMaxTimeParam))?.max.toISODate.quotify ?: "null"
+		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message.quotify
 		'''
-			var «varName» = this.$.validatorFactory.getRegExValidator("«regEx», «message»");
+			var «varName» = this.$.validatorFactory.getTimeRangeValidator(«min», «max»«IF message != null», "«message»"«ENDIF»);
 		'''
 	}
 	
 	def private static dispatch generateValidatorCodeFragment(StandardDateTimeRangeValidator validator, String varName) {
-		val regEx = validator.resolveValidatorParam(typeof(ValidatorRegExParam)).regEx
-		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam)).message
+		val min = validator.resolveValidatorParam(typeof(ValidatorMinDateTimeParam))?.min.toISODateTime.quotify ?: "null"
+		val max = validator.resolveValidatorParam(typeof(ValidatorMaxDateTimeParam))?.max.toISODateTime.quotify ?: "null"
+		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message.quotify
 		'''
-			var «varName» = this.$.validatorFactory.getRegExValidator("«regEx», «message»");
+			var «varName» = this.$.validatorFactory.getDateTimeRangeValidator(«min», «max»«IF message != null», "«message»"«ENDIF»);
 		'''
 	}
+	
+	def private static dispatch generateValidatorCodeFragment(RemoteValidator validator, String varName) '''
+		// TODO
+	'''
+	
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	// Conditional Expressions
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	def private static String generateCondition(ConditionalExpression expression) {
+		switch (expression) {
+			Or: '''(«generateCondition(expression.leftExpression)» || «generateCondition(expression.rightExpression)»)'''
+			And: '''«generateCondition(expression.leftExpression)» && «generateCondition(expression.rightExpression)»'''
+			Not: '''!(«generateCondition(expression.expression).trimParentheses»)'''
+			BooleanExpression: '''«expression.value.toString»'''
+			CompareExpression: {
+				val operator = switch expression.op {
+					case Operator::EQUALS: "==="
+					case Operator::GREATER: ">"
+					case Operator::SMALLER: "<"
+					case Operator::GREATER_OR_EQUAL: ">="
+					case Operator::SMALLER_OR_EQUAL: "<="
+				}
+				'''«generateSimpleExpression(expression.eqLeft)» «operator» «generateSimpleExpression(expression.eqRight)»'''
+			}
+			GuiElementStateExpression: '''<StateExpr>'''
+		}
+	}
+	
+	def private static generateSimpleExpression(SimpleExpression expression) {
+		'''<SimpleExpr>'''
+	}
+	
 }
