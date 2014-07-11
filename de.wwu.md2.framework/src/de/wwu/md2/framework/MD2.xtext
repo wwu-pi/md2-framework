@@ -781,7 +781,7 @@ ElseCodeBlock:
  * Helper Rule. Each element that can contain codeFragments should inherit from ConatinsCodeFragments. So, the code of the generators and
  * the preprocessing does not have to be adapted each time a new element that has a codeFragments attribute is added.
  */
-ConatinsCodeFragments:
+ContainsCodeFragments:
 	CustomAction | IfCodeBlock | ElseCodeBlock
 ;
 
@@ -1242,11 +1242,28 @@ OnConditionEvent:
 // Controller layer => Condition
 /////////////////////////////////////////////
 
+
 /*
  * A Condition allows to compose ConditionalExpressions with the operators 'not', 'and' and 'or'.
  */
-Condition:
-	(ops+='not')? subConditions += ConditionalExpression (ops += ('and' | 'or') (ops+='not')? subConditions += ConditionalExpression)*
+Condition returns ConditionalExpression:
+	Or
+;
+
+/**
+ * Representation of an arbitrary number of conditional expressions connected by OR.
+ * Explicitly model precedence of AND over OR.
+ */
+Or returns ConditionalExpression:
+	And ({Or.leftExpression=current} OP_CONDITION_OR rightExpression=And)*
+;
+
+/**
+ * Representation of an arbitrary number of conditional expressions connected by AND.
+ * Explicitly model precedence of AND over OR.
+ */
+And returns ConditionalExpression:
+	ConditionalExpression ({And.leftExpression=current} OP_CONDITION_AND rightExpression=ConditionalExpression)*
 ;
 
 /*
@@ -1255,20 +1272,18 @@ Condition:
  * or a GuiElementStateExpression that proofs the state of a ViewGUIElement.
  */
 ConditionalExpression:
-	('(' Condition ')') |
+	('(' Or ')') |
+	{Not} OP_CONDITION_NOT expression = ConditionalExpression |
 	{BooleanExpression} value = Boolean |
 	ComplexConditionalExpression
 ;
 
-ComplexConditionalExpression returns ConditionalExpression:
-		/* 
-		 * SimpleExpression is hereby unwantedly a subclass of ConditionalExpression, because Xtext does not remove
-		 * the type of the rule call preceding an assigned action (SimpleExpression) from the list of possible return types,
-		 * which then become subtypes of this rule's overall return type (ConditionalExpression). 
-		 */
+ComplexConditionalExpression:
 	SimpleExpression
-	(=>({EqualsExpression.eqLeft=current} op = Operator) eqRight = SimpleExpression | 
-	=>({GuiElementStateExpression.reference=current} 'is') isState = ViewElementState)
+	(
+		=>({CompareExpression.eqLeft=current} op = Operator) eqRight = SimpleExpression | 
+		=>({GuiElementStateExpression.reference=current} 'is') isState = ViewElementState
+	)
 ;
 
 /*
@@ -1298,6 +1313,9 @@ SimpleExpression:
 	// the order of the rules matter, as they are tried by the parser from left to right,
 	// i.e. an atomic value or reference is considered as long as no mathematical or string concatenation
 	// operator appears.
+	// AbstractViewGUIElementRef and AbstractContentProvider are already implicitly matched in MathExpression.
+	// However, even though they are never matched, they are listed here to make the grammar better understandable and
+	// to see at a glance which grammar elements are supported in SimpleExpressions.
 	ConcatenatedString | MathExpression | Value | AbstractViewGUIElementRef | AbstractContentProvider
 ;
 

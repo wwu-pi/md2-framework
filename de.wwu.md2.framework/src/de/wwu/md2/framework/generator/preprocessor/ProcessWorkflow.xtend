@@ -150,12 +150,10 @@ class ProcessWorkflow {
 				val outerIfCodeBlock = factory.createIfCodeBlock
 				
 				{
-					val condition = factory.createCondition
 					val stepStr = step.stringRepresentationOfStep
-					val conditionalExpression = factory.createEqualsExpression(entity, contentProvider, "currentWorkflowStep", stepStr)
+					val conditionalExpression = factory.createCompareExpression(entity, contentProvider, "currentWorkflowStep", stepStr)
 					
-					condition.subConditions.add(conditionalExpression)
-					outerIfCodeBlock.setCondition(condition)
+					outerIfCodeBlock.setCondition(conditionalExpression)
 					
 					// add outer ifCodeBlock => first element if(...); all other elements elseif(...)
 					if (wfIndex + stepIndex == 0) {
@@ -185,30 +183,27 @@ class ProcessWorkflow {
 					//////////////////////////////////////////////////////////
 					
 					val innerIfCodeBlock = factory.createIfCodeBlock
-					val condition = factory.createCondition
 					
 					// configure the conditional expression to match all events
 					// (lastEventFired equals "evt1" or lastEventFired equals "evt2" or ... or lastEventFired equals "evtN")
-					val events = goto.spec.events
-					val eventSubCondition = factory.createCondition
-					events.forEach[ event, eventIndex |
-						val eventStr = event.stringRepresentationOfEvent
-						val conditionalExpression = factory.createEqualsExpression(entity, contentProvider, "lastEventFired", eventStr)
-						eventSubCondition.subConditions.add(conditionalExpression)
-						if (eventIndex > 0) {
-							eventSubCondition.ops.add("or")
-						}
+					val compareExpressions = goto.spec.events.map[ event |
+						factory.createCompareExpression(entity, contentProvider, "lastEventFired", event.stringRepresentationOfEvent)
 					]
-					condition.subConditions.add(eventSubCondition)
+					val eventsSubCondition = factory.createComplexOr(compareExpressions.iterator)
 					
-					// add 'given' condition of goto specification
-					if (goto.spec instanceof WorkflowGoToSpecExtended && (goto.spec as WorkflowGoToSpecExtended).condition != null) {
-						val given = (goto.spec as WorkflowGoToSpecExtended).condition
-						condition.ops.add("and")
-						condition.subConditions.add(given.copy)
+					// add 'given' condition of goto specification (with 'and')
+					val given = if (goto.spec instanceof WorkflowGoToSpecExtended && (goto.spec as WorkflowGoToSpecExtended).condition != null) {
+						(goto.spec as WorkflowGoToSpecExtended).condition
 					}
 					
-					innerIfCodeBlock.setCondition(condition)
+					if (given == null) {
+						innerIfCodeBlock.setCondition(eventsSubCondition)
+					} else {
+						val and = factory.createAnd
+						and.leftExpression = eventsSubCondition
+						and.rightExpression = given.copy
+						innerIfCodeBlock.setCondition(and)
+					}
 					
 					
 					//////////////////////////////////////////////////////////
@@ -390,19 +385,14 @@ class ProcessWorkflow {
 						g.spec.events.map(e | e.stringRepresentationOfEvent)
 					].flatten.toSet
 					
-					val ifCodeBlock = factory.createIfCodeBlock
-					val condition = factory.createCondition
-					ifCodeBlock.setCondition(condition)
-					
-					// configure the conditional expression to match all events
-					events.forEach[ eventStr, eventIndex |
-						val conditionalExpression = factory.createEqualsExpression(entity, contentProvider, "lastEventFired", eventStr)
-						condition.subConditions.add(conditionalExpression)
-						if (eventIndex > 0) {
-							condition.ops.add("or")
-						}
+					// build the conditional expression to match all events
+					val compareExpressions = events.map[ eventStr |
+						factory.createCompareExpression(entity, contentProvider, "lastEventFired", eventStr)
 					]
+					val condition = factory.createComplexOr(compareExpressions.iterator)
 					
+					val ifCodeBlock = factory.createIfCodeBlock
+					ifCodeBlock.setCondition(condition)
 					innerConditionalCodeFragment.elseifs.add(ifCodeBlock)
 				}
 			]
@@ -557,14 +547,11 @@ class ProcessWorkflow {
 		customAction.codeFragments.add(conditionalCodeFragment)
 		
 		workflowSteps.forEach[ step, index |
-			val ifCodeBlock = factory.createIfCodeBlock
-			
-			val condition = factory.createCondition
 			val stepStr = step.stringRepresentationOfStep
-			val conditionalExpression = factory.createEqualsExpression(entity, contentProvider, "currentWorkflowStep", stepStr)
+			val conditionalExpression = factory.createCompareExpression(entity, contentProvider, "currentWorkflowStep", stepStr)
 			
-			condition.subConditions.add(conditionalExpression)
-			ifCodeBlock.setCondition(condition)
+			val ifCodeBlock = factory.createIfCodeBlock
+			ifCodeBlock.setCondition(conditionalExpression)
 			
 			// create and add GotoViewAction for current step
 			{
@@ -660,7 +647,7 @@ class ProcessWorkflow {
 	/**
 	 * Helper to build a conditional expression of the form <code>contentProvider.attributeName equals "compareWith"</code>.
 	 */
-	def private static createEqualsExpression(
+	def private static createCompareExpression(
 		MD2ComplexElementFactory factory, Entity entity, ContentProvider contentProvider, String attributeName, String compareWith
 	) {
 		
@@ -676,7 +663,7 @@ class ProcessWorkflow {
 		stringVal.setValue(compareWith)
 		
 		// build expression
-		val conditionalExpression = factory.createEqualsExpression
+		val conditionalExpression = factory.createCompareExpression
 		conditionalExpression.setEqLeft(contentProviderPathDefinition)
 		conditionalExpression.setOp(operator)
 		conditionalExpression.setEqRight(stringVal)

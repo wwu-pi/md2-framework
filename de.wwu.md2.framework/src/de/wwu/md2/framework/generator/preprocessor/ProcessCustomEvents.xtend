@@ -202,33 +202,33 @@ class ProcessCustomEvents {
 			// create if conditions to check for each event->action mapping whether it is true (mapped).
 			// In case it is true (the action is currently mapped to the conditional event), the actual action is called.
 			map.forEach[ identifier, action |
+				
+				val mappingConditionalExpression = factory.createCompareExpression
+				
+				{				
+					// eqLeft composition
+					val contentProviderPathDefinition = factory.createContentProviderPathDefinition
+					val pathTail = factory.createPathTail
+					pathTail.setAttributeRef(mappingEntity.attributes.filter( a | a.name.equals(identifier)).last)
+					contentProviderPathDefinition.setContentProviderRef(contentProvider)
+					contentProviderPathDefinition.setTail(pathTail)
+					
+					// op composition
+					val operator = Operator::EQUALS
+					
+					// eqRight composition
+					val booleanVal = factory.createBooleanVal
+					booleanVal.setValue(Boolean::TRUE)
+					
+					mappingConditionalExpression.setEqLeft(contentProviderPathDefinition)
+					mappingConditionalExpression.setOp(operator)
+					mappingConditionalExpression.setEqRight(booleanVal)
+				}
+				
 				// create if condition
 				val mappingCodeFragment = factory.createConditionalCodeFragment
 				val mappingIfBlock = factory.createIfCodeBlock
-				
-				val mappingCondition = factory.createCondition
-				val mappingConditionalExpression = factory.createEqualsExpression
-				mappingCondition.subConditions.add(mappingConditionalExpression)
-				
-				// eqLeft composition
-				val contentProviderPathDefinition = factory.createContentProviderPathDefinition
-				val pathTail = factory.createPathTail
-				pathTail.setAttributeRef(mappingEntity.attributes.filter( a | a.name.equals(identifier)).last)
-				contentProviderPathDefinition.setContentProviderRef(contentProvider)
-				contentProviderPathDefinition.setTail(pathTail)
-				
-				// op composition
-				val operator = Operator::EQUALS
-				
-				// eqRight composition
-				val booleanVal = factory.createBooleanVal
-				booleanVal.setValue(Boolean::TRUE)
-				
-				mappingConditionalExpression.setEqLeft(contentProviderPathDefinition)
-				mappingConditionalExpression.setOp(operator)
-				mappingConditionalExpression.setEqRight(booleanVal)
-				
-				mappingIfBlock.setCondition(mappingCondition)
+				mappingIfBlock.setCondition(mappingConditionalExpression)
 				mappingCodeFragment.setIf(mappingIfBlock)
 				eventConditionIfBlock.codeFragments.add(mappingCodeFragment)
 				

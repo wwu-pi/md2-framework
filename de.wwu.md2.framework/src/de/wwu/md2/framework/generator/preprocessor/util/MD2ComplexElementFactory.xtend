@@ -2,12 +2,13 @@ package de.wwu.md2.framework.generator.preprocessor.util
 
 import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.AttributeType
+import de.wwu.md2.framework.mD2.ConditionalExpression
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.PathTail
 import de.wwu.md2.framework.mD2.impl.MD2FactoryImpl
+import java.util.Iterator
 import java.util.regex.Pattern
-import org.eclipse.xtext.xbase.lib.Pair
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
@@ -179,4 +180,39 @@ class MD2ComplexElementFactory extends MD2FactoryImpl {
 		
 		return pathDefinition
 	}
+	
+	/**
+	 * Builds a compound OR expression of the form <code>expr1 or expr2 or ... or exprN</code>. Recursive method.
+	 * 
+	 * @param iterator - An iterator of a ConditionalExpression collection from which the OR expression should be constructed.
+	 * @throws NoSuchElementException if the iterator has no elements.
+	 */
+	def ConditionalExpression createComplexOr(Iterator<? extends ConditionalExpression> iterator) {
+		val next = iterator.next
+		if (iterator.hasNext) {
+			val or = this.createOr
+			or.leftExpression = next
+			or.rightExpression = createComplexOr(iterator)
+			return or
+		}
+		return next
+	}
+	
+	/**
+	 * Builds a compound AND expression of the form <code>expr1 and expr2 and ... and exprN</code>. Recursive method.
+	 * 
+	 * @param iterator - An iterator of a ConditionalExpression collection from which the AND expression should be constructed.
+	 * @throws NoSuchElementException if the iterator has no elements.
+	 */
+	def ConditionalExpression createComplexAnd(Iterator<? extends ConditionalExpression> iterator) {
+		val next = iterator.next
+		if (iterator.hasNext) {
+			val and = this.createAnd
+			and.leftExpression = next
+			and.rightExpression = createComplexAnd(iterator)
+			return and
+		} 
+		return next
+	}
+	
 }

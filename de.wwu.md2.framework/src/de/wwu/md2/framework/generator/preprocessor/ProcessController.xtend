@@ -1,7 +1,7 @@
 package de.wwu.md2.framework.generator.preprocessor
 
 import de.wwu.md2.framework.mD2.CombinedAction
-import de.wwu.md2.framework.mD2.ConatinsCodeFragments
+import de.wwu.md2.framework.mD2.ContainsCodeFragments
 import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.CustomizedValidatorType
 import de.wwu.md2.framework.mD2.DateRangeValidator
@@ -181,7 +181,7 @@ class ProcessController {
 		for (bindingTask : bindingTasks) {
 			val actions = bindingTask.actions
 			val events = bindingTask.events
-			val codeFragmentContainer = bindingTask.eContainer as ConatinsCodeFragments
+			val codeFragmentContainer = bindingTask.eContainer as ContainsCodeFragments
 			val indexOfBindingTask = codeFragmentContainer.codeFragments.indexOf(bindingTask)
 			
 			for (action : actions) {
@@ -207,7 +207,7 @@ class ProcessController {
 		for (unbindingTask : unbindingTasks) {
 			val actions = unbindingTask.actions
 			val events = unbindingTask.events
-			val codeFragmentContainer = unbindingTask.eContainer as ConatinsCodeFragments
+			val codeFragmentContainer = unbindingTask.eContainer as ContainsCodeFragments
 			val indexOfUnbindingTask = codeFragmentContainer.codeFragments.indexOf(unbindingTask)
 			
 			for (action : actions) {

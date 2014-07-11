@@ -58,9 +58,9 @@ import de.wwu.md2.framework.mD2.WhereClauseCompareExpression
 import de.wwu.md2.framework.mD2.WhereClauseCondition
 import de.wwu.md2.framework.mD2.WhereClauseNot
 import de.wwu.md2.framework.mD2.WhereClauseOr
-import java.text.SimpleDateFormat
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
+import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 
 class ManifestJson {
 	
@@ -186,18 +186,14 @@ class ManifestJson {
 	}
 	
 	def private static resolveSimpleExpression(SimpleExpression expression) {
-		val dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-		val timeFormatter = new SimpleDateFormat("HH:mm:ssXXX");
-		val dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
-		
 		switch (expression) {
 			StringVal: '''"«expression.value»"'''
 			IntVal: '''«expression.value»'''
 			FloatVal: '''«expression.value»'''
 			BooleanVal: '''«expression.value.toString»'''
-			DateVal: '''"«dateFormatter.format(expression.value)»"'''
-			TimeVal: '''"«timeFormatter.format(expression.value)»"'''
-			DateTimeVal: '''"«dateTimeFormatter.format(expression.value)»"'''
+			DateVal: '''"«expression.value.toISODate»"'''
+			TimeVal: '''"«expression.value.toISOTime»"'''
+			DateTimeVal: '''"«expression.value.toISODateTime»"'''
 			AbstractViewGUIElementRef: '''"@«getName(expression.ref)»"'''
 			ConcatenatedString: '''//TODO'''
 			ContentProviderPathDefinition: '''//TODO'''

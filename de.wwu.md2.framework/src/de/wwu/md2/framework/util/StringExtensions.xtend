@@ -15,4 +15,14 @@ class StringExtensions {
 		return str;
 	}
 	
+	/**
+	 * Surround a given string with quotes.
+	 */
+	def static quotify(String str) {
+		if (str == null) {
+			return str;
+		}
+		return '''"«str»"'''
+	}
+	
 }
