@@ -1,80 +1,92 @@
 package de.wwu.md2.framework.generator.mapapps
 
 import de.wwu.md2.framework.generator.util.DataContainer
-import de.wwu.md2.framework.mD2.CustomAction
-import de.wwu.md2.framework.mD2.EventBindingTask
-import de.wwu.md2.framework.mD2.EventUnbindTask
-import de.wwu.md2.framework.mD2.ValidatorBindingTask
-import de.wwu.md2.framework.mD2.ValidatorUnbindTask
-import de.wwu.md2.framework.mD2.CallTask
-import de.wwu.md2.framework.mD2.MappingTask
-import de.wwu.md2.framework.mD2.UnmappingTask
-import de.wwu.md2.framework.mD2.ConditionalCodeFragment
-import de.wwu.md2.framework.mD2.ViewElementSetTask
-import de.wwu.md2.framework.mD2.AttributeSetTask
-import de.wwu.md2.framework.mD2.ContentProviderSetTask
+import de.wwu.md2.framework.mD2.AbstractContentProvider
+import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import de.wwu.md2.framework.mD2.ActionDef
 import de.wwu.md2.framework.mD2.ActionReference
-import de.wwu.md2.framework.mD2.SimpleActionRef
-import de.wwu.md2.framework.mD2.GotoViewAction
-import de.wwu.md2.framework.mD2.DisableAction
-import de.wwu.md2.framework.mD2.EnableAction
-import de.wwu.md2.framework.mD2.DisplayMessageAction
+import de.wwu.md2.framework.mD2.And
+import de.wwu.md2.framework.mD2.AttributeSetTask
+import de.wwu.md2.framework.mD2.BooleanExpression
+import de.wwu.md2.framework.mD2.BooleanVal
+import de.wwu.md2.framework.mD2.CallTask
+import de.wwu.md2.framework.mD2.CompareExpression
+import de.wwu.md2.framework.mD2.ConcatenatedString
+import de.wwu.md2.framework.mD2.ConditionalCodeFragment
+import de.wwu.md2.framework.mD2.ConditionalExpression
+import de.wwu.md2.framework.mD2.ContentProvider
+import de.wwu.md2.framework.mD2.ContentProviderEventRef
 import de.wwu.md2.framework.mD2.ContentProviderOperationAction
 import de.wwu.md2.framework.mD2.ContentProviderResetAction
-
-import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
-import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
-import static extension de.wwu.md2.framework.util.StringExtensions.*
-import static extension de.wwu.md2.framework.util.DateISOFormatter.*
-import de.wwu.md2.framework.mD2.ContentProvider
-import de.wwu.md2.framework.mD2.ViewElementEventRef
-import de.wwu.md2.framework.mD2.ContentProviderEventRef
-import de.wwu.md2.framework.mD2.GlobalEventRef
-import de.wwu.md2.framework.mD2.ViewGUIElement
-import de.wwu.md2.framework.mD2.AbstractContentProvider
-import de.wwu.md2.framework.mD2.RegExValidator
-import de.wwu.md2.framework.mD2.RegExValidatorParam
-import de.wwu.md2.framework.mD2.ValidatorRegExParam
-import de.wwu.md2.framework.mD2.StandardRegExValidator
-import de.wwu.md2.framework.mD2.ValidatorMessageParam
-import de.wwu.md2.framework.mD2.StandardDateTimeRangeValidator
-import de.wwu.md2.framework.mD2.StandardTimeRangeValidator
-import de.wwu.md2.framework.mD2.StandardDateRangeValidator
-import de.wwu.md2.framework.mD2.StandardStringRangeValidator
-import de.wwu.md2.framework.mD2.StandardNumberRangeValidator
-import de.wwu.md2.framework.mD2.StandardNotNullValidator
-import de.wwu.md2.framework.mD2.ValidatorMaxParam
-import de.wwu.md2.framework.mD2.ValidatorMinParamimport de.wwu.md2.framework.mD2.ValidatorMinLengthParam
-import de.wwu.md2.framework.mD2.ValidatorMaxLengthParam
-import de.wwu.md2.framework.mD2.ValidatorMinDateParam
-import de.wwu.md2.framework.mD2.ValidatorMaxDateParam
-import de.wwu.md2.framework.mD2.ValidatorMinTimeParam
-import de.wwu.md2.framework.mD2.ValidatorMaxTimeParam
-import de.wwu.md2.framework.mD2.ValidatorMinDateTimeParam
-import de.wwu.md2.framework.mD2.ValidatorMaxDateTimeParam
-import de.wwu.md2.framework.mD2.RemoteValidator
-import de.wwu.md2.framework.mD2.StandardValidatorType
-import de.wwu.md2.framework.mD2.ValidatorType
+import de.wwu.md2.framework.mD2.ContentProviderSetTask
+import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.CustomizedValidatorType
-import de.wwu.md2.framework.mD2.ConditionalExpression
-import de.wwu.md2.framework.mD2.Or
-import de.wwu.md2.framework.mD2.And
-import de.wwu.md2.framework.mD2.Not
-import de.wwu.md2.framework.mD2.CompareExpression
-import de.wwu.md2.framework.mD2.Operator
-import de.wwu.md2.framework.mD2.BooleanExpression
+import de.wwu.md2.framework.mD2.DateTimeVal
+import de.wwu.md2.framework.mD2.DateVal
+import de.wwu.md2.framework.mD2.DisableAction
+import de.wwu.md2.framework.mD2.DisplayMessageAction
+import de.wwu.md2.framework.mD2.EnableAction
+import de.wwu.md2.framework.mD2.EventBindingTask
+import de.wwu.md2.framework.mD2.EventUnbindTask
+import de.wwu.md2.framework.mD2.FloatVal
+import de.wwu.md2.framework.mD2.GlobalEventRef
+import de.wwu.md2.framework.mD2.GotoViewAction
 import de.wwu.md2.framework.mD2.GuiElementStateExpression
-import de.wwu.md2.framework.mD2.SimpleExpression
+import de.wwu.md2.framework.mD2.IntVal
+import de.wwu.md2.framework.mD2.MappingTask
+import de.wwu.md2.framework.mD2.MathExpression
+import de.wwu.md2.framework.mD2.Not
+import de.wwu.md2.framework.mD2.Operator
+import de.wwu.md2.framework.mD2.Or
+import de.wwu.md2.framework.mD2.RemoteValidator
+import de.wwu.md2.framework.mD2.SimpleActionRef
+import de.wwu.md2.framework.mD2.StandardDateRangeValidator
+import de.wwu.md2.framework.mD2.StandardDateTimeRangeValidator
+import de.wwu.md2.framework.mD2.StandardNotNullValidator
+import de.wwu.md2.framework.mD2.StandardNumberRangeValidator
+import de.wwu.md2.framework.mD2.StandardRegExValidator
+import de.wwu.md2.framework.mD2.StandardStringRangeValidator
+import de.wwu.md2.framework.mD2.StandardTimeRangeValidator
+import de.wwu.md2.framework.mD2.StandardValidatorType
+import de.wwu.md2.framework.mD2.StringVal
+import de.wwu.md2.framework.mD2.TimeVal
+import de.wwu.md2.framework.mD2.UnmappingTask
+import de.wwu.md2.framework.mD2.ValidatorBindingTask
+import de.wwu.md2.framework.mD2.ValidatorMaxDateParam
+import de.wwu.md2.framework.mD2.ValidatorMaxDateTimeParam
+import de.wwu.md2.framework.mD2.ValidatorMaxLengthParam
+import de.wwu.md2.framework.mD2.ValidatorMaxParam
+import de.wwu.md2.framework.mD2.ValidatorMaxTimeParam
+import de.wwu.md2.framework.mD2.ValidatorMessageParam
+import de.wwu.md2.framework.mD2.ValidatorMinDateParam
+import de.wwu.md2.framework.mD2.ValidatorMinDateTimeParam
+import de.wwu.md2.framework.mD2.ValidatorMinLengthParam
+import de.wwu.md2.framework.mD2.ValidatorMinParam
+import de.wwu.md2.framework.mD2.ValidatorMinTimeParam
+import de.wwu.md2.framework.mD2.ValidatorRegExParam
+import de.wwu.md2.framework.mD2.ValidatorType
+import de.wwu.md2.framework.mD2.ValidatorUnbindTask
+import de.wwu.md2.framework.mD2.Value
+import de.wwu.md2.framework.mD2.ViewElementEventRef
+import de.wwu.md2.framework.mD2.ViewElementSetTask
+import de.wwu.md2.framework.mD2.ViewGUIElement
+
+import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
+import static extension de.wwu.md2.framework.util.DateISOFormatter.*
+import static extension de.wwu.md2.framework.util.StringExtensions.*
 
 class CustomActionClass {
 	
 	def static generateCustomAction(CustomAction customAction, DataContainer dataContainer) '''
+		«val hasDateValue = !customAction.eAllContents.filter[ e |
+			e instanceof DateVal || e instanceof TimeVal || e instanceof DateTimeVal
+		].empty»
 		define([
 			"dojo/_base/declare",
+			«IF hasDateValue»"dojo/date/stamp",«ENDIF»
 			"../../md2_runtime/actions/_Action"
 		],
-		function(declare, _Action) {
+		function(declare, «IF hasDateValue»stamp, «ENDIF»_Action) {
 			
 			return declare([_Action], {
 				
@@ -398,8 +410,52 @@ class CustomActionClass {
 		}
 	}
 	
-	def private static generateSimpleExpression(SimpleExpression expression) {
+	def private static dispatch generateSimpleExpression(ConcatenatedString expression) {
+		'''«FOR literal : expression.literals»«generateStringLiteral(literal)»«ENDFOR»'''
+	}
+	
+	def private static dispatch generateSimpleExpression(MathExpression expression) {
 		'''<SimpleExpr>'''
 	}
 	
+	def private static dispatch generateSimpleExpression(Value expression) {
+		switch (expression) {
+			StringVal: '''"«expression.value»"'''
+			IntVal: '''«expression.value»'''
+			FloatVal: '''«expression.value»'''
+			BooleanVal: '''«expression.value.toString»'''
+			DateVal: '''stamp.fromISOString("«expression.value.toISODate»")'''
+			TimeVal: '''stamp.fromISOString("«expression.value.toISOTime»")'''
+			DateTimeVal: '''stamp.fromISOString("«expression.value.toISODateTime»")'''
+		}
+	}
+	
+	def private static dispatch generateSimpleExpression(AbstractViewGUIElementRef expression) {
+		'''<SimpleExpr>'''
+	}
+	
+	def private static dispatch generateSimpleExpression(AbstractContentProvider expression) {
+		'''<SimpleExpr>'''
+	}
+	
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	// Concatenated Strings
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	def private static dispatch generateStringLiteral(Value literal) {
+		'''<Literal>'''
+	}
+	
+	def private static dispatch generateStringLiteral(AbstractViewGUIElementRef literal) {
+		'''<Literal>'''
+	}
+	
+	def private static dispatch generateStringLiteral(AbstractContentProvider literal) {
+		'''<Literal>'''
+	}
+	
+	def private static dispatch generateStringLiteral(MathExpression literal) {
+		'''<Literal>'''
+	}
 }
