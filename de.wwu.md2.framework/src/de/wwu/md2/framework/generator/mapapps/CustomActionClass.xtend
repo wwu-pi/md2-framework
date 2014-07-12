@@ -344,11 +344,15 @@ class CustomActionClass {
 	}
 	
 	def private static dispatch generateValidatorCodeFragment(StandardNumberRangeValidator validator, String varName) {
-		val min = validator.resolveValidatorParam(typeof(ValidatorMinParam))?.min.toString ?: "null"
-		val max = validator.resolveValidatorParam(typeof(ValidatorMaxParam))?.max.toString ?: "null"
+		val minVarName = getUnifiedName("min")
+		val maxVarName = getUnifiedName("max")
+		val min = validator.resolveValidatorParam(typeof(ValidatorMinParam))?.min.toString
+		val max = validator.resolveValidatorParam(typeof(ValidatorMaxParam))?.max.toString
 		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message.quotify
 		'''
-			var «varName» = this.$.validatorFactory.getNumberRangeValidator(«min», «max»«IF message != null», "«message»"«ENDIF»);
+			var «minVarName» = «IF min != null»this.$.create("float", «min»)«ELSE»null«ENDIF»;
+			var «maxVarName» = «IF max != null»this.$.create("float", «max»)«ELSE»null«ENDIF»;
+			var «varName» = this.$.validatorFactory.getNumberRangeValidator(«minVarName», «maxVarName»«IF message != null», "«message»"«ENDIF»);
 		'''
 	}
 	
@@ -362,29 +366,41 @@ class CustomActionClass {
 	}
 	
 	def private static dispatch generateValidatorCodeFragment(StandardDateRangeValidator validator, String varName) {
-		val min = validator.resolveValidatorParam(typeof(ValidatorMinDateParam))?.min.toISODate.quotify ?: "null"
-		val max = validator.resolveValidatorParam(typeof(ValidatorMaxDateParam))?.max.toISODate.quotify ?: "null"
+		val minVarName = getUnifiedName("min")
+		val maxVarName = getUnifiedName("max")
+		val min = validator.resolveValidatorParam(typeof(ValidatorMinDateParam))?.min.toISODate.quotify
+		val max = validator.resolveValidatorParam(typeof(ValidatorMaxDateParam))?.max.toISODate.quotify
 		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message.quotify
 		'''
-			var «varName» = this.$.validatorFactory.getDateRangeValidator(«min», «max»«IF message != null», "«message»"«ENDIF»);
+			var «minVarName» = «IF min != null»this.$.create("date", «min»)«ELSE»null«ENDIF»;
+			var «maxVarName» = «IF max != null»this.$.create("date", «max»)«ELSE»null«ENDIF»;
+			var «varName» = this.$.validatorFactory.getDateRangeValidator(«minVarName», «maxVarName»«IF message != null», "«message»"«ENDIF»);
 		'''
 	}
 	
 	def private static dispatch generateValidatorCodeFragment(StandardTimeRangeValidator validator, String varName) {
-		val min = validator.resolveValidatorParam(typeof(ValidatorMinTimeParam))?.min.toISOTime.quotify ?: "null"
-		val max = validator.resolveValidatorParam(typeof(ValidatorMaxTimeParam))?.max.toISODate.quotify ?: "null"
+		val minVarName = getUnifiedName("min")
+		val maxVarName = getUnifiedName("max")
+		val min = validator.resolveValidatorParam(typeof(ValidatorMinTimeParam))?.min.toISOTime.quotify
+		val max = validator.resolveValidatorParam(typeof(ValidatorMaxTimeParam))?.max.toISOTime.quotify
 		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message.quotify
 		'''
-			var «varName» = this.$.validatorFactory.getTimeRangeValidator(«min», «max»«IF message != null», "«message»"«ENDIF»);
+			var «minVarName» = «IF min != null»this.$.create("time", «min»)«ELSE»null«ENDIF»;
+			var «maxVarName» = «IF max != null»this.$.create("time", «max»)«ELSE»null«ENDIF»;
+			var «varName» = this.$.validatorFactory.getTimeRangeValidator(«minVarName», «maxVarName»«IF message != null», "«message»"«ENDIF»);
 		'''
 	}
 	
 	def private static dispatch generateValidatorCodeFragment(StandardDateTimeRangeValidator validator, String varName) {
-		val min = validator.resolveValidatorParam(typeof(ValidatorMinDateTimeParam))?.min.toISODateTime.quotify ?: "null"
-		val max = validator.resolveValidatorParam(typeof(ValidatorMaxDateTimeParam))?.max.toISODateTime.quotify ?: "null"
+		val minVarName = getUnifiedName("min")
+		val maxVarName = getUnifiedName("max")
+		val min = validator.resolveValidatorParam(typeof(ValidatorMinDateTimeParam))?.min.toISODateTime.quotify
+		val max = validator.resolveValidatorParam(typeof(ValidatorMaxDateTimeParam))?.max.toISODateTime.quotify
 		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message.quotify
 		'''
-			var «varName» = this.$.validatorFactory.getDateTimeRangeValidator(«min», «max»«IF message != null», "«message»"«ENDIF»);
+			var «minVarName» = «IF min != null»this.$.create("datetime", «min»)«ELSE»null«ENDIF»;
+			var «maxVarName» = «IF max != null»this.$.create("datetime", «max»)«ELSE»null«ENDIF»;
+			var «varName» = this.$.validatorFactory.getDateTimeRangeValidator(«minVarName», «maxVarName»«IF message != null», "«message»"«ENDIF»);
 		'''
 	}
 	
@@ -422,24 +438,15 @@ class CustomActionClass {
 	// Simple Expressions
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static dispatch generateSimpleExpression(ConcatenatedString expression) {
-		'''(«FOR literal : expression.literals SEPARATOR(" + ")»«generateStringLiteral(literal)»«ENDFOR»)'''
-	}
-	
-	def private static dispatch generateSimpleExpression(MathSubExpression expression) {
-		'''(«generateMathExpression(expression).trimParentheses»)'''
-	}
-	
 	def private static dispatch generateSimpleExpression(Value expression) {
-		// TODO change to MD2 datatypes
 		switch (expression) {
-			StringVal: '''"«expression.value»"'''
-			IntVal: '''«expression.value»'''
-			FloatVal: '''«expression.value»'''
-			BooleanVal: '''«expression.value.toString»'''
-			DateVal: '''stamp.fromISOString("«expression.value.toISODate»")'''
-			TimeVal: '''stamp.fromISOString("«expression.value.toISOTime»")'''
-			DateTimeVal: '''stamp.fromISOString("«expression.value.toISODateTime»")'''
+			StringVal: '''this.$.create("string", "«expression.value»")'''
+			IntVal: '''this.$.create("integer", «expression.value»)'''
+			FloatVal: '''this.$.create("float", «expression.value»)'''
+			BooleanVal: '''this.$.create("boolean", «expression.value.toString»)'''
+			DateVal: '''this.$.create("date", stamp.fromISOString("«expression.value.toISODate»"))'''
+			TimeVal: '''this.$.create("time", stamp.fromISOString("«expression.value.toISOTime»"))'''
+			DateTimeVal: '''this.$.create("datetime", stamp.fromISOString("«expression.value.toISODateTime»"))'''
 		}
 	}
 	
@@ -449,6 +456,14 @@ class CustomActionClass {
 	
 	def private static dispatch generateSimpleExpression(AbstractContentProviderPath expression) {
 		'''this.$.contentProviderRegistry.getContentProvider("«expression.resolveContentProviderName»").getValue("«expression.resolveContentProviderPathAttribute»")'''
+	}
+	
+	def private static dispatch generateSimpleExpression(ConcatenatedString expression) {
+		'''this.$.create("string", «FOR literal : expression.literals SEPARATOR(" + ")»«generateStringLiteral(literal)»«ENDFOR»)'''
+	}
+	
+	def private static dispatch generateSimpleExpression(MathSubExpression expression) {
+		'''this.$.create("float", «generateMathExpression(expression)»)'''
 	}
 	
 	
@@ -496,10 +511,10 @@ class CustomActionClass {
 	
 	def private static String generateMathExpression(MathSubExpression expression) {
 		switch (expression) {
-			Plus: '''(«expression.leftOperand» + «expression.rightOperand»)'''
-			Minus: '''(«expression.leftOperand» - «expression.rightOperand»)'''
-			Mult: '''«expression.leftOperand» * «expression.rightOperand»'''
-			Div: '''«expression.leftOperand» / «expression.rightOperand»'''
+			Plus: '''(«generateMathExpression(expression.leftOperand)» + «generateMathExpression(expression.rightOperand)»)'''
+			Minus: '''(«generateMathExpression(expression.leftOperand)» - «generateMathExpression(expression.rightOperand)»)'''
+			Mult: '''«generateMathExpression(expression.leftOperand)» * «generateMathExpression(expression.rightOperand)»'''
+			Div: '''«generateMathExpression(expression.leftOperand)» / «generateMathExpression(expression.rightOperand)»'''
 			MathLiteral: '''«generateMathLiteral(expression)»'''
 		}
 	}

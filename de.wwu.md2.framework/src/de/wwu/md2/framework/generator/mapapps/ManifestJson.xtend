@@ -107,7 +107,7 @@ class ManifestJson {
 							«FOR entity : dataContainer.entities SEPARATOR ","»
 								"«entity.name»": {
 									«FOR attribute : entity.attributes SEPARATOR ","»
-										"«attribute.name»": «attribute.attributeDefaultValue»
+										"«attribute.attributeDataType» «attribute.name»": «attribute.attributeDefaultValue»
 									«ENDFOR»
 								}
 							«ENDFOR»
@@ -246,6 +246,21 @@ class ManifestJson {
 		}
 	}
 	
+	def private static getAttributeDataType(Attribute attribute) {
+		val type = attribute.type
+		switch (type) {
+			ReferencedType: '''«type.entity.name»'''
+			IntegerType: '''integer'''
+			FloatType: '''float'''
+			StringType: '''string'''
+			BooleanType: '''boolean'''
+			DateType: '''date'''
+			TimeType: '''time'''
+			DateTimeType: '''datetime'''
+			EnumType: '''string'''
+		}
+	}
+	
 	
 	////////////////////////////////////////////////////////////////////////////////////////////
 	// Dispatch: All ViewGUIElements
@@ -308,6 +323,7 @@ class ManifestJson {
 	
 	def private static dispatch getViewElement(Label label) '''
 		"type": "textoutput",
+		"datatype": "string",
 		"field": "«getName(label)»",
 		"defaultText": "«label.text»",
 		"cellStyle": {
@@ -326,6 +342,7 @@ class ManifestJson {
 	
 	def private static dispatch getViewElement(BooleanInput input) '''
 		"type": "checkbox",
+		"datatype": "boolean",
 		"field": "«getName(input)»",
 		"cellStyle": {
 			"width": "«input.width»%"
@@ -334,6 +351,7 @@ class ManifestJson {
 	
 	def private static dispatch getViewElement(TextInput input) '''
 		"type": "textbox",
+		"datatype": "string",
 		"field": "«getName(input)»",
 		"cellStyle": {
 			"width": "«input.width»%"
@@ -342,6 +360,7 @@ class ManifestJson {
 	
 	def private static dispatch getViewElement(IntegerInput input) '''
 		"type": "numberspinner",
+		"datatype": "integer",
 		"field": "«getName(input)»",
 		"cellStyle": {
 			"width": "«input.width»%"
@@ -350,6 +369,7 @@ class ManifestJson {
 	
 	def private static dispatch getViewElement(NumberInput input) '''
 		"type": "numbertextbox",
+		"datatype": "float",
 		"field": "«getName(input)»",
 		"cellStyle": {
 			"width": "«input.width»%"
@@ -358,6 +378,7 @@ class ManifestJson {
 	
 	def private static dispatch getViewElement(DateInput input) '''
 		"type": "datetextbox",
+		"datatype": "date",
 		"field": "«getName(input)»",
 		"cellStyle": {
 			"width": "«input.width»%"
@@ -366,6 +387,7 @@ class ManifestJson {
 	
 	def private static dispatch getViewElement(TimeInput input) '''
 		"type": "timetextbox",
+		"datatype": "time",
 		"field": "«getName(input)»",
 		"cellStyle": {
 			"width": "«input.width»%"
