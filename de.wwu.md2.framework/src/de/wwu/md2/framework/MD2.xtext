@@ -595,25 +595,39 @@ TabSpecificParam:
 	{TabTitleParam} 'tabTitle' tabTitle = STRING | {TabIconParam} 'tabIcon' tabIcon = STRING
 ;
 
-/////////////////////////////////////
-// View layer => Typedef
-/////////////////////////////////////
+/////////////////////////////////////////
+// View layer => ViewElementReferences
+/////////////////////////////////////////
 
+/*
+ * A reference to another GUI element. All references will be replaced by its concrete instances during
+ * preprocessing. By renaming a reference, the later cloned element can be accessed by the new name, e.g.
+ * for mapping, validator binding etc. So, the reference is treated as if it were the actual GUI element.
+ */
 ViewGUIElementReference:
 	value = [ViewGUIElement | QUALIFIED_NAME] (rename ?= '->' name = EID)?
 ;
 
 /*
- * The ContainerElementType allows to either specify a new ContainerElement or to refer to an existing one
+ * Each ContainerElementReference is a special case of the ViewGUIElementReference that is meant to be used
+ * in SubViewContainers (TabbedPane, AlternativesPane).
  */
-ContainerElementType:
-	{ContainerElementRef} value = [ContainerElement | QUALIFIED_NAME] (rename ?= '->' name = EID)? ('(' (params += TabSpecificParam (',' params += TabSpecificParam)*)? ')')? |
-	{ContainerElementDef} value = ContainerElement
+ContainerElementReference returns ViewGUIElementReference:
+	{ContainerElementReference} value = [ContainerElement | QUALIFIED_NAME] (rename ?= '->' name = EID)? ('(' (params += TabSpecificParam (',' params += TabSpecificParam)*)? ')')?
 ;
 
-/////////////////////////////////////
+/*
+ * The ContainerElementType allows to either specify a new ContainerElement or to refer to an existing one.
+ * Used in SubViewContainers (TabbedPane, AlternativesPane).
+ */
+ContainerElementType:
+	ContainerElement | ContainerElementReference
+;
+
+
+/////////////////////////////////////////
 // View layer => Style definitions
-/////////////////////////////////////
+/////////////////////////////////////////
 
 /*
  * The StyleAssignment allows the user to
@@ -1781,7 +1795,7 @@ EID:
 
 /**
  * Qualified names of the form
- * <tt>ID (.ID)*</tt>
+ * <code>ID (.ID)*</code>
  */
 QUALIFIED_NAME:
 	EID ('.' EID)*

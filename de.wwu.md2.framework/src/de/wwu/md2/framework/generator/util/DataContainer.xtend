@@ -2,7 +2,6 @@ package de.wwu.md2.framework.generator.util
 
 import de.wwu.md2.framework.mD2.AlternativesPane
 import de.wwu.md2.framework.mD2.ContainerElement
-import de.wwu.md2.framework.mD2.ContainerElementDef
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.CustomAction
@@ -211,9 +210,9 @@ class DataContainer
 				tabbedAlternativesPane = tabbedPane
 				
 				// Add all tabs to the respective list
-				tabbedViewContent.addAll(tabbedPane.elements.filter(typeof(ContainerElementDef)).map(c | c.value))
+				tabbedViewContent.addAll(tabbedPane.elements.filter(typeof(ContainerElement)))
 				// Additionally add the tabs to the set of view containers (if they are already in there, they will not be added again since viewContainers is a set)
-				rootViewContainers.addAll(tabbedPane.elements.filter(typeof(ContainerElementDef)).map(c | c.value))
+				rootViewContainers.addAll(tabbedPane.elements.filter(typeof(ContainerElement)))
 			}
 		]
 		
