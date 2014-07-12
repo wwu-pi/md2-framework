@@ -86,7 +86,10 @@ class CustomActionClass {
 	
 	def static generateCustomAction(CustomAction customAction, DataContainer dataContainer) '''
 		«val hasDateValue = !customAction.eAllContents.filter[ e |
-			e instanceof DateVal || e instanceof TimeVal || e instanceof DateTimeVal
+			e instanceof DateVal || e instanceof TimeVal || e instanceof DateTimeVal ||
+			e instanceof ValidatorMinDateParam || e instanceof ValidatorMaxDateParam ||
+			e instanceof ValidatorMinTimeParam || e instanceof ValidatorMaxTimeParam ||
+			e instanceof ValidatorMinDateTimeParam || e instanceof ValidatorMaxDateTimeParam
 		].empty»
 		define([
 			"dojo/_base/declare",
@@ -372,8 +375,8 @@ class CustomActionClass {
 		val max = validator.resolveValidatorParam(typeof(ValidatorMaxDateParam))?.max.toISODate.quotify
 		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message.quotify
 		'''
-			var «minVarName» = «IF min != null»this.$.create("date", «min»)«ELSE»null«ENDIF»;
-			var «maxVarName» = «IF max != null»this.$.create("date", «max»)«ELSE»null«ENDIF»;
+			var «minVarName» = «IF min != null»this.$.create("date", stamp.fromISOString("«min»"))«ELSE»null«ENDIF»;
+			var «maxVarName» = «IF max != null»this.$.create("date", stamp.fromISOString("«max»"))«ELSE»null«ENDIF»;
 			var «varName» = this.$.validatorFactory.getDateRangeValidator(«minVarName», «maxVarName»«IF message != null», "«message»"«ENDIF»);
 		'''
 	}
@@ -385,8 +388,8 @@ class CustomActionClass {
 		val max = validator.resolveValidatorParam(typeof(ValidatorMaxTimeParam))?.max.toISOTime.quotify
 		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message.quotify
 		'''
-			var «minVarName» = «IF min != null»this.$.create("time", «min»)«ELSE»null«ENDIF»;
-			var «maxVarName» = «IF max != null»this.$.create("time", «max»)«ELSE»null«ENDIF»;
+			var «minVarName» = «IF min != null»this.$.create("time", stamp.fromISOString("«min»"))«ELSE»null«ENDIF»;
+			var «maxVarName» = «IF max != null»this.$.create("time", stamp.fromISOString("«max»"))«ELSE»null«ENDIF»;
 			var «varName» = this.$.validatorFactory.getTimeRangeValidator(«minVarName», «maxVarName»«IF message != null», "«message»"«ENDIF»);
 		'''
 	}
@@ -398,8 +401,8 @@ class CustomActionClass {
 		val max = validator.resolveValidatorParam(typeof(ValidatorMaxDateTimeParam))?.max.toISODateTime.quotify
 		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message.quotify
 		'''
-			var «minVarName» = «IF min != null»this.$.create("datetime", «min»)«ELSE»null«ENDIF»;
-			var «maxVarName» = «IF max != null»this.$.create("datetime", «max»)«ELSE»null«ENDIF»;
+			var «minVarName» = «IF min != null»this.$.create("datetime", stamp.fromISOString("«min»"))«ELSE»null«ENDIF»;
+			var «maxVarName» = «IF max != null»this.$.create("datetime", stamp.fromISOString("«max»"))«ELSE»null«ENDIF»;
 			var «varName» = this.$.validatorFactory.getDateTimeRangeValidator(«minVarName», «maxVarName»«IF message != null», "«message»"«ENDIF»);
 		'''
 	}

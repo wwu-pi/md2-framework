@@ -64,11 +64,13 @@ class Util {
 					EAttribute: o.eGet(a)
 					EReference: {
 						val eobj = (o.eGet(a) as EObject)
-						val className = eobj.eClass.name
-						val name = if (eobj.eClass.EAllAttributes.exists[ x | x.name.equals("name") ])
-							         "[" + eobj.eGet(eobj.eClass.EAllAttributes.filter[ x | x.name.equals("name") ].last) + "]"
-							       else "[]"
-						className + name
+						if (eobj != null) {
+							val className = eobj.eClass.name
+							val name = if (eobj.eClass.EAllAttributes.exists[ x | x.name.equals("name") ])
+								         "[" + eobj.eGet(eobj.eClass.EAllAttributes.filter[ x | x.name.equals("name") ].last) + "]"
+								       else "[]"
+							className + name
+						}
 					}
 				}
 				features.add(a.name + "=" + value)
