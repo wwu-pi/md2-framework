@@ -20,11 +20,13 @@ import de.wwu.md2.framework.mD2.ContentProviderOperationAction
 import de.wwu.md2.framework.mD2.ContentProviderResetAction
 import de.wwu.md2.framework.mD2.ContentProviderSetTask
 import de.wwu.md2.framework.mD2.CustomAction
+import de.wwu.md2.framework.mD2.CustomCodeFragment
 import de.wwu.md2.framework.mD2.CustomizedValidatorType
 import de.wwu.md2.framework.mD2.DateTimeVal
 import de.wwu.md2.framework.mD2.DateVal
 import de.wwu.md2.framework.mD2.DisableAction
 import de.wwu.md2.framework.mD2.DisplayMessageAction
+import de.wwu.md2.framework.mD2.Div
 import de.wwu.md2.framework.mD2.EnableAction
 import de.wwu.md2.framework.mD2.EventBindingTask
 import de.wwu.md2.framework.mD2.EventUnbindTask
@@ -34,10 +36,14 @@ import de.wwu.md2.framework.mD2.GotoViewAction
 import de.wwu.md2.framework.mD2.GuiElementStateExpression
 import de.wwu.md2.framework.mD2.IntVal
 import de.wwu.md2.framework.mD2.MappingTask
-import de.wwu.md2.framework.mD2.MathExpression
+import de.wwu.md2.framework.mD2.MathLiteral
+import de.wwu.md2.framework.mD2.MathSubExpression
+import de.wwu.md2.framework.mD2.Minus
+import de.wwu.md2.framework.mD2.Mult
 import de.wwu.md2.framework.mD2.Not
 import de.wwu.md2.framework.mD2.Operator
 import de.wwu.md2.framework.mD2.Or
+import de.wwu.md2.framework.mD2.Plus
 import de.wwu.md2.framework.mD2.RemoteValidator
 import de.wwu.md2.framework.mD2.SimpleActionRef
 import de.wwu.md2.framework.mD2.StandardDateRangeValidator
@@ -69,18 +75,14 @@ import de.wwu.md2.framework.mD2.ValidatorUnbindTask
 import de.wwu.md2.framework.mD2.Value
 import de.wwu.md2.framework.mD2.ViewElementEventRef
 import de.wwu.md2.framework.mD2.ViewElementSetTask
+import de.wwu.md2.framework.mD2.ViewElementState
 import de.wwu.md2.framework.mD2.ViewGUIElement
+import org.eclipse.emf.common.util.EList
+import org.eclipse.xtend2.lib.StringConcatenation
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
-import de.wwu.md2.framework.mD2.ViewElementState
-import de.wwu.md2.framework.mD2.MathSubExpression
-import de.wwu.md2.framework.mD2.Plus
-import de.wwu.md2.framework.mD2.Minus
-import de.wwu.md2.framework.mD2.Mult
-import de.wwu.md2.framework.mD2.Div
-import de.wwu.md2.framework.mD2.MathLiteral
 
 class CustomActionClass {
 	
@@ -104,15 +106,18 @@ class CustomActionClass {
 				
 				execute: function() {
 					
-					«FOR codeFragment : customAction.codeFragments»
-						«generateCodeFragment(codeFragment)»
-						
-					«ENDFOR»
+					«generateCodeBlock(customAction.codeFragments)»
 					
 				}
 				
 			});
 		});
+	'''
+	
+	def private static String generateCodeBlock(EList<CustomCodeFragment> codeFragments) '''
+		«FOR codeFragment : codeFragments SEPARATOR StringConcatenation::DEFAULT_LINE_DELIMITER»
+			«generateCodeFragment(codeFragment)»
+		«ENDFOR»
 	'''
 	
 	
@@ -183,47 +188,43 @@ class CustomActionClass {
 	'''
 	
 	def private static dispatch generateCodeFragment(ConditionalCodeFragment task) '''
-		if («generateCondition(task.^if.condition).trimParentheses») {
-			«FOR codeFragment : task.^if.codeFragments»
-				«generateCodeFragment(codeFragment)»
-				
-			«ENDFOR»
+		if (
+			«generateCondition(task.^if.condition)»
+		) {
+			«generateCodeBlock(task.^if.codeFragments)»
 		}
 		«FOR elseif : task.elseifs»
-			else if («generateCondition(elseif.condition).trimParentheses») {
-				«FOR codeFragment : elseif.codeFragments»
-					«generateCodeFragment(codeFragment)»
-					
-				«ENDFOR»
+			else if (
+				«generateCondition(elseif.condition)»
+			) {
+				«generateCodeBlock(elseif.codeFragments)»
 			}
 		«ENDFOR»
 		«IF task.^else != null»
 			else {
-				«FOR codeFragment : task.^else.codeFragments»
-					«generateCodeFragment(codeFragment)»
-					
-				«ENDFOR»
+				«generateCodeBlock(task.^else.codeFragments)»
 			}
 		«ENDIF»
 	'''
 	
 	def private static dispatch generateCodeFragment(ViewElementSetTask task) '''
-		
+		// TODO
 	'''
 	
 	def private static dispatch generateCodeFragment(AttributeSetTask task) '''
-		
+		// TODO
 	'''
 	
 	def private static dispatch generateCodeFragment(ContentProviderSetTask task) '''
-		
+		// TODO
 	'''
+	
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// Action
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static dispatch generateActionCodeFragment(ActionDef actionDefinition, String varName) {
+	def private static dispatch String generateActionCodeFragment(ActionDef actionDefinition, String varName) {
 		switch (actionDefinition) {
 			ActionReference: {
 				generateActionCodeFragment(actionDefinition.actionRef, varName)
@@ -234,33 +235,33 @@ class CustomActionClass {
 		}
 	}
 	
-	def private static dispatch generateActionCodeFragment(CustomAction action, String varName) '''
+	def private static dispatch String generateActionCodeFragment(CustomAction action, String varName) '''
 		var «varName» = this.$.actionFactory.getCustomAction("«action.name»");
 	'''
 	
-	def private static dispatch generateActionCodeFragment(GotoViewAction action, String varName) '''
+	def private static dispatch String generateActionCodeFragment(GotoViewAction action, String varName) '''
 		var «varName» = this.$.actionFactory.getGotoViewAction("«getName(resolveViewGUIElement(action.view))»");
 	'''
 	
-	def private static dispatch generateActionCodeFragment(DisableAction action, String varName) '''
+	def private static dispatch String generateActionCodeFragment(DisableAction action, String varName) '''
 		var «varName» = this.$.actionFactory.getDisableAction("«getName(resolveViewGUIElement(action.inputField))»");
 	'''
 	
-	def private static dispatch generateActionCodeFragment(EnableAction action, String varName) '''
+	def private static dispatch String generateActionCodeFragment(EnableAction action, String varName) '''
 		var «varName» = this.$.actionFactory.getEnableAction("«getName(resolveViewGUIElement(action.inputField))»");
 	'''
 	
-	def private static dispatch generateActionCodeFragment(DisplayMessageAction action, String varName) '''
+	def private static dispatch String generateActionCodeFragment(DisplayMessageAction action, String varName) '''
 		var «varName» = this.$.actionFactory.getDisplayMessageAction("«action.message»");
 	'''
 	
-	def private static dispatch generateActionCodeFragment(ContentProviderOperationAction action, String varName) '''
+	def private static dispatch String generateActionCodeFragment(ContentProviderOperationAction action, String varName) '''
 		«val contentProviderVar = getUnifiedName("contentProvider")»
 		«generateContentProviderCodeFragment(action.contentProvider.contentProvider, contentProviderVar)»
 		var «varName» = this.$.actionFactory.getContentProviderOperationAction(«contentProviderVar», "«action.operation.toString»");
 	'''
 	
-	def private static dispatch generateActionCodeFragment(ContentProviderResetAction action, String varName) '''
+	def private static dispatch String generateActionCodeFragment(ContentProviderResetAction action, String varName) '''
 		«val contentProviderVar = getUnifiedName("contentProvider")»
 		«generateContentProviderCodeFragment(action.contentProvider.contentProvider, contentProviderVar)»
 		var «varName» = this.$.actionFactory.getContentProviderResetAction(«contentProviderVar»);
@@ -320,7 +321,7 @@ class CustomActionClass {
 	// Validator
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static dispatch generateValidatorCodeFragment(ValidatorType validator, String varName) {
+	def private static dispatch String generateValidatorCodeFragment(ValidatorType validator, String varName) {
 		switch (validator) {
 			StandardValidatorType: {
 				generateValidatorCodeFragment(validator.validator, varName)
@@ -331,7 +332,7 @@ class CustomActionClass {
 		}
 	}
 	
-	def private static dispatch generateValidatorCodeFragment(StandardRegExValidator validator, String varName) {
+	def private static dispatch String generateValidatorCodeFragment(StandardRegExValidator validator, String varName) {
 		val regEx = validator.resolveValidatorParam(typeof(ValidatorRegExParam))?.regEx ?: ".*"
 		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message
 		'''
@@ -339,14 +340,14 @@ class CustomActionClass {
 		'''
 	}
 	
-	def private static dispatch generateValidatorCodeFragment(StandardNotNullValidator validator, String varName) {
+	def private static dispatch String generateValidatorCodeFragment(StandardNotNullValidator validator, String varName) {
 		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message
 		'''
 			var «varName» = this.$.validatorFactory.getNotNullValidator(«IF message != null»"«message»"«ENDIF»);
 		'''
 	}
 	
-	def private static dispatch generateValidatorCodeFragment(StandardNumberRangeValidator validator, String varName) {
+	def private static dispatch String generateValidatorCodeFragment(StandardNumberRangeValidator validator, String varName) {
 		val minVarName = getUnifiedName("min")
 		val maxVarName = getUnifiedName("max")
 		val min = validator.resolveValidatorParam(typeof(ValidatorMinParam))?.min.toString
@@ -359,7 +360,7 @@ class CustomActionClass {
 		'''
 	}
 	
-	def private static dispatch generateValidatorCodeFragment(StandardStringRangeValidator validator, String varName) {
+	def private static dispatch String generateValidatorCodeFragment(StandardStringRangeValidator validator, String varName) {
 		val min = validator.resolveValidatorParam(typeof(ValidatorMinLengthParam))?.minLength.toString ?: "null"
 		val max = validator.resolveValidatorParam(typeof(ValidatorMaxLengthParam))?.maxLength.toString ?: "null"
 		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message.quotify
@@ -368,7 +369,7 @@ class CustomActionClass {
 		'''
 	}
 	
-	def private static dispatch generateValidatorCodeFragment(StandardDateRangeValidator validator, String varName) {
+	def private static dispatch String generateValidatorCodeFragment(StandardDateRangeValidator validator, String varName) {
 		val minVarName = getUnifiedName("min")
 		val maxVarName = getUnifiedName("max")
 		val min = validator.resolveValidatorParam(typeof(ValidatorMinDateParam))?.min.toISODate.quotify
@@ -381,7 +382,7 @@ class CustomActionClass {
 		'''
 	}
 	
-	def private static dispatch generateValidatorCodeFragment(StandardTimeRangeValidator validator, String varName) {
+	def private static dispatch String generateValidatorCodeFragment(StandardTimeRangeValidator validator, String varName) {
 		val minVarName = getUnifiedName("min")
 		val maxVarName = getUnifiedName("max")
 		val min = validator.resolveValidatorParam(typeof(ValidatorMinTimeParam))?.min.toISOTime.quotify
@@ -394,7 +395,7 @@ class CustomActionClass {
 		'''
 	}
 	
-	def private static dispatch generateValidatorCodeFragment(StandardDateTimeRangeValidator validator, String varName) {
+	def private static dispatch String generateValidatorCodeFragment(StandardDateTimeRangeValidator validator, String varName) {
 		val minVarName = getUnifiedName("min")
 		val maxVarName = getUnifiedName("max")
 		val min = validator.resolveValidatorParam(typeof(ValidatorMinDateTimeParam))?.min.toISODateTime.quotify
@@ -407,7 +408,7 @@ class CustomActionClass {
 		'''
 	}
 	
-	def private static dispatch generateValidatorCodeFragment(RemoteValidator validator, String varName) '''
+	def private static dispatch String generateValidatorCodeFragment(RemoteValidator validator, String varName) '''
 		// TODO
 	'''
 	
@@ -418,8 +419,14 @@ class CustomActionClass {
 	
 	def private static String generateCondition(ConditionalExpression expression) {
 		switch (expression) {
-			Or: '''(«generateCondition(expression.leftExpression)» || «generateCondition(expression.rightExpression)»)'''
-			And: '''«generateCondition(expression.leftExpression)» && «generateCondition(expression.rightExpression)»'''
+			Or: '''
+			(
+				«generateCondition(expression.leftExpression)» ||
+				«generateCondition(expression.rightExpression)»
+			)'''
+			And: '''
+				«generateCondition(expression.leftExpression)» &&
+				«generateCondition(expression.rightExpression)»'''
 			Not: '''!(«generateCondition(expression.expression).trimParentheses»)'''
 			BooleanExpression: '''«expression.value.toString»'''
 			CompareExpression: {
@@ -441,7 +448,7 @@ class CustomActionClass {
 	// Simple Expressions
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static dispatch generateSimpleExpression(Value expression) {
+	def private static dispatch String generateSimpleExpression(Value expression) {
 		switch (expression) {
 			StringVal: '''this.$.create("string", "«expression.value»")'''
 			IntVal: '''this.$.create("integer", «expression.value»)'''
@@ -453,19 +460,19 @@ class CustomActionClass {
 		}
 	}
 	
-	def private static dispatch generateSimpleExpression(AbstractViewGUIElementRef expression) {
+	def private static dispatch String generateSimpleExpression(AbstractViewGUIElementRef expression) {
 		'''this.$.widgetRegistry.getWidget("«getName(resolveViewGUIElement(expression))»").getValue()'''
 	}
 	
-	def private static dispatch generateSimpleExpression(AbstractContentProviderPath expression) {
+	def private static dispatch String generateSimpleExpression(AbstractContentProviderPath expression) {
 		'''this.$.contentProviderRegistry.getContentProvider("«expression.resolveContentProviderName»").getValue("«expression.resolveContentProviderPathAttribute»")'''
 	}
 	
-	def private static dispatch generateSimpleExpression(ConcatenatedString expression) {
+	def private static dispatch String generateSimpleExpression(ConcatenatedString expression) {
 		'''this.$.create("string", «FOR literal : expression.literals SEPARATOR(" + ")»«generateStringLiteral(literal)»«ENDFOR»)'''
 	}
 	
-	def private static dispatch generateSimpleExpression(MathSubExpression expression) {
+	def private static dispatch String generateSimpleExpression(MathSubExpression expression) {
 		'''this.$.create("float", «generateMathExpression(expression)»)'''
 	}
 	
