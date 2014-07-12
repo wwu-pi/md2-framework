@@ -24,7 +24,7 @@ import de.wwu.md2.framework.mD2.UnmappingTask
 import de.wwu.md2.framework.mD2.ValidatorBindingTask
 import de.wwu.md2.framework.mD2.ValidatorUnbindTask
 import de.wwu.md2.framework.mD2.ViewElementEventRef
-import de.wwu.md2.framework.mD2.ViewElementRef
+import de.wwu.md2.framework.mD2.ViewGUIElementReference
 import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import java.util.Collection
@@ -48,7 +48,7 @@ class ProcessViewReferences {
 	 */
 	def static void cloneContainerElementReferencesIntoParentContainer(
 		MD2Factory factory, ResourceSet workingInput,
-		HashMap<EObject, EObject> clonedElements, Iterable<ContainerElementRef> containerRefs
+		HashMap<ViewElementType, ViewElementType> clonedElements, Iterable<ContainerElementRef> containerRefs
 	) {
 		containerRefs.forEach [ containerRef |
 			val containerDef = factory.createContainerElementDef()
@@ -71,22 +71,21 @@ class ProcessViewReferences {
 	 * Clone nested ViewElement references into parent container.
 	 */
 	def static void cloneViewElementReferencesIntoParentContainer(
-		MD2Factory factory, ResourceSet workingInput, HashMap<EObject, EObject> clonedElements, Collection<ViewElementRef> viewRefsDone
+		MD2Factory factory, ResourceSet workingInput, HashMap<ViewElementType, ViewElementType> clonedElements, Collection<ViewGUIElementReference> viewRefsDone
 	) {
 		var repeat = true
 		while (repeat) {
-			val Iterable<ViewElementRef> viewRefs = workingInput.resources.map(r|r.allContents.toIterable.filter(typeof(ViewElementRef))).flatten.toList.sort(
+			val viewRefs = workingInput.resources.map(r|r.allContents.toIterable.filter(typeof(ViewGUIElementReference))).flatten.toList.sort(
 				[obj1, obj2 |
-					return countContainers(obj2,0)-countContainers(obj1,0)
+					return countContainers(obj2, 0) - countContainers(obj1, 0)
 				])
 			val size = viewRefsDone.size 
 			viewRefs.forEach [ viewRef |
 				if (!viewRefsDone.contains(viewRef)) {
-					val viewDef = factory.createViewElementDef()
-					viewDef.value = copyElement(viewRef.value, clonedElements) as ViewGUIElement
-					if (viewRef.rename) viewDef.value.name = viewRef.name
-					val EList<EObject> elements = viewRef.eContainer.eGet(viewRef.eContainingFeature) as EList<EObject>
-					elements.add(elements.indexOf(viewRef), viewDef)
+					val viewElement = copyElement(viewRef.value, clonedElements) as ViewGUIElement
+					if (viewRef.rename) viewElement.name = viewRef.name
+					val EList<ViewElementType> elements = viewRef.eContainer.eGet(viewRef.eContainingFeature) as EList<ViewElementType>
+					elements.add(elements.indexOf(viewRef), viewElement)
 					viewRefsDone.add(viewRef)
 				}
 			]
@@ -111,7 +110,7 @@ class ProcessViewReferences {
 	 * Simplify references to AbstractViewGUIElements (auto-generated and/or cloned)
 	 * Set ViewGUIElement to head ref
 	 */
-	def static void simplifyReferencesToAbstractViewGUIElements(MD2Factory factory, ResourceSet workingInput, HashMap<EObject, EObject> clonedElements) {
+	def static void simplifyReferencesToAbstractViewGUIElements(MD2Factory factory, ResourceSet workingInput, HashMap<ViewElementType, ViewElementType> clonedElements) {
 		val Iterable<AbstractViewGUIElementRef> abstractRefs = workingInput.resources.map[ r |
 			r.allContents.toIterable.filter(typeof(AbstractViewGUIElementRef)).filter([!(it.eContainer instanceof AbstractViewGUIElementRef)])
 		].flatten
@@ -129,8 +128,8 @@ class ProcessViewReferences {
 	 * Restricted to StartupActions.
 	 */
 	def static void copyValidatorsToClonedGUIElements(
-		MD2Factory factory, ResourceSet workingInput, HashMap<EObject,
-		EObject> clonedElements, Collection<ValidatorBindingTask> userValidatorBindingTasks
+		MD2Factory factory, ResourceSet workingInput, HashMap<ViewElementType,
+		ViewElementType> clonedElements, Collection<ValidatorBindingTask> userValidatorBindingTasks
 	) {
 		
 		val Iterable<ValidatorBindingTask> validatorBindingTasks = workingInput.resources.map[r |
@@ -159,7 +158,7 @@ class ProcessViewReferences {
 	 * Copy user-specified events from original to cloned/auto-generated GUI elements.
 	 * Restricted to StartupActions.
 	 */
-	def static void copyEventsToClonedGUIElements(MD2Factory factory, ResourceSet workingInput, HashMap<EObject, EObject> clonedElements) {
+	def static void copyEventsToClonedGUIElements(MD2Factory factory, ResourceSet workingInput, HashMap<ViewElementType, ViewElementType> clonedElements) {
 		val Iterable<EventBindingTask> eventBindingTasks = workingInput.resources.map[ r |
 			r.allContents.toIterable.filter(typeof(EventBindingTask)).filter([isCalledAtStartup(it)])
 		].flatten.toList
@@ -188,7 +187,7 @@ class ProcessViewReferences {
 	 * BEWARE: In the previous steps (remapToClonedGUIElements, copyValidatorsToClonedGUIElements, copyEventsToClonedGUIElements)
 	 *         only the start action was considered. Now, all other actions are transformed.
 	 */
-	def static void copyAllCustomCodeFragmentsToClonedGUIElements(MD2Factory factory, ResourceSet workingInput, HashMap<EObject, EObject> clonedElements) {
+	def static void copyAllCustomCodeFragmentsToClonedGUIElements(MD2Factory factory, ResourceSet workingInput, HashMap<ViewElementType, ViewElementType> clonedElements) {
 		
 		val Iterable<CustomCodeFragment> nonStartupCodeFragments = workingInput.resources.map[r |
 			r.allContents.toIterable.filter(typeof(CustomCodeFragment)).filter([!isCalledAtStartup(it)])
@@ -308,7 +307,9 @@ class ProcessViewReferences {
 	/**
 	 * Look up pseudo-referenced ViewGUIElement
 	 */
-	def private static ViewGUIElement resolveAbstractViewGUIElementRef(ResourceSet input, AbstractViewGUIElementRef abstractRef, ViewGUIElement guiElem, HashMap<EObject, EObject> clonedElements) {
+	def private static ViewGUIElement resolveAbstractViewGUIElementRef(
+		ResourceSet input, AbstractViewGUIElementRef abstractRef, ViewGUIElement guiElem, HashMap<ViewElementType, ViewElementType> clonedElements
+	) {
 		var nextGuiElem = guiElem
 		val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider()
 		if (abstractRef.ref instanceof ViewGUIElement) {
@@ -324,9 +325,10 @@ class ProcessViewReferences {
 			if (guiElem == null) {
 				nextGuiElem = abstractRef.ref.eContainer as ViewGUIElement
 			}
-			val searchName = switch (abstractRef.ref) {
-				ViewElementRef: (abstractRef.ref as ViewElementRef).name
-				ContainerElementRef: (abstractRef.ref as ContainerElementRef).name
+			val ref = abstractRef.ref
+			val searchName = switch (ref) {
+				ViewGUIElementReference: ref.name
+				ContainerElementRef: ref.name
 			}
 			nextGuiElem = nextGuiElem.eAllContents.filter(typeof(ViewGUIElement)).findFirst(searchGuiElem | searchGuiElem.name != null && searchGuiElem.name.equals(searchName))
 		}

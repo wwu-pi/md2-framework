@@ -54,16 +54,26 @@ View:
 ;
 
 /*
- * A ViewElement can be either
- * a ViewGUIElement or a style.
+ * A ViewElement can be either a ViewElementType or a style.
+ * Styles can only be specified on view level or directly on ViewGUIElement elements,
+ * but not within containers. This is why ViewElement and ViewElementType are distinguished.
  */
 ViewElement:
-	ViewGUIElement | Style
+	ViewElementType | Style
 ;
 
 /*
- * A ViewGUIElement can either be a
- * ContainerElement or a ContentElement.
+ * The ViewElementType allows to either specify a new ViewGUIElement or to refer to an existing one.
+ * All elements of this type are allowed to be used in containers.
+ */
+ViewElementType:
+	ViewGUIElement | ViewGUIElementReference
+;
+
+/*
+ * A ViewGUIElement is a concrete definition (i.e., no cross-reference to another ViewGUIElement) of arbitrary view elements.
+ * It is the super type for ContainerElement and ContentElement. After the pre-processing all elements of type ViewElementType can
+ * be assumed to be ViewGUIElements.
  */
 ViewGUIElement:
 	ContainerElement | ContentElement
@@ -589,12 +599,8 @@ TabSpecificParam:
 // View layer => Typedef
 /////////////////////////////////////
 
-/*
- * The ViewElementType allows to either specify a new ViewGUIElement or to refer to an existing one
- */
-ViewElementType:
-	{ViewElementRef} value = [ViewGUIElement | QUALIFIED_NAME] (rename ?= '->' name = EID)? |
-	{ViewElementDef} value = ViewGUIElement
+ViewGUIElementReference:
+	value = [ViewGUIElement | QUALIFIED_NAME] (rename ?= '->' name = EID)?
 ;
 
 /*
@@ -794,7 +800,8 @@ ContainsCodeFragments:
  * generated ViewGUIElement containing the value of the specified Attribute.
  */
 AbstractViewGUIElementRef:
-	ref = [ecore::EObject | QUALIFIED_NAME] (tail = NestedAbstractViewGUIElementRef | '[' (path = EntityPathDefinition | simpleType = SimpleDataTypeWrapper) ']')?
+	ref = [ViewElementType | QUALIFIED_NAME] (tail = NestedAbstractViewGUIElementRef |
+	'[' (path = EntityPathDefinition | simpleType = SimpleDataTypeWrapper) ']')?
 ;
 
 /*
@@ -813,7 +820,10 @@ AbstractViewGUIElementRef:
  * shall be referenced.
  */
 NestedAbstractViewGUIElementRef returns AbstractViewGUIElementRef:
-	'->' ref = [ecore::EObject | QUALIFIED_NAME] (tail = NestedAbstractViewGUIElementRef | '[' (path = EntityPathDefinition | simpleType = SimpleDataTypeWrapper) ']')?
+	'->' ref = [ViewElementType | QUALIFIED_NAME] (
+		tail = NestedAbstractViewGUIElementRef |
+		'[' (path = EntityPathDefinition | simpleType = SimpleDataTypeWrapper) ']'
+	)?
 ;
 
 /*
@@ -1350,7 +1360,7 @@ MultiplicationDivision returns MathSubExpression:
 	MathSubExpression (({Mult.leftOperand=current} OP_MATH_MULT | {Div.leftOperand=current} OP_MATH_DIV) rightOperand=MathSubExpression)*
 ;
 
- MathSubExpression returns MathSubExpression:
+MathSubExpression returns MathSubExpression:
 	MathLiteral | '(' AdditionSubtraction ')'
 ;
 

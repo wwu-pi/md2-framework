@@ -19,7 +19,7 @@ import de.wwu.md2.framework.mD2.Spacer
 import de.wwu.md2.framework.mD2.SubViewContainer
 import de.wwu.md2.framework.mD2.TabbedAlternativesPane
 import de.wwu.md2.framework.mD2.View
-import de.wwu.md2.framework.mD2.ViewElementDef
+import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.WidthParam
 import java.util.Collections
 import java.util.Map
@@ -60,25 +60,23 @@ class ProcessView {
 	 * </p>
 	 */
 	def static void duplicateSpacers(MD2Factory factory, ResourceSet workingInput) {
-		val Iterable<Spacer> spacers = workingInput.resources.map(r|r.allContents.toIterable.filter(typeof(Spacer))).flatten
+		val spacers = workingInput.resources.map(r|r.allContents.toIterable.filter(typeof(Spacer))).flatten
 		for (spacer : spacers) {
 			if (spacer.number > 1) {
 				// if we found a spacer, get the list of its containing feature and replace the single spacer by
 				// the specified number of spacers
-				val lst = spacer.eContainer.eContainer.eGet(spacer.eContainer.eContainingFeature) as EList<EObject>
+				val lst = spacer.eContainer.eGet(spacer.eContainingFeature) as EList<EObject>
 				val width = spacer.width
-				val idx = lst.indexOf(spacer.eContainer)
+				val idx = lst.indexOf(spacer)
 				var i = 0
 				while (i < spacer.number) {
 					val newSpacer = factory.createSpacer
 					newSpacer.setNumber(1)
 					newSpacer.setWidth(width)
-					val newViewElementType = factory.createViewElementDef
-					newViewElementType.value = newSpacer
-					lst.add(idx, newViewElementType)
+					lst.add(idx, newSpacer)
 					i = i + 1
 				}
-				spacer.eContainer.remove
+				spacer.remove
 			}
 		}
 	}
@@ -241,9 +239,7 @@ class ProcessView {
 			while (i < numberOfRequiredSpacers) {
 				val newSpacer = factory.createSpacer
 				newSpacer.setNumber(1)
-				val newViewElement = factory.createViewElementDef
-				newViewElement.setValue(newSpacer)
-				gridLayoutPane.elements.add(newViewElement)
+				gridLayoutPane.elements.add(newSpacer)
 				i = i + 1
 			}
 		}
@@ -293,7 +289,7 @@ class ProcessView {
 		].flatten
 		
 		for (contentContainer : containerElements.filter(typeof(GridLayoutPane))) {
-			val allChilds = contentContainer.elements.filter(typeof(ViewElementDef)).toList
+			val allChilds = contentContainer.elements.filter(typeof(ViewGUIElement)).toList
 			
 			// get a sublist of elements for each row
 			val rowWiseList = newArrayList
@@ -312,8 +308,7 @@ class ProcessView {
 				val elementsWithExplicitWidthMap = newLinkedHashMap
 				
 				// step 2 - calculate overall width and collect child elements
-				for (child : rowChilds) {
-					val childElement = child.value
+				for (childElement : rowChilds) {
 					switch(childElement) {
 						ContentElement: {
 							if (childElement.width == -1) {
@@ -449,7 +444,9 @@ class ProcessView {
 		for (input : inputs) {
 			if(input.eIsSet(MD2Package.eINSTANCE.inputElement_LabelText) || input.eIsSet(MD2Package.eINSTANCE.inputElement_TooltipText)) {
 				
-				val inputContext = input.eContainer as ViewElementDef
+				// position of input element in container
+				val lst = input.eContainer.eGet(input.eContainingFeature) as EList<EObject>
+				val position = lst.indexOf(input)
 				
 				// configure layout panel
 				val gridLayout = factory.createGridLayoutPane
@@ -473,36 +470,29 @@ class ProcessView {
 					label.setName("__Label" + input.name)
 					label.setText(input.labelText)
 					label.setWidth(40)
-					
-					val labelElementDef = factory.createViewElementDef
-					labelElementDef.setValue(label)
-					gridLayout.elements.add(labelElementDef)
+					gridLayout.elements.add(label)
 				}
 				
 				// add this input
 				val width = if (input.eIsSet(MD2Package.eINSTANCE.inputElement_LabelText)) 50 else 90
 				input.setWidth(width)
-				val inputElementDef = factory.createViewElementDef
-				inputElementDef.setValue(input)
-				gridLayout.elements.add(inputElementDef)
+				gridLayout.elements.add(input)
 				
 				// add tooltip or spacer if no tooltip is set
-				val tooltipElementDef = factory.createViewElementDef
-				gridLayout.elements.add(tooltipElementDef)
 				if (input.eIsSet(MD2Package.eINSTANCE.inputElement_TooltipText)) {
 					val tooltip = factory.createTooltip
 					tooltip.setName("__Tooltip" + input.name)
 					tooltip.setText(input.tooltipText)
 					tooltip.setWidth(10)
-					tooltipElementDef.setValue(tooltip)
+					gridLayout.elements.add(tooltip)
 				} else {
 					val spacer = factory.createSpacer
 					spacer.setNumber(1)
 					spacer.setWidth(10)
-					tooltipElementDef.setValue(spacer)
+					gridLayout.elements.add(spacer)
 				}
 				
-				inputContext.setValue(gridLayout)
+				lst.add(position, gridLayout)
 			}
 		}
 	}

@@ -617,7 +617,7 @@ class ProcessWorkflow {
 	def private static getStringRepresentationOfEvent(EventDef event) {
 		switch (event) {
 			ViewElementEventRef: {
-				var eObject = event.referencedField.ref
+				var EObject eObject = event.referencedField.ref
 				var str = ""
 				while (!(eObject instanceof View)) {
 					if(eObject instanceof ViewGUIElement) {

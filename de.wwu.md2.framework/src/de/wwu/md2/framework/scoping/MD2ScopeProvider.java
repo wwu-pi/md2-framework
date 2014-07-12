@@ -36,8 +36,8 @@ import de.wwu.md2.framework.mD2.ModelElement;
 import de.wwu.md2.framework.mD2.PathTail;
 import de.wwu.md2.framework.mD2.ReferencedModelType;
 import de.wwu.md2.framework.mD2.ReferencedType;
-import de.wwu.md2.framework.mD2.ViewElementRef;
-import de.wwu.md2.framework.mD2.ViewGUIElement;
+import de.wwu.md2.framework.mD2.ViewElementType;
+import de.wwu.md2.framework.mD2.ViewGUIElementReference;
 
 /**
  * This class contains custom scoping description.
@@ -119,8 +119,8 @@ public class MD2ScopeProvider extends AbstractDeclarativeScopeProvider {
 			} else {
 				final ContainerElement container;
 				// Get the reference to the parent container
-				if (parent.getRef() instanceof ViewElementRef) {
-					container = (ContainerElement) ((ViewElementRef) parent.getRef()).getValue();
+				if (parent.getRef() instanceof ViewGUIElementReference) {
+					container = (ContainerElement) ((ViewGUIElementReference) parent.getRef()).getValue();
 				} else if (parent.getRef() instanceof ContainerElementRef) {
 					container = (ContainerElement) ((ContainerElementRef) parent.getRef()).getValue();
 				} else {
@@ -168,9 +168,9 @@ public class MD2ScopeProvider extends AbstractDeclarativeScopeProvider {
 //	}	
 	
 	private static boolean isContentElement(AbstractViewGUIElementRef abtractRef) {
-		EObject objInQuestion = abtractRef.getRef();
-		if (abtractRef.getRef() instanceof ViewElementRef) {
-			objInQuestion = ((ViewElementRef)abtractRef.getRef()).getValue();
+		ViewElementType objInQuestion = abtractRef.getRef();
+		if (abtractRef.getRef() instanceof ViewGUIElementReference) {
+			objInQuestion = ((ViewGUIElementReference)abtractRef.getRef()).getValue();
 		} else if (abtractRef.getRef() instanceof ContainerElementRef) {
 			objInQuestion = ((ContainerElementRef)abtractRef.getRef()).getValue();			
 		}
@@ -185,11 +185,11 @@ public class MD2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	}
 	
 	private static boolean isValidViewElement(EObject context, EObject obj) {
-		if (obj instanceof ContainerElementRef || obj instanceof ViewElementRef || obj instanceof ViewGUIElement) {
+		if (obj instanceof ContainerElementRef || obj instanceof ViewElementType) {
 			if (isRestrictedToContainer(context)) {
 				if (obj instanceof ContentElement) return false;
-				else if (obj instanceof ViewElementRef) {
-					if (((ViewElementRef) obj).getValue() instanceof ContentElement) return false;
+				else if (obj instanceof ViewGUIElementReference) {
+					if (((ViewGUIElementReference) obj).getValue() instanceof ContentElement) return false;
 				}
 			}
 			return true;

@@ -24,18 +24,18 @@ class Util {
 		workingInput
 	}
 	
-	def static EObject copyElement(EObject elem) {
-		return copyElement(elem, null);
+	def static <T extends EObject> T copyElement(T elem) {
+		return copyElement(elem, null) as T;
 	}
 	
-	def static EObject copyElement(EObject elem, HashMap<EObject, EObject> map) {
+	def static <T extends EObject> T copyElement(T elem, HashMap<T, T> map) {
 		val copier = new EcoreUtil.Copier()
-		val newElem = copier.copy(elem)
+		val newElem = copier.copy(elem) as T
 		copier.copyReferences
 		if (map != null) {
 			// Get all copied elements in a HashSet with the copied element as key
 			for (entry : copier.entrySet) {
-				map.put(entry.value, entry.key)
+				map.put(entry.value as T, entry.key as T)
 			}	
 		}		
 		newElem

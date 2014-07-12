@@ -63,10 +63,9 @@ import de.wwu.md2.framework.mD2.TabbedAlternativesPane;
 import de.wwu.md2.framework.mD2.TimeType;
 import de.wwu.md2.framework.mD2.Validator;
 import de.wwu.md2.framework.mD2.View;
-import de.wwu.md2.framework.mD2.ViewElementDef;
-import de.wwu.md2.framework.mD2.ViewElementRef;
 import de.wwu.md2.framework.mD2.ViewElementType;
 import de.wwu.md2.framework.mD2.ViewGUIElement;
+import de.wwu.md2.framework.mD2.ViewGUIElementReference;
 import de.wwu.md2.framework.mD2.WidthParam;
 import de.wwu.md2.framework.mD2.Workflow;
 import de.wwu.md2.framework.mD2.WorkflowStep;
@@ -232,8 +231,8 @@ public class MD2JavaValidator extends AbstractMD2JavaValidator {
 		// calculate total number of elements in grid layout
 		int size = 0;
 		for(ViewElementType e : gridLayoutPane.getElements()) {
-			if(e instanceof ViewElementDef && ((ViewElementDef)e).getValue() instanceof Spacer && ((Spacer)((ViewElementDef)e).getValue()).getNumber() > 1) {
-				size += ((Spacer)((ViewElementDef)e).getValue()).getNumber();
+			if(e instanceof Spacer && ((Spacer)e).getNumber() > 1) {
+				size += ((Spacer)e).getNumber();
 			} else {
 				size++;
 			}
@@ -264,10 +263,10 @@ public class MD2JavaValidator extends AbstractMD2JavaValidator {
 			boolean isRenamed;
 			String renameName;
 			
-			if(elem instanceof ViewElementRef) {
-				guiElement = ((ViewElementRef) elem).getValue();
-				isRenamed = ((ViewElementRef) elem).isRename();
-				renameName = ((ViewElementRef) elem).getName();
+			if(elem instanceof ViewGUIElementReference) {
+				guiElement = ((ViewGUIElementReference) elem).getValue();
+				isRenamed = ((ViewGUIElementReference) elem).isRename();
+				renameName = ((ViewGUIElementReference) elem).getName();
 			} else if(elem instanceof ContainerElementRef) {
 				guiElement = ((ContainerElementRef) elem).getValue();
 				isRenamed = ((ContainerElementRef) elem).isRename();

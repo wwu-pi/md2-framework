@@ -52,7 +52,7 @@ import de.wwu.md2.framework.mD2.TimeInput
 import de.wwu.md2.framework.mD2.TimeType
 import de.wwu.md2.framework.mD2.TimeVal
 import de.wwu.md2.framework.mD2.Tooltip
-import de.wwu.md2.framework.mD2.ViewElementDef
+import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.WhereClauseAnd
 import de.wwu.md2.framework.mD2.WhereClauseCompareExpression
 import de.wwu.md2.framework.mD2.WhereClauseCondition
@@ -275,7 +275,7 @@ class ManifestJson {
 		"type": "md2gridpanel",
 		"cols": "«gridLayout.params.filter(typeof(GridLayoutPaneColumnsParam)).head.value»",
 		"children": [
-			«FOR element : gridLayout.elements.filter(typeof(ViewElementDef)).map(e | e.value) SEPARATOR ","»
+			«FOR element : gridLayout.elements.filter(typeof(ViewGUIElement)) SEPARATOR ","»
 				{
 					«getViewElement(element)»
 				}
