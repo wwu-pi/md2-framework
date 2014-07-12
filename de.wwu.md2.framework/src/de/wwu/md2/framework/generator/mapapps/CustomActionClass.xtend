@@ -212,7 +212,17 @@ class CustomActionClass {
 	'''
 	
 	def private static dispatch generateCodeFragment(AttributeSetTask task) '''
-		// TODO
+		«val targetContentProviderVar = getUnifiedName("targetContentProvider")»
+		«generateContentProviderCodeFragment(task.pathDefinition.contentProviderRef, targetContentProviderVar)»
+		«val setVar = getUnifiedName("set")»
+		«IF task.newValue != null»
+			var «setVar» = «generateSimpleExpression(task.newValue)»;
+		«ELSEIF task.sourceContentProvider != null»
+			«val sourceContentProviderVar = getUnifiedName("sourceContentProvider")»
+			«generateContentProviderCodeFragment(task.sourceContentProvider.contentProvider, sourceContentProviderVar)»
+			var «setVar» = «sourceContentProviderVar».getContent();
+		«ENDIF»
+		«targetContentProviderVar».setValue("«task.pathDefinition.resolveContentProviderPathAttribute»", «setVar»);
 	'''
 	
 	def private static dispatch generateCodeFragment(ContentProviderSetTask task) '''
