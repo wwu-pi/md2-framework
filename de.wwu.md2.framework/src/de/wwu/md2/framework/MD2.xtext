@@ -494,7 +494,6 @@ Spacer:
  */
 ContainerElement:
 	ContentContainer | SubViewContainer
-//	GridLayoutPane | FlowLayoutPane | AlternativesPane | TabbedAlternativesPane
 ;
 
 /*
@@ -770,23 +769,30 @@ SimpleAction:
 /////////////////////////////////////
 
 /*
- * A CustomCodeFragment is a define the possible commands and tasks that can be declared in a CustomAction.
+ * A CustomCodeFragment defines the possible commands and tasks that can be declared in a CustomAction.
  * 
  * TODO define all keywords that are supported by our language
  * TODO provide possibility to implement arbitrary code (in theory)
  */
 CustomCodeFragment:
-	{EventBindingTask} ('bind' ('action' | 'actions') actions+=ActionDef+ 'on' events += EventDef+) |
-	{EventUnbindTask} ('unbind' ('action' | 'actions') actions+=ActionDef+ 'from' events += EventDef+) |
-	{ValidatorBindingTask} ('bind' ('validator' | 'validators') validators+=ValidatorType+ 'on' (referencedFields += AbstractViewGUIElementRef)+) |
-	{ValidatorUnbindTask} ('unbind' ('validator' | 'validators') (validators+=ValidatorType+ | allTypes ?= 'all') 'from' (referencedFields += AbstractViewGUIElementRef)+) |
-	{CallTask} ('call' action = ActionDef) |
-	{MappingTask} ('map' referencedViewField = AbstractViewGUIElementRef 'to' pathDefinition = AbstractContentProviderPath) |
-	{UnmappingTask} ('unmap' referencedViewField = AbstractViewGUIElementRef 'from' pathDefinition = AbstractContentProviderPath) |
-	{ConditionalCodeFragment} 'if' if = IfCodeBlock ('elseif' elseifs += IfCodeBlock)* ('else' else = ElseCodeBlock)? |
-	{AttributeSetTask} pathDefinition = ContentProviderPathDefinition '=' (sourceContentProvider = ContentProviderReference | newValue = SimpleExpression) |
-	{ContentProviderSetTask} targetContentProvider = ContentProviderReference '=' (sourceContentProvider = ContentProviderReference | newValue = SimpleExpression) |
-	{ViewElementSetTask} referencedViewField = AbstractViewGUIElementRef '=' newValue = SimpleExpression
+	'bind' (
+		{EventBindingTask} ('action' | 'actions') actions += ActionDef+ 'on' events += EventDef+ |
+		{ValidatorBindingTask} ('validator' | 'validators') validators += ValidatorType+ 'on' referencedFields += AbstractViewGUIElementRef+ ) |
+	'unbind' (
+		{EventUnbindTask} ('action' | 'actions') actions += ActionDef+ 'from' events += EventDef+ |
+		{ValidatorUnbindTask} ('validator' | 'validators') (validators += ValidatorType+ | allTypes ?= 'all') 'from' referencedFields += AbstractViewGUIElementRef+ ) |
+	'call' (
+		{CallTask} action = ActionDef ) |
+	'map' (
+		{MappingTask} referencedViewField = AbstractViewGUIElementRef 'to' pathDefinition = AbstractContentProviderPath ) |
+	'unmap' (
+		{UnmappingTask} referencedViewField = AbstractViewGUIElementRef 'from' pathDefinition = AbstractContentProviderPath ) |
+	'set' (
+		 =>ContentProviderPathDefinition {AttributeSetTask.pathDefinition=current} '=' source = SimpleExpression |
+		ContentProviderReference {ContentProviderSetTask.contentProvider=current} '=' source = SimpleExpression |
+		AbstractViewGUIElementRef {ViewElementSetTask.referencedViewField=current} '=' source = SimpleExpression ) |
+	'if' (
+		{ConditionalCodeFragment} if = IfCodeBlock ('elseif' elseifs += IfCodeBlock)* ('else' else = ElseCodeBlock)? )
 ;
 
 IfCodeBlock:
@@ -814,8 +820,10 @@ ContainsCodeFragments:
  * generated ViewGUIElement containing the value of the specified Attribute.
  */
 AbstractViewGUIElementRef:
-	ref = [ViewElementType | QUALIFIED_NAME] (tail = NestedAbstractViewGUIElementRef |
-	'[' (path = EntityPathDefinition | simpleType = SimpleDataTypeWrapper) ']')?
+	ref = [ViewElementType | QUALIFIED_NAME] (
+		tail = NestedAbstractViewGUIElementRef |
+		'[' (path = EntityPathDefinition | simpleType = SimpleDataTypeWrapper) ']'
+	)?
 ;
 
 /*
@@ -1072,7 +1080,6 @@ RemoteConnection:
  */
 ContentProvider:
 	'contentProvider' type = DataType name = EID '{' (
-		//('cache' ((cache ?= 'true') | 'false'))? &
 		'providerType' (default ?= 'default' | local ?= 'local' | connection = [RemoteConnection]) &
 		(filter ?= 'filter' filterType = FilterType ('where' whereClause = WhereClauseCondition)?)? &
 		('readonly' (readonly ?= 'true' | 'false'))?
@@ -1299,20 +1306,17 @@ ConditionalExpression:
 	('(' Or ')') |
 	{Not} OP_CONDITION_NOT expression = ConditionalExpression |
 	{BooleanExpression} value = Boolean |
-	ComplexConditionalExpression
+	=>ComplexConditionalExpression
 ;
 
-ComplexConditionalExpression:
-		SimpleExpression =>({CompareExpression.eqLeft=current} op = Operator) eqRight = SimpleExpression | 
-		AbstractViewGUIElementRef =>({GuiElementStateExpression.reference=current} 'is') isState = ViewElementState
+ComplexConditionalExpression returns ConditionalExpression:
+	=>AbstractViewGUIElementRef (
+		{GuiElementStateExpression.reference=current} 'is' isState = ViewElementState |
+		{CompareExpression.eqLeft=current} op = Operator eqRight = SimpleExpression
+	) |
+	SimpleExpression {CompareExpression.eqLeft=current} op = Operator eqRight = SimpleExpression
 ;
 
-/*
- * Boolean lists all possible Boolean values.
- */
-enum Boolean:
-	TRUE='true' | FALSE='false'
-;
 
 /*
  * ViewElementState lists all possible ViewElementStates.
@@ -1331,60 +1335,12 @@ enum ViewElementState:
  * target (input field / content provider).
  */
 SimpleExpression:
-	// the order of the rules matter, as they are tried by the parser from left to right,
-	// i.e. an atomic value or reference is considered as long as no mathematical or string concatenation
-	// operator appears.
-	// AbstractViewGUIElementRef and AbstractContentProviderPath are already implicitly matched in MathExpression.
-	// However, even though they are never matched, they are listed here to make the grammar better understandable and
-	// to see at a glance which grammar elements are supported in SimpleExpressions.
-	ConcatenatedString | MathExpression | Value | AbstractViewGUIElementRef | AbstractContentProviderPath
-;
-
-/*
- * Helper rule that returns a value object which corresponds to a certain data type.
- * Used to assign any MD2-supported data type to an attribute.
- */
-Value:
-	{IntVal} value = INT |
-	{FloatVal} value = FLOAT |
-	{StringVal} value = STRING |
-	{BooleanVal} value = Boolean |
-	{DateVal} value = DATE |
-	{TimeVal} value = TIME |
-	{DateTimeVal} value = DATE_TIME
+	ConcatenatedString
 ;
 
 
 /////////////////////////////////////////////
-// Controller layer => Math expressions
-/////////////////////////////////////////////
-
-MathLiteral:
-	{IntVal} value = INT |
-	{FloatVal} value = FLOAT |
-	AbstractViewGUIElementRef |
-	AbstractContentProviderPath
-;
-
-AdditionSubtraction returns MathSubExpression:
-	MultiplicationDivision (({Plus.leftOperand=current} OP_MATH_PLUS | {Minus.leftOperand=current} OP_MATH_MINUS) rightOperand=MultiplicationDivision)*
-;
-
-MultiplicationDivision returns MathSubExpression:
-	MathSubExpression (({Mult.leftOperand=current} OP_MATH_MULT | {Div.leftOperand=current} OP_MATH_DIV) rightOperand=MathSubExpression)*
-;
-
-MathSubExpression returns MathSubExpression:
-	MathLiteral | '(' AdditionSubtraction ')'
-;
-
-MathExpression:
-	AdditionSubtraction
-;
-
-
-/////////////////////////////////////////////
-// Controller layer => String concatenation
+// Controller Layer => Concatenated String
 /////////////////////////////////////////////
 
 /**
@@ -1402,20 +1358,47 @@ MathExpression:
  * 
  * TODO - consider to use a human readable format for the string representation of DATE, TIME and DATE_TIME
  */
-StringPartial returns ConcatenatedString:
-	// At least two values have to be concatenated. Otherwise a concatenated string cannot be distinguished from an atomic value.
-	literals += StringLiteral (OP_STRING_CONCAT literals += StringLiteral)+
+ConcatenatedString returns SimpleExpression:
+	StringLiteral ({ConcatenatedString.leftLiteral=current} OP_STRING_CONCAT rightLiteral=StringLiteral)*
 ;
 
-StringLiteral:
-	Value |
+StringLiteral returns SimpleExpression:
+	=>MathExpression |
+	'(' ConcatenatedString ')' |
+	{StringVal} value = STRING |
+	{BooleanVal} value = Boolean |
+	{DateVal} value = DATE |
+	{TimeVal} value = TIME |
+	{DateTimeVal} value = DATE_TIME
+;
+
+
+/////////////////////////////////////////////
+// Controller Layer => Math Expressions
+/////////////////////////////////////////////
+
+MathLiteral returns SimpleExpression:
+	=>AbstractContentProviderPath |
+	AbstractProviderReference |
 	AbstractViewGUIElementRef |
-	AbstractContentProviderPath |
-	MathExpression
+	{IntVal} value = INT |
+	{FloatVal} value = FLOAT
 ;
 
-ConcatenatedString:
-	StringPartial | '(' StringPartial ')'
+AdditionSubtraction returns SimpleExpression:
+	MultiplicationDivision (({Plus.leftOperand=current} OP_MATH_PLUS | {Minus.leftOperand=current} OP_MATH_MINUS) rightOperand=MultiplicationDivision)*
+;
+
+MultiplicationDivision returns SimpleExpression:
+	MathSubExpression (({Mult.leftOperand=current} OP_MATH_MULT | {Div.leftOperand=current} OP_MATH_DIV) rightOperand=MathSubExpression)*
+;
+
+MathSubExpression returns SimpleExpression:
+	MathLiteral | '(' AdditionSubtraction ')'
+;
+
+MathExpression returns SimpleExpression:
+	AdditionSubtraction
 ;
 
 
@@ -1545,8 +1528,7 @@ AbstractContentProviderPath:
 ;
 
 /*
- * The ContentProviderPathDefinition
- * defines a path to an attribute of
+ * The ContentProviderPathDefinition defines a path to an attribute of
  * an entity stored in a ContentProvider.
  */
 ContentProviderPathDefinition:
@@ -1769,10 +1751,11 @@ PERCENT returns ecore::EInt:
  * 
  * TODO Find all keywords that do not break the grammar
  */
-EID:
-	'bold' | 'italic' | 'normal' |
-	'aqua' | 'black' | 'blue' | 'gray' | 'green' | 'lime' | 'maroon' | 'navy' | 'olive' | 'purple' |
-	'red' | 'silver' | 'white' | 'yellow' | ID
+EID: 
+	ID
+//	'bold' | 'italic' | 'normal' |
+//	'aqua' | 'black' | 'blue' | 'gray' | 'green' | 'lime' | 'maroon' | 'navy' | 'olive' | 'purple' |
+//	'red' | 'silver' | 'white' | 'yellow'
 	
 	//'action' | 'actions' |
 	//'silent' | 'event' | 'valid' | 'empty' | 'filled' | 'enum' | 'entity' | 'name' |
@@ -1878,4 +1861,11 @@ OP_CONDITION_NOT:
  */
 enum Operator:
 	EQUALS = 'equals' | GREATER = '>' | SMALLER = '<' | GREATER_OR_EQUAL = '>=' | SMALLER_OR_EQUAL = '<='
+;
+
+/*
+ * Boolean lists all possible Boolean values.
+ */
+enum Boolean:
+	TRUE='true' | FALSE='false'
 ;
