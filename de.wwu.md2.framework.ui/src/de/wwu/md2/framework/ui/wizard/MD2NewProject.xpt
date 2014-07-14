@@ -18,6 +18,18 @@ package «projectName + ".controllers"»
 /*
  * Implement the controller here
  */
+
+main {
+	appName "«projectName»"
+	appVersion "1.0"
+	modelVersion "1.0"
+	startView firstView
+	onInitialized startAction
+}
+
+action CustomAction startAction {
+	
+}
 «ENDFILE»
 «FILE "src/" + projectName.replaceAll("\\.", "/") + "/views/defaultView.md2"-»
 package «projectName + ".views"»
@@ -25,6 +37,10 @@ package «projectName + ".views"»
 /*
  * Implement the view here
  */
+
+FlowLayoutPane firstView {
+	
+}
 «ENDFILE»
 «FILE ".settings/org.eclipse.core.resources.prefs"-»
 eclipse.preferences.version=1
