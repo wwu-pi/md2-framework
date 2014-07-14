@@ -321,7 +321,7 @@ class ProcessCustomEvents {
 			
 			val booleanVal = factory.createBooleanVal
 			booleanVal.setValue(Boolean::TRUE)
-			setTask.setNewValue(booleanVal)
+			setTask.setSource(booleanVal)
 			
 			val mappingPathDefinition = factory.createContentProviderPathDefinition
 			val pathTail = factory.createPathTail
@@ -340,7 +340,7 @@ class ProcessCustomEvents {
 			
 			val booleanVal = factory.createBooleanVal
 			booleanVal.setValue(Boolean::FALSE)
-			setTask.setNewValue(booleanVal)
+			setTask.setSource(booleanVal)
 			
 			val mappingPathDefinition = factory.createContentProviderPathDefinition
 			val pathTail = factory.createPathTail

@@ -256,7 +256,7 @@ class ProcessWorkflow {
 						val targetPathDefinition = factory.createComplexContentProviderPathDefinition(contentProvider, attribute)
 						attributeSetTask.setPathDefinition(targetPathDefinition)
 						
-						attributeSetTask.setNewValue(currentWorkflowStepVal)
+						attributeSetTask.setSource(currentWorkflowStepVal)
 						
 						innerIfCodeBlock.codeFragments.add(attributeSetTask)
 					}
@@ -311,7 +311,7 @@ class ProcessWorkflow {
 							
 							val stringVal = factory.createStringVal
 							stringVal.setValue(nextStep)
-							attributeSetTask.setNewValue(stringVal)
+							attributeSetTask.setSource(stringVal)
 							
 							innerIfCodeBlock.codeFragments.add(attributeSetTask)
 						}
@@ -323,7 +323,7 @@ class ProcessWorkflow {
 							
 							val stringVal = factory.createStringVal
 							stringVal.setValue(previousStep)
-							attributeSetTask.setNewValue(stringVal)
+							attributeSetTask.setSource(stringVal)
 							
 							innerIfCodeBlock.codeFragments.add(attributeSetTask)
 						}
@@ -335,7 +335,7 @@ class ProcessWorkflow {
 							
 							val stringVal = factory.createStringVal
 							stringVal.setValue(currentStep)
-							attributeSetTask.setNewValue(stringVal)
+							attributeSetTask.setSource(stringVal)
 							
 							innerIfCodeBlock.codeFragments.add(attributeSetTask)
 						}
@@ -437,7 +437,7 @@ class ProcessWorkflow {
 			
 			val stringVal = factory.createStringVal
 			stringVal.setValue(str)
-			setTask.setNewValue(stringVal)
+			setTask.setSource(stringVal)
 			
 			val pathDefinition = factory.createContentProviderPathDefinition
 			val pathTail = factory.createPathTail

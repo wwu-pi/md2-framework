@@ -36,8 +36,6 @@ import de.wwu.md2.framework.mD2.GotoViewAction
 import de.wwu.md2.framework.mD2.GuiElementStateExpression
 import de.wwu.md2.framework.mD2.IntVal
 import de.wwu.md2.framework.mD2.MappingTask
-import de.wwu.md2.framework.mD2.MathLiteral
-import de.wwu.md2.framework.mD2.MathSubExpression
 import de.wwu.md2.framework.mD2.Minus
 import de.wwu.md2.framework.mD2.Mult
 import de.wwu.md2.framework.mD2.Not
@@ -72,7 +70,6 @@ import de.wwu.md2.framework.mD2.ValidatorMinTimeParam
 import de.wwu.md2.framework.mD2.ValidatorRegExParam
 import de.wwu.md2.framework.mD2.ValidatorType
 import de.wwu.md2.framework.mD2.ValidatorUnbindTask
-import de.wwu.md2.framework.mD2.Value
 import de.wwu.md2.framework.mD2.ViewElementEventRef
 import de.wwu.md2.framework.mD2.ViewElementSetTask
 import de.wwu.md2.framework.mD2.ViewElementState
@@ -83,6 +80,7 @@ import org.eclipse.xtend2.lib.StringConcatenation
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
+import de.wwu.md2.framework.mD2.SimpleExpression
 
 class CustomActionClass {
 	
@@ -208,25 +206,27 @@ class CustomActionClass {
 	'''
 	
 	def private static dispatch generateCodeFragment(ViewElementSetTask task) '''
-		// TODO
+		«val widgetVar = getUnifiedName("widget")»
+		«generateWidgetCodeFragment(resolveViewGUIElement(task.referencedViewField), widgetVar)»
+		«val setVar = getUnifiedName("set")»
+		var «setVar» = «generateSimpleExpression(task.source)»;
+		«widgetVar».setValue(«setVar»);
 	'''
 	
 	def private static dispatch generateCodeFragment(AttributeSetTask task) '''
 		«val targetContentProviderVar = getUnifiedName("targetContentProvider")»
 		«generateContentProviderCodeFragment(task.pathDefinition.contentProviderRef, targetContentProviderVar)»
 		«val setVar = getUnifiedName("set")»
-		«IF task.newValue != null»
-			var «setVar» = «generateSimpleExpression(task.newValue)»;
-		«ELSEIF task.sourceContentProvider != null»
-			«val sourceContentProviderVar = getUnifiedName("sourceContentProvider")»
-			«generateContentProviderCodeFragment(task.sourceContentProvider.contentProvider, sourceContentProviderVar)»
-			var «setVar» = «sourceContentProviderVar».getContent();
-		«ENDIF»
+		var «setVar» = «generateSimpleExpression(task.source)»;
 		«targetContentProviderVar».setValue("«task.pathDefinition.resolveContentProviderPathAttribute»", «setVar»);
 	'''
 	
 	def private static dispatch generateCodeFragment(ContentProviderSetTask task) '''
-		// TODO
+		«val targetContentProviderVar = getUnifiedName("targetContentProvider")»
+		«generateContentProviderCodeFragment(task.contentProvider, targetContentProviderVar)»
+		«val setVar = getUnifiedName("set")»
+		var «setVar» = «generateSimpleExpression(task.source)»;
+		«targetContentProviderVar».setContent(«setVar»);
 	'''
 	
 	
@@ -458,7 +458,7 @@ class CustomActionClass {
 	// Simple Expressions
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static dispatch String generateSimpleExpression(Value expression) {
+	def private static dispatch String generateSimpleExpression(SimpleExpression expression) {
 		switch (expression) {
 			StringVal: '''this.$.create("string", "«expression.value»")'''
 			IntVal: '''this.$.create("integer", «expression.value»)'''
@@ -508,8 +508,8 @@ class CustomActionClass {
 	// Concatenated Strings
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static dispatch generateStringLiteral(Value literal) {
-		'''«generateSimpleExpression(literal)».toString()'''
+	def private static dispatch generateStringLiteral(ConcatenatedString expression) {
+		'''«generateSimpleExpression(expression)».toString()'''
 	}
 	
 	def private static dispatch generateStringLiteral(AbstractViewGUIElementRef literal) {
@@ -529,22 +529,16 @@ class CustomActionClass {
 	// Math Expressions
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static String generateMathExpression(MathSubExpression expression) {
+	def private static String generateMathExpression(SimpleExpression expression) {
 		switch (expression) {
 			Plus: '''(«generateMathExpression(expression.leftOperand)» + «generateMathExpression(expression.rightOperand)»)'''
 			Minus: '''(«generateMathExpression(expression.leftOperand)» - «generateMathExpression(expression.rightOperand)»)'''
 			Mult: '''«generateMathExpression(expression.leftOperand)» * «generateMathExpression(expression.rightOperand)»'''
 			Div: '''«generateMathExpression(expression.leftOperand)» / «generateMathExpression(expression.rightOperand)»'''
-			MathLiteral: '''«generateMathLiteral(expression)»'''
-		}
-	}
-	
-	def private static String generateMathLiteral(MathLiteral literal) {
-		switch (literal) {
-			IntVal: '''«literal.value»'''
-			FloatVal: '''«literal.value»'''
-			AbstractViewGUIElementRef: '''this.$.widgetRegistry.getWidget("«getName(resolveViewGUIElement(literal))»").getValue().getPlatformValue()'''
-			AbstractContentProviderPath: '''this.$.contentProviderRegistry.getContentProvider("«literal.resolveContentProviderName»").getValue("«literal.resolveContentProviderPathAttribute»").getPlatformValue()'''
+			IntVal: '''«expression.value»'''
+			FloatVal: '''«expression.value»'''
+			AbstractViewGUIElementRef: '''this.$.widgetRegistry.getWidget("«getName(resolveViewGUIElement(expression))»").getValue().getPlatformValue()'''
+			AbstractContentProviderPath: '''this.$.contentProviderRegistry.getContentProvider("«expression.resolveContentProviderName»").getValue("«expression.resolveContentProviderPathAttribute»").getPlatformValue()'''
 		}
 	}
 	

@@ -36,7 +36,6 @@ import de.wwu.md2.framework.mD2.IntegerInput
 import de.wwu.md2.framework.mD2.IntegerType
 import de.wwu.md2.framework.mD2.Label
 import de.wwu.md2.framework.mD2.LocationProvider
-import de.wwu.md2.framework.mD2.MathExpression
 import de.wwu.md2.framework.mD2.NumberInput
 import de.wwu.md2.framework.mD2.Operator
 import de.wwu.md2.framework.mD2.OptionInput
@@ -198,7 +197,6 @@ class ManifestJson {
 			ConcatenatedString: '''//TODO'''
 			ContentProviderPathDefinition: '''//TODO'''
 			LocationProvider: '''//TODO'''
-			MathExpression: '''//TODO'''
 		}
 	}
 	

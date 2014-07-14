@@ -133,7 +133,7 @@ class MD2ComplexElementFactory extends MD2FactoryImpl {
 			
 			val contentProviderReference = this.createContentProviderReference
 			contentProviderReference.setContentProvider(contentProvider)
-			addToHeadTask.setSourceContentProvider(contentProviderReference)
+			addToHeadTask.setSource(contentProviderReference)
 			
 			md2list.put("addToHeadTask", addToHeadTask)
 		}
@@ -144,11 +144,11 @@ class MD2ComplexElementFactory extends MD2FactoryImpl {
 			
 			val contentProviderReference = this.createContentProviderReference
 			contentProviderReference.setContentProvider(contentProvider)
-			removeHeadTask.setTargetContentProvider(contentProviderReference)
+			removeHeadTask.setContentProvider(contentProviderReference)
 			
 			val tailAttribute = entity.attributes.findFirst[ a | a.name.equals("tail")]
 			val pathDefinition = this.createComplexContentProviderPathDefinition(contentProvider, tailAttribute)
-			removeHeadTask.setNewValue(pathDefinition)
+			removeHeadTask.setSource(pathDefinition)
 			
 			md2list.put("removeHeadTask", removeHeadTask)
 		}
