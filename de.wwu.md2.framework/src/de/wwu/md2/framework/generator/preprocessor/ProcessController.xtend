@@ -23,7 +23,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil
 
 import static extension de.wwu.md2.framework.generator.preprocessor.util.Util.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
-import de.wwu.md2.framework.mD2.ContentProvider
+import de.wwu.md2.framework.mD2.ContentProviderimport de.wwu.md2.framework.mD2.CustomAction
 
 class ProcessController {
 	
@@ -125,6 +125,44 @@ class ProcessController {
 				crossReference.replace(combinedAction, custAction)
 			]
 		]
+	}
+	
+	/**
+	 * Create initial GotoViewAction in <i>__startupAction</i> to load the first view. The start-up action goes to
+	 * the view that is defined in the controller's main block. If no startView is specified, no GotoViewAction will be
+	 * created.
+	 * 
+	 * <p>
+	 *   DEPENDENCIES:
+	 * </p>
+	 * <ul>
+	 *   <li>
+	 *     <i>createStartUpActionAndRegisterAsOnInitializedEvent</i> - Requires the <i>__startupAction</i> to add the
+	 *     GotoViewAction call task.
+	 *   </li>
+	 * </ul>
+	 */
+	def static void createInitialGotoViewAction(MD2Factory factory, ResourceSet workingInput) {
+		
+		val main = workingInput.resources.map[ r | 
+			r.allContents.toIterable.filter(typeof(Main))
+		].flatten.head
+		
+		val startupAction = workingInput.resources.map[ r |
+			r.allContents.toIterable.filter(typeof(CustomAction))
+				.filter( action | action.name.equals(ProcessController::startupActionName))
+		].flatten.last
+		
+		// create GotoViewAction and add it to startupAction
+		if (main?.startView != null) {
+			val callTask = factory.createCallTask
+			val simpleActionRef = factory.createSimpleActionRef
+			val gotoViewAction = factory.createGotoViewAction
+			callTask.setAction(simpleActionRef)
+			simpleActionRef.setAction(gotoViewAction)
+			gotoViewAction.setView(main.startView)
+			startupAction.codeFragments.add(0, callTask);
+		}
 	}
 	
 	/**

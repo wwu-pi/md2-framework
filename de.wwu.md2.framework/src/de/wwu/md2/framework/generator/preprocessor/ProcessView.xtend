@@ -29,7 +29,9 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.util.EcoreUtil
 
-import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
+import static extension org.eclipse.emf.ecore.util.EcoreUtil.*import de.wwu.md2.framework.mD2.MD2Model
+import de.wwu.md2.framework.mD2.Controller
+import de.wwu.md2.framework.mD2.Model
 
 class ProcessView {
 	
@@ -103,50 +105,61 @@ class ProcessView {
 	 */
 	def static void transformFlowLayoutsToGridLayouts(MD2Factory factory, ResourceSet workingInput) {
 		
-		val Iterable<FlowLayoutPane> flowLayoutPanes = workingInput.resources.map[r |
-			r.allContents.toIterable.filter(typeof(FlowLayoutPane))
-		].flatten
-		
 		// Store a mapping for all replaced floatLayouts to the newly created GridLayout.
 		// This information is required to update all cross references after the replacement process.
 		val rememberReplacedFloatLayoutsMap = newHashMap
 		
-		for (flowLayoutPane : flowLayoutPanes) {
-			// calculate columns and rows params for the new GridLayout
-			val numberOfContainedElements = flowLayoutPane.elements.size
-			val directionParameter = flowLayoutPane.params.filter(typeof(FlowLayoutPaneFlowDirectionParam)).last
-			val columnsParam = factory.createGridLayoutPaneColumnsParam
-			val rowsParam = factory.createGridLayoutPaneRowsParam
+		workingInput.resources.forEach[r |
 			
-			switch (directionParameter.flowDirection) {
-				case FlowDirection::HORIZONTAL: {
-					columnsParam.setValue(numberOfContainedElements)
-					rowsParam.setValue(1)
-				}
-				case FlowDirection::VERTICAL: {
-					columnsParam.setValue(1)
-					rowsParam.setValue(numberOfContainedElements)
+			// check whether the current resource has a view layer, otherwise continue
+			val hasView = r.contents.filter(typeof(MD2Model)).exists(e | e.modelLayer instanceof View)
+			
+			var iterator = r.allContents
+			while(hasView && iterator.hasNext) {
+				val next = iterator.next
+				if (next instanceof FlowLayoutPane) {
+					val flowLayoutPane = next as FlowLayoutPane
+					
+					// reset iterator after each match to avoid concurrent modification exceptions
+					// => is iterating over the tree while replacing flowLayouts with gridLayouts
+					// TODO can be really slow on big trees (optimization by only iterating views)
+					iterator = r.allContents
+					
+					// calculate columns and rows params for the new GridLayout
+					val numberOfContainedElements = flowLayoutPane.elements.size
+					val directionParameter = flowLayoutPane.params.filter(typeof(FlowLayoutPaneFlowDirectionParam)).last
+					val columnsParam = factory.createGridLayoutPaneColumnsParam
+					val rowsParam = factory.createGridLayoutPaneRowsParam
+					
+					switch (directionParameter.flowDirection) {
+						case FlowDirection::HORIZONTAL: {
+							columnsParam.setValue(numberOfContainedElements)
+							rowsParam.setValue(1)
+						}
+						case FlowDirection::VERTICAL: {
+							columnsParam.setValue(1)
+							rowsParam.setValue(numberOfContainedElements)
+						}
+					}
+					
+					// Create new GridLayout and copy attributes
+					val newGridLayoutPane = factory.createGridLayoutPane
+					newGridLayoutPane.setName(flowLayoutPane.name)
+					val commonParams = flowLayoutPane.params.filter(typeof(CommonContainerParam))
+					newGridLayoutPane.params.addAll(commonParams)
+					
+					// copy child elements
+					val elements = flowLayoutPane.elements
+					newGridLayoutPane.elements.addAll(elements)
+					
+					// set calculated columns and rows parameter and replace the FlowLayout with the newly created GridLayout
+					newGridLayoutPane.params.addAll(columnsParam, rowsParam)
+					flowLayoutPane.replace(newGridLayoutPane)
+					
+					rememberReplacedFloatLayoutsMap.put(flowLayoutPane, newGridLayoutPane)
 				}
 			}
-			
-			// Create new GridLayout and copy attributes
-			val newGridLayoutPane = factory.createGridLayoutPane
-			newGridLayoutPane.setName(flowLayoutPane.name)
-			val commonParams = flowLayoutPane.params.filter(typeof(CommonContainerParam))
-			newGridLayoutPane.params.addAll(commonParams)
-			
-			// copy child elements
-			val elements = flowLayoutPane.elements
-			newGridLayoutPane.elements.addAll(elements)
-			val copier = new EcoreUtil.Copier()
-			flowLayoutPane.elements.addAll(copier.copyAll(newGridLayoutPane.elements))
-			
-			// set calculated columns and rows parameter and replace the FlowLayout with the newly created GridLayout
-			newGridLayoutPane.params.addAll(columnsParam, rowsParam)
-			flowLayoutPane.replace(newGridLayoutPane)
-			
-			rememberReplacedFloatLayoutsMap.put(flowLayoutPane, newGridLayoutPane)
-		}
+		]
 		
 		// Change all cross references to the new grid layout
 		val usageReferencesMap = EcoreUtil.UsageCrossReferencer.findAll(rememberReplacedFloatLayoutsMap.keySet, workingInput)

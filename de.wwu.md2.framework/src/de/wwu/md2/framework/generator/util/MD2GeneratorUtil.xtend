@@ -56,6 +56,10 @@ import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 
 import static extension de.wwu.md2.framework.util.StringExtensions.*
+import de.wwu.md2.framework.mD2.AbstractProviderReference
+import de.wwu.md2.framework.mD2.ContentProvider
+import de.wwu.md2.framework.mD2.LocationProviderReference
+import de.wwu.md2.framework.mD2.ContentProviderReference
 
 class MD2GeneratorUtil {
 		
@@ -164,6 +168,17 @@ class MD2GeneratorUtil {
 	
 	/**
 	 * Helper method to simplify the handling of 'virtual' content providers such as the location provider.
+	 * Returns the name of the contentProvider.
+	 */
+	def static resolveContentProviderName(AbstractProviderReference abstractProviderReference) {
+		switch (abstractProviderReference) {
+			ContentProviderReference: abstractProviderReference.contentProvider.name
+			LocationProviderReference: "location"
+		}
+	}
+	
+	/**
+	 * Helper method to simplify the handling of 'virtual' content providers such as the location provider.
 	 * Returns a string representation of the fully qualified name of the attribute.
 	 */
 	def static resolveContentProviderPathAttribute(AbstractContentProviderPath abstractPath) {
@@ -261,9 +276,11 @@ class MD2GeneratorUtil {
 			(codeFragment.eContainer as CustomAction).name == ProcessAutoGenerator::autoGenerationActionName
 		) {
 			return true
-		}	
-		val Action startupAction = codeFragment.eResource.allContents.filter(typeof(Main)).last.onInitializedEvent
-		if (startupAction == null) return false
+		}
+		val startupAction = codeFragment.eResource.allContents.filter(typeof(Main)).last?.onInitializedEvent
+		if (startupAction == null) {
+			return false
+		}
 		return traverseAction(startupAction).filter(typeof(CustomAction)).exists(customAction | customAction.codeFragments.contains(codeFragment))
 	}
 	

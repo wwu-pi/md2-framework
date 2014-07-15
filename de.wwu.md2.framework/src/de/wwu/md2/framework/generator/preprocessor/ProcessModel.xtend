@@ -110,8 +110,9 @@ class ProcessModel {
 					}
 					//@TODO Implement all ValidatorTypes
 				]
-			]			
-			if (validatorBindingTask.validators.size > 0) {
+			]
+			
+			if (validatorBindingTask != null && validatorBindingTask.validators.size > 0) {
 				getAutoGenAction(workingInput)?.codeFragments.add(validatorBindingTask)
 			}
 		]

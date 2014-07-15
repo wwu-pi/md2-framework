@@ -150,7 +150,7 @@ class DataContainer
 		contentProviders = newHashSet
 		remoteValidators = newHashSet
 		
-		rootViewContainers.add(resolveContainerElement(main.startView));
+		//rootViewContainers.add(resolveContainerElement(main.startView));
 		for (controller : controllers) {
 			for (controllerElement : controller.controllerElements) {
 				switch controllerElement {

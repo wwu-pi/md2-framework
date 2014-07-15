@@ -1359,10 +1359,10 @@ SimpleExpression:
  * TODO - consider to use a human readable format for the string representation of DATE, TIME and DATE_TIME
  */
 ConcatenatedString returns SimpleExpression:
-	StringLiteral ({ConcatenatedString.leftLiteral=current} OP_STRING_CONCAT rightLiteral=StringLiteral)*
+	StringPartial ({ConcatenatedString.leftString=current} OP_STRING_CONCAT rightString=StringPartial)*
 ;
 
-StringLiteral returns SimpleExpression:
+StringPartial returns SimpleExpression:
 	=>MathExpression |
 	'(' ConcatenatedString ')' |
 	{StringVal} value = STRING |

@@ -49,6 +49,16 @@ class ProcessWorkflow {
 	 * TODO - documentation + dependencies
 	 */
 	def static void transformWorkflowsToSequenceOfCoreLanguageElements(MD2ComplexElementFactory factory, ResourceSet workingInput) {
+		
+		// only run this task if there are workflows present
+		val hasWorkflows = workingInput.resources.map[ r |
+			r.allContents.toIterable.findFirst( e | e instanceof Workflow)
+		].exists(e | e != null)
+		
+		if (!hasWorkflows) {
+			return
+		}
+		
 		val returnStepStack = createReturnStepStack(factory, workingInput)
 		
 		val controllerStateEntity = createWorkflowControllerStateEntity(factory, workingInput)

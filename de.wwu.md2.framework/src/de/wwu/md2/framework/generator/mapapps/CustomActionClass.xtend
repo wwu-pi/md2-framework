@@ -81,6 +81,7 @@ import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
 import de.wwu.md2.framework.mD2.SimpleExpression
+import de.wwu.md2.framework.mD2.AbstractProviderReference
 
 class CustomActionClass {
 	
@@ -223,7 +224,7 @@ class CustomActionClass {
 	
 	def private static dispatch generateCodeFragment(ContentProviderSetTask task) '''
 		«val targetContentProviderVar = getUnifiedName("targetContentProvider")»
-		«generateContentProviderCodeFragment(task.contentProvider, targetContentProviderVar)»
+		«generateContentProviderCodeFragment(task.contentProvider.contentProvider, targetContentProviderVar)»
 		«val setVar = getUnifiedName("set")»
 		var «setVar» = «generateSimpleExpression(task.source)»;
 		«targetContentProviderVar».setContent(«setVar»);
@@ -455,39 +456,6 @@ class CustomActionClass {
 	
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////
-	// Simple Expressions
-	//////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	def private static dispatch String generateSimpleExpression(SimpleExpression expression) {
-		switch (expression) {
-			StringVal: '''this.$.create("string", "«expression.value»")'''
-			IntVal: '''this.$.create("integer", «expression.value»)'''
-			FloatVal: '''this.$.create("float", «expression.value»)'''
-			BooleanVal: '''this.$.create("boolean", «expression.value.toString»)'''
-			DateVal: '''this.$.create("date", stamp.fromISOString("«expression.value.toISODate»"))'''
-			TimeVal: '''this.$.create("time", stamp.fromISOString("«expression.value.toISOTime»"))'''
-			DateTimeVal: '''this.$.create("datetime", stamp.fromISOString("«expression.value.toISODateTime»"))'''
-		}
-	}
-	
-	def private static dispatch String generateSimpleExpression(AbstractViewGUIElementRef expression) {
-		'''this.$.widgetRegistry.getWidget("«getName(resolveViewGUIElement(expression))»").getValue()'''
-	}
-	
-	def private static dispatch String generateSimpleExpression(AbstractContentProviderPath expression) {
-		'''this.$.contentProviderRegistry.getContentProvider("«expression.resolveContentProviderName»").getValue("«expression.resolveContentProviderPathAttribute»")'''
-	}
-	
-	def private static dispatch String generateSimpleExpression(ConcatenatedString expression) {
-		'''this.$.create("string", «FOR literal : expression.literals SEPARATOR(" + ")»«generateStringLiteral(literal)»«ENDFOR»)'''
-	}
-	
-	def private static dispatch String generateSimpleExpression(MathSubExpression expression) {
-		'''this.$.create("float", «generateMathExpression(expression)»)'''
-	}
-	
-	
-	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// GUI Element State Expressions
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -505,23 +473,40 @@ class CustomActionClass {
 	
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////
+	// Simple Expressions
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	def private static String generateSimpleExpression(SimpleExpression expression) {
+		switch (expression) {
+			// literals
+			StringVal: '''this.$.create("string", "«expression.value»")'''
+			IntVal: '''this.$.create("integer", «expression.value»)'''
+			FloatVal: '''this.$.create("float", «expression.value»)'''
+			BooleanVal: '''this.$.create("boolean", «expression.value.toString»)'''
+			DateVal: '''this.$.create("date", stamp.fromISOString("«expression.value.toISODate»"))'''
+			TimeVal: '''this.$.create("time", stamp.fromISOString("«expression.value.toISOTime»"))'''
+			DateTimeVal: '''this.$.create("datetime", stamp.fromISOString("«expression.value.toISODateTime»"))'''
+			
+			// literals
+			AbstractViewGUIElementRef: '''this.$.widgetRegistry.getWidget("«getName(resolveViewGUIElement(expression))»").getValue()'''
+			AbstractContentProviderPath: '''this.$.contentProviderRegistry.getContentProvider("«expression.resolveContentProviderName»").getValue("«expression.resolveContentProviderPathAttribute»")'''
+			AbstractProviderReference: '''this.$.contentProviderRegistry.getContentProvider("«expression.resolveContentProviderName»").getContent()'''
+			
+			// concatenated string
+			ConcatenatedString: '''this.$.create("string", «generateConcatenatedString(expression)»)'''
+			
+			// math expressions
+			default:  '''this.$.create("float", «generateMathExpression(expression)»)'''
+		}
+	}
+	
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// Concatenated Strings
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static dispatch generateStringLiteral(ConcatenatedString expression) {
-		'''«generateSimpleExpression(expression)».toString()'''
-	}
-	
-	def private static dispatch generateStringLiteral(AbstractViewGUIElementRef literal) {
-		'''«generateSimpleExpression(literal)».toString()'''
-	}
-	
-	def private static dispatch generateStringLiteral(AbstractContentProviderPath literal) {
-		'''«generateSimpleExpression(literal)».toString()'''
-	}
-	
-	def private static dispatch generateStringLiteral(MathSubExpression literal) {
-		'''(«generateMathExpression(literal)»).toString()'''
+	def private static String generateConcatenatedString(ConcatenatedString expression) {
+		'''«generateSimpleExpression(expression.leftString)».toString().concat(«generateSimpleExpression(expression.rightString)»)'''
 	}
 	
 	
@@ -531,14 +516,10 @@ class CustomActionClass {
 	
 	def private static String generateMathExpression(SimpleExpression expression) {
 		switch (expression) {
-			Plus: '''(«generateMathExpression(expression.leftOperand)» + «generateMathExpression(expression.rightOperand)»)'''
-			Minus: '''(«generateMathExpression(expression.leftOperand)» - «generateMathExpression(expression.rightOperand)»)'''
-			Mult: '''«generateMathExpression(expression.leftOperand)» * «generateMathExpression(expression.rightOperand)»'''
-			Div: '''«generateMathExpression(expression.leftOperand)» / «generateMathExpression(expression.rightOperand)»'''
-			IntVal: '''«expression.value»'''
-			FloatVal: '''«expression.value»'''
-			AbstractViewGUIElementRef: '''this.$.widgetRegistry.getWidget("«getName(resolveViewGUIElement(expression))»").getValue().getPlatformValue()'''
-			AbstractContentProviderPath: '''this.$.contentProviderRegistry.getContentProvider("«expression.resolveContentProviderName»").getValue("«expression.resolveContentProviderPathAttribute»").getPlatformValue()'''
+			Plus: '''(«generateSimpleExpression(expression.leftOperand)».toPlatformValue() + «generateSimpleExpression(expression.rightOperand)».toPlatformValue())'''
+			Minus: '''(«generateSimpleExpression(expression.leftOperand)».toPlatformValue() - «generateSimpleExpression(expression.rightOperand)».toPlatformValue())'''
+			Mult: '''«generateSimpleExpression(expression.leftOperand)».toPlatformValue() * «generateSimpleExpression(expression.rightOperand)».toPlatformValue()'''
+			Div: '''«generateSimpleExpression(expression.leftOperand)».toPlatformValue() / «generateSimpleExpression(expression.rightOperand)».toPlatformValue()'''
 		}
 	}
 	

@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 
 import static de.wwu.md2.framework.generator.preprocessor.ProcessAutoGenerator.*
+import static de.wwu.md2.framework.generator.preprocessor.ProcessCommon.*
 import static de.wwu.md2.framework.generator.preprocessor.ProcessController.*
 import static de.wwu.md2.framework.generator.preprocessor.ProcessCustomEvents.*
 import static de.wwu.md2.framework.generator.preprocessor.ProcessMappings.*
@@ -129,9 +130,13 @@ class MD2Preprocessor {
 		//                                                                         //
 		/////////////////////////////////////////////////////////////////////////////
 		
+		createModelViewAndControllerIfNotPresent(factory, workingInput) // new
+		
 		replaceDefaultProviderTypeWithConcreteDefinition(factory, workingInput) // new
 		
 		createStartUpActionAndRegisterAsOnInitializedEvent(factory, workingInput) // new
+		
+		createInitialGotoViewAction(factory, workingInput) // new
 		
 		transformEventBindingAndUnbindingTasksToOneToOneRelations(factory, workingInput) // new
 		

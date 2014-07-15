@@ -37,6 +37,15 @@ class ProcessCustomEvents {
 	 */
 	def static void transformAllCustomEventsToBasicLanguageStructures(MD2Factory factory, ResourceSet workingInput) {
 		
+		// only run this task if there are conditional events present
+		val hasConditionalEvents = workingInput.resources.map[ r |
+			r.allContents.toIterable.findFirst( e | e instanceof OnConditionEvent)
+		].exists(e | e != null)
+		
+		if (!hasConditionalEvents) {
+			return
+		}
+		
 		// get all event binding and event unbinding tasks that refer to custom events
 		val customEventBindings = workingInput.resources.map[ r |
 			r.allContents.toIterable

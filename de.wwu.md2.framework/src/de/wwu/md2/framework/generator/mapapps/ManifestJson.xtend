@@ -59,33 +59,33 @@ import de.wwu.md2.framework.mD2.WhereClauseNot
 import de.wwu.md2.framework.mD2.WhereClauseOr
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
-import static extension de.wwu.md2.framework.util.DateISOFormatter.*
+import static extension de.wwu.md2.framework.util.DateISOFormatter.*import de.wwu.md2.framework.mD2.WidthParam
 
 class ManifestJson {
 	
-	def static generateManifestJson(DataContainer dataContainer) '''
+	def static generateManifestJson(DataContainer dataContainer, String projectName) '''
 		{
-			"Bundle-SymbolicName": "md2_«dataContainer.createAppName.toString.toFirstLower»",
+			"Bundle-SymbolicName": "md2_«projectName.toFirstLower»",
 			"Bundle-Version": "«dataContainer.main.appVersion»",
-			"Bundle-Name": "«dataContainer.main.appName»",
+			"Bundle-Name": "Generated MD2App «dataContainer.main.appName»",
 			"Bundle-Localization": [],
 			"Bundle-Main": "",
 			"Require-Bundle": [],
 			"Components": [{
-					"name": "MD2«dataContainer.createAppName»",
+					"name": "MD2«projectName.toFirstUpper»",
 					"impl": "ct/Stateful",
 					"provides": ["md2.app.AppDefinition"],
 					"propertiesConstructor": true,
 					"properties": {
 						"windowTitle": "«dataContainer.main.appName»",
-						"serviceUri": "«dataContainer.main.defaultConnection.uri»",
+						"serviceUri": "«dataContainer.main.defaultConnection?.uri»",
 						"onInitialized": "«dataContainer.main.onInitializedEvent.name»",
 						"contentProviders": [
 							«FOR contentProvider : dataContainer.contentProviders SEPARATOR ","»
 								{
 									"name": "«contentProvider.name»",
 									"configuration": {
-										"entity": "«(contentProvider.type as ReferencedModelType).entity.name»",
+										"entityName": "«(contentProvider.type as ReferencedModelType).entity.name»",
 										«IF !contentProvider.local»
 											"serviceUri": "«contentProvider.connection.uri»",
 										«ENDIF»
@@ -106,7 +106,7 @@ class ManifestJson {
 							«FOR entity : dataContainer.entities SEPARATOR ","»
 								"«entity.name»": {
 									«FOR attribute : entity.attributes SEPARATOR ","»
-										"«attribute.attributeDataType» «attribute.name»": «attribute.attributeDefaultValue»
+										"«attribute.attributeDataType»|«attribute.name»": «attribute.attributeDefaultValue»
 									«ENDFOR»
 								}
 							«ENDFOR»
@@ -118,8 +118,8 @@ class ManifestJson {
 									"dataForm": {
 										"dataform-version": "1.0.0",
 										"size": {
-											"h": 200,
-											"w": 500
+											"h": "400",
+											"w": "550"
 										},
 										«getViewElement(view)»
 									}
@@ -272,6 +272,10 @@ class ManifestJson {
 	def private static dispatch getViewElement(GridLayoutPane gridLayout) '''
 		"type": "md2gridpanel",
 		"cols": "«gridLayout.params.filter(typeof(GridLayoutPaneColumnsParam)).head.value»",
+		"valueClass": "layoutCell",
+		"cellStyle": {
+			"width": "«gridLayout.params.filter(typeof(WidthParam)).head.width»%"
+		},
 		"children": [
 			«FOR element : gridLayout.elements.filter(typeof(ViewGUIElement)) SEPARATOR ","»
 				{
