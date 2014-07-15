@@ -186,6 +186,8 @@ class MD2Preprocessor {
 		
 		transformInputsWithLabelsAndTooltipsToLayouts(factory, workingInput) // new
 		
+		createDisableActionsForAllDisabledViewElements(factory, workingInput) // new
+		
 		// Remove redundant elements
 		val Collection<EObject> objectsToRemove = newHashSet()
 		objectsToRemove.addAll(autoGenerators)

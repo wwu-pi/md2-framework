@@ -48,7 +48,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		
 		// Generate common base elements
 //		fsa.generateFile(basePackageName + "/app.json", generateAppJson(dataContainer, requiredBundles))
-		fsa.generateFile(basePackageName + "/manifest.json", generateManifestJson(dataContainer, basePackageName))
+		fsa.generateFile(basePackageName + "/manifest.json", generateManifestJson(dataContainer, processedInput))
 		
 		fsa.generateFile(basePackageName + "/module.js", generateModule(dataContainer))
 		

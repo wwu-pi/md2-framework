@@ -263,7 +263,7 @@ class CustomActionClass {
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(DisplayMessageAction action, String varName) '''
-		var «varName» = this.$.actionFactory.getDisplayMessageAction("«action.message»");
+		var «varName» = this.$.actionFactory.getDisplayMessageAction((«generateSimpleExpression(action.message)»).toString());
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(ContentProviderOperationAction action, String varName) '''
@@ -431,10 +431,10 @@ class CustomActionClass {
 	def private static String generateCondition(ConditionalExpression expression) {
 		switch (expression) {
 			Or: '''
-			(
-				«generateCondition(expression.leftExpression)» ||
-				«generateCondition(expression.rightExpression)»
-			)'''
+				(
+					«generateCondition(expression.leftExpression)» ||
+					«generateCondition(expression.rightExpression)»
+				)'''
 			And: '''
 				«generateCondition(expression.leftExpression)» &&
 				«generateCondition(expression.rightExpression)»'''
@@ -505,9 +505,10 @@ class CustomActionClass {
 	// Concatenated Strings
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static String generateConcatenatedString(ConcatenatedString expression) {
-		'''«generateSimpleExpression(expression.leftString)».toString().concat(«generateSimpleExpression(expression.rightString)»)'''
-	}
+	def private static String generateConcatenatedString(ConcatenatedString expression) '''
+		«generateSimpleExpression(expression.leftString)».toString()
+		.concat(«generateSimpleExpression(expression.rightString)»)
+	'''
 	
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////
@@ -516,10 +517,10 @@ class CustomActionClass {
 	
 	def private static String generateMathExpression(SimpleExpression expression) {
 		switch (expression) {
-			Plus: '''(«generateSimpleExpression(expression.leftOperand)».toPlatformValue() + «generateSimpleExpression(expression.rightOperand)».toPlatformValue())'''
-			Minus: '''(«generateSimpleExpression(expression.leftOperand)».toPlatformValue() - «generateSimpleExpression(expression.rightOperand)».toPlatformValue())'''
-			Mult: '''«generateSimpleExpression(expression.leftOperand)».toPlatformValue() * «generateSimpleExpression(expression.rightOperand)».toPlatformValue()'''
-			Div: '''«generateSimpleExpression(expression.leftOperand)».toPlatformValue() / «generateSimpleExpression(expression.rightOperand)».toPlatformValue()'''
+			Plus: '''(«generateSimpleExpression(expression.leftOperand)».getPlatformValue() + «generateSimpleExpression(expression.rightOperand)».getPlatformValue())'''
+			Minus: '''(«generateSimpleExpression(expression.leftOperand)».getPlatformValue() - «generateSimpleExpression(expression.rightOperand)».getPlatformValue())'''
+			Mult: '''«generateSimpleExpression(expression.leftOperand)».getPlatformValue() * «generateSimpleExpression(expression.rightOperand)».getPlatformValue()'''
+			Div: '''«generateSimpleExpression(expression.leftOperand)».getPlatformValue() / «generateSimpleExpression(expression.rightOperand)».getPlatformValue()'''
 		}
 	}
 	

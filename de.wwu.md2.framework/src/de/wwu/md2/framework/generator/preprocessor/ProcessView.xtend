@@ -1,9 +1,11 @@
 package de.wwu.md2.framework.generator.preprocessor
 
 import de.wwu.md2.framework.mD2.AlternativesPane
+import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.CommonContainerParam
 import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.ContentElement
+import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.FlowDirection
 import de.wwu.md2.framework.mD2.FlowLayoutPane
 import de.wwu.md2.framework.mD2.FlowLayoutPaneFlowDirectionParam
@@ -12,6 +14,7 @@ import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam
 import de.wwu.md2.framework.mD2.GridLayoutPaneRowsParam
 import de.wwu.md2.framework.mD2.InputElement
 import de.wwu.md2.framework.mD2.MD2Factory
+import de.wwu.md2.framework.mD2.MD2Model
 import de.wwu.md2.framework.mD2.MD2Package
 import de.wwu.md2.framework.mD2.NamedColor
 import de.wwu.md2.framework.mD2.NamedColorDef
@@ -29,9 +32,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.util.EcoreUtil
 
-import static extension org.eclipse.emf.ecore.util.EcoreUtil.*import de.wwu.md2.framework.mD2.MD2Model
-import de.wwu.md2.framework.mD2.Controller
-import de.wwu.md2.framework.mD2.Model
+import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 class ProcessView {
 	
@@ -506,6 +507,58 @@ class ProcessView {
 				}
 				
 				lst.add(position, gridLayout)
+			}
+		}
+	}
+	
+	/**
+	 * Creates a <code>DisableAction</code> in the <i>__startupAction</i> for all view elements that are disabled.
+	 * Currently, only InputElements and Buttons can be disabled. However, if new disableable GUI elements are added,
+	 * this method has to be adapted accordingly.
+	 * 
+	 * <p>
+	 *   DEPENDENCIES:
+	 * </p>
+	 * <ul>
+	 *   <li>
+	 *     <i>createStartUpActionAndRegisterAsOnInitializedEvent</i> - Require <i>__startupAction</i> to place the
+	 *     DisableAction call tasks.
+	 *   </li>
+	 *   <li>
+	 *     <i>createViewElementsForAutoGeneratorAction</i> - An AutoGeneratorAction can be disabled as a whole. If that
+	 *     is the case, all created elements are disabled (<code>isDisabled=true</code>) by default.
+	 *   </li>
+	 * </ul>
+	 */
+	def static void createDisableActionsForAllDisabledViewElements(MD2Factory factory, ResourceSet workingInput) {
+		val guiElements = workingInput.resources.map[r |
+			r.allContents.toIterable.filter(typeof(ViewGUIElement))
+		].flatten
+		
+		val startupAction = workingInput.resources.map[ r |
+			r.allContents.toIterable.filter(typeof(CustomAction))
+				.filter( action | action.name.equals(ProcessController::startupActionName))
+		].flatten.last
+		
+		for (guiElement : guiElements) {
+			
+			val isDisabled = switch (guiElement) {
+				InputElement: guiElement.isDisabled
+				Button: guiElement.isDisabled
+				default: false
+			}
+			
+			// if GUI element is disabled => create DisableAction and add it to startupAction
+			if (isDisabled) {
+				val callTask = factory.createCallTask
+				val simpleActionRef = factory.createSimpleActionRef
+				val disableAction = factory.createDisableAction
+				val abstractViewGUIElementRef = factory.createAbstractViewGUIElementRef
+				abstractViewGUIElementRef.setRef(guiElement)
+				callTask.setAction(simpleActionRef)
+				simpleActionRef.setAction(disableAction)
+				disableAction.setInputField(abstractViewGUIElementRef)
+				startupAction.codeFragments.add(0, callTask);
 			}
 		}
 	}

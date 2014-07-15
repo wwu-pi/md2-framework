@@ -360,6 +360,7 @@ Button:
 ButtonShorthandDefinition returns Button:
 	'Button' name = EID '(' text = STRING ')' ('{' (
 		('style' style = StyleAssignment)? &
+		('disabled' ((isDisabled ?= 'true') | 'false'))? &
 		('width' width = PERCENT)?
 	) '}')?
 ;
@@ -372,6 +373,7 @@ ButtonExtendedDefinition returns Button:
 	'Button' name = EID '{' (
 		'text' text = STRING &
 		('style' style = StyleAssignment)? &
+		('disabled' ((isDisabled ?= 'true') | 'false'))? &
 		('width' width = PERCENT)?
 	) '}'
 ;
@@ -753,7 +755,7 @@ SimpleAction:
 	{GotoViewAction} ('GotoView' '(' view = AbstractViewGUIElementRef ')' ) |
 	{DisableAction} ('Disable' '(' inputField = AbstractViewGUIElementRef ')' ) |
 	{EnableAction} ('Enable' '(' inputField = AbstractViewGUIElementRef ')' ) |
-	{DisplayMessageAction} ('DisplayMessage' '(' message = STRING ')' ) |
+	{DisplayMessageAction} ('DisplayMessage' '(' message = SimpleExpression ')' ) |
 	{ContentProviderOperationAction} ('ContentProviderOperation' '(' operation = AllowedOperation contentProvider = ContentProviderReference ')') |
 	{ContentProviderResetAction} ('ContentProviderReset' '('contentProvider = ContentProviderReference ')') |
 	{ContentProviderAddAction} ('ContentProviderAdd' '('contentProvider = ContentProviderReference ')') |

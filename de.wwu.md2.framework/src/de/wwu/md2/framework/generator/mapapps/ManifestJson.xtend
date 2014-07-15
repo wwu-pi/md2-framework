@@ -57,28 +57,31 @@ import de.wwu.md2.framework.mD2.WhereClauseCompareExpression
 import de.wwu.md2.framework.mD2.WhereClauseCondition
 import de.wwu.md2.framework.mD2.WhereClauseNot
 import de.wwu.md2.framework.mD2.WhereClauseOr
+import de.wwu.md2.framework.mD2.WidthParam
+import org.eclipse.emf.ecore.resource.ResourceSet
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
-import static extension de.wwu.md2.framework.util.DateISOFormatter.*import de.wwu.md2.framework.mD2.WidthParam
+import static extension de.wwu.md2.framework.util.DateISOFormatter.*
+import static extension de.wwu.md2.framework.util.StringExtensions.*
 
 class ManifestJson {
 	
-	def static generateManifestJson(DataContainer dataContainer, String projectName) '''
+	def static generateManifestJson(DataContainer dataContainer, ResourceSet processedInput) '''
 		{
-			"Bundle-SymbolicName": "md2_«projectName.toFirstLower»",
+			"Bundle-SymbolicName": "md2_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]»",
 			"Bundle-Version": "«dataContainer.main.appVersion»",
-			"Bundle-Name": "Generated MD2App «dataContainer.main.appName»",
+			"Bundle-Name": "Generated MD2 bundle: «dataContainer.main.appName»",
 			"Bundle-Localization": [],
 			"Bundle-Main": "",
 			"Require-Bundle": [],
 			"Components": [{
-					"name": "MD2«projectName.toFirstUpper»",
+					"name": "MD2«processedInput.getBasePackageName.split("\\.").last.toFirstUpper»",
 					"impl": "ct/Stateful",
 					"provides": ["md2.app.AppDefinition"],
 					"propertiesConstructor": true,
 					"properties": {
 						"windowTitle": "«dataContainer.main.appName»",
-						"serviceUri": "«dataContainer.main.defaultConnection?.uri»",
+						"serviceUri": «dataContainer.main.defaultConnection?.uri.quotify ?: "null"»,
 						"onInitialized": "«dataContainer.main.onInitializedEvent.name»",
 						"contentProviders": [
 							«FOR contentProvider : dataContainer.contentProviders SEPARATOR ","»
@@ -106,7 +109,10 @@ class ManifestJson {
 							«FOR entity : dataContainer.entities SEPARATOR ","»
 								"«entity.name»": {
 									«FOR attribute : entity.attributes SEPARATOR ","»
-										"«attribute.attributeDataType»|«attribute.name»": «attribute.attributeDefaultValue»
+										"«attribute.name»": {
+											"datatype": "«attribute.attributeDataType»",
+											"defaultValue": «attribute.attributeDefaultValue»
+										}
 									«ENDFOR»
 								}
 							«ENDFOR»
