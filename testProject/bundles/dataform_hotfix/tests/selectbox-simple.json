@@ -1,0 +1,81 @@
+{
+    "form" : {
+        "dataform-version":"1.0.0",
+        "size": {
+            "h": 200,
+            "w": 500
+        },
+        "children": [{
+            "type": "label",
+            "value": "Tests Different SelectBox Input Fields",
+            "size": {
+                "l": 5,
+                "t": 0
+            }
+        },{
+            "type": "label",
+            "value": "Label = Value:",
+            "size": {
+                "l": 5,
+                "t": 20
+            }
+        },{
+            "type": "selectbox",
+            "field": "text1",
+            "values" : ["Lowest","Low","Normal","High","Highest"],
+            "max": 10,
+            "size": {
+                "l" : 150,
+                "t" : 20,
+                "w" : 200
+            }
+        },{
+            "type": "label",
+            "value": "Label != Value:",
+            "size": {
+                "l": 5,
+                "t": 50
+            }
+        },{
+            "type": "selectbox",
+            "field": "text2",
+            "searchAttribute" : "name",
+            "labelAttribute" : "name",
+            "values" : [{
+                "name":"Lowest",
+                "value": "1"
+            },{
+                "name":"Low",
+                "value": "2"
+            },{
+                "name":"Normal",
+                "value": "3"
+            },{
+                "name":"High",
+                "value": "4"
+            },{
+                "name":"Highest",
+                "value": "1"
+            }],
+            "size": {
+                "l" : 150,
+                "t" : 50,
+                "w" : 300
+            }
+        },{
+            "type": "selectbox",
+            "field": "text3",
+            "searchAttribute" : "title",
+            "labelAttribute" : "${title}(${id})",
+            "store" : "testStore",
+            "size": {
+                "l" : 150,
+                "t" : 75
+            }
+        }]
+    },
+    "input" :{
+        "text1" : "Low",
+        "text2" : "1"
+    }
+}

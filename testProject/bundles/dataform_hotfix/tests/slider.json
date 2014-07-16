@@ -1,0 +1,74 @@
+{
+    "form" : {
+        "dataform-version":"1.0.0",
+        "size": {
+            "h": 200,
+            "w": 500
+        },
+        "children": [{
+            "type": "label",
+            "value": "Test Sliders",
+            "size": {
+                "l": 5,
+                "t": 0
+            }
+        },{
+            "type": "label",
+            "value": "Simple Slider",
+            "size": {
+                "l": 5,
+                "t": 20
+            }
+        },{
+            "type": "slider",
+            "min": 1,
+            "max": 100,
+            "field" : "sliderValue",
+            "discreteValues" : 100,
+			"showRuleLabels": true,
+			"showRule": true,
+            "ruleLabels": ["low", "high"],
+            "size": {
+                "l" : 150,
+                "t" : 20,
+                "w" : 250
+            }
+        },
+        {
+            "type": "label",
+            "value": "Simple Slider2",
+            "size": {
+                "l": 5,
+                "t": 70
+            }
+        },{
+            "type": "slider",
+            "min": 1,
+            "max": 10,
+            "field" : "sliderValue2",
+            "discreteValues" : 3,
+            "size": {
+                "l" : 150,
+                "t" : 70,
+                "w" : 100
+            }
+        },{
+            "type": "slider",
+            "vertical" : true,
+            "min": 1,
+            "max": 100,
+            "showRule": true,
+            "showRuleLabels": true,
+            "field" : "sliderValue1",
+            "size": {
+                "l" : 250,
+                "t" : 70,
+                "h" : 200
+            }
+        }]
+    },
+    "input" : {
+        "sliderValue" : 4,
+        "sliderValue2" : 5
+    }
+}

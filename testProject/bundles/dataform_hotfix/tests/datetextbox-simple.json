@@ -1,0 +1,98 @@
+{
+    "form" : {
+        "dataform-version":"1.0.0",
+        "size": {
+            "h": 300,
+            "w": 500
+        },
+        "children": [{
+            "type": "label",
+            "value": "Tests Different Date Input Fields",
+            "size": {
+                "l": 5,
+                "t": 0
+            }
+        },{
+            "type": "label",
+            "value": "Free Date",
+            "size": {
+                "l": 5,
+                "t": 25
+            }
+        },{
+            "type": "datetextbox",
+            "field": "free",
+            "size": {
+                "l" : 150,
+                "t" : 25
+            }
+        },{
+            "type": "label",
+            "value": "Date(required)",
+            "size": {
+                "l": 5,
+                "t": 50
+            }
+        },{
+            "type": "datetextbox",
+            "field": "freerequired",
+            "required" : true,
+            "size": {
+                "l" : 150,
+                "t" : 50
+            }
+        },{
+            "type": "label",
+            "value": "Min 2012-05-01",
+            "size": {
+                "l": 5,
+                "t": 75
+            }
+        },{
+            "type": "datetextbox",
+            "field": "min20120501",
+            "min" : "2012-05-01",
+            "size": {
+                "l" : 150,
+                "t" : 75
+            }
+        },{
+            "type": "label",
+            "value": "Max 2012-05-01",
+            "size": {
+                "l": 5,
+                "t": 100
+            }
+        },{
+            "type": "datetextbox",
+            "field": "max20120501",
+            "max" : "2012-05-01",
+            "size": {
+                "l" : 150,
+                "t" : 100
+            }
+        },{
+            "type": "label",
+            "value": "/Date(.)/ test",
+            "size": {
+                "l": 5,
+                "t": 125
+            }
+        },{
+            "type": "datetextbox",
+            "field": "msdate",
+            "size": {
+                "l" : 150,
+                "t" : 125
+            }
+        }]
+    },
+    "input" : {
+        "free" : "2012-05-01",
+        "freerequired" : "2012-05-01",
+        "min20120501" : "2012-05-01",
+        "max20120501" : "2012-05-01",
+        "patternHHmmss" : "2012-05-01",
+        "msdate" : "\/Date(946738800000+0100)\/"
+    }
+}

@@ -1,0 +1,33 @@
+/*
+ * COPYRIGHT 2010-2011 con terra GmbH Germany
+ */
+
+{
+    "idProperty" : "id",
+    "data": [
+    {
+        "id" : 1,
+        "title" : "A"
+    },
+    {
+        "id" : 2,
+        "title" : "B"
+    },
+    {
+        "id" : 3,
+        "title" : "C"
+    },
+    {
+        "id" : 4,
+        "title" : "D"
+    },
+    {
+        "id" : 5,
+        "title" : "E"
+    },
+    {
+        "id" : 6,
+        "title" : "F"
+    }
+    ]
+}

@@ -1,0 +1,305 @@
+{
+	"Bundle-SymbolicName": "md2_mapAppsTest",
+	"Bundle-Version": "1.0",
+	"Bundle-Name": "Generated MD2 bundle: map.apps Test",
+	"Bundle-Localization": [],
+	"Bundle-Main": "",
+	"Require-Bundle": [],
+	"Components": [{
+			"name": "MD2MapAppsTest",
+			"impl": "ct/Stateful",
+			"provides": ["md2.app.AppDefinition"],
+			"propertiesConstructor": true,
+			"properties": {
+				"windowTitle": "map.apps Test",
+				"serviceUri": null,
+				"onInitialized": "__startupAction",
+				"contentProviders": [
+					{
+						"name": "personProvider",
+						"configuration": {
+							"entityName": "Person",
+							"serviceUri": "localhost",
+							"type": "remote"
+						}
+					}
+				],
+				"entities": {
+					"Person": {
+						"firstName": {
+							"datatype": "string",
+							"defaultValue": null
+						},
+						"lastName": {
+							"datatype": "string",
+							"defaultValue": null
+						}
+					}
+				},
+				"views": [
+					{
+						"name": "calculatorView",
+						"dataForm": {
+							"dataform-version": "1.0.0",
+							"size": {
+								"h": "400",
+								"w": "550"
+							},
+							"type": "md2gridpanel",
+							"cols": "1",
+							"valueClass": "layoutCell",
+							"cellStyle": {
+								"width": "100%"
+							}
+							,
+							"children": [
+								{
+									"type": "textoutput",
+									"datatype": "string",
+									"field": "header",
+									"defaultText": "Calculator",
+									"cellStyle": {
+										"width": "100%",
+										"font-weight": "bold",
+										"font-size": "1.5em"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "firstView",
+						"dataForm": {
+							"dataform-version": "1.0.0",
+							"size": {
+								"h": "400",
+								"w": "550"
+							},
+							"type": "md2gridpanel",
+							"cols": "2",
+							"valueClass": "layoutCell",
+							"cellStyle": {
+								"width": "100%"
+							}
+							,
+							"children": [
+								{
+									"type": "md2gridpanel",
+									"cols": "1",
+									"valueClass": "layoutCell",
+									"cellStyle": {
+										"width": "50%"
+									}
+									,
+									"children": [
+										{
+											"type": "textoutput",
+											"datatype": "string",
+											"field": "header1",
+											"defaultText": "Personal Data",
+											"cellStyle": {
+												"width": "100%",
+												"font-weight": "bold",
+												"font-size": "1.5em"
+											}
+										},
+										{
+											"type": "spacer",
+											"cellStyle": {
+												"width": "100%"
+											}
+										},
+										{
+											"type": "md2gridpanel",
+											"cols": "3",
+											"valueClass": "layoutCell",
+											"cellStyle": {
+												"width": "100%"
+											}
+											,
+											"children": [
+												{
+													"type": "textoutput",
+													"datatype": "string",
+													"field": "__LabelfirstName",
+													"defaultText": "First Name",
+													"cellStyle": {
+														"width": "40%"
+													}
+												},
+												{
+													"type": "textbox",
+													"datatype": "string",
+													"field": "firstName",
+													"cellStyle": {
+														"width": "50%"
+													}
+												},
+												{
+													"type": "spacer",
+													"cellStyle": {
+														"width": "10%"
+													}
+												}
+											]
+										},
+										{
+											"type": "md2gridpanel",
+											"cols": "3",
+											"valueClass": "layoutCell",
+											"cellStyle": {
+												"width": "100%"
+											}
+											,
+											"children": [
+												{
+													"type": "textoutput",
+													"datatype": "string",
+													"field": "__LabellastName",
+													"defaultText": "Last Name",
+													"cellStyle": {
+														"width": "40%"
+													}
+												},
+												{
+													"type": "textbox",
+													"datatype": "string",
+													"field": "lastName",
+													"cellStyle": {
+														"width": "50%"
+													}
+												},
+												{
+													"type": "spacer",
+													"cellStyle": {
+														"width": "10%"
+													}
+												}
+											]
+										},
+										{
+											"type": "md2gridpanel",
+											"cols": "3",
+											"valueClass": "layoutCell",
+											"cellStyle": {
+												"width": "100%"
+											}
+											,
+											"children": [
+												{
+													"type": "textoutput",
+													"datatype": "string",
+													"field": "__Labelemail",
+													"defaultText": "Email",
+													"cellStyle": {
+														"width": "40%"
+													}
+												},
+												{
+													"type": "textbox",
+													"datatype": "string",
+													"field": "email",
+													"cellStyle": {
+														"width": "50%"
+													}
+												},
+												{
+													"type": "spacer",
+													"cellStyle": {
+														"width": "10%"
+													}
+												}
+											]
+										}
+									]
+								},
+								{
+									"type": "md2gridpanel",
+									"cols": "1",
+									"valueClass": "layoutCell",
+									"cellStyle": {
+										"width": "50%"
+									}
+									,
+									"children": [
+										{
+											"type": "textoutput",
+											"datatype": "string",
+											"field": "header2",
+											"defaultText": "Actions",
+											"cellStyle": {
+												"width": "100%",
+												"font-weight": "bold",
+												"font-size": "1.5em"
+											}
+										},
+										{
+											"type": "spacer",
+											"cellStyle": {
+												"width": "100%"
+											}
+										},
+										{
+											"type": "button",
+											"title": "Reset",
+											"field": "resetPersonProvider",
+											"cellStyle": {
+												"width": "100%"
+											}
+										},
+										{
+											"type": "button",
+											"title": "Toggle Last Name",
+											"field": "toggleLastName",
+											"cellStyle": {
+												"width": "100%"
+											}
+										},
+										{
+											"type": "button",
+											"title": "Calculator",
+											"field": "gotoCalculator",
+											"cellStyle": {
+												"width": "100%"
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			"name": "TestActions",
+			"impl": "./actions/TestActions",
+			"provides": ["md2.app.CustomAction"]
+		},
+		{
+			"name": "ToggleEnabled",
+			"impl": "./actions/ToggleEnabled",
+			"provides": ["md2.app.CustomAction"]
+		},
+		{
+			"name": "TestEvents",
+			"impl": "./actions/TestEvents",
+			"provides": ["md2.app.CustomAction"]
+		},
+		{
+			"name": "DoMappings",
+			"impl": "./actions/DoMappings",
+			"provides": ["md2.app.CustomAction"]
+		},
+		{
+			"name": "__combined_startAction",
+			"impl": "./actions/__combined_startAction",
+			"provides": ["md2.app.CustomAction"]
+		},
+		{
+			"name": "__startupAction",
+			"impl": "./actions/__startupAction",
+			"provides": ["md2.app.CustomAction"]
+		}
+	]
+}

@@ -1,0 +1,87 @@
+{
+    "form" : {
+        "dataform-version":"1.0.0",
+        "size": {
+            "h": 350,
+            "w": 400
+        },
+        "children": [{
+            "type": "label",
+            "value": "Tests Different Text Input Fields",
+            "size": {
+                "l": 5,
+                "t": 0
+            }
+        },{
+            "type": "label",
+            "value": "Text (max: 10)",
+            "size": {
+                "l": 5,
+                "t": 20
+            }
+        },{
+            "type": "textarea",
+            "field": "text1",
+            "max": 10,
+            "size": {
+                "l" : 150,
+                "t" : 20
+            }
+        },{
+            "type": "label",
+            "value": "Text (max: unlimited)",
+            "size": {
+                "l": 5,
+                "t": 50
+            }
+        },{
+            "type": "textarea",
+            "field": "text2",
+            "size": {
+                "l" : 150,
+                "t" : 50,
+                "w" : 200,
+                "h" : 100
+            }
+        },{
+            "type": "label",
+            "value": "Text (required)",
+            "size": {
+                "l": 5,
+                "t": 175
+            }
+        },{
+            "type": "textarea",
+            "field": "text3",
+            "required": true,
+            "size": {
+                "l" : 150,
+                "t" : 175,
+                "h" : 50
+            }
+        },{
+            "type": "label",
+            "value": "Text (only numbers)",
+            "size": {
+                "l": 5,
+                "t": 250
+            }
+        },{
+            "type": "textarea",
+            "field": "text4",
+            // only numbers per line
+            "regex": "(\\d+[\\n\\r]{0,2})+",
+            "size": {
+                "l" : 150,
+                "t" : 250,
+                "h" : 50
+            }
+        }]
+    },
+    "input" : {
+        "text1" : "only 10",
+        "text2" : "unlimited text",
+        "text3" : "try to delete me",
+        "text4" : "123"
+    }
+}

@@ -1,0 +1,5 @@
+define([
+    "./TextOutputFactory",
+    "./SpacerFactory",
+    "./GridPanel"
+], {});

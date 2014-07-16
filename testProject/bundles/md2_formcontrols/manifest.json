@@ -1,0 +1,32 @@
+{
+    "Bundle-SymbolicName": "md2_formcontrols",
+    "Bundle-Version": "1.0",
+    "Bundle-Name": "MD2 Form Controls",
+    "Bundle-Description": "FormControl factory that provides MD2 specific controls.",
+    "Bundle-Localization": [],
+    "Bundle-Main": "",
+    "Require-Bundle": [],
+    "Bundle-StartLevel": 40,
+    
+    "Components": [{
+        "name": "TextOutputFactory",
+        "provides": "dataform.ControlFactory",
+        "properties": {
+            "dataformtype": "textoutput"
+        }
+    },
+    {
+        "name": "SpacerFactory",
+        "provides": "dataform.ControlFactory",
+        "properties": {
+            "dataformtype": "spacer"
+        }
+    },
+    {
+        "name": "GridPanel",
+        "provides": "dataform.ControlFactory",
+        "properties": {
+            "dataformtype": "md2gridpanel"
+        }
+    }]
+}

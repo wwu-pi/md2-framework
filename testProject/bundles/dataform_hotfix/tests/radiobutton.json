@@ -1,0 +1,182 @@
+{
+    "form": {
+        "dataform-version": "1.0.0",
+        "size": {
+            "h": 330,
+            "w": 500
+        },
+        "children": [{
+                "type": "panel",
+                "cssClass": "outline",
+                "size": {
+                    "l": 5,
+                    "t": 5,
+                    "w": 300,
+                    "h": 80
+                },
+                "children": [
+                    {
+                        "type": "label",
+                        "value": "RadioButton Group 1",
+                        "size": {
+                            "l": 5,
+                            "t": 5
+                        }
+                    }, {
+                        "type": "label",
+                        "value": "Change 'boolean1'",
+                        "size": {
+                            "l": 5,
+                            "t": 25
+                        }
+                    }, {
+                        "type": "radiobutton",
+                        "field": "boolean1",
+                        "groupId": "group1",
+                        "tooltip": "<b>Test if a tooltip is shown</b>",
+                        "size": {
+                            "l": 150,
+                            "t": 25
+                        }
+                    }, {
+                        "type": "label",
+                        "value": "Change 'boolean2'",
+                        "size": {
+                            "l": 5,
+                            "t": 55
+                        }
+                    }, {
+                        "type": "radiobutton",
+                        "field": "boolean2",
+                        "groupId": "group1",
+                        "size": {
+                            "l": 150,
+                            "t": 55
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "panel",
+                "cssClass": "outline",
+                "size": {
+                    "l": 5,
+                    "t": 105,
+                    "w": 300,
+                    "h": 80
+                },
+                "children": [
+                    {
+                        "type": "label",
+                        "value": "RadioButton Group 2",
+                        "size": {
+                            "l": 5,
+                            "t": 5
+                        }
+                    }, {
+                        "type": "label",
+                        "value": "Change 'boolean3'",
+                        "size": {
+                            "l": 5,
+                            "t": 25
+                        }
+                    }, {
+                        "type": "radiobutton",
+                        "field": "boolean3",
+                        "groupId": "group2",
+                        "size": {
+                            "l": 150,
+                            "t": 25
+                        }
+                    }, {
+                        "type": "label",
+                        "value": "Change 'boolean4'",
+                        "size": {
+                            "l": 5,
+                            "t": 55
+                        }
+                    }, {
+                        "type": "radiobutton",
+                        "field": "boolean4",
+                        "groupId": "group2",
+                        "size": {
+                            "l": 150,
+                            "t": 55
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "panel",
+                "cssClass": "outline",
+                "size": {
+                    "l": 5,
+                    "t": 200,
+                    "w": 300,
+                    "h": 110
+                },
+                "children": [
+                    {
+                        "type": "label",
+                        "value": "RadioButton Group 3 with one field for all RadioButtons",
+                        "size": {
+                            "l": 5,
+                            "t": 5
+                        }
+                    }, {
+                        "type": "label",
+                        "value": "Sportsplane",
+                        "size": {
+                            "l": 5,
+                            "t": 25
+                        }
+                    }, {
+                        "type": "radiobutton",
+                        "field": "planeType",
+                        "value":"Sportsplane",
+                        "size": {
+                            "l": 150,
+                            "t": 25
+                        }
+                    }, {
+                        "type": "label",
+                        "value": "Motorglider",
+                        "size": {
+                            "l": 5,
+                            "t": 55
+                        }
+                    }, {
+                        "type": "radiobutton",
+                        "field": "planeType",
+                        "value":"Motorglider",
+                        "size": {
+                            "l": 150,
+                            "t": 55
+                        }
+                    }, {
+                        "type": "label",
+                        "value": "Executive Jet",
+                        "size": {
+                            "l": 5,
+                            "t": 85
+                        }
+                    }, {
+                        "type": "radiobutton",
+                        "field": "planeType",
+                        "value":"Executive Jet",
+                        "size": {
+                            "l": 150,
+                            "t": 85
+                        }
+                    }
+                ]
+            }]
+    },
+    "input": {
+        "boolean1": true,
+        "boolean2": false,
+        "boolean3": true,
+        "boolean4": false,
+        "planeType" : ""
+    }
+}

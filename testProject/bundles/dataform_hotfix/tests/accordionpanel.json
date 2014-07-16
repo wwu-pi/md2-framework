@@ -1,0 +1,44 @@
+{
+    "form" : {
+        "dataform-version":"1.0.0",
+        "size": {
+            "h": 300,
+            "w": 300
+        },
+        "type" : "accordionpanel",
+        "children":[{
+            "type": "panel",
+            "title" :"Panel 1",
+            "children": [{
+                "type": "label",
+                "value": "Content 1",
+                "size": {
+                    "l": 5,
+                    "t": 0
+                }
+            }]
+        },{
+            "type": "panel",
+            "title" :"Panel 2",
+            "children": [{
+                "type": "label",
+                "value": "Content 2",
+                "size": {
+                    "l": 5,
+                    "t": 0
+                }
+            }]
+        },{
+            "type": "panel",
+            "title" :"Panel 3",
+            "children": [{
+                "type": "label",
+                "value": "Content 3",
+                "size": {
+                    "l": 5,
+                    "t": 0
+                }
+            }]
+        }]
+    }
+}

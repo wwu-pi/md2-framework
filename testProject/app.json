@@ -1,0 +1,31 @@
+{
+    "appName": "mapapps Test",
+    
+    "properties": {
+        "id": "MapappsTest",
+        "title": "mapapps Test"
+    },
+    
+    "load": {
+        // the bundle locations, from where the bundles should be resolved
+        "bundleLocations": ["bundles", "${app}/bundles"],
+        
+        // the bundles to load (if empty: all are loaded)
+        "allowedBundles": ["system","splashscreen","templatelayout","themes","templates","windowmanager","md2_runtime","dataform","console","md2_store","onlinestatus","notifier","md2_formcontrols", "md2_mapAppsTest"],//"md2_testdataform"
+        
+        // the bundles to skip during load (if empty none are skipped)
+        // e.g.: "skipBundles" : ["splashscreen"] for disabling the splashscreen
+        "skipBundles": [],
+        
+        "styles": ["${app}:app.css"]
+    },
+    
+    // bundles section used to overwrite or add any property defined by components in the manifest.json of bundles
+    "bundles": {
+        "notifier": {
+            "NotifierFactory": {
+                "fadeTime": 10000
+            }
+        }
+    }
+}

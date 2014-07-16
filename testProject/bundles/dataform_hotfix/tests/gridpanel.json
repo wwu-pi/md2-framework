@@ -1,0 +1,25 @@
+{
+    "form" : {
+        "dataform-version":"1.0.0",
+        "size": {
+            "h": 200,
+            "w": 500
+        },
+        "type" : "gridpanel",
+        "showLabels" : true,
+        "cols" : 1,
+        "children":[{
+            "type": "textbox",
+            "title": "Test1:",
+            "field": "texbox1"
+        },{
+            "type": "textbox",
+            "title": "Test2:",
+            "field": "texbox2"
+        }]
+    },
+    "input" : {
+        "texbox1" : "textbox 1",
+        "texbox2" : "textbox 2"
+    }
+}

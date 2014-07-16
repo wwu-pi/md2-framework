@@ -1,0 +1,166 @@
+{
+    "form" : {
+        "dataform-version":"1.0.0",
+        "size": {
+            "h": 300,
+            "w": 500
+        },
+        "children": [{
+            "type": "label",
+            "value": "Tests Different Number Text Input Fields",
+            "size": {
+                "l": 5,
+                "t": 0
+            }
+        },{
+            "type": "label",
+            "value": "Free Number",
+            "size": {
+                "l": 5,
+                "t": 25
+            }
+        },{
+            "type": "numbertextbox",
+            "field": "free",
+            "size": {
+                "l" : 150,
+                "t" : 25
+            }
+        },{
+            "type": "label",
+            "value": "Max 10",
+            "size": {
+                "l": 5,
+                "t": 50
+            }
+        },{
+            "type": "numbertextbox",
+            "field": "max10",
+            "max" : 10,
+            "size": {
+                "l" : 150,
+                "t" : 50
+            }
+        },{
+            "type": "label",
+            "value": "Min 10",
+            "size": {
+                "l": 5,
+                "t": 75
+            }
+        },{
+            "type": "numbertextbox",
+            "field": "min10",
+            "min" : 10,
+            "size": {
+                "l" : 150,
+                "t" : 75
+            }
+        },{
+            "type": "label",
+            "value": "Range 4-100",
+            "size": {
+                "l": 5,
+                "t": 100
+            }
+        },{
+            "type": "numbertextbox",
+            "field": "minmax4_100",
+            "min" : 4,
+            "max" : 100,
+            "size": {
+                "l" : 150,
+                "t" : 100
+            }
+        },{
+            "type": "label",
+            "value": "PLZ",
+            "size": {
+                "l": 5,
+                "t": 125
+            }
+        },{
+            "type": "numbertextbox",
+            "field": "user.plz",
+            "max" : 99999,
+            "fractional" : false,
+            "size": {
+                "l" : 150,
+                "t" : 125
+            }
+        },{
+            "type": "label",
+            "value": "Places 0",
+            "size": {
+                "l": 5,
+                "t": 150
+            }
+        },{
+            "type": "numbertextbox",
+            "field": "places0",
+            "places" : 0,
+            "size": {
+                "l" : 150,
+                "t" : 150
+            }
+        },{
+            "type": "label",
+            "value": "Places 3",
+            "size": {
+                "l": 5,
+                "t": 175
+            }
+        },{
+            "type": "numbertextbox",
+            "field": "places3",
+            "places" : 3,
+            "size": {
+                "l" : 150,
+                "t" : 175
+            }
+        },{
+            "type": "label",
+            "value": "Places 1-3",
+            "size": {
+                "l": 5,
+                "t": 200
+            }
+        },{
+            "type": "numbertextbox",
+            "field": "places1_3",
+            "places" : "1,3",
+            "size": {
+                "l" : 150,
+                "t" : 200
+            }
+        },{
+            "type": "label",
+            "value": "Required",
+            "size": {
+                "l": 5,
+                "t": 225
+            }
+        },{
+            "type": "numbertextbox",
+            "field": "required",
+            "required" : true,
+            "size": {
+                "l" : 150,
+                "t" : 225
+            }
+        }]
+    },
+    "input" : {
+        "free" : 0,
+        "max10" : 0,
+        "min10" : 10,
+        "minmax4_100" : 4,
+        "user" : {
+            "plz" : 48145
+        },
+        "places0" : 4,
+        "places3" : 4.111,
+        "places1_3" : 2.1,
+        "required" : 0
+    }
+}

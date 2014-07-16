@@ -1,0 +1,69 @@
+{
+    "tests": [{
+        "name" : "Label",
+        "data" : "label-simple.json"
+    },{
+        "name" : "TextBox",
+        "data" : "textbox-simple.json"
+    },{
+        "name" : "CheckBox",
+        "data" : "checkbox-simple.json"
+    },{
+        "name": "RadioButton",
+        "data": "radiobutton.json"
+    },{
+        "name" : "NumberTextBox",
+        "data" : "numbertextbox-simple.json"
+    },{
+        "name" : "NumberSpinner",
+        "data" : "numberspinner-simple.json"
+    },{
+        "name" : "TimeTextBox",
+        "data" : "timetextbox-simple.json"
+    },{
+        "name" : "DateTextBox",
+        "data" : "datetextbox-simple.json"
+    },{
+        "name" : "TextArea",
+        "data" : "textarea-simple.json"
+    },{
+        "name" : "ComboBox",
+        "data" : "combobox-simple.json"
+    },{
+        "name" : "SelectBox",
+        "data" : "selectbox-simple.json"
+    },{
+        "name" : "Panel",
+        "data" : "panel-simple.json"
+    },{
+        "name" : "TabPanel",
+        "data" : "tabpanel.json"
+    },{
+        "name" : "BorderPanel",
+        "data" : "borderpanel.json"
+    },{
+        "name" : "AccordionPanel",
+        "data" : "accordionpanel.json"
+    },{
+        "name" : "TablePanel",
+        "data" : "tablepanel.json"
+    },{
+        "name" : "GridPanel",
+        "data" : "gridpanel.json"
+    },{
+        "name" : "WizardPanel",
+        "data" : "wizardpanel.json"
+    },{
+        "name" : "Slider",
+        "data" : "slider.json"
+    },{
+        "name" : "Switch",
+        "data" : "switch.json"
+    },{
+        "name": "ColorPicker",
+        "data": "colorpicker.json"
+    },{
+        "name": "ToggleButton",
+        "data": "togglebutton.json"
+    }]
+}

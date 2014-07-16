@@ -1,0 +1,119 @@
+{
+    "form" : {
+        "dataform-version":"1.0.0",
+        "size": {
+            "h": 300,
+            "w": 500
+        },
+        "children": [{
+            "type": "label",
+            "value": "Tests Different Toggle Button Input Fields",
+            "size": {
+                "l": 5,
+                "t": 0
+            }
+        },{
+            "type": "togglebutton",
+            "field": "boolean1",
+            "label": "Boolean 1",
+            "tooltip" : "<b>Test if a tooltip is shown</b>",
+            "size": {
+                "l" : 150,
+                "t" : 20
+            }
+        },{
+            "type": "togglebutton",
+            "field": "boolean2",
+            "label": "Boolean 2",
+            "size": {
+                "l" : 150,
+                "t" : 50
+            }
+        },{
+            "type": "label",
+            "value": "Nutzerdaten",
+            "size": {
+                "l": 5,
+                "t": 75
+            }
+        },{
+            "type": "label",
+            "field": "user.givenname",
+            "size": {
+                "l" : 150,
+                "t" : 75
+            }
+        },{
+            "type": "label",
+            "field": "user.surname",
+            "size": {
+                "l" : 150,
+                "t" : 100
+            }
+        },{
+            "type": "togglebutton",
+            "field": "user.locked",
+            "label": "User Locked",
+            "size": {
+                "l" : 150,
+                "t" : 125
+            }
+        },{
+            "type": "togglebutton",
+            "field": "user.superuser",
+            "label": "Super User",
+            "size": {
+                "l" : 150,
+                "t" : 150
+            }
+        },{
+            "type": "togglebutton",
+            "field": "user.role",
+            "label": "User Role A",
+            "value": "ROLE_A",
+            "size": {
+                "l" : 150,
+                "t" : 175
+            }
+        },{
+            "type": "togglebutton",
+            "field": "user.role",
+            "label": "User Role B",
+            "value": "ROLE_B",
+            "size": {
+                "l" : 150,
+                "t" : 200
+            }
+        },{
+            "type": "togglebutton",
+            "field": "user.tags",
+            "label": "User Tags A",
+            "value": "TAG_A",
+            "size": {
+                "l" : 150,
+                "t" : 225
+            }
+        },{
+            "type": "togglebutton",
+            "field": "user.tags",
+            "label": "User Tags B",
+            "value": "TAG_B",
+            "size": {
+                "l" : 150,
+                "t" : 250
+            }
+        }]
+    },
+    "input" : {
+        "boolean1" : true,
+        "boolean2" : false,
+        "user" : {
+            "locked" : true,
+            "superuser" : false,
+            "givenname" : "Max",
+            "surname" : "Mustermann",
+            "role" : ["ROLE_B"],
+            "tags" : ""
+        }
+    }
+}

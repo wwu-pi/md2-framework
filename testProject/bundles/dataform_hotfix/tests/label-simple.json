@@ -1,0 +1,78 @@
+{
+    "form": {
+        "dataform-version": "1.0.0",
+        "size": {
+            "h": 100,
+            "w": 300
+        },
+        "children": [
+            {
+                "type": "label",
+                "value": "Tests different usages of label fields",
+                "cssClass": "title",
+                "size": {
+                    "l": 5,
+                    "t": 0
+                }
+            },
+            {
+                "type": "label",
+                "field": "title",
+                "size": {
+                    "l": 5,
+                    "t": 20
+                }
+            },
+            {
+                "type": "label",
+                "field": "user.givenname",
+                "size": {
+                    "l": 100,
+                    "t": 20
+                }
+            },
+            {
+                "type": "label",
+                "field": "user.surname",
+                "size": {
+                    "l": 100,
+                    "t": 40
+                }
+            },
+            {
+                "type": "label",
+                "value": "Kombination: {user.givenname} {user.surname}",
+                "size": {
+                    "l": 100,
+                    "t": 60
+                }
+            },
+            {
+                "type": "label",
+                "field": "industryType",
+                "lookupValues": [
+                    {
+                        "value": 0,
+                        "name": "Heavy Industry"
+                    },
+                    {
+                        "value": 1,
+                        "name": "Oil Industry"
+                    }
+                ],
+                "size": {
+                    "l": 100,
+                    "t": 80
+                }
+            }
+        ]
+    },
+    "input": {
+        "title": "Nutzerdaten",
+        "user": {
+            "givenname": "Max",
+            "surname": "Mustermann"
+        },
+        "industryType": 1
+    }
+}

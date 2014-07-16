@@ -1,0 +1,31 @@
+{
+    "Bundle-SymbolicName": "onlinestatus",
+    "Bundle-Version": "1.0",
+    "Bundle-Name": "${bundleName}",
+    "Bundle-Description": "${bundleDescription}",
+    "Bundle-Main": "",
+    "Require-Bundle": [],
+    "Components": [{
+        "name": "OnlineStatus",
+        "provides": ["md2.OnlineStatus"],
+        "immediate": true,
+        "properties": {
+            "xhrCheck": true,
+            "xhrFrequency": 6000,
+            "xhrTimeout": 5000,
+            "xhrRemoteUrl": null,
+            "method": "post",
+            "navigatorOnLineCheck": true,
+            "pollingFrequency": 1000,
+            "postNotifications": true
+        },
+        "references": [{
+            "name": "_eventService",
+            "providing": "ct.framework.api.EventService"
+        },
+        {
+            "name" : "_notificationService",
+            "providing": "ct.framework.api.LogService"
+        }]
+    }]
+}

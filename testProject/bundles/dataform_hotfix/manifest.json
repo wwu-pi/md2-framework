@@ -1,0 +1,52 @@
+{
+    "Bundle-SymbolicName": "dataform",
+    "Bundle-Version": "3.0.6",
+    "Bundle-Name": "${bundleName}",
+    "Bundle-Description": "${bundleDescription}",
+    "Bundle-Vendor": "con terra GmbH",
+    "Bundle-Category": ["data"],
+    "Require-Bundle": [],
+    "Bundle-StartLevel": 50,
+    "Components": [{
+            "name": "InternalServiceResolver",
+            "impl": "ct/osgi/ServiceResolver",
+            "provides": ["dataform.ServiceResolver"]
+        },
+        {
+            "name": "DataFormService",
+            "provides": ["dataform.DataFormService"],
+            "references": [{
+                    "name": "builderResolver",
+                    "providing": "dataform.BuilderResolver",
+                    "cardinality": "0..n"
+                }, {
+                    "name": "bindingResolver",
+                    "providing": "dataform.BindingResolver",
+                    "cardinality": "0..n"
+                }, {
+                    "name": "store",
+                    "providing": "ct.api.Store",
+                    "cardinality": "0..n",
+                    "filter": "(useIn=dataform)"
+                }]
+        }, {
+            "name": "JsonFormBuilderResolver",
+            "provides": ["dataform.BuilderResolver"],
+            "references": [{
+                    "name": "formControls",
+                    "providing": "dataform.FormControls"
+                }]
+        }, {
+            "name": "ObjectBindingResolver",
+            "provides": ["dataform.BindingResolver"]
+        }, {
+            "name": "FormControls",
+            "impl": "./controls/FormControls",
+            "provides": ["dataform.FormControls"],
+            "references": [{
+                    "name": "ControlFactory",
+                    "providing": "dataform.ControlFactory",
+                    "cardinality": "0..n"
+                }]
+        }]
+}

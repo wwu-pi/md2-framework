@@ -1,0 +1,167 @@
+{
+    "form" : {
+        "dataform-version":"1.0.0",
+        "size": {
+            "h": 300,
+            "w": 500
+        },
+        "children": [{
+            "type": "label",
+            "value": "Tests Different Checkbox Input Fields",
+            "size": {
+                "l": 5,
+                "t": 0
+            }
+        },{
+            "type": "label",
+            "value": "Change 'boolean1'",
+            "size": {
+                "l": 5,
+                "t": 20
+            }
+        },{
+            "type": "checkbox",
+            "field": "boolean1",
+            "tooltip" : "<b>Test if a tooltip is shown</b>",
+            "size": {
+                "l" : 150,
+                "t" : 20
+            }
+        },{
+            "type": "label",
+            "value": "Change 'boolean2'",
+            "size": {
+                "l": 5,
+                "t": 50
+            }
+        },{
+            "type": "checkbox",
+            "field": "boolean2",
+            "size": {
+                "l" : 150,
+                "t" : 50
+            }
+        },{
+            "type": "label",
+            "value": "Nutzerdaten",
+            "size": {
+                "l": 5,
+                "t": 75
+            }
+        },{
+            "type": "label",
+            "field": "user.givenname",
+            "size": {
+                "l" : 150,
+                "t" : 75
+            }
+        },{
+            "type": "label",
+            "field": "user.surname",
+            "size": {
+                "l" : 150,
+                "t" : 100
+            }
+        },{
+            "type": "label",
+            "value": "locked",
+            "size": {
+                "l": 170,
+                "t": 125
+            }
+        },{
+            "type": "checkbox",
+            "field": "user.locked",
+            "size": {
+                "l" : 150,
+                "t" : 125
+            }
+        },{
+            "type": "label",
+            "value": "superuser",
+            "size": {
+                "l": 170,
+                "t": 150
+            }
+        },{
+            "type": "checkbox",
+            "field": "user.superuser",
+            "size": {
+                "l" : 150,
+                "t" : 150
+            }
+        },{
+            "type": "label",
+            "value": "RoleA",
+            "size": {
+                "l": 170,
+                "t": 175
+            }
+        },{
+            "type": "checkbox",
+            "field": "user.role",
+            "value": "ROLE_A",
+            "size": {
+                "l" : 150,
+                "t" : 175
+            }
+        },{
+            "type": "label",
+            "value": "RoleB",
+            "size": {
+                "l": 170,
+                "t": 200
+            }
+        },{
+            "type": "checkbox",
+            "field": "user.role",
+            "value": "ROLE_B",
+            "size": {
+                "l" : 150,
+                "t" : 200
+            }
+        },{
+            "type": "label",
+            "value": "TagA",
+            "size": {
+                "l": 170,
+                "t": 225
+            }
+        },{
+            "type": "checkbox",
+            "field": "user.tags",
+            "value": "TAG_A",
+            "size": {
+                "l" : 150,
+                "t" : 225
+            }
+        },{
+            "type": "label",
+            "value": "TagB",
+            "size": {
+                "l": 170,
+                "t": 250
+            }
+        },{
+            "type": "checkbox",
+            "field": "user.tags",
+            "value": "TAG_B",
+            "size": {
+                "l" : 150,
+                "t" : 250
+            }
+        }]
+    },
+    "input" : {
+        "boolean1" : true,
+        "boolean2" : false,
+        "user" : {
+            "locked" : true,
+            "superuser" : false,
+            "givenname" : "Max",
+            "surname" : "Mustermann",
+            "role" : ["ROLE_B"],
+            "tags" : ""
+        }
+    }
+}

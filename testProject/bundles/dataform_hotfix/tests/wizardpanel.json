@@ -1,0 +1,32 @@
+{
+    "form" : {
+        "dataform-version":"1.0.0",
+        "size": {
+            "h": 200,
+            "w": 500
+        },
+        "type" : "wizardpanel",
+        "children":[{
+            "type": "panel",
+            "selected" : true,
+            "children": [{
+                "type": "label",
+                "value": "Label of Panel 1",
+                "size": {
+                    "l": 5,
+                    "t": 0
+                }
+            }]
+        },{
+            "type": "panel",
+            "children": [{
+                "type": "label",
+                "value": "Label of Panel 2",
+                "size": {
+                    "l": 5,
+                    "t": 0
+                }
+            }]
+        }]
+    }
+}

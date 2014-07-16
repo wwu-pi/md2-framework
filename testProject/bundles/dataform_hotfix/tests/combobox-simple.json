@@ -1,0 +1,115 @@
+{
+    "form" : {
+        "dataform-version":"1.0.0",
+        "size": {
+            "h": 200,
+            "w": 500
+        },
+        "children": [{
+            "type": "label",
+            "value": "Tests Different ComboBox Input Fields",
+            "size": {
+                "l": 5,
+                "t": 0
+            }
+        },{
+            "type": "label",
+            "value": "Text (max: 10)",
+            "size": {
+                "l": 5,
+                "t": 20
+            }
+        },{
+            "type": "combobox",
+            "field": "text1",
+            "values" : ["Lowest","Low","Normal","High","Highest"],
+            "max": 10,
+            "size": {
+                "l" : 150,
+                "t" : 20,
+                "w" : 200
+            }
+        },{
+            "type": "label",
+            "value": "Text (max: unlimited)",
+            "size": {
+                "l": 5,
+                "t": 50
+            }
+        },{
+            "type": "combobox",
+            "field": "text2",
+            "searchAttribute" : "value",
+            "labelAttribute" : "name",
+            "values" : [{
+                "name":"Lowest",
+                "value": "1"
+            },{
+                "name":"Low",
+                "value": "2"
+            },{
+                "name":"Normal",
+                "value": "3"
+            },{
+                "name":"High",
+                "value": "4"
+            },{
+                "name":"Highest",
+                "value": "1"
+            }],
+            "size": {
+                "l" : 150,
+                "t" : 50,
+                "w" : 300
+            }
+        },{
+            "type": "label",
+            "value": "Nutzerdaten (*)",
+            "size": {
+                "l": 5,
+                "t": 75
+            }
+        },{
+            "type": "combobox",
+            "field": "user.givenname",
+            "values" : ["Marko","Kerstin","Toni","Robin"],
+            "required" : true,
+            "size": {
+                "l" : 150,
+                "t" : 75
+            }
+        },{
+            "type": "combobox",
+            "field": "user.plz",
+            "required" : true,
+            "values" : ["04177","48145","48144"],
+            // triggers autosorting
+            "labelAttribute" : "${name}",
+            "regex" : "[0-9]{5}$",
+            "size": {
+                "l" : 150,
+                "t" : 125
+            }
+        },{
+            "type": "combobox",
+            "field": "extStore",
+            "searchAttribute" : "id",
+            "labelAttribute" : "${title}(${id})",
+            "store" : "testStore",
+            "size": {
+                "l" : 150,
+                "t" : 150
+            }
+        }]
+    },
+    "input" :{
+        "text1" : "only 10",
+        "text2" : "unlimited text",
+        "text3" : "only 10",
+        "user" : {
+            "givenname" : "Max",
+            "plz" :"48145"
+        },
+        "extStore" : "0"
+    }
+}

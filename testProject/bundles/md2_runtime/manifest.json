@@ -1,0 +1,69 @@
+{
+    "Bundle-SymbolicName": "md2_runtime",
+    "Bundle-Version": "1.0",
+    "Bundle-Name": "MD2 Runtime",
+    "Bundle-Description": "The runtime environment for generated MD2 apps.",
+    "Bundle-Vendor": "Soeren Evers",
+    
+    "Bundle-Localization": [],
+    "Bundle-Main": "",
+    "Require-Bundle": [{
+        "name": "dataform"
+    },
+    {
+        "name": "windowmanager"
+    },
+    {
+        "name": "md2_store"
+    }],
+    
+    "Components": [{
+        "name": "MD2Controller",
+        "provides": ["md2.runtime.Controller"],
+        "immediate": true,
+        "instanceFactory": true,
+        "references": [{
+	    "name": "_windowManager",
+    	    "providing": "ct.framework.api.WindowManager"
+    	},
+        {
+            "name": "_dataFormService",
+            "providing": "dataform.DataFormService"
+        },
+        {
+            "name": "_dataFormBean",
+            "providing": "md2.app.AppDefinition"
+        },
+        {
+            "name": "_storeFactory",
+            "providing": "md2.store.StoreFactory"
+        },
+        {
+            "name" : "_notificationService",
+            "providing": "ct.framework.api.LogService"
+        },
+        {
+            "name": "_customActions",
+            "providing": "md2.app.CustomAction",
+            "cardinality": "0..n"
+        }]
+    }, {
+        "name": "MD2RuntimeEventHandler",
+        "provides": ["ct.framework.api.EventHandler"],
+        "properties":{
+            "Event-Topics": [{
+                "topic": "md2/onlinestatus/REGAINED_CONNECTION",
+                "method": "_onConnectionStatusChange",
+                "params": ["online"]
+            }, {
+                "topic": "md2/onlinestatus/LOST_CONNECTION",
+                "method": "_onConnectionStatusChange",
+                "params": ["offline"]
+            }]
+        }
+    }, {
+        "name": "ContentProviderBindingResolver",
+        "impl": "./datamapper/ContentProviderBindingResolver",
+        "provides": ["dataform.BindingResolver"]
+    }]
+}

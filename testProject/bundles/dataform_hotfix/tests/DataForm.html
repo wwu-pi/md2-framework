@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test DataForm</title>
+        <link rel="stylesheet" type="text/css" href="../../../../bundles/base/themes/themes/winter/winter.css"/>
+        <style type="text/css">
+            html,body{
+                position: relative;
+                width: 100%;
+                height: 100%;
+                margin : 0;
+                padding : 0;
+            }
+            #baseContainer {
+                width:100%;
+                height: 100%;
+            }
+            .ctDataForm,#formPane,.ctFormControl.outline{
+                border: 1px solid #DDDDDD;
+            }
+            .ctFormControl.title{
+                font-weight: bold;
+            }
+        </style>
+
+        <script type="text/javascript">
+            var baseUrl = location.href.replace(/\/dataform\/tests.*$/, "")
+            var dojoConfig = {
+                packages: [
+                    {name: "dataform", location: baseUrl + "/dataform"}
+                ]
+            }
+        </script>
+        <script type="text/javascript" src="../../../../ct/dojo-init.js"></script>
+        <script type="text/javascript">
+            afterMapAppsLoad(function() {
+                require([
+                    "dataform/DataFormService",
+                    "dataform/JsonFormBuilderResolver",
+                    "dataform/ObjectBindingResolver",
+                    "dojo/dom",
+                    "dojo/parser",
+                    "dojo/json",
+                    "dijit/registry",
+                    "ct/request",
+                    "dojo/store/Memory",
+                    "ct/store/ComplexMemory",
+                    "dijit/form/SimpleTextarea",
+                    "dijit/layout/BorderContainer",
+                    "dijit/layout/ContentPane",
+                    "dijit/form/FilteringSelect",
+                    "dojo/domReady!"
+                ], function(DataFormService, JsonFormBuilderResolver, ObjectBindingResolver, dom, parser, JSON, registry, ct_request, Memory, ComplexMemory) {
+                    parser.parse();
+                    dom.byId("root").style.visibility = 'visible';
+
+                    var dataFormService = new DataFormService({
+                        builderResolver: [new JsonFormBuilderResolver()],
+                        bindingResolver: [new ObjectBindingResolver()]
+                    });
+
+                    ct_request.requestJSON({url: "./_extMemoryData.json"}).then(function(data) {
+                        var store = new ComplexMemory(data);
+                        dataFormService.addStore(store, {id: "testStore"});
+                    })
+
+
+                    var formJsonArea = registry.byId("formjson");
+                    var dataJsonArea = registry.byId("datajson");
+                    var changedJsonArea = registry.byId("changedJson");
+                    var testDataCombo = registry.byId("testDataCombo");
+                    var testStore;
+                    ct_request.requestJSON({url: "./test-data.json"}).then(function(data) {
+                        testStore = new Memory({idProperty: "name", data: data.tests});
+                        testDataCombo.set("store", testStore);
+                    });
+                    testDataCombo.on("change", function(testName) {
+                        var item = testStore.get(testName);
+                        var data = item.data;
+                        if (typeof(data) === 'string') {
+                            ct_request.requestJSON({url: "./" + data}).then(function(data) {
+                                clearFormInputs();
+                                dataJsonArea.set("value", JSON.stringify(data.input || "", null, " "));
+                                formJsonArea.set("value", JSON.stringify(data.form || "", null, " "));
+                            });
+                        } else {
+                            clearFormInputs();
+                            dataJsonArea.set("value", JSON.stringify(data.input || "", null, " "));
+                            formJsonArea.set("value", JSON.stringify(data.form || "", null, " "));
+                        }
+                    });
+
+
+
+                    var dataFormNode = dom.byId("dataForm");
+                    var lastEventNode = dom.byId("lastEvent");
+
+                    var lastForm;
+
+                    var clearFormInputs = function() {
+                        clearForm();
+                        formJsonArea.set("value", "");
+                        dataJsonArea.set("value", "");
+                    }
+
+                    var clearForm = function() {
+                        if (lastForm) {
+                            lastForm.destroyRecursive();
+                            lastForm = null;
+                        }
+                        // clear old output
+                        dataFormNode.innerHTML = "";
+                        changedJsonArea.set("value", "");
+                        lastEventNode.innerHTML = "";
+                    }
+
+                    var updateForm = function() {
+                        clearForm();
+
+                        try {
+                            var val = formJsonArea.get("value");
+                            if (!val) {
+                                return;
+                            }
+                            lastForm = dataFormService.createDataForm(JSON.parse(val));
+                            lastForm.on("controlEvent", function(evt) {
+                                lastEventNode.innerHTML = evt.topic;
+                            });
+                            lastForm.placeAt(dataFormNode);
+                            lastForm.startup();
+
+                            var dataVal = dataJsonArea.get("value");
+                            if (dataVal) {
+                                var binding = dataFormService.createBinding("object", {
+                                    data: JSON.parse(dataVal)
+                                });
+                                lastForm.set("dataBinding", binding);
+                                binding.watch("*", function() {
+                                    changedJsonArea.set("value", JSON.stringify(binding.data, null, " "));
+                                });
+                            }
+                        } catch (e) {
+                            changedJsonArea.set("value", "" + e);
+                        }
+                    }
+
+
+                    formJsonArea.watch("value", updateForm);
+                    dataJsonArea.watch("value", updateForm);
+                });
+            }, true);
+        </script>
+    </head>
+    <body id="root" class="winter" style="visibility: hidden;">
+        <div id="baseContainer" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="gutters: false,design: 'headline'">
+            <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'top'">
+                <h2>DataForm Test Page</h2>
+                <span>Test Data:</span><div id="testDataCombo" data-dojo-type="dijit/form/FilteringSelect" data-dojo-props=""></div>
+                <span>LastEvent:</span><span id="lastEvent"></span>
+            </div>
+            <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'left',style:'width:300px'">
+                <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="gutters: false,design: 'headline'">
+                    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'top',style:'height:45%'">
+                        <div id="formjson" data-dojo-type="dijit/form/SimpleTextarea" data-dojo-props="style:'resize:none;margin:auto;width:95%;height:95%',wrap:'off',placeholder:'Enter JSON data from description here'"></div>
+                    </div>
+                    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'center'">
+                        <div id="datajson" data-dojo-type="dijit/form/SimpleTextarea" data-dojo-props="style:'resize:none;margin:auto;width:95%;height:95%',wrap:'off',placeholder:'Enter JSON input data here'"></div>
+                    </div>
+                </div>
+            </div>
+            <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'center'">
+                <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="gutters: false,design: 'headline'">
+                    <div id="formPane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'center'">
+                        <div id="dataForm"></div>
+                    </div>
+                    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'bottom',style:'height:300px'">
+                        <div id="changedJson" data-dojo-type="dijit/form/SimpleTextarea" data-dojo-props="style:'resize:none;margin:auto;width:95%;height:95%',wrap:'off',placeholder:'See changed JSON input data here'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
