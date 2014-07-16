@@ -63,6 +63,9 @@ import org.eclipse.emf.ecore.resource.ResourceSet
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
+import de.wwu.md2.framework.mD2.StyleDefinition
+import de.wwu.md2.framework.mD2.HexColorDef
+import de.wwu.md2.framework.mD2.StyleAssignment
 
 class ManifestJson {
 	
@@ -279,9 +282,7 @@ class ManifestJson {
 		"type": "md2gridpanel",
 		"cols": "«gridLayout.params.filter(typeof(GridLayoutPaneColumnsParam)).head.value»",
 		"valueClass": "layoutCell",
-		"cellStyle": {
-			"width": "«gridLayout.params.filter(typeof(WidthParam)).head.width»%"
-		},
+		«generateStyle(null, "width" -> '''«gridLayout.params.filter(typeof(WidthParam)).head.width»%''')»,
 		"children": [
 			«FOR element : gridLayout.elements.filter(typeof(ViewGUIElement)) SEPARATOR ","»
 				{
@@ -315,18 +316,14 @@ class ManifestJson {
 	
 	def private static dispatch getViewElement(Spacer spacer) '''
 		"type": "spacer",
-		"cellStyle": {
-			"width": "«spacer.width»%"
-		}
+		«generateStyle(null, "width" -> '''«spacer.width»%''')»
 	'''
 	
 	def private static dispatch getViewElement(Button button) '''
 		"type": "button",
 		"title": "«button.text»",
 		"field": "«getName(button)»",
-		"cellStyle": {
-			"width": "«button.width»%"
-		}
+		«generateStyle(button.style, "width" -> '''«button.width»%''')»
 	'''
 	
 	def private static dispatch getViewElement(Label label) '''
@@ -334,9 +331,7 @@ class ManifestJson {
 		"datatype": "string",
 		"field": "«getName(label)»",
 		"defaultText": "«label.text»",
-		"cellStyle": {
-			"width": "«label.width»%"
-		}
+		«generateStyle(label.style, "width" -> '''«label.width»%''')»
 	'''
 	
 	def private static dispatch getViewElement(Tooltip tooltip) '''
@@ -352,54 +347,42 @@ class ManifestJson {
 		"type": "checkbox",
 		"datatype": "boolean",
 		"field": "«getName(input)»",
-		"cellStyle": {
-			"width": "«input.width»%"
-		}
+		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
 	def private static dispatch getViewElement(TextInput input) '''
 		"type": "textbox",
 		"datatype": "string",
 		"field": "«getName(input)»",
-		"cellStyle": {
-			"width": "«input.width»%"
-		}
+		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
 	def private static dispatch getViewElement(IntegerInput input) '''
 		"type": "numberspinner",
 		"datatype": "integer",
 		"field": "«getName(input)»",
-		"cellStyle": {
-			"width": "«input.width»%"
-		}
+		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
 	def private static dispatch getViewElement(NumberInput input) '''
 		"type": "numbertextbox",
 		"datatype": "float",
 		"field": "«getName(input)»",
-		"cellStyle": {
-			"width": "«input.width»%"
-		}
+		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
 	def private static dispatch getViewElement(DateInput input) '''
 		"type": "datetextbox",
 		"datatype": "date",
 		"field": "«getName(input)»",
-		"cellStyle": {
-			"width": "«input.width»%"
-		}
+		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
 	def private static dispatch getViewElement(TimeInput input) '''
 		"type": "timetextbox",
 		"datatype": "time",
 		"field": "«getName(input)»",
-		"cellStyle": {
-			"width": "«input.width»%"
-		}
+		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
 	def private static dispatch getViewElement(DateTimeInput input) '''
@@ -409,13 +392,49 @@ class ManifestJson {
 	def private static dispatch getViewElement(OptionInput input) '''
 		"type": "selectbox",
 		"field": "«getName(input)»",
-		"cellStyle": {
-			"width": "«input.width»%"
-		}
+		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
 	def private static dispatch getViewElement(EntitySelector input) '''
 		// TODO
 	'''
+	
+	
+	////////////////////////////////////////////////////////////////////////////////////////////
+	// Generate Styles
+	////////////////////////////////////////////////////////////////////////////////////////////
+	
+	def private static generateStyle(StyleAssignment styleAssignment, Pair<String, String>... additionalValues) {
+		
+		val values = newArrayList(additionalValues)
+		
+		// all style references were replaced by the actual definitions during pre-processing
+		val style = (styleAssignment as StyleDefinition)?.definition
+		
+		if (style != null && style.bold) {
+			values.add("font-weight" -> "bold")
+		}
+		
+		if (style != null && style.italic) {
+			values.add("font-style" -> "italic")
+		}
+		
+		if (style?.color != null) {
+			// after pre-processing all colors are in hex format
+			values.add("color" -> (style.color as HexColorDef).color)
+		}
+		
+		if (style != null && style.fontSize != 0d) {
+			values.add("font-size" -> '''«style.fontSize»em''')
+		}
+		
+		'''
+			"cellStyle": {
+				«FOR value : values SEPARATOR ","»
+					"«value.key»": "«value.value»"
+				«ENDFOR»
+			}
+		'''
+	}
 	
 }

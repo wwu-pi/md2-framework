@@ -651,13 +651,16 @@ Style:
 ;
 
 /*
- * The StyleBody contains the actual style and can be used to set
- * the appearance of the text of some ViewGUIElements. It is
- * possible to set the fontSize, the color and the textStyle.
+ * The StyleBody contains the actual style and can be used to set the appearance of the text of some 
+ * ViewGUIElements. It is possible to set the fontSize, the color and the textStyle.
+ * The fontSize is relative to the default font size, i.e. similar to the unit <i>em</i> in CSS.
+ * 1em is equal to the current font size. 2em means 2 times the size of the current font. This way,
+ * it can adapt automatically to the font size that the target device uses. If the target platform does not
+ * support <i>em</i> as a unit, the pixel or pt size can easily be calculated.
  */
 StyleBody:
 	'{' {StyleBody} (
-		('fontSize' fontSize = INT)? &
+		('fontSize' fontSize = FLOAT)? &
 		('color' color = Color)? &
 		('textStyle' ((bold?='bold'? & italic?='italic'?) | 'normal'))?
 	) '}'

@@ -263,19 +263,19 @@ class CustomActionClass {
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(DisplayMessageAction action, String varName) '''
-		var «varName» = this.$.actionFactory.getDisplayMessageAction((«generateSimpleExpression(action.message)»).toString());
+		«val messageExpressionVar = getUnifiedName("messageExpression")»
+		var «messageExpressionVar» = function() {
+			return «generateSimpleExpression(action.message)».toString();
+		};
+		var «varName» = this.$.actionFactory.getDisplayMessageAction("«action.parameterSignature»", «messageExpressionVar»);
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(ContentProviderOperationAction action, String varName) '''
-		«val contentProviderVar = getUnifiedName("contentProvider")»
-		«generateContentProviderCodeFragment(action.contentProvider.contentProvider, contentProviderVar)»
-		var «varName» = this.$.actionFactory.getContentProviderOperationAction(«contentProviderVar», "«action.operation.toString»");
+		var «varName» = this.$.actionFactory.getContentProviderOperationAction("«action.contentProvider.contentProvider.name»", "«action.operation.toString»");
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(ContentProviderResetAction action, String varName) '''
-		«val contentProviderVar = getUnifiedName("contentProvider")»
-		«generateContentProviderCodeFragment(action.contentProvider.contentProvider, contentProviderVar)»
-		var «varName» = this.$.actionFactory.getContentProviderResetAction(«contentProviderVar»);
+		var «varName» = this.$.actionFactory.getContentProviderResetAction("«action.contentProvider.contentProvider.name»");
 	'''
 	
 	
@@ -296,7 +296,7 @@ class CustomActionClass {
 		«generateContentProviderCodeFragment(event.pathDefinition, contentProviderVar)»
 		«val actionVar = getUnifiedName("action")»
 		«generateActionCodeFragment(actionDefinition, actionVar)»
-		this.$.eventRegistry.get("widget/«event.event.toString»").«IF !isBinding»un«ENDIF»registerAction(«contentProviderVar», "«event.pathDefinition.resolveContentProviderPathAttribute»", «actionVar»);
+		this.$.eventRegistry.get("contentProvider/«event.event.toString»").«IF !isBinding»un«ENDIF»registerAction(«contentProviderVar», "«event.pathDefinition.resolveContentProviderPathAttribute»", «actionVar»);
 	'''
 	
 	def private static dispatch generateEventBindingCodeFragment(GlobalEventRef event, ActionDef actionDefinition, boolean isBinding) '''
