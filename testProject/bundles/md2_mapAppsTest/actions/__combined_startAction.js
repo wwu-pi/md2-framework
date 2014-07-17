@@ -10,14 +10,20 @@ function(declare, _Action) {
 		
 		execute: function() {
 			
-			var action0m = this.$.actionFactory.getCustomAction("doMappings");
-			action0m.execute();
+			var action0n6 = this.$.actionFactory.getCustomAction("doMappings");
+			action0n6.execute();
 			
-			var action0n = this.$.actionFactory.getCustomAction("testActions");
-			action0n.execute();
+			var action0n7 = this.$.actionFactory.getCustomAction("testActions");
+			action0n7.execute();
 			
-			var action0o = this.$.actionFactory.getCustomAction("testEvents");
-			action0o.execute();
+			var action0n8 = this.$.actionFactory.getCustomAction("testEvents");
+			action0n8.execute();
+			
+			var action0n9 = this.$.actionFactory.getCustomAction("bindValidators");
+			action0n9.execute();
+			
+			var action0na = this.$.actionFactory.getCustomAction("testSetter");
+			action0na.execute();
 			
 		}
 		

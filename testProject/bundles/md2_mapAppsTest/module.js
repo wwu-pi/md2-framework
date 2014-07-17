@@ -1,9 +1,14 @@
 define([
 	"ct/Stateful",
+	"./actions/BindValidators",
+	"./actions/__startupAction",
 	"./actions/TestActions",
 	"./actions/ToggleEnabled",
 	"./actions/TestEvents",
-	"./actions/DoMappings",
+	"./actions/TestSetter",
 	"./actions/__combined_startAction",
-	"./actions/__startupAction"
+	"./actions/DoMappings",
+	"./actions/MakeActionsFancy",
+	"./actions/SetName",
+        "./entities/Person"
 ], {});

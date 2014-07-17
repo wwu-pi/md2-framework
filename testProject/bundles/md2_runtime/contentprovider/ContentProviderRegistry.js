@@ -54,8 +54,10 @@ function(declare, d_lang, json, ct_lang, ContentProvider, TypeFactory) {
             var filter = config.filter;
             delete config.filter;
             
+            var isManyProvider = config.isManyProvider;
+            
             var store = this._getOrCreateStore(config);
-            var contentProvider = new ContentProvider(contentProviderName, store, filter);
+            var contentProvider = new ContentProvider(contentProviderName, store, isManyProvider, filter);
             this._contentProviders[contentProviderName] = contentProvider;
         },
         

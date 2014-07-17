@@ -1,5 +1,11 @@
 define([
-    "dojo/_base/declare", "dojo/_base/lang", "dojo/_base/array", "dojo/topic", "ct/_lang"
+    "dojo/_base/declare",
+    "dojo/_base/lang",
+    "dojo/_base/array",
+    "dojo/topic",
+    "../datatypes/TypeFactory",
+    "../datatypes/_Type",
+    "ct/Hash"
 ],
 
 /**
@@ -10,7 +16,7 @@ define([
  * 
  * The ContentProvider might access fields in the dataForm to configure its filter.
  */
-function(declare, lang, array, topic, ct_lang) {
+function(declare, lang, array, topic, _Type, TypeFactory, Hash) {
     
     return declare([], {
         
@@ -30,6 +36,22 @@ function(declare, lang, array, topic, ct_lang) {
          * Reference on the store that is capable of handling the objects managed by this ContentProvider.
          */
         _store: null,
+        
+        /**
+         * A hash that contains all observed attributes along with their current value. If an attribute value
+         * is set, it is compared with the value in this hash. In case the attribute set is an entity, also all
+         * child attributes are resolved and checked. If a value of any of the registered attributes changed,
+         * an onChange event is fired.
+         * 
+         * {
+         *   qualifiedAttrName: {
+         *     value: VALUE,
+         *     numberOfObservers: INT
+         *   },
+         *   ...
+         * }
+         */
+        _observedAttributes: null,
         
         /**
          * ComplexQuery object to describe the load filter for this content provider.
@@ -57,9 +79,7 @@ function(declare, lang, array, topic, ct_lang) {
          */
         _DEBUG_MSG: {
             nameParamErr: "MD2ContentProvider: The required parameter 'name' is not passed to the constructor!",
-            storeParamErr: "MD2ContentProvider: The required parameter 'store' is not passed to the constructor!",
-            objParamErr: "MD2ContentProvider: The required parameter 'objectOrArray' is not passed to setManagedContent!",
-            idMissingWarn: "MD2ContentProvider.setManagedContent: __internalId of passed object missing. Cannot merge!"
+            storeParamErr: "MD2ContentProvider: The required parameter 'store' is not passed to the constructor!"
         },
         
         /**
@@ -72,15 +92,18 @@ function(declare, lang, array, topic, ct_lang) {
          * 
          * @param {string} name
          * @param {MD2Store} store
+         * @param {boolean} isManyProvider
          * @param {Object} filter
          */
-        constructor: function(name, store, filter) {
+        constructor: function(name, store, isManyProvider, filter) {
             !name && window.console && window.console.error(this._DEBUG_MSG["nameParamErr"]);
             !store && window.console && window.console.error(this._DEBUG_MSG["storeParamErr"]);
             this._name = name;
             this._store = store;
             this._content = [];
+            this._observedAttributes = new Hash();
             this._filter = filter;
+            this._isManyProvider = isManyProvider || false;
             this.reset();
         },
         
@@ -89,48 +112,97 @@ function(declare, lang, array, topic, ct_lang) {
         },
         
         /**
-         * Accepts incomplete objects and merges them with the managed content stored in this
-         * ContentProvider. If the stored content is an array of objects the passed object has to
-         * contain the __internalId of the object to update. If only a single object is managed by
-         * this ContentProvider it is sufficient to only pass the property that has to be updated.
-         * 
-         * Hint: This method is not safe in the sense that it also mixes in properties that do not exist in the
-         *       original object managed by this store. This might lead to problems with the backend when saving
-         *       the content of this provider. The user of this class has to take care to not mixin such properties.
-         * 
-         * @param {Object} objectOrArray Object that contains the properties to update or array of objects with
-         *                               the according properties to update.
+         * @param {_Entity} content - Entity or array of entities to set.
          */
-        setContent: function(objectOrArray) {
-            !objectOrArray && window.console && window.console.error(this._DEBUG_MSG["objParamErr"]);
-            objectOrArray = lang.isArray(objectOrArray) ? objectOrArray : [objectOrArray];
+        setContent: function(content) {
+            content = lang.isArray(content) ? content : [content];
+            var clonedContent = [];
             
-            // No performance optimizations. Runs in O(n^2) as only small collections are assumed to be managed.
-            if(this._isManyProvider) {
-                array.forEach(objectOrArray, function(passedObj) {
-                    if(!passedObj.hasOwnProperty("__internalId")) {
-                        // merge with initial object and add to array
-                        var clone = lang.clone(this._entityBlueprint);
-                        lang.mixin(clone, passedObj);
-                        objectOrArray.push(clone);
-                        window.console && window.console.warn(this._DEBUG_MSG["idMissingWarn"]);
-                    } else {
-                        // find and update entity instance
-                        array.forEach(this._content, function(managedObj) {
-                            if(passedObj.__internalId === managedObj.__internalId) {
-                                lang.mixin(managedObj, passedObj);
-                            }
-                        });
-                    }
-                }, this);
-            } else { // single object
-                lang.mixin(this._content[0], objectOrArray);
+            // recursively clone entity
+            array.forEach(content, function(entity) {
+                var newEntity = entity.clone();
+                clonedContent.push(newEntity);
+            });
+            
+            this._setContent(clonedContent);
+        },
+        
+        _setContent: function(content) {
+            this._content = content;
+            this._fireAllOnChanges();
+        },
+        
+        registerObservedOnChange: function(attribute) {
+            
+            if (!this._observedAttributes.contains(attribute)) {
+                this._observedAttributes.set(attribute, {
+                    value: this._getValue(attribute),
+                    numberOfObservers: 0
+                });
             }
+            this._observedAttributes.get(attribute).numberOfObservers++;
             
+            // handler to unregister attribute again
+            var unregisterObservedOnChange = this.unregisterObservedOnChange;
+            return {
+                unregister: function() {
+                    unregisterObservedOnChange(attribute);
+                }
+            };
+        },
+        
+        unregisterObservedOnChange: function(attribute) {
+            if (!this._observedAttributes.contains(attribute)) {
+                return;
+            }
+            var entry = this._observedAttributes.get(attribute);
+            entry.numberOfObservers--;
+            
+            if (entry.numberOfObservers === 0) {
+                this._observedAttributes.remove(attribute);
+            }
         },
         
         /**
-         * Only works for none isMany content providers! For all other providers values cannot be got.
+         * Fires on change event for all changed attributes and updates the current values
+         * of the observed elements.
+         */
+        _fireAllOnChanges: function(qualifiedAttrName) {
+            
+            // shortcut if simple value (no entity)
+            if (qualifiedAttrName) {
+                var val = this.getValue(qualifiedAttrName);
+                var attr = this._observedAttributes.get(qualifiedAttrName);
+                if (attr && (val instanceof _Type)) {
+                    var oldValue = attr.value;
+                    if (!val && val !== oldValue || !val.equals(oldValue)) {
+                        topic.publish(this._topicOnChange, this, qualifiedAttrName, val, oldValue);
+                    }
+                    return;
+                }
+            }
+            
+            // in case it was an entity
+            this._observedAttributes.forEach(function(value, key) {
+                
+                // if an attribute is set, only resolve child attributes. Otherwise all attributes.
+                var isResolve = qualifiedAttrName ? key.indexOf(qualifiedAttrName) === 0 : true;
+                
+                if (isResolve) {
+                    var newValue = this.getValue(key);
+                    if (!newValue && newValue !== value || !newValue.equals(value)) {
+                        var attr = this._observedAttributes.get(key);
+                        var oldValue = attr.value;
+                        attr.value = newValue;
+                        topic.publish(this._topicOnChange, this, key, newValue, oldValue);
+                    }
+                }
+            }, this);
+        },
+        
+        /**
+         * Resolve attribute value.
+         * Only works for none isMany content providers!
          * 
          * TODO find posiibility in MD2 to handle isMany providers (e.g. :contentProvider(where firstName equals "John").lastName)
          * 
@@ -138,36 +210,34 @@ function(declare, lang, array, topic, ct_lang) {
          * @returns {Object} Value of the attribute or null if no value is set.
          */
         getValue: function(attribute) {
-            var pathSegments = attribute.split(".");
             var value = this._content[0];
+            var pathSegments = attribute.split(".");
             array.forEach(pathSegments, function(pathSegment) {
-                if (value && lang.isObject(value)) {
-                    value = value[pathSegment];
-                }
+                value = value ? value.get(pathSegment) : value;
             });
             return value;
         },
         
         /**
-         * Only works for none isMany content providers! For all other providers values cannot be got.
+         * Only works for none isMany content providers!
          * 
          * TODO find posiibility in MD2 to handle isMany providers (e.g. :contentProvider(where firstName equals "John").lastName)
          * 
          * @param {type} attribute
          * @returns {unresolved}
          */
-        setValue: function(attribute, value) {
+        setValue: function(attribute, newValue) {
             var pathSegments = attribute.split(".");
-            var attr = this._content[0];
+            var value = this._content[0];
             array.forEach(pathSegments, function(pathSegment, idx) {
-                if (attr && idx + 1 < pathSegments.length) {
-                    attr = attr[pathSegment];
+                if (value && idx + 1 < pathSegments.length) {
+                    value = value.get(pathSegment);
                 } else {
                     // last path segment
-                    var oldVal = attr[pathSegment];
-                    if (value && !value.equals(oldVal)) {
-                        attr[pathSegment] = value;
-                        topic.publish(this._topicOnChange, this, attribute, value, oldVal);
+                    var oldVal = value ? value.get(pathSegment) : value;
+                    if (newValue && !newValue.equals(oldVal)) {
+                        value.set(pathSegment, newValue);
+                        this._fireAllOnChanges(attribute);
                     }
                 }
             }, this);
@@ -177,19 +247,10 @@ function(declare, lang, array, topic, ct_lang) {
             if (this._isManyProvider) {
                 this._content = [];
             } else {
-                var blueprint = this._store.entity;
-                
-                // initial reset: directly after content provider creation,
-                // content is empty
-                if (!this._content[0]) {
-                    this._content = [lang.clone(blueprint)];
-                }
-                
-                // if this provider only manages a single entity instance, overwrite
-                // all values with the default values
-                ct_lang.forEachOwnProp(blueprint, function(value, name){
-                    this.setValue(name, value.create(value));
-                }, this);
+                var datatype = this._store.entity;
+                var newEntity = TypeFactory.create(datatype);
+                var newContent = [newEntity];
+                this._setContent(newContent);
             }
         },
         
@@ -204,7 +265,7 @@ function(declare, lang, array, topic, ct_lang) {
             
             this._store.query(query, options).then(lang.hitch(this, function(results) {
                 if(results.length) {
-                    this._content = this._isManyProvider ? results : [results[0]];
+                    this._setContent(this._isManyProvider ? results : [results[0]]);
                 } else {
                     this.reset();
                 }
@@ -218,9 +279,10 @@ function(declare, lang, array, topic, ct_lang) {
             var name = this._name;
             
             this._store.put(this._content).then(lang.hitch(this, function(response) {
+                
                 // mixin internalIds from backend
                 for(var i = 0; i < response.length; i++) {
-                    this._content[i].__internalId = response[i].__internalId;
+                    this._content[i].setInternalID(response[i].__internalId);
                 }
                 
                 topic.publish(this._topicAction, "success", name, "save");
@@ -232,8 +294,8 @@ function(declare, lang, array, topic, ct_lang) {
         remove: function() {
             
             // get entities to delete
-            var filtered = array.filter(this._content, function(obj) {
-                return obj.hasOwnProperty("__internalId");
+            var filtered = array.filter(this._content, function(entity) {
+                return entity.hasInternalID();
             });
             
             var delCount = filtered.length;
@@ -253,8 +315,8 @@ function(declare, lang, array, topic, ct_lang) {
             if(!filtered.length) {
                 topic.publish(this._topicAction, "success", this._name, "remove");
             } else {
-                array.forEach(filtered, function(obj) {
-                    this._store.remove(obj.__internalId).then(function(response) {
+                array.forEach(filtered, function(entity) {
+                    this._store.remove(entity.getInternalID()).then(function(response) {
                         topicPost();
                     }, function(error) {
                         topicPost(error);

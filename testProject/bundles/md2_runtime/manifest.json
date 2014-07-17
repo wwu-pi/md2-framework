@@ -46,9 +46,15 @@
             "name": "_customActions",
             "providing": "md2.app.CustomAction",
             "cardinality": "0..n"
+        },
+        {
+            "name": "_entities",
+            "providing": "md2.app.Entity",
+            "cardinality": "0..n"
         }]
     }, {
         "name": "MD2RuntimeEventHandler",
+        "impl": "./handler/MD2RuntimeEventHandler",
         "provides": ["ct.framework.api.EventHandler"],
         "properties":{
             "Event-Topics": [{

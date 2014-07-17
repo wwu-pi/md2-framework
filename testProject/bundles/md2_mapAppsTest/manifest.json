@@ -38,36 +38,6 @@
 				},
 				"views": [
 					{
-						"name": "calculatorView",
-						"dataForm": {
-							"dataform-version": "1.0.0",
-							"size": {
-								"h": "400",
-								"w": "550"
-							},
-							"type": "md2gridpanel",
-							"cols": "1",
-							"valueClass": "layoutCell",
-							"cellStyle": {
-								"width": "100%"
-							}
-							,
-							"children": [
-								{
-									"type": "textoutput",
-									"datatype": "string",
-									"field": "header",
-									"defaultText": "Calculator",
-									"cellStyle": {
-										"width": "100%",
-										"font-weight": "bold",
-										"font-size": "1.5em"
-									}
-								}
-							]
-						}
-					},
-					{
 						"name": "firstView",
 						"dataForm": {
 							"dataform-version": "1.0.0",
@@ -262,14 +232,113 @@
 											"cellStyle": {
 												"width": "100%"
 											}
+										},
+										{
+											"type": "spacer",
+											"cellStyle": {
+												"width": "100%"
+											}
+										},
+										{
+											"type": "md2gridpanel",
+											"cols": "2",
+											"valueClass": "layoutCell",
+											"cellStyle": {
+												"width": "100%"
+											}
+											,
+											"children": [
+												{
+													"type": "checkbox",
+													"datatype": "boolean",
+													"field": "makeFancyActions1",
+													"cellStyle": {
+														"width": "20%"
+													}
+												},
+												{
+													"type": "textoutput",
+													"datatype": "string",
+													"field": "makeFancyActionsLabel",
+													"defaultText": "Make Actions Fancy...",
+													"cellStyle": {
+														"width": "80%",
+														"font-style": "italic",
+														"color": "#008080"
+													}
+												}
+											]
+										},
+										{
+											"type": "spacer",
+											"cellStyle": {
+												"width": "100%"
+											}
+										},
+										{
+											"type": "textoutput",
+											"datatype": "string",
+											"field": "automaticNameLabel",
+											"defaultText": "Set name based on birthdate before/after 01-01-2000?",
+											"cellStyle": {
+												"width": "100%"
+											}
+										},
+										{
+											"type": "datetextbox",
+											"datatype": "date",
+											"field": "birthdate",
+											"cellStyle": {
+												"width": "100%"
+											}
 										}
 									]
+								}
+							]
+						}
+					},
+					{
+						"name": "calculatorView",
+						"dataForm": {
+							"dataform-version": "1.0.0",
+							"size": {
+								"h": "400",
+								"w": "550"
+							},
+							"type": "md2gridpanel",
+							"cols": "1",
+							"valueClass": "layoutCell",
+							"cellStyle": {
+								"width": "100%"
+							}
+							,
+							"children": [
+								{
+									"type": "textoutput",
+									"datatype": "string",
+									"field": "header",
+									"defaultText": "Calculator",
+									"cellStyle": {
+										"width": "100%",
+										"font-weight": "bold",
+										"font-size": "1.5em"
+									}
 								}
 							]
 						}
 					}
 				]
 			}
+		},
+		{
+			"name": "BindValidators",
+			"impl": "./actions/BindValidators",
+			"provides": ["md2.app.CustomAction"]
+		},
+		{
+			"name": "__startupAction",
+			"impl": "./actions/__startupAction",
+			"provides": ["md2.app.CustomAction"]
 		},
 		{
 			"name": "TestActions",
@@ -287,8 +356,8 @@
 			"provides": ["md2.app.CustomAction"]
 		},
 		{
-			"name": "DoMappings",
-			"impl": "./actions/DoMappings",
+			"name": "TestSetter",
+			"impl": "./actions/TestSetter",
 			"provides": ["md2.app.CustomAction"]
 		},
 		{
@@ -297,9 +366,24 @@
 			"provides": ["md2.app.CustomAction"]
 		},
 		{
-			"name": "__startupAction",
-			"impl": "./actions/__startupAction",
+			"name": "DoMappings",
+			"impl": "./actions/DoMappings",
 			"provides": ["md2.app.CustomAction"]
+		},
+		{
+			"name": "MakeActionsFancy",
+			"impl": "./actions/MakeActionsFancy",
+			"provides": ["md2.app.CustomAction"]
+		},
+		{
+			"name": "SetName",
+			"impl": "./actions/SetName",
+			"provides": ["md2.app.CustomAction"]
+		},
+		{
+			"name": "PersonFactory",
+			"impl": "./entities/Person",
+			"provides": ["md2.app.Entity"]
 		}
 	]
 }

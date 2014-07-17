@@ -52,7 +52,10 @@ function(declare, lang, array, topic, TypeFactory) {
             this._datatype = datatype;
             if(defaultValue !== undefined) {
                 this._defaultValue = this._resolveValueType(defaultValue);
-                this.setValue(this._resolveValueType(defaultValue));
+                this._state.currentValue = this._resolveValueType(defaultValue);
+                this.setValue(this._state.currentValue);
+            } else {
+                this._state.currentValue = this._resolveValueType(null);
             }
         },
         

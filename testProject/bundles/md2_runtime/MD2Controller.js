@@ -4,12 +4,13 @@ define([
     "dojo/_base/array",
     "./contentprovider/ContentProviderRegistry",
     "./datamapper/DataMapper",
-    "./MD2DataEventHandler",
+    "./handler/MD2DataEventHandler",
     "./view/WidgetRegistry",
     "./view/ViewManager",
     "./events/EventRegistry",
     "./actions/ActionFactory",
-    "./validators/ValidatorFactory"
+    "./validators/ValidatorFactory",
+    "./datatypes/TypeFactory"
 ],
 function(
     declare,
@@ -22,7 +23,8 @@ function(
     ViewManager,
     EventRegistry,
     ActionFactory,
-    ValidatorFactory
+    ValidatorFactory,
+    TypeFactory
 ) {
     return declare([], {
         
@@ -38,6 +40,9 @@ function(
             
             // injected custom actions
             var customActions = this._customActions;
+            
+            // injected entities
+            TypeFactory.entities = this._entities;
             
             var contentProviderRegistry = this._createContentProviderRegistry();
             var dataMapper = new DataMapper();

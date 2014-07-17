@@ -44,6 +44,8 @@ function(declare, lang, Hash) {
             } else {
                 widget.setValue(contentProvider.getValue(attribute));
             }
+            
+            contentProvider.registerObservedOnChange(attribute);
         },
         
         unmap: function(widget, contentProvider, attribute) {
@@ -62,6 +64,8 @@ function(declare, lang, Hash) {
             if(toContentProviderMapping.contains(key)) {
                 toContentProviderMapping.get(key).remove(id);
             }
+            
+            contentProvider.unregisterObservedOnChange(attribute);
         },
         
         getContentProviders: function(widgetOrFieldName) {

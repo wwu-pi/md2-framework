@@ -1,6 +1,6 @@
 define([
-    "dojo/_base/declare", "dojo/_base/lang"
-], function(declare, lang) {
+    "dojo/_base/declare", "dojo/_base/lang", "./TypeFactory"
+], function(declare, lang, TypeFactory) {
     
     return declare([], {
         
@@ -31,9 +31,12 @@ define([
          * @returns {_Type}
          */
         create: function(value) {
-            var clone = lang.clone(this);
-            clone._platformValue = this._castChain(value);
-            return clone;
+            var newInstance = TypeFactory.create(this._datatype, value);
+            return newInstance;
+        },
+        
+        clone: function() {
+            return this.create(this._platformValue);
         },
         
         toString: function() {
@@ -56,7 +59,7 @@ define([
         
         _equals: function(value) {
             // Override in concrete datatype in cases of none-default comparisons
-            return this._platformValue === value.getPlatformValue();
+            return !!value && this._platformValue === value.getPlatformValue();
         },
         
         _castFromString: function(value) {
