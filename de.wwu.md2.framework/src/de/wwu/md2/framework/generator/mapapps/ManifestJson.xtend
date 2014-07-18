@@ -64,7 +64,8 @@ class ManifestJson {
 				«val snippets = newArrayList(
 					generateConfigurationSnippet(dataContainer, processedInput),
 					generateCustomActionsSnippet(dataContainer),
-					generateEntitiesSnippet(dataContainer)
+					generateEntitiesSnippet(dataContainer),
+					generateToolSnippet(dataContainer)
 				)»
 				«FOR snippet : snippets.filter(s | !s.toString.trim.empty) SEPARATOR ","»
 					«snippet»
@@ -142,6 +143,32 @@ class ManifestJson {
 				"provides": ["md2.app.Entity"]
 			}
 		«ENDFOR»
+	'''
+	
+	def static generateToolSnippet(DataContainer dataContainer) '''
+		{
+			"name": "MD2RuntimeToolShow",
+			"impl": "ct.tools.Tool",
+			"provides": ["ct.tools.Tool"],
+			"propertiesConstructor": true,
+			"properties": {
+				"id": "md2_runtime_tool_show",
+				"title": "«dataContainer.main.appName»",
+				"description": "Starts the MD2 App bundle in runtime.",
+				"tooltip": "Run: «dataContainer.main.appName»",
+				"toolRole": "toolset",
+				"iconClass": "md2-runtime-tool-show-icon icon-view-grid",
+				"togglable": true,
+				"activateHandler": "openWindow",
+				"deactivateHandler": "closeWindow"
+			},
+			"references": [
+				{
+					"name": "handlerScope",
+					"providing": "md2.runtime.Controller"
+				}
+			]
+		}
 	'''
 	
 	/**
