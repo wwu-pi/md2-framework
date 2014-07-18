@@ -6,7 +6,9 @@ import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.ConditionalEventRef
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ContentProviderEventRef
-import de.wwu.md2.framework.mD2.ContentProviderPathDefinition
+import de.wwu.md2.framework.mD2.ContentProviderPath
+import de.wwu.md2.framework.mD2.ContentProviderPathEventRef
+import de.wwu.md2.framework.mD2.ContentProviderReference
 import de.wwu.md2.framework.mD2.ContentProviderSetTask
 import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.CustomAction
@@ -16,7 +18,8 @@ import de.wwu.md2.framework.mD2.EventDef
 import de.wwu.md2.framework.mD2.EventUnbindTask
 import de.wwu.md2.framework.mD2.GlobalEventRef
 import de.wwu.md2.framework.mD2.GotoWorkflowStepAction
-import de.wwu.md2.framework.mD2.LocationProvider
+import de.wwu.md2.framework.mD2.LocationProviderPath
+import de.wwu.md2.framework.mD2.LocationProviderReference
 import de.wwu.md2.framework.mD2.MD2Factory
 import de.wwu.md2.framework.mD2.Model
 import de.wwu.md2.framework.mD2.Operator
@@ -449,7 +452,7 @@ class ProcessWorkflow {
 			stringVal.setValue(str)
 			setTask.setSource(stringVal)
 			
-			val pathDefinition = factory.createContentProviderPathDefinition
+			val pathDefinition = factory.createContentProviderPath
 			val pathTail = factory.createPathTail
 			pathTail.setAttributeRef(entity.attributes.filter[ a |
 				a.name.equals("lastEventFired")
@@ -637,9 +640,19 @@ class ProcessWorkflow {
 				}
 				"__gui" + str + "." + event.event.toString
 			}
-			ContentProviderEventRef: switch (event) {
-				ContentProviderPathDefinition: "__contentProvider." + event.contentProviderRef + "." + event.tail.pathTailAsString + "." + event.event.toString
-				LocationProvider: "__contentProvider.location." + event.locationField.toString
+			ContentProviderPathEventRef: {
+				val path = event.pathDefinition
+				switch (path) {
+					ContentProviderPath: "__contentProvider." + path.contentProviderRef + "." + path.tail.pathTailAsString + "." + event.event.toString
+					LocationProviderPath: "__contentProvider.location." + path.locationField.toString
+				}
+			}
+			ContentProviderEventRef: {
+				val contentProviderRef = event.contentProvider
+				switch (contentProviderRef) {
+					ContentProviderReference: "__contentProvider." + contentProviderRef.contentProvider + "." + event.event.toString
+					LocationProviderReference: "__contentProvider.location"
+				}
 			}
 			GlobalEventRef: "__global." + event.event.toString
 			ConditionalEventRef: "__conditional." + event.eventReference.name

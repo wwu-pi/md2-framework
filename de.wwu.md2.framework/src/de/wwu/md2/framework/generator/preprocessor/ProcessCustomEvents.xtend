@@ -7,7 +7,7 @@ import de.wwu.md2.framework.mD2.Boolean
 import de.wwu.md2.framework.mD2.ConditionalEventRef
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ContentProviderEventType
-import de.wwu.md2.framework.mD2.ContentProviderPathDefinition
+import de.wwu.md2.framework.mD2.ContentProviderPath
 import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.ElementEventType
@@ -216,7 +216,7 @@ class ProcessCustomEvents {
 				
 				{				
 					// eqLeft composition
-					val contentProviderPathDefinition = factory.createContentProviderPathDefinition
+					val contentProviderPathDefinition = factory.createContentProviderPath
 					val pathTail = factory.createPathTail
 					pathTail.setAttributeRef(mappingEntity.attributes.filter( a | a.name.equals(identifier)).last)
 					contentProviderPathDefinition.setContentProviderRef(contentProvider)
@@ -267,8 +267,8 @@ class ProcessCustomEvents {
 			val customAction = factory.createCustomAction
 			customAction.setName("__conditionalEventRegister_" + event.name)
 			
-			// get all contentProviderPathDefinitions from event.condition
-			val pathDefinitions = event.condition.eAllContents.toIterable.filter(typeof(ContentProviderPathDefinition))
+			// get all contentProviderPathes from event.condition
+			val pathDefinitions = event.condition.eAllContents.toIterable.filter(typeof(ContentProviderPath))
 			for (pathDefinition : pathDefinitions) {
 				val eventBindingTask = factory.createEventBindingTask
 				customAction.codeFragments.add(eventBindingTask)
@@ -278,7 +278,7 @@ class ProcessCustomEvents {
 				actionDef.setActionRef(action)
 				eventBindingTask.actions.add(actionDef)
 				
-				val eventRef = factory.createContentProviderEventRef
+				val eventRef = factory.createContentProviderPathEventRef
 				eventRef.setPathDefinition(pathDefinition.copy)
 				eventRef.setEvent(ContentProviderEventType::ON_CHANGE)
 				eventBindingTask.events.add(eventRef)
@@ -332,7 +332,7 @@ class ProcessCustomEvents {
 			booleanVal.setValue(Boolean::TRUE)
 			setTask.setSource(booleanVal)
 			
-			val mappingPathDefinition = factory.createContentProviderPathDefinition
+			val mappingPathDefinition = factory.createContentProviderPath
 			val pathTail = factory.createPathTail
 			pathTail.setAttributeRef(mappingEntity.attributes.filter[ a |
 				a.name.equals(customEventBinding.mappingIdentifierHelper)
@@ -351,7 +351,7 @@ class ProcessCustomEvents {
 			booleanVal.setValue(Boolean::FALSE)
 			setTask.setSource(booleanVal)
 			
-			val mappingPathDefinition = factory.createContentProviderPathDefinition
+			val mappingPathDefinition = factory.createContentProviderPath
 			val pathTail = factory.createPathTail
 			pathTail.setAttributeRef(mappingEntity.attributes.filter[ a |
 				a.name.equals(customEventUnbinding.mappingIdentifierHelper)

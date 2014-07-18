@@ -17,7 +17,7 @@ import de.wwu.md2.framework.mD2.AttrTimeMax
 import de.wwu.md2.framework.mD2.AttrTimeMin
 import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.BooleanType
-import de.wwu.md2.framework.mD2.ContentProviderPathDefinition
+import de.wwu.md2.framework.mD2.ContentProviderPath
 import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.DateTimeType
 import de.wwu.md2.framework.mD2.DateType
@@ -87,19 +87,21 @@ class ProcessModel {
 		val mappingTasks = newHashSet()
 		mappingTasks.addAll(userMappingTasks)
 		mappingTasks.addAll(autoMappingTasks)
-		mappingTasks.filter([(it.pathDefinition as ContentProviderPathDefinition).contentProviderRef.type instanceof ReferencedModelType]).forEach [ mappingTask |
+		mappingTasks.filter([(it.pathDefinition as ContentProviderPath).contentProviderRef.type instanceof ReferencedModelType]).forEach [ mappingTask |
 			val validatorBindingTask = modelConstraintToValidator(factory, workingInput, mappingTask)
 			val guiElem = mappingTask.referencedViewField.resolveViewGUIElement
 			userValidatorBindingTasks.forEach [ userValidatorBindingTask |
 				userValidatorBindingTask.referencedFields.filter([it.resolveViewGUIElement == guiElem]).forEach [ abstractRef |
 					userValidatorBindingTask.validators.filter(typeof(StandardValidatorType)).forEach [ userValidatorType |
-						var ValidatorType removeAutoValidatorType = null		
-						for (autoValidatorType : validatorBindingTask.validators) {						
-							if ((autoValidatorType as StandardValidatorType).validator.eClass == userValidatorType.validator.eClass) {
-								removeAutoValidatorType = autoValidatorType
+						var ValidatorType removeAutoValidatorType
+						if (validatorBindingTask != null) {
+							for (autoValidatorType : validatorBindingTask.validators) {						
+								if ((autoValidatorType as StandardValidatorType).validator.eClass == userValidatorType.validator.eClass) {
+									removeAutoValidatorType = autoValidatorType
+								}
 							}
+							removeAutoValidatorType?.remove()
 						}
-						removeAutoValidatorType?.remove()
 					]
 				]
 			]
@@ -120,7 +122,7 @@ class ProcessModel {
 	
 	def private static ValidatorBindingTask modelConstraintToValidator(MD2Factory factory, ResourceSet input, MappingTask mappingTask) {
 		
-		if (!(mappingTask.pathDefinition instanceof ContentProviderPathDefinition)) {
+		if (!(mappingTask.pathDefinition instanceof ContentProviderPath)) {
 			System::err.println("[ProcessModel] MappingTask is not instance of ContentProviderPathDefinition!")
 			return null
 		}
@@ -130,7 +132,7 @@ class ProcessModel {
 		if (autoGenAction == null || ctrl == null) return null
 		val validatorBindingTask = factory.createValidatorBindingTask()
 		validatorBindingTask.referencedFields.add(copyElement(mappingTask.referencedViewField) as AbstractViewGUIElementRef)
-		val attr = (mappingTask.pathDefinition as ContentProviderPathDefinition).getReferencedAttribute
+		val attr = (mappingTask.pathDefinition as ContentProviderPath).getReferencedAttribute
 		
 		// Add IsNotNullValidator
 		if (!attr.type.eAllContents.toIterable.filter(typeof(AttrIsOptional)).exists(attrIsOptional | attrIsOptional.optional)) {

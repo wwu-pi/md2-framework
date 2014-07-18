@@ -7,6 +7,7 @@ import static de.wwu.md2.framework.generator.mapapps.AppJsonBuilder.*
 import static de.wwu.md2.framework.generator.mapapps.ManifestJson.*
 import static de.wwu.md2.framework.generator.mapapps.ModuleClass.*
 import static de.wwu.md2.framework.generator.mapapps.CustomActionClass.*
+import static de.wwu.md2.framework.generator.mapapps.EntityClass.*
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import java.util.Collection
 
@@ -54,6 +55,10 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		
 		for (customAction : dataContainer.customActions) {
 			fsa.generateFile(basePackageName + "/actions/" + customAction.name.toFirstUpper + ".js", generateCustomAction(customAction, dataContainer))
+		}
+		
+		for (entity : dataContainer.entities) {
+			fsa.generateFile(basePackageName + "/entities/" + entity.name.toFirstUpper + ".js", generateEntity(entity))
 		}
 		
 		

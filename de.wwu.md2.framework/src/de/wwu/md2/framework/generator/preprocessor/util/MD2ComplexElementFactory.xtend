@@ -9,6 +9,7 @@ import de.wwu.md2.framework.mD2.PathTail
 import de.wwu.md2.framework.mD2.impl.MD2FactoryImpl
 import java.util.Iterator
 import java.util.regex.Pattern
+import org.eclipse.xtext.xbase.lib.Pair
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
@@ -174,7 +175,7 @@ class MD2ComplexElementFactory extends MD2FactoryImpl {
 			lastTailSegement = tail
 		}
 		
-		val pathDefinition = this.createContentProviderPathDefinition
+		val pathDefinition = this.createContentProviderPath
 		pathDefinition.setContentProviderRef(contentProvider)
 		pathDefinition.setTail(lastTailSegement)
 		

@@ -6,10 +6,13 @@ class ModuleClass {
 	
 	def static generateModule(DataContainer dataContainer) '''
 		define([
-			"ct/Stateful",
-			«FOR customAction : dataContainer.customActions SEPARATOR ","»
-				"./actions/«customAction.name.toFirstUpper»"
+			«FOR customAction : dataContainer.customActions»
+				"./actions/«customAction.name.toFirstUpper»",
 			«ENDFOR»
+			«FOR entity : dataContainer.entities»
+				"./entities/«entity.name.toFirstUpper»",
+			«ENDFOR»
+			"ct/Stateful"
 		], {});
 	'''
 }

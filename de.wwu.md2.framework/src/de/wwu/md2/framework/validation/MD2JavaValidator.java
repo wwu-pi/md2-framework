@@ -28,7 +28,7 @@ import de.wwu.md2.framework.mD2.ContainerElementReference;
 import de.wwu.md2.framework.mD2.ContentElement;
 import de.wwu.md2.framework.mD2.ContentProvider;
 import de.wwu.md2.framework.mD2.ContentProviderAddAction;
-import de.wwu.md2.framework.mD2.ContentProviderPathDefinition;
+import de.wwu.md2.framework.mD2.ContentProviderPath;
 import de.wwu.md2.framework.mD2.ContentProviderReference;
 import de.wwu.md2.framework.mD2.ContentProviderRemoveAction;
 import de.wwu.md2.framework.mD2.Controller;
@@ -295,12 +295,12 @@ public class MD2JavaValidator extends AbstractMD2JavaValidator {
 	}
 	
 	@Check
-	public void checkEntitySelectorContentProviderIsMany(ContentProviderPathDefinition contentProviderPathDefinition) {
+	public void checkEntitySelectorContentProviderIsMany(ContentProviderPath contentProviderPathDefinition) {
 		if (contentProviderPathDefinition.eContainer() instanceof EntitySelector) {
 			if (contentProviderPathDefinition.getContentProviderRef() != null) {
 				ContentProvider cp =  contentProviderPathDefinition.getContentProviderRef();
 				if (!cp.getType().isMany()) {
-					error("The selected ContentProvider is not compatible. Check multiplicities!", MD2Package.eINSTANCE.getContentProviderPathDefinition_ContentProviderRef());
+					error("The selected ContentProvider is not compatible. Check multiplicities!", MD2Package.eINSTANCE.getContentProviderPath_ContentProviderRef());
 				}
 			}
 		}
@@ -420,11 +420,11 @@ public class MD2JavaValidator extends AbstractMD2JavaValidator {
 	 * @param pathDef
 	 */
 	@Check
-	public void checkContentProviderPathDefinition(ContentProviderPathDefinition pathDef) {
+	public void checkContentProviderPathDefinition(ContentProviderPath pathDef) {
 		if (pathDef.getContentProviderRef() != null) {
 			if (pathDef.getContentProviderRef().getType() instanceof ReferencedModelType) {
 				if (pathDef.getTail() == null) {
-					error("No attribute specified", MD2Package.eINSTANCE.getContentProviderPathDefinition_ContentProviderRef());	
+					error("No attribute specified", MD2Package.eINSTANCE.getContentProviderPath_ContentProviderRef());	
 				}
 			}
 		}

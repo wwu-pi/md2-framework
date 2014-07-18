@@ -82,6 +82,7 @@ import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
 import de.wwu.md2.framework.mD2.SimpleExpression
 import de.wwu.md2.framework.mD2.AbstractProviderReference
+import de.wwu.md2.framework.mD2.ContentProviderPathEventRef
 
 class CustomActionClass {
 	
@@ -291,12 +292,20 @@ class CustomActionClass {
 		this.$.eventRegistry.get("widget/«event.event.toString»").«IF !isBinding»un«ENDIF»registerAction(«widgetVar», «actionVar»);
 	'''
 	
-	def private static dispatch generateEventBindingCodeFragment(ContentProviderEventRef event, ActionDef actionDefinition, boolean isBinding) '''
+	def private static dispatch generateEventBindingCodeFragment(ContentProviderPathEventRef event, ActionDef actionDefinition, boolean isBinding) '''
 		«val contentProviderVar = getUnifiedName("contentProvider")»
 		«generateContentProviderCodeFragment(event.pathDefinition, contentProviderVar)»
 		«val actionVar = getUnifiedName("action")»
 		«generateActionCodeFragment(actionDefinition, actionVar)»
 		this.$.eventRegistry.get("contentProvider/«event.event.toString»").«IF !isBinding»un«ENDIF»registerAction(«contentProviderVar», "«event.pathDefinition.resolveContentProviderPathAttribute»", «actionVar»);
+	'''
+	
+	def private static dispatch generateEventBindingCodeFragment(ContentProviderEventRef event, ActionDef actionDefinition, boolean isBinding) '''
+		«val contentProviderVar = getUnifiedName("contentProvider")»
+		«generateContentProviderCodeFragment(event.contentProvider, contentProviderVar)»
+		«val actionVar = getUnifiedName("action")»
+		«generateActionCodeFragment(actionDefinition, actionVar)»
+		this.$.eventRegistry.get("contentProvider/«event.event.toString»").«IF !isBinding»un«ENDIF»registerAction(«contentProviderVar», "*", «actionVar»);
 	'''
 	
 	def private static dispatch generateEventBindingCodeFragment(GlobalEventRef event, ActionDef actionDefinition, boolean isBinding) '''
@@ -312,6 +321,10 @@ class CustomActionClass {
 	
 	def private static dispatch generateContentProviderCodeFragment(ContentProvider contentProvider, String varName) '''
 		var «varName» = this.$.contentProviderRegistry.getContentProvider("«contentProvider.name»");
+	'''
+	
+	def private static dispatch generateContentProviderCodeFragment(AbstractProviderReference contentProvider, String varName) '''
+		var «varName» = this.$.contentProviderRegistry.getContentProvider("«contentProvider.resolveContentProviderName»");
 	'''
 	
 	def private static dispatch generateContentProviderCodeFragment(AbstractContentProviderPath contentProviderPath, String varName) '''

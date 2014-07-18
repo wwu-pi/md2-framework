@@ -2,6 +2,7 @@ package de.wwu.md2.framework.generator.util
 
 import de.wwu.md2.framework.generator.preprocessor.ProcessAutoGenerator
 import de.wwu.md2.framework.mD2.AbstractContentProviderPath
+import de.wwu.md2.framework.mD2.AbstractProviderReference
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import de.wwu.md2.framework.mD2.Action
 import de.wwu.md2.framework.mD2.ActionReference
@@ -11,18 +12,20 @@ import de.wwu.md2.framework.mD2.BooleanVal
 import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.CombinedAction
 import de.wwu.md2.framework.mD2.ContainerElement
-import de.wwu.md2.framework.mD2.ContentProviderPathDefinition
+import de.wwu.md2.framework.mD2.ContentProviderPath
+import de.wwu.md2.framework.mD2.ContentProviderReference
 import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.CustomCodeFragment
 import de.wwu.md2.framework.mD2.DateTimeVal
 import de.wwu.md2.framework.mD2.DateVal
-import de.wwu.md2.framework.mD2.EntityPathDefinition
+import de.wwu.md2.framework.mD2.EntityPath
 import de.wwu.md2.framework.mD2.FloatVal
 import de.wwu.md2.framework.mD2.FlowLayoutPane
 import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.IntVal
-import de.wwu.md2.framework.mD2.LocationProvider
+import de.wwu.md2.framework.mD2.LocationProviderPath
+import de.wwu.md2.framework.mD2.LocationProviderReference
 import de.wwu.md2.framework.mD2.MD2Model
 import de.wwu.md2.framework.mD2.Main
 import de.wwu.md2.framework.mD2.Model
@@ -56,10 +59,6 @@ import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 
 import static extension de.wwu.md2.framework.util.StringExtensions.*
-import de.wwu.md2.framework.mD2.AbstractProviderReference
-import de.wwu.md2.framework.mD2.ContentProvider
-import de.wwu.md2.framework.mD2.LocationProviderReference
-import de.wwu.md2.framework.mD2.ContentProviderReference
 
 class MD2GeneratorUtil {
 		
@@ -161,8 +160,8 @@ class MD2GeneratorUtil {
 	 */
 	def static resolveContentProviderName(AbstractContentProviderPath abstractPath) {
 		switch (abstractPath) {
-			ContentProviderPathDefinition: abstractPath.contentProviderRef.name
-			LocationProvider: "location"
+			ContentProviderPath: abstractPath.contentProviderRef.name
+			LocationProviderPath: "location"
 		}
 	}
 	
@@ -183,8 +182,8 @@ class MD2GeneratorUtil {
 	 */
 	def static resolveContentProviderPathAttribute(AbstractContentProviderPath abstractPath) {
 		switch (abstractPath) {
-			ContentProviderPathDefinition: getPathTailAsString(abstractPath.tail)
-			LocationProvider: abstractPath.locationField.toString
+			ContentProviderPath: getPathTailAsString(abstractPath.tail)
+			LocationProviderPath: abstractPath.locationField.toString
 		}
 	}
 	
@@ -209,24 +208,24 @@ class MD2GeneratorUtil {
 	def static equals(PathDefinition p1, PathDefinition p2) {
 		if (p1 == p2) return true
 		if (p1 == null || p2 == null) return false
-		if (p1 instanceof ContentProviderPathDefinition && p2 instanceof ContentProviderPathDefinition) {
-			val contentProvider1 = (p1 as ContentProviderPathDefinition).contentProviderRef
-			val contentProvider2 = (p2 as ContentProviderPathDefinition).contentProviderRef
+		if (p1 instanceof ContentProviderPath && p2 instanceof ContentProviderPath) {
+			val contentProvider1 = (p1 as ContentProviderPath).contentProviderRef
+			val contentProvider2 = (p2 as ContentProviderPath).contentProviderRef
 			if (contentProvider1.type instanceof SimpleType || contentProvider2.type instanceof SimpleType) {
 				return contentProvider2.type == contentProvider2.type
 			}
 		}		
 		var ModelElement model1
 		var ModelElement model2
-		if (p1 instanceof EntityPathDefinition) {
-			model1 = (p1 as EntityPathDefinition).entityRef
-		} else if (p1 instanceof ContentProviderPathDefinition) {
-			model1 = ((p1 as ContentProviderPathDefinition).contentProviderRef.type as ReferencedModelType).entity
+		if (p1 instanceof EntityPath) {
+			model1 = (p1 as EntityPath).entityRef
+		} else if (p1 instanceof ContentProviderPath) {
+			model1 = ((p1 as ContentProviderPath).contentProviderRef.type as ReferencedModelType).entity
 		}
-		if (p2 instanceof EntityPathDefinition) {
-			model2 = (p2 as EntityPathDefinition).entityRef
-		} else if (p2 instanceof ContentProviderPathDefinition) {
-			model2 = ((p2 as ContentProviderPathDefinition).contentProviderRef.type as ReferencedModelType).entity
+		if (p2 instanceof EntityPath) {
+			model2 = (p2 as EntityPath).entityRef
+		} else if (p2 instanceof ContentProviderPath) {
+			model2 = ((p2 as ContentProviderPath).contentProviderRef.type as ReferencedModelType).entity
 		}
 		if (model1 != model2) return false
 		var tail1 = p1.tail
@@ -408,7 +407,7 @@ class MD2GeneratorUtil {
 			TimeVal: '"' + expr.value.toString + '"'
 			DateTimeVal: '"' + expr.value.toString + '"'
 			AbstractViewGUIElementRef: resolveFieldContentStrategy.apply(resolveViewGUIElement(expr))
-			ContentProviderPathDefinition: "" // TODO
+			ContentProviderPath: "" // TODO
 		}
 	}
 }
