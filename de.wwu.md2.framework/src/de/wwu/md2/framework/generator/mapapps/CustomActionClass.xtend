@@ -492,7 +492,7 @@ class CustomActionClass {
 	def private static String generateSimpleExpression(SimpleExpression expression) {
 		switch (expression) {
 			// literals
-			StringVal: '''this.$.create("string", "«expression.value»")'''
+			StringVal: '''this.$.create("string", "«expression.value.escape»")'''
 			IntVal: '''this.$.create("integer", «expression.value»)'''
 			FloatVal: '''this.$.create("float", «expression.value»)'''
 			BooleanVal: '''this.$.create("boolean", «expression.value.toString»)'''

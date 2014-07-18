@@ -25,4 +25,17 @@ class StringExtensions {
 		return '''"«str»"'''
 	}
 	
+	/**
+	 * Escapes 
+	 */
+	def static escape(String str) {
+		if (str == null) {
+			return str;
+		}
+		return str.replace("\\", "\\\\")
+		          .replace("\"", "\\\"")
+		          .replace("\r", "\\r")
+		          .replace("\n", "\\n")
+	}
+	
 }

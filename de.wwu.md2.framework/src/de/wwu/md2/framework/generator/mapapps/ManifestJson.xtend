@@ -258,7 +258,7 @@ class ManifestJson {
 	
 	def private static dispatch getViewElement(Button button) '''
 		"type": "button",
-		"title": "«button.text»",
+		"title": "«button.text.escape»",
 		"field": "«getName(button)»",
 		«generateStyle(button.style, "width" -> '''«button.width»%''')»
 	'''
@@ -267,7 +267,7 @@ class ManifestJson {
 		"type": "textoutput",
 		"datatype": "string",
 		"field": "«getName(label)»",
-		"defaultText": "«label.text»",
+		"defaultText": "«label.text.escape»",
 		«generateStyle(label.style, "width" -> '''«label.width»%''')»
 	'''
 	
