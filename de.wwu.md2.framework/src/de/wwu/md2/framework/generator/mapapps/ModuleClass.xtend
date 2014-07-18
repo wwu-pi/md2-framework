@@ -12,6 +12,7 @@ class ModuleClass {
 			«FOR entity : dataContainer.entities»
 				"./entities/«entity.name.toFirstUpper»",
 			«ENDFOR»
+			"./Controller",
 			"ct/Stateful"
 		], {});
 	'''

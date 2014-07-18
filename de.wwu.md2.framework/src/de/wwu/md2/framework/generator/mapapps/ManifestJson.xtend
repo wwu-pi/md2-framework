@@ -56,16 +56,18 @@ class ManifestJson {
 		{
 			"Bundle-SymbolicName": "md2_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]»",
 			"Bundle-Version": "«dataContainer.main.appVersion»",
-			"Bundle-Name": "Generated MD2 bundle: «dataContainer.main.appName»",
+			"Bundle-Name": "«dataContainer.main.appName»",
+			"Bundle-Description": "Generated MD2 bundle: «dataContainer.main.appName»",
 			"Bundle-Localization": [],
 			"Bundle-Main": "",
 			"Require-Bundle": [],
 			"Components": [
 				«val snippets = newArrayList(
 					generateConfigurationSnippet(dataContainer, processedInput),
-					generateCustomActionsSnippet(dataContainer),
-					generateEntitiesSnippet(dataContainer),
-					generateToolSnippet(dataContainer)
+					generateCustomActionsSnippet(dataContainer, processedInput),
+					generateEntitiesSnippet(dataContainer, processedInput),
+					generateControllerSnippet(dataContainer, processedInput),
+					generateToolSnippet(dataContainer, processedInput)
 				)»
 				«FOR snippet : snippets.filter(s | !s.toString.trim.empty) SEPARATOR ","»
 					«snippet»
@@ -78,7 +80,7 @@ class ManifestJson {
 		{
 			"name": "MD2«processedInput.getBasePackageName.split("\\.").last.toFirstUpper»",
 			"impl": "ct/Stateful",
-			"provides": ["md2.app.AppDefinition"],
+			"provides": ["md2.app.«processedInput.getBasePackageName».AppDefinition"],
 			"propertiesConstructor": true,
 			"properties": {
 				"windowTitle": "«dataContainer.main.appName»",
@@ -125,39 +127,67 @@ class ManifestJson {
 		}
 	'''
 	
-	def static generateCustomActionsSnippet(DataContainer dataContainer) '''
+	def static generateCustomActionsSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
 		«FOR customAction : dataContainer.customActions SEPARATOR ","»
 			{
 				"name": "«customAction.name.toFirstUpper»",
 				"impl": "./actions/«customAction.name.toFirstUpper»",
-				"provides": ["md2.app.CustomAction"]
+				"provides": ["md2.app.«processedInput.getBasePackageName».CustomAction"]
 			}
 		«ENDFOR»
 	'''
 	
-	def static generateEntitiesSnippet(DataContainer dataContainer) '''
+	def static generateEntitiesSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
 		«FOR entity : dataContainer.entities SEPARATOR ","»
 			{
 				"name": "«entity.name.toFirstUpper»",
 				"impl": "./entities/«entity.name.toFirstUpper»",
-				"provides": ["md2.app.Entity"]
+				"provides": ["md2.app.«processedInput.getBasePackageName».Entity"]
 			}
 		«ENDFOR»
 	'''
 	
-	def static generateToolSnippet(DataContainer dataContainer) '''
+	def static generateControllerSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
 		{
-			"name": "MD2RuntimeToolShow",
+			"name": "Controller",
+			"provides": ["md2.app.«processedInput.getBasePackageName».Controller"],
+			"instanceFactory": true,
+			"references": [
+				{
+					"name": "_md2AppWidget",
+					"providing": "md2.runtime.InstanceFactory"
+				},
+				{
+					"name": "_customActions",
+					"providing": "md2.app.«processedInput.getBasePackageName».CustomAction",
+					"cardinality": "0..n"
+				},
+				{
+					"name": "_entities",
+					"providing": "md2.app.«processedInput.getBasePackageName».Entity",
+					"cardinality": "0..n"
+				},
+				{
+					"name": "_configBean",
+					"providing": "md2.app.«processedInput.getBasePackageName».AppDefinition"
+				}
+			]
+		}
+	'''
+	
+	def static generateToolSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
+		{
+			"name": "MD2«processedInput.getBasePackageName.split("\\.").last.toFirstUpper»Tool",
 			"impl": "ct.tools.Tool",
 			"provides": ["ct.tools.Tool"],
 			"propertiesConstructor": true,
 			"properties": {
-				"id": "md2_runtime_tool_show",
+				"id": "md2_«processedInput.getBasePackageName.replace(".", "_")»",
 				"title": "«dataContainer.main.appName»",
-				"description": "Starts the MD2 App bundle in runtime.",
-				"tooltip": "Run: «dataContainer.main.appName»",
+				"description": "Start «dataContainer.main.appName»",
+				"tooltip": "Start «dataContainer.main.appName»",
 				"toolRole": "toolset",
-				"iconClass": "md2-runtime-tool-show-icon icon-view-grid",
+				"iconClass": "icon-view-grid",
 				"togglable": true,
 				"activateHandler": "openWindow",
 				"deactivateHandler": "closeWindow"
@@ -165,7 +195,7 @@ class ManifestJson {
 			"references": [
 				{
 					"name": "handlerScope",
-					"providing": "md2.runtime.Controller"
+					"providing": "md2.app.«processedInput.getBasePackageName».Controller"
 				}
 			]
 		}
