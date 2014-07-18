@@ -82,7 +82,7 @@
                             "rel_l": 30,
                             "rel_t": 30
                         },
-                        "tools": ["md2_runtime_tool_show"]
+                        "tools": ["md2_mapAppsTest"]
                     }
                 ]
             },

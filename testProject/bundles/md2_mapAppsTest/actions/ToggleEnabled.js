@@ -13,12 +13,12 @@ function(declare, _Action) {
 			if (
 				this.$.widgetRegistry.getWidget("lastName").isDisabled()
 			) {
-				var action0ge = this.$.actionFactory.getEnableAction("lastName");
-				action0ge.execute();
+				var action0t = this.$.actionFactory.getEnableAction("lastName");
+				action0t.execute();
 			}
 			else {
-				var action0gf = this.$.actionFactory.getDisableAction("lastName");
-				action0gf.execute();
+				var action0u = this.$.actionFactory.getDisableAction("lastName");
+				action0u.execute();
 			}
 			
 		}

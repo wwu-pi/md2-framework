@@ -10,17 +10,17 @@ function(declare, _Action) {
 		
 		execute: function() {
 			
-			var targetContentProvider0ev = this.$.contentProviderRegistry.getContentProvider("copyTest2");
-			var set0ew = this.$.contentProviderRegistry.getContentProvider("copyTest1").getContent();
-			targetContentProvider0ev.setContent(set0ew);
+			var targetContentProvider019 = this.$.contentProviderRegistry.getContentProvider("copyTest2");
+			var set01a = this.$.contentProviderRegistry.getContentProvider("copyTest1").getContent();
+			targetContentProvider019.setContent(set01a);
 			
-			var action0ex = this.$.actionFactory.getDisableAction("copyCopyTest1");
-			action0ex.execute();
+			var action01b = this.$.actionFactory.getDisableAction("copyCopyTest1");
+			action01b.execute();
 			
-			var action0ey = this.$.actionFactory.getEnableAction("resetCopyTest2");
-			action0ey.execute();
+			var action01c = this.$.actionFactory.getEnableAction("resetCopyTest2");
+			action01c.execute();
 			
-			var messageExpression0f0 = function() {
+			var messageExpression01e = function() {
 				return this.$.create("string", this.$.create("string", this.$.create("string", this.$.create("string", "copyTest1: ").toString()
 				.concat(this.$.contentProviderRegistry.getContentProvider("copyTest1").getContent())
 				).toString()
@@ -29,8 +29,8 @@ function(declare, _Action) {
 				.concat(this.$.contentProviderRegistry.getContentProvider("copyTest2").getContent())
 				).toString();
 			};
-			var action0ez = this.$.actionFactory.getDisplayMessageAction("76d91fe66c0480ce7da8f83b28a9a1b2", messageExpression0f0);
-			action0ez.execute();
+			var action01d = this.$.actionFactory.getDisplayMessageAction("76d91fe66c0480ce7da8f83b28a9a1b2", messageExpression01e);
+			action01d.execute();
 			
 		}
 		

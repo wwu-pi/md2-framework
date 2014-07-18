@@ -40,7 +40,6 @@ define([
         
         constructor: function(injectedServices) {
             declare.safeMixin(this, injectedServices);
-            this._createApp();
         },
         
         openWindow: function() {
@@ -64,7 +63,7 @@ define([
             }
         },
         
-        _createApp: function() {
+        build: function() {
             
             // injected notification service
             var notificationService = this._notificationService;
@@ -151,6 +150,7 @@ define([
                 content: this,
                 title: this._dataFormBean.windowTitle,
                 marginBox: windowSize,
+                minimizeOnClose: true,
                 windowName: "md2_window_root"
             };
             

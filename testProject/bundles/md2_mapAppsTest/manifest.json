@@ -1,7 +1,8 @@
 {
 	"Bundle-SymbolicName": "md2_mapAppsTest",
 	"Bundle-Version": "1.0",
-	"Bundle-Name": "Generated MD2 bundle: map.apps Test",
+	"Bundle-Name": "map.apps Test",
+	"Bundle-Description": "Generated MD2 bundle: map.apps Test",
 	"Bundle-Localization": [],
 	"Bundle-Main": "",
 	"Require-Bundle": [],
@@ -9,7 +10,7 @@
 		{
 			"name": "MD2MapAppsTest",
 			"impl": "ct/Stateful",
-			"provides": ["md2.app.AppDefinition"],
+			"provides": ["md2.app.mapAppsTest.AppDefinition"],
 			"propertiesConstructor": true,
 			"properties": {
 				"windowTitle": "map.apps Test",
@@ -443,102 +444,127 @@
 			}
 		},
 		{
-			"name": "SetterTestResetCallback",
-			"impl": "./actions/SetterTestResetCallback",
-			"provides": ["md2.app.CustomAction"]
-		},
-		{
-			"name": "TestSetter",
-			"impl": "./actions/TestSetter",
-			"provides": ["md2.app.CustomAction"]
-		},
-		{
-			"name": "__startupAction",
-			"impl": "./actions/__startupAction",
-			"provides": ["md2.app.CustomAction"]
-		},
-		{
-			"name": "SetterTestCallback",
-			"impl": "./actions/SetterTestCallback",
-			"provides": ["md2.app.CustomAction"]
-		},
-		{
-			"name": "SetterTest",
-			"impl": "./actions/SetterTest",
-			"provides": ["md2.app.CustomAction"]
-		},
-		{
-			"name": "MakeActionsFancy",
-			"impl": "./actions/MakeActionsFancy",
-			"provides": ["md2.app.CustomAction"]
-		},
-		{
-			"name": "DoMappings",
-			"impl": "./actions/DoMappings",
-			"provides": ["md2.app.CustomAction"]
-		},
-		{
-			"name": "__combined_startAction",
-			"impl": "./actions/__combined_startAction",
-			"provides": ["md2.app.CustomAction"]
-		},
-		{
-			"name": "TestEvents",
-			"impl": "./actions/TestEvents",
-			"provides": ["md2.app.CustomAction"]
-		},
-		{
-			"name": "ToggleEnabled",
-			"impl": "./actions/ToggleEnabled",
-			"provides": ["md2.app.CustomAction"]
-		},
-		{
 			"name": "SetName",
 			"impl": "./actions/SetName",
-			"provides": ["md2.app.CustomAction"]
-		},
-		{
-			"name": "BindValidators",
-			"impl": "./actions/BindValidators",
-			"provides": ["md2.app.CustomAction"]
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
 		},
 		{
 			"name": "TestActions",
 			"impl": "./actions/TestActions",
-			"provides": ["md2.app.CustomAction"]
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "TestEvents",
+			"impl": "./actions/TestEvents",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "MakeActionsFancy",
+			"impl": "./actions/MakeActionsFancy",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "ToggleEnabled",
+			"impl": "./actions/ToggleEnabled",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "TestSetter",
+			"impl": "./actions/TestSetter",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "SetterTest",
+			"impl": "./actions/SetterTest",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "SetterTestCallback",
+			"impl": "./actions/SetterTestCallback",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "__startupAction",
+			"impl": "./actions/__startupAction",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "SetterTestResetCallback",
+			"impl": "./actions/SetterTestResetCallback",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "DoMappings",
+			"impl": "./actions/DoMappings",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "BindValidators",
+			"impl": "./actions/BindValidators",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "__combined_startAction",
+			"impl": "./actions/__combined_startAction",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
 		},
 		{
 			"name": "CopyTest",
 			"impl": "./entities/CopyTest",
-			"provides": ["md2.app.Entity"]
+			"provides": ["md2.app.mapAppsTest.Entity"]
 		},
 		{
 			"name": "Person",
 			"impl": "./entities/Person",
-			"provides": ["md2.app.Entity"]
+			"provides": ["md2.app.mapAppsTest.Entity"]
 		},
-                {
-                    "name": "MD2RuntimeToolShow",
-                    "impl": "ct.tools.Tool",
-                    "provides": ["ct.tools.Tool"],
-                    "propertiesConstructor": true,
-                    "properties": {
-                        "id": "md2_runtime_tool_show",
-                        "title": "Run map.apps Test",            
-                        "description": "Starts the MD2 App bundle in runtime.",
-                        "tooltip": "Run map.apps Test",
-                        "toolRole": "toolset",
-                        "iconClass": "md2-runtime-tool-show-icon icon-view-grid",
-                        "togglable": true,
-                        "activateHandler": "openWindow",
-                        "deactivateHandler": "closeWindow"
-                    },
-                    "references": [
-                        {
-                            "name": "handlerScope",
-                            "providing": "md2.runtime.Controller"
-                        }
-                    ]
-                }
+		{
+			"name": "Controller",
+			"provides": ["md2.app.mapAppsTest.Controller"],
+			"instanceFactory": true,
+			"references": [
+				{
+					"name": "_md2AppWidget",
+					"providing": "md2.runtime.InstanceFactory"
+				},
+				{
+					"name": "_customActions",
+					"providing": "md2.app.mapAppsTest.CustomAction",
+					"cardinality": "0..n"
+				},
+				{
+					"name": "_entities",
+					"providing": "md2.app.mapAppsTest.Entity",
+					"cardinality": "0..n"
+				},
+				{
+					"name": "_configBean",
+					"providing": "md2.app.mapAppsTest.AppDefinition"
+				}
+			]
+		},
+		{
+			"name": "MD2MapAppsTestTool",
+			"impl": "ct.tools.Tool",
+			"provides": ["ct.tools.Tool"],
+			"propertiesConstructor": true,
+			"properties": {
+				"id": "md2_mapAppsTest",
+				"title": "map.apps Test",
+				"description": "Start map.apps Test",
+				"tooltip": "Start map.apps Test",
+				"toolRole": "toolset",
+				"iconClass": "icon-view-grid",
+				"togglable": true,
+				"activateHandler": "openWindow",
+				"deactivateHandler": "closeWindow"
+			},
+			"references": [
+				{
+					"name": "handlerScope",
+					"providing": "md2.app.mapAppsTest.Controller"
+				}
+			]
+		}
 	]
 }

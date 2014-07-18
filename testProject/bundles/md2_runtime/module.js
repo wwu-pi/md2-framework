@@ -1,5 +1,5 @@
 define([
-    "./MD2Controller",
+    "./MD2InstanceFactory",
     "./handler/RuntimeEventHandler",
     "./datamapper/ContentProviderBindingResolver"
 ], {});

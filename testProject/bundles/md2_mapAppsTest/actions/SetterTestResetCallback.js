@@ -10,16 +10,16 @@ function(declare, _Action) {
 		
 		execute: function() {
 			
-			var action0em = this.$.actionFactory.getContentProviderResetAction("copyTest2");
-			action0em.execute();
+			var action01j = this.$.actionFactory.getContentProviderResetAction("copyTest2");
+			action01j.execute();
 			
-			var action0en = this.$.actionFactory.getEnableAction("copyCopyTest1");
-			action0en.execute();
+			var action01k = this.$.actionFactory.getEnableAction("copyCopyTest1");
+			action01k.execute();
 			
-			var action0eo = this.$.actionFactory.getDisableAction("resetCopyTest2");
-			action0eo.execute();
+			var action01l = this.$.actionFactory.getDisableAction("resetCopyTest2");
+			action01l.execute();
 			
-			var messageExpression0eq = function() {
+			var messageExpression01n = function() {
 				return this.$.create("string", this.$.create("string", this.$.create("string", this.$.create("string", "copyTest1: ").toString()
 				.concat(this.$.contentProviderRegistry.getContentProvider("copyTest1").getContent())
 				).toString()
@@ -28,8 +28,8 @@ function(declare, _Action) {
 				.concat(this.$.contentProviderRegistry.getContentProvider("copyTest2").getContent())
 				).toString();
 			};
-			var action0ep = this.$.actionFactory.getDisplayMessageAction("76d91fe66c0480ce7da8f83b28a9a1b2", messageExpression0eq);
-			action0ep.execute();
+			var action01m = this.$.actionFactory.getDisplayMessageAction("76d91fe66c0480ce7da8f83b28a9a1b2", messageExpression01n);
+			action01m.execute();
 			
 		}
 		

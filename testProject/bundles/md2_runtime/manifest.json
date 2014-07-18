@@ -28,8 +28,8 @@
     ],
     "Components": [
         {
-            "name": "MD2Controller",
-            "provides": ["md2.runtime.Controller"],
+            "name": "MD2InstanceFactory",
+            "provides": ["md2.runtime.InstanceFactory"],
             "instanceFactory": true,
             "references": [
                 {
@@ -41,26 +41,12 @@
                     "providing": "dataform.DataFormService"
                 },
                 {
-                    "name": "_dataFormBean",
-                    "providing": "md2.app.AppDefinition"
-                },
-                {
                     "name": "_storeFactory",
                     "providing": "md2.store.StoreFactory"
                 },
                 {
-                    "name" : "_notificationService",
+                    "name": "_notificationService",
                     "providing": "ct.framework.api.LogService"
-                },
-                {
-                    "name": "_customActions",
-                    "providing": "md2.app.CustomAction",
-                    "cardinality": "0..n"
-                },
-                {
-                    "name": "_entities",
-                    "providing": "md2.app.Entity",
-                    "cardinality": "0..n"
                 }
             ]
         },
