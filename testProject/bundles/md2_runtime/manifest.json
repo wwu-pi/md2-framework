@@ -66,7 +66,7 @@
         },
         {
             "name": "MD2RuntimeEventHandler",
-            "impl": "./handler/MD2RuntimeEventHandler",
+            "impl": "./handler/RuntimeEventHandler",
             "provides": ["ct.framework.api.EventHandler"],
             "properties": {
                 "Event-Topics": [
@@ -87,27 +87,6 @@
             "name": "ContentProviderBindingResolver",
             "impl": "./datamapper/ContentProviderBindingResolver",
             "provides": ["dataform.BindingResolver"]
-        },
-        {
-            "name": "MD2RuntimeToolShow",
-            "impl": "ct.tools.Tool",
-            "provides": ["ct.tools.Tool"],
-            "propertiesConstructor": true,
-            "properties": {
-                "id": "md2_runtime_tool_show",
-                "title": "Run MD2 App",            
-                "description": "Starts the MD2 App bundle in runtime.",
-                "tooltip": "Run MD2 App",
-                "toolRole": "toolset",
-                "iconClass": "md2-runtime-tool-show-icon icon-view-grid",
-                "togglable": true
-            },
-            "references": [
-                {
-                    "name": "handlerScope",
-                    "providing": "md2.runtime.Controller"
-                }
-            ]
         }
     ]
 }

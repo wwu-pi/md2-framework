@@ -12,8 +12,6 @@ function(declare, array, dom, domConstruct, Hash, WidgetWrapper) {
         
         _widgetRegistry: undefined,
         
-        _window: undefined,
-        
         _dataFormService: undefined,
         
         _dataMapper: undefined,
@@ -22,9 +20,8 @@ function(declare, array, dom, domConstruct, Hash, WidgetWrapper) {
         
         _currentView: undefined,
         
-        constructor: function(widgetRegistry, window, dataFormService, dataMapper) {
+        constructor: function(widgetRegistry, dataFormService, dataMapper) {
             this._widgetRegistry = widgetRegistry;
-            this._window = window;
             this._dataFormService = dataFormService;
             this._dataMapper = dataMapper;
             this._dataFormDescriptions = new Hash();
@@ -34,17 +31,19 @@ function(declare, array, dom, domConstruct, Hash, WidgetWrapper) {
             
             var domNodeDataForm = dom.byId("md2_view");
             
-            // destroy current view
-            var previousView = this._currentView;
-            if (previousView) {
-                this._unsetAllFormControls(previousView.bodyControl);
-                domConstruct.empty(domNodeDataForm);
-                previousView.destroyRecursive();
+            if (domNodeDataForm) {
+                // destroy current view
+                var previousView = this._currentView;
+                if (previousView) {
+                    this._unsetAllFormControls(previousView.bodyControl);
+                    domConstruct.empty(domNodeDataForm);
+                    previousView.destroyRecursive();
+                }
+
+                // attach data form to DOM
+                var dataFormWidget = this._buildView(viewName);
+                dataFormWidget.placeAt(domNodeDataForm).startup();
             }
-            
-            // attach data form to DOM
-            var dataFormWidget = this._buildView(viewName);
-            dataFormWidget.placeAt(domNodeDataForm).startup();
         },
         
         /**

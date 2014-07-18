@@ -1,0 +1,3 @@
+define([
+    "./MD2StoreFactory"
+], {});

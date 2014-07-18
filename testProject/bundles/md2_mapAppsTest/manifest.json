@@ -516,6 +516,29 @@
 			"name": "Person",
 			"impl": "./entities/Person",
 			"provides": ["md2.app.Entity"]
-		}
+		},
+                {
+                    "name": "MD2RuntimeToolShow",
+                    "impl": "ct.tools.Tool",
+                    "provides": ["ct.tools.Tool"],
+                    "propertiesConstructor": true,
+                    "properties": {
+                        "id": "md2_runtime_tool_show",
+                        "title": "Run map.apps Test",            
+                        "description": "Starts the MD2 App bundle in runtime.",
+                        "tooltip": "Run map.apps Test",
+                        "toolRole": "toolset",
+                        "iconClass": "md2-runtime-tool-show-icon icon-view-grid",
+                        "togglable": true,
+                        "activateHandler": "openWindow",
+                        "deactivateHandler": "closeWindow"
+                    },
+                    "references": [
+                        {
+                            "name": "handlerScope",
+                            "providing": "md2.runtime.Controller"
+                        }
+                    ]
+                }
 	]
 }
