@@ -32,11 +32,11 @@ define([
         currentModelVersion: null,
         
         /**
-         * The raw type or blueprint of the actual entity that is managed by this store. It is used for example to
-         * translate between the MD2 datatypes and the JS datatypes that are send to the backend. Furthermore, it
-         * is used to construct a blueprint of this entity for the content provider (e.g. to reset the content provider).
+         * The factory of the entity that is managed by this store. It is used to construct new instances of this
+         * entity, and populate it with the values received from the backend. Furthermore, it
+         * is provided to the content provider (e.g. to reset the content provider).
          */
-        entity: undefined,
+        entityFactory: undefined,
         
         constructor: function(options) {
             declare.safeMixin(this, options);
@@ -230,25 +230,42 @@ define([
         _translateToMD2Types: function(platformEntities) {
             var md2Entities = [];
             array.forEach(platformEntities, function(platformEntity) {
-                var md2Entity = lang.mixin({}, this.entity);
-                ct_lang.forEachOwnProp(platformEntity, function(value, name){
-                    md2Entity[name] = md2Entity[name].create(value);
-                });
+                var md2Entity = this._translateToMD2TypesRecursion(this.entityFactory.create(), platformEntity);
                 md2Entities.push(md2Entity);
-            });
+            }, this);
             return md2Entities;
+        },
+        
+        _translateToMD2TypesRecursion: function(md2Entity, platformEntity) {
+            ct_lang.forEachOwnProp(platformEntity, function(value, name) {
+                if (md2Entity.get(name)) {
+                    md2Entity.set(name, md2Entity.get(name).create(value));
+                } else {
+                    var subMD2Entity = md2Entity._typeFactory.createEntity(md2Entity.attributeTypes[name]);
+                    this._translateToMD2TypesRecursion(subMD2Entity, platformEntity[name]);
+                }
+            }, this);
         },
         
         _translateToJSTypes: function(md2Entities) {
             var platformEntities = [];
             array.forEach(md2Entities, function(md2Entity) {
-                var platformEntity = {};
-                ct_lang.forEachOwnProp(md2Entity, function(value, name){
-                    platformEntity[name] = value.toPlatformValue();
-                });
+                var platformEntity = this._translateToJSTypesRecursion(md2Entity);
                 platformEntities.push(platformEntity);
-            });
+            }, this);
             return platformEntities;
+        },
+        
+        _translateToJSTypesRecursion: function(md2Entity) {
+            var platformEntity = {};
+            ct_lang.forEachOwnProp(md2Entity._attributes, function(value, name) {
+                if (value.toPlatformValue) {
+                    platformEntity[name] = value.toPlatformValue();
+                } else {
+                    platformEntity[name] = this._translateToJSTypesRecursion(value);
+                }
+            }, this);
+            return platformEntity;
         }
         
     });

@@ -42,7 +42,7 @@ function(
             var customActions = this._customActions;
             
             // injected entities
-            TypeFactory.entities = this._entities;
+            TypeFactory.entityFactories = this._entities;
             
             var contentProviderRegistry = this._createContentProviderRegistry();
             var dataMapper = new DataMapper();
@@ -84,14 +84,12 @@ function(
             return this._mainWidget;
         },
         
-        
         _createContentProviderRegistry: function() {
             // configure store factory
             var storeFactory = this._storeFactory;
-            var entities = this._dataFormBean.entities;
             storeFactory.setDefaultServiceUri(this._dataFormBean.serviceUri);
             
-            return new ContentProviderRegistry(storeFactory, entities);
+            return new ContentProviderRegistry(storeFactory);
         },
         
         _createContentProviders: function(contentProviderRegistry, dataMapper) {

@@ -11,17 +11,17 @@ function(declare, _Action) {
 		execute: function() {
 			
 			if (
-				this.$.widgetRegistry.getWidget("makeFancyActions1").getValue().equals(this.$.create("boolean", true)) &&
+				this.$.widgetRegistry.getWidget("makeFancyActions").getValue().equals(this.$.create("boolean", true)) &&
 				this.$.widgetRegistry.getWidget("header2").getValue().equals(this.$.create("string", "Actions"))
 			) {
-				var widget0nf = this.$.widgetRegistry.getWidget("header2");
-				var set0ng = this.$.create("string", "Fancy Actions...");
-				widget0nf.setValue(set0ng);
+				var widget = this.$.widgetRegistry.getWidget("header2");
+				var set = this.$.create("string", "Fancy Actions...");
+				widget.setValue(set);
 			}
 			else {
-				var widget0nh = this.$.widgetRegistry.getWidget("header2");
-				var set0ni = this.$.create("string", "Actions");
-				widget0nh.setValue(set0ni);
+				var widget02 = this.$.widgetRegistry.getWidget("header2");
+				var set03 = this.$.create("string", "Actions");
+				widget02.setValue(set03);
 			}
 			
 		}

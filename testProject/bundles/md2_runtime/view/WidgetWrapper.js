@@ -256,7 +256,7 @@ function(declare, lang, array, topic, TypeFactory) {
         },
         
         _resolveValueType: function(platformValue) {
-            return TypeFactory.create(this._datatype, platformValue);
+            return this._datatype ? TypeFactory.create(this._datatype, platformValue) : null;
         }
         
     });

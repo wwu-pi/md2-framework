@@ -10,14 +10,14 @@ function(declare, _Action) {
 		
 		execute: function() {
 			
-			var action0md = this.$.actionFactory.getDisableAction("firstName");
-			action0md.execute();
+			var action = this.$.actionFactory.getDisableAction("firstName");
+			action.execute();
 			
-			var action0me = this.$.actionFactory.getGotoViewAction("firstView");
-			action0me.execute();
+			var action00 = this.$.actionFactory.getGotoViewAction("firstView");
+			action00.execute();
 			
-			var action0mf = this.$.actionFactory.getCustomAction("__combined_startAction");
-			action0mf.execute();
+			var action01 = this.$.actionFactory.getCustomAction("__combined_startAction");
+			action01.execute();
 			
 		}
 		

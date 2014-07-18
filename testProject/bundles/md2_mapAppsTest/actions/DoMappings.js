@@ -10,13 +10,17 @@ function(declare, _Action) {
 		
 		execute: function() {
 			
-			var contentProvider0nb = this.$.contentProviderRegistry.getContentProvider("personProvider");
-			var widget0nc = this.$.widgetRegistry.getWidget("firstName");
-			this.$.dataMapper.map(widget0nc, contentProvider0nb, "firstName");
+			var contentProvider016 = this.$.contentProviderRegistry.getContentProvider("personProvider");
+			var widget017 = this.$.widgetRegistry.getWidget("firstName");
+			this.$.dataMapper.map(widget017, contentProvider016, "firstName");
 			
-			var contentProvider0nd = this.$.contentProviderRegistry.getContentProvider("personProvider");
-			var widget0ne = this.$.widgetRegistry.getWidget("lastName");
-			this.$.dataMapper.map(widget0ne, contentProvider0nd, "firstName");
+			var contentProvider018 = this.$.contentProviderRegistry.getContentProvider("personProvider");
+			var widget019 = this.$.widgetRegistry.getWidget("lastName");
+			this.$.dataMapper.map(widget019, contentProvider018, "firstName");
+			
+			var contentProvider01a = this.$.contentProviderRegistry.getContentProvider("personProvider");
+			var widget01b = this.$.widgetRegistry.getWidget("email");
+			this.$.dataMapper.map(widget01b, contentProvider01a, "email");
 			
 		}
 		

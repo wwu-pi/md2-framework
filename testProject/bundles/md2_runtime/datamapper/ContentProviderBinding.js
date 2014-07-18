@@ -46,7 +46,11 @@ define([
                 var widgets = this._dataMapper.getWidgets(contentProvider, attribute);
                 widgets.forEach(function(widget) {
                     var fieldName = widget.getId();
-                    this._watchers._firePropertyChange(fieldName, oldVal.getPlatformValue(), newVal.getPlatformValue());
+                    this._watchers._firePropertyChange(
+                        fieldName,
+                        oldVal.getPlatformValue(),
+                        newVal.getPlatformValue()
+                    );
                     
                     var newValue = TypeFactory.create(widget._datatype, newVal);
                     if (!newValue.equals(widget.getValue())) {

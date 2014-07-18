@@ -3,7 +3,6 @@ define([
     "dojo/_base/lang",
     "dojo/_base/array",
     "dojo/topic",
-    "../datatypes/TypeFactory",
     "../datatypes/_Type",
     "ct/Hash"
 ],
@@ -16,7 +15,7 @@ define([
  * 
  * The ContentProvider might access fields in the dataForm to configure its filter.
  */
-function(declare, lang, array, topic, _Type, TypeFactory, Hash) {
+function(declare, lang, array, topic, _Type, Hash) {
     
     return declare([], {
         
@@ -136,7 +135,7 @@ function(declare, lang, array, topic, _Type, TypeFactory, Hash) {
             
             if (!this._observedAttributes.contains(attribute)) {
                 this._observedAttributes.set(attribute, {
-                    value: this._getValue(attribute),
+                    value: this.getValue(attribute),
                     numberOfObservers: 0
                 });
             }
@@ -169,35 +168,63 @@ function(declare, lang, array, topic, _Type, TypeFactory, Hash) {
          */
         _fireAllOnChanges: function(qualifiedAttrName) {
             
-            // shortcut if simple value (no entity)
+            var isAnyValueChanged = false;
+            
+            // It was a setValue event. Distinguish the two cases:
+            // 1. Value was set
+            // 2. Entity was set
             if (qualifiedAttrName) {
+            
+                // Case 1: Value was set => there cannot be any child attributes
                 var val = this.getValue(qualifiedAttrName);
-                var attr = this._observedAttributes.get(qualifiedAttrName);
-                if (attr && (val instanceof _Type)) {
-                    var oldValue = attr.value;
-                    if (!val && val !== oldValue || !val.equals(oldValue)) {
-                        topic.publish(this._topicOnChange, this, qualifiedAttrName, val, oldValue);
-                    }
-                    return;
+                if (val && val.isInstanceOf(_Type)) {
+                    var attr = this._observedAttributes.get(qualifiedAttrName);
+                    if (attr) {
+                        var oldValue = attr.value;
+                        if (!val.equals(oldValue)) {
+                            isAnyValueChanged = true;
+                            topic.publish(this._topicOnChange, this, qualifiedAttrName, val, oldValue);
+                        }
+                    }    
                 }
             }
             
-            // in case it was an entity
-            this._observedAttributes.forEach(function(value, key) {
-                
-                // if an attribute is set, only resolve child attributes. Otherwise all attributes.
-                var isResolve = qualifiedAttrName ? key.indexOf(qualifiedAttrName) === 0 : true;
-                
-                if (isResolve) {
-                    var newValue = this.getValue(key);
-                    if (!newValue && newValue !== value || !newValue.equals(value)) {
-                        var attr = this._observedAttributes.get(key);
-                        var oldValue = attr.value;
-                        attr.value = newValue;
-                        topic.publish(this._topicOnChange, this, key, newValue, oldValue);
+            // Case 2: Entity was set or the entire content provider was updated => reset / load / setContent
+            else {
+                this._observedAttributes.forEach(function(value, key) {
+                    
+                    // If an attribute is set, only resolve its child attributes.
+                    // Otherwise all attributes (content provider reset).
+                    var isResolve = qualifiedAttrName ? key.indexOf(qualifiedAttrName) === 0 : true;
+                    
+                    if (isResolve) {
+                        var newValue = this.getValue(key);
+                        if (!newValue && newValue !== value || !newValue.equals(value)) {
+                            var attr = this._observedAttributes.get(key);
+                            var oldValue = attr.value;
+                            attr.value = newValue;
+                            isAnyValueChanged = true;
+                            topic.publish(this._topicOnChange, this, key, newValue, oldValue);
+                        }
                     }
+                }, this);
+            }
+            
+            // Inform all listeners that listen to any events along the path.
+            // All childs are already informed in case 2.
+            if (isAnyValueChanged) {
+                if (qualifiedAttrName) {
+                    var pathSegments = qualifiedAttrName.split(".").pop();
+                    var currentPath = "";
+                    array.forEach(pathSegments, function(pathSegment, idx) {
+                        currentPath += (idx !== 0 ? "." : "") + pathSegment;
+                        topic.publish(this._topicOnChange, this, currentPath, null, null);
+                    }, this);
                 }
-            }, this);
+                
+                // Fire event for content provider.
+                topic.publish(this._topicOnChange, this, "*", null, null);
+            }
         },
         
         /**
@@ -247,8 +274,8 @@ function(declare, lang, array, topic, _Type, TypeFactory, Hash) {
             if (this._isManyProvider) {
                 this._content = [];
             } else {
-                var datatype = this._store.entity;
-                var newEntity = TypeFactory.create(datatype);
+                var entityFactory = this._store.entityFactory;
+                var newEntity = entityFactory.create();
                 var newContent = [newEntity];
                 this._setContent(newContent);
             }

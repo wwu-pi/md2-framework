@@ -42,7 +42,7 @@ define([
                 window.console && console.warn(this._WARNING_MSG2);
             }
             
-            options.entity = configuration.entity;
+            options.entityFactory = configuration.entityFactory;
             
             return new MD2Store(options);
         },

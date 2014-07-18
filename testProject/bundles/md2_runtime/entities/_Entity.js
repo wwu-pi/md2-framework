@@ -1,10 +1,18 @@
 define([
-    "dojo/_base/declare", "dojo/_base/lang", "ct/_lang", "../datatypes/TypeFactory"
-], function(declare, lang, ct_lang, TypeFactory) {
+    "dojo/_base/declare", "ct/_lang", "../datatypes/TypeFactory"
+], function(declare, ct_lang, TypeFactory) {
     
     return declare([], {
         
         _datatype: "undefined",
+        
+        attributeTypes: {
+            // To be implemented in concrete class.
+            // return {
+            //   xxx: "yyy",
+            //   ...
+            // }
+        },
         
         /**
          * Internal ID as set by the MD2 backend. Entities that are stored
@@ -85,7 +93,7 @@ define([
         toString: function() {
             var attr = [];
             ct_lang.forEachOwnProp(this._attributes, function(value, name){
-                attr.push(name + ": " + value.toString());
+                attr.push(name + ": " + value);
             });
             return "[" + attr.join(", ") + "]";
         },

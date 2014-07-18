@@ -1,19 +1,21 @@
 define([
-    "dojo/_base/declare", "dojo/_base/lang", "dojo/json", "ct/_lang", "./ContentProvider", "../datatypes/TypeFactory"
+    "dojo/_base/declare",
+    "dojo/_base/lang",
+    "dojo/json",
+    "./ContentProvider",
+    "../datatypes/TypeFactory"
 ],
 
 /**
  * Registry that manages all content providers. A reference to this registry can be passed to
  * all MD2 components that deal with component providers.
  */
-function(declare, d_lang, json, ct_lang, ContentProvider, TypeFactory) {
+function(declare, d_lang, json, ContentProvider, TypeFactory) {
     return declare([], {
         
         _contentProviders: null,
         
         _storeFactory: null,
-        
-        _entityDefinitions: null,
         
         /**
          * Keep a table of all stores, so that each store configuration is always stored only once.
@@ -22,11 +24,10 @@ function(declare, d_lang, json, ct_lang, ContentProvider, TypeFactory) {
          */
         _stores: null,
         
-        constructor: function(storeFactory, entityDefinitions) {
+        constructor: function(storeFactory) {
             this._contentProviders = {};
             this._stores = {};
             this._storeFactory = storeFactory;
-            this._entityDefinitions = entityDefinitions;
         },
         
         getContentProvider: function(contentProviderName) {
@@ -78,12 +79,12 @@ function(declare, d_lang, json, ct_lang, ContentProvider, TypeFactory) {
             
             if(!this._stores[key]) {
                 
-                var entity = this._createMD2DatatypedEntity(this._entityDefinitions[config.entityName]);
+                var entityFactory = TypeFactory.getEntityFactory(config.entityName);
                 
                 if(config.type === "remote") {
                     var remoteConfig = {
                         entityName: config.entityName,
-                        entity: entity
+                        entityFactory: entityFactory
                     };
                     if(config.serviceUri) remoteConfig.serviceUri = config.serviceUri;
                     this._stores[key] = this._storeFactory.newInstance(remoteConfig, config.options);
@@ -96,14 +97,6 @@ function(declare, d_lang, json, ct_lang, ContentProvider, TypeFactory) {
             }
             
             return this._stores[key];
-        },
-        
-        _createMD2DatatypedEntity: function(entityDefinition) {
-            var md2Entity = {};
-            ct_lang.forEachOwnProp(entityDefinition, function(value, name) {
-                md2Entity[name] = TypeFactory.create(value.datatype, value.defaultValue);
-            });
-            return md2Entity;
         }
         
     });

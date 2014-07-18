@@ -17,25 +17,29 @@ function(array, Boolean, Date, Time, DateTime, Float, Integer, String) {
         create: function(datatype, platformValue) {
             switch (datatype) {
                 case "boolean":
-                    return new Boolean(platformValue);
+                    return new Boolean(platformValue, TypeFactory);
                 case "date":
-                    return new Date(platformValue);
+                    return new Date(platformValue, TypeFactory);
                 case "time":
-                    return new Time(platformValue);
+                    return new Time(platformValue, TypeFactory);
                 case "datetime":
-                    return new DateTime(platformValue);
+                    return new DateTime(platformValue, TypeFactory);
                 case "float":
-                    return new Float(platformValue);
+                    return new Float(platformValue, TypeFactory);
                 case "integer":
-                    return new Integer(platformValue);
+                    return new Integer(platformValue, TypeFactory);
                 case "string":
-                    return new String(platformValue);
+                    return new String(platformValue, TypeFactory);
                 default:
                     return TypeFactory.createEntity(datatype);
             }
         },
         
         createEntity: function(datatype) {
+            return TypeFactory.getEntityFactory(datatype).create();
+        },
+        
+        getEntityFactory: function(datatype) {
             var factory;
             array.some(TypeFactory.entityFactories, function(entityFactory) {
                 if (entityFactory.datatype === datatype) {
@@ -45,7 +49,7 @@ function(array, Boolean, Date, Time, DateTime, Float, Integer, String) {
             }, this);
             
             if (factory) {
-                return factory.create();
+                return factory;
             } else {
                 console && console.error("[TypeFactory] No Entity with datatype '" + datatype + "' found!");
             }

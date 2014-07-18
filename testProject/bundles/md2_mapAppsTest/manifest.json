@@ -5,7 +5,8 @@
 	"Bundle-Localization": [],
 	"Bundle-Main": "",
 	"Require-Bundle": [],
-	"Components": [{
+	"Components": [
+		{
 			"name": "MD2MapAppsTest",
 			"impl": "ct/Stateful",
 			"provides": ["md2.app.AppDefinition"],
@@ -24,19 +25,37 @@
 						}
 					}
 				],
-				"entities": {
-					"Person": {
-						"firstName": {
-							"datatype": "string",
-							"defaultValue": null
-						},
-						"lastName": {
-							"datatype": "string",
-							"defaultValue": null
-						}
-					}
-				},
 				"views": [
+					{
+						"name": "calculatorView",
+						"dataForm": {
+							"dataform-version": "1.0.0",
+							"size": {
+								"h": "400",
+								"w": "550"
+							},
+							"type": "md2gridpanel",
+							"cols": "1",
+							"valueClass": "layoutCell",
+							"cellStyle": {
+								"width": "100%"
+							}
+							,
+							"children": [
+								{
+									"type": "textoutput",
+									"datatype": "string",
+									"field": "header",
+									"defaultText": "Calculator",
+									"cellStyle": {
+										"width": "100%",
+										"font-weight": "bold",
+										"font-size": "1.5em"
+									}
+								}
+							]
+						}
+					},
 					{
 						"name": "firstView",
 						"dataForm": {
@@ -251,7 +270,7 @@
 												{
 													"type": "checkbox",
 													"datatype": "boolean",
-													"field": "makeFancyActions1",
+													"field": "makeFancyActions",
 													"cellStyle": {
 														"width": "20%"
 													}
@@ -296,63 +315,13 @@
 								}
 							]
 						}
-					},
-					{
-						"name": "calculatorView",
-						"dataForm": {
-							"dataform-version": "1.0.0",
-							"size": {
-								"h": "400",
-								"w": "550"
-							},
-							"type": "md2gridpanel",
-							"cols": "1",
-							"valueClass": "layoutCell",
-							"cellStyle": {
-								"width": "100%"
-							}
-							,
-							"children": [
-								{
-									"type": "textoutput",
-									"datatype": "string",
-									"field": "header",
-									"defaultText": "Calculator",
-									"cellStyle": {
-										"width": "100%",
-										"font-weight": "bold",
-										"font-size": "1.5em"
-									}
-								}
-							]
-						}
 					}
 				]
 			}
 		},
 		{
-			"name": "BindValidators",
-			"impl": "./actions/BindValidators",
-			"provides": ["md2.app.CustomAction"]
-		},
-		{
 			"name": "__startupAction",
 			"impl": "./actions/__startupAction",
-			"provides": ["md2.app.CustomAction"]
-		},
-		{
-			"name": "TestActions",
-			"impl": "./actions/TestActions",
-			"provides": ["md2.app.CustomAction"]
-		},
-		{
-			"name": "ToggleEnabled",
-			"impl": "./actions/ToggleEnabled",
-			"provides": ["md2.app.CustomAction"]
-		},
-		{
-			"name": "TestEvents",
-			"impl": "./actions/TestEvents",
 			"provides": ["md2.app.CustomAction"]
 		},
 		{
@@ -361,18 +330,28 @@
 			"provides": ["md2.app.CustomAction"]
 		},
 		{
+			"name": "MakeActionsFancy",
+			"impl": "./actions/MakeActionsFancy",
+			"provides": ["md2.app.CustomAction"]
+		},
+		{
+			"name": "BindValidators",
+			"impl": "./actions/BindValidators",
+			"provides": ["md2.app.CustomAction"]
+		},
+		{
+			"name": "ToggleEnabled",
+			"impl": "./actions/ToggleEnabled",
+			"provides": ["md2.app.CustomAction"]
+		},
+		{
 			"name": "__combined_startAction",
 			"impl": "./actions/__combined_startAction",
 			"provides": ["md2.app.CustomAction"]
 		},
 		{
-			"name": "DoMappings",
-			"impl": "./actions/DoMappings",
-			"provides": ["md2.app.CustomAction"]
-		},
-		{
-			"name": "MakeActionsFancy",
-			"impl": "./actions/MakeActionsFancy",
+			"name": "TestEvents",
+			"impl": "./actions/TestEvents",
 			"provides": ["md2.app.CustomAction"]
 		},
 		{
@@ -381,7 +360,17 @@
 			"provides": ["md2.app.CustomAction"]
 		},
 		{
-			"name": "PersonFactory",
+			"name": "TestActions",
+			"impl": "./actions/TestActions",
+			"provides": ["md2.app.CustomAction"]
+		},
+		{
+			"name": "DoMappings",
+			"impl": "./actions/DoMappings",
+			"provides": ["md2.app.CustomAction"]
+		},
+		{
+			"name": "Person",
 			"impl": "./entities/Person",
 			"provides": ["md2.app.Entity"]
 		}

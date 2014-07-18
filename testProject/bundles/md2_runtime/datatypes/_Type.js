@@ -1,6 +1,6 @@
 define([
-    "dojo/_base/declare", "dojo/_base/lang", "./TypeFactory"
-], function(declare, lang, TypeFactory) {
+    "dojo/_base/declare", "dojo/_base/lang"
+], function(declare, lang) {
     
     return declare([], {
         
@@ -8,7 +8,10 @@ define([
         
         _datatype: "undefined",
         
-        constructor: function(value) {
+        _creatingFactory: null,
+        
+        constructor: function(value, creator) {
+            this._creatingFactory = creator;
             this._platformValue = this._castChain(value);
         },
         
@@ -31,7 +34,7 @@ define([
          * @returns {_Type}
          */
         create: function(value) {
-            var newInstance = TypeFactory.create(this._datatype, value);
+            var newInstance = this._creatingFactory.create(this._datatype, value);
             return newInstance;
         },
         
