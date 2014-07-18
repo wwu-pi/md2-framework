@@ -7,7 +7,7 @@ define([
         _datatype: "date",
         
         toString: function() {
-            return stamp.toISOString(this._platformValue, { selector: "date" });
+            return this._platformValue ? stamp.toISOString(this._platformValue, { selector: "date" }) : null;
         },
         
         isSet: function() {

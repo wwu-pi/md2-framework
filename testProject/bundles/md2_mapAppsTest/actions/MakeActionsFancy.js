@@ -12,16 +12,16 @@ function(declare, _Action) {
 			
 			if (
 				this.$.widgetRegistry.getWidget("makeFancyActions").getValue().equals(this.$.create("boolean", true)) &&
-				this.$.widgetRegistry.getWidget("header2").getValue().equals(this.$.create("string", "Actions"))
+				this.$.widgetRegistry.getWidget("header1").getValue().equals(this.$.create("string", "Actions"))
 			) {
-				var widget = this.$.widgetRegistry.getWidget("header2");
-				var set = this.$.create("string", "Fancy Actions...");
-				widget.setValue(set);
+				var widget0ff = this.$.widgetRegistry.getWidget("header1");
+				var set0fg = this.$.create("string", "Fancy Actions...");
+				widget0ff.setValue(set0fg);
 			}
 			else {
-				var widget02 = this.$.widgetRegistry.getWidget("header2");
-				var set03 = this.$.create("string", "Actions");
-				widget02.setValue(set03);
+				var widget0fh = this.$.widgetRegistry.getWidget("header1");
+				var set0fi = this.$.create("string", "Actions");
+				widget0fh.setValue(set0fi);
 			}
 			
 		}

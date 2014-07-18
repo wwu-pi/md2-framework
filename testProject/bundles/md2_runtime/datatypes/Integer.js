@@ -7,7 +7,7 @@ define([
         _datatype: "integer",
         
         toString: function() {
-            return this._platformValue.toString();
+            return this._platformValue ? this._platformValue.toString() : null;
         },
         
         isSet: function() {

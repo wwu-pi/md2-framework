@@ -32,6 +32,15 @@ function(
         
         activate: function() {
             
+        },
+        
+        deactivate: function() {
+            this._mainWidget.destroyRecursive();
+            this._mainWidget = null;
+        },
+        
+        createInstance: function() {
+            
             var window = this._createWindow();
             window.show();
             
@@ -73,14 +82,6 @@ function(
             // execute onInitialized action
             actionFactory.getCustomAction(this._dataFormBean.onInitialized).execute();
             
-        },
-        
-        deactivate: function() {
-            this._mainWidget.destroyRecursive();
-            this._mainWidget = null;
-        },
-        
-        createInstance: function() {
             return this._mainWidget;
         },
         

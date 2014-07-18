@@ -17,6 +17,22 @@
 				"onInitialized": "__startupAction",
 				"contentProviders": [
 					{
+						"name": "copyTest2",
+						"configuration": {
+							"entityName": "CopyTest",
+							"serviceUri": "localhost",
+							"type": "remote"
+						}
+					},
+					{
+						"name": "copyTest1",
+						"configuration": {
+							"entityName": "CopyTest",
+							"serviceUri": "localhost",
+							"type": "remote"
+						}
+					},
+					{
 						"name": "personProvider",
 						"configuration": {
 							"entityName": "Person",
@@ -26,36 +42,6 @@
 					}
 				],
 				"views": [
-					{
-						"name": "calculatorView",
-						"dataForm": {
-							"dataform-version": "1.0.0",
-							"size": {
-								"h": "400",
-								"w": "550"
-							},
-							"type": "md2gridpanel",
-							"cols": "1",
-							"valueClass": "layoutCell",
-							"cellStyle": {
-								"width": "100%"
-							}
-							,
-							"children": [
-								{
-									"type": "textoutput",
-									"datatype": "string",
-									"field": "header",
-									"defaultText": "Calculator",
-									"cellStyle": {
-										"width": "100%",
-										"font-weight": "bold",
-										"font-size": "1.5em"
-									}
-								}
-							]
-						}
-					},
 					{
 						"name": "firstView",
 						"dataForm": {
@@ -84,7 +70,7 @@
 										{
 											"type": "textoutput",
 											"datatype": "string",
-											"field": "header1",
+											"field": "header",
 											"defaultText": "Personal Data",
 											"cellStyle": {
 												"width": "100%",
@@ -199,6 +185,97 @@
 													}
 												}
 											]
+										},
+										{
+											"type": "spacer",
+											"cellStyle": {
+												"width": "100%"
+											}
+										},
+										{
+											"type": "spacer",
+											"cellStyle": {
+												"width": "100%"
+											}
+										},
+										{
+											"type": "textoutput",
+											"datatype": "string",
+											"field": "headerCopyTest1",
+											"defaultText": "copyTest1 Content",
+											"cellStyle": {
+												"width": "100%",
+												"font-weight": "bold",
+												"font-size": "1.5em"
+											}
+										},
+										{
+											"type": "md2gridpanel",
+											"cols": "3",
+											"valueClass": "layoutCell",
+											"cellStyle": {
+												"width": "100%"
+											}
+											,
+											"children": [
+												{
+													"type": "textoutput",
+													"datatype": "string",
+													"field": "__Labelattr1",
+													"defaultText": "Attribute 1",
+													"cellStyle": {
+														"width": "40%"
+													}
+												},
+												{
+													"type": "textbox",
+													"datatype": "string",
+													"field": "attr1",
+													"cellStyle": {
+														"width": "50%"
+													}
+												},
+												{
+													"type": "spacer",
+													"cellStyle": {
+														"width": "10%"
+													}
+												}
+											]
+										},
+										{
+											"type": "md2gridpanel",
+											"cols": "3",
+											"valueClass": "layoutCell",
+											"cellStyle": {
+												"width": "100%"
+											}
+											,
+											"children": [
+												{
+													"type": "textoutput",
+													"datatype": "string",
+													"field": "__Labelattr2",
+													"defaultText": "Attribute 2",
+													"cellStyle": {
+														"width": "40%"
+													}
+												},
+												{
+													"type": "numberspinner",
+													"datatype": "integer",
+													"field": "attr2",
+													"cellStyle": {
+														"width": "50%"
+													}
+												},
+												{
+													"type": "spacer",
+													"cellStyle": {
+														"width": "10%"
+													}
+												}
+											]
 										}
 									]
 								},
@@ -214,7 +291,7 @@
 										{
 											"type": "textoutput",
 											"datatype": "string",
-											"field": "header2",
+											"field": "header1",
 											"defaultText": "Actions",
 											"cellStyle": {
 												"width": "100%",
@@ -248,6 +325,22 @@
 											"type": "button",
 											"title": "Calculator",
 											"field": "gotoCalculator",
+											"cellStyle": {
+												"width": "100%"
+											}
+										},
+										{
+											"type": "button",
+											"title": "Copy Content Provider \"copyTest1\"",
+											"field": "copyCopyTest1",
+											"cellStyle": {
+												"width": "100%"
+											}
+										},
+										{
+											"type": "button",
+											"title": "Reset \"copyTest2\"",
+											"field": "resetCopyTest2",
 											"cellStyle": {
 												"width": "100%"
 											}
@@ -315,13 +408,43 @@
 								}
 							]
 						}
+					},
+					{
+						"name": "calculatorView",
+						"dataForm": {
+							"dataform-version": "1.0.0",
+							"size": {
+								"h": "400",
+								"w": "550"
+							},
+							"type": "md2gridpanel",
+							"cols": "1",
+							"valueClass": "layoutCell",
+							"cellStyle": {
+								"width": "100%"
+							}
+							,
+							"children": [
+								{
+									"type": "textoutput",
+									"datatype": "string",
+									"field": "header2",
+									"defaultText": "Calculator",
+									"cellStyle": {
+										"width": "100%",
+										"font-weight": "bold",
+										"font-size": "1.5em"
+									}
+								}
+							]
+						}
 					}
 				]
 			}
 		},
 		{
-			"name": "__startupAction",
-			"impl": "./actions/__startupAction",
+			"name": "SetterTestResetCallback",
+			"impl": "./actions/SetterTestResetCallback",
 			"provides": ["md2.app.CustomAction"]
 		},
 		{
@@ -330,18 +453,28 @@
 			"provides": ["md2.app.CustomAction"]
 		},
 		{
+			"name": "__startupAction",
+			"impl": "./actions/__startupAction",
+			"provides": ["md2.app.CustomAction"]
+		},
+		{
+			"name": "SetterTestCallback",
+			"impl": "./actions/SetterTestCallback",
+			"provides": ["md2.app.CustomAction"]
+		},
+		{
+			"name": "SetterTest",
+			"impl": "./actions/SetterTest",
+			"provides": ["md2.app.CustomAction"]
+		},
+		{
 			"name": "MakeActionsFancy",
 			"impl": "./actions/MakeActionsFancy",
 			"provides": ["md2.app.CustomAction"]
 		},
 		{
-			"name": "BindValidators",
-			"impl": "./actions/BindValidators",
-			"provides": ["md2.app.CustomAction"]
-		},
-		{
-			"name": "ToggleEnabled",
-			"impl": "./actions/ToggleEnabled",
+			"name": "DoMappings",
+			"impl": "./actions/DoMappings",
 			"provides": ["md2.app.CustomAction"]
 		},
 		{
@@ -355,8 +488,18 @@
 			"provides": ["md2.app.CustomAction"]
 		},
 		{
+			"name": "ToggleEnabled",
+			"impl": "./actions/ToggleEnabled",
+			"provides": ["md2.app.CustomAction"]
+		},
+		{
 			"name": "SetName",
 			"impl": "./actions/SetName",
+			"provides": ["md2.app.CustomAction"]
+		},
+		{
+			"name": "BindValidators",
+			"impl": "./actions/BindValidators",
 			"provides": ["md2.app.CustomAction"]
 		},
 		{
@@ -365,9 +508,9 @@
 			"provides": ["md2.app.CustomAction"]
 		},
 		{
-			"name": "DoMappings",
-			"impl": "./actions/DoMappings",
-			"provides": ["md2.app.CustomAction"]
+			"name": "CopyTest",
+			"impl": "./entities/CopyTest",
+			"provides": ["md2.app.Entity"]
 		},
 		{
 			"name": "Person",

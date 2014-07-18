@@ -1,14 +1,18 @@
 define([
-	"./actions/__startupAction",
+	"./actions/SetterTestResetCallback",
 	"./actions/TestSetter",
+	"./actions/__startupAction",
+	"./actions/SetterTestCallback",
+	"./actions/SetterTest",
 	"./actions/MakeActionsFancy",
-	"./actions/BindValidators",
-	"./actions/ToggleEnabled",
+	"./actions/DoMappings",
 	"./actions/__combined_startAction",
 	"./actions/TestEvents",
+	"./actions/ToggleEnabled",
 	"./actions/SetName",
+	"./actions/BindValidators",
 	"./actions/TestActions",
-	"./actions/DoMappings",
+	"./entities/CopyTest",
 	"./entities/Person",
 	"ct/Stateful"
 ], {});

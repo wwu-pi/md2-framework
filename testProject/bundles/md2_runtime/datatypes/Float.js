@@ -7,8 +7,8 @@ define([
         _datatype: "float",
         
         toString: function() {
-            var str = this._platformValue.toString();
-            if (!str.match(/\./)) {
+            var str = this._platformValue ? this._platformValue.toString() : null;
+            if (str && !str.match(/\./)) {
                 str += ".0";
             }
             return str;
