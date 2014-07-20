@@ -50,7 +50,13 @@ class BackendGenerator extends AbstractPlatformGenerator {
 				fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/models/"
 					+ modelElement.name.toFirstUpper + ".java", createModel(basePackageName, modelElement))
 				
-				if(modelElement instanceof Entity) {
+				val isUsedInRemoteContentProvider = dataContainer.contentProviders.exists[ c |
+					c.type instanceof ReferencedModelType
+					&& !c.local
+					&& (c.type as ReferencedModelType).entity.identityEquals(modelElement)
+				]
+				
+				if(modelElement instanceof Entity && isUsedInRemoteContentProvider) {
 					fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/ws/"
 						+ modelElement.name.toFirstUpper + "WS.java", createEntityWS(basePackageName, modelElement as Entity))
 					fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/beans/"
