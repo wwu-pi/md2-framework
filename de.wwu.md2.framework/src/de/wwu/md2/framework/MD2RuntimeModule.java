@@ -1,6 +1,5 @@
 package de.wwu.md2.framework;
 
-
 import org.eclipse.xtext.conversion.IValueConverterService;
 import org.eclipse.xtext.scoping.impl.ImportedNamespaceAwareLocalScopeProvider;
 
@@ -30,7 +29,7 @@ public class MD2RuntimeModule extends de.wwu.md2.framework.AbstractMD2RuntimeMod
 		// Bind all generators here
 		//multiGenBinder.addBinding().to(AndroidGenerator.class);
 		//multiGenBinder.addBinding().to(IOSGenerator.class);
-		//multiGenBinder.addBinding().to(BackendGenerator.class);
+		multiGenBinder.addBinding().to(BackendGenerator.class);
 		multiGenBinder.addBinding().to(TestGenerator.class);
 		multiGenBinder.addBinding().to(MapAppsGenerator.class);
 		
@@ -50,8 +49,7 @@ public class MD2RuntimeModule extends de.wwu.md2.framework.AbstractMD2RuntimeMod
 		// the IGenerator interface is not used anymore. However, org.eclipse.xtext.builder.BuilderParticipant injects
 		// an IGenerator implementation (that is never used, because the according methods are overwritten) and thus Guice
 		// needs any binding. Just provide any implementing class here to make Guice happy...
-		return AndroidGenerator.class;
+		return TestGenerator.class;
 	}
-	
 	
 }

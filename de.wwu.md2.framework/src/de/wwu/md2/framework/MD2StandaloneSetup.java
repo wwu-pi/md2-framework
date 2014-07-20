@@ -1,4 +1,3 @@
-
 package de.wwu.md2.framework;
 
 /**
