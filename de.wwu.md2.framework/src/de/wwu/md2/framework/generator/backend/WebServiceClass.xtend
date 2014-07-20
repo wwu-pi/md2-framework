@@ -15,7 +15,6 @@ class WebServiceClass {
 	def static createEntityWS(String basePackageName, Entity entity) '''
 		package «basePackageName».ws;
 		
-		import java.util.ArrayList;
 		import java.util.List;
 		
 		import javax.ejb.EJB;
@@ -23,7 +22,7 @@ class WebServiceClass {
 		import javax.ws.rs.Consumes;
 		import javax.ws.rs.DELETE;
 		import javax.ws.rs.GET;
-		import javax.ws.rs.PUT;
+		import javax.ws.rs.POST;
 		import javax.ws.rs.Path;
 		import javax.ws.rs.PathParam;
 		import javax.ws.rs.Produces;
@@ -46,73 +45,83 @@ class WebServiceClass {
 			
 			@GET
 			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-			public Response jsonGetAll(@QueryParam("filter") final String filter) {
-				final GenericEntity<List<«entity.name.toFirstUpper»>> «entity.name.toFirstLower»s = new GenericEntity<List<«entity.name.toFirstUpper»>>(«entity.name.toFirstLower»Bean.getAll«entity.name.toFirstUpper»s(filter)) {};
-				Response response = Response
+			public Response getAll(@QueryParam("filter") final String filter, @QueryParam("limit") final int limit) {
+				final GenericEntity<List<«entity.name.toFirstUpper»>> «entity.name.toFirstLower»s =
+						new GenericEntity<List<«entity.name.toFirstUpper»>>(«entity.name.toFirstLower»Bean.getAll«entity.name.toFirstUpper»s(filter, limit)) {};
+				return Response
 						.ok()
 						.entity(«entity.name.toFirstLower»s)
 						.header("MD2-Model-Version", Config.MODEL_VERSION)
 						.build();
-				return response;
 			}
 			
 			@GET
-			@Path("/first")
+			@Path("{id}")
 			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-			public Response jsonGetFirst(@QueryParam("filter") final String filter) {
-				final «entity.name.toFirstUpper» «entity.name.toFirstLower» = «entity.name.toFirstLower»Bean.getFirst«entity.name.toFirstUpper»(filter);
-				final List<«entity.name.toFirstUpper»> «entity.name.toFirstLower»List = new ArrayList<«entity.name.toFirstUpper»>();
-				«entity.name.toFirstLower»List.add(«entity.name.toFirstLower»);
-				final GenericEntity<List<«entity.name.toFirstUpper»>> «entity.name.toFirstLower»Entity = new GenericEntity<List<«entity.name.toFirstUpper»>>(«entity.name.toFirstLower»List) {};
-				Response response;
+			public Response get(@PathParam("id") Integer id) {
+				final «entity.name.toFirstUpper» «entity.name.toFirstLower» = «entity.name.toFirstLower»Bean.get«entity.name.toFirstUpper»(id);
 				
-				if(«entity.name.toFirstLower» != null) {
-					response = Response
+				if («entity.name.toFirstLower» != null) {
+					return Response
 						.ok()
-						.entity(«entity.name.toFirstLower»Entity)
+						.entity(new GenericEntity<«entity.name.toFirstUpper»>(«entity.name.toFirstLower») {})
 						.header("MD2-Model-Version", Config.MODEL_VERSION)
 						.build();
 				} else {
-					response = Response
+					return Response
 						.status(404)
 						.header("MD2-Model-Version", Config.MODEL_VERSION)
 						.build();
 				}
-				
-				return response;
+		
 			}
 			
-			@PUT
+			/**
+			 * Exemplary input format:
+			 * [
+			 *   {
+			 *	   "firstName": "John",
+			 *	   "lastName": "Doe",
+			 *	   "customerId": "2443232",
+			 *     "dateOfBirth": "1954-07-18"
+			 *   }
+			 * ]
+			 */
+			@POST
 			@Consumes(MediaType.APPLICATION_JSON)
 			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-			public Response jsonPut(List<«entity.name.toFirstUpper»> «entity.name.toFirstLower»s) {
-				final GenericEntity<List<InternalIdWrapper>> ids = new GenericEntity<List<InternalIdWrapper>>(«entity.name.toFirstLower»Bean.put«entity.name.toFirstUpper»s(«entity.name.toFirstLower»s)) {};
-				Response response = Response
+			public Response createOrUpdate(List<«entity.name.toFirstUpper»> «entity.name.toFirstLower»s) {
+				final GenericEntity<List<InternalIdWrapper>> ids =
+						new GenericEntity<List<InternalIdWrapper>>(«entity.name.toFirstLower»Bean.createOrUpdate«entity.name.toFirstUpper»s(«entity.name.toFirstLower»s)) {};
+				return Response
 						.ok()
 						.entity(ids)
 						.header("MD2-Model-Version", Config.MODEL_VERSION)
 						.build();
-				return response;
 			}
 			
 			@DELETE
-			@Path("{id}")
-			public Response jsonDelete(@PathParam("id") String id) {
-				Response response;
-				
-				if(«entity.name.toFirstLower»Bean.delete«entity.name.toFirstUpper»(id)) {
-					response = Response
+			public Response delete(@QueryParam("id") List<Integer> ids) {
+				if («entity.name.toFirstLower»Bean.delete«entity.name.toFirstUpper»s(ids)) {
+					return Response
 						.noContent()
 						.header("MD2-Model-Version", Config.MODEL_VERSION)
 						.build();
 				} else {
-					response = Response
-						.status(404)
+					return Response
+						.status(409)
 						.header("MD2-Model-Version", Config.MODEL_VERSION)
 						.build();
 				}
-				
-				return response;
+			}
+			
+			/**
+			 * Workaround for ESRI proxy that forwards DELETE requests as GET requests!
+			 */
+			@GET
+			@Path("delete")
+			public Response deleteWithGet(@QueryParam("id") List<Integer> ids) {
+				return delete(ids);
 			}
 			
 		}

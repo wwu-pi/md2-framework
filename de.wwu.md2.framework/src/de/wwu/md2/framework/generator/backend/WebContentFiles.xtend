@@ -31,7 +31,7 @@ class WebContentFiles {
 		    <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
 		    <init-param>
 		      <param-name>com.sun.jersey.config.property.packages</param-name>
-		      <param-value>«basePackageName».ws</param-value>
+		      <param-value>«basePackageName».ws;org.codehaus.jackson.jaxrs</param-value>
 		    </init-param>
 		    <load-on-startup>1</load-on-startup>
 		  </servlet>
@@ -58,7 +58,6 @@ class WebContentFiles {
 	def static indexJsp() '''
 		<%@page contentType="text/html" pageEncoding="UTF-8"%>
 		<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-		
 		<html>
 			<head>
 				<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">

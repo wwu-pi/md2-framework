@@ -19,6 +19,7 @@ class BeanClass {
 		import javax.ejb.Stateless;
 		import javax.persistence.EntityManager;
 		import javax.persistence.PersistenceContext;
+		import javax.persistence.TypedQuery;
 		
 		import «basePackageName».Utils;
 		import «basePackageName».datatypes.InternalIdWrapper;
@@ -40,22 +41,23 @@ class BeanClass {
 			 * Default logic to get and set «entity.name.toFirstUpper» entities
 			 */
 			
-			public List<«entity.name.toFirstUpper»> getAll«entity.name.toFirstUpper»s(String filter) {
-				List<«entity.name.toFirstUpper»> result = em.createQuery("SELECT t FROM «entity.name.toFirstUpper» t " + Utils.buildWhereParameterFromFilterString(filter), «entity.name.toFirstUpper».class)
-					.getResultList();
+			public List<«entity.name.toFirstUpper»> getAll«entity.name.toFirstUpper»s(String filter, int limit) {
+				TypedQuery<«entity.name.toFirstUpper»> query = em.createQuery("SELECT t FROM «entity.name.toFirstUpper» t " + Utils.buildWhereParameterFromFilterString(filter), «entity.name.toFirstUpper».class);
 				
-				return result;
+				if (limit > 0) {
+					query.setMaxResults(limit);
+				}
+				
+				return query.getResultList();
 			}
 			
-			public «entity.name.toFirstUpper» getFirst«entity.name.toFirstUpper»(String filter) {
-				List<«entity.name.toFirstUpper»> result = em.createQuery("SELECT t FROM «entity.name.toFirstUpper» t " + Utils.buildWhereParameterFromFilterString(filter), «entity.name.toFirstUpper».class)
-					.setMaxResults(1)
-					.getResultList();
+			public «entity.name.toFirstUpper» get«entity.name.toFirstUpper»(int id) {
+				«entity.name.toFirstUpper» «entity.name.toFirstLower» = em.find(«entity.name.toFirstUpper».class, id);
 				
-				return result.isEmpty() ? null : result.get(0);
+				return «entity.name.toFirstLower»;
 			}
 			
-			public List<InternalIdWrapper> put«entity.name.toFirstUpper»s(List<«entity.name.toFirstUpper»> «entity.name.toFirstLower»s) {
+			public List<InternalIdWrapper> createOrUpdate«entity.name.toFirstUpper»s(List<«entity.name.toFirstUpper»> «entity.name.toFirstLower»s) {
 				ArrayList<InternalIdWrapper> ids = new ArrayList<InternalIdWrapper>();
 				
 				for(«entity.name.toFirstUpper» «entity.name.toFirstLower» : «entity.name.toFirstLower»s) {
@@ -66,11 +68,16 @@ class BeanClass {
 				return ids;
 			}
 			
-			public boolean delete«entity.name.toFirstUpper»(String id) {
-				«entity.name.toFirstUpper» «entity.name.toFirstLower» = em.find(«entity.name.toFirstUpper».class, Integer.parseInt(id));
+			public boolean delete«entity.name.toFirstUpper»s(List<Integer> ids) {
 				
-				if(«entity.name.toFirstLower» != null) {
-					em.remove(«entity.name.toFirstLower»);
+				Long count = em.createQuery("SELECT COUNT(t) FROM «entity.name.toFirstUpper» t WHERE t.__internalId IN :ids", Long.class)
+					.setParameter("ids", ids)
+					.getSingleResult();
+				
+				if(count == ids.size()) {
+					em.createQuery("DELETE FROM «entity.name.toFirstUpper» t WHERE t.__internalId IN :ids")
+						.setParameter("ids", ids)
+						.executeUpdate();
 					return true;
 				} else {
 					return false;
