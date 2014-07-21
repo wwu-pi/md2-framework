@@ -1,53 +1,33 @@
 package de.wwu.md2.framework.generator.mapapps
 
 import de.wwu.md2.framework.generator.util.DataContainer
-import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import de.wwu.md2.framework.mD2.AlternativesPane
 import de.wwu.md2.framework.mD2.BooleanInput
-import de.wwu.md2.framework.mD2.BooleanVal
 import de.wwu.md2.framework.mD2.Button
-import de.wwu.md2.framework.mD2.ConcatenatedString
-import de.wwu.md2.framework.mD2.ContentProviderPath
 import de.wwu.md2.framework.mD2.DateInput
 import de.wwu.md2.framework.mD2.DateTimeInput
-import de.wwu.md2.framework.mD2.DateTimeVal
-import de.wwu.md2.framework.mD2.DateVal
 import de.wwu.md2.framework.mD2.EntitySelector
-import de.wwu.md2.framework.mD2.FloatVal
 import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam
 import de.wwu.md2.framework.mD2.HexColorDef
 import de.wwu.md2.framework.mD2.Image
-import de.wwu.md2.framework.mD2.IntVal
 import de.wwu.md2.framework.mD2.IntegerInput
 import de.wwu.md2.framework.mD2.Label
-import de.wwu.md2.framework.mD2.LocationProviderPath
 import de.wwu.md2.framework.mD2.NumberInput
-import de.wwu.md2.framework.mD2.Operator
 import de.wwu.md2.framework.mD2.OptionInput
-import de.wwu.md2.framework.mD2.ReferencedModelType
-import de.wwu.md2.framework.mD2.SimpleExpression
 import de.wwu.md2.framework.mD2.Spacer
-import de.wwu.md2.framework.mD2.StringVal
 import de.wwu.md2.framework.mD2.StyleAssignment
 import de.wwu.md2.framework.mD2.StyleDefinition
 import de.wwu.md2.framework.mD2.TabbedAlternativesPane
 import de.wwu.md2.framework.mD2.TextInput
 import de.wwu.md2.framework.mD2.TimeInput
-import de.wwu.md2.framework.mD2.TimeVal
 import de.wwu.md2.framework.mD2.Tooltip
 import de.wwu.md2.framework.mD2.ViewGUIElement
-import de.wwu.md2.framework.mD2.WhereClauseAnd
-import de.wwu.md2.framework.mD2.WhereClauseCompareExpression
-import de.wwu.md2.framework.mD2.WhereClauseCondition
-import de.wwu.md2.framework.mD2.WhereClauseNot
-import de.wwu.md2.framework.mD2.WhereClauseOr
 import de.wwu.md2.framework.mD2.WidthParam
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.xbase.lib.Pair
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
-import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
 
 class ManifestJson {
@@ -66,6 +46,7 @@ class ManifestJson {
 					generateConfigurationSnippet(dataContainer, processedInput),
 					generateCustomActionsSnippet(dataContainer, processedInput),
 					generateEntitiesSnippet(dataContainer, processedInput),
+					generateContentProvidersSnippet(dataContainer, processedInput),
 					generateControllerSnippet(dataContainer, processedInput),
 					generateToolSnippet(dataContainer, processedInput)
 				)»
@@ -83,31 +64,9 @@ class ManifestJson {
 			"provides": ["md2.app.«processedInput.getBasePackageName».AppDefinition"],
 			"propertiesConstructor": true,
 			"properties": {
+				"id": "md2_«processedInput.getBasePackageName.replace(".", "_")»",
 				"windowTitle": "«dataContainer.main.appName»",
-				"serviceUri": «dataContainer.main.defaultConnection?.uri.quotify ?: "null"»,
 				"onInitialized": "«dataContainer.main.onInitializedEvent.name»",
-				"contentProviders": [
-					«FOR contentProvider : dataContainer.contentProviders SEPARATOR ","»
-						{
-							"name": "«contentProvider.name»",
-							"configuration": {
-								"entityName": "«(contentProvider.type as ReferencedModelType).entity.name»",
-								«IF !contentProvider.local»
-									"serviceUri": "«contentProvider.connection.uri»",
-								«ENDIF»
-								«IF contentProvider.filter»
-									"filter": {
-										«IF contentProvider.whereClause != null»
-											"query": «contentProvider.whereClause.buildContentProviderQuery»,
-										«ENDIF»
-										"count": "«contentProvider.filterType.toString»"
-									},
-								«ENDIF»
-								"type": "«IF contentProvider.local»local«ELSE»remote«ENDIF»"
-							}
-						}
-					«ENDFOR»
-				],
 				"views": [
 					«FOR view : dataContainer.rootViewContainers SEPARATOR ","»
 						{
@@ -147,6 +106,34 @@ class ManifestJson {
 		«ENDFOR»
 	'''
 	
+	def static generateContentProvidersSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
+		«FOR contentProvider : dataContainer.contentProviders SEPARATOR ","»
+			{
+				"name": "«contentProvider.name.toFirstUpper»",
+				"impl": "./contentproviders/«contentProvider.name.toFirstUpper»",
+				"provides": ["md2.app.«processedInput.getBasePackageName».ContentProvider"],
+				«IF !contentProvider.local»
+					"propertiesConstructor": true,
+					"properties": {
+						"uri": "«IF contentProvider.^default»«dataContainer.main.defaultConnection.uri»«ELSE»«contentProvider.connection.uri»«ENDIF»"
+					},
+				«ENDIF»
+				"references": [
+					{
+						«IF contentProvider.local»
+							"name": "_localFactory",
+							"providing": "md2.store.LocalStore",
+						«ELSE»
+							"name": "_remoteFactory",
+							"providing": "md2.store.RemoteStore",
+						«ENDIF»
+						"cardinality": "0..1"
+					}
+				]
+			}
+		«ENDFOR»
+	'''
+	
 	def static generateControllerSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
 		{
 			"name": "Controller",
@@ -168,6 +155,11 @@ class ManifestJson {
 					"cardinality": "0..n"
 				},
 				{
+					"name": "_contentProviders",
+					"providing": "md2.app.«processedInput.getBasePackageName».ContentProvider",
+					"cardinality": "0..n"
+				},
+				{
 					"name": "_configBean",
 					"providing": "md2.app.«processedInput.getBasePackageName».AppDefinition"
 				}
@@ -182,7 +174,7 @@ class ManifestJson {
 			"provides": ["ct.tools.Tool"],
 			"propertiesConstructor": true,
 			"properties": {
-				"id": "md2_«processedInput.getBasePackageName.replace(".", "_")»",
+				"id": "md2_«processedInput.getBasePackageName.replace(".", "_")»_tool",
 				"title": "«dataContainer.main.appName»",
 				"description": "Start «dataContainer.main.appName»",
 				"tooltip": "Start «dataContainer.main.appName»",
@@ -201,78 +193,24 @@ class ManifestJson {
 		}
 	'''
 	
-	/**
-	 * Creates a query in MongoDB syntax from specified whereCondition in MD2.
-	 */
-	def private static String buildContentProviderQuery(WhereClauseCondition condition) {
-		
-		switch (condition) {
-			WhereClauseOr: '''
-				{
-					$or: [
-						«IF condition.leftExpression instanceof WhereClauseCompareExpression»
-							{ «buildContentProviderQuery(condition.leftExpression)» },
-						«ELSE»
-							«buildContentProviderQuery(condition.leftExpression)»,
-						«ENDIF»
-						«IF condition.rightExpression instanceof WhereClauseCompareExpression»
-							{ «buildContentProviderQuery(condition.rightExpression)» }
-						«ELSE»
-							«buildContentProviderQuery(condition.rightExpression)»
-						«ENDIF»
-					]
-				}'''
-			WhereClauseAnd: '''
-				{
-					«buildContentProviderQuery(condition.leftExpression)»,
-					«buildContentProviderQuery(condition.rightExpression)»
-				}'''
-			WhereClauseNot: '''
-				{
-					$not: «buildContentProviderQuery(condition.expression)»
-				}'''
-			WhereClauseCompareExpression: {
-				val simpleExpression = condition.eqRight.resolveSimpleExpression
-				val attribute = getPathTailAsString(condition.eqLeft.tail)
-				val rightHand = switch condition.op {
-					case Operator::EQUALS: '''«simpleExpression»'''
-					case Operator::GREATER: '''{ $gt: «simpleExpression» }'''
-					case Operator::SMALLER: '''{ $lt: «simpleExpression» }'''
-					case Operator::GREATER_OR_EQUAL: '''{ $gte: «simpleExpression» }'''
-					case Operator::SMALLER_OR_EQUAL: '''{ $lte: «simpleExpression» }'''
-				}
-				'''«attribute»: «rightHand»'''
-			}
-		}
-	}
-	
-	def private static resolveSimpleExpression(SimpleExpression expression) {
-		switch (expression) {
-			StringVal: '''"«expression.value»"'''
-			IntVal: '''«expression.value»'''
-			FloatVal: '''«expression.value»'''
-			BooleanVal: '''«expression.value.toString»'''
-			DateVal: '''"«expression.value.toISODate»"'''
-			TimeVal: '''"«expression.value.toISOTime»"'''
-			DateTimeVal: '''"«expression.value.toISODateTime»"'''
-			AbstractViewGUIElementRef: '''"@«getName(expression.ref)»"'''
-			ConcatenatedString: '''//TODO'''
-			ContentProviderPath: '''//TODO'''
-			LocationProviderPath: '''//TODO'''
-		}
-	}
-	
 	
 	////////////////////////////////////////////////////////////////////////////////////////////
 	// Dispatch: All ViewGUIElements
 	////////////////////////////////////////////////////////////////////////////////////////////
 	
+	/**
+	 * TODO If there is a warning "Cannot infer type from recursive usage. Type 'Object' is used.", this is related to
+	 *      Eclipse Bug 404817 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=404817).
+	 *      This todo can be removed when the bug is fixed! Until then the return type String has to be specified
+	 *      explicitly.
+	 */
+	 
 	
 	/***************************************************************
 	 * Container Elements
 	 ***************************************************************/
 	
-	def private static dispatch getViewElement(GridLayoutPane gridLayout) '''
+	def private static dispatch String getViewElement(GridLayoutPane gridLayout) '''
 		"type": "md2gridpanel",
 		"cols": "«gridLayout.params.filter(typeof(GridLayoutPaneColumnsParam)).head.value»",
 		"valueClass": "layoutCell",
@@ -286,16 +224,11 @@ class ManifestJson {
 		]
 	'''
 	
-	def private static dispatch getViewElement(TabbedAlternativesPane tabbedPane) '''
+	def private static dispatch String getViewElement(TabbedAlternativesPane tabbedPane) '''
 		// TODO
 	'''
 	
-	/**
-	 * TODO If there is a warning "Cannot infer type from recursive usage. Type 'Object' is used.", this is related to
-	 *      Eclipse Bug 404817 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=404817).
-	 *      This todo can be removed when the bug is fixed!
-	 */
-	def private static dispatch getViewElement(AlternativesPane alternativesPane) '''
+	def private static dispatch String getViewElement(AlternativesPane alternativesPane) '''
 		// TODO
 	'''
 	
@@ -304,23 +237,23 @@ class ManifestJson {
 	 * Content Elements => Various
 	 ***************************************************************/
 	 
-	 def private static dispatch getViewElement(Image image) '''
+	 def private static dispatch String getViewElement(Image image) '''
 		// TODO
 	'''
 	
-	def private static dispatch getViewElement(Spacer spacer) '''
+	def private static dispatch String getViewElement(Spacer spacer) '''
 		"type": "spacer",
 		«generateStyle(null, "width" -> '''«spacer.width»%''')»
 	'''
 	
-	def private static dispatch getViewElement(Button button) '''
+	def private static dispatch String getViewElement(Button button) '''
 		"type": "button",
 		"title": "«button.text.escape»",
 		"field": "«getName(button)»",
 		«generateStyle(button.style, "width" -> '''«button.width»%''')»
 	'''
 	
-	def private static dispatch getViewElement(Label label) '''
+	def private static dispatch String getViewElement(Label label) '''
 		"type": "textoutput",
 		"datatype": "string",
 		"field": "«getName(label)»",
@@ -328,7 +261,7 @@ class ManifestJson {
 		«generateStyle(label.style, "width" -> '''«label.width»%''')»
 	'''
 	
-	def private static dispatch getViewElement(Tooltip tooltip) '''
+	def private static dispatch String getViewElement(Tooltip tooltip) '''
 		// TODO
 	'''
 	
@@ -337,59 +270,59 @@ class ManifestJson {
 	 * Content Elements => Input
 	 ***************************************************************/
 	
-	def private static dispatch getViewElement(BooleanInput input) '''
+	def private static dispatch String getViewElement(BooleanInput input) '''
 		"type": "checkbox",
 		"datatype": "boolean",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch getViewElement(TextInput input) '''
+	def private static dispatch String getViewElement(TextInput input) '''
 		"type": "textbox",
 		"datatype": "string",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch getViewElement(IntegerInput input) '''
+	def private static dispatch String getViewElement(IntegerInput input) '''
 		"type": "numberspinner",
 		"datatype": "integer",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch getViewElement(NumberInput input) '''
+	def private static dispatch String getViewElement(NumberInput input) '''
 		"type": "numbertextbox",
 		"datatype": "float",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch getViewElement(DateInput input) '''
+	def private static dispatch String getViewElement(DateInput input) '''
 		"type": "datetextbox",
 		"datatype": "date",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch getViewElement(TimeInput input) '''
+	def private static dispatch String getViewElement(TimeInput input) '''
 		"type": "timetextbox",
 		"datatype": "time",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch getViewElement(DateTimeInput input) '''
+	def private static dispatch String getViewElement(DateTimeInput input) '''
 		// TODO
 	'''
 	
-	def private static dispatch getViewElement(OptionInput input) '''
+	def private static dispatch String getViewElement(OptionInput input) '''
 		"type": "selectbox",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch getViewElement(EntitySelector input) '''
+	def private static dispatch String getViewElement(EntitySelector input) '''
 		// TODO
 	'''
 	

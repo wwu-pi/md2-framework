@@ -21,6 +21,7 @@ class ControllerClass {
 		            app._dataFormBean = this._configBean;
 		            app._customActions = this._customActions;
 		            app._entities = this._entities;
+		            app._contentProviders = this._contentProviders;
 		            
 		            // build app
 		            app.build();

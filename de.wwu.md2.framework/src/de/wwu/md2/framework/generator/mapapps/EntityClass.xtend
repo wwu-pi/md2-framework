@@ -64,7 +64,7 @@ class EntityClass {
 				datatype: "«entity.name»",
 				
 				create: function() {
-					return new «entity.name»();
+					return new «entity.name»(this.typeFactory);
 				}
 				
 			});
