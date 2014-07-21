@@ -7,8 +7,7 @@ define([
     "./simpleactions/EnableAction",
     "./simpleactions/DisableAction",
     "./simpleactions/DisplayMessageAction",
-    "./simpleactions/GotoViewAction",
-    "../datatypes/TypeFactory"
+    "./simpleactions/GotoViewAction"
 ], function(
     declare,
     lang,
@@ -18,31 +17,18 @@ define([
     EnableAction,
     DisableAction,
     DisplayMessageAction,
-    GotoViewAction,
-    TypeFactory
+    GotoViewAction
 ) {
     
     return declare([], {
         
-        _references: {
-            dataMapper: null,
-            eventRegistry: null,
-            contentProviderRegistry: null,
-            actionFactory: null,
-            viewManager: null,
-            widgetRegistry: null,
-            dataEventHandler: null,
-            notificationService: null,
-            create: null
-        },
+        _references: null,
         
-        _customActions: undefined,
+        _customActions: null,
         
-        constructor: function(customActions, references) {
-            lang.mixin(this._references, references);
+        constructor: function(customActions, $) {
+            this._references = $;
             this._customActions = customActions;
-            this._references.actionFactory = this;
-            this._references.create = TypeFactory.create;
         },
         
         getCustomAction: function(name) {
@@ -58,7 +44,7 @@ define([
             if (returnAction) {
                 return returnAction;
             } else {
-                console && console.error("[ActionFactory] No CustomAction with name '" + name + "' found!");
+                throw new Error("[ActionFactory] No CustomAction with name '" + name + "' found!");
             }
         },
         

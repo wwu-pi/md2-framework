@@ -1,6 +1,15 @@
 define([
-    "dojo/_base/declare", "dojo/_base/lang", "dojo/_base/array", "ct/_lang", "ct/_when", "ct/request", "ct/store/StoreUtil", "dojo/store/util/QueryResults", "dojo/json", "dojo/request/xhr"
-], function(declare, lang, array, ct_lang, ct_when, ct_request, StoreUtil, QueryResults, JSON, xhr) {
+    "dojo/_base/declare",
+    "dojo/_base/lang",
+    "dojo/_base/array",
+    "ct/_lang",
+    "ct/_when",
+    "ct/request",
+    "ct/store/StoreUtil",
+    "dojo/store/util/QueryResults",
+    "dojo/json",
+    "dojo/request/xhr"
+], function(declare, lang, array, ct_lang, ct_when, ct_request, StoreUtil, QueryResults, json, xhr) {
     
     return declare([], {
         
@@ -41,21 +50,30 @@ define([
         constructor: function(options) {
             declare.safeMixin(this, options);
             
+            if (!this.url) {
+                throw new Error("[MD2Store] Required property 'url' in options is not set!");
+            }
+            
             // ensure trailing slash
-            !this.url && window.console && console.error("MD2Store: url property in options is not set!");
             this.url = this.url.replace(/\/+$/, "") + "/";
         },
         
         query: function(query, options) {
             
-            var url = (options && options.count === 1) ? this.url.concat("first") : this.url;
-            var content = query ? {
-                filter: this._complexQueryTranslator(query)
-            } : {};
+            var url = this.url;
+            var parameters = {};
+            
+            if (query) {
+                parameters.filter = this._complexQueryTranslator(query);
+            }
+            
+            if (options && options.count) {
+                parameters.limit = options.count;
+            }
             
             var promise = ct_when(ct_request({
                 url: url,
-                content: content
+                content: parameters
             }), function(response) {
                 var result = lang.isArray(response) ? response : [response];
                 var total = result.length;
@@ -91,19 +109,27 @@ define([
                 Accept: this.accepts
             }, this.headers, options.headers || {});
             
-            return xhr.put(ct_request.getProxiedUrl(this.url, true), {
-                data: JSON.stringify([jsObject]),
+            return xhr.post(ct_request.getProxiedUrl(this.url, true), {
+                data: json.stringify(jsObject),
                 handleAs: "json",
                 headers : headers
             });
         },
         
         add: function(object, options) {
-            this.put(object, options);
+            return this.put(object, options);
         },
         
-        remove: function(id) {
-            return xhr.del(ct_request.getProxiedUrl(this.url.concat("delete/", id), true), {});
+        remove: function(ids) {
+            /*
+             * Use [GET] {service_url}/delete, because the ESRI proxy is not capable of
+             * handling [DELETE] requests.
+             */
+            return xhr.get(ct_request.getProxiedUrl(this.url.concat("delete/"), true), {
+                query: {
+                    id: ids
+                }
+            });
         },
         
         /**
@@ -133,7 +159,7 @@ define([
                     }
                     filterString += ")";
                 } else {
-                    if(lang.isObject(query[key])) {//alert(JSON.stringify(query[key]));
+                    if(lang.isObject(query[key])) {//alert(json.stringify(query[key]));
                         filterString += this._operatorExpression(query[key], key);
                     } else {
                         filterString += key.concat(" equals ", this._quotify(query[key]));
@@ -238,13 +264,18 @@ define([
         
         _translateToMD2TypesRecursion: function(md2Entity, platformEntity) {
             ct_lang.forEachOwnProp(platformEntity, function(value, name) {
-                if (md2Entity.get(name)) {
-                    md2Entity.set(name, md2Entity.get(name).create(value));
+                if (name === "__internalId") {
+                    md2Entity.setInternalID(value);
                 } else {
-                    var subMD2Entity = md2Entity._typeFactory.createEntity(md2Entity.attributeTypes[name]);
-                    this._translateToMD2TypesRecursion(subMD2Entity, platformEntity[name]);
+                    if (md2Entity.get(name)) {
+                        md2Entity.set(name, md2Entity.get(name).create(value));
+                    } else {
+                        var subMD2Entity = md2Entity._typeFactory.createEntity(md2Entity.attributeTypes[name]);
+                        md2Entity.set(name, this._translateToMD2TypesRecursion(subMD2Entity, platformEntity[name]));
+                    }
                 }
             }, this);
+            return md2Entity;
         },
         
         _translateToJSTypes: function(md2Entities) {
@@ -259,8 +290,8 @@ define([
         _translateToJSTypesRecursion: function(md2Entity) {
             var platformEntity = {};
             ct_lang.forEachOwnProp(md2Entity._attributes, function(value, name) {
-                if (value.toPlatformValue) {
-                    platformEntity[name] = value.toPlatformValue();
+                if (value.getPlatformValue) {
+                    platformEntity[name] = value.getPlatformValue();
                 } else {
                     platformEntity[name] = this._translateToJSTypesRecursion(value);
                 }

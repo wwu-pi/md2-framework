@@ -6,12 +6,20 @@ function(declare, array, Hash) {
         /**
          * Object that stores the names of all widgets to an array of actions that have to be executed on event.
          */
-        _widgetToActionsMapping: new Hash(),
+        _widgetToActionsMapping: null,
         
         /**
          * Reference to the event handler of the actual widgets.
          */
-        _widgetToEventHandlerMapping: new Hash(),
+        _widgetToEventHandlerMapping: null,
+        
+        _appId: null,
+        
+        constructor: function(appId) {
+            this._widgetToActionsMapping = new Hash();
+            this._widgetToEventHandlerMapping = new Hash();
+            this._appId = appId;
+        },
         
         /**
          * Binds an action to a specific widget event.

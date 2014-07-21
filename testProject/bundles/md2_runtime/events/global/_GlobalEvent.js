@@ -6,12 +6,16 @@ function(declare, array) {
         /**
          * Array of actions that have to be executed on event
          */
-        _actions: [],
+        _actions: null,
         
         /**
          * Reference to the event handler of the actual
          */
         _eventHandler: null,
+        
+        constructor: function() {
+            this._actions = [];
+        },
         
         /**
          * Binds an action to this event.

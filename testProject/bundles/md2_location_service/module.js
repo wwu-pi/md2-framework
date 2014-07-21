@@ -1,3 +1,4 @@
 define([
-    "./MD2StoreFactory"
+    "./LocationHandler",
+    "./LocationStoreFactory"
 ], {});

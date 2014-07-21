@@ -4,21 +4,21 @@ define([
 ],
 function(declare, _Entity) {
 	
-	var Person = declare([_Entity], {
+	var Customer = declare([_Entity], {
 		
-		_datatype: "Person",
+		_datatype: "Customer",
 		
 		attributeTypes: {
+			id: "integer",
 			firstName: "string",
-			lastName: "string",
-			email: "string"
+			lastName: "string"
 		},
 		
 		_initialize: function() {
 			this._attributes = {
+				id: this._typeFactory.create("integer", null),
 				firstName: this._typeFactory.create("string", null),
-				lastName: this._typeFactory.create("string", null),
-				email: this._typeFactory.create("string", null)
+				lastName: this._typeFactory.create("string", null)
 			};
 		}
 		
@@ -29,10 +29,10 @@ function(declare, _Entity) {
 	 */
 	return declare([], {
 		
-		datatype: "Person",
+		datatype: "Customer",
 		
 		create: function() {
-			return new Person(this.typeFactory);
+			return new Customer(this.typeFactory);
 		}
 		
 	});

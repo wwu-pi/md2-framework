@@ -1,9 +1,10 @@
 define([
     "dojo/_base/declare",
+    "dojo/_base/lang",
     "dojo/_base/array",
     "../_Action"
 ],
-function(declare, array, _Action) {
+function(declare, lang, array, _Action) {
     
     return declare([_Action], {
         
@@ -21,12 +22,15 @@ function(declare, array, _Action) {
         
         execute: function() {
             if(array.indexOf(["load", "save", "remove"], this._operation) < 0) {
-                console && console.error("ContentProviderOperationAction: Unsupported data action '" + this._operation + "'!");
+                throw new Error("[ContentProviderOperationAction] Unsupported data action '" + this._operation + "'!");
                 return;
             }
-            this.$.dataEventHandler.registerDataEvent();
-            var contentProvider = this.$.contentProviderRegistry.getContentProvider(this._contentProvider);
-            contentProvider && contentProvider[this._operation]();
+            
+            // register callback to be executed by the data event handler
+            this.$.dataEventHandler.registerDataEvent(lang.hitch(this, function() {
+                var contentProvider = this.$.contentProviderRegistry.getContentProvider(this._contentProvider);
+                contentProvider && contentProvider[this._operation]();
+            }));
         }
         
     });

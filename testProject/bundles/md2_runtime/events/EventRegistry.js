@@ -28,14 +28,19 @@ function(
      * Provide a single point of access for all event registry instances.
      */
     return declare([], {
-        _registry: undefined,
         
-        constructor: function() {
+        _registry: null,
+        
+        _appId: null,
+        
+        constructor: function(appId) {
             this._registry = new Hash();
+            this._appId = appId;
         },
         
         get: function(eventName) {
             if (!this._registry.contains(eventName)) {
+                var appId = this._appId;
                 switch(eventName) {
                     case "global/onConnectionLost":
                         this._registry.set(eventName, new GlobalOnConnectionLost());
@@ -47,22 +52,22 @@ function(
                         this._registry.set(eventName, new GlobalOnLocationUpdate());
                         break;
                     case "contentProvider/onChange":
-                        this._registry.set(eventName, new ContentProviderOnChange());
+                        this._registry.set(eventName, new ContentProviderOnChange(appId));
                         break;
                     case "widget/onChange":
-                        this._registry.set(eventName, new WidgetOnChange());
+                        this._registry.set(eventName, new WidgetOnChange(appId));
                         break;
                     case "widget/onClick":
-                        this._registry.set(eventName, new WidgetOnClick());
+                        this._registry.set(eventName, new WidgetOnClick(appId));
                         break;
                     case "widget/onLeftSwipe":
-                        this._registry.set(eventName, new WidgetOnLeftSwipe());
+                        this._registry.set(eventName, new WidgetOnLeftSwipe(appId));
                         break;
                     case "widget/onRightSwipe":
-                        this._registry.set(eventName, new WidgetOnRightSwipe());
+                        this._registry.set(eventName, new WidgetOnRightSwipe(appId));
                         break;
                     case "widget/onWrongValidation":
-                        this._registry.set(eventName, new WidgetOnWrongValidation());
+                        this._registry.set(eventName, new WidgetOnWrongValidation(appId));
                         break;
                 }
             }

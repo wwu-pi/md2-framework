@@ -7,12 +7,20 @@ function(declare, array, Hash) {
          * Object that stores the names of all contentprovider$attribute combinations to
          * an array of actions that have to be executed on event.
          */
-        _contentProviderToActionsMapping: new Hash(),
+        _contentProviderToActionsMapping: null,
         
         /**
          * Reference to the event handler of the actual contentprovider$attribute combinations.
          */
-        _contentProviderToEventHandlerMapping: new Hash(),
+        _contentProviderToEventHandlerMapping: null,
+        
+        _appId: null,
+        
+        constructor: function(appId) {
+            this._contentProviderToActionsMapping = new Hash();
+            this._contentProviderToEventHandlerMapping = new Hash();
+            this._appId = appId;
+        },
         
         /**
          * Binds an action to a specific content provider event.

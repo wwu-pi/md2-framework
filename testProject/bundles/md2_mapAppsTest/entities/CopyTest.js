@@ -30,7 +30,7 @@ function(declare, _Entity) {
 		datatype: "CopyTest",
 		
 		create: function() {
-			return new CopyTest();
+			return new CopyTest(this.typeFactory);
 		}
 		
 	});

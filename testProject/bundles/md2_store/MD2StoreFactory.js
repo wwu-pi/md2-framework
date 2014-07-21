@@ -1,62 +1,63 @@
 define([
-    "dojo/_base/declare", "./MD2Store"
-], function(declare, MD2Store) {
+    "dojo/_base/declare", "ct/Hash", "./MD2Store"
+], function(declare, Hash, MD2Store) {
     
     return declare([], {
         
-        _defaultServiceUri: null,
-        
-        _WARNING_MSG1: "MD2StoreFactory: Target property in options object will be overwritten!",
-        
-        _WARNING_MSG2: "MD2StoreFactory: No serviceUri or table are passed to createInstance"
-                        + "method. Target property has to be set manually in the created store!",
+        /**
+         * Identifier to get the type of the store this factory creates.
+         */
+        type: "remote",
         
         /**
-         * Create a new instance of the MD2 store. If a default service URI is set, it is used to create the service.
-         * The default service URI can be overwritten by explicitly setting another service URI in the configuration object.
-         * 
-         * In case no configuration object has been passed to the function, the store has to be configured accordingly
-         * in the aftermath (set target property).
-         * 
-         * @param {Object} configuration - Configuration object of the form {serviceUri: <string>, table: <string>},
-         *                 with the service URI being optional if a defaultService is defined.
-         * @param {Object} options - Overwrite default options of created store.
-         * @returns {MD2Store}
+         * Remember all created store instances. If a store for the same service uri and
+         * entity type is request a second time, the existing instance is returned.
          */
-        newInstance: function(configuration, options) {
-            
-            configuration = configuration || {};
-            options = options || {};
-            
-            // pass default service if not present in configuration object
-            if(typeof configuration.serviceUri === "undefined" && this._defaultServiceUri) {
-                configuration.serviceUri = this._defaultServiceUri;
-            }
-            
-            // build target from serviceUri and entity name
-            if (configuration.serviceUri && configuration.entityName) {
-                configuration.serviceUri = configuration.serviceUri.replace(/\/+$/, "") + "/"; // ensure trailing slash
-                options.url && window.console && console.warn(this._WARNING_MSG1);
-                options.url = configuration.serviceUri + configuration.entityName;
-            } else {
-                window.console && console.warn(this._WARNING_MSG2);
-            }
-            
-            options.entityFactory = configuration.entityFactory;
-            
-            return new MD2Store(options);
+        _stores: null,
+        
+        constructor: function() {
+            this._stores = new Hash();
         },
         
         /**
-         * Set a default service URI to be used when a new service is created.
+         * Create a new instance of the MD2 store. The URI of the store is inferred from
+         * the serviceUri and the datatype of the passed entity factory.
          * 
-         * The default service URI can be overwritten by explicitly setting another
-         * service URI in the configuration object that is passed to the createInstance method.
-         * 
-         * @param {String} defaultServiceUri - Default service URI.
+         * @param {string} serviceUri - URI of the MD2 backend service.
+         * @param {_EntityFactory} entityFactory - Entity factory that creates an
+         *        entity that is handled by the created store.
+         * @returns {MD2Store}
          */
-        setDefaultServiceUri: function(defaultServiceUri) {
-            this._defaultServiceUri = defaultServiceUri;
+        create: function(serviceUri, entityFactory) {
+            
+            if (!serviceUri || !entityFactory) {
+                throw new Error("[MD2StoreFactory] The properties 'serviceUri' or 'entityFactory' are missing "
+                        + "in the configuration object of method #create!");
+            }
+            
+            var options = {
+                url: this._formatUri(serviceUri, entityFactory.datatype),
+                entityFactory: entityFactory
+            };
+            
+            // Look-up store in hash
+            if (this._stores.contains(options.url)) {
+                return this._stores.get(options.url);
+            } else {
+                var store = new MD2Store(options);
+                this._stores.set(options.url, store);
+                return store;
+            }
+        },
+        
+        /**
+         * Build target uri from serviceUri and entity name.
+         */
+        _formatUri: function(serviceUri, entityName) {
+            // ensure trailing slash
+            serviceUri = serviceUri.replace(/\/+$/, "") + "/";
+            entityName = entityName.charAt(0).toLowerCase() + entityName.slice(1);
+            return serviceUri + entityName;
         }
         
     });

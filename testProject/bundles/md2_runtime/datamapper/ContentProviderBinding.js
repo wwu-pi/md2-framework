@@ -1,6 +1,6 @@
 define([
-    "dojo/_base/declare", "dojo/_base/lang", "dojo/topic", "ct/Stateful", "../datatypes/TypeFactory"
-], function(declare, lang, topic, Stateful, TypeFactory) {
+    "dojo/_base/declare", "dojo/_base/lang", "dojo/topic", "ct/Stateful"
+], function(declare, lang, topic, Stateful) {
     
     return declare([], {
         
@@ -8,9 +8,11 @@ define([
         
         constructor: function(opts) {
             if (!opts.dataMapper) {
-                console & console.error("ContentProviderBinding: Missing option 'dataMapper'!");
+                throw new Error("[ContentProviderBinding] Missing option 'dataMapper'!");
             }
             this._dataMapper = opts.dataMapper;
+            this._typeFactory = opts.typeFactory;
+            this._appId = opts.appId;
             this._watchers = new Stateful();
             this._contentProviderOnChange();
         },
@@ -42,7 +44,8 @@ define([
         
         _contentProviderOnChange: function() {
             // register handler for content provider on change events and notify all watchers
-            topic.subscribe("md2/contentProvider/onChange", lang.hitch(this, function(contentProvider, attribute, newVal, oldVal) {
+            var topicName = "md2/contentProvider/onChange/" + this._appId;
+            topic.subscribe(topicName, lang.hitch(this, function(contentProvider, attribute, newVal, oldVal) {
                 var widgets = this._dataMapper.getWidgets(contentProvider, attribute);
                 widgets.forEach(function(widget) {
                     var fieldName = widget.getId();
@@ -52,7 +55,7 @@ define([
                         newVal.getPlatformValue()
                     );
                     
-                    var newValue = TypeFactory.create(widget._datatype, newVal);
+                    var newValue = this._typeFactory.create(widget._datatype, newVal);
                     if (!newValue.equals(widget.getValue())) {
                         widget.setValue(newValue);
                     }

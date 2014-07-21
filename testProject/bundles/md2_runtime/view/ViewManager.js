@@ -1,48 +1,85 @@
 define([
     "dojo/_base/declare",
     "dojo/_base/array",
-    "dojo/dom",
     "dojo/dom-construct",
+    "dojo/dom-geometry",
     "ct/Hash",
     "./WidgetWrapper"
 ],
-function(declare, array, dom, domConstruct, Hash, WidgetWrapper) {
+function(declare, array, domConstruct, domGeometry, Hash, WidgetWrapper) {
     
     return declare([], {
         
-        _widgetRegistry: undefined,
+        _widgetRegistry: null,
         
-        _dataFormService: undefined,
+        _dataFormService: null,
         
-        _dataMapper: undefined,
+        _dataMapper: null,
         
-        _dataFormDescriptions: undefined,
+        _typeFactory: null,
         
-        _currentView: undefined,
+        _mainWidget: null,
         
-        constructor: function(widgetRegistry, dataFormService, dataMapper) {
+        _appId: null,
+        
+        _dataFormDescriptions: null,
+        
+        _currentView: null,
+        
+        _lastDisplayedViewName: null,
+        
+        constructor: function(widgetRegistry, dataFormService, dataMapper, typeFactory, mainWidget, appId) {
             this._widgetRegistry = widgetRegistry;
             this._dataFormService = dataFormService;
             this._dataMapper = dataMapper;
+            this._typeFactory = typeFactory;
+            this._mainWidget = mainWidget;
+            this._appId = appId;
             this._dataFormDescriptions = new Hash();
         },
         
         goto: function(viewName) {
             
-            var domNodeDataForm = dom.byId("md2_view");
+            this.destroyCurrentView();
             
-            if (domNodeDataForm) {
-                // destroy current view
-                var previousView = this._currentView;
-                if (previousView) {
-                    this._unsetAllFormControls(previousView.bodyControl);
-                    domConstruct.empty(domNodeDataForm);
-                    previousView.destroyRecursive();
-                }
-
-                // attach data form to DOM
-                var dataFormWidget = this._buildView(viewName);
-                dataFormWidget.placeAt(domNodeDataForm).startup();
+            // attach data form to DOM
+            var domNodeDataForm = this._mainWidget.displayViewNode;
+            console.log("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
+            var dataFormWidget = this._buildView(viewName);
+            console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+            console.log(dataFormWidget);
+            dataFormWidget.placeAt(domNodeDataForm).startup();
+            this._lastDisplayedViewName = viewName;
+            
+            this.resizeView();
+        },
+        
+        destroyCurrentView: function() {
+            var domNodeDataForm = this._mainWidget.displayViewNode;
+            
+            // destroy current view
+            var previousView = this._currentView;
+            if (previousView) {
+                this._unsetAllFormControls(previousView.bodyControl);
+                domConstruct.empty(domNodeDataForm);
+                previousView.destroyRecursive();
+                this._currentView = null;
+            }
+        },
+        
+        restoreLastView: function() {
+            this.goto(this._lastDisplayedViewName);
+        },
+        
+        resizeView: function() {
+            var displayViewNode = this._mainWidget.displayViewNode;
+            var marginBox = domGeometry.getMarginBox(displayViewNode);
+            var currentView = this._currentView;
+            if (currentView) {
+                currentView.resize({
+                    w: marginBox.w,
+                    h: marginBox.h + 60
+                });
             }
         },
         
@@ -64,6 +101,7 @@ function(declare, array, dom, domConstruct, Hash, WidgetWrapper) {
             var dataFormDescription = this._dataFormDescriptions.get(viewName);
             var dataFormService = this._dataFormService;
             var dataMapper = this._dataMapper;
+            var typeFactory = this._typeFactory;
             
             // create data form for current view
             var dataFormWidget = dataFormService.createDataForm(dataFormDescription);
@@ -72,7 +110,9 @@ function(declare, array, dom, domConstruct, Hash, WidgetWrapper) {
             
             // bind dataMapper to data form
             var binding = dataFormService.createBinding("contentProvider", {
-                dataMapper: dataMapper
+                dataMapper: dataMapper,
+                typeFactory: typeFactory,
+                appId: this._appId
             });
             dataFormWidget.set("dataBinding", binding);
             
@@ -91,7 +131,9 @@ function(declare, array, dom, domConstruct, Hash, WidgetWrapper) {
                 var id = child.field;
                 var datatype = child.datatype;
                 var defaultValue = child.defaultValue;
-                var widgetWrapper = new WidgetWrapper(id, datatype, defaultValue);
+                var typeFactory = this._typeFactory;
+                var appId = this._appId;
+                var widgetWrapper = new WidgetWrapper(id, datatype, defaultValue, typeFactory, appId);
                 this._widgetRegistry.add(widgetWrapper);
                 
                 if (child.children) {

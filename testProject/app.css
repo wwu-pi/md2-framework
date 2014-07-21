@@ -10,7 +10,7 @@
     text-align: right;
 }
 
-#md2_spinner_overlay {
+.md2-spinner-overlay {
     position: absolute;
     z-index: 1;
     height: 100%;

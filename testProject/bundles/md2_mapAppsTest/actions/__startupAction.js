@@ -10,17 +10,17 @@ function(declare, _Action) {
 		
 		execute: function() {
 			
-			var action01f = this.$.actionFactory.getDisableAction("resetCopyTest2");
-			action01f.execute();
+			var action046 = this.$.actionFactory.getDisableAction("resetCopyTest2");
+			action046.execute();
 			
-			var action01g = this.$.actionFactory.getDisableAction("firstName");
-			action01g.execute();
+			var action047 = this.$.actionFactory.getDisableAction("firstName");
+			action047.execute();
 			
-			var action01h = this.$.actionFactory.getGotoViewAction("firstView");
-			action01h.execute();
+			var action048 = this.$.actionFactory.getGotoViewAction("firstView");
+			action048.execute();
 			
-			var action01i = this.$.actionFactory.getCustomAction("__combined_startAction");
-			action01i.execute();
+			var action049 = this.$.actionFactory.getCustomAction("__combined_startAction");
+			action049.execute();
 			
 		}
 		

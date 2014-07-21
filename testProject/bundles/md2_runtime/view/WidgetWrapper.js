@@ -3,9 +3,9 @@ define([
     "dojo/_base/lang",
     "dojo/_base/array",
     "dojo/topic",
-    "../datatypes/TypeFactory"
+    "dojo/string"
 ],
-function(declare, lang, array, topic, TypeFactory) {
+function(declare, lang, array, topic, string) {
     
     return declare([], {
         
@@ -34,13 +34,15 @@ function(declare, lang, array, topic, TypeFactory) {
         
         _datatype: undefined,
         
+        _typeFactory: null,
+        
         /**
          * Identifier of the topic this wrapper publishes to for onChange
          * events of the widget.
          */
-        _topicOnChange: "md2/widget/onChange",
+        _topicOnChange: "md2/widget/onChange/${appId}",
         
-        constructor: function(identifier, datatype, defaultValue) {
+        constructor: function(identifier, datatype, defaultValue, typeFactory, appId) {
             this._events = [];
             this._validators = [];
             this._state = {
@@ -50,6 +52,9 @@ function(declare, lang, array, topic, TypeFactory) {
             
             this._identifier = identifier;
             this._datatype = datatype;
+            this._typeFactory = typeFactory;
+            this._topicOnChange = string.substitute(this._topicOnChange, {appId: appId});
+            
             if(defaultValue !== undefined) {
                 this._defaultValue = this._resolveValueType(defaultValue);
                 this._state.currentValue = this._resolveValueType(defaultValue);
@@ -78,7 +83,7 @@ function(declare, lang, array, topic, TypeFactory) {
                 
                 // reregister all validators
                 array.forEach(this._validators, function(validator) {
-                    this._addValidator(validator);
+                    this.addValidator(validator);
                 }, this);
                 
                 this._onChangeObserver = widget.on("change", lang.hitch(this, function() {
@@ -88,11 +93,12 @@ function(declare, lang, array, topic, TypeFactory) {
             
             // reregister all events
             array.forEach(this._events, function(event) {
-                this._registerEvent(event);
+                this._registerEventOnWidget(event);
             }, this);
             
             // set validators
             this._updateWidgetValidator();
+            
         },
         
         unsetWidget: function() {
@@ -256,7 +262,7 @@ function(declare, lang, array, topic, TypeFactory) {
         },
         
         _resolveValueType: function(platformValue) {
-            return this._datatype ? TypeFactory.create(this._datatype, platformValue) : null;
+            return this._datatype ? this._typeFactory.create(this._datatype, platformValue) : null;
         }
         
     });

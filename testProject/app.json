@@ -30,9 +30,11 @@
             
             "md2_runtime",
             "md2_store",
+            "md2_location_service",
             "onlinestatus",
             "md2_formcontrols",
-            "md2_mapAppsTest"
+            "md2_mapAppsTest",
+            "md2_HelloWorld"
             //"md2_testdataform"
         ],
         
@@ -82,7 +84,7 @@
                             "rel_l": 30,
                             "rel_t": 30
                         },
-                        "tools": ["md2_mapAppsTest"]
+                        "tools": ["md2_mapAppsTest_tool", "md2_HelloWorld_tool"]
                     }
                 ]
             },

@@ -1,0 +1,303 @@
+{
+	"Bundle-SymbolicName": "md2_HelloWorld",
+	"Bundle-Version": "1.0",
+	"Bundle-Name": "Hello World",
+	"Bundle-Description": "Generated MD2 bundle: Hello World",
+	"Bundle-Localization": [],
+	"Bundle-Main": "",
+	"Require-Bundle": [],
+	"Components": [
+		{
+			"name": "MD2HelloWorld",
+			"impl": "ct/Stateful",
+			"provides": ["md2.app.HelloWorld.AppDefinition"],
+			"propertiesConstructor": true,
+			"properties": {
+                                "id": "md2_HelloWorld",
+				"windowTitle": "Hello World",
+				"onInitialized": "__startupAction",
+				"views": [
+					{
+						"name": "firstView",
+						"dataForm": {
+							"dataform-version": "1.0.0",
+							"size": {
+								"h": "400",
+								"w": "550"
+							},
+							"type": "md2gridpanel",
+							"cols": "1",
+							"valueClass": "layoutCell",
+							"cellStyle": {
+								"width": "100%"
+							}
+							,
+							"children": [
+								{
+									"type": "textoutput",
+									"datatype": "string",
+									"field": "serachFor",
+									"defaultText": "Look-up ID",
+									"cellStyle": {
+										"width": "100%"
+									}
+								},
+								{
+									"type": "numberspinner",
+									"datatype": "integer",
+									"field": "id",
+									"cellStyle": {
+										"width": "100%"
+									}
+								},
+								{
+									"type": "spacer",
+									"cellStyle": {
+										"width": "100%"
+									}
+								},
+								{
+									"type": "spacer",
+									"cellStyle": {
+										"width": "100%"
+									}
+								},
+								{
+									"type": "md2gridpanel",
+									"cols": "3",
+									"valueClass": "layoutCell",
+									"cellStyle": {
+										"width": "100%"
+									}
+									,
+									"children": [
+										{
+											"type": "textoutput",
+											"datatype": "string",
+											"field": "__LabelformId",
+											"defaultText": "ID",
+											"cellStyle": {
+												"width": "40%"
+											}
+										},
+										{
+											"type": "numberspinner",
+											"datatype": "integer",
+											"field": "formId",
+											"cellStyle": {
+												"width": "50%"
+											}
+										},
+										{
+											"type": "spacer",
+											"cellStyle": {
+												"width": "10%"
+											}
+										}
+									]
+								},
+								{
+									"type": "md2gridpanel",
+									"cols": "3",
+									"valueClass": "layoutCell",
+									"cellStyle": {
+										"width": "100%"
+									}
+									,
+									"children": [
+										{
+											"type": "textoutput",
+											"datatype": "string",
+											"field": "__LabelformFirstName",
+											"defaultText": "First Name",
+											"cellStyle": {
+												"width": "40%"
+											}
+										},
+										{
+											"type": "textbox",
+											"datatype": "string",
+											"field": "formFirstName",
+											"cellStyle": {
+												"width": "50%"
+											}
+										},
+										{
+											"type": "spacer",
+											"cellStyle": {
+												"width": "10%"
+											}
+										}
+									]
+								},
+								{
+									"type": "md2gridpanel",
+									"cols": "3",
+									"valueClass": "layoutCell",
+									"cellStyle": {
+										"width": "100%"
+									}
+									,
+									"children": [
+										{
+											"type": "textoutput",
+											"datatype": "string",
+											"field": "__LabelformLastName",
+											"defaultText": "Last Name",
+											"cellStyle": {
+												"width": "40%"
+											}
+										},
+										{
+											"type": "textbox",
+											"datatype": "string",
+											"field": "formLastName",
+											"cellStyle": {
+												"width": "50%"
+											}
+										},
+										{
+											"type": "spacer",
+											"cellStyle": {
+												"width": "10%"
+											}
+										}
+									]
+								},
+								{
+									"type": "md2gridpanel",
+									"cols": "3",
+									"valueClass": "layoutCell",
+									"cellStyle": {
+										"width": "100%"
+									}
+									,
+									"children": [
+										{
+											"type": "button",
+											"title": "Save",
+											"field": "butSave",
+											"cellStyle": {
+												"width": "34%"
+											}
+										},
+										{
+											"type": "button",
+											"title": "Load",
+											"field": "butLoad",
+											"cellStyle": {
+												"width": "33%"
+											}
+										},
+										{
+											"type": "button",
+											"title": "Reset",
+											"field": "butReset",
+											"cellStyle": {
+												"width": "33%"
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			"name": "MapFields",
+			"impl": "./actions/MapFields",
+			"provides": ["md2.app.HelloWorld.CustomAction"]
+		},
+		{
+			"name": "StartAction",
+			"impl": "./actions/StartAction",
+			"provides": ["md2.app.HelloWorld.CustomAction"]
+		},
+		{
+			"name": "__startupAction",
+			"impl": "./actions/__startupAction",
+			"provides": ["md2.app.HelloWorld.CustomAction"]
+		},
+		{
+			"name": "BindButtons",
+			"impl": "./actions/BindButtons",
+			"provides": ["md2.app.HelloWorld.CustomAction"]
+		},
+		{
+			"name": "Customer",
+			"impl": "./entities/Customer",
+			"provides": ["md2.app.HelloWorld.Entity"]
+		},
+		{
+			"name": "CustomerProvider",
+			"impl": "./contentproviders/CustomerProvider",
+			"provides": ["md2.app.HelloWorld.ContentProvider"],
+			"propertiesConstructor": true,
+			"properties": {
+				"uri": "http://localhost:8080/HelloWorld.backend/service/"
+			},
+			"references": [
+				{
+					"name": "_remoteFactory",
+					"providing": "md2.store.RemoteStore",
+					"cardinality": "0..1"
+				}
+			]
+		},
+		{
+			"name": "Controller",
+			"provides": ["md2.app.HelloWorld.Controller"],
+			"instanceFactory": true,
+			"references": [
+				{
+					"name": "_md2AppWidget",
+					"providing": "md2.runtime.InstanceFactory"
+				},
+				{
+					"name": "_customActions",
+					"providing": "md2.app.HelloWorld.CustomAction",
+					"cardinality": "0..n"
+				},
+				{
+					"name": "_entities",
+					"providing": "md2.app.HelloWorld.Entity",
+					"cardinality": "0..n"
+				},
+				{
+					"name": "_contentProviders",
+					"providing": "md2.app.HelloWorld.ContentProvider",
+					"cardinality": "0..n"
+				},
+				{
+					"name": "_configBean",
+					"providing": "md2.app.HelloWorld.AppDefinition"
+				}
+			]
+		},
+		{
+			"name": "MD2HelloWorldTool",
+			"impl": "ct.tools.Tool",
+			"provides": ["ct.tools.Tool"],
+			"propertiesConstructor": true,
+			"properties": {
+				"id": "md2_HelloWorld_tool",
+				"title": "Hello World",
+				"description": "Start Hello World",
+				"tooltip": "Start Hello World",
+				"toolRole": "toolset",
+				"iconClass": "icon-view-grid",
+				"togglable": true,
+				"activateHandler": "openWindow",
+				"deactivateHandler": "closeWindow"
+			},
+			"references": [
+				{
+					"name": "handlerScope",
+					"providing": "md2.app.HelloWorld.Controller"
+				}
+			]
+		}
+	]
+}

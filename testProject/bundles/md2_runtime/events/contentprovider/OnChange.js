@@ -8,7 +8,8 @@ function(declare, lang, topic, _ContentProviderEvent) {
         
         _setEvent: function(contentProvider, attribute) {
             if(!this._reference) {
-                this._reference = topic.subscribe("md2/contentProvider/onChange", lang.hitch(this, function(contentProvider, attribute) {
+                var topicName = "md2/contentProvider/onChange/" + this._appId;
+                this._reference = topic.subscribe(topicName, lang.hitch(this, function(contentProvider, attribute) {
                     this._onEvent(contentProvider, attribute);
                 }));
             }

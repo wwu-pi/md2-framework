@@ -14,14 +14,14 @@ function(declare, _Action) {
 				this.$.widgetRegistry.getWidget("makeFancyActions").getValue().equals(this.$.create("boolean", true)) &&
 				this.$.widgetRegistry.getWidget("header1").getValue().equals(this.$.create("string", "Actions"))
 			) {
-				var widget0p = this.$.widgetRegistry.getWidget("header1");
-				var set0q = this.$.create("string", "Fancy Actions...");
-				widget0p.setValue(set0q);
+				var widget02r = this.$.widgetRegistry.getWidget("header1");
+				var set02s = this.$.create("string", "Fancy Actions...");
+				widget02r.setValue(set02s);
 			}
 			else {
-				var widget0r = this.$.widgetRegistry.getWidget("header1");
-				var set0s = this.$.create("string", "Actions");
-				widget0r.setValue(set0s);
+				var widget02t = this.$.widgetRegistry.getWidget("header1");
+				var set02u = this.$.create("string", "Actions");
+				widget02t.setValue(set02u);
 			}
 			
 		}

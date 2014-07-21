@@ -44,7 +44,7 @@ function(declare, _Entity) {
         datatype: "Location",
 
         create: function() {
-            return new Location();
+            return new Location(this.typeFactory);
         }
 
     });

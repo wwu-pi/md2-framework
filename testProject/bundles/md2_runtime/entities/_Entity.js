@@ -1,6 +1,6 @@
 define([
-    "dojo/_base/declare", "ct/_lang", "../datatypes/TypeFactory"
-], function(declare, ct_lang, TypeFactory) {
+    "dojo/_base/declare", "ct/_lang"
+], function(declare, ct_lang) {
     
     return declare([], {
         
@@ -21,9 +21,9 @@ define([
         _internalID: null,
         
         /**
-         * The static type factory. Used to construct the default values.
+         * Instance of the type factory that created this entity. Used to construct the default values.
          */
-        _typeFactory: TypeFactory,
+        _typeFactory: null,
         
         /**
          * Attributes of this entity. Object of the form:
@@ -35,9 +35,8 @@ define([
          */
         _attributes: null,
         
-        constructor: function(container, containingFeatureName) {
-            this._container = container;
-            this._containingFeatureName = containingFeatureName;
+        constructor: function(typeFactory) {
+            this._typeFactory = typeFactory;
             this._initialize();
         },
         

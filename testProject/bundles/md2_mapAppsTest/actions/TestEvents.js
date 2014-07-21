@@ -10,52 +10,52 @@ function(declare, _Action) {
 		
 		execute: function() {
 			
-			var widget = this.$.widgetRegistry.getWidget("resetPersonProvider");
-			var action08 = this.$.actionFactory.getContentProviderResetAction("personProvider");
-			this.$.eventRegistry.get("widget/onClick").registerAction(widget, action08);
+			var widget02v = this.$.widgetRegistry.getWidget("resetPersonProvider");
+			var action02w = this.$.actionFactory.getContentProviderResetAction("personProvider");
+			this.$.eventRegistry.get("widget/onClick").registerAction(widget02v, action02w);
 			
-			var widget09 = this.$.widgetRegistry.getWidget("toggleLastName");
-			var action0a = this.$.actionFactory.getCustomAction("toggleEnabled");
-			this.$.eventRegistry.get("widget/onClick").registerAction(widget09, action0a);
+			var widget02x = this.$.widgetRegistry.getWidget("toggleLastName");
+			var action02y = this.$.actionFactory.getCustomAction("toggleEnabled");
+			this.$.eventRegistry.get("widget/onClick").registerAction(widget02x, action02y);
 			
-			var widget0b = this.$.widgetRegistry.getWidget("gotoCalculator");
-			var action0c = this.$.actionFactory.getGotoViewAction("calculatorView");
-			this.$.eventRegistry.get("widget/onClick").registerAction(widget0b, action0c);
+			var widget02z = this.$.widgetRegistry.getWidget("gotoCalculator");
+			var action030 = this.$.actionFactory.getGotoViewAction("calculatorView");
+			this.$.eventRegistry.get("widget/onClick").registerAction(widget02z, action030);
 			
-			var widget0d = this.$.widgetRegistry.getWidget("makeFancyActions");
-			var action0e = this.$.actionFactory.getCustomAction("makeActionsFancy");
-			this.$.eventRegistry.get("widget/onChange").registerAction(widget0d, action0e);
+			var widget031 = this.$.widgetRegistry.getWidget("makeFancyActions");
+			var action032 = this.$.actionFactory.getCustomAction("makeActionsFancy");
+			this.$.eventRegistry.get("widget/onChange").registerAction(widget031, action032);
 			
-			var widget0f = this.$.widgetRegistry.getWidget("birthdate");
-			var action0g = this.$.actionFactory.getCustomAction("setName");
-			this.$.eventRegistry.get("widget/onChange").registerAction(widget0f, action0g);
+			var widget033 = this.$.widgetRegistry.getWidget("birthdate");
+			var action034 = this.$.actionFactory.getCustomAction("setName");
+			this.$.eventRegistry.get("widget/onChange").registerAction(widget033, action034);
 			
-			var widget0h = this.$.widgetRegistry.getWidget("email");
-			var messageExpression0j = function() {
+			var widget035 = this.$.widgetRegistry.getWidget("email");
+			var messageExpression037 = function() {
 				return this.$.create("string", this.$.create("string", "Email Address changed: ").toString()
 				.concat(this.$.widgetRegistry.getWidget("email").getValue())
 				).toString();
 			};
-			var action0i = this.$.actionFactory.getDisplayMessageAction("17f35191bd82d7c26468d5019216dabb", messageExpression0j);
-			this.$.eventRegistry.get("widget/onChange").registerAction(widget0h, action0i);
+			var action036 = this.$.actionFactory.getDisplayMessageAction("17f35191bd82d7c26468d5019216dabb", messageExpression037);
+			this.$.eventRegistry.get("widget/onChange").registerAction(widget035, action036);
 			
-			var contentProvider = this.$.contentProviderRegistry.getContentProvider("personProvider");
-			var messageExpression0l = function() {
+			var contentProvider038 = this.$.contentProviderRegistry.getContentProvider("personProvider");
+			var messageExpression03a = function() {
 				return this.$.create("string", this.$.create("string", this.$.contentProviderRegistry.getContentProvider("personProvider").getValue("firstName").toString()
 				.concat(this.$.create("string", ", your email address is "))
 				).toString()
 				.concat(this.$.widgetRegistry.getWidget("email").getValue())
 				).toString();
 			};
-			var action0k = this.$.actionFactory.getDisplayMessageAction("39cb0a76f5dbfc2a9a7b411c3c41fd00", messageExpression0l);
-			this.$.eventRegistry.get("contentProvider/onChange").registerAction(contentProvider, "firstName", action0k);
+			var action039 = this.$.actionFactory.getDisplayMessageAction("39cb0a76f5dbfc2a9a7b411c3c41fd00", messageExpression03a);
+			this.$.eventRegistry.get("contentProvider/onChange").registerAction(contentProvider038, "firstName", action039);
 			
-			var contentProvider0m = this.$.contentProviderRegistry.getContentProvider("personProvider");
-			var messageExpression0o = function() {
+			var contentProvider03b = this.$.contentProviderRegistry.getContentProvider("personProvider");
+			var messageExpression03d = function() {
 				return this.$.create("string", "Oh, something happened in the personProvider!").toString();
 			};
-			var action0n = this.$.actionFactory.getDisplayMessageAction("4d79b7288b263862d1984ffe3f4ade4d", messageExpression0o);
-			this.$.eventRegistry.get("contentProvider/onChange").registerAction(contentProvider0m, "*", action0n);
+			var action03c = this.$.actionFactory.getDisplayMessageAction("4d79b7288b263862d1984ffe3f4ade4d", messageExpression03d);
+			this.$.eventRegistry.get("contentProvider/onChange").registerAction(contentProvider03b, "*", action03c);
 			
 		}
 		

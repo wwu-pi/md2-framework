@@ -1,62 +1,144 @@
 define([
-    "dojo/_base/declare", "./MD2Store"
-], function(declare, MD2Store) {
+    "dojo/_base/declare",
+    "dojo/_base/lang",
+    "dojo/store/util/QueryResults",
+    "esri/tasks/locator",
+    "esri/geometry/Point"
+], function(declare, lang, QueryResults, Locator, Point) {
     
-    return declare([], {
+    var LocationStore = declare([], {
         
-        _defaultServiceUri: null,
-        
-        _WARNING_MSG1: "MD2StoreFactory: Target property in options object will be overwritten!",
-        
-        _WARNING_MSG2: "MD2StoreFactory: No serviceUri or table are passed to createInstance"
-                        + "method. Target property has to be set manually in the created store!",
+        /** 
+         * Defines the Accept header to use on HTTP requests
+         */
+        accepts: "application/javascript, application/json",
         
         /**
-         * Create a new instance of the MD2 store. If a default service URI is set, it is used to create the service.
-         * The default service URI can be overwritten by explicitly setting another service URI in the configuration object.
-         * 
-         * In case no configuration object has been passed to the function, the store has to be configured accordingly
-         * in the aftermath (set target property).
-         * 
-         * @param {Object} configuration - Configuration object of the form {serviceUri: <string>, table: <string>},
-         *                 with the service URI being optional if a defaultService is defined.
-         * @param {Object} options - Overwrite default options of created store.
-         * @returns {MD2Store}
+         * Additional headers to pass in all requests to the server. These can be overridden
+         * by passing additional headers to calls to the store.
          */
-        newInstance: function(configuration, options) {
-            
-            configuration = configuration || {};
-            options = options || {};
-            
-            // pass default service if not present in configuration object
-            if(typeof configuration.serviceUri === "undefined" && this._defaultServiceUri) {
-                configuration.serviceUri = this._defaultServiceUri;
-            }
-            
-            // build target from serviceUri and entity name
-            if (configuration.serviceUri && configuration.entityName) {
-                configuration.serviceUri = configuration.serviceUri.replace(/\/+$/, "") + "/"; // ensure trailing slash
-                options.url && window.console && console.warn(this._WARNING_MSG1);
-                options.url = configuration.serviceUri + configuration.entityName;
-            } else {
-                window.console && console.warn(this._WARNING_MSG2);
-            }
-            
-            options.entityFactory = configuration.entityFactory;
-            
-            return new MD2Store(options);
+        headers: {},
+        
+        /**
+         * URL of the web service. Injected by property constructor or mixed in as option.
+         */
+        url: null,
+        
+        /**
+         * The factory of the entity that is managed by this store. It is used to construct new instances of this
+         * entity, and populate it with the values received from the backend. Furthermore, it
+         * is provided to the content provider (e.g. to reset the content provider).
+         */
+        entityFactory: undefined,
+        
+        constructor: function(options) {
+            declare.safeMixin(this, options);
         },
         
+        _reverseGeoCode: function() {
+            var locationHandler = this._locationHandler;
+            var latitude = locationHandler.getLatitude();
+            var longitude = locationHandler.getLongitude();
+            
+            var locator = new Locator(this.url);
+            var promise = locator.locationToAddress(new Point(latitude, longitude), 500);
+            
+            return promise;
+        },
+        
+        _storeAddressInLocationEntity: function(promise) {
+            
+            /*
+             * Format of the address entity as returned by the ArcGIS server:
+             * "address": {
+             *    "Address": "6 Avenue Gustave Eiffel",
+             *    "Neighborhood": "7e Arrondissement",
+             *    "City": "Paris",
+             *    "Subregion": "Paris",
+             *    "Region": "Île-de-France",
+             *    "Postal": "75007",
+             *    "PostalExt": null,
+             *    "CountryCode": "FRA",
+             *    "Loc_name": "FRA.PointAddress"
+             * }
+             */
+            promise = promise.then(lang.hitch(this, function(addressCandidate) {
+                var locationEntity = this.entityFactory.create();
+                
+                var lat = addressCandidate.location.x;
+                locationEntity.latitude = locationEntity.latitude.create(lat);
+                
+                var long = addressCandidate.location.y;
+                locationEntity.longitude = locationEntity.longitude.create(long);
+                
+                var alt = null;
+                locationEntity.altitude = locationEntity.altitude.create(alt);
+                
+                var city = addressCandidate.address.City;
+                locationEntity.city = locationEntity.city.create(city);
+                
+                var street = addressCandidate.address.Address;
+                locationEntity.street = locationEntity.street.create(street);
+                
+                var number = null;
+                locationEntity.number = locationEntity.number.create(number);
+                
+                var postal = addressCandidate.address.Postal;
+                locationEntity.postalCode = locationEntity.postalCode.create(postal);
+                
+                var countryCode = addressCandidate.address.CountryCode;
+                locationEntity.country = locationEntity.country.create(countryCode);
+                
+                var province = addressCandidate.address.Region;
+                locationEntity.province = locationEntity.province.create(province);
+                
+                return [locationEntity];
+            }));
+            
+            return promise;
+        },
+        
+        query: function(query, options) {
+            if (query) {
+                var msg = "[LocationStoreFactory] Store does not support querying. The passed query is ignored.";
+                console && console.warn(msg);
+            }
+            var promise = this._reverseGeoCode();
+            promise = this._storeAddressInLocationEntity(promise);
+            return QueryResults(promise);
+        },
+        
+        get: function(id) {
+            throw new Error("Read-only store: Unsupported operation!")
+        },
+        
+        put: function(object, options) {
+            throw new Error("Read-only store: Unsupported operation!")
+        },
+        
+        add: function(object, options) {
+            throw new Error("Read-only store: Unsupported operation!")
+        },
+        
+        remove: function(id) {
+            throw new Error("Read-only store: Unsupported operation!")
+        }
+        
+    });
+    
+    /**
+     * Factory for the LocationStore
+     */
+    return declare([], {
+        
         /**
-         * Set a default service URI to be used when a new service is created.
-         * 
-         * The default service URI can be overwritten by explicitly setting another
-         * service URI in the configuration object that is passed to the createInstance method.
-         * 
-         * @param {String} defaultServiceUri - Default service URI.
+         * Identifier to get the type of the store this factory creates.
          */
-        setDefaultServiceUri: function(defaultServiceUri) {
-            this._defaultServiceUri = defaultServiceUri;
+        type: "location",
+        
+        create: function(options) {
+            options.url = options.url || this._properties.url;
+            return new LocationStore(options);
         }
         
     });

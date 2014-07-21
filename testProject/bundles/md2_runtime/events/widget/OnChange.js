@@ -10,7 +10,8 @@ function(declare, lang, topic, _WidgetEvent) {
             if(this._reference) {
                 return;
             }
-            this._reference = topic.subscribe("md2/widget/onChange", lang.hitch(this, function(widget) {
+            var topicName = "md2/widget/onChange/" + this._appId;
+            this._reference = topic.subscribe(topicName, lang.hitch(this, function(widget) {
                 this._onEvent(widget);
             }));
         }

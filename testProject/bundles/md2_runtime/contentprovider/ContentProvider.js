@@ -2,9 +2,11 @@ define([
     "dojo/_base/declare",
     "dojo/_base/lang",
     "dojo/_base/array",
+    "dojo/string",
     "dojo/topic",
     "../datatypes/_Type",
-    "ct/Hash"
+    "ct/Hash",
+    "dojo/json"
 ],
 
 /**
@@ -15,7 +17,7 @@ define([
  * 
  * The ContentProvider might access fields in the dataForm to configure its filter.
  */
-function(declare, lang, array, topic, _Type, Hash) {
+function(declare, lang, array, string, topic, _Type, Hash, json) {
     
     return declare([], {
         
@@ -53,7 +55,8 @@ function(declare, lang, array, topic, _Type, Hash) {
         _observedAttributes: null,
         
         /**
-         * ComplexQuery object to describe the load filter for this content provider.
+         * Reference to a builder function for filters. The function returns a
+         * ComplexQuery object that describes the load filter for this content provider.
          */
         _filter: null,
         
@@ -66,12 +69,12 @@ function(declare, lang, array, topic, _Type, Hash) {
         /**
          * Identifier of the topic this content provider publishes to for data updates.
          */
-        _topicAction: "md2/contentProvider/dataAction",
+        _topicAction: "md2/contentProvider/dataAction/${appId}",
         
         /**
          * Identifier of the topic this content provider publishes to for onChange events.
          */
-        _topicOnChange: "md2/contentProvider/onChange",
+        _topicOnChange: "md2/contentProvider/onChange/${appId}",
         
         /**
          * Debug messages
@@ -90,14 +93,19 @@ function(declare, lang, array, topic, _Type, Hash) {
          * }
          * 
          * @param {string} name
+         * @param {string} appId
          * @param {MD2Store} store
          * @param {boolean} isManyProvider
          * @param {Object} filter
          */
-        constructor: function(name, store, isManyProvider, filter) {
+        constructor: function(name, appId, store, isManyProvider, filter) {
             !name && window.console && window.console.error(this._DEBUG_MSG["nameParamErr"]);
             !store && window.console && window.console.error(this._DEBUG_MSG["storeParamErr"]);
             this._name = name;
+            
+            this._topicAction = string.substitute(this._topicAction, {appId: appId});
+            this._topicOnChange = string.substitute(this._topicOnChange, {appId: appId});
+            
             this._store = store;
             this._content = [];
             this._observedAttributes = new Hash();
@@ -283,12 +291,11 @@ function(declare, lang, array, topic, _Type, Hash) {
         
         load: function() {
             var name = this._name;
-            var filter = this._filter || {};
-            var query = lang.clone(filter.query);
+            var filter = this._filter ? this._filter() : {};
+            var query = filter.query;
             var options = filter.count === "first" || !this._isManyProvider ? {
                 count: 1
             } : null;
-            this._replacePlaceholdersInQuery(query);
             
             this._store.query(query, options).then(lang.hitch(this, function(results) {
                 if(results.length) {
@@ -325,68 +332,25 @@ function(declare, lang, array, topic, _Type, Hash) {
                 return entity.hasInternalID();
             });
             
-            var delCount = filtered.length;
-            var errMsg = null;
-            var topicPost = lang.hitch(this, function(error) {
-                delCount--;
-                errMsg = error || errMsg;
-                if(delCount === 0 && !errMsg) {
-                    topic.publish(this._topicAction, "success", this._name, "remove");
-                } else if(delCount === 0 && errMsg) {
-                    topic.publish(this._topicAction, "error", this._name, "remove", errMsg);
-                }
-            });
-            
             // if there are no entities with an internal id, it was never loaded from the backend
             // => thus, there is no need to delete it from store
             if(!filtered.length) {
                 topic.publish(this._topicAction, "success", this._name, "remove");
             } else {
-                array.forEach(filtered, function(entity) {
-                    this._store.remove(entity.getInternalID()).then(function(response) {
-                        topicPost();
-                    }, function(error) {
-                        topicPost(error);
-                    });
+                var ids = array.map(filtered, function(entity) {
+                    return entity.getInternalID();
                 }, this);
+                
+                this._store.remove(ids).then(function() {
+                    topic.publish(this._topicAction, "success", this._name, "remove");
+                }, function(error) {
+                    topic.publish(this._topicAction, "error", this._name, "remove", error);
+                });
             }
         },
         
         getName: function() {
             return this._name;
-        },
-        
-        _replacePlaceholdersInQuery: function(query) {
-            
-            if(!query) {
-                return;
-            }
-            
-            var dataMapper = this._filter.dataMapper;
-            
-            for(var key in query) {
-                
-                if(!query.hasOwnProperty(key)) {
-                    continue;
-                }
-                
-                var val = query[key];
-                if(lang.isObject(val)) {
-                    this._replacePlaceholdersInQuery(val);
-                } else if(lang.isArray(val)) {
-                    array.forEach(val, function(obj) {
-                        this._replacePlaceholdersInQuery(obj);
-                    }, this);
-                } else if(lang.isString(val) && val.charAt(0) === "@") {
-                    var mapping = dataMapper.getMapping(val.substring(1));
-                    var realValue;
-                    if(mapping.contentProvider) {
-                        var content = mapping.contentProvider.getContent();
-                        realValue = content[mapping.propertyName];
-                    }
-                    query[key] = realValue || null;
-                }
-            }
         }
         
     });

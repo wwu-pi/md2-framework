@@ -28,9 +28,9 @@
     ],
     "Components": [
         {
-            "name": "MD2InstanceFactory",
+            "name": "MD2MainWidget",
             "provides": ["md2.runtime.InstanceFactory"],
-            "instanceFactory": true,
+            "serviceFactory": true,
             "references": [
                 {
                     "name": "_windowManager",
@@ -41,12 +41,12 @@
                     "providing": "dataform.DataFormService"
                 },
                 {
-                    "name": "_storeFactory",
-                    "providing": "md2.store.StoreFactory"
-                },
-                {
                     "name": "_notificationService",
                     "providing": "ct.framework.api.LogService"
+                },
+                {
+                    "name": "_locationFactory",
+                    "providing": "md2.store.LocationStore"
                 }
             ]
         },
@@ -65,6 +65,14 @@
                         "topic": "md2/onlinestatus/LOST_CONNECTION",
                         "method": "_onConnectionStatusChange",
                         "params": ["offline"]
+                    },
+                    {
+                        "topic": "md2/location/LOCATION_UPDATE",
+                        "method": "_onLocationUpdate"
+                    },
+                    {
+                        "topic": "ct/window/RESIZE",
+                        "method": "_onWindowResize"
                     }
                 ]
             }

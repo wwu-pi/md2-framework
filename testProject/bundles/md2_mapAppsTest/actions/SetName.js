@@ -14,14 +14,14 @@ function(declare, stamp, _Action) {
 			if (
 				this.$.widgetRegistry.getWidget("birthdate").getValue().lt(this.$.create("date", stamp.fromISOString("2000-01-01")))
 			) {
-				var targetContentProvider = this.$.contentProviderRegistry.getContentProvider("personProvider");
-				var set = this.$.create("string", "John Doe");
-				targetContentProvider.setValue("firstName", set);
+				var targetContentProvider04a = this.$.contentProviderRegistry.getContentProvider("personProvider");
+				var set04b = this.$.create("string", "John Doe");
+				targetContentProvider04a.setValue("firstName", set04b);
 			}
 			else {
-				var targetContentProvider00 = this.$.contentProviderRegistry.getContentProvider("personProvider");
-				var set01 = this.$.create("string", "Johnny Doe");
-				targetContentProvider00.setValue("firstName", set01);
+				var targetContentProvider04c = this.$.contentProviderRegistry.getContentProvider("personProvider");
+				var set04d = this.$.create("string", "Johnny Doe");
+				targetContentProvider04c.setValue("firstName", set04d);
 			}
 			
 		}
