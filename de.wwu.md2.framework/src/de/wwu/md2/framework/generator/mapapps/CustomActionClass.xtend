@@ -254,7 +254,7 @@ class CustomActionClass {
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(ContentProviderOperationAction action, String varName) '''
-		var «varName» = this.$.actionFactory.getContentProviderOperationAction("«action.contentProvider.contentProvider.name»", "«action.operation.toString»");
+		var «varName» = this.$.actionFactory.getContentProviderOperationAction("«action.contentProvider.resolveContentProviderName»", "«action.operation.toString»");
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(ContentProviderResetAction action, String varName) '''

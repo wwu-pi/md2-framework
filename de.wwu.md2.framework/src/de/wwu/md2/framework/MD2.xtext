@@ -759,7 +759,7 @@ SimpleAction:
 	{DisableAction} ('Disable' '(' inputField = AbstractViewGUIElementRef ')' ) |
 	{EnableAction} ('Enable' '(' inputField = AbstractViewGUIElementRef ')' ) |
 	{DisplayMessageAction} ('DisplayMessage' '(' message = SimpleExpression ')' ) |
-	{ContentProviderOperationAction} ('ContentProviderOperation' '(' operation = AllowedOperation contentProvider = ContentProviderReference ')') |
+	{ContentProviderOperationAction} ('ContentProviderOperation' '(' operation = AllowedOperation contentProvider = AbstractProviderReference ')') |
 	{ContentProviderResetAction} ('ContentProviderReset' '('contentProvider = ContentProviderReference ')') |
 	{ContentProviderAddAction} ('ContentProviderAdd' '('contentProvider = ContentProviderReference ')') |
 	{ContentProviderRemoveAction} ('ContentProviderRemove' '('contentProvider = ContentProviderReference 'where' whereClause = WhereClauseCondition ')') |

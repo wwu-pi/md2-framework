@@ -87,7 +87,7 @@ class ProcessModel {
 		val mappingTasks = newHashSet()
 		mappingTasks.addAll(userMappingTasks)
 		mappingTasks.addAll(autoMappingTasks)
-		mappingTasks.filter([(it.pathDefinition as ContentProviderPath).contentProviderRef.type instanceof ReferencedModelType]).forEach [ mappingTask |
+		mappingTasks.filter([it.pathDefinition instanceof ContentProviderPath && (it.pathDefinition as ContentProviderPath).contentProviderRef.type instanceof ReferencedModelType]).forEach [ mappingTask |
 			val validatorBindingTask = modelConstraintToValidator(factory, workingInput, mappingTask)
 			val guiElem = mappingTask.referencedViewField.resolveViewGUIElement
 			userValidatorBindingTasks.forEach [ userValidatorBindingTask |
