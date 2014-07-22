@@ -64,7 +64,10 @@ define([
             var parameters = {};
             
             if (query) {
+                this._makePlainJSObjectWithStringValues(query);
                 parameters.filter = this._complexQueryTranslator(query);
+                console && console.log("Vanilla query object: ", query);
+                console && console.log("Filter string: ", parameters.filter);
             }
             
             if (options && options.count) {
@@ -133,6 +136,22 @@ define([
         },
         
         /**
+         * Tarnsforms an object (not an entity!) with md2 datatypes into a
+         * plain JS object with string values. This is the basis for the filter string.
+         * @param {type} obj
+         * @returns {Object} - Vanilla object
+         */
+        _makePlainJSObjectWithStringValues: function(obj) {
+            ct_lang.forEachOwnProp(obj, function(value, key) {
+                if (value.hasOwnProperty("_platformValue")) {
+                    obj[key] = value.toString();
+                } else if (lang.isObject(value)) {
+                    this._makePlainJSObjectWithStringValues(value);
+                }
+            }, this);
+        },
+        
+        /**
          * Translates a query in the mongodb JSON-notation that is used by map.apps' ComplexQuery
          * notation into a query string that is supported by the MD2 backend.
          * 
@@ -148,18 +167,24 @@ define([
                 }
                 
                 if(key.charAt(0) === "$") {
-                    filterString += "(";
                     switch(key) {
                         case "$and":
                             filterString += this._logicalOperator(query[key], "and");
                             break;
                         case "$or":
+                            filterString += "(";
                             filterString += this._logicalOperator(query[key], "or");
+                            filterString += ")";
+                            break;
+                        case "$not":
+                            filterString += "not(";
+                            filterString += this._complexQueryTranslator(query[key]);
+                            filterString += ")";
                             break;
                     }
-                    filterString += ")";
                 } else {
-                    if(lang.isObject(query[key])) {//alert(json.stringify(query[key]));
+                    if(lang.isObject(query[key])) {
+                        // nested entity
                         filterString += this._operatorExpression(query[key], key);
                     } else {
                         filterString += key.concat(" equals ", this._quotify(query[key]));
@@ -200,7 +225,7 @@ define([
                 var value = this._quotify(exp[key]);
                 switch(key) {
                     case "$not":
-                        expression += "not".concat("(", this._operatorExpression(value, prop), ")");
+                        expression += "not".concat("(", this._operatorExpression(exp[key], key), ")");
                         break;
                     case "$eq":
                         expression += prop.concat(" equals ", value);
@@ -289,6 +314,9 @@ define([
         
         _translateToJSTypesRecursion: function(md2Entity) {
             var platformEntity = {};
+            if (md2Entity.getInternalID()) {
+                platformEntity["__internalId"] = md2Entity.getInternalID();
+            }
             ct_lang.forEachOwnProp(md2Entity._attributes, function(value, name) {
                 if (value.getPlatformValue) {
                     platformEntity[name] = value.getPlatformValue();

@@ -10,11 +10,11 @@ function(declare, _Action) {
 		
 		execute: function() {
 			
-			var action078 = this.$.actionFactory.getGotoViewAction("firstView");
-			action078.execute();
+			var action01l = this.$.actionFactory.getGotoViewAction("firstView");
+			action01l.execute();
 			
-			var action079 = this.$.actionFactory.getCustomAction("startAction");
-			action079.execute();
+			var action01m = this.$.actionFactory.getCustomAction("startAction");
+			action01m.execute();
 			
 		}
 		

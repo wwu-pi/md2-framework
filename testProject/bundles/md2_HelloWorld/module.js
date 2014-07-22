@@ -1,8 +1,8 @@
 define([
-	"./actions/MapFields",
 	"./actions/StartAction",
-	"./actions/__startupAction",
 	"./actions/BindButtons",
+	"./actions/__startupAction",
+	"./actions/MapFields",
 	"./entities/Customer",
 	"./contentproviders/CustomerProvider",
 	"./Controller",

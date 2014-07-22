@@ -44,10 +44,7 @@ function(declare, array, domConstruct, domGeometry, Hash, WidgetWrapper) {
             
             // attach data form to DOM
             var domNodeDataForm = this._mainWidget.displayViewNode;
-            console.log("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
             var dataFormWidget = this._buildView(viewName);
-            console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-            console.log(dataFormWidget);
             dataFormWidget.placeAt(domNodeDataForm).startup();
             this._lastDisplayedViewName = viewName;
             

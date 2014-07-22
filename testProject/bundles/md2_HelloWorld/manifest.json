@@ -13,7 +13,7 @@
 			"provides": ["md2.app.HelloWorld.AppDefinition"],
 			"propertiesConstructor": true,
 			"properties": {
-                                "id": "md2_HelloWorld",
+				"id": "md2_HelloWorld",
 				"windowTitle": "Hello World",
 				"onInitialized": "__startupAction",
 				"views": [
@@ -166,7 +166,7 @@
 								},
 								{
 									"type": "md2gridpanel",
-									"cols": "3",
+									"cols": "4",
 									"valueClass": "layoutCell",
 									"cellStyle": {
 										"width": "100%"
@@ -178,7 +178,7 @@
 											"title": "Save",
 											"field": "butSave",
 											"cellStyle": {
-												"width": "34%"
+												"width": "25%"
 											}
 										},
 										{
@@ -186,7 +186,15 @@
 											"title": "Load",
 											"field": "butLoad",
 											"cellStyle": {
-												"width": "33%"
+												"width": "25%"
+											}
+										},
+										{
+											"type": "button",
+											"title": "Delete",
+											"field": "butRemove",
+											"cellStyle": {
+												"width": "25%"
 											}
 										},
 										{
@@ -194,7 +202,7 @@
 											"title": "Reset",
 											"field": "butReset",
 											"cellStyle": {
-												"width": "33%"
+												"width": "25%"
 											}
 										}
 									]
@@ -206,13 +214,13 @@
 			}
 		},
 		{
-			"name": "MapFields",
-			"impl": "./actions/MapFields",
+			"name": "StartAction",
+			"impl": "./actions/StartAction",
 			"provides": ["md2.app.HelloWorld.CustomAction"]
 		},
 		{
-			"name": "StartAction",
-			"impl": "./actions/StartAction",
+			"name": "BindButtons",
+			"impl": "./actions/BindButtons",
 			"provides": ["md2.app.HelloWorld.CustomAction"]
 		},
 		{
@@ -221,8 +229,8 @@
 			"provides": ["md2.app.HelloWorld.CustomAction"]
 		},
 		{
-			"name": "BindButtons",
-			"impl": "./actions/BindButtons",
+			"name": "MapFields",
+			"impl": "./actions/MapFields",
 			"provides": ["md2.app.HelloWorld.CustomAction"]
 		},
 		{

@@ -10,17 +10,17 @@ function(declare, _Action) {
 		
 		execute: function() {
 			
-			var contentProvider070 = this.$.contentProviderRegistry.getContentProvider("customerProvider");
-			var widget071 = this.$.widgetRegistry.getWidget("formId");
-			this.$.dataMapper.map(widget071, contentProvider070, "id");
+			var contentProvider01n = this.$.contentProviderRegistry.getContentProvider("customerProvider");
+			var widget01o = this.$.widgetRegistry.getWidget("formId");
+			this.$.dataMapper.map(widget01o, contentProvider01n, "id");
 			
-			var contentProvider072 = this.$.contentProviderRegistry.getContentProvider("customerProvider");
-			var widget073 = this.$.widgetRegistry.getWidget("formFirstName");
-			this.$.dataMapper.map(widget073, contentProvider072, "firstName");
+			var contentProvider01p = this.$.contentProviderRegistry.getContentProvider("customerProvider");
+			var widget01q = this.$.widgetRegistry.getWidget("formFirstName");
+			this.$.dataMapper.map(widget01q, contentProvider01p, "firstName");
 			
-			var contentProvider074 = this.$.contentProviderRegistry.getContentProvider("customerProvider");
-			var widget075 = this.$.widgetRegistry.getWidget("formLastName");
-			this.$.dataMapper.map(widget075, contentProvider074, "lastName");
+			var contentProvider01r = this.$.contentProviderRegistry.getContentProvider("customerProvider");
+			var widget01s = this.$.widgetRegistry.getWidget("formLastName");
+			this.$.dataMapper.map(widget01s, contentProvider01r, "lastName");
 			
 		}
 		
