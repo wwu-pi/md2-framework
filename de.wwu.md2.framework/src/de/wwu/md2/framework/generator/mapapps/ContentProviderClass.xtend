@@ -81,7 +81,13 @@ class ContentProviderClass {
 	'''
 	
 	def static generateLocalBody(ContentProvider contentProvider) '''
-		// TODO Local Content Provider
+		if (!this._localFactory) {
+			throw new Error("[«contentProvider.name.toFirstUpper»] No store factory of type 'local' found! "
+					+ "Check whether bundle is missing.");
+		}
+		
+		var entityFactory = typeFactory.getEntityFactory("«(contentProvider.type as ReferencedModelType).entity.name»");
+		var store = this._localFactory.create(entityFactory);
 	'''
 	
 	/**
