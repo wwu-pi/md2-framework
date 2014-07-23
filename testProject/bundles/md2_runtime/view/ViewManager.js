@@ -59,6 +59,7 @@ function(declare, array, domConstruct, domGeometry, Hash, WidgetWrapper) {
             if (previousView) {
                 this._unsetAllFormControls(previousView.bodyControl);
                 domConstruct.empty(domNodeDataForm);
+                previousView.get("dataBinding").destroy();
                 previousView.destroyRecursive();
                 this._currentView = null;
             }

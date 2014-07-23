@@ -18,11 +18,11 @@ define([
         },
         
         getLatitude: function() {
-           return  this._currentMapPoint.getLatitude();
+           return this._currentMapPoint ? this._currentMapPoint.getLatitude() : null;
         },
         
         getLongitude: function() {
-            return this._currentMapPoint.getLongitude();
+            return this._currentMapPoint ? this._currentMapPoint.getLongitude() : null;
         },
         
         _observeMapClicks: function() {
@@ -35,6 +35,12 @@ define([
         },
         
         _broadcastOnLocationUpdateEvent: function() {
+            console && console.debug(
+                "Broadcast:",
+                "md2/location/LOCATION_UPDATE",
+                "Longitude: " + this.getLongitude(),
+                "Latitude: " + this.getLatitude()
+            );
             this._eventService.postEvent("md2/location/LOCATION_UPDATE", {
                 latitude: this.getLatitude(),
                 longitude: this.getLongitude()

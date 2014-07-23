@@ -247,11 +247,11 @@ function(declare, lang, array, topic, string) {
             // overwrite default validator function of dijit widget to use MD2 validators
             var widget = this._formControl.widget;
             var self = this;
-            widget.validator = function(value) {
+            widget.validator = function() {
                 var isValid = true;
                 var messages = [];
                 array.forEach(self._validators, function(validator) {
-                    if (!validator.isValid(self._resolveValueType(value))) {
+                    if (!validator.isValid(self._resolveValueType(widget.value))) {
                         isValid = false;
                         messages.push(validator.getMessage());
                     }

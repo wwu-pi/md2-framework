@@ -11,7 +11,7 @@ define([
         },
         
         isSet: function() {
-            return this._platformValue;
+            return !!this._platformValue;
         },
         
         _equals: function(value) {

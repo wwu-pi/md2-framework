@@ -1,10 +1,14 @@
 {
     "md2_runtime": {},
-    //"md2_testdataform": {},
     "md2_store": {},
     "onlinestatus": {},
     "md2_formcontrols": {},
+    "md2_location_service": {},
+    
+    
     "md2_mapAppsTest": {},
     "md2_HelloWorld": {},
-    "md2_location_service": {}
+    "md2_locationTest": {},
+    "md2_generateTest": {}
+    //"md2_testdataform": {},
 }

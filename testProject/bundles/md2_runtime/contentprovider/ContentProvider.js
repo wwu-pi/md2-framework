@@ -140,7 +140,6 @@ function(declare, lang, array, string, topic, _Type, Hash, json) {
         },
         
         registerObservedOnChange: function(attribute) {
-            
             if (!this._observedAttributes.contains(attribute)) {
                 this._observedAttributes.set(attribute, {
                     value: this.getValue(attribute),

@@ -29,6 +29,10 @@ function(declare, array, Hash) {
          */
         registerAction: function(widget, action) {
             
+            if (!widget) {
+                return;
+            }
+            
             var widgetId = widget.getId();
             
             // check whether there are already actions bound to this widget
@@ -62,6 +66,10 @@ function(declare, array, Hash) {
          * @param {Action} action - Action to be unbound from this event.
          */
         unregisterAction: function(widget, action) {
+            
+            if (!widget) {
+                return;
+            }
             
             var widgetId = widget.getId();
             

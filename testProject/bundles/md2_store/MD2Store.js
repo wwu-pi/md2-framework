@@ -66,8 +66,8 @@ define([
             if (query) {
                 this._makePlainJSObjectWithStringValues(query);
                 parameters.filter = this._complexQueryTranslator(query);
-                console && console.log("Vanilla query object: ", query);
-                console && console.log("Filter string: ", parameters.filter);
+                console && console.debug("[MD2Store] Vanilla query object: ", query);
+                console && console.debug("[MD2Store] Filter string: ", parameters.filter);
             }
             
             if (options && options.count) {

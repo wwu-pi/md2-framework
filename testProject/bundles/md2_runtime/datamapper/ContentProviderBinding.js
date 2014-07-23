@@ -4,8 +4,6 @@ define([
     
     return declare([], {
         
-        _dataMapper: null,
-        
         constructor: function(opts) {
             if (!opts.dataMapper) {
                 throw new Error("[ContentProviderBinding] Missing option 'dataMapper'!");
@@ -15,6 +13,10 @@ define([
             this._appId = opts.appId;
             this._watchers = new Stateful();
             this._contentProviderOnChange();
+        },
+        
+        destroy: function() {
+            this._contentProviderListener.remove();
         },
         
         get: function(fieldname, index) {
@@ -45,7 +47,7 @@ define([
         _contentProviderOnChange: function() {
             // register handler for content provider on change events and notify all watchers
             var topicName = "md2/contentProvider/onChange/" + this._appId;
-            topic.subscribe(topicName, lang.hitch(this, function(contentProvider, attribute, newVal, oldVal) {
+            var ref = topic.subscribe(topicName, lang.hitch(this, function(contentProvider, attribute, newVal, oldVal) {
                 var widgets = this._dataMapper.getWidgets(contentProvider, attribute);
                 widgets.forEach(function(widget) {
                     var fieldName = widget.getId();
@@ -61,6 +63,7 @@ define([
                     }
                 }, this);
             }));
+            this._contentProviderListener = ref;
         }
     });
 });

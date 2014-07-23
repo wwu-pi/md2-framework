@@ -36,12 +36,14 @@ define([
         },
         
         _reverseGeoCode: function() {
-            var locationHandler = this._locationHandler;
-            var latitude = locationHandler.getLatitude();
+            var locationHandler = this.locationHandler;
             var longitude = locationHandler.getLongitude();
+            var latitude = locationHandler.getLatitude();
             
+            // ArcGIS World Geocoding Service API:
+            // https://developers.arcgis.com/rest/geocode/api-reference/overview-world-geocoding-service.htm
             var locator = new Locator(this.url);
-            var promise = locator.locationToAddress(new Point(latitude, longitude), 500);
+            var promise = locator.locationToAddress(new Point(longitude, latitude), 1000);
             
             return promise;
         },
@@ -50,47 +52,58 @@ define([
             
             /*
              * Format of the address entity as returned by the ArcGIS server:
-             * "address": {
-             *    "Address": "6 Avenue Gustave Eiffel",
-             *    "Neighborhood": "7e Arrondissement",
-             *    "City": "Paris",
-             *    "Subregion": "Paris",
-             *    "Region": "Île-de-France",
-             *    "Postal": "75007",
-             *    "PostalExt": null,
-             *    "CountryCode": "FRA",
-             *    "Loc_name": "FRA.PointAddress"
+             * {
+             *   "address": {
+             *     "Address": "1098 S Rocky Ford Trail Rd",
+             *     "Neighborhood": null,
+             *     "City": "Circleville",
+             *     "Subregion": null,
+             *     "Region": "Utah",
+             *     "Postal": "84723",
+             *     "PostalExt": null,
+             *     "CountryCode": "USA",
+             *     "Loc_name": "USA.StreetAddress"
+             *   },
+             *   "location": {
+             *     "x": -112.21653860760983,
+             *     "y": 38.150483035342795,
+             *     "spatialReference": {
+             *       "wkid": 4326,
+             *       "latestWkid": 4326
+             *     }
+             *   }
              * }
              */
             promise = promise.then(lang.hitch(this, function(addressCandidate) {
+                
                 var locationEntity = this.entityFactory.create();
                 
                 var lat = addressCandidate.location.x;
-                locationEntity.latitude = locationEntity.latitude.create(lat);
+                locationEntity.set("latitude", locationEntity.get("latitude").create(lat));
                 
                 var long = addressCandidate.location.y;
-                locationEntity.longitude = locationEntity.longitude.create(long);
+                locationEntity.set("longitude", locationEntity.get("longitude").create(long));
                 
                 var alt = null;
-                locationEntity.altitude = locationEntity.altitude.create(alt);
+                locationEntity.set("altitude", locationEntity.get("altitude").create(alt));
                 
                 var city = addressCandidate.address.City;
-                locationEntity.city = locationEntity.city.create(city);
+                locationEntity.set("city", locationEntity.get("city").create(city));
                 
                 var street = addressCandidate.address.Address;
-                locationEntity.street = locationEntity.street.create(street);
+                locationEntity.set("street", locationEntity.get("street").create(street));
                 
                 var number = null;
-                locationEntity.number = locationEntity.number.create(number);
+                locationEntity.set("number", locationEntity.get("number").create(number));
                 
                 var postal = addressCandidate.address.Postal;
-                locationEntity.postalCode = locationEntity.postalCode.create(postal);
+                locationEntity.set("postalCode", locationEntity.get("postalCode").create(postal));
                 
                 var countryCode = addressCandidate.address.CountryCode;
-                locationEntity.country = locationEntity.country.create(countryCode);
+                locationEntity.set("country", locationEntity.get("country").create(countryCode));
                 
                 var province = addressCandidate.address.Region;
-                locationEntity.province = locationEntity.province.create(province);
+                locationEntity.set("province", locationEntity.get("province").create(province));
                 
                 return [locationEntity];
             }));
@@ -138,6 +151,7 @@ define([
         
         create: function(options) {
             options.url = options.url || this._properties.url;
+            options.locationHandler = this._locationHandler;
             return new LocationStore(options);
         }
         
