@@ -11,7 +11,13 @@ function(declare, ContentProvider) {
 		
 		create: function(typeFactory, $) {
 			
-			// TODO Local Content Provider
+			if (!this._localFactory) {
+				throw new Error("[__conditionalEventMappingsProvider] No store factory of type 'local' found! "
+						+ "Check whether bundle is missing.");
+			}
+			
+			var entityFactory = typeFactory.getEntityFactory("__ConditionalEventMappings");
+			var store = this._localFactory.create(entityFactory);
 			var appId = "md2_generateTest";
 			
 			

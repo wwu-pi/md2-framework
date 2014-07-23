@@ -10,9 +10,17 @@ function(declare, _Action) {
 		
 		execute: function() {
 			
-			var widget0c2 = this.$.widgetRegistry.getWidget("__firstNameTextInput_29");
-			var action0c3 = this.$.actionFactory.getCustomAction("__conditionalEvent_evt");
-			this.$.eventRegistry.get("widget/onChange").registerAction(widget0c2, action0c3);
+			var widget023 = this.$.widgetRegistry.getWidget("__firstNameTextInput_5");
+			var action024 = this.$.actionFactory.getCustomAction("__conditionalEvent_evt");
+			this.$.eventRegistry.get("widget/onChange").registerAction(widget023, action024);
+			
+			var widget025 = this.$.widgetRegistry.getWidget("__firstNameTextInput_5");
+			var action026 = this.$.actionFactory.getCustomAction("__conditionalEvent_evt");
+			this.$.eventRegistry.get("widget/onChange").registerAction(widget025, action026);
+			
+			var widget027 = this.$.widgetRegistry.getWidget("__lastNameTextInput_5");
+			var action028 = this.$.actionFactory.getCustomAction("__conditionalEvent_evt");
+			this.$.eventRegistry.get("widget/onChange").registerAction(widget027, action028);
 			
 		}
 		

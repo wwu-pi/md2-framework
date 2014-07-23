@@ -11,14 +11,13 @@ function(declare, ContentProvider) {
 		
 		create: function(typeFactory, $) {
 			
-			if (!this._remoteFactory) {
-				throw new Error("[Customer] No store factory of type 'remote' found! "
+			if (!this._localFactory) {
+				throw new Error("[Customer] No store factory of type 'local' found! "
 						+ "Check whether bundle is missing.");
 			}
 			
-			var properties = this._properties;
 			var entityFactory = typeFactory.getEntityFactory("Customer");
-			var store = this._remoteFactory.create(properties.uri, entityFactory);
+			var store = this._localFactory.create(entityFactory);
 			var appId = "md2_generateTest";
 			
 			

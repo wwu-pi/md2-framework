@@ -11,16 +11,24 @@ function(declare, _Action) {
 		execute: function() {
 			
 			if (
-				this.$.widgetRegistry.getWidget("__firstNameTextInput_29").getValue().equals(this.$.create("string", "John"))
+				(
+					this.$.widgetRegistry.getWidget("__firstNameTextInput_5").getValue().equals(this.$.create("string", "John")) ||
+					this.$.widgetRegistry.getWidget("__firstNameTextInput_5").getValue().equals(this.$.create("string", "Bill"))
+				) &&
+				this.$.widgetRegistry.getWidget("__lastNameTextInput_5").getValue().equals(this.$.create("string", "Doe"))
 			) {
 				if (
-					this.$.contentProviderRegistry.getContentProvider("__conditionalEventMappingsProvider").getValue("__simple__DisplayMessageAction_1fe519c7936c4d3acfd70860153a0ec9__evt").equals(this.$.create("boolean", true))
+					this.$.contentProviderRegistry.getContentProvider("__conditionalEventMappingsProvider").getValue("__simple__DisplayMessageAction_d21199be1a3d6d37dc59562c85de9a22__evt").equals(this.$.create("boolean", true))
 				) {
-					var messageExpression0bn = function() {
-						return this.$.create("string", "Your name is John!").toString();
+					var messageExpression030 = function() {
+						return this.$.create("string", this.$.create("string", this.$.create("string", "Dude, I know you!! Your name is ").toString()
+						.concat(this.$.contentProviderRegistry.getContentProvider("customer").getValue("firstName"))
+						).toString()
+						.concat(this.$.create("string", "!"))
+						).toString();
 					};
-					var action0bm = this.$.actionFactory.getDisplayMessageAction("1fe519c7936c4d3acfd70860153a0ec9", messageExpression0bn);
-					action0bm.execute();
+					var action02z = this.$.actionFactory.getDisplayMessageAction("d21199be1a3d6d37dc59562c85de9a22", messageExpression030);
+					action02z.execute();
 				}
 			}
 			

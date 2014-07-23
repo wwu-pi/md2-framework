@@ -9,12 +9,12 @@ function(declare, _Entity) {
 		_datatype: "__ConditionalEventMappings",
 		
 		attributeTypes: {
-			__simple__DisplayMessageAction_1fe519c7936c4d3acfd70860153a0ec9__evt: "boolean"
+			__simple__DisplayMessageAction_d21199be1a3d6d37dc59562c85de9a22__evt: "boolean"
 		},
 		
 		_initialize: function() {
 			this._attributes = {
-				__simple__DisplayMessageAction_1fe519c7936c4d3acfd70860153a0ec9__evt: this._typeFactory.create("boolean", false)
+				__simple__DisplayMessageAction_d21199be1a3d6d37dc59562c85de9a22__evt: this._typeFactory.create("boolean", false)
 			};
 		}
 		
