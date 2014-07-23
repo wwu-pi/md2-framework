@@ -187,7 +187,9 @@ class ProcessWorkflow {
 				val gotos = step.gotos
 				
 				val innerConditionalCodeFragment = factory.createConditionalCodeFragment
-				outerIfCodeBlock.codeFragments.add(innerConditionalCodeFragment)
+				if (!gotos.empty) {
+					outerIfCodeBlock.codeFragments.add(innerConditionalCodeFragment)
+				}
 				
 				gotos.forEach[ goto, gotoIndex |
 					
@@ -643,14 +645,14 @@ class ProcessWorkflow {
 			ContentProviderPathEventRef: {
 				val path = event.pathDefinition
 				switch (path) {
-					ContentProviderPath: "__contentProvider." + path.contentProviderRef + "." + path.tail.pathTailAsString + "." + event.event.toString
+					ContentProviderPath: "__contentProvider." + path.contentProviderRef.name + "." + path.tail.pathTailAsString + "." + event.event.toString
 					LocationProviderPath: "__contentProvider.location." + path.locationField.toString
 				}
 			}
 			ContentProviderEventRef: {
 				val contentProviderRef = event.contentProvider
 				switch (contentProviderRef) {
-					ContentProviderReference: "__contentProvider." + contentProviderRef.contentProvider + "." + event.event.toString
+					ContentProviderReference: "__contentProvider." + contentProviderRef.contentProvider.name + "." + event.event.toString
 					LocationProviderReference: "__contentProvider.location"
 				}
 			}

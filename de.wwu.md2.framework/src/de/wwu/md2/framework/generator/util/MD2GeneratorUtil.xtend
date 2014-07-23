@@ -145,6 +145,15 @@ class MD2GeneratorUtil {
 	}
 	
 	/**
+	 * A helper method that can be applied on arbitrary objects and that always returns void.
+	 * That is for example useful to suppress the output in template expressions (e.g. the
+	 * returned boolean for List.add)
+	 */
+	def static returnVoid(Object o) {
+		return
+	}
+	
+	/**
 	 * Takes a list of all views and a GUI element.
 	 * Returns the view to which the given guiElement belongs.
 	 */

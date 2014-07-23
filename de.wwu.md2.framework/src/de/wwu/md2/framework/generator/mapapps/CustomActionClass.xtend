@@ -170,16 +170,20 @@ class CustomActionClass {
 	'''
 	
 	def private static dispatch generateCodeFragment(ConditionalCodeFragment task) '''
-		if (
-			«generateCondition(task.^if.condition)»
-		) {
+		«val ifBoolVar = getUnifiedName("bool")»
+		var «ifBoolVar» = «generateCondition(task.^if.condition)»;
+		«val precomputedElseifs = newArrayList»
+		«FOR elseif : task.elseifs»
+			«val elseifBoolVar = getUnifiedName("bool")»
+			var «elseifBoolVar» = «generateCondition(elseif.condition)»;
+			«precomputedElseifs.add(elseifBoolVar -> elseif.codeFragments).returnVoid»
+		«ENDFOR»
+		if («ifBoolVar») {
 			«generateCodeBlock(task.^if.codeFragments)»
 		}
-		«FOR elseif : task.elseifs»
-			else if (
-				«generateCondition(elseif.condition)»
-			) {
-				«generateCodeBlock(elseif.codeFragments)»
+		«FOR elseif : precomputedElseifs»
+			else if («elseif.key») {
+				«generateCodeBlock(elseif.value)»
 			}
 		«ENDFOR»
 		«IF task.^else != null»
