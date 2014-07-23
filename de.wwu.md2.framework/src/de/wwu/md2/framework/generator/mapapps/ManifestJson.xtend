@@ -89,7 +89,7 @@ class ManifestJson {
 	def static generateCustomActionsSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
 		«FOR customAction : dataContainer.customActions SEPARATOR ","»
 			{
-				"name": "«customAction.name.toFirstUpper»",
+				"name": "«customAction.name.toFirstUpper»Action",
 				"impl": "./actions/«customAction.name.toFirstUpper»",
 				"provides": ["md2.app.«processedInput.getBasePackageName».CustomAction"]
 			}
@@ -99,7 +99,7 @@ class ManifestJson {
 	def static generateEntitiesSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
 		«FOR entity : dataContainer.entities SEPARATOR ","»
 			{
-				"name": "«entity.name.toFirstUpper»",
+				"name": "«entity.name.toFirstUpper»Entity",
 				"impl": "./entities/«entity.name.toFirstUpper»",
 				"provides": ["md2.app.«processedInput.getBasePackageName».Entity"]
 			}
@@ -109,7 +109,7 @@ class ManifestJson {
 	def static generateContentProvidersSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
 		«FOR contentProvider : dataContainer.contentProviders SEPARATOR ","»
 			{
-				"name": "«contentProvider.name.toFirstUpper»",
+				"name": "«contentProvider.name.toFirstUpper»Provider",
 				"impl": "./contentproviders/«contentProvider.name.toFirstUpper»",
 				"provides": ["md2.app.«processedInput.getBasePackageName».ContentProvider"],
 				«IF !contentProvider.local»

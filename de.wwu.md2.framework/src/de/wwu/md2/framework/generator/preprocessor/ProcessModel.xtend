@@ -31,20 +31,15 @@ import de.wwu.md2.framework.mD2.MappingTask
 import de.wwu.md2.framework.mD2.Model
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.ReferencedType
-import de.wwu.md2.framework.mD2.StandardValidatorType
 import de.wwu.md2.framework.mD2.StringType
 import de.wwu.md2.framework.mD2.TimeType
 import de.wwu.md2.framework.mD2.ValidatorBindingTask
-import de.wwu.md2.framework.mD2.ValidatorType
-import de.wwu.md2.framework.mD2.ValidatorUnbindTask
-import java.util.Collection
 import org.eclipse.emf.ecore.resource.ResourceSet
 
 import static de.wwu.md2.framework.generator.preprocessor.ProcessAutoGenerator.*
 import static de.wwu.md2.framework.generator.preprocessor.util.Util.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
-import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 class ProcessModel {
 	
@@ -74,45 +69,18 @@ class ProcessModel {
 	}
 	
 	/**
-	 * Create validators according to model constraints for mapped GUI elements if no user-specified validator with same type is found.
+	 * Create validators according to model constraints for mapped GUI elements.
 	 * Restricted to StartupActions.
 	 * 
 	 * TODO change => each time an entity is mapped, the according validator is mapped as well!!
 	 */
-	def static void createValidatorsForModelConstraints(
-		MD2Factory factory, ResourceSet workingInput, Collection<MappingTask> autoMappingTasks,
-		Collection<MappingTask> userMappingTasks, Collection<ValidatorBindingTask> userValidatorBindingTasks
-	) {
-		val Collection<ValidatorUnbindTask> unbindTasks = workingInput.resources.map(r|r.allContents.toIterable.filter(typeof(ValidatorUnbindTask)).filter([isCalledAtStartup(it)])).flatten.toList
-		val mappingTasks = newHashSet()
-		mappingTasks.addAll(userMappingTasks)
-		mappingTasks.addAll(autoMappingTasks)
+	def static void createValidatorsForModelConstraints(MD2Factory factory, ResourceSet workingInput) {
+		val mappingTasks = workingInput.resources.map[ r |
+			r.allContents.toIterable.filter(typeof(MappingTask)).filter([isCalledAtStartup(it)])
+		].flatten.toList
+		
 		mappingTasks.filter([it.pathDefinition instanceof ContentProviderPath && (it.pathDefinition as ContentProviderPath).contentProviderRef.type instanceof ReferencedModelType]).forEach [ mappingTask |
 			val validatorBindingTask = modelConstraintToValidator(factory, workingInput, mappingTask)
-			val guiElem = mappingTask.referencedViewField.resolveViewGUIElement
-			userValidatorBindingTasks.forEach [ userValidatorBindingTask |
-				userValidatorBindingTask.referencedFields.filter([it.resolveViewGUIElement == guiElem]).forEach [ abstractRef |
-					userValidatorBindingTask.validators.filter(typeof(StandardValidatorType)).forEach [ userValidatorType |
-						var ValidatorType removeAutoValidatorType
-						if (validatorBindingTask != null) {
-							for (autoValidatorType : validatorBindingTask.validators) {						
-								if ((autoValidatorType as StandardValidatorType).validator.eClass == userValidatorType.validator.eClass) {
-									removeAutoValidatorType = autoValidatorType
-								}
-							}
-							removeAutoValidatorType?.remove()
-						}
-					]
-				]
-			]
-			unbindTasks.forEach [ unbindTask |
-				unbindTask.referencedFields.filter([it.resolveViewGUIElement == guiElem]).forEach [ abstractRef |
-					if (unbindTask.allTypes) {
-						validatorBindingTask.validators.clear()
-					}
-					//@TODO Implement all ValidatorTypes
-				]
-			]
 			
 			if (validatorBindingTask != null && validatorBindingTask.validators.size > 0) {
 				getAutoGenAction(workingInput)?.codeFragments.add(validatorBindingTask)

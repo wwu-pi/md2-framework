@@ -8,7 +8,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.emf.ecore.util.EcoreUtil
 
-import static extension org.apache.commons.codec.digest.DigestUtils.*
+import static extension org.apache.commons.codec.digest.DigestUtils.*import de.wwu.md2.framework.mD2.ViewElementType
 
 class Util {
 	
@@ -25,17 +25,22 @@ class Util {
 	}
 	
 	def static <T extends EObject> T copyElement(T elem) {
-		return copyElement(elem, null) as T;
-	}
-	
-	def static <T extends EObject> T copyElement(T elem, HashMap<T, T> map) {
 		val copier = new EcoreUtil.Copier()
 		val newElem = copier.copy(elem) as T
 		copier.copyReferences
+		return newElem
+	}
+	
+	def static ViewElementType copyViewElementType(ViewElementType elem, HashMap<ViewElementType, ViewElementType> map) {
+		val copier = new EcoreUtil.Copier()
+		val newElem = copier.copy(elem) as ViewElementType
+		copier.copyReferences
 		if (map != null) {
-			// Get all copied elements in a HashSet with the copied element as key
+			// Get all copied child elements in a HashSet with the copy as key and the original as value
 			for (entry : copier.entrySet) {
-				map.put(entry.value as T, entry.key as T)
+				if (entry.value instanceof ViewElementType) {
+					map.put(entry.value as ViewElementType, entry.key as ViewElementType)
+				}
 			}	
 		}		
 		newElem
