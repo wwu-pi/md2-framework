@@ -40,6 +40,13 @@ class MD2Preprocessor {
 	private static ResourceSet preprocessedModel
 	
 	/**
+	 * A reference to the previous (unpreprocessed) resource set is stored to compare it with
+	 * the current one. If they equal, the preprocessing can be skipped and the stored preprocessedModel
+	 * is returned.
+	 */
+	private static ResourceSet previousInputSet
+	
+	/**
 	 * Singleton instance of this preprocessor.
 	 */
 	private static MD2Preprocessor instance
@@ -52,10 +59,11 @@ class MD2Preprocessor {
 	 * model is the same so that this factory should be considerably faster.
 	 */
 	def static ResourceSet getPreprocessedModel(ResourceSet input) {
-		if (!input.equals(preprocessedModel)) {
+		if (!input.equals(previousInputSet)) {
 			if (instance == null) {
 				instance = new MD2Preprocessor
 			}
+			previousInputSet = input
 			preprocessedModel = instance.preprocessModel(input)
 		}
 		return preprocessedModel

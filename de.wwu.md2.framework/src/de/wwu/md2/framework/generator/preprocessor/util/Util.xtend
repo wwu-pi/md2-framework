@@ -13,26 +13,26 @@ import static extension org.apache.commons.codec.digest.DigestUtils.*import de.
 class Util {
 	
 	def static ResourceSet copyModel(ResourceSet input) {
-		val ResourceSet workingInput = new ResourceSetImpl()
-		val copier = new EcoreUtil.Copier()
+		val ResourceSet workingInput = new ResourceSetImpl
+		val copier = new EcoreUtil.Copier
 		for (resource : input.resources) {
 			val workingInputResource = workingInput.createResource(resource.URI)
 			workingInputResource.contents.addAll((copier.copyAll(resource.contents)))
 			workingInput.resources.add(workingInputResource)
 		}
-		copier.copyReferences()
+		copier.copyReferences
 		workingInput
 	}
 	
 	def static <T extends EObject> T copyElement(T elem) {
-		val copier = new EcoreUtil.Copier()
+		val copier = new EcoreUtil.Copier
 		val newElem = copier.copy(elem) as T
 		copier.copyReferences
 		return newElem
 	}
 	
 	def static ViewElementType copyViewElementType(ViewElementType elem, HashMap<ViewElementType, ViewElementType> map) {
-		val copier = new EcoreUtil.Copier()
+		val copier = new EcoreUtil.Copier
 		val newElem = copier.copy(elem) as ViewElementType
 		copier.copyReferences
 		if (map != null) {
