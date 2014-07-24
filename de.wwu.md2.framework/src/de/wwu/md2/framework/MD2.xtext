@@ -740,7 +740,7 @@ CustomAction:
  */
 CombinedAction:
 	'CombinedAction' name = EID '{'
-		('actions' actions += [Action | QUALIFIED_NAME]+)?
+		actions += [Action | QUALIFIED_NAME]*
 	'}'
 ;
 
@@ -1294,7 +1294,7 @@ WorkflowStep:
 		(
 			('view' view = AbstractViewGUIElementRef) &
 			(gotos += WorkflowGoToDefinition)* &
-			('message' message = STRING)?
+			('message' message = SimpleExpression)?
 		) |
 		'subworkflow' subworkflow = [Workflow]  // TODO consider to remove!!
 	)
@@ -1379,10 +1379,7 @@ ConditionalExpression:
 ;
 
 ComplexConditionalExpression returns ConditionalExpression:
-	=>AbstractViewGUIElementRef (
-		{GuiElementStateExpression.reference=current} 'is' isState = ViewElementState |
-		{CompareExpression.eqLeft=current} op = Operator eqRight = SimpleExpression
-	) |
+	=>(AbstractViewGUIElementRef 'is') {GuiElementStateExpression.reference=current} isState = ViewElementState |
 	SimpleExpression {CompareExpression.eqLeft=current} op = Operator eqRight = SimpleExpression
 ;
 
