@@ -129,7 +129,7 @@ class MD2Preprocessor {
 		
 		createStartUpActionAndRegisterAsOnInitializedEvent(factory, workingInput) // new
 		
-		createInitialGotoViewAction(factory, workingInput) // new
+		createInitialGotoViewOrSetWorkflowAction(factory, workingInput) // new
 		
 		transformEventBindingAndUnbindingTasksToOneToOneRelations(factory, workingInput) // new
 		

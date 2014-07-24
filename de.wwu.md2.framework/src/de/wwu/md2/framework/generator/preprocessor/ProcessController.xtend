@@ -2,7 +2,9 @@ package de.wwu.md2.framework.generator.preprocessor
 
 import de.wwu.md2.framework.mD2.CombinedAction
 import de.wwu.md2.framework.mD2.ContainsCodeFragments
+import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.Controller
+import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.CustomizedValidatorType
 import de.wwu.md2.framework.mD2.DateRangeValidator
 import de.wwu.md2.framework.mD2.DateTimeRangeValidator
@@ -23,7 +25,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil
 
 import static extension de.wwu.md2.framework.generator.preprocessor.util.Util.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
-import de.wwu.md2.framework.mD2.ContentProviderimport de.wwu.md2.framework.mD2.CustomAction
 
 class ProcessController {
 	
@@ -129,8 +130,9 @@ class ProcessController {
 	
 	/**
 	 * Create initial GotoViewAction in <i>__startupAction</i> to load the first view. The start-up action goes to
-	 * the view that is defined in the controller's main block. If no startView is specified, no GotoViewAction will be
-	 * created.
+	 * the view that is defined in the controller's main block. If no startView is specified, a SetWorkflow action
+	 * for the startWorkflow is created instead and added to the <i>__startupAction</i> action. Beware that the
+	 * SetWorkflowAction is replaced in the workflow processing again as it is no core MD2 element.
 	 * 
 	 * <p>
 	 *   DEPENDENCIES:
@@ -142,7 +144,7 @@ class ProcessController {
 	 *   </li>
 	 * </ul>
 	 */
-	def static void createInitialGotoViewAction(MD2Factory factory, ResourceSet workingInput) {
+	def static void createInitialGotoViewOrSetWorkflowAction(MD2Factory factory, ResourceSet workingInput) {
 		
 		val main = workingInput.resources.map[ r | 
 			r.allContents.toIterable.filter(typeof(Main))
@@ -151,9 +153,9 @@ class ProcessController {
 		val startupAction = workingInput.resources.map[ r |
 			r.allContents.toIterable.filter(typeof(CustomAction))
 				.filter( action | action.name.equals(ProcessController::startupActionName))
-		].flatten.last
+		].flatten.head
 		
-		// create GotoViewAction and add it to startupAction
+		// if startView set: create GotoViewAction and add it to startupAction
 		if (main?.startView != null) {
 			val callTask = factory.createCallTask
 			val simpleActionRef = factory.createSimpleActionRef
@@ -161,6 +163,17 @@ class ProcessController {
 			callTask.setAction(simpleActionRef)
 			simpleActionRef.setAction(gotoViewAction)
 			gotoViewAction.setView(main.startView)
+			startupAction.codeFragments.add(0, callTask);
+		}
+		
+		// else if startWorkflow set: create SetWorkflowAction and add it to startupAction
+		else if (main?.startWorkflow != null) {
+			val callTask = factory.createCallTask
+			val simpleActionRef = factory.createSimpleActionRef
+			val setWorkflowAction = factory.createSetWorkflowAction
+			callTask.setAction(simpleActionRef)
+			simpleActionRef.setAction(setWorkflowAction)
+			setWorkflowAction.setWorkflow(main.startWorkflow)
 			startupAction.codeFragments.add(0, callTask);
 		}
 	}
