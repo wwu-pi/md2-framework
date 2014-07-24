@@ -1,6 +1,7 @@
 package de.wwu.md2.framework.generator.preprocessor
 
 import de.wwu.md2.framework.generator.preprocessor.util.MD2ComplexElementFactory
+import de.wwu.md2.framework.mD2.ActionDef
 import de.wwu.md2.framework.mD2.AttributeSetTask
 import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.ConditionalEventRef
@@ -23,6 +24,7 @@ import de.wwu.md2.framework.mD2.LocationProviderReference
 import de.wwu.md2.framework.mD2.MD2Factory
 import de.wwu.md2.framework.mD2.Model
 import de.wwu.md2.framework.mD2.Operator
+import de.wwu.md2.framework.mD2.SetWorkflowAction
 import de.wwu.md2.framework.mD2.View
 import de.wwu.md2.framework.mD2.ViewElementEventRef
 import de.wwu.md2.framework.mD2.ViewGUIElement
@@ -74,6 +76,11 @@ class ProcessWorkflow {
 		val eventActionMap = createWorkflowActionTriggerActions(factory, workingInput, controllerStateEntity, controllerStateCP, workflowAction)
 		
 		registerWorkflowActionTriggerActionsOnStartup(factory, workingInput, eventActionMap)
+		
+		// Transform all SimpleActions for the workflow control
+		transformSetWorkflowActionToCustomActionCall(factory, workingInput, controllerStateEntity, controllerStateCP, workflowExecuteStepAction)
+		
+		// Remove actual workflow after everything has been transformed
 		removeWorkflows(factory, workingInput)
 	}
 	
@@ -395,7 +402,7 @@ class ProcessWorkflow {
 				// add a final elseif that catches the event if none of the other conditions was satisfied
 				// ... elseif (lastEventFired equals "evt1" or lastEventFired equals "evt2" or ... or lastEventFired equals "evtX")
 				// for all events of the defined gotos
-				if (gotos.size > 0 && !step.message.nullOrEmpty) {
+				if (gotos.size > 0 && step.message != null) {
 					val events = gotos.map[ g |
 						g.spec.events.map(e | e.stringRepresentationOfEvent)
 					].flatten.toSet
@@ -409,6 +416,17 @@ class ProcessWorkflow {
 					val ifCodeBlock = factory.createIfCodeBlock
 					ifCodeBlock.setCondition(condition)
 					innerConditionalCodeFragment.elseifs.add(ifCodeBlock)
+					
+					// Create DisplayMessageAction and add it to the elseif block
+					{
+						val callTask = factory.createCallTask
+						val actionDef = factory.createSimpleActionRef
+						val displayMessageAction = factory.createDisplayMessageAction
+						displayMessageAction.setMessage(step.message)
+						actionDef.setAction(displayMessageAction)
+						callTask.setAction(actionDef)
+						ifCodeBlock.codeFragments.add(callTask)
+					}
 				}
 			]
 		]
@@ -559,7 +577,9 @@ class ProcessWorkflow {
 		controller.controllerElements.add(customAction)
 		
 		val conditionalCodeFragment = factory.createConditionalCodeFragment
-		customAction.codeFragments.add(conditionalCodeFragment)
+		if (!workflowSteps.empty) {
+			customAction.codeFragments.add(conditionalCodeFragment)
+		}
 		
 		workflowSteps.forEach[ step, index |
 			val stepStr = step.stringRepresentationOfStep
@@ -595,9 +615,9 @@ class ProcessWorkflow {
 			r.allContents.toIterable.filter(typeof(Workflow))
 		].flatten
 		
-//		while (!workflows.empty) {
-//			workflows.last.remove
-//		}
+		while (!workflows.empty) {
+			workflows.last.remove
+		}
 	}
 	
 	
@@ -605,22 +625,103 @@ class ProcessWorkflow {
 	// Workflow Actions
 	////////////////////////////////////////////////
 	
-	def static void transformNextStepActionToCustomActionCall(MD2Factory factory, ResourceSet workingInput) {
+	/**
+	 * Replace the SetWorkflowAction with a CustomAction action that sets the current workflow step in the
+	 * <code>__workflowControllerStateProvider</code> to the first step of the specified workflow and then executes
+	 * the <code>__workflowExecuteStepAction</code> to go to the actual view.
+	 * 
+	 * First custom actions that set and go to the respective workflow are created for all SetWorkflowActions, then
+	 * in a second step all SetWorkflowActions are replaced with the newly created custom actions.
+	 */
+	def private static transformSetWorkflowActionToCustomActionCall(
+		MD2ComplexElementFactory factory, ResourceSet workingInput, Entity entity, ContentProvider contentProvider,
+		CustomAction workflowExecuteStepAction
+	) {
+		
+		// get random controller element to place the action in
+		val controller = workingInput.resources.map[ r |
+			r.allContents.toIterable.filter(typeof(Controller))
+		].flatten.last
+		
+		// get all SetWorkflowActions
+		val setWorkflowActions = workingInput.resources.map[ r |
+			r.allContents.toIterable.filter(typeof(SetWorkflowAction))
+		].flatten
+		
+		// remember all SetWorkflow###Actions that are already created, so that for each workflow only one such
+		// action is created
+		val createdSetWorkflowActions = newHashMap
+		
+		// Step 1:
+		// Create custom actions for all SetWorkflowActions that set the new workflow step in the
+		// content provider and then call the __workflowExecuteStepAction.
+		setWorkflowActions.forEach[ setWorkflowAction |
+			
+			val workflow = setWorkflowAction.workflow
+			
+			if (!createdSetWorkflowActions.containsKey(workflow)) {
+				
+				val customAction = factory.createCustomAction
+				customAction.setName("__workflowSetWorkflow" + workflow.name.toFirstUpper + "Action")
+				controller.controllerElements.add(customAction)
+				createdSetWorkflowActions.put(workflow, customAction)
+				
+				// create attribute set task
+				{
+					val stringVal = factory.createStringVal
+					val targetStep = workflow.workflowSteps.head.stringRepresentationOfStep
+					stringVal.setValue(targetStep)
+					
+					val attributeSetTask = factory.createAttributeSetTask
+					val attribute = entity.attributes.findFirst[ a | a.name.equals("currentWorkflowStep")]
+					val targetPathDefinition = factory.createComplexContentProviderPathDefinition(contentProvider, attribute)
+					attributeSetTask.setPathDefinition(targetPathDefinition)
+					
+					attributeSetTask.setSource(stringVal)
+					
+					customAction.codeFragments.add(attributeSetTask)
+				}
+				
+				// create call task for the __workflowExecuteStepAction (that changes the actual view)
+				{
+					val callTask = factory.createCallTask
+					val actionDef = factory.createActionReference
+					actionDef.setActionRef(workflowExecuteStepAction)
+					callTask.setAction(actionDef)
+					customAction.codeFragments.add(callTask)
+				}
+			}
+		]
+		
+		// Step2:
+		// Replace all SetWorkflowActions with the newly created custom actions.
+		setWorkflowActions.forEach[ setWorkflowAction |
+			
+			val workflow = setWorkflowAction.workflow
+			val containingActionDef = setWorkflowAction.eContainer as ActionDef
+			
+			// build the SimpleActionRef that contains the cross-reference to the actual custom action
+			val actionRef = factory.createActionReference
+			val customAction = createdSetWorkflowActions.get(workflow)
+			actionRef.setActionRef(customAction)
+			
+			containingActionDef.replace(actionRef)
+		]
 		
 	}
 	
-	def static void transformPreviousStepActionToCustomActionCall(MD2Factory factory, ResourceSet workingInput) {
+	def private static transformNextStepActionToCustomActionCall(MD2Factory factory, ResourceSet workingInput) {
 		
 	}
 	
-	def static void transformGotoStepActionToCustomActionCall(MD2Factory factory, ResourceSet workingInput) {
+	def private static transformPreviousStepActionToCustomActionCall(MD2Factory factory, ResourceSet workingInput) {
 		
 	}
 	
-	def static void transformSetWorkflowActionToCustomActionCall(MD2Factory factory, ResourceSet workingInput) {
+	def private static transformGotoStepActionToCustomActionCall(MD2Factory factory, ResourceSet workingInput) {
 		
 	}
-	
+		
 	
 	////////////////////////////////////////////////
 	// Helper methods
