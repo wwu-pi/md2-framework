@@ -29,6 +29,7 @@ import org.eclipse.xtext.xbase.lib.Pair
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
+import de.wwu.md2.framework.mD2.ContainerElement
 
 class ManifestJson {
 	
@@ -77,7 +78,7 @@ class ManifestJson {
 									"h": "400",
 									"w": "550"
 								},
-								«getViewElement(view)»
+								«getViewElement(view, processedInput)»
 							}
 						}
 					«ENDFOR»
@@ -210,7 +211,7 @@ class ManifestJson {
 	 * Container Elements
 	 ***************************************************************/
 	
-	def private static dispatch String getViewElement(GridLayoutPane gridLayout) '''
+	def private static dispatch String getViewElement(GridLayoutPane gridLayout, ResourceSet processedInput) '''
 		"type": "md2gridpanel",
 		"cols": "«gridLayout.params.filter(typeof(GridLayoutPaneColumnsParam)).head.value»",
 		"valueClass": "layoutCell",
@@ -218,17 +219,26 @@ class ManifestJson {
 		"children": [
 			«FOR element : gridLayout.elements.filter(typeof(ViewGUIElement)) SEPARATOR ","»
 				{
-					«getViewElement(element)»
+					«getViewElement(element, processedInput)»
 				}
 			«ENDFOR»
 		]
 	'''
 	
-	def private static dispatch String getViewElement(TabbedAlternativesPane tabbedPane) '''
-		// TODO
+	def private static dispatch String getViewElement(TabbedAlternativesPane tabbedPane, ResourceSet processedInput) '''
+		"type": "tabpanel",
+		«generateStyle(null, "width" -> '''100%''')»,
+		"children": [
+			«FOR element : tabbedPane.elements.filter(typeof(ContainerElement)) SEPARATOR ","»
+				{
+					"title": "«element.tabName»",
+					«getViewElement(element, processedInput)»
+				}
+			«ENDFOR»
+		]
 	'''
 	
-	def private static dispatch String getViewElement(AlternativesPane alternativesPane) '''
+	def private static dispatch String getViewElement(AlternativesPane alternativesPane, ResourceSet processedInput) '''
 		// TODO
 	'''
 	
@@ -237,23 +247,27 @@ class ManifestJson {
 	 * Content Elements => Various
 	 ***************************************************************/
 	 
-	 def private static dispatch String getViewElement(Image image) '''
-		// TODO
+	 def private static dispatch String getViewElement(Image image, ResourceSet processedInput) '''
+		"type": "simpleimage",
+		"src": "md2_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]»:./resources/«image.src»",
+		«IF image.imgWidth > 0»"imgW": «image.imgWidth»,«ENDIF»
+		«IF image.imgHeight > 0»"imgH": «image.imgHeight»,«ENDIF»
+		«generateStyle(null, "width" -> '''«image.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(Spacer spacer) '''
+	def private static dispatch String getViewElement(Spacer spacer, ResourceSet processedInput) '''
 		"type": "spacer",
 		«generateStyle(null, "width" -> '''«spacer.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(Button button) '''
+	def private static dispatch String getViewElement(Button button, ResourceSet processedInput) '''
 		"type": "button",
 		"title": "«button.text.escape»",
 		"field": "«getName(button)»",
 		«generateStyle(button.style, "width" -> '''«button.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(Label label) '''
+	def private static dispatch String getViewElement(Label label, ResourceSet processedInput) '''
 		"type": "textoutput",
 		"datatype": "string",
 		"field": "«getName(label)»",
@@ -261,8 +275,12 @@ class ManifestJson {
 		«generateStyle(label.style, "width" -> '''«label.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(Tooltip tooltip) '''
-		// TODO
+	def private static dispatch String getViewElement(Tooltip tooltip, ResourceSet processedInput) '''
+		"type": "tooltipicon",
+		"datatype": "string",
+		"field": "«getName(tooltip)»",
+		"defaultText": "«tooltip.text.escape»",
+		«generateStyle(null, "width" -> '''«tooltip.width»%''')»
 	'''
 	
 	
@@ -270,59 +288,62 @@ class ManifestJson {
 	 * Content Elements => Input
 	 ***************************************************************/
 	
-	def private static dispatch String getViewElement(BooleanInput input) '''
+	def private static dispatch String getViewElement(BooleanInput input, ResourceSet processedInput) '''
 		"type": "checkbox",
 		"datatype": "boolean",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(TextInput input) '''
+	def private static dispatch String getViewElement(TextInput input, ResourceSet processedInput) '''
 		"type": "textbox",
 		"datatype": "string",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(IntegerInput input) '''
+	def private static dispatch String getViewElement(IntegerInput input, ResourceSet processedInput) '''
 		"type": "numberspinner",
 		"datatype": "integer",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(NumberInput input) '''
+	def private static dispatch String getViewElement(NumberInput input, ResourceSet processedInput) '''
 		"type": "numbertextbox",
 		"datatype": "float",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(DateInput input) '''
+	def private static dispatch String getViewElement(DateInput input, ResourceSet processedInput) '''
 		"type": "datetextbox",
 		"datatype": "date",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(TimeInput input) '''
+	def private static dispatch String getViewElement(TimeInput input, ResourceSet processedInput) '''
 		"type": "timetextbox",
 		"datatype": "time",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(DateTimeInput input) '''
-		// TODO
+	def private static dispatch String getViewElement(DateTimeInput input, ResourceSet processedInput) '''
+		"type": "datetimebox",
+		"datatype": "datetime",
+		"field": "«getName(input)»",
+		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(OptionInput input) '''
+	def private static dispatch String getViewElement(OptionInput input, ResourceSet processedInput) '''
 		"type": "selectbox",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(EntitySelector input) '''
+	def private static dispatch String getViewElement(EntitySelector input, ResourceSet processedInput) '''
 		// TODO
 	'''
 	

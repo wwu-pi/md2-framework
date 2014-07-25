@@ -398,7 +398,7 @@ class ProcessView {
 		// If the parent of the container element is the View itself or a Tab-/AlternativesPane, set the width to 100%
 		for (containerElement : containerElements) {
 			// two times .eContainer, because we have to navigate out of the wrapping ContainerElementType
-			if(containerElement.eContainer instanceof View || containerElement.eContainer.eContainer instanceof SubViewContainer) {
+			if(containerElement.eContainer instanceof View || containerElement.eContainer instanceof SubViewContainer) {
 				var widthParam = switch(containerElement) {
 					GridLayoutPane: containerElement.params.filter(typeof(WidthParam)).last
 					AlternativesPane: containerElement.params.filter(typeof(WidthParam)).last

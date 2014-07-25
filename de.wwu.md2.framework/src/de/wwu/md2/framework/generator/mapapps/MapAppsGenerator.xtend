@@ -49,6 +49,9 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		// Clean current project folder
 		fsa.deleteDirectory(basePackageName)
 		
+		// Copy resources
+		fsa.copyFileFromProject("resources/images", basePackageName + "/resources")
+		
 		// Generate common base elements
 //		fsa.generateFile(basePackageName + "/app.json", generateAppJson(dataContainer, requiredBundles))
 		fsa.generateFile(basePackageName + "/manifest.json", generateManifestJson(dataContainer, processedInput))
