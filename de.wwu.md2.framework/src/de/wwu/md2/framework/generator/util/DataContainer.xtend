@@ -14,11 +14,10 @@ import de.wwu.md2.framework.mD2.RemoteValidator
 import de.wwu.md2.framework.mD2.View
 import java.util.Collection
 import java.util.Set
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
-import de.wwu.md2.framework.mD2.CallTask
-import org.eclipse.emf.ecore.EObject
 
 /**
  * DataContainer to store data that are used throughout the generation process.

@@ -227,7 +227,9 @@ class ManifestJson {
 	
 	def private static dispatch String getViewElement(TabbedAlternativesPane tabbedPane, ResourceSet processedInput) '''
 		"type": "tabpanel",
+		"valueClass": "layoutCell",
 		«generateStyle(null, "width" -> '''100%''')»,
+		"subViewName": "«getName(tabbedPane)»",
 		"children": [
 			«FOR element : tabbedPane.elements.filter(typeof(ContainerElement)) SEPARATOR ","»
 				{
@@ -239,7 +241,17 @@ class ManifestJson {
 	'''
 	
 	def private static dispatch String getViewElement(AlternativesPane alternativesPane, ResourceSet processedInput) '''
-		// TODO
+		"type": "stackcontainer",
+		"valueClass": "layoutCell",
+		«generateStyle(null, "width" -> '''«alternativesPane.params.filter(typeof(WidthParam)).head.width»%''')»,
+		"subViewName": "«getName(alternativesPane)»",
+		"children": [
+			«FOR element : alternativesPane.elements.filter(typeof(ContainerElement)) SEPARATOR ","»
+				{
+					«getViewElement(element, processedInput)»
+				}
+			«ENDFOR»
+		]
 	'''
 	
 	
@@ -247,7 +259,7 @@ class ManifestJson {
 	 * Content Elements => Various
 	 ***************************************************************/
 	 
-	 def private static dispatch String getViewElement(Image image, ResourceSet processedInput) '''
+	def private static dispatch String getViewElement(Image image, ResourceSet processedInput) '''
 		"type": "simpleimage",
 		"src": "md2_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]»:./resources/«image.src»",
 		«IF image.imgWidth > 0»"imgW": «image.imgWidth»,«ENDIF»
