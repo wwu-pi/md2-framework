@@ -123,11 +123,12 @@ function(declare, lang, array, string, topic, _Type, Hash, json) {
          */
         setContent: function(content) {
             content = lang.isArray(content) ? content : [content];
+            var entityFactory = this._store.entityFactory.create();
             var clonedContent = [];
             
             // recursively clone entity
             array.forEach(content, function(entity) {
-                var newEntity = entity.clone();
+                var newEntity = entity ? entity.clone() : entityFactory;
                 clonedContent.push(newEntity);
             });
             
@@ -270,7 +271,7 @@ function(declare, lang, array, string, topic, _Type, Hash, json) {
                     // last path segment
                     var oldVal = value ? value.get(pathSegment) : value;
                     if (newValue && !newValue.equals(oldVal)) {
-                        value.set(pathSegment, newValue);
+                        value.set(pathSegment, newValue.clone());
                         this._fireAllOnChanges(attribute);
                     }
                 }

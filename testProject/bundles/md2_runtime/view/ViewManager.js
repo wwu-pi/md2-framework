@@ -3,10 +3,11 @@ define([
     "dojo/_base/array",
     "dojo/dom-construct",
     "dojo/dom-geometry",
+    "ct/_lang",
     "ct/Hash",
     "./WidgetWrapper"
 ],
-function(declare, array, domConstruct, domGeometry, Hash, WidgetWrapper) {
+function(declare, array, domConstruct, domGeometry, ct_lang, Hash, WidgetWrapper) {
     
     return declare([], {
         
@@ -26,7 +27,16 @@ function(declare, array, domConstruct, domGeometry, Hash, WidgetWrapper) {
         
         _currentView: null,
         
+        _currentSubViews: null,
+        
         _lastDisplayedViewName: null,
+        
+        /**
+         * Hash that represents the view hierarchy. E.g., if a view in a tab is showed, the
+         * parental view that shows the actual tab-pane has to be displayed as well.
+         * Hash: view->parentView
+         */
+        _subviewHierarchy: null,
         
         constructor: function(widgetRegistry, dataFormService, dataMapper, typeFactory, mainWidget, appId) {
             this._widgetRegistry = widgetRegistry;
@@ -36,9 +46,32 @@ function(declare, array, domConstruct, domGeometry, Hash, WidgetWrapper) {
             this._mainWidget = mainWidget;
             this._appId = appId;
             this._dataFormDescriptions = new Hash();
+            this._subviewHierarchy = new Hash();
         },
         
+        /**
+         * Recursively displays the view with the given name and all its parental views.
+         * @param {string} viewName
+         */
         goto: function(viewName) {
+            var parentView = this._subviewHierarchy.get(viewName);
+            
+            if (parentView) {
+                this.goto(parentView);
+                var parentViewOrNull = this._currentSubViews.get(parentView);
+                var parentView = parentViewOrNull ? parentViewOrNull : this._currentView;
+                parentView.widget.selectChild(this._currentSubViews.get(viewName));
+            } else {
+                this._showMainView(viewName);
+            }
+            
+        },
+        
+        _showMainView: function(viewName) {
+            // check whether view is already displayed
+            if (this._currentView && this._lastDisplayedViewName === viewName) {
+                return;
+            }
             
             this.destroyCurrentView();
             
@@ -91,6 +124,7 @@ function(declare, array, domConstruct, domGeometry, Hash, WidgetWrapper) {
          */
         setupView: function(viewName, dataFormDescription) {
             this._dataFormDescriptions.set(viewName, dataFormDescription);
+            this._currentParentView = viewName;
             this._registerAllFormControls(dataFormDescription);
         },
         
@@ -103,6 +137,7 @@ function(declare, array, domConstruct, domGeometry, Hash, WidgetWrapper) {
             
             // create data form for current view
             var dataFormWidget = dataFormService.createDataForm(dataFormDescription);
+            this._currentSubViews = null;
             this._setAllFormControls(dataFormWidget.bodyControl);
             this._currentView = dataFormWidget;
             
@@ -124,6 +159,7 @@ function(declare, array, domConstruct, domGeometry, Hash, WidgetWrapper) {
          * @param {FormControl} dataFormDescription
          */
         _registerAllFormControls: function(dataFormDescription) {
+            
             // register all formControls in widgetRegistry
             array.forEach(dataFormDescription.children, function(child) {
                 var id = child.field;
@@ -134,10 +170,27 @@ function(declare, array, domConstruct, domGeometry, Hash, WidgetWrapper) {
                 var widgetWrapper = new WidgetWrapper(id, datatype, defaultValue, typeFactory, appId);
                 this._widgetRegistry.add(widgetWrapper);
                 
+                this._addSubViewToHierarchyHash(child);
+                
                 if (child.children) {
                     this._registerAllFormControls(child);
                 }
             }, this);
+        },
+        
+        /**
+         * If the current dataFormDescription is a sub view (i.e., a tabbed or an alternatives pane),
+         * add it to the hierarchy hash.
+         * 
+         * @param {type} widgetDescription
+         */
+        _addSubViewToHierarchyHash: function(widgetDescription) {
+            var subViewName = widgetDescription.subViewName;
+            if (!subViewName) {
+                return;
+            }
+            this._subviewHierarchy.set(subViewName, this._currentParentView);
+            this._currentParentView = subViewName;
         },
         
         /**
@@ -169,6 +222,11 @@ function(declare, array, domConstruct, domGeometry, Hash, WidgetWrapper) {
                 var id = child.field;
                 var widgetWrapper = this._widgetRegistry.getWidget(id);
                 widgetWrapper && widgetWrapper.setWidget(child);
+                
+                this._currentSubViews = ct_lang.chk(this._currentSubViews, new Hash());
+                if (child.subViewName) {
+                    this._currentSubViews.set(child.subViewName, child);
+                }
                 
                 if (child.children) {
                     this._setAllFormControls(child);

@@ -3,26 +3,41 @@ define([
     "dojo/_base/declare",
     "dojo/dom-construct",
     "bundles/base/dataform/controls/_Control",
-    "dijit/_WidgetBase"
+    "dijit/_WidgetBase",
+    "dijit/Tooltip"
 ],
-function (d_lang, declare, d_domconstruct, _Control, _WidgetBase) {
-    /**
-     * @fileOverview This is a widget for displaying data of type string.
-     */
-    var TextOutput = declare([_WidgetBase], {
-        _setLabelAttr: function(value) {
-            var domNode = this.domNode;
-            domNode.innerHTML = value || "";
+function (d_lang, declare, d_domconstruct, _Control, _WidgetBase, Tooltip) {
+    
+    var TooltipIcon = declare([_WidgetBase], {
+        
+        _setValueAttr: function(value) {
+            this.labelValue = value || "";
+            if(this.tooltip) {
+                this.tooltip.label = this.labelValue;
+            }
         },
+        
         buildRendering: function () {
-            this.domNode = d_domconstruct.create("span");
+            var inner = d_domconstruct.create("div", {class: "icon-info"});
+            var outer = d_domconstruct.create("div", {class: "md2-tooltipicon"});
+            d_domconstruct.place(inner, outer);
+            this.domNode = outer;
+        },
+        
+        postCreate: function() {
+            this.tooltip = new Tooltip({
+                connectId: [this.domNode],
+                label: this.labelValue
+            });
         }
     });
     
-    var TextOutputControl = declare([_Control], {
-        controlClass: "textoutput",
+    var TooltipControl = declare([_Control], {
+        
+        controlClass: "tooltipicon",
+        
         createWidget: function(params) {
-            return new TextOutput(d_lang.mixin(params, {
+            return new TooltipIcon(d_lang.mixin(params, {
                 label: this.value || this.title || "",
                 value: this.defaultText
             }));
@@ -50,15 +65,9 @@ function (d_lang, declare, d_domconstruct, _Control, _WidgetBase) {
     
     return declare([], /** @lends dataform.controls.FormControlFactory.prototype */{
         
-        controls: {
-            "textOutput": TextOutput/*,
-            "decoratedInputLayout": DecoratedInputLayout,
-            "tooltip": Tooltip,
-            "spacer": Spacer,
-            "dateTimeTextBox": DateTimeTextBox*/
-        },
         createFormControl: function(widgetParams) {
-            return new TextOutputControl(widgetParams);
+            return new TooltipControl(widgetParams);
         }
+        
     });
 });

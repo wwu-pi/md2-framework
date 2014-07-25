@@ -1,5 +1,9 @@
 define([
     "./TextOutputFactory",
     "./SpacerFactory",
-    "./GridPanel"
+    "./TooltipFactory",
+    "./DateTimeBoxFactory",
+    "./ImageFactory",
+    "./GridPanelFactory",
+    "./StackContainerFactory"
 ], {});

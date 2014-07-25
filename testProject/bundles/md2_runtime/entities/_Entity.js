@@ -80,8 +80,8 @@ define([
         
         clone: function() {
             var newEntity = this.create();
-            ct_lang.forEachOwnProp(this._attributes, function(value, name){
-                newEntity._attributes[name] = value.clone();
+            ct_lang.forEachOwnProp(this._attributes, function(value, name) {
+                newEntity._attributes[name] = value ? value.clone() : value;
             });
             return newEntity;
         },
@@ -91,7 +91,7 @@ define([
          */
         toString: function() {
             var attr = [];
-            ct_lang.forEachOwnProp(this._attributes, function(value, name){
+            ct_lang.forEachOwnProp(this._attributes, function(value, name) {
                 attr.push(name + ": " + value);
             });
             return "[" + attr.join(", ") + "]";
@@ -108,7 +108,7 @@ define([
             }
             
             var isEntityEqual = true;
-            ct_lang.forEachOwnProp(this._attributes, function(thisValue, name){
+            ct_lang.forEachOwnProp(this._attributes, function(thisValue, name) {
                 var isAttrEqual = !value[name] && value[name] === thisValue[name]
                                   || thisValue[name].equals(value[name]);
                 isEntityEqual = isEntityEqual && isAttrEqual;
