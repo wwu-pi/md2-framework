@@ -10,13 +10,13 @@ function(declare, _Action) {
 		
 		execute: function() {
 			
-			var validator02n = this.$.validatorFactory.getNotNullValidator("Email field must not be empty!");
-			var widget02o = this.$.widgetRegistry.getWidget("email");
-			widget02o.addValidator(validator02n);
+			var validator04p = this.$.validatorFactory.getNotNullValidator("Email field must not be empty!");
+			var widget04q = this.$.widgetRegistry.getWidget("email");
+			widget04q.addValidator(validator04p);
 			
-			var validator02p = this.$.validatorFactory.getRegExValidator(".+@.+", "Have you ever seen an email address without @?");
-			var widget02q = this.$.widgetRegistry.getWidget("email");
-			widget02q.addValidator(validator02p);
+			var validator04r = this.$.validatorFactory.getRegExValidator(".+@.+", "Have you ever seen an email address without @?");
+			var widget04s = this.$.widgetRegistry.getWidget("email");
+			widget04s.addValidator(validator04r);
 			
 		}
 		

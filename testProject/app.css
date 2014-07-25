@@ -2,12 +2,30 @@
    all widget specific styles are to be found in the according bundle styles
 */
 
-/* TODO move to bundle md2_testwidget */
+/* TODO move to bundle md2_runtime */
 
 .md2-wf-navbar {
     border-top: 1px solid;
     padding-top: 10px;
     text-align: right;
+}
+
+.md2-tooltipicon {
+    position: relative;
+    top: 3px;
+    height: 15px;
+    width: 15px;
+    padding: 2px;
+    background:#3c3c3c;
+    color: #fff;
+    margin-left:5px;
+    font-size: 1.3em;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+}
+
+.md2-tooltipicon div {
+    margin: 1px 0 1px 4px;
 }
 
 .md2-spinner-overlay {

@@ -10,33 +10,33 @@ function(declare, _Action) {
 		
 		execute: function() {
 			
-			var messageExpression03f = function() {
+			var messageExpression04x = function() {
 				return this.$.create("string", "Hurray ... This is an MD2 message!").toString();
 			};
-			var action03e = this.$.actionFactory.getDisplayMessageAction("eced5417eaa969793b313a1d9347b31d", messageExpression03f);
-			action03e.execute();
+			var action04w = this.$.actionFactory.getDisplayMessageAction("eced5417eaa969793b313a1d9347b31d", messageExpression04x);
+			action04w.execute();
 			
-			var messageExpression03h = function() {
+			var messageExpression04z = function() {
 				return this.$.create("string", this.$.create("string", this.$.create("string", "And now a message with an expression.").toString()
 				.concat(this.$.create("string", " 4 + 4 = "))
 				).toString()
 				.concat(this.$.create("float", (this.$.create("integer", 4).getPlatformValue() + this.$.create("integer", 4).getPlatformValue())))
 				).toString();
 			};
-			var action03g = this.$.actionFactory.getDisplayMessageAction("27f58e6e0e54c53bfdb33e25109d5b4e", messageExpression03h);
-			action03g.execute();
+			var action04y = this.$.actionFactory.getDisplayMessageAction("27f58e6e0e54c53bfdb33e25109d5b4e", messageExpression04z);
+			action04y.execute();
 			
-			var messageExpression03j = function() {
+			var messageExpression051 = function() {
 				return this.$.create("boolean", true).toString();
 			};
-			var action03i = this.$.actionFactory.getDisplayMessageAction("d3da3c486b89dad5f81b4c12697c5dac", messageExpression03j);
-			action03i.execute();
+			var action050 = this.$.actionFactory.getDisplayMessageAction("d3da3c486b89dad5f81b4c12697c5dac", messageExpression051);
+			action050.execute();
 			
-			var action03k = this.$.actionFactory.getDisableAction("lastName");
-			action03k.execute();
+			var action052 = this.$.actionFactory.getDisableAction("lastName");
+			action052.execute();
 			
-			var action03l = this.$.actionFactory.getEnableAction("firstName");
-			action03l.execute();
+			var action053 = this.$.actionFactory.getEnableAction("firstName");
+			action053.execute();
 			
 		}
 		

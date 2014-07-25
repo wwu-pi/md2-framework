@@ -1,0 +1,269 @@
+{
+	"Bundle-SymbolicName": "md2_tabTest",
+	"Bundle-Version": "1.0",
+	"Bundle-Name": "tabTest",
+	"Bundle-Description": "Generated MD2 bundle: tabTest",
+	"Bundle-Localization": [],
+	"Bundle-Main": "",
+	"Require-Bundle": [],
+	"Components": [
+		{
+			"name": "MD2TabTest",
+			"impl": "ct/Stateful",
+			"provides": ["md2.app.tabTest.AppDefinition"],
+			"propertiesConstructor": true,
+			"properties": {
+				"id": "md2_tabTest",
+				"windowTitle": "tabTest",
+				"onInitialized": "__startupAction",
+				"views": [
+					{
+						"name": "tabNo1",
+						"dataForm": {
+							"dataform-version": "1.0.0",
+							"size": {
+								"h": "400",
+								"w": "550"
+							},
+							"type": "md2gridpanel",
+							"cols": "1",
+							"valueClass": "layoutCell",
+							"cellStyle": {
+								"width": "100%"
+							}
+							,
+							"children": [
+								{
+									"type": "textoutput",
+									"datatype": "string",
+									"field": "l",
+									"defaultText": "View 1",
+									"cellStyle": {
+										"width": "100%"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "tabNo2",
+						"dataForm": {
+							"dataform-version": "1.0.0",
+							"size": {
+								"h": "400",
+								"w": "550"
+							},
+							"type": "md2gridpanel",
+							"cols": "2",
+							"valueClass": "layoutCell",
+							"cellStyle": {
+								"width": "100%"
+							}
+							,
+							"children": [
+								{
+									"type": "textoutput",
+									"datatype": "string",
+									"field": "l1",
+									"defaultText": "View 2",
+									"cellStyle": {
+										"width": "50%"
+									}
+								},
+								{
+									"type": "simpleimage",
+									"src": "md2_tabTest:./resources/test.gif",
+									"cellStyle": {
+										"width": "50%"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "tabView",
+						"dataForm": {
+							"dataform-version": "1.0.0",
+							"size": {
+								"h": "400",
+								"w": "550"
+							},
+							"type": "tabpanel",
+							"cellStyle": {
+								"width": "100%"
+							}
+							,
+							"children": [
+								{
+									"title": "TabNo1",
+									"type": "md2gridpanel",
+									"cols": "1",
+									"valueClass": "layoutCell",
+									"cellStyle": {
+										"width": "100%"
+									}
+									,
+									"children": [
+										{
+											"type": "textoutput",
+											"datatype": "string",
+											"field": "l",
+											"defaultText": "View 1",
+											"cellStyle": {
+												"width": "100%"
+											}
+										}
+									]
+								},
+								{
+									"title": "Results",
+									"type": "md2gridpanel",
+									"cols": "2",
+									"valueClass": "layoutCell",
+									"cellStyle": {
+										"width": "100%"
+									}
+									,
+									"children": [
+										{
+											"type": "textoutput",
+											"datatype": "string",
+											"field": "l1",
+											"defaultText": "View 2",
+											"cellStyle": {
+												"width": "50%"
+											}
+										},
+										{
+											"type": "simpleimage",
+											"src": "md2_tabTest:./resources/test.gif",
+											"cellStyle": {
+												"width": "50%"
+											}
+										}
+									]
+								},
+								{
+									"title": "A Third Tab",
+									"type": "md2gridpanel",
+									"cols": "1",
+									"valueClass": "layoutCell",
+									"cellStyle": {
+										"width": "100%"
+									}
+									,
+									"children": [
+										{
+											"type": "textoutput",
+											"datatype": "string",
+											"field": "l2",
+											"defaultText": "View 3",
+											"cellStyle": {
+												"width": "100%"
+											}
+										}
+									]
+								}
+							]
+						}
+					},
+					{
+						"name": "tabNo3",
+						"dataForm": {
+							"dataform-version": "1.0.0",
+							"size": {
+								"h": "400",
+								"w": "550"
+							},
+							"type": "md2gridpanel",
+							"cols": "1",
+							"valueClass": "layoutCell",
+							"cellStyle": {
+								"width": "100%"
+							}
+							,
+							"children": [
+								{
+									"type": "textoutput",
+									"datatype": "string",
+									"field": "l2",
+									"defaultText": "View 3",
+									"cellStyle": {
+										"width": "100%"
+									}
+								}
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			"name": "__startupActionAction",
+			"impl": "./actions/__startupAction",
+			"provides": ["md2.app.tabTest.CustomAction"]
+		},
+		{
+			"name": "StartActionAction",
+			"impl": "./actions/StartAction",
+			"provides": ["md2.app.tabTest.CustomAction"]
+		},
+		{
+			"name": "Controller",
+			"provides": ["md2.app.tabTest.Controller"],
+			"instanceFactory": true,
+			"references": [
+				{
+					"name": "_md2AppWidget",
+					"providing": "md2.runtime.InstanceFactory"
+				},
+				{
+					"name": "_customActions",
+					"providing": "md2.app.tabTest.CustomAction",
+					"cardinality": "0..n"
+				},
+				{
+					"name": "_entities",
+					"providing": "md2.app.tabTest.Entity",
+					"cardinality": "0..n"
+				},
+				{
+					"name": "_contentProviders",
+					"providing": "md2.app.tabTest.ContentProvider",
+					"cardinality": "0..n"
+				},
+				{
+					"name": "_configBean",
+					"providing": "md2.app.tabTest.AppDefinition"
+				},
+                                {
+                                        "name": "_toolsetManager",
+					"providing": "toolset.Toolsetmanager"
+                                }
+			]
+		},
+		{
+			"name": "MD2TabTestTool",
+			"impl": "ct.tools.Tool",
+			"provides": ["ct.tools.Tool"],
+			"propertiesConstructor": true,
+			"properties": {
+				"id": "md2_tabTest_tool",
+                                "title": "tabTest",
+				"description": "Start tabTest",
+				"tooltip": "Start tabTest",
+				"toolRole": "toolset",
+				"iconClass": "icon-view-grid",
+				"togglable": true,
+				"activateHandler": "openWindow",
+				"deactivateHandler": "closeWindow"
+			},
+			"references": [
+				{
+					"name": "handlerScope",
+					"providing": "md2.app.tabTest.Controller"
+				}
+			]
+		}
+	]
+}

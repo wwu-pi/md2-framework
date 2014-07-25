@@ -10,17 +10,17 @@ function(declare, _Action) {
 		
 		execute: function() {
 			
-			var widget023 = this.$.widgetRegistry.getWidget("__firstNameTextInput_5");
-			var action024 = this.$.actionFactory.getCustomAction("__conditionalEvent_evt");
-			this.$.eventRegistry.get("widget/onChange").registerAction(widget023, action024);
+			var widget = this.$.widgetRegistry.getWidget("__firstNameTextInput_2");
+			var action = this.$.actionFactory.getCustomAction("__conditionalEvent_evt");
+			this.$.eventRegistry.get("widget/onChange").registerAction(widget, action);
 			
-			var widget025 = this.$.widgetRegistry.getWidget("__firstNameTextInput_5");
-			var action026 = this.$.actionFactory.getCustomAction("__conditionalEvent_evt");
-			this.$.eventRegistry.get("widget/onChange").registerAction(widget025, action026);
+			var widget00 = this.$.widgetRegistry.getWidget("__firstNameTextInput_2");
+			var action01 = this.$.actionFactory.getCustomAction("__conditionalEvent_evt");
+			this.$.eventRegistry.get("widget/onChange").registerAction(widget00, action01);
 			
-			var widget027 = this.$.widgetRegistry.getWidget("__lastNameTextInput_5");
-			var action028 = this.$.actionFactory.getCustomAction("__conditionalEvent_evt");
-			this.$.eventRegistry.get("widget/onChange").registerAction(widget027, action028);
+			var widget02 = this.$.widgetRegistry.getWidget("__lastNameTextInput_2");
+			var action03 = this.$.actionFactory.getCustomAction("__conditionalEvent_evt");
+			this.$.eventRegistry.get("widget/onChange").registerAction(widget02, action03);
 			
 		}
 		

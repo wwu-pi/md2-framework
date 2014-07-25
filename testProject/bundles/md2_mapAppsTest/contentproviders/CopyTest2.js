@@ -19,9 +19,10 @@ function(declare, ContentProvider) {
 			var properties = this._properties;
 			var entityFactory = typeFactory.getEntityFactory("CopyTest");
 			var store = this._remoteFactory.create(properties.uri, entityFactory);
+			var appId = "md2_mapAppsTest";
 			
 			
-			return new ContentProvider("copyTest2", "md2_mapAppsTest", store, false);
+			return new ContentProvider("copyTest2", appId, store, false);
 		}
 		
 	});

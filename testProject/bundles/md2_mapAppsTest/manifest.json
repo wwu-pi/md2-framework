@@ -13,8 +13,8 @@
 			"provides": ["md2.app.mapAppsTest.AppDefinition"],
 			"propertiesConstructor": true,
 			"properties": {
+				"id": "md2_mapAppsTest",
 				"windowTitle": "map.apps Test",
-                                "id": "md2_mapAppsTest",
 				"onInitialized": "__startupAction",
 				"views": [
 					{
@@ -45,7 +45,7 @@
 										{
 											"type": "textoutput",
 											"datatype": "string",
-											"field": "header",
+											"field": "header1",
 											"defaultText": "Personal Data",
 											"cellStyle": {
 												"width": "100%",
@@ -86,7 +86,10 @@
 													}
 												},
 												{
-													"type": "spacer",
+													"type": "tooltipicon",
+													"datatype": "string",
+													"field": "__TooltipfirstName",
+													"defaultText": "Please enter your first name here. In case you don't know your name, it might help to look it up in your passport.",
 													"cellStyle": {
 														"width": "10%"
 													}
@@ -266,7 +269,7 @@
 										{
 											"type": "textoutput",
 											"datatype": "string",
-											"field": "header1",
+											"field": "header2",
 											"defaultText": "Actions",
 											"cellStyle": {
 												"width": "100%",
@@ -403,7 +406,7 @@
 								{
 									"type": "textoutput",
 									"datatype": "string",
-									"field": "header2",
+									"field": "header",
 									"defaultText": "Calculator",
 									"cellStyle": {
 										"width": "100%",
@@ -418,98 +421,82 @@
 			}
 		},
 		{
-			"name": "__combined_startAction",
-			"impl": "./actions/__combined_startAction",
-			"provides": ["md2.app.mapAppsTest.CustomAction"]
-		},
-		{
-			"name": "SetterTestResetCallback",
-			"impl": "./actions/SetterTestResetCallback",
-			"provides": ["md2.app.mapAppsTest.CustomAction"]
-		},
-		{
-			"name": "SetterTestCallback",
-			"impl": "./actions/SetterTestCallback",
-			"provides": ["md2.app.mapAppsTest.CustomAction"]
-		},
-		{
-			"name": "TestSetter",
-			"impl": "./actions/TestSetter",
-			"provides": ["md2.app.mapAppsTest.CustomAction"]
-		},
-		{
-			"name": "BindValidators",
+			"name": "BindValidatorsAction",
 			"impl": "./actions/BindValidators",
 			"provides": ["md2.app.mapAppsTest.CustomAction"]
 		},
 		{
-			"name": "MakeActionsFancy",
-			"impl": "./actions/MakeActionsFancy",
-			"provides": ["md2.app.mapAppsTest.CustomAction"]
-		},
-		{
-			"name": "TestEvents",
-			"impl": "./actions/TestEvents",
-			"provides": ["md2.app.mapAppsTest.CustomAction"]
-		},
-		{
-			"name": "TestActions",
-			"impl": "./actions/TestActions",
-			"provides": ["md2.app.mapAppsTest.CustomAction"]
-		},
-		{
-			"name": "SetterTest",
-			"impl": "./actions/SetterTest",
-			"provides": ["md2.app.mapAppsTest.CustomAction"]
-		},
-		{
-			"name": "DoMappings",
-			"impl": "./actions/DoMappings",
-			"provides": ["md2.app.mapAppsTest.CustomAction"]
-		},
-		{
-			"name": "__startupAction",
-			"impl": "./actions/__startupAction",
-			"provides": ["md2.app.mapAppsTest.CustomAction"]
-		},
-		{
-			"name": "SetName",
-			"impl": "./actions/SetName",
-			"provides": ["md2.app.mapAppsTest.CustomAction"]
-		},
-		{
-			"name": "ToggleEnabled",
+			"name": "ToggleEnabledAction",
 			"impl": "./actions/ToggleEnabled",
 			"provides": ["md2.app.mapAppsTest.CustomAction"]
 		},
 		{
-			"name": "CopyTest",
-			"impl": "./entities/CopyTest",
-			"provides": ["md2.app.mapAppsTest.Entity"]
+			"name": "TestActionsAction",
+			"impl": "./actions/TestActions",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
 		},
 		{
-			"name": "Person",
+			"name": "SetNameAction",
+			"impl": "./actions/SetName",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "TestSetterAction",
+			"impl": "./actions/TestSetter",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "__combined_startActionAction",
+			"impl": "./actions/__combined_startAction",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "SetterTestCallbackAction",
+			"impl": "./actions/SetterTestCallback",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "MakeActionsFancyAction",
+			"impl": "./actions/MakeActionsFancy",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "SetterTestAction",
+			"impl": "./actions/SetterTest",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "__startupActionAction",
+			"impl": "./actions/__startupAction",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "DoMappingsAction",
+			"impl": "./actions/DoMappings",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "TestEventsAction",
+			"impl": "./actions/TestEvents",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "SetterTestResetCallbackAction",
+			"impl": "./actions/SetterTestResetCallback",
+			"provides": ["md2.app.mapAppsTest.CustomAction"]
+		},
+		{
+			"name": "PersonEntity",
 			"impl": "./entities/Person",
 			"provides": ["md2.app.mapAppsTest.Entity"]
 		},
 		{
-			"name": "CopyTest1",
-			"impl": "./contentproviders/CopyTest1",
-			"provides": ["md2.app.mapAppsTest.ContentProvider"],
-			"propertiesConstructor": true,
-			"properties": {
-				"uri": "http://localhost:8080/mapAppsTest.backend/service/"
-			},
-			"references": [
-				{
-					"name": "_remoteFactory",
-					"providing": "md2.store.RemoteStore",
-					"cardinality": "0..1"
-				}
-			]
+			"name": "CopyTestEntity",
+			"impl": "./entities/CopyTest",
+			"provides": ["md2.app.mapAppsTest.Entity"]
 		},
 		{
-			"name": "PersonProvider",
+			"name": "PersonProviderProvider",
 			"impl": "./contentproviders/PersonProvider",
 			"provides": ["md2.app.mapAppsTest.ContentProvider"],
 			"propertiesConstructor": true,
@@ -525,8 +512,24 @@
 			]
 		},
 		{
-			"name": "CopyTest2",
+			"name": "CopyTest2Provider",
 			"impl": "./contentproviders/CopyTest2",
+			"provides": ["md2.app.mapAppsTest.ContentProvider"],
+			"propertiesConstructor": true,
+			"properties": {
+				"uri": "http://localhost:8080/mapAppsTest.backend/service/"
+			},
+			"references": [
+				{
+					"name": "_remoteFactory",
+					"providing": "md2.store.RemoteStore",
+					"cardinality": "0..1"
+				}
+			]
+		},
+		{
+			"name": "CopyTest1Provider",
+			"impl": "./contentproviders/CopyTest1",
 			"provides": ["md2.app.mapAppsTest.ContentProvider"],
 			"propertiesConstructor": true,
 			"properties": {

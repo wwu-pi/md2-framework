@@ -18,6 +18,293 @@
 				"onInitialized": "__startupAction",
 				"views": [
 					{
+						"name": "condEventView",
+						"dataForm": {
+							"dataform-version": "1.0.0",
+							"size": {
+								"h": "400",
+								"w": "550"
+							},
+							"type": "md2gridpanel",
+							"cols": "1",
+							"valueClass": "layoutCell",
+							"cellStyle": {
+								"width": "100%"
+							}
+							,
+							"children": [
+								{
+									"type": "button",
+									"title": "Start Workflow",
+									"field": "startWf",
+									"cellStyle": {
+										"width": "100%"
+									}
+								},
+								{
+									"type": "md2gridpanel",
+									"cols": "2",
+									"valueClass": "layoutCell",
+									"cellStyle": {
+										"width": "100%"
+									}
+									,
+									"children": [
+										{
+											"type": "button",
+											"title": "Autogenerator Test",
+											"field": "gotoAutogenerator",
+											"cellStyle": {
+												"width": "50%"
+											}
+										},
+										{
+											"type": "button",
+											"title": "ConditionalEvent Test",
+											"field": "gotoConditionalEvent",
+											"cellStyle": {
+												"width": "50%"
+											}
+										}
+									]
+								}
+							]
+						}
+					},
+					{
+						"name": "fifthView",
+						"dataForm": {
+							"dataform-version": "1.0.0",
+							"size": {
+								"h": "400",
+								"w": "550"
+							},
+							"type": "md2gridpanel",
+							"cols": "1",
+							"valueClass": "layoutCell",
+							"cellStyle": {
+								"width": "100%"
+							}
+							,
+							"children": [
+								{
+									"type": "textoutput",
+									"datatype": "string",
+									"field": "head",
+									"defaultText": "Fifth View",
+									"cellStyle": {
+										"width": "100%"
+									}
+								},
+								{
+									"type": "textoutput",
+									"datatype": "string",
+									"field": "info",
+									"defaultText": "Unfortunately, you reached the end of this amazing little workflow! But it's not all over... You are free to go back to the previous step and if you are really keen, you can even go directly back to the third step. But only if the sum of the numbers you enter in the following two fields is 8.",
+									"cellStyle": {
+										"width": "100%"
+									}
+								},
+								{
+									"type": "md2gridpanel",
+									"cols": "8",
+									"valueClass": "layoutCell",
+									"cellStyle": {
+										"width": "100%"
+									}
+									,
+									"children": [
+										{
+											"type": "numberspinner",
+											"datatype": "integer",
+											"field": "num1",
+											"cellStyle": {
+												"width": "12%"
+											}
+										},
+										{
+											"type": "numberspinner",
+											"datatype": "integer",
+											"field": "num2",
+											"cellStyle": {
+												"width": "12%"
+											}
+										},
+										{
+											"type": "textoutput",
+											"datatype": "string",
+											"field": "sum",
+											"defaultText": " = 8",
+											"cellStyle": {
+												"width": "12%"
+											}
+										},
+										{
+											"type": "spacer",
+											"cellStyle": {
+												"width": "12%"
+											}
+										},
+										{
+											"type": "spacer",
+											"cellStyle": {
+												"width": "13%"
+											}
+										},
+										{
+											"type": "spacer",
+											"cellStyle": {
+												"width": "13%"
+											}
+										},
+										{
+											"type": "spacer",
+											"cellStyle": {
+												"width": "13%"
+											}
+										},
+										{
+											"type": "spacer",
+											"cellStyle": {
+												"width": "13%"
+											}
+										}
+									]
+								},
+								{
+									"type": "button",
+									"title": "Previous",
+									"field": "prev",
+									"cellStyle": {
+										"width": "100%"
+									}
+								},
+								{
+									"type": "button",
+									"title": "Go back to Step 3",
+									"field": "returnTo3",
+									"cellStyle": {
+										"width": "100%"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "fourthView",
+						"dataForm": {
+							"dataform-version": "1.0.0",
+							"size": {
+								"h": "400",
+								"w": "550"
+							},
+							"type": "md2gridpanel",
+							"cols": "1",
+							"valueClass": "layoutCell",
+							"cellStyle": {
+								"width": "100%"
+							}
+							,
+							"children": [
+								{
+									"type": "textoutput",
+									"datatype": "string",
+									"field": "head1",
+									"defaultText": "Fourth View",
+									"cellStyle": {
+										"width": "100%"
+									}
+								},
+								{
+									"type": "textoutput",
+									"datatype": "string",
+									"field": "nameLabel",
+									"defaultText": "Please enter a valid name! I.e. 'Bill' or 'George' to proceed...",
+									"cellStyle": {
+										"width": "100%"
+									}
+								},
+								{
+									"type": "textbox",
+									"datatype": "string",
+									"field": "yourName",
+									"cellStyle": {
+										"width": "100%"
+									}
+								},
+								{
+									"type": "button",
+									"title": "Next",
+									"field": "next",
+									"cellStyle": {
+										"width": "100%"
+									}
+								},
+								{
+									"type": "button",
+									"title": "Previous",
+									"field": "prev1",
+									"cellStyle": {
+										"width": "100%"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "thirdView",
+						"dataForm": {
+							"dataform-version": "1.0.0",
+							"size": {
+								"h": "400",
+								"w": "550"
+							},
+							"type": "md2gridpanel",
+							"cols": "1",
+							"valueClass": "layoutCell",
+							"cellStyle": {
+								"width": "100%"
+							}
+							,
+							"children": [
+								{
+									"type": "textoutput",
+									"datatype": "string",
+									"field": "head2",
+									"defaultText": "Third View",
+									"cellStyle": {
+										"width": "100%"
+									}
+								},
+								{
+									"type": "textoutput",
+									"datatype": "string",
+									"field": "boolText",
+									"defaultText": "Do you want to skip the next step?",
+									"cellStyle": {
+										"width": "100%"
+									}
+								},
+								{
+									"type": "checkbox",
+									"datatype": "boolean",
+									"field": "isSkipNextStep",
+									"cellStyle": {
+										"width": "100%"
+									}
+								},
+								{
+									"type": "button",
+									"title": "Continue",
+									"field": "continue",
+									"cellStyle": {
+										"width": "100%"
+									}
+								}
+							]
+						}
+					},
+					{
 						"name": "autogeneratedView",
 						"dataForm": {
 							"dataform-version": "1.0.0",
@@ -45,7 +332,7 @@
 										{
 											"type": "textoutput",
 											"datatype": "string",
-											"field": "__Label__customerIDIntegerInput_5",
+											"field": "__Label__customerIDIntegerInput_2",
 											"defaultText": "Customer ID",
 											"cellStyle": {
 												"width": "40%"
@@ -54,7 +341,7 @@
 										{
 											"type": "numberspinner",
 											"datatype": "integer",
-											"field": "__customerIDIntegerInput_5",
+											"field": "__customerIDIntegerInput_2",
 											"cellStyle": {
 												"width": "50%"
 											}
@@ -79,7 +366,7 @@
 										{
 											"type": "textoutput",
 											"datatype": "string",
-											"field": "__Label__firstNameTextInput_5",
+											"field": "__Label__firstNameTextInput_2",
 											"defaultText": "First Name",
 											"cellStyle": {
 												"width": "40%"
@@ -88,7 +375,7 @@
 										{
 											"type": "textbox",
 											"datatype": "string",
-											"field": "__firstNameTextInput_5",
+											"field": "__firstNameTextInput_2",
 											"cellStyle": {
 												"width": "50%"
 											}
@@ -113,7 +400,7 @@
 										{
 											"type": "textoutput",
 											"datatype": "string",
-											"field": "__Label__lastNameTextInput_5",
+											"field": "__Label__lastNameTextInput_2",
 											"defaultText": "Last Name",
 											"cellStyle": {
 												"width": "40%"
@@ -122,7 +409,7 @@
 										{
 											"type": "textbox",
 											"datatype": "string",
-											"field": "__lastNameTextInput_5",
+											"field": "__lastNameTextInput_2",
 											"cellStyle": {
 												"width": "50%"
 											}
@@ -147,7 +434,7 @@
 										{
 											"type": "textoutput",
 											"datatype": "string",
-											"field": "__Label__residenceTextInput_5",
+											"field": "__Label__residenceTextInput_2",
 											"defaultText": "Residence",
 											"cellStyle": {
 												"width": "40%"
@@ -156,7 +443,7 @@
 										{
 											"type": "textbox",
 											"datatype": "string",
-											"field": "__residenceTextInput_5",
+											"field": "__residenceTextInput_2",
 											"cellStyle": {
 												"width": "50%"
 											}
@@ -181,7 +468,7 @@
 										{
 											"type": "textoutput",
 											"datatype": "string",
-											"field": "__Label__expectedSalesNumberInput_5",
+											"field": "__Label__expectedSalesNumberInput_2",
 											"defaultText": "Expected Sales",
 											"cellStyle": {
 												"width": "40%"
@@ -190,7 +477,7 @@
 										{
 											"type": "numbertextbox",
 											"datatype": "float",
-											"field": "__expectedSalesNumberInput_5",
+											"field": "__expectedSalesNumberInput_2",
 											"cellStyle": {
 												"width": "50%"
 											}
@@ -215,7 +502,7 @@
 										{
 											"type": "textoutput",
 											"datatype": "string",
-											"field": "__Label__dateOfBirthDateInput_5",
+											"field": "__Label__dateOfBirthDateInput_2",
 											"defaultText": "Date Of Birth",
 											"cellStyle": {
 												"width": "40%"
@@ -224,7 +511,7 @@
 										{
 											"type": "datetextbox",
 											"datatype": "date",
-											"field": "__dateOfBirthDateInput_5",
+											"field": "__dateOfBirthDateInput_2",
 											"cellStyle": {
 												"width": "50%"
 											}
@@ -249,7 +536,7 @@
 										{
 											"type": "textoutput",
 											"datatype": "string",
-											"field": "__Label__ownsPropertyBooleanInput_5",
+											"field": "__Label__ownsPropertyBooleanInput_2",
 											"defaultText": "Owns Property",
 											"cellStyle": {
 												"width": "40%"
@@ -258,7 +545,7 @@
 										{
 											"type": "checkbox",
 											"datatype": "boolean",
-											"field": "__ownsPropertyBooleanInput_5",
+											"field": "__ownsPropertyBooleanInput_2",
 											"cellStyle": {
 												"width": "50%"
 											}
@@ -300,59 +587,13 @@
 								}
 							]
 						}
-					},
-					{
-						"name": "condEventView",
-						"dataForm": {
-							"dataform-version": "1.0.0",
-							"size": {
-								"h": "400",
-								"w": "550"
-							},
-							"type": "md2gridpanel",
-							"cols": "1",
-							"valueClass": "layoutCell",
-							"cellStyle": {
-								"width": "100%"
-							}
-							,
-							"children": [
-								{
-									"type": "md2gridpanel",
-									"cols": "2",
-									"valueClass": "layoutCell",
-									"cellStyle": {
-										"width": "100%"
-									}
-									,
-									"children": [
-										{
-											"type": "button",
-											"title": "Autogenerator Test",
-											"field": "gotoAutogenerator",
-											"cellStyle": {
-												"width": "50%"
-											}
-										},
-										{
-											"type": "button",
-											"title": "ConditionalEvent Test",
-											"field": "gotoConditionalEvent",
-											"cellStyle": {
-												"width": "50%"
-											}
-										}
-									]
-								}
-							]
-						}
 					}
 				]
 			}
 		},
 		{
-			"name": "__autoGenerationActionAction",
-			"impl": "./actions/__autoGenerationAction",
+			"name": "RegisterOnConditionEventAction",
+			"impl": "./actions/RegisterOnConditionEvent",
 			"provides": ["md2.app.generateTest.CustomAction"]
 		},
 		{
@@ -361,18 +602,8 @@
 			"provides": ["md2.app.generateTest.CustomAction"]
 		},
 		{
-			"name": "RegisterAutogeneratedViewEventsAction",
-			"impl": "./actions/RegisterAutogeneratedViewEvents",
-			"provides": ["md2.app.generateTest.CustomAction"]
-		},
-		{
-			"name": "RegisterOnConditionEventAction",
-			"impl": "./actions/RegisterOnConditionEvent",
-			"provides": ["md2.app.generateTest.CustomAction"]
-		},
-		{
-			"name": "RegisterButtonEventsAction",
-			"impl": "./actions/RegisterButtonEvents",
+			"name": "__autoGenerationActionAction",
+			"impl": "./actions/__autoGenerationAction",
 			"provides": ["md2.app.generateTest.CustomAction"]
 		},
 		{
@@ -381,8 +612,13 @@
 			"provides": ["md2.app.generateTest.CustomAction"]
 		},
 		{
-			"name": "__startupActionAction",
-			"impl": "./actions/__startupAction",
+			"name": "__workflowActionEventTrigger_90363878099ecf8465aaa9c31dd40836d87bf657Action",
+			"impl": "./actions/__workflowActionEventTrigger_90363878099ecf8465aaa9c31dd40836d87bf657",
+			"provides": ["md2.app.generateTest.CustomAction"]
+		},
+		{
+			"name": "RegisterButtonEventsAction",
+			"impl": "./actions/RegisterButtonEvents",
 			"provides": ["md2.app.generateTest.CustomAction"]
 		},
 		{
@@ -391,8 +627,78 @@
 			"provides": ["md2.app.generateTest.CustomAction"]
 		},
 		{
+			"name": "__workflowProcessingActionAction",
+			"impl": "./actions/__workflowProcessingAction",
+			"provides": ["md2.app.generateTest.CustomAction"]
+		},
+		{
+			"name": "__workflowExecuteStepActionAction",
+			"impl": "./actions/__workflowExecuteStepAction",
+			"provides": ["md2.app.generateTest.CustomAction"]
+		},
+		{
+			"name": "__registerWorkflowActionEventTriggerAction",
+			"impl": "./actions/__registerWorkflowActionEventTrigger",
+			"provides": ["md2.app.generateTest.CustomAction"]
+		},
+		{
+			"name": "__workflowActionEventTrigger_cfe85f46120c5939ec296ec8d9bbe5e4370e85b7Action",
+			"impl": "./actions/__workflowActionEventTrigger_cfe85f46120c5939ec296ec8d9bbe5e4370e85b7",
+			"provides": ["md2.app.generateTest.CustomAction"]
+		},
+		{
+			"name": "__startupActionAction",
+			"impl": "./actions/__startupAction",
+			"provides": ["md2.app.generateTest.CustomAction"]
+		},
+		{
+			"name": "StartWfAction",
+			"impl": "./actions/StartWf",
+			"provides": ["md2.app.generateTest.CustomAction"]
+		},
+		{
+			"name": "__workflowActionEventTrigger_bbc2a4e497d9addeb461525eca209c1a9d8318bbAction",
+			"impl": "./actions/__workflowActionEventTrigger_bbc2a4e497d9addeb461525eca209c1a9d8318bb",
+			"provides": ["md2.app.generateTest.CustomAction"]
+		},
+		{
+			"name": "__workflowSetWorkflowMyWfActionAction",
+			"impl": "./actions/__workflowSetWorkflowMyWfAction",
+			"provides": ["md2.app.generateTest.CustomAction"]
+		},
+		{
+			"name": "__workflowActionEventTrigger_677bcd38126c2b277b777f785d321a0894ab39a5Action",
+			"impl": "./actions/__workflowActionEventTrigger_677bcd38126c2b277b777f785d321a0894ab39a5",
+			"provides": ["md2.app.generateTest.CustomAction"]
+		},
+		{
+			"name": "__workflowActionEventTrigger_95d500bd5356e0abe9941f0d19265525bd7fafc5Action",
+			"impl": "./actions/__workflowActionEventTrigger_95d500bd5356e0abe9941f0d19265525bd7fafc5",
+			"provides": ["md2.app.generateTest.CustomAction"]
+		},
+		{
+			"name": "RegisterAutogeneratedViewEventsAction",
+			"impl": "./actions/RegisterAutogeneratedViewEvents",
+			"provides": ["md2.app.generateTest.CustomAction"]
+		},
+		{
+			"name": "__workflowActionEventTrigger_5ce708de2070e9212d109e122a3bb991cd0b1539Action",
+			"impl": "./actions/__workflowActionEventTrigger_5ce708de2070e9212d109e122a3bb991cd0b1539",
+			"provides": ["md2.app.generateTest.CustomAction"]
+		},
+		{
+			"name": "__WorkflowControllerStateEntity",
+			"impl": "./entities/__WorkflowControllerState",
+			"provides": ["md2.app.generateTest.Entity"]
+		},
+		{
 			"name": "__ConditionalEventMappingsEntity",
 			"impl": "./entities/__ConditionalEventMappings",
+			"provides": ["md2.app.generateTest.Entity"]
+		},
+		{
+			"name": "__ReturnStepStackEntity",
+			"impl": "./entities/__ReturnStepStack",
 			"provides": ["md2.app.generateTest.Entity"]
 		},
 		{
@@ -413,8 +719,32 @@
 			]
 		},
 		{
+			"name": "__workflowControllerStateProviderProvider",
+			"impl": "./contentproviders/__workflowControllerStateProvider",
+			"provides": ["md2.app.generateTest.ContentProvider"],
+			"references": [
+				{
+					"name": "_localFactory",
+					"providing": "md2.store.LocalStore",
+					"cardinality": "0..1"
+				}
+			]
+		},
+		{
 			"name": "CustomerProvider",
 			"impl": "./contentproviders/Customer",
+			"provides": ["md2.app.generateTest.ContentProvider"],
+			"references": [
+				{
+					"name": "_localFactory",
+					"providing": "md2.store.LocalStore",
+					"cardinality": "0..1"
+				}
+			]
+		},
+		{
+			"name": "__returnStepStackProviderProvider",
+			"impl": "./contentproviders/__returnStepStackProvider",
 			"provides": ["md2.app.generateTest.ContentProvider"],
 			"references": [
 				{

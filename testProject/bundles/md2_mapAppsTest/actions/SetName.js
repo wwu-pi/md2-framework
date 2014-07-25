@@ -11,17 +11,16 @@ function(declare, stamp, _Action) {
 		
 		execute: function() {
 			
-			if (
-				this.$.widgetRegistry.getWidget("birthdate").getValue().lt(this.$.create("date", stamp.fromISOString("2000-01-01")))
-			) {
-				var targetContentProvider04a = this.$.contentProviderRegistry.getContentProvider("personProvider");
-				var set04b = this.$.create("string", "John Doe");
-				targetContentProvider04a.setValue("firstName", set04b);
+			var bool054 = this.$.widgetRegistry.getWidget("birthdate").getValue().lt(this.$.create("date", stamp.fromISOString("2000-01-01")));
+			if (bool054) {
+				var targetContentProvider055 = this.$.contentProviderRegistry.getContentProvider("personProvider");
+				var set056 = this.$.create("string", "John Doe");
+				targetContentProvider055.setValue("firstName", set056);
 			}
 			else {
-				var targetContentProvider04c = this.$.contentProviderRegistry.getContentProvider("personProvider");
-				var set04d = this.$.create("string", "Johnny Doe");
-				targetContentProvider04c.setValue("firstName", set04d);
+				var targetContentProvider057 = this.$.contentProviderRegistry.getContentProvider("personProvider");
+				var set058 = this.$.create("string", "Johnny Doe");
+				targetContentProvider057.setValue("firstName", set058);
 			}
 			
 		}

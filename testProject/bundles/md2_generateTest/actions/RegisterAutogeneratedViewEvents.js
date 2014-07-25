@@ -10,22 +10,22 @@ function(declare, _Action) {
 		
 		execute: function() {
 			
-			var contentProvider029 = this.$.contentProviderRegistry.getContentProvider("customer");
-			var messageExpression02b = function() {
+			var contentProvider03y = this.$.contentProviderRegistry.getContentProvider("customer");
+			var messageExpression040 = function() {
 				return this.$.contentProviderRegistry.getContentProvider("customer").getContent().toString();
 			};
-			var action02a = this.$.actionFactory.getDisplayMessageAction("112a2832a0432ea14c187123947a229a", messageExpression02b);
-			this.$.eventRegistry.get("contentProvider/onChange").registerAction(contentProvider029, "ownsProperty", action02a);
+			var action03z = this.$.actionFactory.getDisplayMessageAction("112a2832a0432ea14c187123947a229a", messageExpression040);
+			this.$.eventRegistry.get("contentProvider/onChange").registerAction(contentProvider03y, "ownsProperty", action03z);
 			
-			var contentProvider02c = this.$.contentProviderRegistry.getContentProvider("customer");
-			var messageExpression02e = function() {
+			var contentProvider041 = this.$.contentProviderRegistry.getContentProvider("customer");
+			var messageExpression043 = function() {
 				return this.$.create("string", "The :customer provider was updated!").toString();
 			};
-			var action02d = this.$.actionFactory.getDisplayMessageAction("0f460caa4b79be5d4ddb1225680d3bba", messageExpression02e);
-			this.$.eventRegistry.get("contentProvider/onChange").registerAction(contentProvider02c, "*", action02d);
+			var action042 = this.$.actionFactory.getDisplayMessageAction("0f460caa4b79be5d4ddb1225680d3bba", messageExpression043);
+			this.$.eventRegistry.get("contentProvider/onChange").registerAction(contentProvider041, "*", action042);
 			
-			var widget02f = this.$.widgetRegistry.getWidget("__firstNameTextInput_5");
-			var messageExpression02h = function() {
+			var widget044 = this.$.widgetRegistry.getWidget("__firstNameTextInput_2");
+			var messageExpression046 = function() {
 				return this.$.create("string", this.$.create("string", this.$.create("string", this.$.create("string", "Your Name: ").toString()
 				.concat(this.$.contentProviderRegistry.getContentProvider("customer").getValue("firstName"))
 				).toString()
@@ -34,8 +34,8 @@ function(declare, _Action) {
 				.concat(this.$.contentProviderRegistry.getContentProvider("customer").getValue("lastName"))
 				).toString();
 			};
-			var action02g = this.$.actionFactory.getDisplayMessageAction("04ace8cd5a44949b697988e98907cd15", messageExpression02h);
-			this.$.eventRegistry.get("widget/onChange").registerAction(widget02f, action02g);
+			var action045 = this.$.actionFactory.getDisplayMessageAction("04ace8cd5a44949b697988e98907cd15", messageExpression046);
+			this.$.eventRegistry.get("widget/onChange").registerAction(widget044, action045);
 			
 		}
 		

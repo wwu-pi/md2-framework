@@ -19,30 +19,31 @@ function(declare, ContentProvider) {
 			var properties = this._properties;
 			var entityFactory = typeFactory.getEntityFactory("Person");
 			var store = this._remoteFactory.create(properties.uri, entityFactory);
+			var appId = "md2_mapAppsTest";
 			
 			var filter = function() {
 				this.$ = $;
 				
-				var expr04g = this.$.create("string", "john.doe@example.com");
-				var expr04h = this.$.create("string", this.$.create("string", this.$.create("string", "John").toString()
+				var expr073 = this.$.create("string", "john.doe@example.com");
+				var expr074 = this.$.create("string", this.$.create("string", this.$.create("string", "John").toString()
 				.concat(this.$.create("string", " "))
 				).toString()
 				.concat(this.$.create("string", "Doe"))
 				);
-				var expr04i = this.$.create("string", "Johnny");
+				var expr075 = this.$.create("string", "Johnny");
 				return {
 					query: {
-						email: expr04g,
+						email: expr073,
 						$or: [
-							{ firstName: expr04h },
-							{ firstName: expr04i }
+							{ firstName: expr074 },
+							{ firstName: expr075 }
 						]
 					},
 					"count": "first"
 				};
 			};
 			
-			return new ContentProvider("personProvider", "md2_mapAppsTest", store, false, filter);
+			return new ContentProvider("personProvider", appId, store, false, filter);
 		}
 		
 	});

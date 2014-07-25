@@ -10,15 +10,15 @@ function(declare, _Action) {
 		
 		execute: function() {
 			
-			var targetContentProvider03m = this.$.contentProviderRegistry.getContentProvider("copyTest1");
-			var set03n = this.$.create("string", "This is an attribute!");
-			targetContentProvider03m.setValue("attr1", set03n);
+			var targetContentProvider05r = this.$.contentProviderRegistry.getContentProvider("copyTest1");
+			var set05s = this.$.create("string", "This is an attribute!");
+			targetContentProvider05r.setValue("attr1", set05s);
 			
-			var targetContentProvider03o = this.$.contentProviderRegistry.getContentProvider("copyTest1");
-			var set03p = this.$.create("integer", 123);
-			targetContentProvider03o.setValue("attr2", set03p);
+			var targetContentProvider05t = this.$.contentProviderRegistry.getContentProvider("copyTest1");
+			var set05u = this.$.create("integer", 123);
+			targetContentProvider05t.setValue("attr2", set05u);
 			
-			var messageExpression03r = function() {
+			var messageExpression05w = function() {
 				return this.$.create("string", this.$.create("string", this.$.create("string", this.$.create("string", "copyTest1: ").toString()
 				.concat(this.$.contentProviderRegistry.getContentProvider("copyTest1").getContent())
 				).toString()
@@ -27,24 +27,24 @@ function(declare, _Action) {
 				.concat(this.$.contentProviderRegistry.getContentProvider("copyTest2").getContent())
 				).toString();
 			};
-			var action03q = this.$.actionFactory.getDisplayMessageAction("76d91fe66c0480ce7da8f83b28a9a1b2", messageExpression03r);
-			action03q.execute();
+			var action05v = this.$.actionFactory.getDisplayMessageAction("76d91fe66c0480ce7da8f83b28a9a1b2", messageExpression05w);
+			action05v.execute();
 			
-			var widget03s = this.$.widgetRegistry.getWidget("copyCopyTest1");
-			var action03t = this.$.actionFactory.getCustomAction("setterTestCallback");
-			this.$.eventRegistry.get("widget/onClick").registerAction(widget03s, action03t);
+			var widget05x = this.$.widgetRegistry.getWidget("copyCopyTest1");
+			var action05y = this.$.actionFactory.getCustomAction("setterTestCallback");
+			this.$.eventRegistry.get("widget/onClick").registerAction(widget05x, action05y);
 			
-			var widget03u = this.$.widgetRegistry.getWidget("resetCopyTest2");
-			var action03v = this.$.actionFactory.getCustomAction("setterTestResetCallback");
-			this.$.eventRegistry.get("widget/onClick").registerAction(widget03u, action03v);
+			var widget05z = this.$.widgetRegistry.getWidget("resetCopyTest2");
+			var action060 = this.$.actionFactory.getCustomAction("setterTestResetCallback");
+			this.$.eventRegistry.get("widget/onClick").registerAction(widget05z, action060);
 			
-			var contentProvider03w = this.$.contentProviderRegistry.getContentProvider("copyTest1");
-			var widget03x = this.$.widgetRegistry.getWidget("attr1");
-			this.$.dataMapper.map(widget03x, contentProvider03w, "attr1");
+			var contentProvider061 = this.$.contentProviderRegistry.getContentProvider("copyTest1");
+			var widget062 = this.$.widgetRegistry.getWidget("attr1");
+			this.$.dataMapper.map(widget062, contentProvider061, "attr1");
 			
-			var contentProvider03y = this.$.contentProviderRegistry.getContentProvider("copyTest1");
-			var widget03z = this.$.widgetRegistry.getWidget("attr2");
-			this.$.dataMapper.map(widget03z, contentProvider03y, "attr2");
+			var contentProvider063 = this.$.contentProviderRegistry.getContentProvider("copyTest1");
+			var widget064 = this.$.widgetRegistry.getWidget("attr2");
+			this.$.dataMapper.map(widget064, contentProvider063, "attr2");
 			
 		}
 		

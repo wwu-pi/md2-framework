@@ -10,9 +10,9 @@ function(declare, _Action) {
 		
 		execute: function() {
 			
-			var targetContentProvider02i = this.$.contentProviderRegistry.getContentProvider("__conditionalEventMappingsProvider");
-			var set02j = this.$.create("boolean", true);
-			targetContentProvider02i.setValue("__simple__DisplayMessageAction_d21199be1a3d6d37dc59562c85de9a22__evt", set02j);
+			var targetContentProvider = this.$.contentProviderRegistry.getContentProvider("__conditionalEventMappingsProvider");
+			var set = this.$.create("boolean", true);
+			targetContentProvider.setValue("__simple__DisplayMessageAction_d21199be1a3d6d37dc59562c85de9a22__evt", set);
 			
 		}
 		

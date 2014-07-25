@@ -10,53 +10,53 @@ function(declare, _Action) {
 		
 		execute: function() {
 			
-			var contentProvider01f = this.$.contentProviderRegistry.getContentProvider("customer");
-			var widget01g = this.$.widgetRegistry.getWidget("__customerIDIntegerInput_5");
-			this.$.dataMapper.map(widget01g, contentProvider01f, "customerID");
+			var contentProvider = this.$.contentProviderRegistry.getContentProvider("customer");
+			var widget04 = this.$.widgetRegistry.getWidget("__customerIDIntegerInput_2");
+			this.$.dataMapper.map(widget04, contentProvider, "customerID");
 			
-			var contentProvider01h = this.$.contentProviderRegistry.getContentProvider("customer");
-			var widget01i = this.$.widgetRegistry.getWidget("__firstNameTextInput_5");
-			this.$.dataMapper.map(widget01i, contentProvider01h, "firstName");
+			var contentProvider05 = this.$.contentProviderRegistry.getContentProvider("customer");
+			var widget06 = this.$.widgetRegistry.getWidget("__firstNameTextInput_2");
+			this.$.dataMapper.map(widget06, contentProvider05, "firstName");
 			
-			var contentProvider01j = this.$.contentProviderRegistry.getContentProvider("customer");
-			var widget01k = this.$.widgetRegistry.getWidget("__lastNameTextInput_5");
-			this.$.dataMapper.map(widget01k, contentProvider01j, "lastName");
+			var contentProvider07 = this.$.contentProviderRegistry.getContentProvider("customer");
+			var widget08 = this.$.widgetRegistry.getWidget("__lastNameTextInput_2");
+			this.$.dataMapper.map(widget08, contentProvider07, "lastName");
 			
-			var contentProvider01l = this.$.contentProviderRegistry.getContentProvider("customer");
-			var widget01m = this.$.widgetRegistry.getWidget("__residenceTextInput_5");
-			this.$.dataMapper.map(widget01m, contentProvider01l, "residence");
+			var contentProvider09 = this.$.contentProviderRegistry.getContentProvider("customer");
+			var widget0a = this.$.widgetRegistry.getWidget("__residenceTextInput_2");
+			this.$.dataMapper.map(widget0a, contentProvider09, "residence");
 			
-			var contentProvider01n = this.$.contentProviderRegistry.getContentProvider("customer");
-			var widget01o = this.$.widgetRegistry.getWidget("__expectedSalesNumberInput_5");
-			this.$.dataMapper.map(widget01o, contentProvider01n, "expectedSales");
+			var contentProvider0b = this.$.contentProviderRegistry.getContentProvider("customer");
+			var widget0c = this.$.widgetRegistry.getWidget("__expectedSalesNumberInput_2");
+			this.$.dataMapper.map(widget0c, contentProvider0b, "expectedSales");
 			
-			var contentProvider01p = this.$.contentProviderRegistry.getContentProvider("customer");
-			var widget01q = this.$.widgetRegistry.getWidget("__dateOfBirthDateInput_5");
-			this.$.dataMapper.map(widget01q, contentProvider01p, "dateOfBirth");
+			var contentProvider0d = this.$.contentProviderRegistry.getContentProvider("customer");
+			var widget0e = this.$.widgetRegistry.getWidget("__dateOfBirthDateInput_2");
+			this.$.dataMapper.map(widget0e, contentProvider0d, "dateOfBirth");
 			
-			var contentProvider01r = this.$.contentProviderRegistry.getContentProvider("customer");
-			var widget01s = this.$.widgetRegistry.getWidget("__ownsPropertyBooleanInput_5");
-			this.$.dataMapper.map(widget01s, contentProvider01r, "ownsProperty");
+			var contentProvider0f = this.$.contentProviderRegistry.getContentProvider("customer");
+			var widget0g = this.$.widgetRegistry.getWidget("__ownsPropertyBooleanInput_2");
+			this.$.dataMapper.map(widget0g, contentProvider0f, "ownsProperty");
 			
-			var validator01t = this.$.validatorFactory.getNotNullValidator();
-			var widget01u = this.$.widgetRegistry.getWidget("__customerIDIntegerInput_5");
-			widget01u.addValidator(validator01t);
+			var validator = this.$.validatorFactory.getNotNullValidator();
+			var widget0h = this.$.widgetRegistry.getWidget("__customerIDIntegerInput_2");
+			widget0h.addValidator(validator);
 			
-			var validator01v = this.$.validatorFactory.getNotNullValidator();
-			var widget01w = this.$.widgetRegistry.getWidget("__residenceTextInput_5");
-			widget01w.addValidator(validator01v);
+			var validator0i = this.$.validatorFactory.getNotNullValidator();
+			var widget0j = this.$.widgetRegistry.getWidget("__residenceTextInput_2");
+			widget0j.addValidator(validator0i);
 			
-			var validator01x = this.$.validatorFactory.getNotNullValidator();
-			var widget01y = this.$.widgetRegistry.getWidget("__expectedSalesNumberInput_5");
-			widget01y.addValidator(validator01x);
+			var validator0k = this.$.validatorFactory.getNotNullValidator();
+			var widget0l = this.$.widgetRegistry.getWidget("__expectedSalesNumberInput_2");
+			widget0l.addValidator(validator0k);
 			
-			var validator01z = this.$.validatorFactory.getNotNullValidator();
-			var widget020 = this.$.widgetRegistry.getWidget("__dateOfBirthDateInput_5");
-			widget020.addValidator(validator01z);
+			var validator0m = this.$.validatorFactory.getNotNullValidator();
+			var widget0n = this.$.widgetRegistry.getWidget("__dateOfBirthDateInput_2");
+			widget0n.addValidator(validator0m);
 			
-			var validator021 = this.$.validatorFactory.getNotNullValidator();
-			var widget022 = this.$.widgetRegistry.getWidget("__ownsPropertyBooleanInput_5");
-			widget022.addValidator(validator021);
+			var validator0o = this.$.validatorFactory.getNotNullValidator();
+			var widget0p = this.$.widgetRegistry.getWidget("__ownsPropertyBooleanInput_2");
+			widget0p.addValidator(validator0o);
 			
 		}
 		
