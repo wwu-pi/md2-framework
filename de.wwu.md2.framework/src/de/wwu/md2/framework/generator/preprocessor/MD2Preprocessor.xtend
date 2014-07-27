@@ -147,8 +147,6 @@ class MD2Preprocessor {
 		
 		replaceNamedColorsWithHexColors(factory, workingInput) // revisited
 		
-		mergeNestedWorkflows(factory, workingInput)
-		
 		replaceCombinedActionWithCustomAction(factory, workingInput) // refactored
 		
 		createAutoGenerationAction(factory, workingInput, autoGenerators)  // refactored

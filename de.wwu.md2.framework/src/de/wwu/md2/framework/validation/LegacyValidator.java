@@ -60,7 +60,6 @@ import de.wwu.md2.framework.mD2.ViewGUIElement;
 import de.wwu.md2.framework.mD2.ViewGUIElementReference;
 import de.wwu.md2.framework.mD2.WidthParam;
 import de.wwu.md2.framework.mD2.Workflow;
-import de.wwu.md2.framework.mD2.WorkflowStep;
 import de.wwu.md2.framework.util.MD2Util;
 
 public class LegacyValidator extends AbstractMD2JavaValidator {
@@ -460,58 +459,6 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 		if(workflow.getWorkflowSteps().isEmpty()) {
 			acceptWarning("No workflow steps are defined for this workflow. Such workflows have no effect and should be omitted.",
 					workflow, null, -1, null);
-		}
-	}
-	
-	/**
-	 * Avoid recursive workflow nesting.
-	 * @param workflow
-	 */
-	@Check
-	public void checkForRecurisveWorkflowNesting(Workflow workflow) {
-		checkForRecurisveWorkflowNesting(workflow, workflow);
-	}
-	
-	/**
-	 * Checks recursively whether a subworkflow has the same name as the root workflow.
-	 * @param workflow Root workflow.
-	 * @param subworkflow Subworkflow.
-	 */
-	private void checkForRecurisveWorkflowNesting(Workflow workflow, Workflow subworkflow) {
-		for(WorkflowStep step : subworkflow.getWorkflowSteps()) {
-			if(step.getSubworkflow() != null) {
-				if(step.getSubworkflow().equals(workflow) || step.getSubworkflow().equals(subworkflow)) {
-					acceptError("Recursive workflow nesting. The subworkflow references to it's root workflow.",
-							step, MD2Package.eINSTANCE.getWorkflowStep_Subworkflow(), -1, null);
-					return;
-				}
-				else {
-					checkForRecurisveWorkflowNesting(workflow, step.getSubworkflow());
-				}
-			}
-		}
-	}
-	
-	/**
-	 * This validator ensures that the start view (defined in the main block) can only reference the first
-	 * step of the default workflow. Else, it could lead to undefined behavior if the non-first step cannot
-	 * be reached due to forwardConditions in previous steps.
-	 * @param workflow
-	 */
-	@Check
-	public void checkThatStartViewReferencesOnFirstWorkflowStep(Main main) {
-		if(main.getStartWorkflow() == null)
-			return;
-		
-		int i = 0;
-		for(WorkflowStep step : main.getStartWorkflow().getWorkflowSteps()) {
-			if(i > 0 && step.getView() != null && step.getView().getRef().equals(main.getStartView().getRef())) {
-				acceptError("The defined start view relates to workflow step no. " + (i + 1) + " of the default workflow. It has to " +
-						"point to the first step or any view that is not associated with the default workflow.",
-						main, MD2Package.eINSTANCE.getMain_StartView(), -1, null);
-				return;
-			}				
-			i++;
 		}
 	}
 	

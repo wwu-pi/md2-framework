@@ -749,9 +749,9 @@ CombinedAction:
  */
 SimpleAction:
 	// virtual actions that are replaced during preprocessing
-	{GotoNextWorkflowStepAction} 'NextStep' |
-	{GotoPreviousWorkflowStepAction} 'PreviousStep' |
-	{GotoWorkflowStepAction} 'GotoStep' '(' wfStep = [WorkflowStep | QUALIFIED_NAME] ')' |
+	{WorkflowProceedAction} 'WorkflowProceed' |
+	{WorkflowReverseAction} 'WorkflowReverse' |
+	{WorkflowGotoAction} 'WorkflowGoto' '(' wfStep = [WorkflowStep | QUALIFIED_NAME] ')' |
 	{SetWorkflowAction} 'SetWorkflow' '(' workflow = [Workflow] ')' |
 	
 	// core actions that have to be supported by the platform
@@ -761,6 +761,8 @@ SimpleAction:
 	{DisplayMessageAction} ('DisplayMessage' '(' message = SimpleExpression ')' ) |
 	{ContentProviderOperationAction} ('ContentProviderOperation' '(' operation = AllowedOperation contentProvider = AbstractProviderReference ')') |
 	{ContentProviderResetAction} ('ContentProviderReset' '('contentProvider = ContentProviderReference ')') |
+	
+	// TODO -- multi-valued content provider, not supported yet
 	{ContentProviderAddAction} ('ContentProviderAdd' '('contentProvider = ContentProviderReference ')') |
 	{ContentProviderRemoveAction} ('ContentProviderRemove' '('contentProvider = ContentProviderReference 'where' whereClause = WhereClauseCondition ')') |
 	
@@ -1291,12 +1293,9 @@ Workflow:
  */
 WorkflowStep:
 	'step' name = EID ':' (
-		(
-			('view' view = AbstractViewGUIElementRef) &
-			(gotos += WorkflowGoToDefinition)* &
-			('message' message = SimpleExpression)?
-		) |
-		'subworkflow' subworkflow = [Workflow]  // TODO consider to remove!!
+		('view' view = AbstractViewGUIElementRef) &
+		(gotos += WorkflowGoToDefinition)* &
+		('message' message = SimpleExpression)?
 	)
 ;
 
