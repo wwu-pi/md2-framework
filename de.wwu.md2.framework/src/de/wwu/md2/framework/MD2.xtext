@@ -1761,16 +1761,23 @@ PERCENT returns ecore::EInt:
  * 
  * TODO Find all keywords that do not break the grammar
  */
-EID: 
+EID:
+	//location content provider fields
+	'latitude' | 'longitude' | 'altitude' | 'city' | 'street' | 'number' | 'postalCode' | 'country' | 'province' |
+	
+	// font styles
+	'bold' | 'italic' | 'normal' |
+	
+	// colors
+	'aqua' | 'black' | 'blue' | 'gray' | 'green' | 'lime' | 'maroon' | 'navy' | 'olive' | 'purple' |
+	'red' | 'silver' | 'white' | 'yellow' |
+	
+	// arbitrary ID
 	ID
-//	'bold' | 'italic' | 'normal' |
-//	'aqua' | 'black' | 'blue' | 'gray' | 'green' | 'lime' | 'maroon' | 'navy' | 'olive' | 'purple' |
-//	'red' | 'silver' | 'white' | 'yellow'
 	
 	//'action' | 'actions' |
 	//'silent' | 'event' | 'valid' | 'empty' | 'filled' | 'enum' | 'entity' | 'name' |
-	//'description' | 'optional' | 'latitude' | 'longitude' | 'altitude' | 'city' | 'street' | 'number' |
-	//'postalCode' | 'country' | 'province' |	'tabTitle' | 'tabIcon' | 
+	//'description' | 'optional' | 'tabTitle' | 'tabIcon' | 
 	//'displayAll' | 'fontSize' | 'color' | 'textStyle' | 
 	//	'only' | 'style' | 'text' | 'height' | 'width' |
 	//	'src' | 'columns' | 'rows' | 'horizontal' | 'vertical' |
@@ -1792,6 +1799,14 @@ EID:
  */
 QUALIFIED_NAME:
 	EID ('.' EID)*
+;
+
+/**
+ * Override default terminal rule ID to not allow two underscores (__) at the beginning of the ID
+ * as such IDs are used internally by the pre-processor.
+ */
+terminal ID:
+	'^'?('a'..'z'|'A'..'Z'|'_') (('a'..'z'|'A'..'Z'|'0'..'9') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*)?
 ;
 
 /**
