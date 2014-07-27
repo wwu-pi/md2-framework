@@ -1,8 +1,7 @@
 define([
-    "dojo/_base/declare",
-    "dojo/_base/array"
+    "dojo/_base/declare"
 ],
-function(declare, array) {
+function(declare) {
     
     return declare([], {
         
@@ -32,8 +31,7 @@ function(declare, array) {
         },
         
         /**
-         * Returns the configured MD2AppWidget instance and registers
-         * a tool to start this app in the MD2 toolset.
+         * Returns the configured MD2AppWidget instance.
          * @returns {MD2AppWidget}
          */
         createInstance: function() {

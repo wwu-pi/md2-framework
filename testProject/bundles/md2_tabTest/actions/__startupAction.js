@@ -10,11 +10,11 @@ function(declare, _Action) {
 		
 		execute: function() {
 			
-			var action05 = this.$.actionFactory.getGotoViewAction("tabView");
-			action05.execute();
+			var action = this.$.actionFactory.getGotoViewAction("tabNo2");
+			action.execute();
 			
-			var action06 = this.$.actionFactory.getCustomAction("startAction");
-			action06.execute();
+			var action00 = this.$.actionFactory.getCustomAction("startAction");
+			action00.execute();
 			
 		}
 		

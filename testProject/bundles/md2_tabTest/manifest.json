@@ -18,77 +18,11 @@
 				"onInitialized": "__startupAction",
 				"views": [
 					{
-						"name": "tabNo1",
-						"dataForm": {
-							"dataform-version": "1.0.0",
-							"size": {
-								"h": "400",
-								"w": "550"
-							},
-							"type": "md2gridpanel",
-							"cols": "1",
-							"valueClass": "layoutCell",
-							"cellStyle": {
-								"width": "100%"
-							}
-							,
-							"children": [
-								{
-									"type": "textoutput",
-									"datatype": "string",
-									"field": "l",
-									"defaultText": "View 1",
-									"cellStyle": {
-										"width": "100%"
-									}
-								}
-							]
-						}
-					},
-					{
-						"name": "tabNo2",
-						"dataForm": {
-							"dataform-version": "1.0.0",
-							"size": {
-								"h": "400",
-								"w": "550"
-							},
-							"type": "md2gridpanel",
-							"cols": "2",
-							"valueClass": "layoutCell",
-							"cellStyle": {
-								"width": "100%"
-							}
-							,
-							"children": [
-								{
-									"type": "textoutput",
-									"datatype": "string",
-									"field": "l1",
-									"defaultText": "View 2",
-									"cellStyle": {
-										"width": "50%"
-									}
-								},
-								{
-									"type": "simpleimage",
-									"src": "md2_tabTest:./resources/test.gif",
-									"cellStyle": {
-										"width": "50%"
-									}
-								}
-							]
-						}
-					},
-					{
 						"name": "tabView",
 						"dataForm": {
 							"dataform-version": "1.0.0",
-							"size": {
-								"h": "400",
-								"w": "550"
-							},
 							"type": "tabpanel",
+							"valueClass": "layoutCell",
 							"cellStyle": {
 								"width": "100%"
 							}
@@ -103,6 +37,7 @@
 										"width": "100%"
 									}
 									,
+									"subViewName": "tabNo1",
 									"children": [
 										{
 											"type": "textoutput",
@@ -124,6 +59,7 @@
 										"width": "100%"
 									}
 									,
+									"subViewName": "tabNo2",
 									"children": [
 										{
 											"type": "textoutput",
@@ -152,6 +88,7 @@
 										"width": "100%"
 									}
 									,
+									"subViewName": "tabNo3",
 									"children": [
 										{
 											"type": "textoutput",
@@ -166,46 +103,18 @@
 								}
 							]
 						}
-					},
-					{
-						"name": "tabNo3",
-						"dataForm": {
-							"dataform-version": "1.0.0",
-							"size": {
-								"h": "400",
-								"w": "550"
-							},
-							"type": "md2gridpanel",
-							"cols": "1",
-							"valueClass": "layoutCell",
-							"cellStyle": {
-								"width": "100%"
-							}
-							,
-							"children": [
-								{
-									"type": "textoutput",
-									"datatype": "string",
-									"field": "l2",
-									"defaultText": "View 3",
-									"cellStyle": {
-										"width": "100%"
-									}
-								}
-							]
-						}
 					}
 				]
 			}
 		},
 		{
-			"name": "__startupActionAction",
-			"impl": "./actions/__startupAction",
+			"name": "StartActionAction",
+			"impl": "./actions/StartAction",
 			"provides": ["md2.app.tabTest.CustomAction"]
 		},
 		{
-			"name": "StartActionAction",
-			"impl": "./actions/StartAction",
+			"name": "__startupActionAction",
+			"impl": "./actions/__startupAction",
 			"provides": ["md2.app.tabTest.CustomAction"]
 		},
 		{
@@ -235,11 +144,7 @@
 				{
 					"name": "_configBean",
 					"providing": "md2.app.tabTest.AppDefinition"
-				},
-                                {
-                                        "name": "_toolsetManager",
-					"providing": "toolset.Toolsetmanager"
-                                }
+				}
 			]
 		},
 		{
@@ -249,7 +154,7 @@
 			"propertiesConstructor": true,
 			"properties": {
 				"id": "md2_tabTest_tool",
-                                "title": "tabTest",
+				"title": "tabTest",
 				"description": "Start tabTest",
 				"tooltip": "Start tabTest",
 				"toolRole": "toolset",

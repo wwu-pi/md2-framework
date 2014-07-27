@@ -1,13 +1,15 @@
 define([
     "dojo/_base/declare",
+    "dojo/_base/lang",
     "dojo/_base/array",
     "dojo/dom-construct",
     "dojo/dom-geometry",
+    "dojo/query",
     "ct/_lang",
     "ct/Hash",
     "./WidgetWrapper"
 ],
-function(declare, array, domConstruct, domGeometry, ct_lang, Hash, WidgetWrapper) {
+function(declare, lang, array, domConstruct, domGeometry, query, ct_lang, Hash, WidgetWrapper) {
     
     return declare([], {
         
@@ -54,34 +56,16 @@ function(declare, array, domConstruct, domGeometry, ct_lang, Hash, WidgetWrapper
          * @param {string} viewName
          */
         goto: function(viewName) {
-            var parentView = this._subviewHierarchy.get(viewName);
-            
-            if (parentView) {
-                this.goto(parentView);
-                var parentViewOrNull = this._currentSubViews.get(parentView);
-                var parentView = parentViewOrNull ? parentViewOrNull : this._currentView;
-                parentView.widget.selectChild(this._currentSubViews.get(viewName));
+            var parentViewName = this._subviewHierarchy.get(viewName);
+            if (parentViewName) {
+                this.goto(parentViewName);
+                var subViewContainer = this._currentSubViewContainers.get(viewName);
+                var subView = this._currentSubViews.get(viewName).widget;
+                subViewContainer.widget.selectChild(subView);
             } else {
                 this._showMainView(viewName);
             }
-            
-        },
-        
-        _showMainView: function(viewName) {
-            // check whether view is already displayed
-            if (this._currentView && this._lastDisplayedViewName === viewName) {
-                return;
-            }
-            
-            this.destroyCurrentView();
-            
-            // attach data form to DOM
-            var domNodeDataForm = this._mainWidget.displayViewNode;
-            var dataFormWidget = this._buildView(viewName);
-            dataFormWidget.placeAt(domNodeDataForm).startup();
             this._lastDisplayedViewName = viewName;
-            
-            this.resizeView();
         },
         
         destroyCurrentView: function() {
@@ -103,15 +87,21 @@ function(declare, array, domConstruct, domGeometry, ct_lang, Hash, WidgetWrapper
         },
         
         resizeView: function() {
-            var displayViewNode = this._mainWidget.displayViewNode;
-            var marginBox = domGeometry.getMarginBox(displayViewNode);
-            var currentView = this._currentView;
-            if (currentView) {
-                currentView.resize({
-                    w: marginBox.w,
-                    h: marginBox.h + 60
-                });
-            }
+            // samll time laps to ensure that the new size is already assigned to DOM tree
+            setTimeout(lang.hitch(this, function() {
+                var containerNode = this._mainWidget.domNode.parentNode;
+                if (!containerNode) {
+                    return;
+                }
+                var contentBox = domGeometry.getContentBox(containerNode);
+                var currentView = this._currentView;
+                if (currentView) {
+                    currentView.resize({
+                        w: contentBox.w,
+                        h: contentBox.h
+                    });
+                }
+            }), 250);
         },
         
         /**
@@ -124,8 +114,7 @@ function(declare, array, domConstruct, domGeometry, ct_lang, Hash, WidgetWrapper
          */
         setupView: function(viewName, dataFormDescription) {
             this._dataFormDescriptions.set(viewName, dataFormDescription);
-            this._currentParentView = viewName;
-            this._registerAllFormControls(dataFormDescription);
+            this._registerAllFormControls(dataFormDescription, viewName);
         },
         
         _buildView: function(viewName) {
@@ -138,6 +127,7 @@ function(declare, array, domConstruct, domGeometry, ct_lang, Hash, WidgetWrapper
             // create data form for current view
             var dataFormWidget = dataFormService.createDataForm(dataFormDescription);
             this._currentSubViews = null;
+            this._currentSubViewContainers = null;
             this._setAllFormControls(dataFormWidget.bodyControl);
             this._currentView = dataFormWidget;
             
@@ -152,13 +142,29 @@ function(declare, array, domConstruct, domGeometry, ct_lang, Hash, WidgetWrapper
             return dataFormWidget;
         },
         
+        _showMainView: function(viewName) {
+            // check whether view is already displayed
+            if (this._currentView && this._lastDisplayedViewName === viewName) {
+                return;
+            }
+            
+            this.destroyCurrentView();
+            
+            // attach data form to DOM
+            var domNodeDataForm = this._mainWidget.displayViewNode;
+            var dataFormWidget = this._buildView(viewName);
+            dataFormWidget.placeAt(domNodeDataForm).startup();
+            
+            this.resizeView();
+        },
+        
         /**
          * Recursively extract all data form controls from data form description and
          * create WidgetWrappers in WigetRegistry for them.
          * 
          * @param {FormControl} dataFormDescription
          */
-        _registerAllFormControls: function(dataFormDescription) {
+        _registerAllFormControls: function(dataFormDescription, currentParentView) {
             
             // register all formControls in widgetRegistry
             array.forEach(dataFormDescription.children, function(child) {
@@ -170,10 +176,11 @@ function(declare, array, domConstruct, domGeometry, ct_lang, Hash, WidgetWrapper
                 var widgetWrapper = new WidgetWrapper(id, datatype, defaultValue, typeFactory, appId);
                 this._widgetRegistry.add(widgetWrapper);
                 
-                this._addSubViewToHierarchyHash(child);
+                this._addSubViewToHierarchyHash(child, currentParentView);
                 
                 if (child.children) {
-                    this._registerAllFormControls(child);
+                    var parentViewName = child.subViewName || currentParentView;
+                    this._registerAllFormControls(child, parentViewName);
                 }
             }, this);
         },
@@ -184,13 +191,12 @@ function(declare, array, domConstruct, domGeometry, ct_lang, Hash, WidgetWrapper
          * 
          * @param {type} widgetDescription
          */
-        _addSubViewToHierarchyHash: function(widgetDescription) {
+        _addSubViewToHierarchyHash: function(widgetDescription, parentViewName) {
             var subViewName = widgetDescription.subViewName;
             if (!subViewName) {
                 return;
             }
-            this._subviewHierarchy.set(subViewName, this._currentParentView);
-            this._currentParentView = subViewName;
+            this._subviewHierarchy.set(subViewName, parentViewName);
         },
         
         /**
@@ -226,6 +232,8 @@ function(declare, array, domConstruct, domGeometry, ct_lang, Hash, WidgetWrapper
                 this._currentSubViews = ct_lang.chk(this._currentSubViews, new Hash());
                 if (child.subViewName) {
                     this._currentSubViews.set(child.subViewName, child);
+                    this._currentSubViewContainers = ct_lang.chk(this._currentSubViewContainers, new Hash());
+                    this._currentSubViewContainers.set(child.subViewName, dataFormWidget);
                 }
                 
                 if (child.children) {
