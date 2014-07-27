@@ -195,7 +195,7 @@ class DataContainer {
 		// Calculate root view for each view that is accessed via a GotoViewAction
 		rootViewContainers = containers.map[ container |
 			var EObject elem = container
-			while (!(container.eContainer instanceof View)) {
+			while (!(elem.eContainer instanceof View)) {
 				elem = elem.eContainer
 			}
 			elem as ContainerElement

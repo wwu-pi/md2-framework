@@ -4,6 +4,8 @@ import de.wwu.md2.framework.generator.util.DataContainer
 import de.wwu.md2.framework.mD2.AlternativesPane
 import de.wwu.md2.framework.mD2.BooleanInput
 import de.wwu.md2.framework.mD2.Button
+import de.wwu.md2.framework.mD2.ContainerElement
+import de.wwu.md2.framework.mD2.ContentElement
 import de.wwu.md2.framework.mD2.DateInput
 import de.wwu.md2.framework.mD2.DateTimeInput
 import de.wwu.md2.framework.mD2.EntitySelector
@@ -29,7 +31,6 @@ import org.eclipse.xtext.xbase.lib.Pair
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
-import de.wwu.md2.framework.mD2.ContainerElement
 
 class ManifestJson {
 	
@@ -74,11 +75,7 @@ class ManifestJson {
 							"name": "«view.name»",
 							"dataForm": {
 								"dataform-version": "1.0.0",
-								"size": {
-									"h": "400",
-									"w": "550"
-								},
-								«getViewElement(view, processedInput)»
+								«getViewElement(view, processedInput, false)»
 							}
 						}
 					«ENDFOR»
@@ -211,44 +208,48 @@ class ManifestJson {
 	 * Container Elements
 	 ***************************************************************/
 	
-	def private static dispatch String getViewElement(GridLayoutPane gridLayout, ResourceSet processedInput) '''
+	def private static dispatch String getViewElement(GridLayoutPane gridLayout, ResourceSet processedInput, boolean isSubView) '''
 		"type": "md2gridpanel",
 		"cols": "«gridLayout.params.filter(typeof(GridLayoutPaneColumnsParam)).head.value»",
 		"valueClass": "layoutCell",
 		«generateStyle(null, "width" -> '''«gridLayout.params.filter(typeof(WidthParam)).head.width»%''')»,
+		«IF isSubView»"subViewName": "«getName(gridLayout)»",«ENDIF»
 		"children": [
 			«FOR element : gridLayout.elements.filter(typeof(ViewGUIElement)) SEPARATOR ","»
 				{
-					«getViewElement(element, processedInput)»
+					«switch element {
+						ContentElement: getViewElement(element, processedInput)
+						ContainerElement: getViewElement(element, processedInput, false)
+					}»
 				}
 			«ENDFOR»
 		]
 	'''
 	
-	def private static dispatch String getViewElement(TabbedAlternativesPane tabbedPane, ResourceSet processedInput) '''
+	def private static dispatch String getViewElement(TabbedAlternativesPane tabbedPane, ResourceSet processedInput, boolean isSubView) '''
 		"type": "tabpanel",
 		"valueClass": "layoutCell",
 		«generateStyle(null, "width" -> '''100%''')»,
-		"subViewName": "«getName(tabbedPane)»",
+		«IF isSubView»"subViewName": "«getName(tabbedPane)»",«ENDIF»
 		"children": [
 			«FOR element : tabbedPane.elements.filter(typeof(ContainerElement)) SEPARATOR ","»
 				{
 					"title": "«element.tabName»",
-					«getViewElement(element, processedInput)»
+					«getViewElement(element, processedInput, true)»
 				}
 			«ENDFOR»
 		]
 	'''
 	
-	def private static dispatch String getViewElement(AlternativesPane alternativesPane, ResourceSet processedInput) '''
+	def private static dispatch String getViewElement(AlternativesPane alternativesPane, ResourceSet processedInput, boolean isSubView) '''
 		"type": "stackcontainer",
 		"valueClass": "layoutCell",
 		«generateStyle(null, "width" -> '''«alternativesPane.params.filter(typeof(WidthParam)).head.width»%''')»,
-		"subViewName": "«getName(alternativesPane)»",
+		«IF isSubView»"subViewName": "«getName(alternativesPane)»",«ENDIF»
 		"children": [
 			«FOR element : alternativesPane.elements.filter(typeof(ContainerElement)) SEPARATOR ","»
 				{
-					«getViewElement(element, processedInput)»
+					«getViewElement(element, processedInput, true)»
 				}
 			«ENDFOR»
 		]
