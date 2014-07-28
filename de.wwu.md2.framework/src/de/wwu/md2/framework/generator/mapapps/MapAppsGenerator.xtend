@@ -2,31 +2,18 @@ package de.wwu.md2.framework.generator.mapapps
 
 import de.wwu.md2.framework.generator.AbstractPlatformGenerator
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
+import java.util.Collection
 
-import static de.wwu.md2.framework.generator.mapapps.AppJsonBuilder.*
-import static de.wwu.md2.framework.generator.mapapps.ManifestJson.*
-import static de.wwu.md2.framework.generator.mapapps.ModuleClass.*
-import static de.wwu.md2.framework.generator.mapapps.ControllerClass.*
 import static de.wwu.md2.framework.generator.mapapps.ContentProviderClass.*
+import static de.wwu.md2.framework.generator.mapapps.ControllerClass.*
 import static de.wwu.md2.framework.generator.mapapps.CustomActionClass.*
 import static de.wwu.md2.framework.generator.mapapps.EntityClass.*
-import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
-import java.util.Collection
+import static de.wwu.md2.framework.generator.mapapps.ManifestJson.*
+import static de.wwu.md2.framework.generator.mapapps.ModuleClass.*
 
 class MapAppsGenerator extends AbstractPlatformGenerator {
 	
 	override doGenerate(IExtendedFileSystemAccess fsa) {
-		
-		/////////////////////////////////////////
-		// Feasibility check
-		/////////////////////////////////////////
-		
-		// Check whether a main block has been defined. Otherwise do not run the generator.
-		if(dataContainer.main == null) {
-			System::out.println("map.apps: No main block found. Quit gracefully.")
-			return
-		}
-		
 		
 		/////////////////////////////////////////
 		// Calculate bundle dependencies

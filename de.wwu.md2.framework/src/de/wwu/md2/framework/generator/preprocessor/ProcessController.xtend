@@ -44,7 +44,7 @@ class ProcessController extends AbstractPreprocessor {
 		if (ctrl != null) {
 			
 			// create __startupAction
-			val startupAction = factory.createCustomAction();
+			val startupAction = factory.createCustomAction;
 			startupAction.setName(startupActionName)
 			ctrl.controllerElements.add(startupAction)
 			
@@ -75,11 +75,11 @@ class ProcessController extends AbstractPreprocessor {
 	 */
 	def replaceDefaultProviderTypeWithConcreteDefinition() {
 		val contentProviders = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(typeof(ContentProvider))
+			ctrl.controllerElements.filter(ContentProvider)
 		].flatten
 		
 		val main = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(typeof(Main))
+			ctrl.controllerElements.filter(Main)
 		].flatten.head
 		
 		for (contentProvider : contentProviders) {
@@ -101,7 +101,7 @@ class ProcessController extends AbstractPreprocessor {
 	 */
 	def replaceCombinedActionWithCustomAction() {
 		val combinedActions = controllers.map[ ctrl | 
-			ctrl.controllerElements.filter(typeof(CombinedAction))
+			ctrl.controllerElements.filter(CombinedAction)
 		].flatten
 		
 		combinedActions.forEach[ combinedAction |
@@ -149,7 +149,7 @@ class ProcessController extends AbstractPreprocessor {
 		].flatten.head
 		
 		val startupAction = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(typeof(CustomAction))
+			ctrl.controllerElements.filter(CustomAction)
 				.filter( action | action.name.equals(ProcessController::startupActionName))
 		].flatten.head
 		
@@ -186,7 +186,7 @@ class ProcessController extends AbstractPreprocessor {
 	 */
 	def calculateParameterSignatureForAllSimpleActions() {
 		val simpleActions = controllers.map[ ctrl | 
-			ctrl.eAllContents.toIterable.filter(typeof(SimpleAction))
+			ctrl.eAllContents.toIterable.filter(SimpleAction)
 		].flatten
 		
 		for (simpleAction : simpleActions) {
@@ -224,7 +224,7 @@ class ProcessController extends AbstractPreprocessor {
 		////////////////////////////////////////////////////
 		
 		val bindingTasks = controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable.filter(typeof(EventBindingTask))
+			ctrl.eAllContents.toIterable.filter(EventBindingTask)
 		].flatten.toList
 		
 		for (bindingTask : bindingTasks) {
@@ -250,7 +250,7 @@ class ProcessController extends AbstractPreprocessor {
 		////////////////////////////////////////////////////
 		
 		val unbindingTasks = controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable.filter(typeof(EventUnbindTask))
+			ctrl.eAllContents.toIterable.filter(EventUnbindTask)
 		].flatten
 		
 		for (unbindingTask : unbindingTasks) {
@@ -276,7 +276,7 @@ class ProcessController extends AbstractPreprocessor {
 	 */
 	def replaceCustomValidatorsWithStandardValidatorDefinitions() {
 		val Iterable<CustomizedValidatorType> validators = controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable.filter(typeof(CustomizedValidatorType))
+			ctrl.eAllContents.toIterable.filter(CustomizedValidatorType)
 		].flatten
 		
 		validators.forEach [ validator |

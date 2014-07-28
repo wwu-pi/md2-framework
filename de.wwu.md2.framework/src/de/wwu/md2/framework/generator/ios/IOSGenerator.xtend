@@ -33,16 +33,6 @@ class IOSGenerator extends AbstractPlatformGenerator
 	override doGenerate(IExtendedFileSystemAccess fsa) {
 		
 		/////////////////////////////////////////
-		// Feasibility check
-		/////////////////////////////////////////
-		
-		// Check whether a main block has been defined. Otherwise do not run the generator.
-		if(dataContainer.main == null) {
-			System::out.println("iOS: No main block found. Quit gracefully.")
-			return
-		}
-		
-		/////////////////////////////////////////
 		// Initialize
 		/////////////////////////////////////////
 		

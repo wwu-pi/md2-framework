@@ -62,15 +62,6 @@ class MD2Preprocessor extends AbstractPreprocessor {
 	 */
 	private def preprocessModel() {
 		
-		val autoGenerator = new ProcessAutoGenerator
-		val controller = new ProcessController
-		val conditionalEvents = new ProcessCustomEvents
-		val model = new ProcessModel
-		val view = new ProcessView
-		val viewReferences = new ProcessViewReferences
-		val workflows = new ProcessWorkflow
-		
-		
 		/////////////////////////////////////////////////////////////////////////////
 		//                                                                         //
 		// Collections that are shared between tasks throughout the model          //
@@ -115,6 +106,18 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		// TODO: Document (maybe enforce) pre-processing task dependencies         //
 		//                                                                         //
 		/////////////////////////////////////////////////////////////////////////////
+		
+		// instantiate all preprocessor classes
+		val autoGenerator = new ProcessAutoGenerator
+		val controller = new ProcessController
+		val conditionalEvents = new ProcessCustomEvents
+		val model = new ProcessModel
+		val view = new ProcessView
+		val viewReferences = new ProcessViewReferences
+		val workflows = new ProcessWorkflow
+		
+		
+		// workflow
 		
 		controller.replaceDefaultProviderTypeWithConcreteDefinition // new
 		
