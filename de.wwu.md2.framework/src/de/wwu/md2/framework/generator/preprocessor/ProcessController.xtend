@@ -39,29 +39,26 @@ class ProcessController extends AbstractPreprocessor {
 	 */
 	def createStartUpActionAndRegisterAsOnInitializedEvent() {
 		
-		val ctrl = controllers.last
+		val ctrl = controllers.head
 		
-		if (ctrl != null) {
-			
-			// create __startupAction
-			val startupAction = factory.createCustomAction;
-			startupAction.setName(startupActionName)
-			ctrl.controllerElements.add(startupAction)
-			
-			// register __startupAction as onInitializedEvent in main block
-			val main = controllers.map[ c |
-				c.eAllContents.toIterable.filter(Main).head
-			].head
-			val originalStartupAction = main.onInitializedEvent
-			main.setOnInitializedEvent(startupAction)
-			
-			// add original startup action to __startupAction
-			val originalCallTask = factory.createCallTask
-			val originalActionReference = factory.createActionReference
-			originalActionReference.setActionRef(originalStartupAction)
-			originalCallTask.setAction(originalActionReference)
-			startupAction.codeFragments.add(originalCallTask);
-		}
+		// create __startupAction
+		val startupAction = factory.createCustomAction;
+		startupAction.setName(startupActionName)
+		ctrl.controllerElements.add(startupAction)
+		
+		// register __startupAction as onInitializedEvent in main block
+		val main = controllers.map[ c |
+			c.eAllContents.toIterable.filter(Main).head
+		].head
+		val originalStartupAction = main.onInitializedEvent
+		main.setOnInitializedEvent(startupAction)
+		
+		// add original startup action to __startupAction
+		val originalCallTask = factory.createCallTask
+		val originalActionReference = factory.createActionReference
+		originalActionReference.setActionRef(originalStartupAction)
+		originalCallTask.setAction(originalActionReference)
+		startupAction.codeFragments.add(originalCallTask);
 	}
 	
 	/**
