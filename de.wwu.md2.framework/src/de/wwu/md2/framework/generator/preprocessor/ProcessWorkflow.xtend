@@ -1,8 +1,9 @@
 package de.wwu.md2.framework.generator.preprocessor
 
-import de.wwu.md2.framework.generator.preprocessor.util.MD2ComplexElementFactory
+import de.wwu.md2.framework.generator.preprocessor.util.AbstractPreprocessor
 import de.wwu.md2.framework.mD2.ActionDef
 import de.wwu.md2.framework.mD2.AttributeSetTask
+import de.wwu.md2.framework.mD2.Boolean
 import de.wwu.md2.framework.mD2.ConditionalEventRef
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ContentProviderEventRef
@@ -10,38 +11,37 @@ import de.wwu.md2.framework.mD2.ContentProviderPath
 import de.wwu.md2.framework.mD2.ContentProviderPathEventRef
 import de.wwu.md2.framework.mD2.ContentProviderReference
 import de.wwu.md2.framework.mD2.ContentProviderSetTask
-import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.EventDef
 import de.wwu.md2.framework.mD2.GlobalEventRef
 import de.wwu.md2.framework.mD2.LocationProviderPath
 import de.wwu.md2.framework.mD2.LocationProviderReference
-import de.wwu.md2.framework.mD2.MD2Factory
-import de.wwu.md2.framework.mD2.Model
 import de.wwu.md2.framework.mD2.Operator
 import de.wwu.md2.framework.mD2.SetWorkflowAction
 import de.wwu.md2.framework.mD2.View
 import de.wwu.md2.framework.mD2.ViewElementEventRef
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.Workflow
+import de.wwu.md2.framework.mD2.WorkflowGoToDefinition
 import de.wwu.md2.framework.mD2.WorkflowGoToNext
 import de.wwu.md2.framework.mD2.WorkflowGoToPrevious
 import de.wwu.md2.framework.mD2.WorkflowGoToSpecExtended
 import de.wwu.md2.framework.mD2.WorkflowGoToStep
+import de.wwu.md2.framework.mD2.WorkflowGotoAction
 import de.wwu.md2.framework.mD2.WorkflowProceedAction
 import de.wwu.md2.framework.mD2.WorkflowReturn
 import de.wwu.md2.framework.mD2.WorkflowReverseAction
 import de.wwu.md2.framework.mD2.WorkflowStep
+import java.util.Collection
 import java.util.HashMap
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.emf.ecore.resource.ResourceSet
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension org.apache.commons.codec.digest.DigestUtils.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
-class ProcessWorkflow {
+class ProcessWorkflow extends AbstractPreprocessor {
 	
 	////////////////////////////////////////////////
 	// Workflow Transformation Methods
@@ -50,7 +50,7 @@ class ProcessWorkflow {
 	/**
 	 * TODO - documentation + dependencies
 	 */
-	def static void transformWorkflowsToSequenceOfCoreLanguageElements(MD2ComplexElementFactory factory, ResourceSet workingInput) {
+	def transformWorkflowsToSequenceOfCoreLanguageElements() {
 		
 		// only run this task if there are workflows present
 		val hasWorkflows = workingInput.resources.map[ r |
@@ -61,24 +61,27 @@ class ProcessWorkflow {
 			return
 		}
 		
-		val returnStepStack = createReturnStepStack(factory, workingInput)
+		val returnStepStack = createReturnStepStack
 		
-		val controllerStateEntity = createWorkflowControllerStateEntity(factory, workingInput)
-		val controllerStateCP = createWorkflowControllerStateContentProvider(factory, workingInput, controllerStateEntity)
+		val controllerStateEntity = createWorkflowControllerStateEntity
+		val controllerStateCP = createWorkflowControllerStateContentProvider(controllerStateEntity)
 		
-		val workflowExecuteStepAction = createExecuteStepCustomAction(factory, workingInput, controllerStateEntity, controllerStateCP)
+		val workflowExecuteStepAction = createExecuteStepCustomAction(controllerStateEntity, controllerStateCP)
 		
 		
-		val workflowAction = createWorkflowProcessAction(factory, workingInput, controllerStateEntity, controllerStateCP, workflowExecuteStepAction, returnStepStack)
-		val eventActionMap = createWorkflowActionTriggerActions(factory, workingInput, controllerStateEntity, controllerStateCP, workflowAction)
+		val workflowAction = createWorkflowProcessAction(controllerStateEntity, controllerStateCP, workflowExecuteStepAction, returnStepStack)
+		val eventActionMap = createWorkflowActionTriggerActions(controllerStateEntity, controllerStateCP, workflowAction)
 		
-		registerWorkflowActionTriggerActionsOnStartup(factory, workingInput, eventActionMap)
+		registerWorkflowActionTriggerActionsOnStartup(eventActionMap)
 		
 		// Transform all SimpleActions for the workflow control
-		transformSetWorkflowActionToCustomActionCall(factory, workingInput, controllerStateEntity, controllerStateCP, workflowExecuteStepAction)
+		transformSetWorkflowActionToCustomActionCall(controllerStateEntity, controllerStateCP, workflowExecuteStepAction)
+		transformWorkflowProceedActionToCustomActionCall(controllerStateEntity, controllerStateCP, workflowExecuteStepAction)
+		transformWorkflowReverseActionToCustomActionCall(controllerStateEntity, controllerStateCP, workflowExecuteStepAction)
+		transformWorkflowGotoActionToCustomActionCall(controllerStateEntity, controllerStateCP, workflowExecuteStepAction)
 		
 		// Remove actual workflow after everything has been transformed
-		removeWorkflows(factory, workingInput)
+		removeWorkflows
 	}
 	
 	/**
@@ -87,10 +90,8 @@ class ProcessWorkflow {
 	 * stores the current workflow name and stepname in the form <i>workflow__step</i>. <code>lastEventFired</code> always keeps
 	 * the name of the last event that was fired (should be the event that triggered the <code>__WorkflowProcessAction</code>).
 	 */
-	def private static createWorkflowControllerStateEntity(MD2ComplexElementFactory factory, ResourceSet workingInput) {
-		val model = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Model))
-		].flatten.last
+	private def createWorkflowControllerStateEntity() {
+		val model = models.last
 		
 		// Create entity
 		val stringType = factory.createStringType
@@ -108,12 +109,8 @@ class ProcessWorkflow {
 	/**
 	 * Create content provider for <code>__WorkflowControllerState</code> entity.
 	 */
-	def private static createWorkflowControllerStateContentProvider(
-		MD2ComplexElementFactory factory, ResourceSet workingInput, Entity controllerStateEntity
-	) {
-		val controller = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Controller))
-		].flatten.last
+	private def createWorkflowControllerStateContentProvider(Entity controllerStateEntity) {
+		val controller = controllers.last
 		
 		// Create content provider
 		val contentProvider = factory.createComplexContentProvider(
@@ -131,17 +128,14 @@ class ProcessWorkflow {
 	/**
 	 * TODO - documentation
 	 */
-	def private static createWorkflowProcessAction(
-		MD2ComplexElementFactory factory, ResourceSet workingInput, Entity entity,
-		ContentProvider contentProvider, CustomAction workflowExecuteStepAction, HashMap<String, EObject> stack
+	private def createWorkflowProcessAction(
+		Entity entity, ContentProvider contentProvider, CustomAction workflowExecuteStepAction, HashMap<String, EObject> stack
 	) {
-		val workflows = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Workflow))
+		val workflows = controllers.map[ ctrl |
+			ctrl.controllerElements.filter(Workflow)
 		].flatten
 		
-		val controller = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Controller))
-		].flatten.last
+		val controller = controllers.last
 		
 		// createAction
 		val customAction = factory.createCustomAction
@@ -168,7 +162,7 @@ class ProcessWorkflow {
 				
 				{
 					val stepStr = step.stringRepresentationOfStep
-					val conditionalExpression = factory.createCompareExpression(entity, contentProvider, "currentWorkflowStep", stepStr)
+					val conditionalExpression = createCompareExpression(entity, contentProvider, "currentWorkflowStep", stepStr)
 					
 					outerIfCodeBlock.setCondition(conditionalExpression)
 					
@@ -197,18 +191,18 @@ class ProcessWorkflow {
 				
 				gotos.forEach[ goto, gotoIndex |
 					
+					val workflowGoTo = goto.goto
+					
 					//////////////////////////////////////////////////////////
 					// Create inner ifCodeBlock and its according condition
 					//////////////////////////////////////////////////////////
 					
 					val innerIfCodeBlock = factory.createIfCodeBlock
 					
-					// configure the conditional expression to match all events
+					// configure the conditional expression to match all events and the WorkflowProceed,
+					// WorkflowReverse and WorkflowGoto simple action calls
 					// (lastEventFired equals "evt1" or lastEventFired equals "evt2" or ... or lastEventFired equals "evtN")
-					val compareExpressions = goto.spec.events.map[ event |
-						factory.createCompareExpression(entity, contentProvider, "lastEventFired", event.stringRepresentationOfEvent)
-					]
-					val eventsSubCondition = factory.createComplexOr(compareExpressions.iterator)
+					val eventsSubCondition = matchAllEventsCondition(newHashSet(goto), entity, contentProvider)
 					
 					// add 'given' condition of goto specification (with 'and')
 					val given = if (goto.spec instanceof WorkflowGoToSpecExtended && (goto.spec as WorkflowGoToSpecExtended).condition != null) {
@@ -228,8 +222,6 @@ class ProcessWorkflow {
 					//////////////////////////////////////////////////////////
 					// Create code fragment for inner if code block
 					//////////////////////////////////////////////////////////
-					
-					val workflowGoTo = goto.goto
 					
 					// set current workflow step
 					{
@@ -400,17 +392,8 @@ class ProcessWorkflow {
 				// ... elseif (lastEventFired equals "evt1" or lastEventFired equals "evt2" or ... or lastEventFired equals "evtX")
 				// for all events of the defined gotos
 				if (gotos.size > 0 && step.message != null) {
-					val events = gotos.map[ g |
-						g.spec.events.map(e | e.stringRepresentationOfEvent)
-					].flatten.toSet
-					
-					// build the conditional expression to match all events
-					val compareExpressions = events.map[ eventStr |
-						factory.createCompareExpression(entity, contentProvider, "lastEventFired", eventStr)
-					]
-					val condition = factory.createComplexOr(compareExpressions.iterator)
-					
 					val ifCodeBlock = factory.createIfCodeBlock
+					val condition = matchAllEventsCondition(gotos, entity, contentProvider)
 					ifCodeBlock.setCondition(condition)
 					innerConditionalCodeFragment.elseifs.add(ifCodeBlock)
 					
@@ -436,17 +419,13 @@ class ProcessWorkflow {
 	 * workflow processing action. These actions are then bound to the according events. This can be seen as a workaround, because
 	 * in MD2 there is no way to find out which event triggered a particular action.
 	 */
-	def private static createWorkflowActionTriggerActions(
-		MD2Factory factory, ResourceSet workingInput, Entity entity, ContentProvider contentProvider, CustomAction workflowAction
-	) {
+	private def createWorkflowActionTriggerActions(Entity entity, ContentProvider contentProvider, CustomAction workflowAction) {
 		
-		val workflows = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Workflow))
+		val workflows = controllers.map[ ctrl |
+			ctrl.controllerElements.filter(Workflow)
 		].flatten
 		
-		val controller = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Controller))
-		].flatten.last
+		val controller = controllers.last
 		
 		// get all events of all workflows
 		val gotos = workflows.map(wf | wf.workflowSteps).flatten.map(step | step.gotos).flatten
@@ -460,7 +439,7 @@ class ProcessWorkflow {
 		eventMap.forEach[ str, event |
 			
 			val customAction = buildWorkflowActionTriggerAction(
-				factory, "__workflowActionEventTrigger_" + str.sha1Hex, str, entity, contentProvider, workflowAction
+				"__workflowActionEventTrigger_" + str.sha1Hex, str, entity, contentProvider, workflowAction
 			)
 			
 			controller.controllerElements.add(customAction)
@@ -470,13 +449,9 @@ class ProcessWorkflow {
 		return eventActionMap
 	}
 	
-	def private static void registerWorkflowActionTriggerActionsOnStartup(
-		MD2Factory factory, ResourceSet workingInput, HashMap<EventDef, CustomAction> eventActionMap
-	) {
+	private def registerWorkflowActionTriggerActionsOnStartup(HashMap<EventDef, CustomAction> eventActionMap) {
 		
-		val controller = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Controller))
-		].flatten.last
+		val controller = controllers.last
 		
 		// create custom action to register all events
 		val customAction = factory.createCustomAction
@@ -496,8 +471,8 @@ class ProcessWorkflow {
 		]
 		
 		// add action as call task to startUpAction
-		val startupAction = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(CustomAction))
+		val startupAction = controllers.map[ ctrl |
+			ctrl.controllerElements.filter(CustomAction)
 				.filter( action | action.name.equals(ProcessController::startupActionName))
 		].flatten.last
 		val callTask = factory.createCallTask
@@ -507,15 +482,10 @@ class ProcessWorkflow {
 		startupAction.codeFragments.add(0, callTask);
 	}
 	
-	def static createReturnStepStack(MD2ComplexElementFactory factory, ResourceSet workingInput) {
+	private def createReturnStepStack() {
 		
-		val controller = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Controller))
-		].flatten.last
-		
-		val model = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Model))
-		].flatten.last
+		val controller = controllers.last
+		val model = models.last
 		
 		val stringType = factory.createStringType
 		val stack = factory.createComplexStack(
@@ -531,21 +501,15 @@ class ProcessWorkflow {
 		return stack
 	}
 	
-	def static createExecuteStepCustomAction(
-		MD2ComplexElementFactory factory, ResourceSet workingInput, Entity entity,
-		ContentProvider contentProvider
-	) {
+	private def createExecuteStepCustomAction(Entity entity, ContentProvider contentProvider) {
 		
-		val workflowSteps = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Workflow)).map[ w |
+		val workflowSteps = controllers.map[ ctrl |
+			ctrl.controllerElements.filter(Workflow).map[ w |
 				w.workflowSteps
 			].flatten
 		].flatten
 		
-		val controller = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Controller))
-		].flatten.last
-		
+		val controller = controllers.last
 		
 		val customAction = factory.createCustomAction
 		customAction.setName("__workflowExecuteStepAction")
@@ -558,7 +522,7 @@ class ProcessWorkflow {
 		
 		workflowSteps.forEach[ step, index |
 			val stepStr = step.stringRepresentationOfStep
-			val conditionalExpression = factory.createCompareExpression(entity, contentProvider, "currentWorkflowStep", stepStr)
+			val conditionalExpression = createCompareExpression(entity, contentProvider, "currentWorkflowStep", stepStr)
 			
 			val ifCodeBlock = factory.createIfCodeBlock
 			ifCodeBlock.setCondition(conditionalExpression)
@@ -585,9 +549,9 @@ class ProcessWorkflow {
 		return customAction
 	}
 	
-	def static void removeWorkflows(MD2Factory factory, ResourceSet workingInput) {
-		val workflows = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Workflow))
+	private def removeWorkflows() {
+		val workflows = controllers.map[ ctrl |
+			ctrl.controllerElements.filter(Workflow)
 		].flatten
 		
 		while (!workflows.empty) {
@@ -608,19 +572,16 @@ class ProcessWorkflow {
 	 * First custom actions that set and go to the respective workflow are created for all SetWorkflowActions, then
 	 * in a second step all SetWorkflowActions are replaced with the newly created custom actions.
 	 */
-	def private static transformSetWorkflowActionToCustomActionCall(
-		MD2ComplexElementFactory factory, ResourceSet workingInput, Entity entity, ContentProvider contentProvider,
-		CustomAction workflowExecuteStepAction
+	private def transformSetWorkflowActionToCustomActionCall(
+		Entity entity, ContentProvider contentProvider, CustomAction workflowExecuteStepAction
 	) {
 		
 		// get random controller element to place the action in
-		val controller = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Controller))
-		].flatten.last
+		val controller = controllers.last
 		
 		// get all SetWorkflowActions
-		val setWorkflowActions = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(SetWorkflowAction))
+		val setWorkflowActions = controllers.map[ ctrl |
+			ctrl.eAllContents.toIterable.filter(SetWorkflowAction)
 		].flatten
 		
 		// remember all SetWorkflow###Actions that are already created, so that for each workflow only one such
@@ -685,24 +646,25 @@ class ProcessWorkflow {
 		
 	}
 	
-	def private static transformWorkflowProceedActionToCustomActionCall(
-		MD2Factory factory, ResourceSet workingInput, Entity entity, ContentProvider contentProvider,
-		CustomAction workflowAction
+	private def transformWorkflowProceedActionToCustomActionCall(
+		Entity entity, ContentProvider contentProvider, CustomAction workflowAction
 	) {
 		// get random controller element to place the action in
-		val controller = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Controller))
-		].flatten.last
+		val controller = controllers.last
 		
 		// get all WorkflowProceedActions
-		val workflowProceedActions = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(WorkflowProceedAction))
+		val workflowProceedActions = controllers.map[ ctrl |
+			ctrl.eAllContents.toIterable.filter(WorkflowProceedAction)
 		].flatten
+		
+		if (workflowProceedActions.empty) {
+			return
+		}
 		
 		// Create custom action that sets the 'virtual' event <i>action.proceed</i> and calls the
 		// __workflowExecuteAction.
 		val customAction = buildWorkflowActionTriggerAction(
-			factory, "__workflowActionEventTrigger_proceed", "action.proceed", entity, contentProvider, workflowAction
+			"__workflowActionEventTrigger_proceed", "__action.proceed", entity, contentProvider, workflowAction
 		)
 		controller.controllerElements.add(customAction)
 		
@@ -717,24 +679,25 @@ class ProcessWorkflow {
 		]
 	}
 	
-	def private static transformWorkflowReverseActionToCustomActionCall(
-		MD2Factory factory, ResourceSet workingInput, Entity entity, ContentProvider contentProvider,
-		CustomAction workflowAction
+	private def transformWorkflowReverseActionToCustomActionCall(
+		Entity entity, ContentProvider contentProvider, CustomAction workflowAction
 	) {
 		// get random controller element to place the action in
-		val controller = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Controller))
-		].flatten.last
+		val controller = controllers.last
 		
 		// get all WorkflowReverseActions
-		val workflowReverseActions = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(WorkflowReverseAction))
+		val workflowReverseActions = controllers.map[ ctrl |
+			ctrl.eAllContents.toIterable.filter(WorkflowReverseAction)
 		].flatten
+		
+		if (workflowReverseActions.empty) {
+			return
+		}
 		
 		// Create custom action that sets the 'virtual' event <i>action.reverse</i> and calls the
 		// __workflowExecuteAction.
 		val customAction = buildWorkflowActionTriggerAction(
-			factory, "__workflowActionEventTrigger_reverse", "action.reverse", entity, contentProvider, workflowAction
+			"__workflowActionEventTrigger_reverse", "__action.reverse", entity, contentProvider, workflowAction
 		)
 		controller.controllerElements.add(customAction)
 		
@@ -749,8 +712,47 @@ class ProcessWorkflow {
 		]
 	}
 	
-	def private static transformGotoStepActionToCustomActionCall(MD2Factory factory, ResourceSet workingInput) {
+	private def transformWorkflowGotoActionToCustomActionCall(
+		Entity entity, ContentProvider contentProvider, CustomAction workflowAction
+	) {
+		// get random controller element to place the action in
+		val controller = controllers.last
 		
+		// get all WorkflowGotoActions
+		val workflowGotoActions = controllers.map[ ctrl |
+			ctrl.eAllContents.toIterable.filter(WorkflowGotoAction)
+		].flatten
+		
+		// remember all __workflowActionEventTrigger_goto### actions that are already created, so that for each step
+		// only one such action is created
+		val createdWorkflowGotoActions = newHashMap
+		
+		// Create custom action that sets the 'virtual' event <i>action.goto.stepID</i> and calls the
+		// __workflowExecuteAction. For each WorkflowGotoAction that points to a different step one of these
+		// actions is build and stored in a hash map.
+		workflowGotoActions.forEach[ workflowGotoAction |
+			val workflowStep = workflowGotoAction.wfStep
+			if (!createdWorkflowGotoActions.containsKey(workflowStep)) {
+				val customActionName = "__workflowActionEventTrigger_goto" + workflowStep.stringRepresentationOfStep.sha1Hex
+				val eventIdentifier = "__action.goto." + workflowStep.stringRepresentationOfStep
+				val customAction = buildWorkflowActionTriggerAction(
+					customActionName, eventIdentifier, entity, contentProvider, workflowAction
+				)
+				createdWorkflowGotoActions.put(workflowStep, customAction)
+				controller.controllerElements.add(customAction)
+			}
+		]
+		
+		// Replace all WorkflowGotoActions with the appropriate custom action from the hash map.
+		workflowGotoActions.forEach[ workflowGotoAction |
+			// build the SimpleActionRef that contains the cross-reference to the actual custom action
+			val actionRef = factory.createActionReference
+			val customAction = createdWorkflowGotoActions.get(workflowGotoAction.wfStep)
+			actionRef.setActionRef(customAction)
+			
+			val containingActionDef = workflowGotoAction.eContainer as ActionDef
+			containingActionDef.replace(actionRef)
+		]
 	}
 	
 	
@@ -761,7 +763,7 @@ class ProcessWorkflow {
 	/**
 	 * Helper to create a non-ambiguous string representation for events.
 	 */
-	def private static getStringRepresentationOfEvent(EventDef event) {
+	private def getStringRepresentationOfEvent(EventDef event) {
 		switch (event) {
 			ViewElementEventRef: {
 				var EObject eObject = event.referencedField.ref
@@ -796,7 +798,7 @@ class ProcessWorkflow {
 	/**
 	 * Helper to create the string representation of a workflow step name of the form <i>workflowName__stepName</i>.
 	 */
-	def private static getStringRepresentationOfStep(WorkflowStep step) {
+	private def getStringRepresentationOfStep(WorkflowStep step) {
 		val workflow = step.eContainer as Workflow
 		return workflow.name + "__" + step.name
 	}
@@ -804,8 +806,8 @@ class ProcessWorkflow {
 	/**
 	 * Helper to build a conditional expression of the form <code>contentProvider.attributeName equals "compareWith"</code>.
 	 */
-	def private static createCompareExpression(
-		MD2ComplexElementFactory factory, Entity entity, ContentProvider contentProvider, String attributeName, String compareWith
+	private def createCompareExpression(
+		Entity entity, ContentProvider contentProvider, String attributeName, String compareWith
 	) {
 		
 		// eqLeft composition
@@ -835,9 +837,9 @@ class ProcessWorkflow {
 	 * 
 	 * @return The newly created CustomAction.
 	 */
-	def private static buildWorkflowActionTriggerAction(
-		MD2Factory factory, String actionName, String eventRepresentation, Entity entity,
-		ContentProvider contentProvider, CustomAction workflowAction
+	private def buildWorkflowActionTriggerAction(
+		String actionName, String eventRepresentation, Entity entity, ContentProvider contentProvider,
+		CustomAction workflowAction
 	) {
 		val customAction = factory.createCustomAction
 		customAction.setName(actionName)
@@ -867,6 +869,55 @@ class ProcessWorkflow {
 		customAction.codeFragments.add(callTask)
 		
 		return customAction
+	}
+	
+	/**
+	 * Helper to build a conditional expression of the form
+	 * <code>(lastEventFired equals "evt1" or lastEventFired equals "evt2" or ... or lastEventFired equals "evtN")</code>
+	 * with <code>evtN</code> being the string representation of an event as calculated in <i>getStringRepresentationOfEvent</i>
+	 * or the string representation of an Workflow navigation action (i.e, WorkflowProceed, WorkflowReverse and WorkflowGoto).
+	 * 
+	 * @return ConditionalExpression
+	 */
+	private def matchAllEventsCondition(
+		Collection<WorkflowGoToDefinition> gotos, Entity entity, ContentProvider contentProvider
+	) {
+		// configure the conditional expression to match all events
+		// (lastEventFired equals "evt1" or lastEventFired equals "evt2" or ... or lastEventFired equals "evtN")
+		val events = gotos.map[ g |
+			g.spec.events.map(e | e.stringRepresentationOfEvent)
+		].flatten.toSet
+		
+		// add conditional expression that matches the WorkflowProceed, WorkflowReverse and WorkflowGoto actions
+		val navigationActions = gotos.map[ g |
+			val workflowGoTo = g.goto
+			switch workflowGoTo {
+				WorkflowGoToNext: "__action.proceed"
+				WorkflowGoToPrevious: "__action.reverse"
+				WorkflowGoToStep: "__action.goto." + workflowGoTo.workflowStep.stringRepresentationOfStep
+			}
+		].toSet
+		
+		// merge both sets into a new hash set
+		val allCompareStrings = newHashSet
+		allCompareStrings.addAll(events)
+		allCompareStrings.addAll(navigationActions)
+		
+		// build the conditional expression to match all events and actions
+		val compareExpressions = allCompareStrings.map[ str |
+			createCompareExpression(entity, contentProvider, "lastEventFired", str)
+		]
+		
+		// if no events and actions are specified, set condition to false
+		val eventsSubCondition = if (!compareExpressions.empty) {
+			factory.createComplexOr(compareExpressions.iterator)
+		} else {
+			val booleanExpr = factory.createBooleanExpression
+			booleanExpr.setValue(Boolean::FALSE)
+			booleanExpr
+		}
+		
+		return eventsSubCondition
 	}
 	
 }

@@ -1311,9 +1311,9 @@ WorkflowGoTo:
 ;
 
 WorkflowGoToSpec:
-	{WorkflowGoToSpecShorthand} ('on' events += EventDef+) |
+	{WorkflowGoToSpecShorthand} ('on' events += EventDef+)? |
 	{WorkflowGoToSpecExtended} '{' (
-		('on' events += EventDef+) &
+		('on' events += EventDef+)? &
 		('given' (condition = Condition | '{' condition = Condition '}'))? &
 		('then' action = ActionDef)?
 	) '}'

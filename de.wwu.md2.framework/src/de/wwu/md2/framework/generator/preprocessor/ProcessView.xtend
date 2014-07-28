@@ -1,5 +1,6 @@
 package de.wwu.md2.framework.generator.preprocessor
 
+import de.wwu.md2.framework.generator.preprocessor.util.AbstractPreprocessor
 import de.wwu.md2.framework.mD2.AlternativesPane
 import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.CommonContainerParam
@@ -13,8 +14,6 @@ import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam
 import de.wwu.md2.framework.mD2.GridLayoutPaneRowsParam
 import de.wwu.md2.framework.mD2.InputElement
-import de.wwu.md2.framework.mD2.MD2Factory
-import de.wwu.md2.framework.mD2.MD2Model
 import de.wwu.md2.framework.mD2.MD2Package
 import de.wwu.md2.framework.mD2.NamedColor
 import de.wwu.md2.framework.mD2.NamedColorDef
@@ -29,12 +28,11 @@ import java.util.Map
 import java.util.Set
 import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.util.EcoreUtil
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
-class ProcessView {
+class ProcessView extends AbstractPreprocessor {
 	
 	/**
 	 * Check for existence of flowDirection parameter for all FlowLayoutPanes.
@@ -44,7 +42,7 @@ class ProcessView {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def static void setFlowLayoutPaneDefaultParameters(MD2Factory factory, ResourceSet workingInput) {
+	def setFlowLayoutPaneDefaultParameters() {
 		val Iterable<FlowLayoutPane> flowLayoutPanes = workingInput.resources.map(r|r.allContents.toIterable.filter(typeof(FlowLayoutPane))).flatten
 		for (flowLayoutPane : flowLayoutPanes) {
 			if(!flowLayoutPane.params.exists(p | p instanceof FlowLayoutPaneFlowDirectionParam)) {
@@ -62,8 +60,12 @@ class ProcessView {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def static void duplicateSpacers(MD2Factory factory, ResourceSet workingInput) {
-		val spacers = workingInput.resources.map(r|r.allContents.toIterable.filter(typeof(Spacer))).flatten
+	def duplicateSpacers() {
+		
+		val spacers = views.map[ view |
+			view.eAllContents.toIterable.filter(Spacer)
+		].flatten
+		
 		for (spacer : spacers) {
 			if (spacer.number > 1) {
 				// if we found a spacer, get the list of its containing feature and replace the single spacer by
@@ -104,19 +106,16 @@ class ProcessView {
 	 *   </li>
 	 * </ul>
 	 */
-	def static void transformFlowLayoutsToGridLayouts(MD2Factory factory, ResourceSet workingInput) {
+	def transformFlowLayoutsToGridLayouts() {
 		
 		// Store a mapping for all replaced floatLayouts to the newly created GridLayout.
 		// This information is required to update all cross references after the replacement process.
 		val rememberReplacedFloatLayoutsMap = newHashMap
 		
-		workingInput.resources.forEach[r |
+		views.forEach[ view |
 			
-			// check whether the current resource has a view layer, otherwise continue
-			val hasView = r.contents.filter(typeof(MD2Model)).exists(e | e.modelLayer instanceof View)
-			
-			var iterator = r.allContents
-			while(hasView && iterator.hasNext) {
+			var iterator = view.eAllContents
+			while(iterator.hasNext) {
 				val next = iterator.next
 				if (next instanceof FlowLayoutPane) {
 					val flowLayoutPane = next as FlowLayoutPane
@@ -124,7 +123,7 @@ class ProcessView {
 					// reset iterator after each match to avoid concurrent modification exceptions
 					// => is iterating over the tree while replacing flowLayouts with gridLayouts
 					// TODO can be really slow on big trees (optimization by only iterating views)
-					iterator = r.allContents
+					iterator = view.eAllContents
 					
 					// calculate columns and rows params for the new GridLayout
 					val numberOfContainedElements = flowLayoutPane.elements.size
@@ -188,15 +187,15 @@ class ProcessView {
 	 *   </li>
 	 * </ul>
 	 */
-	def static void calculateNumRowsAndNumColumnsParameters(MD2Factory factory, ResourceSet workingInput) {
-		val Iterable<GridLayoutPane> gridLayoutPanes = workingInput.resources.map[r |
-			r.allContents.toIterable.filter(typeof(GridLayoutPane))
+	def calculateNumRowsAndNumColumnsParameters() {
+		val gridLayoutPanes = views.map[ view |
+			view.eAllContents.toIterable.filter(GridLayoutPane)
 		].flatten
 		
 		for (gridLayoutPane : gridLayoutPanes) {
 			var numberOfContainedElements = gridLayoutPane.elements.size
-			val columnsParams = gridLayoutPane.params.filter(typeof(GridLayoutPaneColumnsParam))
-			val rowsParams = gridLayoutPane.params.filter(typeof(GridLayoutPaneRowsParam))
+			val columnsParams = gridLayoutPane.params.filter(GridLayoutPaneColumnsParam)
+			val rowsParams = gridLayoutPane.params.filter(GridLayoutPaneRowsParam)
 			
 			// enforce minimum grid size
 			if (numberOfContainedElements == 0) {
@@ -238,15 +237,15 @@ class ProcessView {
 	 *   </li>
 	 * </ul>
 	 */
-	def static void fillUpGridLayoutsWithSpacers(MD2Factory factory, ResourceSet workingInput) {
-		val Iterable<GridLayoutPane> gridLayoutPanes = workingInput.resources.map[r |
-			r.allContents.toIterable.filter(typeof(GridLayoutPane))
+	def fillUpGridLayoutsWithSpacers() {
+		val Iterable<GridLayoutPane> gridLayoutPanes = views.map[ view |
+			view.eAllContents.toIterable.filter(GridLayoutPane)
 		].flatten
 		
 		for (gridLayoutPane : gridLayoutPanes) {
 			val numberOfContainedElements = gridLayoutPane.elements.size
-			val columns = gridLayoutPane.params.filter(typeof(GridLayoutPaneColumnsParam)).last.value
-			val rows = gridLayoutPane.params.filter(typeof(GridLayoutPaneRowsParam)).last.value
+			val columns = gridLayoutPane.params.filter(GridLayoutPaneColumnsParam).last.value
+			val rows = gridLayoutPane.params.filter(GridLayoutPaneRowsParam).last.value
 			
 			val numberOfRequiredSpacers = rows * columns - numberOfContainedElements
 			var i = 0
@@ -295,11 +294,12 @@ class ProcessView {
 	 *   </li>
 	 * </ul>
 	 */
-	def static void calculateAllViewElementWidths(MD2Factory factory, ResourceSet workingInput) {
+	def calculateAllViewElementWidths() {
 		
 		// step 1
-		val Iterable<ContainerElement> containerElements = workingInput.resources.map[r |
-			r.allContents.toIterable.filter(typeof(ContainerElement)).filter(containerElem | !(containerElem instanceof TabbedAlternativesPane))
+		val containerElements = views.map[ view |
+			view.eAllContents.toIterable.filter(ContainerElement)
+				.filter(containerElem | !(containerElem instanceof TabbedAlternativesPane))
 		].flatten
 		
 		for (contentContainer : containerElements.filter(typeof(GridLayoutPane))) {
@@ -450,9 +450,9 @@ class ProcessView {
 	 *   </li>
 	 * </ul>
 	 */
-	def static void transformInputsWithLabelsAndTooltipsToLayouts(MD2Factory factory, ResourceSet workingInput) {
-		val Iterable<InputElement> inputs = workingInput.resources.map[r |
-			r.allContents.toIterable.filter(typeof(InputElement))
+	def transformInputsWithLabelsAndTooltipsToLayouts() {
+		val Iterable<InputElement> inputs = views.map[ view |
+			view.eAllContents.toIterable.filter(InputElement)
 		].flatten
 		
 		for (input : inputs) {
@@ -530,13 +530,13 @@ class ProcessView {
 	 *   </li>
 	 * </ul>
 	 */
-	def static void createDisableActionsForAllDisabledViewElements(MD2Factory factory, ResourceSet workingInput) {
-		val guiElements = workingInput.resources.map[r |
-			r.allContents.toIterable.filter(typeof(ViewGUIElement))
+	def createDisableActionsForAllDisabledViewElements() {
+		val guiElements = views.map[ view |
+			view.eAllContents.toIterable.filter(ViewGUIElement)
 		].flatten
 		
-		val startupAction = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(CustomAction))
+		val startupAction = controllers.map[ ctrl |
+			ctrl.controllerElements.filter(CustomAction)
 				.filter( action | action.name.equals(ProcessController::startupActionName))
 		].flatten.last
 		
@@ -570,8 +570,11 @@ class ProcessView {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def static void replaceNamedColorsWithHexColors(MD2Factory factory, ResourceSet workingInput) {
-		val Iterable<NamedColorDef> namedColorDefs = workingInput.resources.map(r|r.allContents.toIterable.filter(typeof(NamedColorDef))).flatten
+	def replaceNamedColorsWithHexColors() {
+		val namedColorDefs = views.map[ view |
+			view.eAllContents.toIterable.filter(NamedColorDef)
+		].flatten
+		
 		for (namedColorDef : namedColorDefs) {
 			val hexColorDef = factory.createHexColorDef
 			hexColorDef.color = colorNameHexMap().get(namedColorDef.color)
@@ -582,7 +585,7 @@ class ProcessView {
 	/**
 	 * Map all supported named colors to their according hex color.
 	 */
-	def private static colorNameHexMap() {
+	private def colorNameHexMap() {
 		val Map<NamedColor, String> map = newHashMap
 		map.put(NamedColor::AQUA, "#00ffff")
 		map.put(NamedColor::BLACK, "#000000")
@@ -610,7 +613,7 @@ class ProcessView {
 	 * 
 	 * This method is slow for big errors! Thus, reduce error before calling this method.
 	 */
-	def private static void distributeTotalErrorOfElements(Set<Map.Entry<EObject,Integer>> iterable, int total) {
+	private def distributeTotalErrorOfElements(Set<Map.Entry<EObject, Integer>> iterable, int total) {
 		val newSum = iterable.map[m | m.value].reduce[v1, v2| v1 + v2]
 		val error = newSum - total;
 		val iterations = if (error >= 0) error else error * -1

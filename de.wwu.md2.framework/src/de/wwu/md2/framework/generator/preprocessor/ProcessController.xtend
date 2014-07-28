@@ -1,16 +1,15 @@
 package de.wwu.md2.framework.generator.preprocessor
 
+import de.wwu.md2.framework.generator.preprocessor.util.AbstractPreprocessor
 import de.wwu.md2.framework.mD2.CombinedAction
 import de.wwu.md2.framework.mD2.ContainsCodeFragments
 import de.wwu.md2.framework.mD2.ContentProvider
-import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.CustomizedValidatorType
 import de.wwu.md2.framework.mD2.DateRangeValidator
 import de.wwu.md2.framework.mD2.DateTimeRangeValidator
 import de.wwu.md2.framework.mD2.EventBindingTask
 import de.wwu.md2.framework.mD2.EventUnbindTask
-import de.wwu.md2.framework.mD2.MD2Factory
 import de.wwu.md2.framework.mD2.Main
 import de.wwu.md2.framework.mD2.NotNullValidator
 import de.wwu.md2.framework.mD2.NumberRangeValidator
@@ -20,13 +19,12 @@ import de.wwu.md2.framework.mD2.StandardValidator
 import de.wwu.md2.framework.mD2.StandardValidatorType
 import de.wwu.md2.framework.mD2.StringRangeValidator
 import de.wwu.md2.framework.mD2.TimeRangeValidator
-import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.util.EcoreUtil
 
 import static extension de.wwu.md2.framework.generator.preprocessor.util.Util.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
-class ProcessController {
+class ProcessController extends AbstractPreprocessor {
 	
 	public static String startupActionName = "__startupAction"
 	
@@ -39,11 +37,9 @@ class ProcessController {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def static void createStartUpActionAndRegisterAsOnInitializedEvent(MD2Factory factory, ResourceSet workingInput) {
+	def createStartUpActionAndRegisterAsOnInitializedEvent() {
 		
-		val ctrl = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Controller))
-		].flatten.last
+		val ctrl = controllers.last
 		
 		if (ctrl != null) {
 			
@@ -53,7 +49,9 @@ class ProcessController {
 			ctrl.controllerElements.add(startupAction)
 			
 			// register __startupAction as onInitializedEvent in main block
-			val main = ctrl.eAllContents.toIterable.filter(typeof(Main)).last
+			val main = controllers.map[ c |
+				c.eAllContents.toIterable.filter(Main).head
+			].head
 			val originalStartupAction = main.onInitializedEvent
 			main.setOnInitializedEvent(startupAction)
 			
@@ -75,13 +73,13 @@ class ProcessController {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def static void replaceDefaultProviderTypeWithConcreteDefinition(MD2Factory factory, ResourceSet workingInput) {
-		val contentProviders = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(ContentProvider))
+	def replaceDefaultProviderTypeWithConcreteDefinition() {
+		val contentProviders = controllers.map[ ctrl |
+			ctrl.controllerElements.filter(typeof(ContentProvider))
 		].flatten
 		
-		val main = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Main))
+		val main = controllers.map[ ctrl |
+			ctrl.controllerElements.filter(typeof(Main))
 		].flatten.head
 		
 		for (contentProvider : contentProviders) {
@@ -101,9 +99,9 @@ class ProcessController {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def static void replaceCombinedActionWithCustomAction(MD2Factory factory, ResourceSet workingInput) {
-		val Iterable<CombinedAction> combinedActions = workingInput.resources.map[ r | 
-			r.allContents.toIterable.filter(typeof(CombinedAction))
+	def replaceCombinedActionWithCustomAction() {
+		val combinedActions = controllers.map[ ctrl | 
+			ctrl.controllerElements.filter(typeof(CombinedAction))
 		].flatten
 		
 		combinedActions.forEach[ combinedAction |
@@ -144,14 +142,14 @@ class ProcessController {
 	 *   </li>
 	 * </ul>
 	 */
-	def static void createInitialGotoViewOrSetWorkflowAction(MD2Factory factory, ResourceSet workingInput) {
+	def createInitialGotoViewOrSetWorkflowAction() {
 		
-		val main = workingInput.resources.map[ r | 
-			r.allContents.toIterable.filter(typeof(Main))
+		val main = controllers.map[ ctrl | 
+			ctrl.controllerElements.filter(typeof(Main))
 		].flatten.head
 		
-		val startupAction = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(CustomAction))
+		val startupAction = controllers.map[ ctrl |
+			ctrl.controllerElements.filter(typeof(CustomAction))
 				.filter( action | action.name.equals(ProcessController::startupActionName))
 		].flatten.head
 		
@@ -186,9 +184,9 @@ class ProcessController {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def static void calculateParameterSignatureForAllSimpleActions(MD2Factory factory, ResourceSet workingInput) {
-		val Iterable<SimpleAction> simpleActions = workingInput.resources.map[ r | 
-			r.allContents.toIterable.filter(typeof(SimpleAction))
+	def calculateParameterSignatureForAllSimpleActions() {
+		val simpleActions = controllers.map[ ctrl | 
+			ctrl.eAllContents.toIterable.filter(typeof(SimpleAction))
 		].flatten
 		
 		for (simpleAction : simpleActions) {
@@ -219,14 +217,14 @@ class ProcessController {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def static void transformEventBindingAndUnbindingTasksToOneToOneRelations(MD2Factory factory, ResourceSet workingInput) {
+	def transformEventBindingAndUnbindingTasksToOneToOneRelations() {
 		
 		////////////////////////////////////////////////////
 		// transform all binding tasks
 		////////////////////////////////////////////////////
 		
-		val bindingTasks = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(EventBindingTask))
+		val bindingTasks = controllers.map[ ctrl |
+			ctrl.eAllContents.toIterable.filter(typeof(EventBindingTask))
 		].flatten.toList
 		
 		for (bindingTask : bindingTasks) {
@@ -251,8 +249,8 @@ class ProcessController {
 		// transform all unbinding tasks
 		////////////////////////////////////////////////////
 		
-		val unbindingTasks = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(EventUnbindTask))
+		val unbindingTasks = controllers.map[ ctrl |
+			ctrl.eAllContents.toIterable.filter(typeof(EventUnbindTask))
 		].flatten
 		
 		for (unbindingTask : unbindingTasks) {
@@ -276,9 +274,9 @@ class ProcessController {
 	/**
 	 * Replace custom validators with standard validator definitions.
 	 */
-	def static void replaceCustomValidatorsWithStandardValidatorDefinitions(MD2Factory factory, ResourceSet workingInput) {
-		val Iterable<CustomizedValidatorType> validators = workingInput.resources.map[r |
-			r.allContents.toIterable.filter(typeof(CustomizedValidatorType))
+	def replaceCustomValidatorsWithStandardValidatorDefinitions() {
+		val Iterable<CustomizedValidatorType> validators = controllers.map[ ctrl |
+			ctrl.eAllContents.toIterable.filter(typeof(CustomizedValidatorType))
 		].flatten
 		
 		validators.forEach [ validator |

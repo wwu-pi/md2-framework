@@ -1,6 +1,7 @@
 package de.wwu.md2.framework.generator.preprocessor
 
 import com.google.common.collect.Sets
+import de.wwu.md2.framework.generator.preprocessor.util.AbstractPreprocessor
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import de.wwu.md2.framework.mD2.AttrDateMax
 import de.wwu.md2.framework.mD2.AttrDateMin
@@ -18,7 +19,8 @@ import de.wwu.md2.framework.mD2.AttrTimeMin
 import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.BooleanType
 import de.wwu.md2.framework.mD2.ContentProviderPath
-import de.wwu.md2.framework.mD2.Controller
+import de.wwu.md2.framework.mD2.CustomAction
+import de.wwu.md2.framework.mD2.CustomCodeFragment
 import de.wwu.md2.framework.mD2.DateTimeType
 import de.wwu.md2.framework.mD2.DateType
 import de.wwu.md2.framework.mD2.Entity
@@ -26,28 +28,25 @@ import de.wwu.md2.framework.mD2.Enum
 import de.wwu.md2.framework.mD2.EnumType
 import de.wwu.md2.framework.mD2.FloatType
 import de.wwu.md2.framework.mD2.IntegerType
-import de.wwu.md2.framework.mD2.MD2Factory
+import de.wwu.md2.framework.mD2.Main
 import de.wwu.md2.framework.mD2.MappingTask
 import de.wwu.md2.framework.mD2.Model
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.ReferencedType
 import de.wwu.md2.framework.mD2.StringType
 import de.wwu.md2.framework.mD2.TimeType
-import de.wwu.md2.framework.mD2.ValidatorBindingTask
-import org.eclipse.emf.ecore.resource.ResourceSet
 
-import static de.wwu.md2.framework.generator.preprocessor.ProcessAutoGenerator.*
 import static de.wwu.md2.framework.generator.preprocessor.util.Util.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
-class ProcessModel {
+class ProcessModel extends AbstractPreprocessor {
 	
 	/**
 	 * Replace implicit Enum definitions with Enum model elements.
 	 * Change AttributeType from EnumType to ReferencedType.
 	 */
-	def static void transformImplicitEnums(MD2Factory factory, ResourceSet workingInput) {
+	def transformImplicitEnums() {
 		val Iterable<Attribute> enumAttributes = workingInput.resources.map(r|r.allContents.toIterable.filter(typeof(Attribute)).filter(attr | attr.type instanceof EnumType)).flatten.toList
 		enumAttributes.forEach [ enumAttr |
 			// Assume structure: Model -> Entity -> Attribute
@@ -74,30 +73,33 @@ class ProcessModel {
 	 * 
 	 * TODO change => each time an entity is mapped, the according validator is mapped as well!!
 	 */
-	def static void createValidatorsForModelConstraints(MD2Factory factory, ResourceSet workingInput) {
-		val mappingTasks = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(MappingTask)).filter([isCalledAtStartup(it)])
+	def createValidatorsForModelConstraints(String autoGenerationActionName) {
+		val mappingTasks = controllers.map[ ctrl |
+			ctrl.eAllContents.toIterable.filter(typeof(MappingTask)).filter([isCalledAtStartup(it, autoGenerationActionName)])
 		].flatten.toList
 		
+		val autogenAction = controllers.map[ ctrl |
+			ctrl.controllerElements.filter(typeof(CustomAction)).filter(action | action.name == autoGenerationActionName)
+		].flatten.last
+		
 		mappingTasks.filter([it.pathDefinition instanceof ContentProviderPath && (it.pathDefinition as ContentProviderPath).contentProviderRef.type instanceof ReferencedModelType]).forEach [ mappingTask |
-			val validatorBindingTask = modelConstraintToValidator(factory, workingInput, mappingTask)
+			val validatorBindingTask = modelConstraintToValidator(mappingTask, autogenAction)
 			
 			if (validatorBindingTask != null && validatorBindingTask.validators.size > 0) {
-				getAutoGenAction(workingInput)?.codeFragments.add(validatorBindingTask)
+				autogenAction?.codeFragments.add(validatorBindingTask)
 			}
 		]
 	}
 	
-	def private static ValidatorBindingTask modelConstraintToValidator(MD2Factory factory, ResourceSet input, MappingTask mappingTask) {
+	private def modelConstraintToValidator(MappingTask mappingTask, CustomAction autogenAction) {
 		
 		if (!(mappingTask.pathDefinition instanceof ContentProviderPath)) {
 			System::err.println("[ProcessModel] MappingTask is not instance of ContentProviderPathDefinition!")
 			return null
 		}
 		
-		val autoGenAction = getAutoGenAction(input)
-		val ctrl = input.resources.map(r|r.allContents.toIterable.filter(typeof(Controller))).flatten.last
-		if (autoGenAction == null || ctrl == null) return null
+		val ctrl = controllers.last
+		if (autogenAction == null || ctrl == null) return null
 		val validatorBindingTask = factory.createValidatorBindingTask()
 		validatorBindingTask.referencedFields.add(copyElement(mappingTask.referencedViewField) as AbstractViewGUIElementRef)
 		val attr = (mappingTask.pathDefinition as ContentProviderPath).getReferencedAttribute
@@ -258,6 +260,19 @@ class ProcessModel {
 			}
 		}
 		validatorBindingTask
+	}
+	
+	private def isCalledAtStartup(CustomCodeFragment codeFragment, String autoGenerationActionName) {
+		if (codeFragment.eContainer instanceof CustomAction &&
+			(codeFragment.eContainer as CustomAction).name == autoGenerationActionName
+		) {
+			return true
+		}
+		val startupAction = codeFragment.eResource.allContents.filter(Main).last?.onInitializedEvent
+		if (startupAction == null) {
+			return false
+		}
+		return traverseAction(startupAction).filter(CustomAction).exists(customAction | customAction.codeFragments.contains(codeFragment))
 	}
 	
 }

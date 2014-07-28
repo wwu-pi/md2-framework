@@ -1,6 +1,5 @@
 package de.wwu.md2.framework.generator.util
 
-import de.wwu.md2.framework.generator.preprocessor.ProcessAutoGenerator
 import de.wwu.md2.framework.mD2.AbstractContentProviderPath
 import de.wwu.md2.framework.mD2.AbstractProviderReference
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
@@ -8,7 +7,6 @@ import de.wwu.md2.framework.mD2.Action
 import de.wwu.md2.framework.mD2.ActionReference
 import de.wwu.md2.framework.mD2.AlternativesPane
 import de.wwu.md2.framework.mD2.Attribute
-import de.wwu.md2.framework.mD2.BooleanVal
 import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.CombinedAction
 import de.wwu.md2.framework.mD2.ContainerElement
@@ -16,37 +14,22 @@ import de.wwu.md2.framework.mD2.ContentProviderPath
 import de.wwu.md2.framework.mD2.ContentProviderReference
 import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.CustomAction
-import de.wwu.md2.framework.mD2.CustomCodeFragment
-import de.wwu.md2.framework.mD2.DateTimeVal
-import de.wwu.md2.framework.mD2.DateVal
 import de.wwu.md2.framework.mD2.EntityPath
-import de.wwu.md2.framework.mD2.FloatVal
 import de.wwu.md2.framework.mD2.FlowLayoutPane
 import de.wwu.md2.framework.mD2.GridLayoutPane
-import de.wwu.md2.framework.mD2.IntVal
 import de.wwu.md2.framework.mD2.LocationProviderPath
 import de.wwu.md2.framework.mD2.LocationProviderReference
 import de.wwu.md2.framework.mD2.MD2Model
-import de.wwu.md2.framework.mD2.Main
 import de.wwu.md2.framework.mD2.Model
 import de.wwu.md2.framework.mD2.ModelElement
-import de.wwu.md2.framework.mD2.Operator
 import de.wwu.md2.framework.mD2.PathDefinition
 import de.wwu.md2.framework.mD2.PathTail
 import de.wwu.md2.framework.mD2.ReferencedModelType
-import de.wwu.md2.framework.mD2.SimpleExpression
 import de.wwu.md2.framework.mD2.SimpleType
 import de.wwu.md2.framework.mD2.StandardValidator
-import de.wwu.md2.framework.mD2.StringVal
 import de.wwu.md2.framework.mD2.TabTitleParam
-import de.wwu.md2.framework.mD2.TimeVal
 import de.wwu.md2.framework.mD2.View
 import de.wwu.md2.framework.mD2.ViewGUIElement
-import de.wwu.md2.framework.mD2.WhereClauseAnd
-import de.wwu.md2.framework.mD2.WhereClauseCompareExpression
-import de.wwu.md2.framework.mD2.WhereClauseCondition
-import de.wwu.md2.framework.mD2.WhereClauseNot
-import de.wwu.md2.framework.mD2.WhereClauseOr
 import java.util.Collection
 import java.util.HashMap
 import java.util.HashSet
@@ -57,8 +40,6 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameProvider
-
-import static extension de.wwu.md2.framework.util.StringExtensions.*
 
 class MD2GeneratorUtil {
 		
@@ -279,19 +260,6 @@ class MD2GeneratorUtil {
 		return abstractRef.ref as ContainerElement
 	}
 	
-	def static isCalledAtStartup(CustomCodeFragment codeFragment) {
-		if (codeFragment.eContainer instanceof CustomAction &&
-			(codeFragment.eContainer as CustomAction).name == ProcessAutoGenerator::autoGenerationActionName
-		) {
-			return true
-		}
-		val startupAction = codeFragment.eResource.allContents.filter(typeof(Main)).last?.onInitializedEvent
-		if (startupAction == null) {
-			return false
-		}
-		return traverseAction(startupAction).filter(typeof(CustomAction)).exists(customAction | customAction.codeFragments.contains(codeFragment))
-	}
-	
 	def static Iterable<Action> traverseAction(Action action) {
 		val hashSet = newHashSet(action)
 		hashSet.addAll(switch (action) {
@@ -309,114 +277,5 @@ class MD2GeneratorUtil {
 		}.filter([it instanceof TabTitleParam]).head
 		if (param != null) (param as TabTitleParam).tabTitle else container.name.toFirstUpper
 	}
-	
-	/**
-	 * Generates the filter string for the remote content provider.
-	 * 
-	 * TODO Explicitly define return value String!
-	 *      Otherwise there is a warning "Cannot infer type from recursive usage. Type 'Object' is used.". This is related to
-	 *      Eclipse Bug 404817 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=404817).
-	 *      The explicit return value can be removed when the bug is fixed!
-	 */
-	def static String generateRemoteFilterString(WhereClauseCondition expression, (ViewGUIElement)=>String resolveFieldContentStrategy) {
-		
-		val str = new StringBuilder
-		
-		switch (expression) {
-			WhereClauseOr: {
-				str.append("(")
-				str.append(generateRemoteFilterString(expression.leftExpression, resolveFieldContentStrategy))
-				str.append(" or ")
-				str.append(generateRemoteFilterString(expression.rightExpression, resolveFieldContentStrategy))
-				str.append(")")
-			}
-			WhereClauseAnd: {
-				str.append(generateRemoteFilterString(expression.leftExpression, resolveFieldContentStrategy))
-				str.append(" and ")
-				str.append(generateRemoteFilterString(expression.rightExpression, resolveFieldContentStrategy))
-			}
-			WhereClauseNot: {
-				str.append("not")
-				str.append("(")
-				str.append(generateRemoteFilterString(expression.expression, resolveFieldContentStrategy).trimParentheses)
-				str.append(")")
-			}
-			WhereClauseCompareExpression: {
-				str.append(getPathTailAsString(expression.eqLeft.tail))
-				str.append(" ")
-				str.append(expression.op.toString)
-				str.append(" ")
-				str.append(getSimpleExpression(expression.eqRight, resolveFieldContentStrategy))
-			}
-		}
-		
-		return str.toString.trim
-	}
-	
-	/**
-	 * Generates a filter string for the local content provider.
-	 * 
-	 * TODO This code should not be part of the utils as it is dependent on the actual platform generator (was originally written
-	 *      for the Android generator and is used only there!)
-	 * 
-	 * TODO Explicitly define return value String!
-	 *      Otherwise there is a warning "Cannot infer type from recursive usage. Type 'Object' is used.". This is related to
-	 *      Eclipse Bug 404817 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=404817).
-	 *      The explicit return value can be removed when the bug is fixed!
-	 */
-	def static String generateLocalFilterString(WhereClauseCondition expression, (ViewGUIElement)=>String resolveFieldContentStrategy) {
-		
-		val str = new StringBuilder
-		
-		switch (expression) {
-			WhereClauseOr: {
-				str.append("(")
-				str.append(generateLocalFilterString(expression.leftExpression, resolveFieldContentStrategy))
-				str.append(" || ")
-				str.append(generateLocalFilterString(expression.rightExpression, resolveFieldContentStrategy))
-				str.append(")")
-			}
-			WhereClauseAnd: {
-				str.append(generateLocalFilterString(expression.leftExpression, resolveFieldContentStrategy))
-				str.append(" && ")
-				str.append(generateLocalFilterString(expression.rightExpression, resolveFieldContentStrategy))
-			}
-			WhereClauseNot: {
-				str.append("!")
-				str.append("(")
-				str.append(generateLocalFilterString(expression.expression, resolveFieldContentStrategy).trimParentheses)
-				str.append(")")
-			}
-			WhereClauseCompareExpression: {
-				val operator = switch expression.op {
-					case Operator::EQUALS: "=="
-					case Operator::GREATER: ">"
-					case Operator::SMALLER: "<"
-					case Operator::GREATER_OR_EQUAL: ">="
-					case Operator::SMALLER_OR_EQUAL: "<="
-				}
-				str.append(getPathTailAsString(expression.eqLeft.tail))
-				str.append(" ")
-				str.append(operator)
-				str.append(" ")
-				str.append(getSimpleExpression(expression.eqRight, resolveFieldContentStrategy))
-			}
-		}
-		
-		return str.toString.trim
-	}
-	
-	def private static getSimpleExpression(SimpleExpression expr, (ViewGUIElement)=>String resolveFieldContentStrategy)	{
-		switch (expr) {
-			StringVal: '"' + expr.value + '"'
-			IntVal: expr.value.toString
-			FloatVal: expr.value.toString
-			BooleanVal: expr.value.toString
-			DateVal: '"' + expr.value.toString + '"'
-			TimeVal: '"' + expr.value.toString + '"'
-			DateTimeVal: '"' + expr.value.toString + '"'
-			AbstractViewGUIElementRef: resolveFieldContentStrategy.apply(resolveViewGUIElement(expr))
-			ContentProviderPath: "" // TODO
-		}
-	}
+
 }

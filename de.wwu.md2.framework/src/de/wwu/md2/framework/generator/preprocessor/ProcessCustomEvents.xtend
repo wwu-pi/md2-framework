@@ -1,5 +1,6 @@
 package de.wwu.md2.framework.generator.preprocessor
 
+import de.wwu.md2.framework.generator.preprocessor.util.AbstractPreprocessor
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import de.wwu.md2.framework.mD2.ActionDef
 import de.wwu.md2.framework.mD2.ActionReference
@@ -14,28 +15,26 @@ import de.wwu.md2.framework.mD2.ElementEventType
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.EventBindingTask
 import de.wwu.md2.framework.mD2.EventUnbindTask
-import de.wwu.md2.framework.mD2.MD2Factory
 import de.wwu.md2.framework.mD2.Model
 import de.wwu.md2.framework.mD2.OnConditionEvent
 import de.wwu.md2.framework.mD2.Operator
 import de.wwu.md2.framework.mD2.SimpleActionRef
 import java.util.HashMap
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.emf.ecore.resource.ResourceSet
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 /**
  * TODO documentation
  */
-class ProcessCustomEvents {
+class ProcessCustomEvents extends AbstractPreprocessor {
 	
 	/**
 	 * main step that calls all substeps
 	 * 
 	 * dependencies: transformWorkflowsToSequenceOfCoreLanguageElements - This step night create new customEvents that have to be transformed
 	 */
-	def static void transformAllCustomEventsToBasicLanguageStructures(MD2Factory factory, ResourceSet workingInput) {
+	def transformAllCustomEventsToBasicLanguageStructures() {
 		
 		// only run this task if there are conditional events present
 		val hasConditionalEvents = workingInput.resources.map[ r |
@@ -60,13 +59,13 @@ class ProcessCustomEvents {
 		].flatten
 		
 		// All sub steps
-		val allEventActionTuples = createAllEventActionTuples(factory, workingInput, customEventBindings, customEventUnbindings)
-		val mappingEntity = createEntity(factory, workingInput, allEventActionTuples);
-		val contentProvider = createContentProviderForEntity(factory, workingInput, mappingEntity)
-		createCustomActionForEachConditionalEvent(factory, workingInput, allEventActionTuples, contentProvider, mappingEntity)
-		createCustomActionToRegisterConditionalEvents(factory, workingInput, allEventActionTuples)
-		replaceCustomEventBindingsWithSettersForMappingEntity(factory, workingInput, customEventBindings, customEventUnbindings, contentProvider, mappingEntity)
-		removeOnConditionalEvents(factory, workingInput, allEventActionTuples)
+		val allEventActionTuples = createAllEventActionTuples(customEventBindings, customEventUnbindings)
+		val mappingEntity = createEntity(allEventActionTuples);
+		val contentProvider = createContentProviderForEntity(mappingEntity)
+		createCustomActionForEachConditionalEvent(allEventActionTuples, contentProvider, mappingEntity)
+		createCustomActionToRegisterConditionalEvents(allEventActionTuples)
+		replaceCustomEventBindingsWithSettersForMappingEntity(customEventBindings, customEventUnbindings, contentProvider, mappingEntity)
+		removeOnConditionalEvents(allEventActionTuples)
 	}
 	
 	/**
@@ -88,9 +87,8 @@ class ProcessCustomEvents {
 	 *   </li>
 	 * </ul>
 	 */
-	def private static createAllEventActionTuples(
-		MD2Factory factory, ResourceSet workingInput, Iterable<EventBindingTask> customEventBindings,
-		Iterable<EventUnbindTask> customEventUnbindings
+	private def createAllEventActionTuples(
+		Iterable<EventBindingTask> customEventBindings, Iterable<EventUnbindTask> customEventUnbindings
 	) {
 		
 		val allEventActionTuples = newHashMap
@@ -140,9 +138,7 @@ class ProcessCustomEvents {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def private static createEntity(
-		MD2Factory factory, ResourceSet workingInput, HashMap<OnConditionEvent, HashMap<String, ActionDef>> allEventActionTuples
-	) {
+	private def createEntity(HashMap<OnConditionEvent, HashMap<String, ActionDef>> allEventActionTuples) {
 		val model = workingInput.resources.map[ r |
 			r.allContents.toIterable.filter(typeof(Model))
 		].flatten.last
@@ -168,7 +164,7 @@ class ProcessCustomEvents {
 	/**
 	 * Create a local content provider for the <i>__ConditionalEventMappings</i> entity.
 	 */
-	def private static createContentProviderForEntity(MD2Factory factory, ResourceSet workingInput, Entity mappingEntity) {
+	private def createContentProviderForEntity(Entity mappingEntity) {
 		val controller = workingInput.resources.map[ r |
 			r.allContents.toIterable.filter(typeof(Controller))
 		].flatten.last
@@ -187,10 +183,9 @@ class ProcessCustomEvents {
 	}
 	
 	//   foreach CustomEvent: create CustomAction
-	def private static createCustomActionForEachConditionalEvent(
-		MD2Factory factory, ResourceSet workingInput,
-		HashMap<OnConditionEvent, HashMap<String, ActionDef>> allEventActionTuples,
-		ContentProvider contentProvider, Entity mappingEntity
+	private def createCustomActionForEachConditionalEvent(
+		HashMap<OnConditionEvent, HashMap<String, ActionDef>> allEventActionTuples, ContentProvider contentProvider,
+		Entity mappingEntity
 	) {
 		
 		val controller = workingInput.resources.map[ r |
@@ -254,8 +249,7 @@ class ProcessCustomEvents {
 	//   foreach CustomEvent: create __registerCustomEventName action and add it to startUpAction
 	// this is just to structure the code. All the event bindings could also be placed directly in the
 	// startup action or in one single custom action
-	def private static createCustomActionToRegisterConditionalEvents(
-		MD2Factory factory, ResourceSet workingInput,
+	private def createCustomActionToRegisterConditionalEvents(
 		HashMap<OnConditionEvent, HashMap<String, ActionDef>> allEventActionTuples
 	) {
 		
@@ -319,10 +313,8 @@ class ProcessCustomEvents {
 	}
 	
 	//   create setters to bind event and replace the original event binding with the set task
-	def private static replaceCustomEventBindingsWithSettersForMappingEntity(
-		MD2Factory factory, ResourceSet workingInput,
-		Iterable<EventBindingTask> customEventBindings,
-		Iterable<EventUnbindTask> customEventUnbindings,
+	private def replaceCustomEventBindingsWithSettersForMappingEntity(
+		Iterable<EventBindingTask> customEventBindings, Iterable<EventUnbindTask> customEventUnbindings,
 		ContentProvider contentProvider, Entity mappingEntity
 	) {
 		for (customEventBinding : customEventBindings) {
@@ -365,10 +357,7 @@ class ProcessCustomEvents {
 	}
 	
 	// remove actual onConditionalEvent
-	def private static removeOnConditionalEvents(
-		MD2Factory factory, ResourceSet workingInput,
-		HashMap<OnConditionEvent, HashMap<String, ActionDef>> allEventActionTuples
-	) {
+	private def removeOnConditionalEvents(HashMap<OnConditionEvent, HashMap<String, ActionDef>> allEventActionTuples) {
 		for (onConditionalEvent : allEventActionTuples.keySet) {
 			onConditionalEvent.remove
 		}
@@ -380,7 +369,7 @@ class ProcessCustomEvents {
 	// Helper methods
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static getMappingIdentifierHelper(EObject binding) {
+	private def getMappingIdentifierHelper(EObject binding) {
 		val action = switch (binding) {
 			EventBindingTask: binding.actions.get(0)
 			EventUnbindTask: binding.actions.get(0)
