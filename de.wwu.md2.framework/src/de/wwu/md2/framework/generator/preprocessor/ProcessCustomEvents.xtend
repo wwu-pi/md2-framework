@@ -9,59 +9,129 @@ import de.wwu.md2.framework.mD2.ConditionalEventRef
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ContentProviderEventType
 import de.wwu.md2.framework.mD2.ContentProviderPath
-import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.CustomAction
+import de.wwu.md2.framework.mD2.CustomCodeFragment
 import de.wwu.md2.framework.mD2.ElementEventType
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.EventBindingTask
 import de.wwu.md2.framework.mD2.EventUnbindTask
-import de.wwu.md2.framework.mD2.Model
 import de.wwu.md2.framework.mD2.OnConditionEvent
 import de.wwu.md2.framework.mD2.Operator
 import de.wwu.md2.framework.mD2.SimpleActionRef
 import java.util.HashMap
-import org.eclipse.emf.ecore.EObject
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 /**
- * TODO documentation
+ * Transforms all OnConditionEvents to core language elements (Entities, ContentProviders, OnChangeEvents, CustomActions).
  */
 class ProcessCustomEvents extends AbstractPreprocessor {
 	
 	/**
-	 * main step that calls all substeps
+	 * <p>Transforms all OnConditionEvents to core language elements (Entities, ContentProviders, OnChangeEvents, CustomActions). This
+	 * is the main step that is further split into substeps.</p>
 	 * 
-	 * dependencies: transformWorkflowsToSequenceOfCoreLanguageElements - This step night create new customEvents that have to be transformed
+	 * <p>Idea: For each conditional event binding task (e.g. <code>bind action myAction on myConditionEvent</code>), an attribute with the name
+	 * <i>myAction__myConditionEvent</i> is created and added to the <i>__ConditionalEventMappings</i> entity. The data type of this attribute
+	 * is boolean. All event mappings are now replaced by setter tasks that set the attribute value to true, unmapping tasks are replaced by setter
+	 * tasks that set the attribute value to false.</p>
+	 * 
+	 * <p>Furthermore, a CustomAction is created that contains one if-block with the condition of the actual conditional event. If the condition is
+	 * satisfied, in an inner if-block for each mapping it is checked whether the mapping flag is set to true. The code block of the inner if-conditions
+	 * contains a call task that calls the action <i>myAction</i> to which the event was actually bound. For each contentProvider attribute and each
+	 * guiElement that is referenced in the condition an EventBindingTask is created that binds the newly created CustomAction to the respective
+	 * <code>onChange</code> event.</p>
+	 * 
+	 * <p>Example:</p>
+	 * <pre>
+	 * event OnConditionEvent myEvent {
+	 *   :anyProvider.attribute1 equals "anyString" and myView.numberInput >= 8
+	 * }
+	 * 
+	 * action CustomAction myOtherAction {
+	 *   bind myAction on myEvent
+	 * }
+	 * 
+	 * action CustomAction myAction {
+	 *   // Do something if myEvent is triggered
+	 * }
+	 * </pre>
+	 * 
+	 * is transformed into the following MD2 code:
+	 * <pre>
+	 * contentProvider __ConditionalEventMappings __conditionalEventMappingsProvider {
+	 *   type local
+	 * }
+	 * action CustomAction __conditionalEvent_myEvent {
+	 *   if (:anyProvider.attribute1 equals "anyString" and myView.numberInput >= 8) {
+	 *     if (:__conditionalEventMappingsProvider.myOtherAction__myEvent equals true) {
+	 *       call myAction
+	 *     }
+	 *     // further else ifs for other action-custom event mappings
+	 *   }
+	 * }
+	 * action CustomAction __startupAction {
+	 *   bind __conditionalEvent_myEvent on :anyProvider.attribute1.onChange
+	 *   bind __conditionalEvent_myEvent on myView.numberInput.onChange
+	 * }
+	 * action CustomAction myOtherAction {
+	 *   set :__conditionalEventMappingsProvider.myOtherAction__myEvent = true
+	 * }
+	 * action CustomAction myAction {
+	 *   // Do something if myEvent is triggered
+	 * }
+	 * </pre>
+	 * <pre>
+	 * entity __ConditionalEventMappings {
+	 *   myOtherAction__myEvent: boolean
+	 * }
+	 * </pre>
+	 * 
+	 * <p>
+	 *   DEPENDENCIES:
+	 * </p>
+	 * <ul>
+	 *   <li>
+	 *     <i>createStartUpActionAndRegisterAsOnInitializedEvent</i> - It is assumed that a __startUp action exists in which all new event bindings
+	 *     can be placed.
+	 *   </li>
+	 *   <li>
+	 *     <i>transformWorkflowsToSequenceOfCoreLanguageElements</i> - The workflow definition may contain conditional events. These events that are
+	 *     defined in the workflow steps are transformed into normal EventBindingTasks during the workflow processing. Only these EventBindingTasks
+	 *     can be handled by this transformation step.
+	 *   </li>
+	 *   <li>
+	 *     <i>transformEventBindingAndUnbindingTasksToOneToOneRelations</i> - This step relies on the aspect that each mapping consists of exactly
+	 *     one activity and one event (using .head without checking the size of each events/actions list).
+	 *   </li>
+	 *   <li>
+	 *     <i>calculateParameterSignatureForAllSimpleActions</i> - Required to create identifiers for each simple action.
+	 *   </li>
+	 * </ul>
 	 */
 	def transformAllCustomEventsToBasicLanguageStructures() {
 		
 		// only run this task if there are conditional events present
-		val hasConditionalEvents = workingInput.resources.map[ r |
-			r.allContents.toIterable.findFirst( e | e instanceof OnConditionEvent)
-		].exists(e | e != null)
+		val hasConditionalEvents = controllers.map[ ctrl |
+			ctrl.controllerElements.exists( e | e instanceof OnConditionEvent)
+		].exists(b | b)
 		
 		if (!hasConditionalEvents) {
 			return
 		}
 		
 		// get all event binding and event unbinding tasks that refer to custom events
-		val customEventBindings = workingInput.resources.map[ r |
-			r.allContents.toIterable
-				.filter(typeof(EventBindingTask))
-				.filter(bindingTask | bindingTask.events.exists(eventType | eventType instanceof ConditionalEventRef))
-		].flatten
+		val customEventBindings = customEventBindings
+		val customEventUnbindings = customEventUnbindings
 		
-		val customEventUnbindings = workingInput.resources.map[ r |
-			r.allContents.toIterable
-				.filter(typeof(EventUnbindTask))
-				.filter(unbindingTask | unbindingTask.events.exists(eventType | eventType instanceof ConditionalEventRef))
-		].flatten
 		
-		// All sub steps
+		//////////////////////////////////////
+		// Sub-Steps
+		//////////////////////////////////////
+		
 		val allEventActionTuples = createAllEventActionTuples(customEventBindings, customEventUnbindings)
-		val mappingEntity = createEntity(allEventActionTuples);
-		val contentProvider = createContentProviderForEntity(mappingEntity)
+		val mappingEntity        = createEntity(allEventActionTuples)
+		val contentProvider      = createContentProviderForEntity(mappingEntity)
 		createCustomActionForEachConditionalEvent(allEventActionTuples, contentProvider, mappingEntity)
 		createCustomActionToRegisterConditionalEvents(allEventActionTuples)
 		replaceCustomEventBindingsWithSettersForMappingEntity(customEventBindings, customEventUnbindings, contentProvider, mappingEntity)
@@ -71,8 +141,9 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 	/**
 	 * Generate string identifiers for each event->action mapping and store them in a nested HashMap of the form
 	 * (event => [identifier => action]) that is used in later steps to get all actions that are mapped to a certain event.
-	 * The string identifiers assure that each event->action mapping is only stored once (it is not considered whether a mapping
-	 * is a binding or unbinding task).
+	 * The string identifiers assure that each event->action mapping is only stored once (it is not relevant whether a mapping
+	 * is a binding or an unbinding task as only one attribute will be created per binding => true/false indicates whether the
+	 * actual task is bound).
 	 * 
 	 * <p>
 	 *   DEPENDENCIES:
@@ -101,7 +172,7 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 				allEventActionTuples.put(conditionalEvent, newHashMap)
 			}
 			
-			allEventActionTuples.get(conditionalEvent).put(binding.mappingIdentifierHelper, action)
+			allEventActionTuples.get(conditionalEvent).put(binding.mappingIdentifier, action)
 		]
 		
 		customEventUnbindings.forEach[ binding |
@@ -112,7 +183,7 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 				allEventActionTuples.put(conditionalEvent, newHashMap)
 			}
 			
-			allEventActionTuples.get(conditionalEvent).put(binding.mappingIdentifierHelper, action)
+			allEventActionTuples.get(conditionalEvent).put(binding.mappingIdentifier, action)
 		]
 		
 		return allEventActionTuples
@@ -139,9 +210,7 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 	 * </p>
 	 */
 	private def createEntity(HashMap<OnConditionEvent, HashMap<String, ActionDef>> allEventActionTuples) {
-		val model = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Model))
-		].flatten.last
+		val model = models.head
 		
 		// create entity and populate it with attributes for each unique action->event mapping
 		val mappingEntity = factory.createEntity
@@ -163,11 +232,13 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 	
 	/**
 	 * Create a local content provider for the <i>__ConditionalEventMappings</i> entity.
+	 * 
+	 * <p>
+	 *   DEPENDENCIES: None
+	 * </p>
 	 */
 	private def createContentProviderForEntity(Entity mappingEntity) {
-		val controller = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Controller))
-		].flatten.last
+		val controller = controllers.head
 		
 		val referencedModelType = factory.createReferencedModelType
 		referencedModelType.setEntity(mappingEntity)
@@ -182,15 +253,21 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 		return contentProvider
 	}
 	
-	//   foreach CustomEvent: create CustomAction
+	/**
+	 * For each OnConditionEvent: Create a CustomAction that contains one if-block with the condition of the actual conditional event. If the condition is
+	 * satisfied, in an inner if-block for each mapping it is checked whether the mapping flag is set to true. The code block of the inner if-conditions
+	 * contains a call task that calls the action <i>myAction</i> to which the event was actually bound.
+	 * 
+	 * <p>
+	 *   DEPENDENCIES: None
+	 * </p>
+	 */
 	private def createCustomActionForEachConditionalEvent(
 		HashMap<OnConditionEvent, HashMap<String, ActionDef>> allEventActionTuples, ContentProvider contentProvider,
 		Entity mappingEntity
 	) {
 		
-		val controller = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Controller))
-		].flatten.last
+		val controller = controllers.head
 		
 		allEventActionTuples.forEach[ event, map |
 			val customAction = factory.createCustomAction
@@ -209,11 +286,11 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 				
 				val mappingConditionalExpression = factory.createCompareExpression
 				
-				{				
+				{
 					// eqLeft composition
 					val contentProviderPathDefinition = factory.createContentProviderPath
 					val pathTail = factory.createPathTail
-					pathTail.setAttributeRef(mappingEntity.attributes.filter( a | a.name.equals(identifier)).last)
+					pathTail.setAttributeRef(mappingEntity.attributes.filter( a | a.name.equals(identifier)).head)
 					contentProviderPathDefinition.setContentProviderRef(contentProvider)
 					contentProviderPathDefinition.setTail(pathTail)
 					
@@ -246,29 +323,39 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 		]
 	}
 	
-	//   foreach CustomEvent: create __registerCustomEventName action and add it to startUpAction
-	// this is just to structure the code. All the event bindings could also be placed directly in the
-	// startup action or in one single custom action
+	/**
+	 * For each CustomEvent: create __registerCustomEventName action and add it to startUpAction.
+	 * This is just to structure the code. All the event bindings could also be placed directly in the
+	 * startup action or in one single custom action.
+	 * 
+	 * <p>
+	 *   DEPENDENCIES:
+	 * </p>
+	 * <ul>
+	 *   <li>
+	 *     <i>createStartUpActionAndRegisterAsOnInitializedEvent</i> - It is assumed that a __startUp action exists in
+	 *     which all new event bindings can be placed.
+	 *   </li>
+	 * </ul>
+	 */
 	private def createCustomActionToRegisterConditionalEvents(
 		HashMap<OnConditionEvent, HashMap<String, ActionDef>> allEventActionTuples
 	) {
 		
-		val controller = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(typeof(Controller))
-		].flatten.last
+		val controller = controllers.head
 		
 		allEventActionTuples.forEach[ event, map |
 			val customAction = factory.createCustomAction
 			customAction.setName("__conditionalEventRegister_" + event.name)
 			
 			// get all contentProviderPathes from event.condition
-			val pathDefinitions = event.condition.eAllContents.toIterable.filter(typeof(ContentProviderPath))
+			val pathDefinitions = event.condition.eAllContents.toIterable.filter(ContentProviderPath)
 			for (pathDefinition : pathDefinitions) {
 				val eventBindingTask = factory.createEventBindingTask
 				customAction.codeFragments.add(eventBindingTask)
 				
 				val actionDef = factory.createActionReference
-				val action = controller.controllerElements.filter(typeof(CustomAction)).filter(a | a.name.equals("__conditionalEvent_" + event.name)).last
+				val action = controller.controllerElements.filter(CustomAction).filter(a | a.name.equals("__conditionalEvent_" + event.name)).head
 				actionDef.setActionRef(action)
 				eventBindingTask.actions.add(actionDef)
 				
@@ -279,13 +366,13 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 			}
 			
 			// get all GUIElement references from event.condition
-			val guiElementRefs = event.condition.eAllContents.toIterable.filter(typeof(AbstractViewGUIElementRef))
+			val guiElementRefs = event.condition.eAllContents.toIterable.filter(AbstractViewGUIElementRef)
 			for (guiElementRef : guiElementRefs) {
 				val eventBindingTask = factory.createEventBindingTask
 				customAction.codeFragments.add(eventBindingTask)
 				
 				val actionDef = factory.createActionReference
-				val action = controller.controllerElements.filter(typeof(CustomAction)).filter(a | a.name.equals("__conditionalEvent_" + event.name)).last
+				val action = controller.controllerElements.filter(CustomAction).filter(a | a.name.equals("__conditionalEvent_" + event.name)).head
 				actionDef.setActionRef(action)
 				eventBindingTask.actions.add(actionDef)
 				
@@ -299,10 +386,11 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 			controller.controllerElements.add(customAction)
 			
 			// add action as call task to startUpAction
-			val startupAction = workingInput.resources.map[ r |
-				r.allContents.toIterable.filter(typeof(CustomAction))
+			val startupAction = controllers.map[ ctrl |
+				ctrl.controllerElements.filter(CustomAction)
 					.filter( action | action.name.equals(ProcessController::startupActionName))
-			].flatten.last
+			].flatten.head
+			
 			val callTask = factory.createCallTask
 			val actionDef = factory.createActionReference
 			actionDef.setActionRef(customAction)
@@ -312,7 +400,20 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 		
 	}
 	
-	//   create setters to bind event and replace the original event binding with the set task
+	/**
+	 * Create setters to bind the event (set mapping flag in content provider to <code>true</code>) and replace the original
+	 * event binding with the AttributeSetTask.
+	 * 
+	 * <p>
+	 *   DEPENDENCIES:
+	 * </p>
+	 * <ul>
+	 *   <li>
+	 *     <i>transformEventBindingAndUnbindingTasksToOneToOneRelations</i> - This step relies on the aspect that each mapping consists of exactly
+	 *     one activity and one event (using .head without checking the size of each events/actions list).
+	 *   </li>
+	 * </ul>
+	 */
 	private def replaceCustomEventBindingsWithSettersForMappingEntity(
 		Iterable<EventBindingTask> customEventBindings, Iterable<EventUnbindTask> customEventUnbindings,
 		ContentProvider contentProvider, Entity mappingEntity
@@ -327,7 +428,7 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 			val mappingPathDefinition = factory.createContentProviderPath
 			val pathTail = factory.createPathTail
 			pathTail.setAttributeRef(mappingEntity.attributes.filter[ a |
-				a.name.equals(customEventBinding.mappingIdentifierHelper)
+				a.name.equals(customEventBinding.mappingIdentifier)
 			].last)
 			mappingPathDefinition.setContentProviderRef(contentProvider)
 			mappingPathDefinition.setTail(pathTail)
@@ -346,7 +447,7 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 			val mappingPathDefinition = factory.createContentProviderPath
 			val pathTail = factory.createPathTail
 			pathTail.setAttributeRef(mappingEntity.attributes.filter[ a |
-				a.name.equals(customEventUnbinding.mappingIdentifierHelper)
+				a.name.equals(customEventUnbinding.mappingIdentifier)
 			].last)
 			mappingPathDefinition.setContentProviderRef(contentProvider)
 			mappingPathDefinition.setTail(pathTail)
@@ -356,10 +457,16 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 		}
 	}
 	
-	// remove actual onConditionalEvent
+	/**
+	 * Cleanup: Remove actual OnConditionEvent after everything was transformed.
+	 * 
+	 * <p>
+	 *   DEPENDENCIES: None
+	 * </p>
+	 */
 	private def removeOnConditionalEvents(HashMap<OnConditionEvent, HashMap<String, ActionDef>> allEventActionTuples) {
-		for (onConditionalEvent : allEventActionTuples.keySet) {
-			onConditionalEvent.remove
+		for (onConditionEvent : allEventActionTuples.keySet) {
+			onConditionEvent.remove
 		}
 	}
 	
@@ -369,7 +476,11 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 	// Helper methods
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	
-	private def getMappingIdentifierHelper(EObject binding) {
+	/**
+	 * Create a unique string identifier for each CustomAction-ConditionalEvent mapping. This string is used
+	 * as the attribute name in the mapping entity.
+	 */
+	private def getMappingIdentifier(CustomCodeFragment binding) {
 		val action = switch (binding) {
 			EventBindingTask: binding.actions.get(0)
 			EventUnbindTask: binding.actions.get(0)
@@ -386,5 +497,29 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 		val conditionalEvent = (event as ConditionalEventRef).eventReference
 		
 		actionIdentifier + "__" + conditionalEvent.name
+	}
+	
+	/**
+	 * Helper method that returns an iterable with all EventBindingTasks whose eventType refers to an
+	 * OnConditionEvent.
+	 */
+	private def getCustomEventBindings() {
+		controllers.map[ ctrl |
+			ctrl.eAllContents.toIterable
+				.filter(EventBindingTask)
+				.filter(bindingTask | bindingTask.events.exists(eventType | eventType instanceof ConditionalEventRef))
+		].flatten
+	}
+	
+	/**
+	 * Helper method that returns an iterable with all EventUnbindingTasks whose eventType refers to an
+	 * OnConditionEvent.
+	 */
+	private def getCustomEventUnbindings() {
+		controllers.map[ ctrl |
+			ctrl.eAllContents.toIterable
+				.filter(EventUnbindTask)
+				.filter(unbindingTask | unbindingTask.events.exists(eventType | eventType instanceof ConditionalEventRef))
+		].flatten
 	}
 }
