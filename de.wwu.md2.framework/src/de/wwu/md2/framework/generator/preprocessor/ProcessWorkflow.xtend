@@ -40,8 +40,31 @@ class ProcessWorkflow extends AbstractPreprocessor {
 	////////////////////////////////////////////////
 	
 	/**
-	 * TODO - documentation + dependencies
+	 * <p>Transforms all workflow definitions as well as the WorkflowProceed, WorkflowReverse, WorkflowGoto and SetWorkflow actions to the core
+	 * MD2 language elements. Therefore, a the following elements are created:</p>
 	 * 
+	 * <p><i>__WorkflowControllerStateEntity</i> with its <i>__workflowControllerStateEntityProvider</i>: Stores the current workflow step that is
+	 * executed as well as a string representation of the event that lead to the execution of <i>__workflowProcessAction</i>.</p>
+	 * 
+	 * <p><i>__WorkflowReturnStepStack</i> with its according provider <i>__workflowReturnStepStackProvider</i>: A recursively defined stack that
+	 * stores the current workflow step in case of 'goto' statements to allow to return to this step.</p>
+	 * 
+	 * <p><i>__workflowExecuteAction</i>: A custom action that executes the actual workflow step stored in the "currentWorkflowStep" attribute of the
+	 * <i>__workflowControllerStateEntityProvider</i>. Currently, it only goes to the view defined in the target step, but it can easily be extended to
+	 * support further features.</p>
+	 * 
+	 * <p><i>__workflowProcessAction</i>: This action is the heart, or the central component of the workflow processing. Based on the current workflow step,
+	 * the event that triggered the call of this action and the 'given' conditions specified in each workflow step, it is decided which workflow step to
+	 * execute next. So, based on the state in the <i>__workflowControllerStateEntityProvider</i>, it decides which information to write in the
+	 * <i>__workflowReturnStepStackProvider</i> and which step is executed next by the <i>__workflowExecuteAction</i> action.</p>
+	 * 
+	 * <p>Several <i>__workflowActionTriggerAction_###uniqueIdentifier###</i>s: Events in MD2 cannot be identified. Thus, the target action cannot know by
+	 * which event it was triggered if it is bound to multiple events. As a workaround <i>__workflowActionTriggerAction</i>s are created for each different
+	 * event. As this action is only bound to one event it always knows by which event it was triggered. This action then writes a string representation of
+	 * the event by which it was triggered to the "lastEventFired" attribute of the <i>__workflowControllerStateEntityProvider</i>. Then it executes the actual
+	 * <i>__workflowProcessAction</i> that was supposed to be triggered by the event.</p>
+	 * 
+	 * <p>Detailed explanations of the according structures are given in the comments on the methods that create the actual elements.</p>
 	 * 
 	 * <p>
 	 *   DEPENDENCIES:
@@ -142,330 +165,6 @@ class ProcessWorkflow extends AbstractPreprocessor {
 	}
 	
 	/**
-	 * The heart of the workflow processing. A custom action that is in charge of selecting the workflow step that has to be executed next.
-	 * It creates 
-	 */
-	private def createWorkflowProcessAction(
-		Entity entity, ContentProvider contentProvider, CustomAction workflowExecuteStepAction, HashMap<String, EObject> stack
-	) {
-		val workflows = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(Workflow)
-		].flatten
-		
-		val controller = controllers.last
-		
-		// createAction
-		val customAction = factory.createCustomAction
-		customAction.setName("__workflowProcessingAction")
-		controller.controllerElements.add(customAction)
-		
-		// add conditional code fragment to the custom action
-		val conditionalCodeFragment = factory.createConditionalCodeFragment
-		customAction.codeFragments.add(conditionalCodeFragment)
-		
-		// populate conditional code fragment:
-		// create if { ...wf1_step1_code... }, elseif { ...wf1_step2_code... }, elseif { ...wf1_stepN_code... }, ..., elseif { ...wfN_stepM_code... }
-		workflows.forEach[ workflow, wfIndex |
-			val steps = workflow.workflowSteps
-			steps.forEach[ step, stepIndex |
-				
-				///////////////////////////////////////////////////////
-				// Outer if...elseif...
-				// Decide in which Workflow Step we are
-				///////////////////////////////////////////////////////
-				
-				// Create outer ifCodeBlock with condition
-				val outerIfCodeBlock = factory.createIfCodeBlock
-				
-				{
-					val stepStr = step.stringRepresentationOfStep
-					val conditionalExpression = createCompareExpression(entity, contentProvider, "currentWorkflowStep", stepStr)
-					
-					outerIfCodeBlock.setCondition(conditionalExpression)
-					
-					// add outer ifCodeBlock => first element if(...); all other elements elseif(...)
-					if (wfIndex + stepIndex == 0) {
-						conditionalCodeFragment.setIf(outerIfCodeBlock)
-					} else {
-						conditionalCodeFragment.elseifs.add(outerIfCodeBlock)
-					}
-				}
-				
-				
-				///////////////////////////////////////////////////////
-				// Inner if...elseif... for each step-change operation
-				// Decide whether the condition for a workflow step
-				// change is satisfied and whether the right event
-				// was fired.
-				///////////////////////////////////////////////////////
-				
-				val gotos = step.gotos
-				
-				if (!gotos.empty) {
-					val innerConditionalCodeFragment = createWorkflowProcessActionInnerIfBlock(
-						gotos, steps, step, stepIndex, entity, contentProvider, workflowExecuteStepAction, stack
-					)
-					outerIfCodeBlock.codeFragments.add(innerConditionalCodeFragment)
-				}
-				
-			]
-		]
-		
-		return customAction
-	}
-	
-	private def createWorkflowProcessActionInnerIfBlock(
-		List<WorkflowGoToDefinition> gotos, List<WorkflowStep> steps, WorkflowStep step, int stepIndex,
-		Entity entity, ContentProvider contentProvider, CustomAction workflowExecuteStepAction, HashMap<String, EObject> stack
-	) {
-		
-		val innerConditionalCodeFragment = factory.createConditionalCodeFragment
-		
-		// create one inner if block per goto
-		gotos.forEach[ goto, gotoIndex |
-			
-			val workflowGoTo = goto.goto
-			
-			
-			//////////////////////////////////////////////////////////
-			// Create inner ifCodeBlock and its according condition
-			//////////////////////////////////////////////////////////
-			
-			val innerIfCodeBlock = factory.createIfCodeBlock
-			
-			// configure the conditional expression to match all events and the WorkflowProceed,
-			// WorkflowReverse and WorkflowGoto simple action calls
-			// (lastEventFired equals "evt1" or lastEventFired equals "evt2" or ... or lastEventFired equals "evtN")
-			val eventsSubCondition = matchAllEventsCondition(newHashSet(goto), entity, contentProvider)
-			
-			// add 'given' condition of goto specification (with 'and')
-			val given = if (goto.spec instanceof WorkflowGoToSpecExtended && (goto.spec as WorkflowGoToSpecExtended).condition != null) {
-				(goto.spec as WorkflowGoToSpecExtended).condition
-			}
-			
-			if (given == null) {
-				innerIfCodeBlock.setCondition(eventsSubCondition)
-			} else {
-				val and = factory.createAnd
-				and.leftExpression = eventsSubCondition
-				and.rightExpression = given.copy
-				innerIfCodeBlock.setCondition(and)
-			}
-			
-			
-			//////////////////////////////////////////////////////////
-			// Create code fragment for inner if code block
-			//////////////////////////////////////////////////////////
-			
-			createWorkflowProcessActionInnerIfBlockCodeFragment(
-				gotos, steps, step, stepIndex, workflowGoTo, innerIfCodeBlock, goto, entity,
-				contentProvider, workflowExecuteStepAction, stack
-			)
-			
-			
-			///////////////////////////////////////////////////////////////////////////////////
-			// add inner ifCodeBlock => first element if(...); all other elements elseif(...)
-			///////////////////////////////////////////////////////////////////////////////////
-			
-			if (gotoIndex == 0) {
-				innerConditionalCodeFragment.setIf(innerIfCodeBlock)
-			} else {
-				innerConditionalCodeFragment.elseifs.add(innerIfCodeBlock)
-			}
-		]
-		
-		// if message is defined:
-		// add a final elseif that catches the event if none of the other conditions was satisfied
-		// ... elseif (lastEventFired equals "evt1" or lastEventFired equals "evt2" or ... or lastEventFired equals "evtX")
-		// for all events of the defined gotos
-		if (gotos.size > 0 && step.message != null) {
-			val ifCodeBlock = createWorkflowProcessActionInnerIfBlockMessage(gotos, step, entity, contentProvider)
-			innerConditionalCodeFragment.elseifs.add(ifCodeBlock)
-		}
-		
-		return innerConditionalCodeFragment
-	}
-	
-	private def createWorkflowProcessActionInnerIfBlockMessage(
-		List<WorkflowGoToDefinition> gotos, WorkflowStep step, Entity entity, ContentProvider contentProvider
-	) {
-		val ifCodeBlock = factory.createIfCodeBlock
-		val condition = matchAllEventsCondition(gotos, entity, contentProvider)
-		ifCodeBlock.setCondition(condition)
-		
-		// Create DisplayMessageAction and add it to the elseif block
-		{
-			val callTask = factory.createCallTask
-			val actionDef = factory.createSimpleActionRef
-			val displayMessageAction = factory.createDisplayMessageAction
-			displayMessageAction.setMessage(step.message)
-			actionDef.setAction(displayMessageAction)
-			callTask.setAction(actionDef)
-			ifCodeBlock.codeFragments.add(callTask)
-		}
-		
-		return ifCodeBlock
-	}
-	
-	private def createWorkflowProcessActionInnerIfBlockCodeFragment(
-		List<WorkflowGoToDefinition> gotos, List<WorkflowStep> steps, WorkflowStep step, int stepIndex, WorkflowGoTo workflowGoTo,
-		IfCodeBlock innerIfCodeBlock, WorkflowGoToDefinition goto, Entity entity, ContentProvider contentProvider, CustomAction workflowExecuteStepAction,
-		HashMap<String, EObject> stack
-	) {
-		// set current workflow step
-		{
-			val currentWorkflowStepVal = switch(workflowGoTo) {
-				// no check for indexOutOfBounds => validator required at programming time
-				WorkflowGoToNext: {
-					val stringVal = factory.createStringVal
-					val targetStep = steps.get(stepIndex + 1).stringRepresentationOfStep
-					stringVal.setValue(targetStep)
-					stringVal
-				}
-				WorkflowGoToPrevious: {
-					val stringVal = factory.createStringVal
-					val targetStep = steps.get(stepIndex - 1).stringRepresentationOfStep
-					stringVal.setValue(targetStep)
-					stringVal
-				}
-				WorkflowGoToStep: {
-					val stringVal = factory.createStringVal
-					val targetStep = workflowGoTo.workflowStep.stringRepresentationOfStep
-					stringVal.setValue(targetStep)
-					stringVal
-				}
-				WorkflowReturn: {
-					val stackEntity = stack.get("entity") as Entity
-					val stackProvider = stack.get("contentProvider") as ContentProvider
-					
-					val attribute =
-						if (workflowGoTo.changeStep && workflowGoTo.changeDirection.equals("proceed")) {
-							stackEntity.attributes.findFirst[ a | a.name.equals("returnAndProceedStep")]
-						} else if (workflowGoTo.changeStep && workflowGoTo.changeDirection.equals("reverse")) {
-							stackEntity.attributes.findFirst[ a | a.name.equals("returnAndReverseStep")]
-						} else {
-							stackEntity.attributes.findFirst[ a | a.name.equals("returnStep")]
-						}
-					
-					factory.createComplexContentProviderPathDefinition(stackProvider, attribute)
-				}
-			}
-			
-			val attributeSetTask = factory.createAttributeSetTask
-			val attribute = entity.attributes.findFirst[ a | a.name.equals("currentWorkflowStep")]
-			val targetPathDefinition = factory.createComplexContentProviderPathDefinition(contentProvider, attribute)
-			attributeSetTask.setPathDefinition(targetPathDefinition)
-			
-			attributeSetTask.setSource(currentWorkflowStepVal)
-			
-			innerIfCodeBlock.codeFragments.add(attributeSetTask)
-		}
-		
-		// if this is a 'goto' statement => put current step on stack to allow to return
-		if (workflowGoTo instanceof WorkflowGoToStep) {
-			val workflowGoToStep = workflowGoTo as WorkflowGoToStep
-			
-			var currentStep = ""
-			var nextStep = ""
-			var previousStep = ""
-			
-			if (workflowGoToStep.returnTo != null) {
-				val returnToStep = workflowGoToStep.returnTo
-				val returnToStepWorkflow = returnToStep.eContainer as Workflow
-				val currentStepIndex = returnToStepWorkflow.workflowSteps.indexOf(returnToStep)
-				
-				currentStep = returnToStep.stringRepresentationOfStep
-				nextStep = 
-					if(currentStepIndex + 1 >= returnToStepWorkflow.workflowSteps.size) ""
-					else returnToStepWorkflow.workflowSteps.get(stepIndex + 1).stringRepresentationOfStep
-				previousStep =
-					if(currentStepIndex - 1 < 0) ""
-					else returnToStepWorkflow.workflowSteps.get(stepIndex - 1).stringRepresentationOfStep
-			} else {
-				currentStep = step.stringRepresentationOfStep
-				nextStep = if(stepIndex + 1 >= steps.size) "" else steps.get(stepIndex + 1).stringRepresentationOfStep
-				previousStep = if(stepIndex - 1 < 0) "" else steps.get(stepIndex - 1).stringRepresentationOfStep
-			}
-			
-			val stackEntity = stack.get("entity") as Entity
-			val stackProvider = stack.get("contentProvider") as ContentProvider
-					
-			val proceedAttribute = stackEntity.attributes.findFirst[ a | a.name.equals("returnAndProceedStep")]
-			val reverseAttribute = stackEntity.attributes.findFirst[ a | a.name.equals("returnAndReverseStep")]
-			val returnAttribute = stackEntity.attributes.findFirst[ a | a.name.equals("returnStep")]
-			
-			val proceedAttributePath = factory.createComplexContentProviderPathDefinition(stackProvider, proceedAttribute)
-			val reverseAttributePath = factory.createComplexContentProviderPathDefinition(stackProvider, reverseAttribute)
-			val returnAttributePath = factory.createComplexContentProviderPathDefinition(stackProvider, returnAttribute)
-			
-			// add new entity instance to head
-			{
-				val attributeSetTask = stack.get("addToHeadTask") as AttributeSetTask
-				innerIfCodeBlock.codeFragments.add(attributeSetTask)
-			}
-			
-			// set returnAndProceedStep attribute
-			{
-				val attributeSetTask = factory.createAttributeSetTask
-				attributeSetTask.setPathDefinition(proceedAttributePath)
-				
-				val stringVal = factory.createStringVal
-				stringVal.setValue(nextStep)
-				attributeSetTask.setSource(stringVal)
-				
-				innerIfCodeBlock.codeFragments.add(attributeSetTask)
-			}
-			
-			// set returnAndReverseStep attribute
-			{
-				val attributeSetTask = factory.createAttributeSetTask
-				attributeSetTask.setPathDefinition(reverseAttributePath)
-				
-				val stringVal = factory.createStringVal
-				stringVal.setValue(previousStep)
-				attributeSetTask.setSource(stringVal)
-				
-				innerIfCodeBlock.codeFragments.add(attributeSetTask)
-			}
-			
-			// set returnStep attribute
-			{
-				val attributeSetTask = factory.createAttributeSetTask
-				attributeSetTask.setPathDefinition(returnAttributePath)
-				
-				val stringVal = factory.createStringVal
-				stringVal.setValue(currentStep)
-				attributeSetTask.setSource(stringVal)
-				
-				innerIfCodeBlock.codeFragments.add(attributeSetTask)
-			}
-		}
-		
-		// if this is a 'return' statement => remove current head step from stack
-		if (workflowGoTo instanceof WorkflowReturn) {
-			val contentProviderSetTask = stack.get("removeHeadTask") as ContentProviderSetTask
-			innerIfCodeBlock.codeFragments.add(contentProviderSetTask)
-		}
-		
-		// create call task for the __workflowExecuteStepAction (that changes the actual view)
-		{
-			val callTask = factory.createCallTask
-			val actionDef = factory.createActionReference
-			actionDef.setActionRef(workflowExecuteStepAction)
-			callTask.setAction(actionDef)
-			innerIfCodeBlock.codeFragments.add(callTask)
-		}
-		
-		// create action to execute after view change ('then' statement)
-		if (goto.spec instanceof WorkflowGoToSpecExtended && (goto.spec as WorkflowGoToSpecExtended).action != null) {
-			val callTask = factory.createCallTask
-			val actionDef = (goto.spec as WorkflowGoToSpecExtended).action
-			callTask.setAction(actionDef.copy)
-			innerIfCodeBlock.codeFragments.add(callTask)
-		}
-	}
-	
-	/**
 	 * For each event create an action that sets the name of the event to the <i>lastEventFired</i> attribute and calls the actual
 	 * workflow processing action. These actions are then bound to the according events. This can be seen as a workaround, because
 	 * in MD2 there is no way to find out which event triggered a particular action.
@@ -500,6 +199,10 @@ class ProcessWorkflow extends AbstractPreprocessor {
 		return eventActionMap
 	}
 	
+	/**
+	 * For each event that occurs in any of the workflow steps, create event binding tasks in the startup action that
+	 * trigger the WorkflowActionTriggerActions created in the step <i>createWorkflowActionTriggerActions</i>.
+	 */
 	private def registerWorkflowActionTriggerActionsOnStartup(HashMap<EventDef, CustomAction> eventActionMap) {
 		
 		val controller = controllers.last
@@ -533,6 +236,11 @@ class ProcessWorkflow extends AbstractPreprocessor {
 		startupAction.codeFragments.add(0, callTask);
 	}
 	
+	/**
+	 * Creates a recursively defined stack named <i>__ReturnStepStack</i> that consists of an entity (with
+	 * the fields <i>returnStep</i>, <i>returnAndReverseStep</i> and <i>returnAndProceedStep</i>) and its according
+	 * content provider.
+	 */
 	private def createReturnStepStack() {
 		
 		val controller = controllers.last
@@ -552,6 +260,25 @@ class ProcessWorkflow extends AbstractPreprocessor {
 		return stack
 	}
 	
+	/**
+	 * Creates a CustomAction that executes the actual workflow step that should be executed next. It consists of
+	 * if blocks that check in which workflow step we currently are (value of the "currentWorkflowStep" field of
+	 * the <i>__workflowStateProvider</i>) and then calls the respective GotoViewAction.
+	 * <pre>
+	 * if (:__workflowStateProvider.currentWorkflowStep equals "myWf1_myStep1") {
+	 *   call GotoView(myView1)
+	 * }
+	 * else if (:__workflowStateProvider.currentWorkflowStep equals "myWf1_myStep2") {
+	 *   call GotoView(myView2)
+	 * }
+	 * .
+	 * .
+	 * .
+	 * else if (:__workflowStateProvider.currentWorkflowStep equals "myWfN_myStepM") {
+	 *   call GotoView(myViewK)
+	 * }
+	 * </pre>
+	 */
 	private def createExecuteStepCustomAction(Entity entity, ContentProvider contentProvider) {
 		
 		val workflowSteps = controllers.map[ ctrl |
@@ -589,7 +316,7 @@ class ProcessWorkflow extends AbstractPreprocessor {
 				ifCodeBlock.codeFragments.add(callTask)
 			}
 			
-			// add outer ifCodeBlock => first element if(...); all other elements elseif(...)
+			// add ifCodeBlock => first element if(...); all other elements elseif(...)
 			if (index == 0) {
 				conditionalCodeFragment.setIf(ifCodeBlock)
 			} else {
@@ -600,6 +327,10 @@ class ProcessWorkflow extends AbstractPreprocessor {
 		return customAction
 	}
 	
+	/**
+	 * Cleanup after transforming all workflow to MD2 core language elements. Removes all workflows
+	 * from the model.
+	 */
 	private def removeWorkflows() {
 		val workflows = controllers.map[ ctrl |
 			ctrl.controllerElements.filter(Workflow)
@@ -697,6 +428,11 @@ class ProcessWorkflow extends AbstractPreprocessor {
 		
 	}
 	
+	/**
+	 * Replaces all WorkflowProceedActions with <i>WorkflowActionTriggerAction</i>s (custom action built in method
+	 * buildWorkflowActionTriggerAction). The call of a WorkflowProceedAction is handled as the firing of an pseudo event
+	 * called "__action.proceed".
+	 */
 	private def transformWorkflowProceedActionToCustomActionCall(
 		Entity entity, ContentProvider contentProvider, CustomAction workflowAction
 	) {
@@ -730,6 +466,11 @@ class ProcessWorkflow extends AbstractPreprocessor {
 		]
 	}
 	
+	/**
+	 * Replaces all WorkflowReverseActions with <i>WorkflowActionTriggerAction</i>s (custom action built in method
+	 * buildWorkflowActionTriggerAction). The call of a WorkflowReverseAction is handled as the firing of an pseudo event
+	 * called "__action.reverse".
+	 */
 	private def transformWorkflowReverseActionToCustomActionCall(
 		Entity entity, ContentProvider contentProvider, CustomAction workflowAction
 	) {
@@ -763,6 +504,12 @@ class ProcessWorkflow extends AbstractPreprocessor {
 		]
 	}
 	
+	/**
+	 * Replaces all WorkflowGotoActions with <i>WorkflowActionTriggerAction</i>s (custom action built in method
+	 * buildWorkflowActionTriggerAction). The call of a WorkflowGotoAction is handled as the firing of an pseudo event
+	 * called "__action.goto.###" with ### being the name of target workflow step as created by the method
+	 * <i>stringRepresentationOfStep</i>.
+	 */
 	private def transformWorkflowGotoActionToCustomActionCall(
 		Entity entity, ContentProvider contentProvider, CustomAction workflowAction
 	) {
@@ -807,9 +554,422 @@ class ProcessWorkflow extends AbstractPreprocessor {
 	}
 	
 	
-	////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////
+	// Step: createWorkflowProcessAction (divided into sub methods for
+	//       better understandability)
+	/////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * The heart of the workflow processing. A custom action that is in charge of selecting the workflow step that has to be executed next.
+	 * It creates an outer if block that determines in which workflow step we are by looking up the "currentWorkflowStep" attribute value in the
+	 * <i>__workflowControllerStateProvider</i>. Once the current workflow step is determined, the inner code block as created in the
+	 * method <i>createWorkflowProcessActionInnerIfBlock</i> is executed.
+	 * 
+	 * <pre>
+	 * if (:__workflowStateProvider.currentWorkflowStep equals "myWf1_myStep1") {
+	 *   // inner code block 1
+	 * }
+	 * else if (:__workflowStateProvider.currentWorkflowStep equals "myWf1_myStep2") {
+	 *   // inner code block 2
+	 * }
+	 * .
+	 * .
+	 * .
+	 * else if (:__workflowStateProvider.currentWorkflowStep equals "myWfN_myStepM") {
+	 *   // inner code block N*M
+	 * }
+	 * </pre>
+	 */
+	private def createWorkflowProcessAction(
+		Entity entity, ContentProvider contentProvider, CustomAction workflowExecuteStepAction, HashMap<String, EObject> stack
+	) {
+		val workflows = controllers.map[ ctrl |
+			ctrl.controllerElements.filter(Workflow)
+		].flatten
+		
+		val controller = controllers.last
+		
+		// createAction
+		val customAction = factory.createCustomAction
+		customAction.setName("__workflowProcessingAction")
+		controller.controllerElements.add(customAction)
+		
+		// add conditional code fragment to the custom action
+		val conditionalCodeFragment = factory.createConditionalCodeFragment
+		customAction.codeFragments.add(conditionalCodeFragment)
+		
+		// populate conditional code fragment:
+		// create if { ...wf1_step1_code... }, elseif { ...wf1_step2_code... }, elseif { ...wf1_stepN_code... }, ..., elseif { ...wfN_stepM_code... }
+		workflows.forEach[ workflow, wfIndex |
+			val steps = workflow.workflowSteps
+			steps.forEach[ step, stepIndex |
+				
+				///////////////////////////////////////////////////////
+				// Outer if...elseif...
+				// Decide in which Workflow Step we are
+				///////////////////////////////////////////////////////
+				
+				// Create outer ifCodeBlock with condition
+				val outerIfCodeBlock = factory.createIfCodeBlock
+				
+				{
+					val stepStr = step.stringRepresentationOfStep
+					val conditionalExpression = createCompareExpression(entity, contentProvider, "currentWorkflowStep", stepStr)
+					
+					outerIfCodeBlock.setCondition(conditionalExpression)
+					
+					// add outer ifCodeBlock => first element if(...); all other elements elseif(...)
+					if (wfIndex + stepIndex == 0) {
+						conditionalCodeFragment.setIf(outerIfCodeBlock)
+					} else {
+						conditionalCodeFragment.elseifs.add(outerIfCodeBlock)
+					}
+				}
+				
+				
+				///////////////////////////////////////////////////////
+				// Inner if...elseif... for each step-change operation
+				// Decide whether the condition for a workflow step
+				// change is satisfied and whether the right event
+				// was fired.
+				///////////////////////////////////////////////////////
+				
+				val gotos = step.gotos
+				
+				if (!gotos.empty) {
+					val innerConditionalCodeFragment = createWorkflowProcessActionInnerIfBlock(
+						gotos, steps, step, stepIndex, entity, contentProvider, workflowExecuteStepAction, stack
+					)
+					outerIfCodeBlock.codeFragments.add(innerConditionalCodeFragment)
+				}
+				
+			]
+		]
+		
+		return customAction
+	}
+	
+	/**
+	 * The inner code block can be seen as a switch that decides which goto is executed. The if conditions check whether any of the
+	 * events defined in "on" (or any of the pseudo events triggered by WorkflowProceed, WorkflowReverse or WorkflowGoto) triggered
+	 * the workflow processing action and if specified, whether the condition "given" is satisfied. If none of the conditions is satisfied,
+	 * in a last elseif block it is checked whether any of the events that are handled by this workflow step was fired at all. If that is the case,
+	 * the message specified in "message" is displayed. If no message is specified or if none of the events matched nothing happens.
+	 * This method builds the conditions and calls the methods <i>createWorkflowProcessActionInnerIfBlockCodeFragment</i> to build the actual code
+	 * block for each of the if statements and <i>createWorkflowProcessActionInnerIfBlockMessage</i> to create the DisplayMessageAction.
+	 * 
+	 * <pre>
+	 * if (#check for current step, c.f. method createWorkflowProcessAction) {
+	 *   if ((:__workflowStateProvider.lastEventFired equals "myEvtA" or :__workflowStateProvider.lastEventFired equals "myEvtB" or ...) and GIVEN_COND1) {
+	 *     // inner code block 1
+	 *   }
+	 *   else if ((:__workflowStateProvider.lastEventFired equals "myEvtA" or :__workflowStateProvider.lastEventFired equals "myEvtC" or ...) and GIVEN_COND2) {
+	 *     // inner code block 2
+	 *   }
+	 *   .
+	 *   .
+	 *   .
+	 *   else if (:__workflowStateProvider.lastEventFired equals "myEvtA" or :__workflowStateProvider.lastEventFired equals "myEvtB" or :__workflowStateProvider.lastEventFired equals "myEvtC") {
+	 *     call DisplayMessageAction("any message")
+	 *   }
+	 * }
+	 * .
+	 * .
+	 * .
+	 * </pre>
+	 */
+	private def createWorkflowProcessActionInnerIfBlock(
+		List<WorkflowGoToDefinition> gotos, List<WorkflowStep> steps, WorkflowStep step, int stepIndex,
+		Entity entity, ContentProvider contentProvider, CustomAction workflowExecuteStepAction, HashMap<String, EObject> stack
+	) {
+		
+		val innerConditionalCodeFragment = factory.createConditionalCodeFragment
+		
+		// create one inner if block per goto
+		gotos.forEach[ goto, gotoIndex |
+			
+			val workflowGoTo = goto.goto
+			
+			
+			//////////////////////////////////////////////////////////
+			// Create inner ifCodeBlock and its according condition
+			//////////////////////////////////////////////////////////
+			
+			val innerIfCodeBlock = factory.createIfCodeBlock
+			
+			// configure the conditional expression to match all events and the WorkflowProceed,
+			// WorkflowReverse and WorkflowGoto simple action calls
+			// (lastEventFired equals "evt1" or lastEventFired equals "evt2" or ... or lastEventFired equals "evtN")
+			val eventsSubCondition = matchAllEventsCondition(newHashSet(goto), entity, contentProvider)
+			
+			// add 'given' condition of goto specification (with 'and')
+			val given = if (goto.spec instanceof WorkflowGoToSpecExtended && (goto.spec as WorkflowGoToSpecExtended).condition != null) {
+				(goto.spec as WorkflowGoToSpecExtended).condition
+			}
+			
+			if (given == null) {
+				innerIfCodeBlock.setCondition(eventsSubCondition)
+			} else {
+				val and = factory.createAnd
+				and.leftExpression = eventsSubCondition
+				and.rightExpression = given.copy
+				innerIfCodeBlock.setCondition(and)
+			}
+			
+			
+			//////////////////////////////////////////////////////////
+			// Create code fragment for inner if code block
+			//////////////////////////////////////////////////////////
+			
+			createWorkflowProcessActionInnerIfBlockCodeFragment(
+				gotos, steps, step, stepIndex, workflowGoTo, innerIfCodeBlock, goto, entity,
+				contentProvider, workflowExecuteStepAction, stack
+			)
+			
+			
+			///////////////////////////////////////////////////////////////////////////////////
+			// add inner ifCodeBlock => first element if(...); all other elements elseif(...)
+			///////////////////////////////////////////////////////////////////////////////////
+			
+			if (gotoIndex == 0) {
+				innerConditionalCodeFragment.setIf(innerIfCodeBlock)
+			} else {
+				innerConditionalCodeFragment.elseifs.add(innerIfCodeBlock)
+			}
+		]
+		
+		// if message is defined:
+		// add a final elseif that catches the event if none of the other conditions was satisfied
+		// ... elseif (lastEventFired equals "evt1" or lastEventFired equals "evt2" or ... or lastEventFired equals "evtX")
+		// for all events of the defined gotos
+		if (gotos.size > 0 && step.message != null) {
+			val ifCodeBlock = createWorkflowProcessActionInnerIfBlockMessage(gotos, step, entity, contentProvider)
+			innerConditionalCodeFragment.elseifs.add(ifCodeBlock)
+		}
+		
+		return innerConditionalCodeFragment
+	}
+	
+	/**
+	 * Creates the DisplayMessageAction for the case that none of the gotos matched.
+	 */
+	private def createWorkflowProcessActionInnerIfBlockMessage(
+		List<WorkflowGoToDefinition> gotos, WorkflowStep step, Entity entity, ContentProvider contentProvider
+	) {
+		val ifCodeBlock = factory.createIfCodeBlock
+		val condition = matchAllEventsCondition(gotos, entity, contentProvider)
+		ifCodeBlock.setCondition(condition)
+		
+		// Create DisplayMessageAction and add it to the elseif block
+		{
+			val callTask = factory.createCallTask
+			val actionDef = factory.createSimpleActionRef
+			val displayMessageAction = factory.createDisplayMessageAction
+			displayMessageAction.setMessage(step.message)
+			actionDef.setAction(displayMessageAction)
+			callTask.setAction(actionDef)
+			ifCodeBlock.codeFragments.add(callTask)
+		}
+		
+		return ifCodeBlock
+	}
+	
+	/**
+	 * <p>Creates the actual code fragment for the if conditions that are created in the method <i>createWorkflowProcessActionInnerIfBlock</i>.
+	 * It sets the value of the "currentWorkflowStep" attribute in the <i>__workflowStateControllerProvider</i> to the next step that should be
+	 * executed and calls the <i>__workflowExecuteStepAction</i> to get switch to the next workflow step.</p>
+	 * 
+	 * <p>If it is a 'goto' statement, also generate the code to put information about the current step on the <i>__workflowReturnStack</i> to allow
+	 * to return to the previous step. If this is a 'return' statement, remove the current head step from the <i>__workflowReturnStack</i>.</p>
+	 */
+	private def createWorkflowProcessActionInnerIfBlockCodeFragment(
+		List<WorkflowGoToDefinition> gotos, List<WorkflowStep> steps, WorkflowStep step, int stepIndex, WorkflowGoTo workflowGoTo,
+		IfCodeBlock innerIfCodeBlock, WorkflowGoToDefinition goto, Entity entity, ContentProvider contentProvider, CustomAction workflowExecuteStepAction,
+		HashMap<String, EObject> stack
+	) {
+		// set current workflow step
+		{
+			val currentWorkflowStepVal = getCurrentWorkflowStepValue(steps, stepIndex, workflowGoTo, stack)
+			
+			val attributeSetTask = factory.createAttributeSetTask
+			val attribute = entity.attributes.findFirst[ a | a.name.equals("currentWorkflowStep")]
+			val targetPathDefinition = factory.createComplexContentProviderPathDefinition(contentProvider, attribute)
+			attributeSetTask.setPathDefinition(targetPathDefinition)
+			
+			attributeSetTask.setSource(currentWorkflowStepVal)
+			
+			innerIfCodeBlock.codeFragments.add(attributeSetTask)
+		}
+		
+		// if this is a 'goto' statement => put current step on stack to allow to return
+		if (workflowGoTo instanceof WorkflowGoToStep) {
+			val workflowGoToStep = workflowGoTo as WorkflowGoToStep
+			createCodeToAddStepToReturnStack(workflowGoToStep, steps, step, stepIndex, innerIfCodeBlock, stack)
+		}
+		
+		// if this is a 'return' statement => remove current head step from stack
+		if (workflowGoTo instanceof WorkflowReturn) {
+			val contentProviderSetTask = stack.get("removeHeadTask") as ContentProviderSetTask
+			innerIfCodeBlock.codeFragments.add(contentProviderSetTask)
+		}
+		
+		// create call task for the __workflowExecuteStepAction (that changes the actual view)
+		{
+			val callTask = factory.createCallTask
+			val actionDef = factory.createActionReference
+			actionDef.setActionRef(workflowExecuteStepAction)
+			callTask.setAction(actionDef)
+			innerIfCodeBlock.codeFragments.add(callTask)
+		}
+		
+		// create action to execute after view change ('then' statement)
+		if (goto.spec instanceof WorkflowGoToSpecExtended && (goto.spec as WorkflowGoToSpecExtended).action != null) {
+			val callTask = factory.createCallTask
+			val actionDef = (goto.spec as WorkflowGoToSpecExtended).action
+			callTask.setAction(actionDef.copy)
+			innerIfCodeBlock.codeFragments.add(callTask)
+		}
+	}
+	
+	/**
+	 * If the inner code block of the <i>__workflowProcessAction</i> defines a 'goto' statement, generate the code to put information
+	 * about the current step on the <i>__workflowReturnStack</i> to allow to return to this step later on. Therefore, calculate the next
+	 * and the previous step. If they exist, put their string representations on the step. Otherwise, put an empty string on the stack in
+	 * lieu of the actual string representation.
+	 */
+	private def createCodeToAddStepToReturnStack(
+		WorkflowGoToStep workflowGoToStep, List<WorkflowStep> steps, WorkflowStep step, int stepIndex, IfCodeBlock innerIfCodeBlock,
+		HashMap<String, EObject> stack
+	) {
+		
+		var currentStep = ""
+		var nextStep = ""
+		var previousStep = ""
+		
+		if (workflowGoToStep.returnTo != null) {
+			val returnToStep = workflowGoToStep.returnTo
+			val returnToStepWorkflow = returnToStep.eContainer as Workflow
+			val currentStepIndex = returnToStepWorkflow.workflowSteps.indexOf(returnToStep)
+			
+			currentStep = returnToStep.stringRepresentationOfStep
+			nextStep = 
+				if(currentStepIndex + 1 >= returnToStepWorkflow.workflowSteps.size) ""
+				else returnToStepWorkflow.workflowSteps.get(stepIndex + 1).stringRepresentationOfStep
+			previousStep =
+				if(currentStepIndex - 1 < 0) ""
+				else returnToStepWorkflow.workflowSteps.get(stepIndex - 1).stringRepresentationOfStep
+		} else {
+			currentStep = step.stringRepresentationOfStep
+			nextStep = if(stepIndex + 1 >= steps.size) "" else steps.get(stepIndex + 1).stringRepresentationOfStep
+			previousStep = if(stepIndex - 1 < 0) "" else steps.get(stepIndex - 1).stringRepresentationOfStep
+		}
+		
+		val stackEntity = stack.get("entity") as Entity
+		val stackProvider = stack.get("contentProvider") as ContentProvider
+				
+		val proceedAttribute = stackEntity.attributes.findFirst[ a | a.name.equals("returnAndProceedStep")]
+		val reverseAttribute = stackEntity.attributes.findFirst[ a | a.name.equals("returnAndReverseStep")]
+		val returnAttribute = stackEntity.attributes.findFirst[ a | a.name.equals("returnStep")]
+		
+		val proceedAttributePath = factory.createComplexContentProviderPathDefinition(stackProvider, proceedAttribute)
+		val reverseAttributePath = factory.createComplexContentProviderPathDefinition(stackProvider, reverseAttribute)
+		val returnAttributePath = factory.createComplexContentProviderPathDefinition(stackProvider, returnAttribute)
+		
+		// add new entity instance to head
+		{
+			val attributeSetTask = stack.get("addToHeadTask") as AttributeSetTask
+			innerIfCodeBlock.codeFragments.add(attributeSetTask)
+		}
+		
+		// set returnAndProceedStep attribute
+		{
+			val attributeSetTask = factory.createAttributeSetTask
+			attributeSetTask.setPathDefinition(proceedAttributePath)
+			
+			val stringVal = factory.createStringVal
+			stringVal.setValue(nextStep)
+			attributeSetTask.setSource(stringVal)
+			
+			innerIfCodeBlock.codeFragments.add(attributeSetTask)
+		}
+		
+		// set returnAndReverseStep attribute
+		{
+			val attributeSetTask = factory.createAttributeSetTask
+			attributeSetTask.setPathDefinition(reverseAttributePath)
+			
+			val stringVal = factory.createStringVal
+			stringVal.setValue(previousStep)
+			attributeSetTask.setSource(stringVal)
+			
+			innerIfCodeBlock.codeFragments.add(attributeSetTask)
+		}
+		
+		// set returnStep attribute
+		{
+			val attributeSetTask = factory.createAttributeSetTask
+			attributeSetTask.setPathDefinition(returnAttributePath)
+			
+			val stringVal = factory.createStringVal
+			stringVal.setValue(currentStep)
+			attributeSetTask.setSource(stringVal)
+			
+			innerIfCodeBlock.codeFragments.add(attributeSetTask)
+		}
+	}
+	
+	/**
+	 * Calculates the simple expression with which the value of the "currentWorkflowStep" attribute is compared for equality.
+	 * In case of the WorkflowGoToNext, WorkflowGoToPrevious and WorkflowGoToStep definitions this is straight forward. The
+	 * string representations of the next, previous or goto step are returned respectively. In case of a return statement,
+	 * the target step is popped from the <i>__workflowReturnStepStack</i> => the returned simple expression is a content provider
+	 * path expression in those cases.
+	 */
+	private def getCurrentWorkflowStepValue(
+		List<WorkflowStep> steps, int stepIndex, WorkflowGoTo workflowGoTo, HashMap<String, EObject> stack
+	) {
+		switch(workflowGoTo) {
+			// no check for indexOutOfBounds => validator required at programming time
+			WorkflowGoToNext: {
+				val stringVal = factory.createStringVal
+				val targetStep = steps.get(stepIndex + 1).stringRepresentationOfStep
+				stringVal.setValue(targetStep)
+				stringVal
+			}
+			WorkflowGoToPrevious: {
+				val stringVal = factory.createStringVal
+				val targetStep = steps.get(stepIndex - 1).stringRepresentationOfStep
+				stringVal.setValue(targetStep)
+				stringVal
+			}
+			WorkflowGoToStep: {
+				val stringVal = factory.createStringVal
+				val targetStep = workflowGoTo.workflowStep.stringRepresentationOfStep
+				stringVal.setValue(targetStep)
+				stringVal
+			}
+			WorkflowReturn: {
+				val stackEntity = stack.get("entity") as Entity
+				val stackProvider = stack.get("contentProvider") as ContentProvider
+				
+				val attribute =
+					if (workflowGoTo.changeStep && workflowGoTo.changeDirection.equals("proceed")) {
+						stackEntity.attributes.findFirst[ a | a.name.equals("returnAndProceedStep")]
+					} else if (workflowGoTo.changeStep && workflowGoTo.changeDirection.equals("reverse")) {
+						stackEntity.attributes.findFirst[ a | a.name.equals("returnAndReverseStep")]
+					} else {
+						stackEntity.attributes.findFirst[ a | a.name.equals("returnStep")]
+					}
+				
+				factory.createComplexContentProviderPathDefinition(stackProvider, attribute)
+			}
+		}
+	}
+	
+	
+	/////////////////////////////////////////////////////////////////////
 	// Helper methods
-	////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////
 	
 	/**
 	 * Helper to create the string representation of a workflow step name of the form <i>workflowName__stepName</i>.
