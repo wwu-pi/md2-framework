@@ -1,6 +1,7 @@
 package de.wwu.md2.framework.generator.preprocessor
 
 import de.wwu.md2.framework.generator.preprocessor.util.AbstractPreprocessor
+import de.wwu.md2.framework.mD2.AbstractContentProviderPath
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import de.wwu.md2.framework.mD2.ActionDef
 import de.wwu.md2.framework.mD2.ActionReference
@@ -8,7 +9,6 @@ import de.wwu.md2.framework.mD2.Boolean
 import de.wwu.md2.framework.mD2.ConditionalEventRef
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ContentProviderEventType
-import de.wwu.md2.framework.mD2.ContentProviderPath
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.CustomCodeFragment
 import de.wwu.md2.framework.mD2.ElementEventType
@@ -20,6 +20,7 @@ import de.wwu.md2.framework.mD2.Operator
 import de.wwu.md2.framework.mD2.SimpleActionRef
 import java.util.HashMap
 
+import static extension de.wwu.md2.framework.generator.preprocessor.util.Helper.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 /**
@@ -348,11 +349,13 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 			val customAction = factory.createCustomAction
 			customAction.setName("__conditionalEventRegister_" + event.name)
 			
+			// Stores representations of all events already added to avoid duplicates
+			val avoidDuplicates = newHashSet
+			
 			// get all contentProviderPathes from event.condition
-			val pathDefinitions = event.condition.eAllContents.toIterable.filter(ContentProviderPath)
+			val pathDefinitions = event.condition.eAllContents.toIterable.filter(AbstractContentProviderPath)
 			for (pathDefinition : pathDefinitions) {
 				val eventBindingTask = factory.createEventBindingTask
-				customAction.codeFragments.add(eventBindingTask)
 				
 				val actionDef = factory.createActionReference
 				val action = controller.controllerElements.filter(CustomAction).filter(a | a.name.equals("__conditionalEvent_" + event.name)).head
@@ -363,13 +366,18 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 				eventRef.setPathDefinition(pathDefinition.copy)
 				eventRef.setEvent(ContentProviderEventType::ON_CHANGE)
 				eventBindingTask.events.add(eventRef)
+				
+				val stringRepresentation = eventRef.stringRepresentationOfEvent
+				if (!avoidDuplicates.contains(stringRepresentation)) {
+					customAction.codeFragments.add(eventBindingTask)
+					avoidDuplicates.add(stringRepresentation)
+				}
 			}
 			
 			// get all GUIElement references from event.condition
 			val guiElementRefs = event.condition.eAllContents.toIterable.filter(AbstractViewGUIElementRef)
 			for (guiElementRef : guiElementRefs) {
 				val eventBindingTask = factory.createEventBindingTask
-				customAction.codeFragments.add(eventBindingTask)
 				
 				val actionDef = factory.createActionReference
 				val action = controller.controllerElements.filter(CustomAction).filter(a | a.name.equals("__conditionalEvent_" + event.name)).head
@@ -380,6 +388,12 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 				eventRef.setReferencedField(guiElementRef.copy)
 				eventRef.setEvent(ElementEventType::ON_CHANGE)
 				eventBindingTask.events.add(eventRef)
+				
+				val stringRepresentation = eventRef.stringRepresentationOfEvent
+				if (!avoidDuplicates.contains(stringRepresentation)) {
+					customAction.codeFragments.add(eventBindingTask)
+					avoidDuplicates.add(stringRepresentation)
+				}
 			}
 			
 			// add action to controller

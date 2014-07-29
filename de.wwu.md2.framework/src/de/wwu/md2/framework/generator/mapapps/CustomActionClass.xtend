@@ -56,7 +56,7 @@ import de.wwu.md2.framework.mD2.ValidatorType
 import de.wwu.md2.framework.mD2.ValidatorUnbindTask
 import de.wwu.md2.framework.mD2.ViewElementEventRef
 import de.wwu.md2.framework.mD2.ViewElementSetTask
-import de.wwu.md2.framework.mD2.ViewGUIElement
+import de.wwu.md2.framework.mD2.ViewElementType
 import org.eclipse.emf.common.util.EList
 import org.eclipse.xtend2.lib.StringConcatenation
 
@@ -129,7 +129,7 @@ class CustomActionClass {
 				«val validatorVar = getUnifiedName("validator")»
 				«generateValidatorCodeFragment(validator, validatorVar)»
 				«val widgetVar = getUnifiedName("widget")»
-				«generateWidgetCodeFragment(resolveViewGUIElement(field), widgetVar)»
+				«generateWidgetCodeFragment(resolveViewElement(field), widgetVar)»
 				«widgetVar».addValidator(«validatorVar»);
 			«ENDFOR»
 		«ENDFOR»
@@ -141,7 +141,7 @@ class CustomActionClass {
 				«val validatorVar = getUnifiedName("validator")»
 				«generateValidatorCodeFragment(validator, validatorVar)»
 				«val widgetVar = getUnifiedName("widget")»
-				«generateWidgetCodeFragment(resolveViewGUIElement(field), widgetVar)»
+				«generateWidgetCodeFragment(resolveViewElement(field), widgetVar)»
 				«widgetVar».removeValidator(«validatorVar»);
 			«ENDFOR»
 		«ENDFOR»
@@ -157,7 +157,7 @@ class CustomActionClass {
 		«val contentProviderVar = getUnifiedName("contentProvider")»
 		«generateContentProviderCodeFragment(task.pathDefinition, contentProviderVar)»
 		«val widgetVar = getUnifiedName("widget")»
-		«generateWidgetCodeFragment(resolveViewGUIElement(task.referencedViewField), widgetVar)»
+		«generateWidgetCodeFragment(resolveViewElement(task.referencedViewField), widgetVar)»
 		this.$.dataMapper.map(«widgetVar», «contentProviderVar», "«task.pathDefinition.resolveContentProviderPathAttribute»");
 	'''
 	
@@ -165,7 +165,7 @@ class CustomActionClass {
 		«val contentProviderVar = getUnifiedName("contentProvider")»
 		«generateContentProviderCodeFragment(task.pathDefinition, contentProviderVar)»
 		«val widgetVar = getUnifiedName("widget")»
-		«generateWidgetCodeFragment(resolveViewGUIElement(task.referencedViewField), widgetVar)»
+		«generateWidgetCodeFragment(resolveViewElement(task.referencedViewField), widgetVar)»
 		this.$.dataMapper.unmap(«widgetVar», «contentProviderVar», "«task.pathDefinition.resolveContentProviderPathAttribute»");
 	'''
 	
@@ -195,7 +195,7 @@ class CustomActionClass {
 	
 	def private static dispatch generateCodeFragment(ViewElementSetTask task) '''
 		«val widgetVar = getUnifiedName("widget")»
-		«generateWidgetCodeFragment(resolveViewGUIElement(task.referencedViewField), widgetVar)»
+		«generateWidgetCodeFragment(resolveViewElement(task.referencedViewField), widgetVar)»
 		«val setVar = getUnifiedName("set")»
 		var «setVar» = «generateSimpleExpression(task.source)»;
 		«widgetVar».setValue(«setVar»);
@@ -238,15 +238,15 @@ class CustomActionClass {
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(GotoViewAction action, String varName) '''
-		var «varName» = this.$.actionFactory.getGotoViewAction("«getName(resolveViewGUIElement(action.view))»");
+		var «varName» = this.$.actionFactory.getGotoViewAction("«getName(resolveViewElement(action.view))»");
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(DisableAction action, String varName) '''
-		var «varName» = this.$.actionFactory.getDisableAction("«getName(resolveViewGUIElement(action.inputField))»");
+		var «varName» = this.$.actionFactory.getDisableAction("«getName(resolveViewElement(action.inputField))»");
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(EnableAction action, String varName) '''
-		var «varName» = this.$.actionFactory.getEnableAction("«getName(resolveViewGUIElement(action.inputField))»");
+		var «varName» = this.$.actionFactory.getEnableAction("«getName(resolveViewElement(action.inputField))»");
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(DisplayMessageAction action, String varName) '''
@@ -272,7 +272,7 @@ class CustomActionClass {
 	
 	def private static dispatch generateEventBindingCodeFragment(ViewElementEventRef event, ActionDef actionDefinition, boolean isBinding) '''
 		«val widgetVar = getUnifiedName("widget")»
-		«generateWidgetCodeFragment(resolveViewGUIElement(event.referencedField), widgetVar)»
+		«generateWidgetCodeFragment(resolveViewElement(event.referencedField), widgetVar)»
 		«val actionVar = getUnifiedName("action")»
 		«generateActionCodeFragment(actionDefinition, actionVar)»
 		this.$.eventRegistry.get("widget/«event.event.toString»").«IF !isBinding»un«ENDIF»registerAction(«widgetVar», «actionVar»);
@@ -322,7 +322,7 @@ class CustomActionClass {
 	// Widget
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static generateWidgetCodeFragment(ViewGUIElement guiElement, String varName) '''
+	def private static generateWidgetCodeFragment(ViewElementType guiElement, String varName) '''
 		var «varName» = this.$.widgetRegistry.getWidget("«getName(guiElement)»");
 	'''
 	

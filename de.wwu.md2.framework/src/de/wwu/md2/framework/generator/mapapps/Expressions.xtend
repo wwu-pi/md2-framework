@@ -68,7 +68,7 @@ class Expressions {
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	def private static generateGUIElementStateExpression(GuiElementStateExpression expression) {
-		val widget = '''this.$.widgetRegistry.getWidget("«getName(resolveViewGUIElement(expression.reference))»")'''
+		val widget = '''this.$.widgetRegistry.getWidget("«getName(resolveViewElement(expression.reference))»")'''
 		switch (expression.isState) {
 			case ViewElementState::VALID: '''«widget».isValid()'''
 			case ViewElementState::EMPTY: '''(!«widget».getValue() || !«widget».getValue().isSet())'''
@@ -96,7 +96,7 @@ class Expressions {
 			DateTimeVal: '''this.$.create("datetime", stamp.fromISOString("«expression.value.toISODateTime»"))'''
 			
 			// literals
-			AbstractViewGUIElementRef: '''this.$.widgetRegistry.getWidget("«getName(resolveViewGUIElement(expression))»").getValue()'''
+			AbstractViewGUIElementRef: '''this.$.widgetRegistry.getWidget("«getName(resolveViewElement(expression))»").getValue()'''
 			AbstractContentProviderPath: '''this.$.contentProviderRegistry.getContentProvider("«expression.resolveContentProviderName»").getValue("«expression.resolveContentProviderPathAttribute»")'''
 			AbstractProviderReference: '''this.$.contentProviderRegistry.getContentProvider("«expression.resolveContentProviderName»").getContent()'''
 			

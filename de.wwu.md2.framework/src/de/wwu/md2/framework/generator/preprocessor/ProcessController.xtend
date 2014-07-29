@@ -48,8 +48,8 @@ class ProcessController extends AbstractPreprocessor {
 		
 		// register __startupAction as onInitializedEvent in main block
 		val main = controllers.map[ c |
-			c.eAllContents.toIterable.filter(Main).head
-		].head
+			c.eAllContents.toIterable.filter(Main)
+		].flatten.head
 		val originalStartupAction = main.onInitializedEvent
 		main.setOnInitializedEvent(startupAction)
 		

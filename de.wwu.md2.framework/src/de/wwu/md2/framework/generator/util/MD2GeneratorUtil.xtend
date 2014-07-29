@@ -29,6 +29,7 @@ import de.wwu.md2.framework.mD2.SimpleType
 import de.wwu.md2.framework.mD2.StandardValidator
 import de.wwu.md2.framework.mD2.TabTitleParam
 import de.wwu.md2.framework.mD2.View
+import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import java.util.Collection
 import java.util.HashMap
@@ -77,21 +78,25 @@ class MD2GeneratorUtil {
 	}
 	
 	/**
-	 * Returns the name of the given EObject. In case that there is a second EObject with the
+	 * Returns the name of the given ViewElementType. In case that there is a second ViewElementType with the
 	 * same name in another scope (the element has another fully qualified name), the name is extended
 	 * by a number.
 	 * 
-	 * If obj is null, the result of this method is null
+	 * @return A name that identifies the view element uniquely or null if the parameter was null.
 	 */
-	def static getName(EObject obj) {
+	def static getName(ViewElementType obj) {
+		if (obj == null) {
+			return null
+		}
 		
-		if(obj == null) return null
-		if(obj instanceof AbstractViewGUIElementRef) System::err.println("Unwanted behavior: Name resolver was invoked with AbstractViewGUIElementRef instead of ViewGUIElement.")
+		if(qualifiedNameProvider == null) {
+			qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider
+		}
+		if(qualifiedNameToNameMapping == null) {
+			qualifiedNameToNameMapping = newHashMap
+		}
 		
-		if(qualifiedNameProvider == null) qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider()
-		if(qualifiedNameToNameMapping == null) qualifiedNameToNameMapping = newHashMap
-		
-		var name = obj.getClass.getMethod("getName").invoke(obj) as String
+		var name = obj.name
 		val qualifiedName = qualifiedNameProvider.getFullyQualifiedName(obj).toString
 		
 		if(!qualifiedNameToNameMapping.containsKey(qualifiedName)) {
@@ -248,15 +253,23 @@ class MD2GeneratorUtil {
 	}
 	
 	// Relies on simplified AbstractViewGUIElementRef from Preprocessing
-	def static ViewGUIElement resolveViewGUIElement(AbstractViewGUIElementRef abstractRef) {
-		if (abstractRef == null) return null
-		// @TODO Implement some checking and error handling
-		return abstractRef.ref as ViewGUIElement
+	def static resolveViewElement(AbstractViewGUIElementRef abstractRef) {
+		if (abstractRef == null) {
+			return null
+		}
+		if (abstractRef.ref == null) {
+			throw new Error("No view element bound to AbstractViewGUIElementRef!")
+		}
+		return abstractRef.ref as ViewElementType
 	}
 	
-	def static ContainerElement resolveContainerElement(AbstractViewGUIElementRef abstractRef) {
-		if (abstractRef == null) return null
-		// @TODO Implement some checking and error handling
+	def static resolveContainerElement(AbstractViewGUIElementRef abstractRef) {
+		if (abstractRef == null) {
+			return null
+		}
+		if (abstractRef.ref == null) {
+			throw new Error("No view element bound to AbstractViewGUIElementRef!")
+		}
 		return abstractRef.ref as ContainerElement
 	}
 	

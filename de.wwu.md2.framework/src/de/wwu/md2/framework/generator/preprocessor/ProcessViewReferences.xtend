@@ -32,6 +32,7 @@ import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 
+import static de.wwu.md2.framework.generator.preprocessor.util.Helper.*
 import static de.wwu.md2.framework.generator.preprocessor.util.Util.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
@@ -130,7 +131,7 @@ class ProcessViewReferences extends AbstractPreprocessor {
 				EventBindingTask: {
 					codeFragment.events.filter(typeof(ViewElementEventRef)).forEach [ eventRef |
 						clonedElements.forEach[ cloned, original |
-							if (original == eventRef.referencedField.resolveViewGUIElement) {
+							if (original == eventRef.referencedField.resolveViewElement) {
 								val newTask = copyElement(codeFragment)
 								newTask.events.clear
 								val newEventRef = factory.createViewElementEventRef()
@@ -148,7 +149,7 @@ class ProcessViewReferences extends AbstractPreprocessor {
 				EventUnbindTask: {
 					codeFragment.events.filter(typeof(ViewElementEventRef)).forEach [ eventRef |
 						clonedElements.forEach[ cloned, original |
-							if (original == eventRef.referencedField.resolveViewGUIElement) {
+							if (original == eventRef.referencedField.resolveViewElement) {
 								val newTask = copyElement(codeFragment)
 								newTask.events.clear
 								val newEventRef = factory.createViewElementEventRef()
@@ -166,7 +167,7 @@ class ProcessViewReferences extends AbstractPreprocessor {
 				ValidatorBindingTask: {
 					for (abstractRef : codeFragment.referencedFields) {
 						clonedElements.forEach[ cloned, original |
-							if (original == abstractRef.resolveViewGUIElement) {
+							if (original == abstractRef.resolveViewElement) {
 								val newTask = copyElement(codeFragment)
 								newTask.referencedFields.clear
 								val newAbstractRef = factory.createAbstractViewGUIElementRef()
@@ -181,7 +182,7 @@ class ProcessViewReferences extends AbstractPreprocessor {
 				ValidatorUnbindTask: {
 					for (abstractRef : codeFragment.referencedFields) {
 						clonedElements.forEach[ cloned, original |
-							if (original == abstractRef.resolveViewGUIElement) {
+							if (original == abstractRef.resolveViewElement) {
 								val newTask = copyElement(codeFragment)
 								newTask.referencedFields.clear
 								val newAbstractRef = factory.createAbstractViewGUIElementRef()
@@ -195,7 +196,7 @@ class ProcessViewReferences extends AbstractPreprocessor {
 				}
 				MappingTask: {
 					clonedElements.forEach[ cloned, original |
-						if (original == codeFragment.referencedViewField.resolveViewGUIElement) {		
+						if (original == codeFragment.referencedViewField.resolveViewElement) {		
 							val newTask = copyElement(codeFragment)
 							val newAbstractRef = factory.createAbstractViewGUIElementRef()
 							newAbstractRef.ref = cloned
@@ -207,7 +208,7 @@ class ProcessViewReferences extends AbstractPreprocessor {
 				}
 				UnmappingTask: {
 					clonedElements.forEach[ cloned, original |
-						if (original == codeFragment.referencedViewField.resolveViewGUIElement) {		
+						if (original == codeFragment.referencedViewField.resolveViewElement) {		
 							val newTask = copyElement(codeFragment)
 							val newAbstractRef = factory.createAbstractViewGUIElementRef()
 							newAbstractRef.ref = cloned
@@ -245,7 +246,7 @@ class ProcessViewReferences extends AbstractPreprocessor {
 		
 		// get all containers that are used as views
 		val rootViews = gotoViewActions.map[ action |
-			action.view.resolveViewGUIElement
+			action.view.resolveViewElement
 		].toSet
 		
 		// check for all cloned code fragments if they are child of any of the root views
