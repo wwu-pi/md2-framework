@@ -38,33 +38,30 @@ class AndroidGenerator extends AbstractPlatformGenerator {
 		// Generation work flow
 		/////////////////////////////////////////
 		
-		// Clean Android folder
-		fsa.deleteDirectory(basePackageName)
-		
 		// Copy resources
-		fsa.copyFileFromProject("resources/images", basePackageName + "/res/drawable-xhdpi")
+		fsa.copyFileFromProject("resources/images", rootFolder + "/res/drawable-xhdpi")
 		
 		// Copy static library files
-		fsa.generateFileFromInputStream(getSystemResource("/android/guava-10.0.1.jar"), basePackageName + "/lib/guava-10.0.1.jar")
-		fsa.generateFileFromInputStream(getSystemResource("/android/md2-android-lib.jar"), basePackageName + "/lib/md2-android-lib.jar")
-		fsa.generateFileFromInputStream(getSystemResource("/android/jackson-all-1.9.9.jar"), basePackageName + "/lib/jackson-all-1.9.9.jar")
+		fsa.generateFileFromInputStream(getSystemResource("/android/guava-10.0.1.jar"), rootFolder + "/lib/guava-10.0.1.jar")
+		fsa.generateFileFromInputStream(getSystemResource("/android/md2-android-lib.jar"), rootFolder + "/lib/md2-android-lib.jar")
+		fsa.generateFileFromInputStream(getSystemResource("/android/jackson-all-1.9.9.jar"), rootFolder + "/lib/jackson-all-1.9.9.jar")
 		
 		// Copy Icons and logos
-		fsa.generateFileFromInputStream(getSystemResource("/android/drawable-ldpi/ic_launcher.png"), basePackageName + "/res/drawable-ldpi/ic_launcher.png")
-		fsa.generateFileFromInputStream(getSystemResource("/android/drawable-mdpi/ic_launcher.png"), basePackageName + "/res/drawable-mdpi/ic_launcher.png")
-		fsa.generateFileFromInputStream(getSystemResource("/android/drawable-hdpi/ic_launcher.png"), basePackageName + "/res/drawable-hdpi/ic_launcher.png")
-		fsa.generateFileFromInputStream(getSystemResource("/android/drawable-xhdpi/ic_launcher.png"), basePackageName + "/res/drawable-xhdpi/ic_launcher.png")
-		fsa.generateFileFromInputStream(getSystemResource("/android/drawable-ldpi/information.png"), basePackageName + "/res/drawable-hdpi/information.png")
-		fsa.generateFileFromInputStream(getSystemResource("/android/drawable-mdpi/information_24px.png"), basePackageName + "/res/drawable-ldpi/information.png")
-		fsa.generateFileFromInputStream(getSystemResource("/android/drawable-hdpi/information_32px.png"), basePackageName + "/res/drawable-mdpi/information.png")
-		fsa.generateFileFromInputStream(getSystemResource("/android/drawable-xhdpi/information_32px.png"), basePackageName + "/res/drawable-xhdpi/information.png")
+		fsa.generateFileFromInputStream(getSystemResource("/android/drawable-ldpi/ic_launcher.png"), rootFolder + "/res/drawable-ldpi/ic_launcher.png")
+		fsa.generateFileFromInputStream(getSystemResource("/android/drawable-mdpi/ic_launcher.png"), rootFolder + "/res/drawable-mdpi/ic_launcher.png")
+		fsa.generateFileFromInputStream(getSystemResource("/android/drawable-hdpi/ic_launcher.png"), rootFolder + "/res/drawable-hdpi/ic_launcher.png")
+		fsa.generateFileFromInputStream(getSystemResource("/android/drawable-xhdpi/ic_launcher.png"), rootFolder + "/res/drawable-xhdpi/ic_launcher.png")
+		fsa.generateFileFromInputStream(getSystemResource("/android/drawable-ldpi/information.png"), rootFolder + "/res/drawable-hdpi/information.png")
+		fsa.generateFileFromInputStream(getSystemResource("/android/drawable-mdpi/information_24px.png"), rootFolder + "/res/drawable-ldpi/information.png")
+		fsa.generateFileFromInputStream(getSystemResource("/android/drawable-hdpi/information_32px.png"), rootFolder + "/res/drawable-mdpi/information.png")
+		fsa.generateFileFromInputStream(getSystemResource("/android/drawable-xhdpi/information_32px.png"), rootFolder + "/res/drawable-xhdpi/information.png")
 		
 		// Generate common base elements
-		fsa.generateFile(basePackageName + "/.project", dotProject(basePackageName))
-		fsa.generateFile(basePackageName + "/.classpath", dotClassPath)
-		fsa.generateFile(basePackageName + "/project.properties", projectProperties(minAppVersion))
-		fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/" + createAppClassName(dataContainer) + ".java", ProjectApplication::generateApplication(basePackageName, createAppClassName(dataContainer), dataContainer))
-		fsa.generateFile(basePackageName + "/.settings/org.eclipse.core.resources.prefs", preferences)
+		fsa.generateFile(rootFolder + "/.project", dotProject(basePackageName))
+		fsa.generateFile(rootFolder + "/.classpath", dotClassPath)
+		fsa.generateFile(rootFolder + "/project.properties", projectProperties(minAppVersion))
+		fsa.generateFile(rootFolder + "/src/" + basePackageName.replace('.', '/') + "/" + createAppClassName(dataContainer) + ".java", ProjectApplication::generateApplication(basePackageName, createAppClassName(dataContainer), dataContainer))
+		fsa.generateFile(rootFolder + "/.settings/org.eclipse.core.resources.prefs", preferences)
 		
 		
 		/////////////////////////////////////////
@@ -76,7 +73,7 @@ class AndroidGenerator extends AbstractPlatformGenerator {
 		dataContainer.models.forEach[model | model.modelElements.forEach[elem | createModel(fsa, elem)]]
 		
 		// Generate Arrays.xml
-		fsa.generateFile(basePackageName + "/res/values/arrays.xml" , generateArraysXml(enums))
+		fsa.generateFile(rootFolder + "/res/values/arrays.xml" , generateArraysXml(enums))
 		val stringsTemplate = new StringsXmlTemplate();
 		stringsTemplate.addString("app_name", dataContainer.main.appName)
 		
@@ -86,7 +83,7 @@ class AndroidGenerator extends AbstractPlatformGenerator {
 		/////////////////////////////////////////
 		
 		// Generate Style.xml
-		fsa.generateFile(basePackageName + "/res/values/style.xml" , generateStyleXml())
+		fsa.generateFile(rootFolder + "/res/values/style.xml" , generateStyleXml())
 		
 		// List of all root views that will be created
 		val Set<ContainerElement> activities = newHashSet
@@ -113,7 +110,7 @@ class AndroidGenerator extends AbstractPlatformGenerator {
 			// Generate view
 			if(!(curViewContainer instanceof TabbedAlternativesPane)) {
 				val viewGenerator = new LayoutXml(stringsTemplate)
-				fsa.generateFile(basePackageName + "/res/layout/" + getName(curViewContainer).toLowerCase + ".xml" , viewGenerator.generateLayoutXml(curViewContainer))
+				fsa.generateFile(rootFolder + "/res/layout/" + getName(curViewContainer).toLowerCase + ".xml" , viewGenerator.generateLayoutXml(curViewContainer))
 				// Add all new detected fragments to the queue and the list of fragments
 				viewContainerQueue.addAll(viewGenerator.newFragmentsToGenerate)
 				fragments.addAll(viewGenerator.newFragmentsToGenerate)
@@ -142,7 +139,7 @@ class AndroidGenerator extends AbstractPlatformGenerator {
 		
 		// Generate actions
 		dataContainer.customActions.forEach [
-			fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/actions/" + getName(it).toFirstUpper + ".java", 
+			fsa.generateFile(rootFolder + "/src/" + basePackageName.replace('.', '/') + "/actions/" + getName(it).toFirstUpper + ".java", 
 				new CustomActionTemplate(basePackageName, it, dataContainer, topLevelViewContainers, activities, fragments).generateCustomAction
 			)
 		]
@@ -172,10 +169,10 @@ class AndroidGenerator extends AbstractPlatformGenerator {
 		val activityGenerator = new Activity(dataContainer)
 		activities.forEach [
 			if(it instanceof TabbedAlternativesPane) {
-				fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/controller/" + getName(it).toFirstUpper + "Activity.java" , activityGenerator.generateTabbedActivity(basePackageName, stringsTemplate, it as TabbedAlternativesPane))
+				fsa.generateFile(rootFolder + "/src/" + basePackageName.replace('.', '/') + "/controller/" + getName(it).toFirstUpper + "Activity.java" , activityGenerator.generateTabbedActivity(basePackageName, stringsTemplate, it as TabbedAlternativesPane))
 			}
 			else {
-				fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/controller/" + getName(it).toFirstUpper + "Activity.java" , activityGenerator.generateActivity(basePackageName, it))
+				fsa.generateFile(rootFolder + "/src/" + basePackageName.replace('.', '/') + "/controller/" + getName(it).toFirstUpper + "Activity.java" , activityGenerator.generateActivity(basePackageName, it))
 			}
 		]
 		
@@ -205,15 +202,15 @@ class AndroidGenerator extends AbstractPlatformGenerator {
 		activitiesListForFragment.add(0, mainActivity)
 		
 		// Generate Manifest
-		fsa.generateFile(basePackageName + "/AndroidManifest.xml", manifest(basePackageName, minAppVersion, dataContainer, activitiesListForFragment))
+		fsa.generateFile(rootFolder + "/AndroidManifest.xml", manifest(basePackageName, minAppVersion, dataContainer, activitiesListForFragment))
 		
 		// Generate from template objects
-		fsa.generateFile(basePackageName + "/res/values/strings.xml" , stringsTemplate.render())
+		fsa.generateFile(rootFolder + "/res/values/strings.xml" , stringsTemplate.render())
 	}
 	
 	def private createModel(IExtendedFileSystemAccess fsa, ModelElement elem) {
 		try {
-			fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + '/models/' + elem.name + '.java' , createClass(elem, basePackageName))
+			fsa.generateFile(rootFolder + "/src/" + basePackageName.replace('.', '/') + '/models/' + elem.name + '.java' , createClass(elem, basePackageName))
 		} catch (Exception e) {
 			System::out.println("Error generating model class " + elem.name + ". Type: " + elem.toString() + " (" + e.getClass().name + ": " + e.message+")");
 		}

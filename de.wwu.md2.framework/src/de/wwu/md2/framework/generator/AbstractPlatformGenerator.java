@@ -20,18 +20,8 @@ public abstract class AbstractPlatformGenerator implements IPlatformGenerator {
 	protected DataContainer dataContainer;
 	protected ResourceSet processedInput;
 
+	protected String rootFolder;
 	protected String basePackageName;
-	
-	@Override
-	public String getPlatformPrefix() {
-		return this.getClass().getCanonicalName();
-	}
-	
-	@Override
-	public void doGenerate(Resource input, IFileSystemAccess fsa) {
-		throw new UnsupportedOperationException("Use the following method instead: " +
-				"doGenerate(ResourceSet input, IExtendedFileSystemAccess fsa)");
-	}
 	
 	@Override
 	public void doGenerate(ResourceSet input, IExtendedFileSystemAccess fsa) {
@@ -50,16 +40,26 @@ public abstract class AbstractPlatformGenerator implements IPlatformGenerator {
 		// Extract base package name
 		basePackageName = MD2GeneratorUtil.getBasePackageName(processedInput) + '.' + getPlatformPrefix();
 		
+		// Extend the root folder with a default sub-folder to which all files are generated
+		rootFolder = (getDefaultSubfolder() != null) ? basePackageName + "/" + getDefaultSubfolder() : basePackageName;
+		
 		
 		/////////////////////////////////////////
 		// Feasibility check
 		/////////////////////////////////////////
 		
 		// Check whether a main block has been defined. Otherwise do not run the generator.
-		if(dataContainer.getMain() == null) {
+		if (dataContainer.getMain() == null) {
 			System.out.println("No main block found. Quit gracefully.");
 			return;
 		}
+		
+		
+		/////////////////////////////////////////
+		// Clean current project folder
+		/////////////////////////////////////////
+		
+		fsa.deleteDirectory(basePackageName);
 		
 		
 		/////////////////////////////////////////
@@ -69,6 +69,31 @@ public abstract class AbstractPlatformGenerator implements IPlatformGenerator {
 		doGenerate(fsa);
 	}
 	
+	@Override
+	public String getPlatformPrefix() {
+		return this.getClass().getCanonicalName();
+	}
+	
+	@Override
+	public void doGenerate(Resource input, IFileSystemAccess fsa) {
+		throw new UnsupportedOperationException("Use the following method instead: " +
+				"doGenerate(ResourceSet input, IExtendedFileSystemAccess fsa)");
+	}
+	
+	/**
+	 * Specify the name of a default sub-folder of the root folder to which all files are generated.
+	 * Is supposed to be overwritten by the actual generator implementation if a sub-folder should be used.
+	 * 
+	 * @return File name of the sub folder or null if no sub folder should be used.
+	 */
+	public String getDefaultSubfolder() {
+		return null;
+	}
+	
+	/**
+	 * Actual generator method that is supposed to be implemented by the concrete generators.
+	 * @param fsa
+	 */
 	public abstract void doGenerate(IExtendedFileSystemAccess fsa);
 	
 }

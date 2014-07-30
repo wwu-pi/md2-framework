@@ -30,14 +30,11 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		// Generation work flow
 		/////////////////////////////////////////
 		
-		// Clean backend folder
-		fsa.deleteDirectory(basePackageName)
-		
 		// Generate models, web services and beans
 		dataContainer.models.forEach [model |
 			model.modelElements.filter(typeof(ModelElement)).forEach[modelElement |
-				fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/models/"
-					+ modelElement.name.toFirstUpper + ".java", createModel(basePackageName, modelElement))
+				fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/models/"
+					+ modelElement.name.toFirstUpper + ".java", createModel(rootFolder, modelElement))
 				
 				val isUsedInRemoteContentProvider = dataContainer.contentProviders.exists[ c |
 					c.type instanceof ReferencedModelType
@@ -45,77 +42,78 @@ class BackendGenerator extends AbstractPlatformGenerator {
 					&& (c.type as ReferencedModelType).entity.identityEquals(modelElement)
 				]
 				
+				// web services and beans for an entity are only generated if they are used in any remote content provider
 				if(modelElement instanceof Entity && isUsedInRemoteContentProvider) {
-					fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/ws/"
-						+ modelElement.name.toFirstUpper + "WS.java", createEntityWS(basePackageName, modelElement as Entity))
-					fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/beans/"
-						+ modelElement.name.toFirstUpper + "Bean.java", createEntityBean(basePackageName, modelElement as Entity))
+					fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/"
+						+ modelElement.name.toFirstUpper + "WS.java", createEntityWS(rootFolder, modelElement as Entity))
+					fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/beans/"
+						+ modelElement.name.toFirstUpper + "Bean.java", createEntityBean(rootFolder, modelElement as Entity))
 				}
 			]
 		]
 		
 		// Generate datatype wrapper
-		fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/datatypes/BooleanWrapper.java", createBooleanWrapper(basePackageName))
-		fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/datatypes/DateWrapper.java", createDateWrapper(basePackageName))
-		fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/datatypes/DecimalWrapper.java", createDecimalWrapper(basePackageName))
-		fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/datatypes/IntegerWrapper.java", createIntegerWrapper(basePackageName))
-		fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/datatypes/InternalIdWrapper.java", createInternalIdWrapper(basePackageName))
-		fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/datatypes/IsValidWrapper.java", createIsValidWrapper(basePackageName))
-		fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/datatypes/StringWrapper.java", createStringWrapper(basePackageName))
-		fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/datatypes/TimestampWrapper.java", createTimestampWrapper(basePackageName))
-		fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/datatypes/TimeWrapper.java", createTimeWrapper(basePackageName))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/datatypes/BooleanWrapper.java", createBooleanWrapper(basePackageName))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/datatypes/DateWrapper.java", createDateWrapper(basePackageName))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/datatypes/DecimalWrapper.java", createDecimalWrapper(basePackageName))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/datatypes/IntegerWrapper.java", createIntegerWrapper(basePackageName))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/datatypes/InternalIdWrapper.java", createInternalIdWrapper(basePackageName))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/datatypes/IsValidWrapper.java", createIsValidWrapper(basePackageName))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/datatypes/StringWrapper.java", createStringWrapper(basePackageName))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/datatypes/TimestampWrapper.java", createTimestampWrapper(basePackageName))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/datatypes/TimeWrapper.java", createTimeWrapper(basePackageName))
 		
 		// Generate validation and model version web services
 		val affectedEntities = <ModelElement>newHashSet
 		affectedEntities.addAll(dataContainer.remoteValidators.filter(v | v.contentProvider != null && v.contentProvider.contentProvider.type instanceof ReferencedModelType)
 			.map(v | (v.contentProvider.contentProvider.type as ReferencedModelType).entity).filter(typeof(Entity)))
 		
-		fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/ws/VersionNegotiationWS.java", createVersionNegotiationWS(basePackageName))
-		fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/datatypes/ValidationResult.java", createValidationResult(basePackageName))
-		fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/datatypes/ValidationError.java", createValidationError(basePackageName))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/VersionNegotiationWS.java", createVersionNegotiationWS(basePackageName))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/datatypes/ValidationResult.java", createValidationResult(basePackageName))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/datatypes/ValidationError.java", createValidationError(basePackageName))
 		
 		if(!dataContainer.remoteValidators.empty) {
-			fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/ws/RemoteValidationWS.java",
-				createRemoteValidationWS(basePackageName, affectedEntities, dataContainer.remoteValidators))
-			fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/beans/RemoteValidationBean.java",
-				createRemoteValidationBean(basePackageName, affectedEntities, dataContainer.remoteValidators))
+			fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/RemoteValidationWS.java",
+				createRemoteValidationWS(rootFolder, affectedEntities, dataContainer.remoteValidators))
+			fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/beans/RemoteValidationBean.java",
+				createRemoteValidationBean(rootFolder, affectedEntities, dataContainer.remoteValidators))
 		}
 		
 		// Generate common backend files
-		fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/Utils.java", createUtils(basePackageName))
-		fsa.generateFile(basePackageName + "/src/" + basePackageName.replace('.', '/') + "/Config.java", createConfig(basePackageName, dataContainer))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/Utils.java", createUtils(basePackageName))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/Config.java", createConfig(basePackageName, dataContainer))
 		
 		// Generate persistence.xml
-		fsa.generateFile(basePackageName + "/src/META-INF/persistence.xml", createPersistenceXml(basePackageName))
+		fsa.generateFile(rootFolder + "/src/META-INF/persistence.xml", createPersistenceXml(basePackageName))
 		
 		// Generate .settings folder
 		// TODO: check necessity
-		fsa.generateFile(basePackageName + "/.settings/.jsdtscope", jsdtscope)
-		fsa.generateFile(basePackageName + "/.settings/org.eclipse.jdt.core.prefs", orgEclipseJdtCorePrefs)
-		fsa.generateFile(basePackageName + "/.settings/org.eclipse.jpt.core.prefs", orgEclipseJptCorePrefs)
-		fsa.generateFile(basePackageName + "/.settings/org.eclipse.wst.common.component", orgEclipseWstCommonComponent(basePackageName))
-		fsa.generateFile(basePackageName + "/.settings/org.eclipse.wst.common.project.facet.core.prefs.xml", orgEclipseWstCommonProjectFacetCorePrefs)
-		fsa.generateFile(basePackageName + "/.settings/org.eclipse.wst.common.project.facet.core.xml", orgEclipseWstCommonProjectFacetCore)
-		fsa.generateFile(basePackageName + "/.settings/org.eclipse.wst.jsdt.ui.superType.container", orgEclipseWstJsdtUiSuperTypeContainer)
-		fsa.generateFile(basePackageName + "/.settings/org.eclipse.wst.jsdt.ui.superType.name", orgEclipseWstJsdtUiSuperTypeName)
+		fsa.generateFile(rootFolder + "/.settings/.jsdtscope", jsdtscope)
+		fsa.generateFile(rootFolder + "/.settings/org.eclipse.jdt.core.prefs", orgEclipseJdtCorePrefs)
+		fsa.generateFile(rootFolder + "/.settings/org.eclipse.jpt.core.prefs", orgEclipseJptCorePrefs)
+		fsa.generateFile(rootFolder + "/.settings/org.eclipse.wst.common.component", orgEclipseWstCommonComponent(basePackageName))
+		fsa.generateFile(rootFolder + "/.settings/org.eclipse.wst.common.project.facet.core.prefs.xml", orgEclipseWstCommonProjectFacetCorePrefs)
+		fsa.generateFile(rootFolder + "/.settings/org.eclipse.wst.common.project.facet.core.xml", orgEclipseWstCommonProjectFacetCore)
+		fsa.generateFile(rootFolder + "/.settings/org.eclipse.wst.jsdt.ui.superType.container", orgEclipseWstJsdtUiSuperTypeContainer)
+		fsa.generateFile(rootFolder + "/.settings/org.eclipse.wst.jsdt.ui.superType.name", orgEclipseWstJsdtUiSuperTypeName)
 		
 		// Generate .classpath and .project files
-		fsa.generateFile(basePackageName + "/.classpath", createClasspath)
-		fsa.generateFile(basePackageName + "/.project", createProjectFile(basePackageName))
+		fsa.generateFile(rootFolder + "/.classpath", createClasspath)
+		fsa.generateFile(rootFolder + "/.project", createProjectFile(basePackageName))
 		
 		// Generate WebContent folder
-		fsa.generateFile(basePackageName + "/WebContent/index.jsp", indexJsp)
-		fsa.generateFile(basePackageName + "/WebContent/META-INF/MANIFEST.MF", manifest)
-		fsa.generateFile(basePackageName + "/WebContent/WEB-INF/sun-web.xml", sunWebXml(basePackageName)) // TODO: necessary?
-		fsa.generateFile(basePackageName + "/WebContent/WEB-INF/web.xml", webXml(basePackageName))
+		fsa.generateFile(rootFolder + "/WebContent/index.jsp", indexJsp)
+		fsa.generateFile(rootFolder + "/WebContent/META-INF/MANIFEST.MF", manifest)
+		fsa.generateFile(rootFolder + "/WebContent/WEB-INF/sun-web.xml", sunWebXml(basePackageName)) // TODO: necessary?
+		fsa.generateFile(rootFolder + "/WebContent/WEB-INF/web.xml", webXml(basePackageName))
 		
 		// Copy static jar libs
-		fsa.generateFileFromInputStream(getSystemResource("/backend/guava-13.0.jar"), basePackageName + "/WebContent/WEB-INF/lib/guava-13.0.jar")
-		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-core-asl-1.9.2.jar"), basePackageName + "/WebContent/WEB-INF/lib/jackson-core-asl-1.9.2.jar")
-		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-jaxrs-1.9.2.jar"), basePackageName + "/WebContent/WEB-INF/lib/jackson-jaxrs-1.9.2.jar")
-		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-mapper-asl-1.9.2.jar"), basePackageName + "/WebContent/WEB-INF/lib/jackson-mapper-asl-1.9.2.jar")
-		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-xc-1.9.2.jar"), basePackageName + "/WebContent/WEB-INF/lib/jackson-xc-1.9.2.jar")
-		fsa.generateFileFromInputStream(getSystemResource("/backend/jersey-bundle-1.18.1.jar"), basePackageName + "/WebContent/WEB-INF/lib/jersey-bundle-1.18.1.jar")
+		fsa.generateFileFromInputStream(getSystemResource("/backend/guava-13.0.jar"), rootFolder + "/WebContent/WEB-INF/lib/guava-13.0.jar")
+		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-core-asl-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-core-asl-1.9.2.jar")
+		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-jaxrs-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-jaxrs-1.9.2.jar")
+		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-mapper-asl-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-mapper-asl-1.9.2.jar")
+		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-xc-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-xc-1.9.2.jar")
+		fsa.generateFileFromInputStream(getSystemResource("/backend/jersey-bundle-1.18.1.jar"), rootFolder + "/WebContent/WEB-INF/lib/jersey-bundle-1.18.1.jar")
 		
 	}
 	

@@ -68,7 +68,7 @@ import static extension de.wwu.md2.framework.util.StringExtensions.*
 
 class CustomActionClass {
 	
-	def static generateCustomAction(CustomAction customAction, DataContainer dataContainer) '''
+	def static String generateCustomAction(CustomAction customAction, DataContainer dataContainer) '''
 		«val hasDateValue = !customAction.eAllContents.filter[ e |
 			e instanceof DateVal || e instanceof TimeVal || e instanceof DateTimeVal ||
 			e instanceof ValidatorMinDateParam || e instanceof ValidatorMaxDateParam ||
@@ -78,7 +78,7 @@ class CustomActionClass {
 		define([
 			"dojo/_base/declare",
 			«IF hasDateValue»"dojo/date/stamp",«ENDIF»
-			"../../md2_runtime/actions/_Action"
+			"md2_runtime/actions/_Action"
 		],
 		function(declare, «IF hasDateValue»stamp, «ENDIF»_Action) {
 			

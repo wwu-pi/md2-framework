@@ -38,4 +38,20 @@ class StringExtensions {
 		          .replace("\n", "\\n")
 	}
 	
+	/**
+	 * Replace all tabs with n spaces.
+	 */
+	def static tabsToSpaces(String str, int n) {
+		if (str == null) {
+			return str;
+		}
+		var spaces = ""
+		var i = 0
+		while(i < n) {
+			spaces = spaces + " "
+			i = i + 1
+		}
+		str.replace("\t", spaces)
+	}
+	
 }

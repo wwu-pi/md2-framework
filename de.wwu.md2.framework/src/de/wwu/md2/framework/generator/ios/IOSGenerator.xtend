@@ -37,15 +37,12 @@ class IOSGenerator extends AbstractPlatformGenerator
 		/////////////////////////////////////////
 		
 		appName = createAppName(dataContainer).toString
-		projectFolder = basePackageName + "/" + appName
+		projectFolder = rootFolder + "/" + appName
 		val FileStructure fileStructure = new FileStructure(appName)
 		
 		/////////////////////////////////////////
 		// Generation work flow
 		/////////////////////////////////////////
-		
-		// Clean iOS folder
-		fsa.deleteDirectory(basePackageName)
 		
 		// Copy resources
 		val fileNames = fsa.copyFileFromProject("resources/images", projectFolder)

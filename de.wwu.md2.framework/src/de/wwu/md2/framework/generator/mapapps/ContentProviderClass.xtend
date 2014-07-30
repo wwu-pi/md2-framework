@@ -17,10 +17,10 @@ import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
 class ContentProviderClass {
 	
-	def static generateContentProvider(ContentProvider contentProvider, ResourceSet processedInput) '''
+	def static String generateContentProvider(ContentProvider contentProvider, ResourceSet processedInput) '''
 		define([
 			"dojo/_base/declare",
-			"../../md2_runtime/contentprovider/ContentProvider"
+			"md2_runtime/contentprovider/ContentProvider"
 		],
 		function(declare, ContentProvider) {
 			

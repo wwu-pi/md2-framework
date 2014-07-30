@@ -34,15 +34,20 @@ import static extension de.wwu.md2.framework.util.StringExtensions.*
 
 class ManifestJson {
 	
-	def static generateManifestJson(DataContainer dataContainer, ResourceSet processedInput) '''
+	def static String generateManifestJson(DataContainer dataContainer, ResourceSet processedInput) '''
 		{
-			"Bundle-SymbolicName": "md2_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]»",
+			"Bundle-SymbolicName": "md2_app_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]»",
 			"Bundle-Version": "«dataContainer.main.appVersion»",
 			"Bundle-Name": "«dataContainer.main.appName»",
 			"Bundle-Description": "Generated MD2 bundle: «dataContainer.main.appName»",
 			"Bundle-Localization": [],
 			"Bundle-Main": "",
 			"Require-Bundle": [],
+			"Require-Bundle": [
+				{
+					"name": "md2_runtime"
+				}
+			],
 			"Components": [
 				«val snippets = newArrayList(
 					generateConfigurationSnippet(dataContainer, processedInput),
@@ -85,23 +90,19 @@ class ManifestJson {
 	'''
 	
 	def static generateCustomActionsSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
-		«FOR customAction : dataContainer.customActions SEPARATOR ","»
-			{
-				"name": "«customAction.name.toFirstUpper»Action",
-				"impl": "./actions/«customAction.name.toFirstUpper»",
-				"provides": ["md2.app.«processedInput.getBasePackageName».CustomAction"]
-			}
-		«ENDFOR»
+		{
+			"name": "CustomActions",
+			"provides": ["md2.app.«processedInput.getBasePackageName».CustomActions"],
+			"instanceFactory": true
+		}
 	'''
 	
 	def static generateEntitiesSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
-		«FOR entity : dataContainer.entities SEPARATOR ","»
-			{
-				"name": "«entity.name.toFirstUpper»Entity",
-				"impl": "./entities/«entity.name.toFirstUpper»",
-				"provides": ["md2.app.«processedInput.getBasePackageName».Entity"]
-			}
-		«ENDFOR»
+		{
+			"name": "Entities",
+			"provides": ["md2.app.«processedInput.getBasePackageName».Entities"],
+			"instanceFactory": true
+		}
 	'''
 	
 	def static generateContentProvidersSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
@@ -144,13 +145,11 @@ class ManifestJson {
 				},
 				{
 					"name": "_customActions",
-					"providing": "md2.app.«processedInput.getBasePackageName».CustomAction",
-					"cardinality": "0..n"
+					"providing": "md2.app.«processedInput.getBasePackageName».CustomActions"
 				},
 				{
 					"name": "_entities",
-					"providing": "md2.app.«processedInput.getBasePackageName».Entity",
-					"cardinality": "0..n"
+					"providing": "md2.app.«processedInput.getBasePackageName».Entities"
 				},
 				{
 					"name": "_contentProviders",
@@ -172,7 +171,7 @@ class ManifestJson {
 			"provides": ["ct.tools.Tool"],
 			"propertiesConstructor": true,
 			"properties": {
-				"id": "md2_«processedInput.getBasePackageName.replace(".", "_")»_tool",
+				"id": "md2_app_«processedInput.getBasePackageName.replace(".", "_")»_tool",
 				"title": "«dataContainer.main.appName»",
 				"description": "Start «dataContainer.main.appName»",
 				"tooltip": "Start «dataContainer.main.appName»",
@@ -262,7 +261,7 @@ class ManifestJson {
 	 
 	def private static dispatch String getViewElement(Image image, ResourceSet processedInput) '''
 		"type": "simpleimage",
-		"src": "md2_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]»:./resources/«image.src»",
+		"src": "md2_app_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]»:./resources/«image.src»",
 		«IF image.imgWidth > 0»"imgW": «image.imgWidth»,«ENDIF»
 		«IF image.imgHeight > 0»"imgH": «image.imgHeight»,«ENDIF»
 		«generateStyle(null, "width" -> '''«image.width»%''')»

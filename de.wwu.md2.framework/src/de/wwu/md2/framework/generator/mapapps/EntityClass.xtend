@@ -25,14 +25,14 @@ import static extension de.wwu.md2.framework.util.StringExtensions.*
 
 class EntityClass {
 	
-	def static generateEntity(Entity entity) '''
+	def static String generateEntity(Entity entity) '''
 		«val hasDateValue = !entity.attributes.filter[ a |
 			a.type instanceof DateType || a.type instanceof TimeType || a.type instanceof DateTimeType
 		].empty»
 		define([
 			"dojo/_base/declare",
 			«IF hasDateValue»"dojo/date/stamp",«ENDIF»
-			"../../md2_runtime/entities/_Entity"
+			"md2_runtime/entities/_Entity"
 		],
 		function(declare, «IF hasDateValue»stamp, «ENDIF»_Entity) {
 			

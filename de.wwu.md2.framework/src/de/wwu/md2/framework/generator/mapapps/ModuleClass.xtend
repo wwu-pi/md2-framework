@@ -4,19 +4,15 @@ import de.wwu.md2.framework.generator.util.DataContainer
 
 class ModuleClass {
 	
-	def static generateModule(DataContainer dataContainer) '''
+	def static String generateModule(DataContainer dataContainer) '''
 		define([
-			«FOR customAction : dataContainer.customActions»
-				"./actions/«customAction.name.toFirstUpper»",
-			«ENDFOR»
-			«FOR entity : dataContainer.entities»
-				"./entities/«entity.name.toFirstUpper»",
-			«ENDFOR»
+			"ct/Stateful",
 			«FOR contentProvider : dataContainer.contentProviders»
 				"./contentproviders/«contentProvider.name.toFirstUpper»",
 			«ENDFOR»
 			"./Controller",
-			"ct/Stateful"
+			"./CustomActions",
+			"./Entities"
 		], {});
 	'''
 }

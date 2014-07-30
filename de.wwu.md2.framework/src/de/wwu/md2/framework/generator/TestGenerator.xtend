@@ -26,19 +26,8 @@ class TestGenerator extends AbstractPlatformGenerator {
 	
 	override doGenerate(IExtendedFileSystemAccess fsa) {
 		
-		/////////////////////////////////////////
-		// Feasibility check
-		/////////////////////////////////////////
-		
-		// Check whether a main block has been defined. Otherwise do not run the generator.
-		if(dataContainer.main == null) {
-			System::out.println("TestGenerator: No main block found. Quit gracefully.")
-			return
-		}
-		
-		
 		for(view: dataContainer.views) {
-			fsa.generateFile(basePackageName + "/view.test", traverse(view))
+			fsa.generateFile(rootFolder + "/view.test", traverse(view))
 		}
 		val modelsCopy = processedInput.copyModel
 		val xmiSet = new ResourceSetImpl()
@@ -58,7 +47,7 @@ class TestGenerator extends AbstractPlatformGenerator {
 			} finally{
 				scanner.close();
 			}
-			val relativeURI = basePackageName + "/" + xmiRes.URI.segment(xmiRes.URI.segmentCount-2) + "/" + xmiRes.URI.lastSegment
+			val relativeURI = rootFolder + "/" + xmiRes.URI.segment(xmiRes.URI.segmentCount-2) + "/" + xmiRes.URI.lastSegment
 			fsa.generateFile(relativeURI, text)
 		]	
 	}	

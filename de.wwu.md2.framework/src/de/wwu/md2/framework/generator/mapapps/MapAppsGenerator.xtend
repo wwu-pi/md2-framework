@@ -2,94 +2,69 @@ package de.wwu.md2.framework.generator.mapapps
 
 import de.wwu.md2.framework.generator.AbstractPlatformGenerator
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
-import java.util.Collection
 
 import static de.wwu.md2.framework.generator.mapapps.ContentProviderClass.*
 import static de.wwu.md2.framework.generator.mapapps.ControllerClass.*
 import static de.wwu.md2.framework.generator.mapapps.CustomActionClass.*
+import static de.wwu.md2.framework.generator.mapapps.CustomActionInterfaceClass.*
 import static de.wwu.md2.framework.generator.mapapps.EntityClass.*
+import static de.wwu.md2.framework.generator.mapapps.EntityInterfaceClass.*
 import static de.wwu.md2.framework.generator.mapapps.ManifestJson.*
 import static de.wwu.md2.framework.generator.mapapps.ModuleClass.*
+
+import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
+import static extension de.wwu.md2.framework.util.StringExtensions.*
 
 class MapAppsGenerator extends AbstractPlatformGenerator {
 	
 	override doGenerate(IExtendedFileSystemAccess fsa) {
 		
 		/////////////////////////////////////////
-		// Calculate bundle dependencies
-		/////////////////////////////////////////
-		
-		val Collection<String> requiredBundles = newArrayList
-		
-		requiredBundles.add("system")
-		requiredBundles.add("splashscreen")
-		requiredBundles.add("templatelayout")
-		requiredBundles.add("themes")
-		requiredBundles.add("templates")
-		requiredBundles.add("windowmanager")
-		
-		
-		/////////////////////////////////////////
 		// Generation work flow
 		/////////////////////////////////////////
 		
-		// Clean current project folder
-		fsa.deleteDirectory(basePackageName)
-		
 		// Copy resources
-		fsa.copyFileFromProject("resources/images", basePackageName + "/resources")
+		fsa.copyFileFromProject("resources/images", rootFolder + "/resources")
 		
 		// Generate common base elements
-//		fsa.generateFile(basePackageName + "/app.json", generateAppJson(dataContainer, requiredBundles))
-		fsa.generateFile(basePackageName + "/manifest.json", generateManifestJson(dataContainer, processedInput))
+		fsa.generateFile(rootFolder + "/manifest.json", generateManifestJson(dataContainer, processedInput).tabsToSpaces(4))
 		
-		fsa.generateFile(basePackageName + "/module.js", generateModule(dataContainer))
+		fsa.generateFile(rootFolder + "/module.js", generateModule(dataContainer).tabsToSpaces(4))
 		
-		fsa.generateFile(basePackageName + "/Controller.js", generateController)
+		fsa.generateFile(rootFolder + "/Controller.js", generateController(dataContainer).tabsToSpaces(4))
+		
+		fsa.generateFile(rootFolder + "/CustomActions.js", generateCustomActionInterface(dataContainer).tabsToSpaces(4))
+		
+		fsa.generateFile(rootFolder + "/Entities.js", generateEntityInterface(dataContainer).tabsToSpaces(4))
 		
 		for (customAction : dataContainer.customActions) {
-			fsa.generateFile(basePackageName + "/actions/" + customAction.name.toFirstUpper + ".js", generateCustomAction(customAction, dataContainer))
+			fsa.generateFile(rootFolder + "/actions/" + customAction.name.toFirstUpper + ".js", generateCustomAction(customAction, dataContainer).tabsToSpaces(4))
 		}
 		
 		for (entity : dataContainer.entities) {
-			fsa.generateFile(basePackageName + "/entities/" + entity.name.toFirstUpper + ".js", generateEntity(entity))
+			fsa.generateFile(rootFolder + "/entities/" + entity.name.toFirstUpper + ".js", generateEntity(entity).tabsToSpaces(4))
 		}
 		
 		for (contentProvider : dataContainer.contentProviders) {
-			fsa.generateFile(basePackageName + "/contentproviders/" + contentProvider.name.toFirstUpper + ".js", generateContentProvider(contentProvider, processedInput))
+			fsa.generateFile(rootFolder + "/contentproviders/" + contentProvider.name.toFirstUpper + ".js", generateContentProvider(contentProvider, processedInput).tabsToSpaces(4))
 		}
 		
 		
-		
 		/////////////////////////////////////////
-		// Generate models
-		/////////////////////////////////////////
-		
-		
-		
-		/////////////////////////////////////////
-		// Generate views
+		// Build zip file for bundle
 		/////////////////////////////////////////
 		
-		
-		
-		/////////////////////////////////////////
-		// Generate controllers
-		/////////////////////////////////////////
-		
-		
-		
-		/////////////////////////////////////////
-		// Build app (zip file)
-		/////////////////////////////////////////
-		
-//		fsa.deleteFile(createAppName(dataContainer) + ".zip")
-//		fsa.zipDirectory(basePackageName, createAppName(dataContainer) + ".zip");
+		val zipFileName = '''md2_app_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]».zip'''
+		fsa.zipDirectory(rootFolder, rootFolder + "/../" + zipFileName);
 		
 	}
 	
 	override getPlatformPrefix() {
 		"mapapps"
+	}
+	
+	override getDefaultSubfolder() {
+		"md2_app_" + processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]
 	}
 	
 }
