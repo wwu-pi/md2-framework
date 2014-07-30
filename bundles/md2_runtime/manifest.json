@@ -26,6 +26,12 @@
             "name": "onlinestatus"
         }
     ],
+    "CSS-Themes-Extension": [
+        {
+            "name": "*",
+            "files": ["./resources/style.css"]
+        }
+    ],
     "Components": [
         {
             "name": "MD2MainWidget",

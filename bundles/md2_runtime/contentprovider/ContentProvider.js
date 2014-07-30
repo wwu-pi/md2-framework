@@ -5,8 +5,7 @@ define([
     "dojo/string",
     "dojo/topic",
     "../datatypes/_Type",
-    "ct/Hash",
-    "dojo/json"
+    "ct/Hash"
 ],
 
 /**
@@ -17,7 +16,7 @@ define([
  * 
  * The ContentProvider might access fields in the dataForm to configure its filter.
  */
-function(declare, lang, array, string, topic, _Type, Hash, json) {
+function(declare, lang, array, string, topic, _Type, Hash) {
     
     return declare([], {
         

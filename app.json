@@ -1,9 +1,8 @@
 {
-    "appName": "mapapps Test",
-    
+    "appName": "MD2 Demo",
     "properties": {
-        "id": "MapappsTest",
-        "title": "mapapps Test"
+        "id": "MD2Demo",
+        "title": "MD2 Demo"
     },
     
     "load": {
@@ -44,9 +43,7 @@
         
         // the bundles to skip during load (if empty none are skipped)
         // e.g.: "skipBundles" : ["splashscreen"] for disabling the splashscreen
-        "skipBundles": [],
-        
-        "styles": ["${app}:app.css"]
+        "skipBundles": []
     },
     
     // bundles section used to overwrite or add any property defined by components in the manifest.json of bundles

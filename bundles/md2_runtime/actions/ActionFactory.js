@@ -1,6 +1,5 @@
 define([
     "dojo/_base/declare",
-    "dojo/_base/lang",
     "dojo/_base/array",
     "./simpleactions/ContentProviderOperationAction",
     "./simpleactions/ContentProviderResetAction",
@@ -10,7 +9,6 @@ define([
     "./simpleactions/GotoViewAction"
 ], function(
     declare,
-    lang,
     array,
     ContentProviderOperationAction,
     ContentProviderResetAction,
