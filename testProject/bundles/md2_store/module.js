@@ -1,3 +1,0 @@
-define([
-    "./MD2StoreFactory"
-], {});
