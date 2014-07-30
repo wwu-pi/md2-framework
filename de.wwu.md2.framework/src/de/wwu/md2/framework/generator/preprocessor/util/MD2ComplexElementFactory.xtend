@@ -23,8 +23,8 @@ import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
  */
 class MD2ComplexElementFactory extends MD2FactoryImpl {
 	
-	def MD2ComplexElementFactory() {
-		super
+	new() {
+		super()
 	}
 	
 	/**
