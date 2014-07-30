@@ -1,0 +1,4 @@
+define([
+    "./LocationHandler",
+    "./LocationStoreFactory"
+], {});

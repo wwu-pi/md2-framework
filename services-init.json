@@ -1,0 +1,25 @@
+{
+    "maps": [
+        {
+            "id": "default",
+            "glass_pane" : [],
+            "operationalLayer" : [],
+            "baseLayer" : [
+                {
+                    "id": "background1",
+                    "title": "Streets",
+                    "service": "streets",
+                    "layers" : ["*"],
+                    "enabled" : true
+                },
+                {
+                    "id": "background3",
+                    "title": "Topography",
+                    "service": "worldTopo",
+                    "layers" : ["*"],
+                    "enabled" : false
+                }
+            ]
+        }
+    ]
+}

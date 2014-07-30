@@ -1,0 +1,40 @@
+{
+    "Bundle-SymbolicName": "md2_location_service",
+    "Bundle-Version": "1.0",
+    "Bundle-Name": "MD2 Location Service",
+    "Bundle-Localization": [],
+    "Bundle-Main": "",
+    "Require-Bundle": [],
+    
+    "Components": [
+        {
+            "name": "LocationHandler",
+            "provides": ["md2.location.LocationHandler"],
+            "immediate": true,
+            "references": [
+                {
+                    "name": "_eventService",
+                    "providing": "ct.framework.api.EventService"
+                },
+                {
+                    "name": "_esriMap",
+                    "providing": "esri.Map"
+                }
+            ]
+        },
+        {
+            "name": "LocationStoreFactory",
+            "provides": ["md2.store.LocationStore"],
+            "propertiesConstructor": true,
+            "properties": {
+                "url": "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer"
+            },
+            "references": [
+                {
+                    "name": "_locationHandler",
+                    "providing": "md2.location.LocationHandler"
+                }
+            ]
+        }
+    ]
+}
