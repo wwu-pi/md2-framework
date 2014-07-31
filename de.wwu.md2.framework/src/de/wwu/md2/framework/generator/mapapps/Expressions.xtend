@@ -25,11 +25,11 @@ import de.wwu.md2.framework.mD2.SimpleExpression
 import de.wwu.md2.framework.mD2.StringVal
 import de.wwu.md2.framework.mD2.TimeVal
 import de.wwu.md2.framework.mD2.ViewElementState
+import java.util.Map
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
-import java.util.Map
 
 class Expressions {
 	
@@ -37,18 +37,36 @@ class Expressions {
 	// Conditional Expressions
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def static String generateCondition(ConditionalExpression expression, Map<String, String> imports) {
+	def static String generateCondition(ConditionalExpression expression, String varName, Map<String, String> imports) {
 		switch (expression) {
-			Or: '''
-				(
-					«generateCondition(expression.leftExpression, imports)» ||
-					«generateCondition(expression.rightExpression, imports)»
-				)'''
-			And: '''
-				«generateCondition(expression.leftExpression, imports)» &&
-				«generateCondition(expression.rightExpression, imports)»'''
-			Not: '''!(«generateCondition(expression.expression, imports).trimParentheses»)'''
-			BooleanExpression: '''«expression.value.toString»'''
+			Or: {
+				val leftBoolVar = getUnifiedName("bool")
+				val rightBoolVar = getUnifiedName("bool")
+				'''
+					«generateCondition(expression.leftExpression, leftBoolVar, imports)»
+					«generateCondition(expression.rightExpression, rightBoolVar, imports)»
+					var «varName» = «leftBoolVar» || «rightBoolVar»;
+				'''
+			}
+			And: {
+				val leftBoolVar = getUnifiedName("bool")
+				val rightBoolVar = getUnifiedName("bool")
+				'''
+					«generateCondition(expression.leftExpression, leftBoolVar, imports)»
+					«generateCondition(expression.rightExpression, rightBoolVar, imports)»
+					var «varName» = «leftBoolVar» && «rightBoolVar»;
+				'''
+			}
+			Not: {
+				val boolVar = getUnifiedName("bool")
+				'''
+					«generateCondition(expression.expression, boolVar, imports)»
+					var «varName» = !«boolVar»;
+				'''
+			}
+			BooleanExpression: '''
+				var «varName» = «expression.value.toString»;
+			'''
 			CompareExpression: {
 				val operator = switch expression.op {
 					case Operator::EQUALS: "equals"
@@ -57,9 +75,13 @@ class Expressions {
 					case Operator::GREATER_OR_EQUAL: "gte"
 					case Operator::SMALLER_OR_EQUAL: "lte"
 				}
-				'''«generateSimpleExpression(expression.eqLeft, imports)».«operator»(«generateSimpleExpression(expression.eqRight, imports)»)'''
+				'''
+					var «varName» = «generateSimpleExpression(expression.eqLeft, imports)».«operator»(«generateSimpleExpression(expression.eqRight, imports)»);
+				'''
 			}
-			GuiElementStateExpression: '''«generateGUIElementStateExpression(expression)»'''
+			GuiElementStateExpression: '''
+				var «varName» = «generateGUIElementStateExpression(expression)»;
+			'''
 		}
 	}
 	
