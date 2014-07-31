@@ -1,6 +1,5 @@
 package de.wwu.md2.framework.generator.mapapps
 
-import de.wwu.md2.framework.generator.util.DataContainer
 import de.wwu.md2.framework.mD2.AbstractContentProviderPath
 import de.wwu.md2.framework.mD2.AbstractProviderReference
 import de.wwu.md2.framework.mD2.ActionDef
@@ -17,8 +16,6 @@ import de.wwu.md2.framework.mD2.ContentProviderSetTask
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.CustomCodeFragment
 import de.wwu.md2.framework.mD2.CustomizedValidatorType
-import de.wwu.md2.framework.mD2.DateTimeVal
-import de.wwu.md2.framework.mD2.DateVal
 import de.wwu.md2.framework.mD2.DisableAction
 import de.wwu.md2.framework.mD2.DisplayMessageAction
 import de.wwu.md2.framework.mD2.EnableAction
@@ -29,6 +26,7 @@ import de.wwu.md2.framework.mD2.GotoViewAction
 import de.wwu.md2.framework.mD2.MappingTask
 import de.wwu.md2.framework.mD2.RemoteValidator
 import de.wwu.md2.framework.mD2.SimpleActionRef
+import de.wwu.md2.framework.mD2.SimpleExpression
 import de.wwu.md2.framework.mD2.StandardDateRangeValidator
 import de.wwu.md2.framework.mD2.StandardDateTimeRangeValidator
 import de.wwu.md2.framework.mD2.StandardNotNullValidator
@@ -37,7 +35,6 @@ import de.wwu.md2.framework.mD2.StandardRegExValidator
 import de.wwu.md2.framework.mD2.StandardStringRangeValidator
 import de.wwu.md2.framework.mD2.StandardTimeRangeValidator
 import de.wwu.md2.framework.mD2.StandardValidatorType
-import de.wwu.md2.framework.mD2.TimeVal
 import de.wwu.md2.framework.mD2.UnmappingTask
 import de.wwu.md2.framework.mD2.ValidatorBindingTask
 import de.wwu.md2.framework.mD2.ValidatorMaxDateParam
@@ -57,7 +54,8 @@ import de.wwu.md2.framework.mD2.ValidatorUnbindTask
 import de.wwu.md2.framework.mD2.ViewElementEventRef
 import de.wwu.md2.framework.mD2.ViewElementSetTask
 import de.wwu.md2.framework.mD2.ViewElementType
-import org.eclipse.emf.common.util.EList
+import java.util.List
+import java.util.Map
 import org.eclipse.xtend2.lib.StringConcatenation
 
 import static de.wwu.md2.framework.generator.mapapps.Expressions.*
@@ -68,37 +66,37 @@ import static extension de.wwu.md2.framework.util.StringExtensions.*
 
 class CustomActionClass {
 	
-	def static String generateCustomAction(CustomAction customAction, DataContainer dataContainer) '''
-		«val hasDateValue = !customAction.eAllContents.filter[ e |
-			e instanceof DateVal || e instanceof TimeVal || e instanceof DateTimeVal ||
-			e instanceof ValidatorMinDateParam || e instanceof ValidatorMaxDateParam ||
-			e instanceof ValidatorMinTimeParam || e instanceof ValidatorMaxTimeParam ||
-			e instanceof ValidatorMinDateTimeParam || e instanceof ValidatorMaxDateTimeParam
-		].empty»
+	def static String generateCustomAction(CustomAction customAction) '''
+		«val imports = newLinkedHashMap("declare" -> "dojo/_base/declare", "_Action" -> "md2_runtime/actions/_Action")»
+		«val body = generateCustomActionBody(customAction, imports)»
 		define([
-			"dojo/_base/declare",
-			«IF hasDateValue»"dojo/date/stamp",«ENDIF»
-			"md2_runtime/actions/_Action"
+			«FOR key : imports.keySet SEPARATOR ","»
+				"«imports.get(key)»"
+			«ENDFOR»
 		],
-		function(declare, «IF hasDateValue»stamp, «ENDIF»_Action) {
+		function(«FOR key : imports.keySet SEPARATOR ", "»«key»«ENDFOR») {
 			
-			return declare([_Action], {
-				
-				_actionSignature: "«customAction.name»",
-				
-				execute: function() {
-					
-					«generateCodeBlock(customAction.codeFragments)»
-					
-				}
-				
-			});
+			«body»
 		});
 	'''
 	
-	def private static String generateCodeBlock(EList<CustomCodeFragment> codeFragments) '''
+	def static String generateCustomActionBody(CustomAction customAction, Map<String, String> imports) '''
+		return declare([_Action], {
+			
+			_actionSignature: "«customAction.name»",
+			
+			execute: function() {
+				
+				«generateCodeBlock(customAction.codeFragments, imports)»
+				
+			}
+			
+		});
+	'''
+	
+	def private static String generateCodeBlock(List<CustomCodeFragment> codeFragments, Map<String, String> imports) '''
 		«FOR codeFragment : codeFragments SEPARATOR StringConcatenation::DEFAULT_LINE_DELIMITER»
-			«generateCodeFragment(codeFragment)»
+			«generateCodeFragment(codeFragment, imports)»
 		«ENDFOR»
 	'''
 	
@@ -107,27 +105,27 @@ class CustomActionClass {
 	// Custom Code Fragments
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static dispatch generateCodeFragment(EventBindingTask task) '''
+	def private static dispatch generateCodeFragment(EventBindingTask task, Map<String, String> imports) '''
 		«FOR event : task.events»
 			«FOR action : task.actions»
-				«generateEventBindingCodeFragment(event, action, true)»
+				«generateEventBindingCodeFragment(event, action, true, imports)»
 			«ENDFOR»
 		«ENDFOR»
 	'''
 	
-	def private static dispatch generateCodeFragment(EventUnbindTask task) '''
+	def private static dispatch generateCodeFragment(EventUnbindTask task, Map<String, String> imports) '''
 		«FOR event : task.events»
 			«FOR action : task.actions»
-				«generateEventBindingCodeFragment(event, action, false)»
+				«generateEventBindingCodeFragment(event, action, false, imports)»
 			«ENDFOR»
 		«ENDFOR»
 	'''
 	
-	def private static dispatch generateCodeFragment(ValidatorBindingTask task) '''
+	def private static dispatch generateCodeFragment(ValidatorBindingTask task, Map<String, String> imports) '''
 		«FOR validator : task.validators»
 			«FOR field : task.referencedFields»
 				«val validatorVar = getUnifiedName("validator")»
-				«generateValidatorCodeFragment(validator, validatorVar)»
+				«generateValidatorCodeFragment(validator, validatorVar, imports)»
 				«val widgetVar = getUnifiedName("widget")»
 				«generateWidgetCodeFragment(resolveViewElement(field), widgetVar)»
 				«widgetVar».addValidator(«validatorVar»);
@@ -135,11 +133,11 @@ class CustomActionClass {
 		«ENDFOR»
 	'''
 	
-	def private static dispatch generateCodeFragment(ValidatorUnbindTask task) '''
+	def private static dispatch generateCodeFragment(ValidatorUnbindTask task, Map<String, String> imports) '''
 		«FOR validator : task.validators»
 			«FOR field : task.referencedFields»
 				«val validatorVar = getUnifiedName("validator")»
-				«generateValidatorCodeFragment(validator, validatorVar)»
+				«generateValidatorCodeFragment(validator, validatorVar, imports)»
 				«val widgetVar = getUnifiedName("widget")»
 				«generateWidgetCodeFragment(resolveViewElement(field), widgetVar)»
 				«widgetVar».removeValidator(«validatorVar»);
@@ -147,13 +145,13 @@ class CustomActionClass {
 		«ENDFOR»
 	'''
 	
-	def private static dispatch generateCodeFragment(CallTask task) '''
+	def private static dispatch generateCodeFragment(CallTask task, Map<String, String> imports) '''
 		«val actionVar = getUnifiedName("action")»
-		«generateActionCodeFragment(task.action, actionVar)»
+		«generateActionCodeFragment(task.action, actionVar, imports)»
 		«actionVar».execute();
 	'''
 	
-	def private static dispatch generateCodeFragment(MappingTask task) '''
+	def private static dispatch generateCodeFragment(MappingTask task, Map<String, String> imports) '''
 		«val contentProviderVar = getUnifiedName("contentProvider")»
 		«generateContentProviderCodeFragment(task.pathDefinition, contentProviderVar)»
 		«val widgetVar = getUnifiedName("widget")»
@@ -161,7 +159,7 @@ class CustomActionClass {
 		this.$.dataMapper.map(«widgetVar», «contentProviderVar», "«task.pathDefinition.resolveContentProviderPathAttribute»");
 	'''
 	
-	def private static dispatch generateCodeFragment(UnmappingTask task) '''
+	def private static dispatch generateCodeFragment(UnmappingTask task, Map<String, String> imports) '''
 		«val contentProviderVar = getUnifiedName("contentProvider")»
 		«generateContentProviderCodeFragment(task.pathDefinition, contentProviderVar)»
 		«val widgetVar = getUnifiedName("widget")»
@@ -169,51 +167,51 @@ class CustomActionClass {
 		this.$.dataMapper.unmap(«widgetVar», «contentProviderVar», "«task.pathDefinition.resolveContentProviderPathAttribute»");
 	'''
 	
-	def private static dispatch generateCodeFragment(ConditionalCodeFragment task) '''
+	def private static dispatch generateCodeFragment(ConditionalCodeFragment task, Map<String, String> imports) '''
 		«val ifBoolVar = getUnifiedName("bool")»
-		var «ifBoolVar» = «generateCondition(task.^if.condition)»;
+		var «ifBoolVar» = «generateCondition(task.^if.condition, imports)»;
 		«val precomputedElseifs = newArrayList»
 		«FOR elseif : task.elseifs»
 			«val elseifBoolVar = getUnifiedName("bool")»
-			var «elseifBoolVar» = «generateCondition(elseif.condition)»;
+			var «elseifBoolVar» = «generateCondition(elseif.condition, imports)»;
 			«precomputedElseifs.add(elseifBoolVar -> elseif.codeFragments).returnVoid»
 		«ENDFOR»
 		if («ifBoolVar») {
-			«generateCodeBlock(task.^if.codeFragments)»
+			«generateCodeBlock(task.^if.codeFragments, imports)»
 		}
 		«FOR elseif : precomputedElseifs»
 			else if («elseif.key») {
-				«generateCodeBlock(elseif.value)»
+				«generateCodeBlock(elseif.value, imports)»
 			}
 		«ENDFOR»
 		«IF task.^else != null»
 			else {
-				«generateCodeBlock(task.^else.codeFragments)»
+				«generateCodeBlock(task.^else.codeFragments, imports)»
 			}
 		«ENDIF»
 	'''
 	
-	def private static dispatch generateCodeFragment(ViewElementSetTask task) '''
+	def private static dispatch generateCodeFragment(ViewElementSetTask task, Map<String, String> imports) '''
 		«val widgetVar = getUnifiedName("widget")»
 		«generateWidgetCodeFragment(resolveViewElement(task.referencedViewField), widgetVar)»
 		«val setVar = getUnifiedName("set")»
-		var «setVar» = «generateSimpleExpression(task.source)»;
+		var «setVar» = «generateSimpleExpression(task.source, imports)»;
 		«widgetVar».setValue(«setVar»);
 	'''
 	
-	def private static dispatch generateCodeFragment(AttributeSetTask task) '''
+	def private static dispatch generateCodeFragment(AttributeSetTask task, Map<String, String> imports) '''
 		«val targetContentProviderVar = getUnifiedName("targetContentProvider")»
 		«generateContentProviderCodeFragment(task.pathDefinition.contentProviderRef, targetContentProviderVar)»
 		«val setVar = getUnifiedName("set")»
-		var «setVar» = «generateSimpleExpression(task.source)»;
+		var «setVar» = «generateSimpleExpression(task.source, imports)»;
 		«targetContentProviderVar».setValue("«task.pathDefinition.resolveContentProviderPathAttribute»", «setVar»);
 	'''
 	
-	def private static dispatch generateCodeFragment(ContentProviderSetTask task) '''
+	def private static dispatch generateCodeFragment(ContentProviderSetTask task, Map<String, String> imports) '''
 		«val targetContentProviderVar = getUnifiedName("targetContentProvider")»
 		«generateContentProviderCodeFragment(task.contentProvider.contentProvider, targetContentProviderVar)»
 		«val setVar = getUnifiedName("set")»
-		var «setVar» = «generateSimpleExpression(task.source)»;
+		var «setVar» = «generateSimpleExpression(task.source, imports)»;
 		«targetContentProviderVar».setContent(«setVar»);
 	'''
 	
@@ -222,46 +220,44 @@ class CustomActionClass {
 	// Action
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static dispatch String generateActionCodeFragment(ActionDef actionDefinition, String varName) {
+	def private static dispatch String generateActionCodeFragment(ActionDef actionDefinition, String varName, Map<String, String> imports) {
 		switch (actionDefinition) {
 			ActionReference: {
-				generateActionCodeFragment(actionDefinition.actionRef, varName)
+				generateActionCodeFragment(actionDefinition.actionRef, varName, imports)
 			}
 			SimpleActionRef: {
-				generateActionCodeFragment(actionDefinition.action, varName)
+				generateActionCodeFragment(actionDefinition.action, varName, imports)
 			}
 		}
 	}
 	
-	def private static dispatch String generateActionCodeFragment(CustomAction action, String varName) '''
+	def private static dispatch String generateActionCodeFragment(CustomAction action, String varName, Map<String, String> imports) '''
 		var «varName» = this.$.actionFactory.getCustomAction("«action.name»");
 	'''
 	
-	def private static dispatch String generateActionCodeFragment(GotoViewAction action, String varName) '''
+	def private static dispatch String generateActionCodeFragment(GotoViewAction action, String varName, Map<String, String> imports) '''
 		var «varName» = this.$.actionFactory.getGotoViewAction("«getName(resolveViewElement(action.view))»");
 	'''
 	
-	def private static dispatch String generateActionCodeFragment(DisableAction action, String varName) '''
+	def private static dispatch String generateActionCodeFragment(DisableAction action, String varName, Map<String, String> imports) '''
 		var «varName» = this.$.actionFactory.getDisableAction("«getName(resolveViewElement(action.inputField))»");
 	'''
 	
-	def private static dispatch String generateActionCodeFragment(EnableAction action, String varName) '''
+	def private static dispatch String generateActionCodeFragment(EnableAction action, String varName, Map<String, String> imports) '''
 		var «varName» = this.$.actionFactory.getEnableAction("«getName(resolveViewElement(action.inputField))»");
 	'''
 	
-	def private static dispatch String generateActionCodeFragment(DisplayMessageAction action, String varName) '''
-		«val messageExpressionVar = getUnifiedName("messageExpression")»
-		var «messageExpressionVar» = function() {
-			return «generateSimpleExpression(action.message)».toString();
-		};
+	def private static dispatch String generateActionCodeFragment(DisplayMessageAction action, String varName, Map<String, String> imports) '''
+		«val messageExpressionVar = getUnifiedName("message")»
+		«generateMessage(action.message, messageExpressionVar, imports)»
 		var «varName» = this.$.actionFactory.getDisplayMessageAction("«action.parameterSignature»", «messageExpressionVar»);
 	'''
 	
-	def private static dispatch String generateActionCodeFragment(ContentProviderOperationAction action, String varName) '''
+	def private static dispatch String generateActionCodeFragment(ContentProviderOperationAction action, String varName, Map<String, String> imports) '''
 		var «varName» = this.$.actionFactory.getContentProviderOperationAction("«action.contentProvider.resolveContentProviderName»", "«action.operation.toString»");
 	'''
 	
-	def private static dispatch String generateActionCodeFragment(ContentProviderResetAction action, String varName) '''
+	def private static dispatch String generateActionCodeFragment(ContentProviderResetAction action, String varName, Map<String, String> imports) '''
 		var «varName» = this.$.actionFactory.getContentProviderResetAction("«action.contentProvider.contentProvider.name»");
 	'''
 	
@@ -270,33 +266,33 @@ class CustomActionClass {
 	// Event
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static dispatch generateEventBindingCodeFragment(ViewElementEventRef event, ActionDef actionDefinition, boolean isBinding) '''
+	def private static dispatch generateEventBindingCodeFragment(ViewElementEventRef event, ActionDef actionDefinition, boolean isBinding, Map<String, String> imports) '''
 		«val widgetVar = getUnifiedName("widget")»
 		«generateWidgetCodeFragment(resolveViewElement(event.referencedField), widgetVar)»
 		«val actionVar = getUnifiedName("action")»
-		«generateActionCodeFragment(actionDefinition, actionVar)»
+		«generateActionCodeFragment(actionDefinition, actionVar, imports)»
 		this.$.eventRegistry.get("widget/«event.event.toString»").«IF !isBinding»un«ENDIF»registerAction(«widgetVar», «actionVar»);
 	'''
 	
-	def private static dispatch generateEventBindingCodeFragment(ContentProviderPathEventRef event, ActionDef actionDefinition, boolean isBinding) '''
+	def private static dispatch generateEventBindingCodeFragment(ContentProviderPathEventRef event, ActionDef actionDefinition, boolean isBinding, Map<String, String> imports) '''
 		«val contentProviderVar = getUnifiedName("contentProvider")»
 		«generateContentProviderCodeFragment(event.pathDefinition, contentProviderVar)»
 		«val actionVar = getUnifiedName("action")»
-		«generateActionCodeFragment(actionDefinition, actionVar)»
+		«generateActionCodeFragment(actionDefinition, actionVar, imports)»
 		this.$.eventRegistry.get("contentProvider/«event.event.toString»").«IF !isBinding»un«ENDIF»registerAction(«contentProviderVar», "«event.pathDefinition.resolveContentProviderPathAttribute»", «actionVar»);
 	'''
 	
-	def private static dispatch generateEventBindingCodeFragment(ContentProviderEventRef event, ActionDef actionDefinition, boolean isBinding) '''
+	def private static dispatch generateEventBindingCodeFragment(ContentProviderEventRef event, ActionDef actionDefinition, boolean isBinding, Map<String, String> imports) '''
 		«val contentProviderVar = getUnifiedName("contentProvider")»
 		«generateContentProviderCodeFragment(event.contentProvider, contentProviderVar)»
 		«val actionVar = getUnifiedName("action")»
-		«generateActionCodeFragment(actionDefinition, actionVar)»
+		«generateActionCodeFragment(actionDefinition, actionVar, imports)»
 		this.$.eventRegistry.get("contentProvider/«event.event.toString»").«IF !isBinding»un«ENDIF»registerAction(«contentProviderVar», "*", «actionVar»);
 	'''
 	
-	def private static dispatch generateEventBindingCodeFragment(GlobalEventRef event, ActionDef actionDefinition, boolean isBinding) '''
+	def private static dispatch generateEventBindingCodeFragment(GlobalEventRef event, ActionDef actionDefinition, boolean isBinding, Map<String, String> imports) '''
 		«val actionVar = getUnifiedName("action")»
-		«generateActionCodeFragment(actionDefinition, actionVar)»
+		«generateActionCodeFragment(actionDefinition, actionVar, imports)»
 		this.$.eventRegistry.get("global/«event.event.toString»").«IF !isBinding»un«ENDIF»registerAction(«actionVar»);
 	'''
 	
@@ -331,98 +327,140 @@ class CustomActionClass {
 	// Validator
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static dispatch String generateValidatorCodeFragment(ValidatorType validator, String varName) {
+	def private static dispatch String generateValidatorCodeFragment(ValidatorType validator, String varName, Map<String, String> imports) {
 		switch (validator) {
 			StandardValidatorType: {
-				generateValidatorCodeFragment(validator.validator, varName)
+				generateValidatorCodeFragment(validator.validator, varName, imports)
 			}
 			CustomizedValidatorType: {
-				generateValidatorCodeFragment(validator.validator, varName)
+				generateValidatorCodeFragment(validator.validator, varName, imports)
 			}
 		}
 	}
 	
-	def private static dispatch String generateValidatorCodeFragment(StandardRegExValidator validator, String varName) {
-		val regEx = validator.resolveValidatorParam(typeof(ValidatorRegExParam))?.regEx ?: ".*"
-		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message
+	def private static dispatch String generateValidatorCodeFragment(
+		StandardRegExValidator validator, String varName, Map<String, String> imports
+	) {
+		val msgVarName = getUnifiedName("message")
+		val regEx = validator.resolveValidatorParam(ValidatorRegExParam)?.regEx ?: ".*"
 		'''
-			var «varName» = this.$.validatorFactory.getRegExValidator("«regEx»"«IF message != null», "«message»"«ENDIF»);
-		'''
-	}
-	
-	def private static dispatch String generateValidatorCodeFragment(StandardNotNullValidator validator, String varName) {
-		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message
-		'''
-			var «varName» = this.$.validatorFactory.getNotNullValidator(«IF message != null»"«message»"«ENDIF»);
+			«generateMessage(validator.resolveValidatorParam(ValidatorMessageParam)?.message, msgVarName, imports)»
+			var «varName» = this.$.validatorFactory.getRegExValidator("«regEx»", «msgVarName»);
 		'''
 	}
 	
-	def private static dispatch String generateValidatorCodeFragment(StandardNumberRangeValidator validator, String varName) {
+	def private static dispatch String generateValidatorCodeFragment(
+		StandardNotNullValidator validator, String varName, Map<String, String> imports
+	) {
+		val msgVarName = getUnifiedName("message")
+		'''
+			«generateMessage(validator.resolveValidatorParam(ValidatorMessageParam)?.message, msgVarName, imports)»
+			var «varName» = this.$.validatorFactory.getNotNullValidator(«msgVarName»);
+		'''
+	}
+	
+	def private static dispatch String generateValidatorCodeFragment(
+		StandardNumberRangeValidator validator, String varName, Map<String, String> imports
+	) {
 		val minVarName = getUnifiedName("min")
 		val maxVarName = getUnifiedName("max")
-		val min = validator.resolveValidatorParam(typeof(ValidatorMinParam))?.min.toString
-		val max = validator.resolveValidatorParam(typeof(ValidatorMaxParam))?.max.toString
-		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message.quotify
+		val msgVarName = getUnifiedName("message")
+		val minParam = validator.resolveValidatorParam(ValidatorMinParam)
+		val maxParam = validator.resolveValidatorParam(ValidatorMaxParam)
 		'''
-			var «minVarName» = «IF min != null»this.$.create("float", «min»)«ELSE»null«ENDIF»;
-			var «maxVarName» = «IF max != null»this.$.create("float", «max»)«ELSE»null«ENDIF»;
-			var «varName» = this.$.validatorFactory.getNumberRangeValidator(«minVarName», «maxVarName»«IF message != null», "«message»"«ENDIF»);
-		'''
-	}
-	
-	def private static dispatch String generateValidatorCodeFragment(StandardStringRangeValidator validator, String varName) {
-		val min = validator.resolveValidatorParam(typeof(ValidatorMinLengthParam))?.minLength.toString ?: "null"
-		val max = validator.resolveValidatorParam(typeof(ValidatorMaxLengthParam))?.maxLength.toString ?: "null"
-		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message.quotify
-		'''
-			var «varName» = this.$.validatorFactory.getStringRangeValidator(«min», «max»«IF message != null», "«message»"«ENDIF»);
+			var «minVarName» = «IF minParam != null»this.$.create("float", «minParam.min»)«ELSE»null«ENDIF»;
+			var «maxVarName» = «IF maxParam != null»this.$.create("float", «maxParam.max»)«ELSE»null«ENDIF»;
+			«generateMessage(validator.resolveValidatorParam(ValidatorMessageParam)?.message, msgVarName, imports)»
+			var «varName» = this.$.validatorFactory.getNumberRangeValidator(«minVarName», «maxVarName», «msgVarName»);
 		'''
 	}
 	
-	def private static dispatch String generateValidatorCodeFragment(StandardDateRangeValidator validator, String varName) {
+	def private static dispatch String generateValidatorCodeFragment(
+		StandardStringRangeValidator validator, String varName, Map<String, String> imports
+	) {
+		val msgVarName = getUnifiedName("message")
+		val minParam = validator.resolveValidatorParam(ValidatorMinLengthParam)
+		val maxParam = validator.resolveValidatorParam(ValidatorMaxLengthParam)
+		val min = if (minParam != null) minParam.minLength else "null"
+		val max = if (maxParam != null) maxParam.maxLength else "null"
+		'''
+			«generateMessage(validator.resolveValidatorParam(ValidatorMessageParam)?.message, msgVarName, imports)»
+			var «varName» = this.$.validatorFactory.getStringRangeValidator(«min», «max», «msgVarName»);
+		'''
+	}
+	
+	def private static dispatch String generateValidatorCodeFragment(
+		StandardDateRangeValidator validator, String varName, Map<String, String> imports
+	) {
 		val minVarName = getUnifiedName("min")
 		val maxVarName = getUnifiedName("max")
-		val min = validator.resolveValidatorParam(typeof(ValidatorMinDateParam))?.min.toISODate.quotify
-		val max = validator.resolveValidatorParam(typeof(ValidatorMaxDateParam))?.max.toISODate.quotify
-		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message.quotify
+		val msgVarName = getUnifiedName("message")
+		val min = validator.resolveValidatorParam(ValidatorMinDateParam)?.min.toISODate.quotify
+		val max = validator.resolveValidatorParam(ValidatorMaxDateParam)?.max.toISODate.quotify
+		if (min != null || max != null) {
+			imports.put("stamp", "dojo/date/stamp")
+		}
 		'''
 			var «minVarName» = «IF min != null»this.$.create("date", stamp.fromISOString("«min»"))«ELSE»null«ENDIF»;
 			var «maxVarName» = «IF max != null»this.$.create("date", stamp.fromISOString("«max»"))«ELSE»null«ENDIF»;
-			var «varName» = this.$.validatorFactory.getDateRangeValidator(«minVarName», «maxVarName»«IF message != null», "«message»"«ENDIF»);
+			«generateMessage(validator.resolveValidatorParam(ValidatorMessageParam)?.message, msgVarName, imports)»
+			var «varName» = this.$.validatorFactory.getDateRangeValidator(«minVarName», «maxVarName», «msgVarName»);
 		'''
 	}
 	
-	def private static dispatch String generateValidatorCodeFragment(StandardTimeRangeValidator validator, String varName) {
+	def private static dispatch String generateValidatorCodeFragment(
+		StandardTimeRangeValidator validator, String varName, Map<String, String> imports
+	) {
 		val minVarName = getUnifiedName("min")
 		val maxVarName = getUnifiedName("max")
-		val min = validator.resolveValidatorParam(typeof(ValidatorMinTimeParam))?.min.toISOTime.quotify
-		val max = validator.resolveValidatorParam(typeof(ValidatorMaxTimeParam))?.max.toISOTime.quotify
-		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message.quotify
+		val msgVarName = getUnifiedName("message")
+		val min = validator.resolveValidatorParam(ValidatorMinTimeParam)?.min.toISOTime.quotify
+		val max = validator.resolveValidatorParam(ValidatorMaxTimeParam)?.max.toISOTime.quotify
+		if (min != null || max != null) {
+			imports.put("stamp", "dojo/date/stamp")
+		}
 		'''
 			var «minVarName» = «IF min != null»this.$.create("time", stamp.fromISOString("«min»"))«ELSE»null«ENDIF»;
 			var «maxVarName» = «IF max != null»this.$.create("time", stamp.fromISOString("«max»"))«ELSE»null«ENDIF»;
-			var «varName» = this.$.validatorFactory.getTimeRangeValidator(«minVarName», «maxVarName»«IF message != null», "«message»"«ENDIF»);
+			«generateMessage(validator.resolveValidatorParam(ValidatorMessageParam)?.message, msgVarName, imports)»
+			var «varName» = this.$.validatorFactory.getTimeRangeValidator(«minVarName», «maxVarName», «msgVarName»);
 		'''
 	}
 	
-	def private static dispatch String generateValidatorCodeFragment(StandardDateTimeRangeValidator validator, String varName) {
+	def private static dispatch String generateValidatorCodeFragment(
+		StandardDateTimeRangeValidator validator, String varName, Map<String, String> imports
+	) {
 		val minVarName = getUnifiedName("min")
 		val maxVarName = getUnifiedName("max")
-		val min = validator.resolveValidatorParam(typeof(ValidatorMinDateTimeParam))?.min.toISODateTime.quotify
-		val max = validator.resolveValidatorParam(typeof(ValidatorMaxDateTimeParam))?.max.toISODateTime.quotify
-		val message = validator.resolveValidatorParam(typeof(ValidatorMessageParam))?.message.quotify
+		val msgVarName = getUnifiedName("message")
+		val min = validator.resolveValidatorParam(ValidatorMinDateTimeParam)?.min.toISODateTime.quotify
+		val max = validator.resolveValidatorParam(ValidatorMaxDateTimeParam)?.max.toISODateTime.quotify
+		if (min != null || max != null) {
+			imports.put("stamp", "dojo/date/stamp")
+		}
 		'''
 			var «minVarName» = «IF min != null»this.$.create("datetime", stamp.fromISOString("«min»"))«ELSE»null«ENDIF»;
 			var «maxVarName» = «IF max != null»this.$.create("datetime", stamp.fromISOString("«max»"))«ELSE»null«ENDIF»;
-			var «varName» = this.$.validatorFactory.getDateTimeRangeValidator(«minVarName», «maxVarName»«IF message != null», "«message»"«ENDIF»);
+			«generateMessage(validator.resolveValidatorParam(ValidatorMessageParam)?.message, msgVarName, imports)»
+			var «varName» = this.$.validatorFactory.getDateTimeRangeValidator(«minVarName», «maxVarName», «msgVarName»);
 		'''
 	}
 	
-	def private static dispatch String generateValidatorCodeFragment(RemoteValidator validator, String varName) '''
+	def private static dispatch String generateValidatorCodeFragment(
+		RemoteValidator validator, String varName, Map<String, String> imports
+	) '''
 		// TODO
 	'''
 	
-	
-	
+	def private static generateMessage(SimpleExpression msg, String varName, Map<String, String> imports) '''
+		«IF msg != null»
+			«imports.put("lang", "dojo/_base/lang").returnVoid»
+			var «varName» = lang.hitch(this, function() {
+				return «generateSimpleExpression(msg, imports)».toString();
+			});
+		«ELSE»
+			var «varName» = null;
+		«ENDIF»
+	'''
 	
 }

@@ -8,7 +8,7 @@ import de.wwu.md2.framework.mD2.WhereClauseCompareExpression
 import de.wwu.md2.framework.mD2.WhereClauseCondition
 import de.wwu.md2.framework.mD2.WhereClauseNot
 import de.wwu.md2.framework.mD2.WhereClauseOr
-import java.util.LinkedHashMap
+import java.util.Map
 import org.eclipse.emf.ecore.resource.ResourceSet
 
 import static de.wwu.md2.framework.generator.mapapps.Expressions.*
@@ -18,54 +18,61 @@ import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 class ContentProviderClass {
 	
 	def static String generateContentProvider(ContentProvider contentProvider, ResourceSet processedInput) '''
+		«val imports = newLinkedHashMap("declare" -> "dojo/_base/declare", "ContentProvider" -> "md2_runtime/contentprovider/ContentProvider")»
+		«val body = generateContentProviderBody(contentProvider, processedInput, imports)»
 		define([
-			"dojo/_base/declare",
-			"md2_runtime/contentprovider/ContentProvider"
+			«FOR key : imports.keySet SEPARATOR ","»
+				"«imports.get(key)»"
+			«ENDFOR»
 		],
-		function(declare, ContentProvider) {
+		function(«FOR key : imports.keySet SEPARATOR ", "»«key»«ENDFOR») {
 			
-			/**
-			 * ContentProvider Factory
-			 */
-			return declare([], {
+			«body»
+		});
+	'''
+	
+	def static String generateContentProviderBody(ContentProvider contentProvider, ResourceSet processedInput, Map<String, String> imports) '''
+		/**
+		 * ContentProvider Factory
+		 */
+		return declare([], {
+			
+			create: function(typeFactory, $) {
 				
-				create: function(typeFactory, $) {
-					
-					«IF contentProvider.local»
-						«generateLocalBody(contentProvider)»
-					«ELSE»
-						«generateRemoteBody(contentProvider)»
-					«ENDIF»
-					var appId = "md2_«processedInput.getBasePackageName.replace(".", "_")»";
-					
-					«IF contentProvider.filter»
-						var filter = function() {
-							this.$ = $;
-							«IF contentProvider.whereClause != null»
-								«val expressionVars = newLinkedHashMap»
-								«val query = contentProvider.whereClause.buildContentProviderQuery(expressionVars)»
-								
-								«FOR expressionVar : expressionVars.keySet»
-									var «expressionVar» = «expressionVars.get(expressionVar)»;
-								«ENDFOR»
-								return {
-									query: {
-										«query»
-									},
-									"count": "«contentProvider.filterType.toString»"
-								};
-							«ELSE»
-								return {
-									"count": "«contentProvider.filterType.toString»"
-								};
-							«ENDIF»
-						};
-					«ENDIF»
-					
-					return new ContentProvider("«contentProvider.name.toFirstLower»", appId, store, «IF contentProvider.type.many»true«ELSE»false«ENDIF»«IF contentProvider.filter», filter«ENDIF»);
-				}
+				«IF contentProvider.local»
+					«generateLocalBody(contentProvider)»
+				«ELSE»
+					«generateRemoteBody(contentProvider)»
+				«ENDIF»
+				var appId = "md2_«processedInput.getBasePackageName.replace(".", "_")»";
 				
-			});
+				«IF contentProvider.filter»
+					var filter = function() {
+						this.$ = $;
+						«IF contentProvider.whereClause != null»
+							«val expressionVars = newLinkedHashMap»
+							«val query = contentProvider.whereClause.buildContentProviderQuery(expressionVars, imports)»
+							
+							«FOR expressionVar : expressionVars.keySet»
+								var «expressionVar» = «expressionVars.get(expressionVar)»;
+							«ENDFOR»
+							return {
+								query: {
+									«query»
+								},
+								"count": "«contentProvider.filterType.toString»"
+							};
+						«ELSE»
+							return {
+								"count": "«contentProvider.filterType.toString»"
+							};
+						«ENDIF»
+					};
+				«ENDIF»
+				
+				return new ContentProvider("«contentProvider.name.toFirstLower»", appId, store, «IF contentProvider.type.many»true«ELSE»false«ENDIF»«IF contentProvider.filter», filter«ENDIF»);
+			}
+			
 		});
 	'''
 	
@@ -93,22 +100,24 @@ class ContentProviderClass {
 	/**
 	 * Creates a query in MongoDB syntax from specified whereCondition in MD2.
 	 */
-	def private static String buildContentProviderQuery(WhereClauseCondition condition, LinkedHashMap<String, String> expressionVars) {
+	def private static String buildContentProviderQuery(
+		WhereClauseCondition condition, Map<String, String> expressionVars, Map<String, String> imports
+	) {
 		
 		switch (condition) {
 			WhereClauseOr: '''
 				$or: [
-					{ «buildContentProviderQuery(condition.leftExpression, expressionVars)» },
-					{ «buildContentProviderQuery(condition.rightExpression, expressionVars)» }
+					{ «buildContentProviderQuery(condition.leftExpression, expressionVars, imports)» },
+					{ «buildContentProviderQuery(condition.rightExpression, expressionVars, imports)» }
 				]'''
 			WhereClauseAnd: '''
-				«buildContentProviderQuery(condition.leftExpression, expressionVars)»,
-				«buildContentProviderQuery(condition.rightExpression, expressionVars)»'''
+				«buildContentProviderQuery(condition.leftExpression, expressionVars, imports)»,
+				«buildContentProviderQuery(condition.rightExpression, expressionVars, imports)»'''
 			WhereClauseNot: '''
-				$not: { «buildContentProviderQuery(condition.expression, expressionVars)» }'''
+				$not: { «buildContentProviderQuery(condition.expression, expressionVars, imports)» }'''
 			WhereClauseCompareExpression: {
 				val simpleExpressionVar = getUnifiedName("expr")
-				expressionVars.put(simpleExpressionVar, generateSimpleExpression(condition.eqRight))
+				expressionVars.put(simpleExpressionVar, generateSimpleExpression(condition.eqRight, imports))
 				val attribute = getPathTailAsString(condition.eqLeft.tail)
 				val rightHand = switch condition.op {
 					case Operator::EQUALS: '''«simpleExpressionVar»'''

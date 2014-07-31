@@ -38,7 +38,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		fsa.generateFile(rootFolder + "/Entities.js", generateEntityInterface(dataContainer).tabsToSpaces(4))
 		
 		for (customAction : dataContainer.customActions) {
-			fsa.generateFile(rootFolder + "/actions/" + customAction.name.toFirstUpper + ".js", generateCustomAction(customAction, dataContainer).tabsToSpaces(4))
+			fsa.generateFile(rootFolder + "/actions/" + customAction.name.toFirstUpper + ".js", generateCustomAction(customAction).tabsToSpaces(4))
 		}
 		
 		for (entity : dataContainer.entities) {

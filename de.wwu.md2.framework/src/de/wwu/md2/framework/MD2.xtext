@@ -976,12 +976,11 @@ ValidatorParam:
 ;
 
 /*
- * ValidatorMessageParam provides the possibility
- * to define a message, that will be shown to the
+ * ValidatorMessageParam provides the possibility to define a message, that will be shown to the
  * user if the validation fails.
  */
 ValidatorMessageParam:
-	'message' message = STRING
+	'message' message = SimpleExpression
 ;
 
 /*

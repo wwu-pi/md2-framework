@@ -19,6 +19,7 @@ import de.wwu.md2.framework.mD2.IntegerType
 import de.wwu.md2.framework.mD2.ReferencedType
 import de.wwu.md2.framework.mD2.StringType
 import de.wwu.md2.framework.mD2.TimeType
+import java.util.Map
 
 import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
@@ -26,55 +27,58 @@ import static extension de.wwu.md2.framework.util.StringExtensions.*
 class EntityClass {
 	
 	def static String generateEntity(Entity entity) '''
-		«val hasDateValue = !entity.attributes.filter[ a |
-			a.type instanceof DateType || a.type instanceof TimeType || a.type instanceof DateTimeType
-		].empty»
+		«val imports = newLinkedHashMap("declare" -> "dojo/_base/declare", "_Entity" -> "md2_runtime/entities/_Entity")»
+		«val body = generateEntityBody(entity, imports)»
 		define([
-			"dojo/_base/declare",
-			«IF hasDateValue»"dojo/date/stamp",«ENDIF»
-			"md2_runtime/entities/_Entity"
+			«FOR key : imports.keySet SEPARATOR ","»
+				"«imports.get(key)»"
+			«ENDFOR»
 		],
-		function(declare, «IF hasDateValue»stamp, «ENDIF»_Entity) {
+		function(«FOR key : imports.keySet SEPARATOR ", "»«key»«ENDFOR») {
 			
-			var «entity.name» = declare([_Entity], {
-				
-				_datatype: "«entity.name»",
-				
-				attributeTypes: {
+			«body»
+		});
+	'''
+	
+	def private static generateEntityBody(Entity entity, Map<String, String> imports) '''
+		var «entity.name» = declare([_Entity], {
+			
+			_datatype: "«entity.name»",
+			
+			attributeTypes: {
+				«FOR attribute : entity.attributes SEPARATOR ","»
+					«attribute.name»: "«attribute.generateAttributeDataType»"
+				«ENDFOR»
+			},
+			
+			_initialize: function() {
+				this._attributes = {
 					«FOR attribute : entity.attributes SEPARATOR ","»
-						«attribute.name»: "«attribute.attributeDataType»"
+						«attribute.name»: «attribute.generateAttributeDefaultValue(imports)»
 					«ENDFOR»
-				},
-				
-				_initialize: function() {
-					this._attributes = {
-						«FOR attribute : entity.attributes SEPARATOR ","»
-							«attribute.name»: «attribute.attributeDefaultValue»
-						«ENDFOR»
-					};
-				}
-				
-			});
+				};
+			}
 			
-			/**
-			 * Entity Factory
-			 */
-			return declare([], {
-				
-				datatype: "«entity.name»",
-				
-				create: function() {
-					return new «entity.name»(this.typeFactory);
-				}
-				
-			});
+		});
+		
+		/**
+		 * Entity Factory
+		 */
+		return declare([], {
+			
+			datatype: "«entity.name»",
+			
+			create: function() {
+				return new «entity.name»(this.typeFactory);
+			}
+			
 		});
 	'''
 	
 	/**
 	 * Get a string representation of the default value for each attribute
 	 */
-	def private static getAttributeDefaultValue(Attribute attribute) {
+	def private static generateAttributeDefaultValue(Attribute attribute, Map<String, String> imports) {
 		val type = attribute.type
 		switch (type) {
 			ReferencedType: {
@@ -98,14 +102,23 @@ class EntityClass {
 			}
 			DateType: {
 				val defaultValue = type.params.filter(typeof(AttrDateDefault)).head
+				if (defaultValue != null) {
+					imports.put("stamp", "dojo/date/stamp")
+				}
 				'''this._typeFactory.create("date", «IF defaultValue != null»stamp.fromISOString("«defaultValue?.value.toISODate»")«ELSE»null«ENDIF»)'''
 			}
 			TimeType: {
 				val defaultValue = type.params.filter(typeof(AttrTimeDefault)).head
+				if (defaultValue != null) {
+					imports.put("stamp", "dojo/date/stamp")
+				}
 				'''this._typeFactory.create("time", «IF defaultValue != null»stamp.fromISOString("«defaultValue?.value.toISOTime»")«ELSE»null«ENDIF»)'''
 			}
 			DateTimeType: {
 				val defaultValue = type.params.filter(typeof(AttrDateTimeDefault)).head
+				if (defaultValue != null) {
+					imports.put("stamp", "dojo/date/stamp")
+				}
 				'''this._typeFactory.create("datetime", «IF defaultValue != null»stamp.fromISOString("«defaultValue?.value.toISODateTime»")«ELSE»null«ENDIF»)'''
 			}
 			EnumType: {
@@ -115,7 +128,7 @@ class EntityClass {
 		}
 	}
 	
-	def private static getAttributeDataType(Attribute attribute) {
+	def private static generateAttributeDataType(Attribute attribute) {
 		val type = attribute.type
 		switch (type) {
 			ReferencedType: '''«type.entity.name»'''

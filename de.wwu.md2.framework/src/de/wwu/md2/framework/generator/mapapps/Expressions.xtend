@@ -29,6 +29,7 @@ import de.wwu.md2.framework.mD2.ViewElementState
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
+import java.util.Map
 
 class Expressions {
 	
@@ -36,17 +37,17 @@ class Expressions {
 	// Conditional Expressions
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def static String generateCondition(ConditionalExpression expression) {
+	def static String generateCondition(ConditionalExpression expression, Map<String, String> imports) {
 		switch (expression) {
 			Or: '''
 				(
-					«generateCondition(expression.leftExpression)» ||
-					«generateCondition(expression.rightExpression)»
+					«generateCondition(expression.leftExpression, imports)» ||
+					«generateCondition(expression.rightExpression, imports)»
 				)'''
 			And: '''
-				«generateCondition(expression.leftExpression)» &&
-				«generateCondition(expression.rightExpression)»'''
-			Not: '''!(«generateCondition(expression.expression).trimParentheses»)'''
+				«generateCondition(expression.leftExpression, imports)» &&
+				«generateCondition(expression.rightExpression, imports)»'''
+			Not: '''!(«generateCondition(expression.expression, imports).trimParentheses»)'''
 			BooleanExpression: '''«expression.value.toString»'''
 			CompareExpression: {
 				val operator = switch expression.op {
@@ -56,7 +57,7 @@ class Expressions {
 					case Operator::GREATER_OR_EQUAL: "gte"
 					case Operator::SMALLER_OR_EQUAL: "lte"
 				}
-				'''«generateSimpleExpression(expression.eqLeft)».«operator»(«generateSimpleExpression(expression.eqRight)»)'''
+				'''«generateSimpleExpression(expression.eqLeft, imports)».«operator»(«generateSimpleExpression(expression.eqRight, imports)»)'''
 			}
 			GuiElementStateExpression: '''«generateGUIElementStateExpression(expression)»'''
 		}
@@ -84,16 +85,25 @@ class Expressions {
 	// Simple Expressions
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def static String generateSimpleExpression(SimpleExpression expression) {
+	def static String generateSimpleExpression(SimpleExpression expression, Map<String, String> imports) {
 		switch (expression) {
 			// literals
 			StringVal: '''this.$.create("string", "«expression.value.escape»")'''
 			IntVal: '''this.$.create("integer", «expression.value»)'''
 			FloatVal: '''this.$.create("float", «expression.value»)'''
 			BooleanVal: '''this.$.create("boolean", «expression.value.toString»)'''
-			DateVal: '''this.$.create("date", stamp.fromISOString("«expression.value.toISODate»"))'''
-			TimeVal: '''this.$.create("time", stamp.fromISOString("«expression.value.toISOTime»"))'''
-			DateTimeVal: '''this.$.create("datetime", stamp.fromISOString("«expression.value.toISODateTime»"))'''
+			DateVal: {
+				imports.put("stamp", "dojo/date/stamp")
+				'''this.$.create("date", stamp.fromISOString("«expression.value.toISODate»"))'''
+			}
+			TimeVal: {
+				imports.put("stamp", "dojo/date/stamp")
+				'''this.$.create("time", stamp.fromISOString("«expression.value.toISOTime»"))'''
+			}
+			DateTimeVal: {
+				imports.put("stamp", "dojo/date/stamp")
+				'''this.$.create("datetime", stamp.fromISOString("«expression.value.toISODateTime»"))'''
+			}
 			
 			// literals
 			AbstractViewGUIElementRef: '''this.$.widgetRegistry.getWidget("«getName(resolveViewElement(expression))»").getValue()'''
@@ -101,10 +111,10 @@ class Expressions {
 			AbstractProviderReference: '''this.$.contentProviderRegistry.getContentProvider("«expression.resolveContentProviderName»").getContent()'''
 			
 			// concatenated string
-			ConcatenatedString: '''this.$.create("string", «generateConcatenatedString(expression)»)'''
+			ConcatenatedString: '''this.$.create("string", «generateConcatenatedString(expression, imports)»)'''
 			
 			// math expressions
-			default:  '''this.$.create("float", «generateMathExpression(expression)»)'''
+			default:  '''this.$.create("float", «generateMathExpression(expression, imports)»)'''
 		}
 	}
 	
@@ -113,9 +123,9 @@ class Expressions {
 	// Concatenated Strings
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static String generateConcatenatedString(ConcatenatedString expression) '''
-		«generateSimpleExpression(expression.leftString)».toString()
-		.concat(«generateSimpleExpression(expression.rightString)»)
+	def private static String generateConcatenatedString(ConcatenatedString expression, Map<String, String> imports) '''
+		«generateSimpleExpression(expression.leftString, imports)».toString()
+		.concat(«generateSimpleExpression(expression.rightString, imports)»)
 	'''
 	
 	
@@ -123,12 +133,12 @@ class Expressions {
 	// Math Expressions
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static String generateMathExpression(SimpleExpression expression) {
+	def private static String generateMathExpression(SimpleExpression expression, Map<String, String> imports) {
 		switch (expression) {
-			Plus: '''(«generateSimpleExpression(expression.leftOperand)».getPlatformValue() + «generateSimpleExpression(expression.rightOperand)».getPlatformValue())'''
-			Minus: '''(«generateSimpleExpression(expression.leftOperand)».getPlatformValue() - «generateSimpleExpression(expression.rightOperand)».getPlatformValue())'''
-			Mult: '''«generateSimpleExpression(expression.leftOperand)».getPlatformValue() * «generateSimpleExpression(expression.rightOperand)».getPlatformValue()'''
-			Div: '''«generateSimpleExpression(expression.leftOperand)».getPlatformValue() / «generateSimpleExpression(expression.rightOperand)».getPlatformValue()'''
+			Plus: '''(«generateSimpleExpression(expression.leftOperand, imports)».getPlatformValue() + «generateSimpleExpression(expression.rightOperand, imports)».getPlatformValue())'''
+			Minus: '''(«generateSimpleExpression(expression.leftOperand, imports)».getPlatformValue() - «generateSimpleExpression(expression.rightOperand, imports)».getPlatformValue())'''
+			Mult: '''«generateSimpleExpression(expression.leftOperand, imports)».getPlatformValue() * «generateSimpleExpression(expression.rightOperand, imports)».getPlatformValue()'''
+			Div: '''«generateSimpleExpression(expression.leftOperand, imports)».getPlatformValue() / «generateSimpleExpression(expression.rightOperand, imports)».getPlatformValue()'''
 		}
 	}
 	
