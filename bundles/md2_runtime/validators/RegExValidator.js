@@ -5,8 +5,6 @@ function(declare, _Validator) {
     
     return declare([_Validator], {
         
-        _message: "",
-        
         _type: "RegExValidator",
         
         _regExp: undefined,
@@ -16,14 +14,13 @@ function(declare, _Validator) {
          * The regex pattern is checked against the string representation of the given value.
          * 
          * @param {string} pattern - Regex pattern.
-         * @param {string} message
+         * @param {Function} message - Function with a message string as return value.
          */
         constructor: function(pattern, message) {
             if (message) {
-                this._message = message;
-            } else {
-                this._message = "The input format is invalid!";
+                this._messageCallback = message;
             }
+            this._defaultMessage = "The input format is invalid!";
             this._regExp = new RegExp("^" + pattern + "$");
         },
         

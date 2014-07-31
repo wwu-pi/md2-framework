@@ -5,8 +5,6 @@ function(declare, _Validator) {
     
     return declare([_Validator], {
         
-        _message: "",
-        
         isValid: function(value) {
             // TODO
         }

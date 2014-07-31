@@ -5,8 +5,6 @@ function(declare, _Validator) {
     
     return declare([_Validator], {
         
-        _message: "",
-        
         _type: "StringRangeValidator",
         
         _min: undefined,
@@ -18,16 +16,15 @@ function(declare, _Validator) {
          * 
          * @param {integer} minLength - Minimum string length.
          * @param {integer} maxLength - Maximum string length.
-         * @param {string} message
+         * @param {Function} message - Function with a message string as return value.
          */
         constructor: function(minLength, maxLength, message) {
             if (message) {
-                this._message = message;
-            } else {
-                this._message = "The string length is out of the specified range! "
-                                + (minLength ? "Minimum length is " + minLength : "") + ". "
-                                + (maxLength ? "Maximum length is " + maxLength : "") + ". ";
+                this._messageCallback = message;
             }
+            this._defaultMessage = "The string length is out of the specified range! "
+                                 + (minLength ? "Minimum length is " + minLength : "") + ". "
+                                 + (maxLength ? "Maximum length is " + maxLength : "") + ". ";
             this._min = minLength;
             this._max = maxLength;
         },

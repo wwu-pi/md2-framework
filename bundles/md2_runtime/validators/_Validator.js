@@ -7,7 +7,9 @@ function(declare) {
      */
     return declare([], {
         
-        _message: "",
+        _messageCallback: null,
+        
+        _defaultMessage: "",
         
         _type: "",
         
@@ -20,7 +22,11 @@ function(declare) {
         },
         
         getMessage: function() {
-            return this._message;
+            if (this._messageCallback) {
+                return this._messageCallback();
+            } else {
+                return this._defaultMessage;
+            }
         }
         
     });

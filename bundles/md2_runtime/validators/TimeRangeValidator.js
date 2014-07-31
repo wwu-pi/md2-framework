@@ -5,8 +5,6 @@ function(declare, _Validator) {
     
     return declare([_Validator], {
         
-        _message: "",
-        
         _type: "TimeRangeValidator",
         
         _min: undefined,
@@ -18,16 +16,15 @@ function(declare, _Validator) {
          * 
          * @param {Time} min - ISO date format HH:mm:ss
          * @param {Time} max - ISO date format HH:mm:ss
-         * @param {string} message
+         * @param {Function} message - Function with a message string as return value.
          */
         constructor: function(min, max, message) {
             if (message) {
-                this._message = message;
-            } else {
-                this._message = "The time is out of the specified range! "
-                                + (min ? "Not before " + min.toString() : "") + ". "
-                                + (max ? "Not after " + max.toString() : "") + ". ";
+                this._messageCallback = message;
             }
+            this._defaultMessage = "The time is out of the specified range! "
+                                 + (min ? "Not before " + min.toString() : "") + ". "
+                                 + (max ? "Not after " + max.toString() : "") + ". ";
             this._min = min;
             this._max = max;
         },

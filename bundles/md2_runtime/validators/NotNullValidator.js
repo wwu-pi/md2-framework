@@ -5,21 +5,18 @@ function(declare, _Validator) {
     
     return declare([_Validator], {
         
-        _message: "",
-        
         _type: "NotNullValidator",
         
         /**
          * Create NotNullValidator.
          * 
-         * @param {string} message
+         * @param {Function} message - Function with a message string as return value.
          */
         constructor: function(message) {
             if (message) {
-                this._message = message;
-            } else {
-                this._message = "This value is required!";
+                this._messageCallback = message;
             }
+            this._defaultMessage = "This value is required!";
         },
         
         isValid: function(value) {
