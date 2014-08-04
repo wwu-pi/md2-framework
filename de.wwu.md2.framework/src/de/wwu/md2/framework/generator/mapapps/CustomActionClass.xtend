@@ -194,24 +194,24 @@ class CustomActionClass {
 	def private static dispatch generateCodeFragment(ViewElementSetTask task, Map<String, String> imports) '''
 		«val widgetVar = getUnifiedName("widget")»
 		«generateWidgetCodeFragment(resolveViewElement(task.referencedViewField), widgetVar)»
-		«val setVar = getUnifiedName("set")»
-		var «setVar» = «generateSimpleExpression(task.source, imports)»;
+		«val setVar = getUnifiedName("expr")»
+		«generateSimpleExpression(task.source, setVar, imports)»
 		«widgetVar».setValue(«setVar»);
 	'''
 	
 	def private static dispatch generateCodeFragment(AttributeSetTask task, Map<String, String> imports) '''
 		«val targetContentProviderVar = getUnifiedName("targetContentProvider")»
 		«generateContentProviderCodeFragment(task.pathDefinition.contentProviderRef, targetContentProviderVar)»
-		«val setVar = getUnifiedName("set")»
-		var «setVar» = «generateSimpleExpression(task.source, imports)»;
+		«val setVar = getUnifiedName("expr")»
+		«generateSimpleExpression(task.source, setVar, imports)»
 		«targetContentProviderVar».setValue("«task.pathDefinition.resolveContentProviderPathAttribute»", «setVar»);
 	'''
 	
 	def private static dispatch generateCodeFragment(ContentProviderSetTask task, Map<String, String> imports) '''
 		«val targetContentProviderVar = getUnifiedName("targetContentProvider")»
 		«generateContentProviderCodeFragment(task.contentProvider.contentProvider, targetContentProviderVar)»
-		«val setVar = getUnifiedName("set")»
-		var «setVar» = «generateSimpleExpression(task.source, imports)»;
+		«val setVar = getUnifiedName("expr")»
+		«generateSimpleExpression(task.source, setVar, imports)»
 		«targetContentProviderVar».setContent(«setVar»);
 	'''
 	
@@ -455,8 +455,10 @@ class CustomActionClass {
 	def private static generateMessage(SimpleExpression msg, String varName, Map<String, String> imports) '''
 		«IF msg != null»
 			«imports.put("lang", "dojo/_base/lang").returnVoid»
+			«val exprVar = getUnifiedName("expr")»
 			var «varName» = lang.hitch(this, function() {
-				return «generateSimpleExpression(msg, imports)».toString();
+				«generateSimpleExpression(msg, exprVar, imports)»
+				return «exprVar».toString();
 			});
 		«ELSE»
 			var «varName» = null;

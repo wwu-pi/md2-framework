@@ -9,6 +9,7 @@ import de.wwu.md2.framework.mD2.WhereClauseCondition
 import de.wwu.md2.framework.mD2.WhereClauseNot
 import de.wwu.md2.framework.mD2.WhereClauseOr
 import java.util.Map
+import java.util.Set
 import org.eclipse.emf.ecore.resource.ResourceSet
 
 import static de.wwu.md2.framework.generator.mapapps.Expressions.*
@@ -50,11 +51,11 @@ class ContentProviderClass {
 					var filter = function() {
 						this.$ = $;
 						«IF contentProvider.whereClause != null»
-							«val expressionVars = newLinkedHashMap»
+							«val expressionVars = newLinkedHashSet»
 							«val query = contentProvider.whereClause.buildContentProviderQuery(expressionVars, imports)»
 							
-							«FOR expressionVar : expressionVars.keySet»
-								var «expressionVar» = «expressionVars.get(expressionVar)»;
+							«FOR expressionVar : expressionVars»
+								«expressionVar»
 							«ENDFOR»
 							return {
 								query: {
@@ -101,7 +102,7 @@ class ContentProviderClass {
 	 * Creates a query in MongoDB syntax from specified whereCondition in MD2.
 	 */
 	def private static String buildContentProviderQuery(
-		WhereClauseCondition condition, Map<String, String> expressionVars, Map<String, String> imports
+		WhereClauseCondition condition, Set<String> expressionVars, Map<String, String> imports
 	) {
 		
 		switch (condition) {
@@ -117,7 +118,8 @@ class ContentProviderClass {
 				$not: { «buildContentProviderQuery(condition.expression, expressionVars, imports)» }'''
 			WhereClauseCompareExpression: {
 				val simpleExpressionVar = getUnifiedName("expr")
-				expressionVars.put(simpleExpressionVar, generateSimpleExpression(condition.eqRight, imports))
+				expressionVars.add(generateSimpleExpression(condition.eqRight, simpleExpressionVar, imports))
+				
 				val attribute = getPathTailAsString(condition.eqLeft.tail)
 				val rightHand = switch condition.op {
 					case Operator::EQUALS: '''«simpleExpressionVar»'''

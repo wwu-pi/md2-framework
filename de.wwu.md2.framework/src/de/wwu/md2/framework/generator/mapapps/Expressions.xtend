@@ -21,7 +21,6 @@ import de.wwu.md2.framework.mD2.Not
 import de.wwu.md2.framework.mD2.Operator
 import de.wwu.md2.framework.mD2.Or
 import de.wwu.md2.framework.mD2.Plus
-import de.wwu.md2.framework.mD2.SimpleExpression
 import de.wwu.md2.framework.mD2.StringVal
 import de.wwu.md2.framework.mD2.TimeVal
 import de.wwu.md2.framework.mD2.ViewElementState
@@ -68,6 +67,8 @@ class Expressions {
 				var «varName» = «expression.value.toString»;
 			'''
 			CompareExpression: {
+				val leftExprVar = getUnifiedName("expr")
+				val rightExprVar = getUnifiedName("expr")
 				val operator = switch expression.op {
 					case Operator::EQUALS: "equals"
 					case Operator::GREATER: "gt"
@@ -76,11 +77,13 @@ class Expressions {
 					case Operator::SMALLER_OR_EQUAL: "lte"
 				}
 				'''
-					var «varName» = «generateSimpleExpression(expression.eqLeft, imports)».«operator»(«generateSimpleExpression(expression.eqRight, imports)»);
+					«generateSimpleExpression(expression.eqLeft, leftExprVar, imports)»
+					«generateSimpleExpression(expression.eqRight, rightExprVar, imports)»
+					var «varName» = «leftExprVar».«operator»(«rightExprVar»);
 				'''
 			}
 			GuiElementStateExpression: '''
-				var «varName» = «generateGUIElementStateExpression(expression)»;
+				«generateGUIElementStateExpression(expression, varName)»
 			'''
 		}
 	}
@@ -90,78 +93,139 @@ class Expressions {
 	// GUI Element State Expressions
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static generateGUIElementStateExpression(GuiElementStateExpression expression) {
-		val widget = '''this.$.widgetRegistry.getWidget("«getName(resolveViewElement(expression.reference))»")'''
-		switch (expression.isState) {
-			case ViewElementState::VALID: '''«widget».isValid()'''
-			case ViewElementState::EMPTY: '''(!«widget».getValue() || !«widget».getValue().isSet())'''
-			case ViewElementState::SET: '''(«widget».getValue() && «widget».getValue().isSet())'''
-			case ViewElementState::DEFAULT_VALUE: '''(«widget».getDefaultValue() && «widget».getDefaultValue().equals(«widget».getValue()))'''
-			case ViewElementState::DISABLED: '''«widget».isDisabled()'''
-			case ViewElementState::ENABLED: '''!«widget».isDisabled()'''
+	def private static generateGUIElementStateExpression(GuiElementStateExpression expression, String varName) {
+		val widgetVar = getUnifiedName("widget")
+		val exprStr = switch (expression.isState) {
+			case ViewElementState::VALID: '''«widgetVar».isValid()'''
+			case ViewElementState::EMPTY: '''!«widgetVar».getValue() || !«widgetVar».getValue().isSet()'''
+			case ViewElementState::SET: '''«widgetVar».getValue() && «widgetVar».getValue().isSet()'''
+			case ViewElementState::DEFAULT_VALUE: '''«widgetVar».getDefaultValue() && «widgetVar».getDefaultValue().equals(«widgetVar».getValue())'''
+			case ViewElementState::DISABLED: '''«widgetVar».isDisabled()'''
+			case ViewElementState::ENABLED: '''!«widgetVar».isDisabled()'''
 		}
+		'''
+			var «widgetVar» = this.$.widgetRegistry.getWidget("«getName(resolveViewElement(expression.reference))»");
+			var «varName» = «exprStr»;
+		'''
 	}
 	
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////
-	// Simple Expressions
+	// Simple Expressions => Constant Literals
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def static String generateSimpleExpression(SimpleExpression expression, Map<String, String> imports) {
-		switch (expression) {
-			// literals
-			StringVal: '''this.$.create("string", "«expression.value.escape»")'''
-			IntVal: '''this.$.create("integer", «expression.value»)'''
-			FloatVal: '''this.$.create("float", «expression.value»)'''
-			BooleanVal: '''this.$.create("boolean", «expression.value.toString»)'''
-			DateVal: {
-				imports.put("stamp", "dojo/date/stamp")
-				'''this.$.create("date", stamp.fromISOString("«expression.value.toISODate»"))'''
-			}
-			TimeVal: {
-				imports.put("stamp", "dojo/date/stamp")
-				'''this.$.create("time", stamp.fromISOString("«expression.value.toISOTime»"))'''
-			}
-			DateTimeVal: {
-				imports.put("stamp", "dojo/date/stamp")
-				'''this.$.create("datetime", stamp.fromISOString("«expression.value.toISODateTime»"))'''
-			}
-			
-			// literals
-			AbstractViewGUIElementRef: '''this.$.widgetRegistry.getWidget("«getName(resolveViewElement(expression))»").getValue()'''
-			AbstractContentProviderPath: '''this.$.contentProviderRegistry.getContentProvider("«expression.resolveContentProviderName»").getValue("«expression.resolveContentProviderPathAttribute»")'''
-			AbstractProviderReference: '''this.$.contentProviderRegistry.getContentProvider("«expression.resolveContentProviderName»").getContent()'''
-			
-			// concatenated string
-			ConcatenatedString: '''this.$.create("string", «generateConcatenatedString(expression, imports)»)'''
-			
-			// math expressions
-			default:  '''this.$.create("float", «generateMathExpression(expression, imports)»)'''
-		}
+	def static dispatch String generateSimpleExpression(StringVal expression, String varName, Map<String, String> imports) '''
+		var «varName» = this.$.create("string", "«expression.value.escape»");
+	'''
+	
+	def static dispatch String generateSimpleExpression(IntVal expression, String varName, Map<String, String> imports) '''
+		var «varName» = this.$.create("integer", «expression.value»);
+	'''
+	
+	def static dispatch String generateSimpleExpression(FloatVal expression, String varName, Map<String, String> imports) '''
+		var «varName» = this.$.create("float", «expression.value»);
+	'''
+	
+	def static dispatch String generateSimpleExpression(BooleanVal expression, String varName, Map<String, String> imports) '''
+		var «varName» = this.$.create("boolean", «expression.value.toString»);
+	'''
+	
+	def static dispatch String generateSimpleExpression(DateVal expression, String varName, Map<String, String> imports) {
+		imports.put("stamp", "dojo/date/stamp")
+		'''
+			var «varName» = this.$.create("date", stamp.fromISOString("«expression.value.toISODate»"));
+		'''
+	}
+	
+	def static dispatch String generateSimpleExpression(TimeVal expression, String varName, Map<String, String> imports) {
+		imports.put("stamp", "dojo/date/stamp")
+		'''
+			var «varName» = this.$.create("time", stamp.fromISOString("«expression.value.toISOTime»"));
+		'''
+	}
+	
+	def static dispatch String generateSimpleExpression(DateTimeVal expression, String varName, Map<String, String> imports) {
+		imports.put("stamp", "dojo/date/stamp")
+		'''
+			var «varName» = this.$.create("datetime", stamp.fromISOString("«expression.value.toISODateTime»"));
+		'''
 	}
 	
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////
-	// Concatenated Strings
+	// Simple Expressions => Variable Literals
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static String generateConcatenatedString(ConcatenatedString expression, Map<String, String> imports) '''
-		«generateSimpleExpression(expression.leftString, imports)».toString()
-		.concat(«generateSimpleExpression(expression.rightString, imports)»)
+	def static dispatch String generateSimpleExpression(AbstractViewGUIElementRef expression, String varName, Map<String, String> imports) '''
+		var «varName» = this.$.widgetRegistry.getWidget("«getName(resolveViewElement(expression))»").getValue();
+	'''
+	
+	def static dispatch String generateSimpleExpression(AbstractContentProviderPath expression, String varName, Map<String, String> imports) '''
+		var «varName» = this.$.contentProviderRegistry.getContentProvider("«expression.resolveContentProviderName»").getValue("«expression.resolveContentProviderPathAttribute»");
+	'''
+	
+	def static dispatch String generateSimpleExpression(AbstractProviderReference expression, String varName, Map<String, String> imports) '''
+		var «varName» = this.$.contentProviderRegistry.getContentProvider("«expression.resolveContentProviderName»").getContent();
 	'''
 	
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////
-	// Math Expressions
+	// Simple Expressions => Concatenated Strings
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	def private static String generateMathExpression(SimpleExpression expression, Map<String, String> imports) {
-		switch (expression) {
-			Plus: '''(«generateSimpleExpression(expression.leftOperand, imports)».getPlatformValue() + «generateSimpleExpression(expression.rightOperand, imports)».getPlatformValue())'''
-			Minus: '''(«generateSimpleExpression(expression.leftOperand, imports)».getPlatformValue() - «generateSimpleExpression(expression.rightOperand, imports)».getPlatformValue())'''
-			Mult: '''«generateSimpleExpression(expression.leftOperand, imports)».getPlatformValue() * «generateSimpleExpression(expression.rightOperand, imports)».getPlatformValue()'''
-			Div: '''«generateSimpleExpression(expression.leftOperand, imports)».getPlatformValue() / «generateSimpleExpression(expression.rightOperand, imports)».getPlatformValue()'''
-		}
+	def static dispatch String generateSimpleExpression(ConcatenatedString expression, String varName, Map<String, String> imports) {
+		val leftStrVar = getUnifiedName("str")
+		val rightStrVar = getUnifiedName("str")
+		'''
+			«generateSimpleExpression(expression.leftString, leftStrVar, imports)»
+			«generateSimpleExpression(expression.rightString, rightStrVar, imports)»
+			var «varName» = this.$.create("string", «leftStrVar».toString().concat(«rightStrVar»));
+		'''
+	}
+	
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	// Simple Expressions => Math Expressions
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	def static dispatch String generateSimpleExpression(Plus expression, String varName, Map<String, String> imports) {
+		val leftOperandVar = getUnifiedName("math")
+		val rightOperandVar = getUnifiedName("math")
+		'''
+			«generateSimpleExpression(expression.leftOperand, leftOperandVar, imports)»
+			«generateSimpleExpression(expression.rightOperand, rightOperandVar, imports)»
+			var «varName» = this.$.create("float", «leftOperandVar».getPlatformValue() + «rightOperandVar».getPlatformValue());
+		'''
+	}
+	
+	def static dispatch String generateSimpleExpression(Minus expression, String varName, Map<String, String> imports) {
+		val leftOperandVar = getUnifiedName("math")
+		val rightOperandVar = getUnifiedName("math")
+		'''
+			«generateSimpleExpression(expression.leftOperand, leftOperandVar, imports)»
+			«generateSimpleExpression(expression.rightOperand, rightOperandVar, imports)»
+			var «varName» = this.$.create("float", «leftOperandVar».getPlatformValue() - «rightOperandVar».getPlatformValue());
+		'''
+	}
+	
+	def static dispatch String generateSimpleExpression(Mult expression, String varName, Map<String, String> imports) {
+		val leftOperandVar = getUnifiedName("math")
+		val rightOperandVar = getUnifiedName("math")
+		'''
+			«generateSimpleExpression(expression.leftOperand, leftOperandVar, imports)»
+			«generateSimpleExpression(expression.rightOperand, rightOperandVar, imports)»
+			var «varName» = this.$.create("float", «leftOperandVar».getPlatformValue() * «rightOperandVar».getPlatformValue());
+		'''
+	}
+	
+	def static dispatch String generateSimpleExpression(Div expression, String varName, Map<String, String> imports) {
+		val leftOperandVar = getUnifiedName("math")
+		val rightOperandVar = getUnifiedName("math")
+		'''
+			«generateSimpleExpression(expression.leftOperand, leftOperandVar, imports)»
+			«generateSimpleExpression(expression.rightOperand, rightOperandVar, imports)»
+			var «varName» = this.$.create("float", «leftOperandVar».getPlatformValue() / «rightOperandVar».getPlatformValue());
+		'''
 	}
 	
 }
