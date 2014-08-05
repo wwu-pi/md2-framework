@@ -1473,25 +1473,21 @@ MathExpression returns SimpleExpression:
 /////////////////////////////////////
 
 /*
- * The root Model element contains all
- * ModelElements containing to this model model
+ * The root Model element that contains all ModelElements.
  */
 Model:
 	 modelElements += ModelElement+
 ;
 
 /*
- * The ModelElement is
- * the super type of all
- * possible ModelElements.
+ * The ModelElement is the super type of all possible ModelElements.
  */
 ModelElement:
 	 Entity | Enum
 ;
 
 /*
- * An Enum allows the user to define
- * a list of STRING values, stored
+ * An Enum allows the user to define a list of STRING values, stored
  * in the enumBody.
  */
 Enum:
@@ -1501,8 +1497,7 @@ Enum:
 ;
 
 /*
- * An EnumBody allows the user to define
- * a list of STRING values.
+ * An EnumBody allows the user to define a list of STRING values.
  */
 EnumBody:
 	elements += STRING (',' elements += STRING)*
@@ -1541,7 +1536,7 @@ Attribute:
  * defined ModelElement or an implicit Enum declaration.
  */
 AttributeType:
-	{ReferencedType} entity = [ModelElement | QUALIFIED_NAME]	many ?= BRACKETS? ('(' (params += ReferencedTypeParam (',' params += ReferencedTypeParam)*)? ')')? |
+	{ReferencedType} element = [ModelElement | QUALIFIED_NAME]	many ?= BRACKETS? ('(' (params += ReferencedTypeParam (',' params += ReferencedTypeParam)*)? ')')? |
 	{IntegerType} 'integer'										many ?= BRACKETS? ('(' (params += IntegerTypeParam (',' params += IntegerTypeParam)*)? ')')? |
 	{FloatType} 'float'											many ?= BRACKETS? ('(' (params += FloatTypeParam (',' params += FloatTypeParam)*)? ')')? |
 	{StringType} 'string'										many ?= BRACKETS? ('(' (params += StringTypeParam (',' params += StringTypeParam)*)? ')')? |
@@ -1555,12 +1550,9 @@ AttributeType:
 ;
 
 /*
- * The parser rule BRACKETS defines
- * how square brackets look like.
- * BRACKETS can be annotated to an
- * AttributeType to declare the
- * Attribute to have a one to many
- * relation.
+ * The parser rule BRACKETS defines how square brackets look like.
+ * BRACKETS can be annotated to an AttributeType to declare the
+ * Attribute to have a one to many relation.
  */
 BRACKETS:
 	'[' ']'
@@ -1582,13 +1574,16 @@ AttributeTypeParam:
 ;
 
 /*
- * ReferencedTypeParam is a super type of all
- * possible parameters of referenced Attributes.
- * The value being optional is the only parameter.
- * This parameter will be used to generate a validator.
+ * ReferencedTypeParam is a super type of all possible parameters of referenced Attributes.
+ * The value being optional is the only parameter. This parameter will be used to generate a validator.
+ * 
+ * The parser cannot distinguish cross-references to different parsing rules.
+ * Thus, it is necessary to link the common super type ModelElement. Validators have to assure that
+ * enum specific parameters cannot be assigned to referenced entities and vice versa.
  */
 ReferencedTypeParam:
-	{AttrIsOptional} optional ?= 'optional'
+	{AttrIsOptional} optional ?= 'optional' |
+	{AttrEnumDefault} 'default' value = STRING // enum specific
 ;
 
 /*
@@ -1697,10 +1692,8 @@ DateTimeTypeParam:
 ;
 
 /*
- * ReferencedTypeParam is a super type of
- * all possible parameters of referenced
- * Attributes. The value being optional
- * is the only parameter. This parameter
+ * ReferencedTypeParam is a super type of all possible parameters of referenced
+ * Attributes. The value being optional is the only parameter. This parameter
  * will be used to generate a validator.
  */
 EnumTypeParam:

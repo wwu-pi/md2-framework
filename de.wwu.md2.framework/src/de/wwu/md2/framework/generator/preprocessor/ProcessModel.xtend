@@ -60,7 +60,7 @@ class ProcessModel extends AbstractPreprocessor {
 			
 			// Replace EnumType with ReferencedType
 			val refType = factory.createReferencedType()
-			refType.entity = curEnum
+			refType.element = curEnum
 			refType.many = enumAttr.type.many
 			refType.params.addAll(Sets::newHashSet((enumAttr.type as EnumType).params.filter(typeof(AttrIsOptional))))
 			enumAttr.type = refType
@@ -114,7 +114,7 @@ class ProcessModel extends AbstractPreprocessor {
 		// Add attribute type specific standard validators
 		val type = attr.type
 		switch type {
-			ReferencedType case type.entity instanceof Enum: { 
+			ReferencedType case type.element instanceof Enum: { 
 				// No further standard validators exist for this case
 			}
 			IntegerType: {

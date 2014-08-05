@@ -15,7 +15,9 @@ import org.eclipse.xtext.validation.ComposedChecks;
  */
 @ComposedChecks(validators= {
 	LegacyValidator.class,
-	ControllerValidator.class
+	ControllerValidator.class,
+	ModelValidator.class,
+	ViewValidator.class
 })
 public class MD2JavaValidator extends AbstractMD2JavaValidator {
 	

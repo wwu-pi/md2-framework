@@ -90,7 +90,7 @@ class MD2ComplexElementFactory extends MD2FactoryImpl {
 		{
 			val attribute = this.createAttribute
 			val type = this.createReferencedType
-			type.setEntity(entity)
+			type.setElement(entity)
 			attribute.setName("tail")
 			attribute.setType(type)
 			entity.attributes.add(attribute)

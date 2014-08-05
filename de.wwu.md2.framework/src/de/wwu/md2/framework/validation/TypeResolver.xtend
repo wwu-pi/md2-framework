@@ -162,7 +162,7 @@ class TypeResolver {
 			DateType: "date"
 			TimeType: "time"
 			DateTimeType: "datetime"
-			ReferencedType: type.entity.name
+			ReferencedType: type.element.name
 			EnumType: "Enum"
 			default: System::err.println("Unexpected AttributeType found: " + type.eClass.name)
 		}

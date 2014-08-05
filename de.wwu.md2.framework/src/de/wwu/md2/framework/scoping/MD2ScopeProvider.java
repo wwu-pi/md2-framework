@@ -59,7 +59,7 @@ public class MD2ScopeProvider extends AbstractDeclarativeScopeProvider {
 		if (parent instanceof PathTail) {
 			AttributeType aType = ((PathTail) parent).getAttributeRef().getType();
 			if (aType instanceof ReferencedType) {
-				ModelElement modelElement = ((ReferencedType) aType).getEntity();
+				ModelElement modelElement = ((ReferencedType) aType).getElement();
 				if (modelElement instanceof Entity) {
 					resultSet.addAll(((Entity) modelElement).getAttributes());
 				}

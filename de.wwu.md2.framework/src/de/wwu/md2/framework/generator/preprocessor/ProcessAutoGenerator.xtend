@@ -192,8 +192,8 @@ class ProcessAutoGenerator extends AbstractPreprocessor {
 			}
 			iterPathDefinition.lastPathTail.setAttributeRef(it)
 			entityPathes.add(iterPathDefinition)
-			if (it instanceof ReferencedType && (it as ReferencedType).entity instanceof Entity) {
-				entityPathes.addAll(entityToPathDefinition(iterPathDefinition, (it as ReferencedType).entity as Entity))
+			if (it instanceof ReferencedType && (it as ReferencedType).element instanceof Entity) {
+				entityPathes.addAll(entityToPathDefinition(iterPathDefinition, (it as ReferencedType).element as Entity))
 			}
 		]
 		entityPathes
@@ -233,20 +233,20 @@ class ProcessAutoGenerator extends AbstractPreprocessor {
 //					} else {
 						switch (a.type) {
 							ReferencedType: {
-								if ((a.type as ReferencedType).entity instanceof Entity) {
+								if ((a.type as ReferencedType).element instanceof Entity) {
 									val flowLayoutPane = factory.createFlowLayoutPane()
 									flowLayoutPane.name = a.name + "FlowLayoutPane"
 									// Recursive modelToView for referenced entities
-									for (childElem : modelToView((a.type as ReferencedType).entity, copyElement(pathDefinitionIter) as ContentProviderPath, filteredAttributes, a.labelText + " - ")) {
+									for (childElem : modelToView((a.type as ReferencedType).element, copyElement(pathDefinitionIter) as ContentProviderPath, filteredAttributes, a.labelText + " - ")) {
 										flowLayoutPane.elements.add(childElem)
 									}
 									flowLayoutPane.params.add(factory.createFlowLayoutPaneFlowDirectionParam)
 									(flowLayoutPane.params.get(0) as FlowLayoutPaneFlowDirectionParam).flowDirection = FlowDirection::VERTICAL
 									guiElementToAdd = flowLayoutPane
-								} else if ((a.type as ReferencedType).entity instanceof Enum) {
+								} else if ((a.type as ReferencedType).element instanceof Enum) {
 									guiElementToAdd = factory.createOptionInput().applyLabelAndTooltip(a, labelPrefix)
 									guiElementToAdd.name = "__" + a.name + "OptionInput" + "_" + autoGenerationCounter.toString;
-									(guiElementToAdd as OptionInput).enumReference = ((a.type as ReferencedType).entity as Enum)
+									(guiElementToAdd as OptionInput).enumReference = ((a.type as ReferencedType).element as Enum)
 								}
 							}
 							BooleanType: {

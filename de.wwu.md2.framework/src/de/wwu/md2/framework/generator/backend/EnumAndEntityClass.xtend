@@ -24,21 +24,21 @@ class EnumAndEntityClass {
 		«IF entity.attributes.exists(a | isDateOrTimeType(a.type))»import java.util.Date;«ENDIF»
 		«IF entity.attributes.exists(a | a.type.many)»import java.util.List;«ENDIF»
 		
-		«IF entity.attributes.exists(a | a.type instanceof ReferencedType && (a.type as ReferencedType).entity instanceof Entity)»
+		«IF entity.attributes.exists(a | a.type instanceof ReferencedType && (a.type as ReferencedType).element instanceof Entity)»
 			import javax.persistence.CascadeType;
 		«ENDIF»
 		import javax.persistence.Column;
-		«IF entity.attributes.exists(a | a.type.many && !(a.type instanceof ReferencedType && (a.type as ReferencedType).entity instanceof Entity))»
+		«IF entity.attributes.exists(a | a.type.many && !(a.type instanceof ReferencedType && (a.type as ReferencedType).element instanceof Entity))»
 			import javax.persistence.ElementCollection;
 		«ENDIF»
 		import javax.persistence.Entity;
 		import javax.persistence.GeneratedValue;
 		import javax.persistence.GenerationType;
 		import javax.persistence.Id;
-		«IF entity.attributes.exists(a | a.type.many && a.type instanceof ReferencedType && (a.type as ReferencedType).entity instanceof Entity)»
+		«IF entity.attributes.exists(a | a.type.many && a.type instanceof ReferencedType && (a.type as ReferencedType).element instanceof Entity)»
 			import javax.persistence.ManyToMany;
 		«ENDIF»
-		«IF entity.attributes.exists(a | !a.type.many && a.type instanceof ReferencedType && (a.type as ReferencedType).entity instanceof Entity)»
+		«IF entity.attributes.exists(a | !a.type.many && a.type instanceof ReferencedType && (a.type as ReferencedType).element instanceof Entity)»
 			import javax.persistence.ManyToOne;
 		«ENDIF»
 		«IF entity.attributes.exists(a | isDateOrTimeType(a.type))»
@@ -117,7 +117,7 @@ class EnumAndEntityClass {
 	
 	def private static getDataType(AttributeType type) {
 		val dataType = switch type {
-			ReferencedType: type.entity.name.toFirstUpper
+			ReferencedType: type.element.name.toFirstUpper
 			IntegerType: "int"
 			FloatType: "double"
 			StringType: "String"
@@ -151,7 +151,7 @@ class EnumAndEntityClass {
 			DateTimeType: type.params
 		}.exists(p | p instanceof AttrIsOptional)
 		
-		val isEntity = type instanceof ReferencedType && (type as ReferencedType).entity instanceof Entity
+		val isEntity = type instanceof ReferencedType && (type as ReferencedType).element instanceof Entity
 		
 		if(!isOptional) {
 			result.append("@NotNull").append(NEW_LINE)

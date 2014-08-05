@@ -13,6 +13,7 @@ import de.wwu.md2.framework.mD2.BooleanType
 import de.wwu.md2.framework.mD2.DateTimeType
 import de.wwu.md2.framework.mD2.DateType
 import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.Enum
 import de.wwu.md2.framework.mD2.EnumType
 import de.wwu.md2.framework.mD2.FloatType
 import de.wwu.md2.framework.mD2.IntegerType
@@ -82,47 +83,54 @@ class EntityClass {
 		val type = attribute.type
 		switch (type) {
 			ReferencedType: {
-				'''null'''
+				val element = type.element
+				switch element {
+					Entity: '''null'''
+					Enum: {
+						val defaultValue = type.params.filter(AttrEnumDefault).head
+						'''this._typeFactory.create("«element.name.toFirstUpper»", "«IF defaultValue != null»VALUE«element.enumBody.elements.indexOf(defaultValue.value)»«ELSE»VALUE0«ENDIF»")'''
+					}
+				}
 			}
 			IntegerType: {
-				val defaultValue = type.params.filter(typeof(AttrIntDefault)).head
+				val defaultValue = type.params.filter(AttrIntDefault).head
 				'''this._typeFactory.create("integer", «IF defaultValue != null»«defaultValue.value»«ELSE»null«ENDIF»)'''
 			}
 			FloatType: {
-				val defaultValue = type.params.filter(typeof(AttrFloatDefault)).head
+				val defaultValue = type.params.filter(AttrFloatDefault).head
 				'''this._typeFactory.create("float", «IF defaultValue != null»«defaultValue.value»«ELSE»null«ENDIF»)'''
 			}
 			StringType: {
-				val defaultValue = type.params.filter(typeof(AttrStringDefault)).head
+				val defaultValue = type.params.filter(AttrStringDefault).head
 				'''this._typeFactory.create("string", «defaultValue?.value.quotify ?: '''null'''»)'''
 			}
 			BooleanType: {
-				val defaultValue = type.params.filter(typeof(AttrBooleanDefault)).head
+				val defaultValue = type.params.filter(AttrBooleanDefault).head
 				'''this._typeFactory.create("boolean", «defaultValue?.value ?: '''false'''»)'''
 			}
 			DateType: {
-				val defaultValue = type.params.filter(typeof(AttrDateDefault)).head
+				val defaultValue = type.params.filter(AttrDateDefault).head
 				if (defaultValue != null) {
 					imports.put("stamp", "dojo/date/stamp")
 				}
 				'''this._typeFactory.create("date", «IF defaultValue != null»stamp.fromISOString("«defaultValue?.value.toISODate»")«ELSE»null«ENDIF»)'''
 			}
 			TimeType: {
-				val defaultValue = type.params.filter(typeof(AttrTimeDefault)).head
+				val defaultValue = type.params.filter(AttrTimeDefault).head
 				if (defaultValue != null) {
 					imports.put("stamp", "dojo/date/stamp")
 				}
 				'''this._typeFactory.create("time", «IF defaultValue != null»stamp.fromISOString("«defaultValue?.value.toISOTime»")«ELSE»null«ENDIF»)'''
 			}
 			DateTimeType: {
-				val defaultValue = type.params.filter(typeof(AttrDateTimeDefault)).head
+				val defaultValue = type.params.filter(AttrDateTimeDefault).head
 				if (defaultValue != null) {
 					imports.put("stamp", "dojo/date/stamp")
 				}
 				'''this._typeFactory.create("datetime", «IF defaultValue != null»stamp.fromISOString("«defaultValue?.value.toISODateTime»")«ELSE»null«ENDIF»)'''
 			}
 			EnumType: {
-				val defaultValue = type.params.filter(typeof(AttrEnumDefault)).head
+				val defaultValue = type.params.filter(AttrEnumDefault).head
 				'''this._typeFactory.create("string", «defaultValue?.value.quotify ?: '''null'''»)'''
 			}
 		}
@@ -131,7 +139,7 @@ class EntityClass {
 	def private static generateAttributeDataType(Attribute attribute) {
 		val type = attribute.type
 		switch (type) {
-			ReferencedType: '''«type.entity.name»'''
+			ReferencedType: '''«type.element.name.toFirstUpper»'''
 			IntegerType: '''integer'''
 			FloatType: '''float'''
 			StringType: '''string'''
@@ -139,7 +147,7 @@ class EntityClass {
 			DateType: '''date'''
 			TimeType: '''time'''
 			DateTimeType: '''datetime'''
-			EnumType: '''string'''
+			default: throw new Error("Data type not supported!")
 		}
 	}
 }
