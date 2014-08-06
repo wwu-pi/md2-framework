@@ -2,9 +2,9 @@ package de.wwu.md2.framework.generator.mapapps
 
 import de.wwu.md2.framework.generator.util.DataContainer
 
-class CustomActionInterfaceClass {
+class CustomActionsInterfaceClass {
 	
-	def static String generateCustomActionInterface(DataContainer dataContainer) '''
+	def static String generateCustomActionsInterface(DataContainer dataContainer) '''
 		define([
 			«val imports = newArrayList('''"dojo/_base/declare"''', generateActionImports(dataContainer))»
 			«FOR importStr : imports.filter(s | !s.toString.trim.empty) SEPARATOR ","»

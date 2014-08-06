@@ -6,10 +6,11 @@ import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import static de.wwu.md2.framework.generator.mapapps.ContentProviderClass.*
 import static de.wwu.md2.framework.generator.mapapps.ControllerClass.*
 import static de.wwu.md2.framework.generator.mapapps.CustomActionClass.*
-import static de.wwu.md2.framework.generator.mapapps.CustomActionInterfaceClass.*
+import static de.wwu.md2.framework.generator.mapapps.CustomActionsInterfaceClass.*
 import static de.wwu.md2.framework.generator.mapapps.EntityClass.*
-import static de.wwu.md2.framework.generator.mapapps.EntityInterfaceClass.*
+import static de.wwu.md2.framework.generator.mapapps.EnumClass.*
 import static de.wwu.md2.framework.generator.mapapps.ManifestJson.*
+import static de.wwu.md2.framework.generator.mapapps.ModelsInterfaceClass.*
 import static de.wwu.md2.framework.generator.mapapps.ModuleClass.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
@@ -33,16 +34,20 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		
 		fsa.generateFile(rootFolder + "/Controller.js", generateController(dataContainer).tabsToSpaces(4))
 		
-		fsa.generateFile(rootFolder + "/CustomActions.js", generateCustomActionInterface(dataContainer).tabsToSpaces(4))
+		fsa.generateFile(rootFolder + "/CustomActions.js", generateCustomActionsInterface(dataContainer).tabsToSpaces(4))
 		
-		fsa.generateFile(rootFolder + "/Entities.js", generateEntityInterface(dataContainer).tabsToSpaces(4))
+		fsa.generateFile(rootFolder + "/Models.js", generateModelsInterface(dataContainer).tabsToSpaces(4))
 		
 		for (customAction : dataContainer.customActions) {
 			fsa.generateFile(rootFolder + "/actions/" + customAction.name.toFirstUpper + ".js", generateCustomAction(customAction).tabsToSpaces(4))
 		}
 		
 		for (entity : dataContainer.entities) {
-			fsa.generateFile(rootFolder + "/entities/" + entity.name.toFirstUpper + ".js", generateEntity(entity).tabsToSpaces(4))
+			fsa.generateFile(rootFolder + "/models/" + entity.name.toFirstUpper + ".js", generateEntity(entity).tabsToSpaces(4))
+		}
+		
+		for (^enum : dataContainer.enums) {
+			fsa.generateFile(rootFolder + "/models/" + enum.name.toFirstUpper + ".js", generateEnum(enum).tabsToSpaces(4))
 		}
 		
 		for (contentProvider : dataContainer.contentProviders) {

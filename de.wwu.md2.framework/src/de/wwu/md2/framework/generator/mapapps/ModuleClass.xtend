@@ -12,7 +12,7 @@ class ModuleClass {
 			«ENDFOR»
 			"./Controller",
 			"./CustomActions",
-			"./Entities"
+			"./Models"
 		], {});
 	'''
 }

@@ -52,7 +52,7 @@ class ManifestJson {
 				«val snippets = newArrayList(
 					generateConfigurationSnippet(dataContainer, processedInput),
 					generateCustomActionsSnippet(dataContainer, processedInput),
-					generateEntitiesSnippet(dataContainer, processedInput),
+					generateModelsSnippet(dataContainer, processedInput),
 					generateContentProvidersSnippet(dataContainer, processedInput),
 					generateControllerSnippet(dataContainer, processedInput),
 					generateToolSnippet(dataContainer, processedInput)
@@ -97,10 +97,10 @@ class ManifestJson {
 		}
 	'''
 	
-	def static generateEntitiesSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
+	def static generateModelsSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
 		{
-			"name": "Entities",
-			"provides": ["md2.app.«processedInput.getBasePackageName».Entities"],
+			"name": "Models",
+			"provides": ["md2.app.«processedInput.getBasePackageName».Models"],
 			"instanceFactory": true
 		}
 	'''
@@ -148,8 +148,8 @@ class ManifestJson {
 					"providing": "md2.app.«processedInput.getBasePackageName».CustomActions"
 				},
 				{
-					"name": "_entities",
-					"providing": "md2.app.«processedInput.getBasePackageName».Entities"
+					"name": "_models",
+					"providing": "md2.app.«processedInput.getBasePackageName».Models"
 				},
 				{
 					"name": "_contentProviders",
@@ -351,6 +351,7 @@ class ManifestJson {
 	
 	def private static dispatch String getViewElement(OptionInput input, ResourceSet processedInput) '''
 		"type": "selectbox",
+		"datatype": "«input.enumReference.name.toFirstUpper»",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''

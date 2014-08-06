@@ -22,7 +22,7 @@ class ControllerClass {
 					// configure app
 					app._dataFormBean = this._configBean;
 					app._customActions = this._customActions;
-					app._entities = this._entities;
+					app._models = this._models;
 					app._contentProviders = this._contentProviders;
 					
 					// build app
