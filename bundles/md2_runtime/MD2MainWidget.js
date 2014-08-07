@@ -83,8 +83,8 @@ define([
             // injected custom actions
             var customActions = this._customActions;
             
-            // injected entities
-            var entityFactories = this._entities;
+            // injected entities and enums
+            var modelFactories = this._models;
             
             // Object of references to be passed to actions/contentProviders etc.
             // Will be populated after all components are built. Thus, $ is only
@@ -92,7 +92,7 @@ define([
             // to easily access all components.
             var $ = {};
             
-            var typeFactory = new TypeFactory(entityFactories);
+            var typeFactory = new TypeFactory(modelFactories);
             
             var contentProviderRegistry = new ContentProviderRegistry();
             this._createContentProviders(appId, contentProviderRegistry, typeFactory, $);

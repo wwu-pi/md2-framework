@@ -42,12 +42,12 @@ function(declare, array, Boolean, Date, Time, DateTime, Float, Integer, String, 
                 case "string":
                     return new String(platformValue, this);
                 default:
-                    return this.createEntity(datatype);
+                    return this.createEntity(datatype, platformValue);
             }
         },
         
-        createEntity: function(datatype) {
-            return this.getEntityFactory(datatype).create(this);
+        createEntity: function(datatype, platformValue) {
+            return this.getEntityFactory(datatype).create(platformValue);
         },
         
         getEntityFactory: function(datatype) {

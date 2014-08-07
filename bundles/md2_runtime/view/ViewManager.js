@@ -228,6 +228,8 @@ function(declare, lang, array, domConstruct, domGeometry, ct_lang, Hash, WidgetW
                 var widgetWrapper = this._widgetRegistry.getWidget(id);
                 widgetWrapper && widgetWrapper.setWidget(child);
                 
+                this._populateSelectBox(child);
+                
                 this._currentSubViews = ct_lang.chk(this._currentSubViews, new Hash());
                 if (child.subViewName) {
                     this._currentSubViews.set(child.subViewName, child);
@@ -239,6 +241,21 @@ function(declare, lang, array, domConstruct, domGeometry, ct_lang, Hash, WidgetW
                     this._setAllFormControls(child);
                 }
             }, this);
+        },
+        
+        /**
+         * Checks whether the given form control is a selectbox. If so, populate it with
+         * the enum values specified in the view or the values currently mapped.
+         * 
+         * @param {FormControl} dataFormWidget
+         */
+        _populateSelectBox: function(dataFormWidget) {
+            if (dataFormWidget.controlClass === "selectbox") {
+                var datatype = dataFormWidget.datatype;
+                var e = this._typeFactory.createEntity(datatype);
+                dataFormWidget.searchAttribute = "name";
+                dataFormWidget.values = e.getOptions();
+            }
         }
     });
 });
