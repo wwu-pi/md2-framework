@@ -10,6 +10,7 @@ import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.FlowDirection
 import de.wwu.md2.framework.mD2.FlowLayoutPane
 import de.wwu.md2.framework.mD2.FlowLayoutPaneFlowDirectionParam
+import de.wwu.md2.framework.mD2.GotoViewAction
 import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam
 import de.wwu.md2.framework.mD2.GridLayoutPaneRowsParam
@@ -29,6 +30,8 @@ import java.util.Set
 import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil
+
+import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
@@ -531,8 +534,27 @@ class ProcessView extends AbstractPreprocessor {
 	 * </ul>
 	 */
 	def createDisableActionsForAllDisabledViewElements() {
+		
+		// get all views that are accessed by GotoViewActions at some time
+		val accessibleViews = controllers.map[ ctrl |
+			ctrl.controllerElements.filter(CustomAction).map[ customAction |
+				customAction.eAllContents.toIterable
+			].flatten.filter(GotoViewAction).map[ gotoView |
+				resolveContainerElement(gotoView.view)
+			]
+		].flatten.toSet
+		
+		// get all GUI elements that are contained in an accessible view
 		val guiElements = views.map[ view |
-			view.eAllContents.toIterable.filter(ViewGUIElement)
+			view.eAllContents.toIterable.filter(ViewGUIElement).filter[ e |
+				var EObject eObject = e
+				var isContained = false
+				while (!(eObject instanceof View) && !isContained) {
+					isContained = accessibleViews.contains(eObject)
+					eObject = eObject.eContainer
+				}
+				isContained
+			]
 		].flatten
 		
 		val startupAction = controllers.map[ ctrl |
