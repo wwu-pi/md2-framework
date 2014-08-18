@@ -12,7 +12,6 @@ import de.wwu.md2.framework.mD2.CombinedAction
 import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.ContentProviderPath
 import de.wwu.md2.framework.mD2.ContentProviderReference
-import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.EntityPath
 import de.wwu.md2.framework.mD2.FlowLayoutPane
@@ -20,7 +19,6 @@ import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.LocationProviderPath
 import de.wwu.md2.framework.mD2.LocationProviderReference
 import de.wwu.md2.framework.mD2.MD2Model
-import de.wwu.md2.framework.mD2.Model
 import de.wwu.md2.framework.mD2.ModelElement
 import de.wwu.md2.framework.mD2.PathDefinition
 import de.wwu.md2.framework.mD2.PathTail
@@ -28,7 +26,6 @@ import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.SimpleType
 import de.wwu.md2.framework.mD2.StandardValidator
 import de.wwu.md2.framework.mD2.TabTitleParam
-import de.wwu.md2.framework.mD2.View
 import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import java.util.Collection
@@ -43,7 +40,7 @@ import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 
 class MD2GeneratorUtil {
-		
+	
 	private static IQualifiedNameProvider qualifiedNameProvider
 	private static HashMap<String, String> qualifiedNameToNameMapping
 	
@@ -55,17 +52,17 @@ class MD2GeneratorUtil {
 	private static HashSet<String> uniqueNames = newHashSet
 	
 	/**
-	 * Get the base package name of the current project.
+	 * Get the base package name of the current project by taking a random package name and removing the last segment
+	 * .controllers, .views or .models.
 	 */
 	def static getBasePackageName(ResourceSet input) {
-		val model = input.resources.map(r|r.allContents.toIterable.filter(typeof(MD2Model))).flatten.last
-		var packageName = model.getPackage().pkgName;
-		switch model.modelLayer {
-			// Xtend resolves runtime argument type for modelLayer
-			View : packageName.substring(0, packageName.indexOf(".view") )
-			Model : packageName.substring(0, packageName.indexOf(".model"))
-			Controller : packageName.substring(0, packageName.indexOf(".controller"))
-		}
+		val model = input.resources.map[ r |
+			r.allContents.toIterable.filter(MD2Model)
+		].flatten.last
+		val pkgNameSegments = newArrayList
+		pkgNameSegments.addAll(model.package.pkgName.split("\\."))
+		pkgNameSegments.remove(pkgNameSegments.size - 1)
+		pkgNameSegments.join(".")
 	}
 	
 	/**
