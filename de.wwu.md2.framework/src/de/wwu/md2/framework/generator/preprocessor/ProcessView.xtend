@@ -305,17 +305,17 @@ class ProcessView extends AbstractPreprocessor {
 				.filter(containerElem | !(containerElem instanceof TabbedAlternativesPane))
 		].flatten
 		
-		for (contentContainer : containerElements.filter(typeof(GridLayoutPane))) {
-			val allChilds = contentContainer.elements.filter(typeof(ViewGUIElement)).toList
+		for (contentContainer : containerElements.filter(GridLayoutPane)) {
+			val allChilds = contentContainer.elements.filter(ViewGUIElement).toList
 			
 			// get a sublist of elements for each row
 			val rowWiseList = newArrayList
-			val rows = contentContainer.params.filter(typeof(GridLayoutPaneRowsParam)).last.value
-			val cols = contentContainer.params.filter(typeof(GridLayoutPaneColumnsParam)).last.value
+			val rows = contentContainer.params.filter(GridLayoutPaneRowsParam).last.value
+			val cols = contentContainer.params.filter(GridLayoutPaneColumnsParam).last.value
 			var i = 0
-			while (i < rows) {
+			while (i < rows * cols) {
 				rowWiseList.add(allChilds.subList(i, i + cols))
-				i = i + 1
+				i = i + cols
 			}
 			
 			// row-wise width calculation of the elements in the list
@@ -337,8 +337,8 @@ class ProcessView extends AbstractPreprocessor {
 						}
 						ContainerElement: {
 							var widthParam = switch(childElement) {
-								GridLayoutPane: childElement.params.filter(typeof(WidthParam)).last
-								AlternativesPane: childElement.params.filter(typeof(WidthParam)).last
+								GridLayoutPane: childElement.params.filter(WidthParam).last
+								AlternativesPane: childElement.params.filter(WidthParam).last
 							}
 							if (widthParam == null) {
 								widthParam = factory.createWidthParam
@@ -403,8 +403,8 @@ class ProcessView extends AbstractPreprocessor {
 			// two times .eContainer, because we have to navigate out of the wrapping ContainerElementType
 			if(containerElement.eContainer instanceof View || containerElement.eContainer instanceof SubViewContainer) {
 				var widthParam = switch(containerElement) {
-					GridLayoutPane: containerElement.params.filter(typeof(WidthParam)).last
-					AlternativesPane: containerElement.params.filter(typeof(WidthParam)).last
+					GridLayoutPane: containerElement.params.filter(WidthParam).last
+					AlternativesPane: containerElement.params.filter(WidthParam).last
 				}
 				if(widthParam == null) {
 					widthParam = factory.createWidthParam
