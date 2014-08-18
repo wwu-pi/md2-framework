@@ -14,6 +14,10 @@ import de.wwu.md2.framework.mD2.Operator
 import de.wwu.md2.framework.mD2.UnmappingTask
 import de.wwu.md2.framework.mD2.ViewElementSetTask
 import de.wwu.md2.framework.mD2.WhereClauseCompareExpression
+import de.wwu.md2.framework.mD2.Workflow
+import de.wwu.md2.framework.mD2.WorkflowGoToNext
+import de.wwu.md2.framework.mD2.WorkflowGoToPrevious
+import de.wwu.md2.framework.mD2.WorkflowStep
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
 
@@ -198,6 +202,45 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		if (isNumericOperator && !numericTypes.contains(left)) {
 			val error = '''Cannot use operator '«expr.op.toString»' on a value of type '«left»'.'''
 			acceptError(error, expr, MD2Package.eINSTANCE.whereClauseCompareExpression_Op, -1, null);
+		}
+	}
+	
+	
+	/////////////////////////////////////////////////////////
+	/// Workflow Validators
+	/////////////////////////////////////////////////////////
+	
+	/**
+	 * Avoids that reverse operations can be assigned to the first step of a workflow.
+	 */
+	@Check
+	def checkThatNoReverseDeclarationsOnFirstWorkflowStep(WorkflowGoToPrevious reverse) {
+		
+		val workflowStep = reverse.eContainer.eContainer as WorkflowStep
+		val workflow = workflowStep.eContainer as Workflow
+		
+		val stepIndex = workflow.workflowSteps.indexOf(workflowStep)
+		
+		if (stepIndex == 0) {
+			val error = '''No preceeding step! Cannot define 'reverse' operation on first workflow step.'''
+			acceptError(error, reverse, null, -1, null);
+		}
+	}
+	
+	/**
+	 * Avoids that proceed operations can be assigned to the last step of a workflow.
+	 */
+	@Check
+	def checkThatNoProceedDeclarationsOnLastWorkflowStep(WorkflowGoToNext next) {
+		
+		val workflowStep = next.eContainer.eContainer as WorkflowStep
+		val workflow = workflowStep.eContainer as Workflow
+		
+		val stepIndex = workflow.workflowSteps.indexOf(workflowStep)
+		
+		if (stepIndex == workflow.workflowSteps.size - 1) {
+			val error = '''No proceeding step! Cannot define 'proceed' operation on last workflow step.'''
+			acceptError(error, next, null, -1, null);
 		}
 	}
 	
