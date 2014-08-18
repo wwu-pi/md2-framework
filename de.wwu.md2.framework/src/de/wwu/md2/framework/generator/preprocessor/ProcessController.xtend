@@ -159,6 +159,7 @@ class ProcessController extends AbstractPreprocessor {
 			simpleActionRef.setAction(gotoViewAction)
 			gotoViewAction.setView(main.startView)
 			startupAction.codeFragments.add(0, callTask);
+			main.setStartView(null)
 		}
 		
 		// else if startWorkflow set: create SetWorkflowAction and add it to startupAction
@@ -170,6 +171,7 @@ class ProcessController extends AbstractPreprocessor {
 			simpleActionRef.setAction(setWorkflowAction)
 			setWorkflowAction.setWorkflow(main.startWorkflow)
 			startupAction.codeFragments.add(0, callTask);
+			main.setStartWorkflow(null)
 		}
 	}
 	
