@@ -44,6 +44,16 @@ class ManifestJson {
 			"Bundle-Main": "",
 			"Require-Bundle": [],
 			"Require-Bundle": [
+				«IF dataContainer.contentProviders.exists[it.local]»
+					{
+						"name": "md2_local_store"
+					},
+				«ENDIF»
+				«IF dataContainer.contentProviders.exists[it.connection != null || it.^default]»
+					{
+						"name": "md2_store"
+					},
+				«ENDIF»
 				{
 					"name": "md2_runtime"
 				}
