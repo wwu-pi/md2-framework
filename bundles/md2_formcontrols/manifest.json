@@ -6,7 +6,6 @@
     "Bundle-Localization": [],
     "Bundle-Main": "",
     "Require-Bundle": [],
-    "Bundle-StartLevel": 40,
     "Require-Bundle": [
         {
             "name": "dataform"

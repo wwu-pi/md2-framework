@@ -17,10 +17,10 @@
             "name": "windowmanager"
         },
         {
-            "name": "md2_store"
+            "name": "md2_formcontrols"
         },
         {
-            "name": "md2_formcontrols"
+            "name": "md2_location_service"
         },
         {
             "name": "onlinestatus"
