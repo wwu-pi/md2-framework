@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/de.wwu.md2.framework.feature_0.2.0.rc3.jar" id="de.wwu.md2.framework.feature" version="0.2.0.rc3">
+      <category name="md2_framework"/>
+   </feature>
+   <category-def name="md2_framework" label="MD2 Framework">
+      <description>
+         Core MD2 framework files and MD2 Eclipse Editor
+      </description>
+   </category-def>
+</site>

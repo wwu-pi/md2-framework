@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.wwu.md2.framework.feature"
+      label="MD2 Framework"
+      version="0.2.0.rc3"
+      provider-name="University of Muenster">
+
+   <description>
+      MD2 Framework Development environment. This feature consists
+of a plug-in with the language specification (including a parser
+and validators) and the generators, and a plug-in that provides
+a UI for the Eclipse Editor.
+   </description>
+
+   <copyright>
+      Copyright 2014 University of Muenster
+   </copyright>
+
+   <license url="http://www.apache.org/licenses/LICENSE-2.0">
+      Copyright 2014 University of Muenster
+
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+   </license>
+
+   <url>
+      <update label="MD2 Framework Eclipse Plug-in" url="http://md2.soerenevers.de/plugin/"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.xtend"/>
+      <import plugin="org.eclipse.xtext" version="2.0.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.log4j" version="1.2.15" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext.util"/>
+      <import plugin="org.eclipse.emf.ecore"/>
+      <import plugin="org.eclipse.emf.common"/>
+      <import plugin="org.antlr.runtime"/>
+      <import plugin="org.eclipse.xtext.common.types"/>
+      <import plugin="org.apache.commons.logging"/>
+      <import plugin="org.eclipse.xtext.xbase.lib"/>
+      <import plugin="org.eclipse.xtend.lib"/>
+      <import plugin="org.eclipse.xtext.ui"/>
+      <import plugin="org.eclipse.ui.editors" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.ide" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext.ui.shared"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.xtext.builder"/>
+      <import plugin="org.eclipse.xtext.common.types.ui"/>
+      <import plugin="org.eclipse.xtext.ui.codetemplates.ui"/>
+      <import plugin="org.eclipse.compare"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.xpand"/>
+      <import plugin="org.eclipse.jdt.core"/>
+   </requires>
+
+   <plugin
+         id="de.wwu.md2.framework"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.wwu.md2.framework.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
