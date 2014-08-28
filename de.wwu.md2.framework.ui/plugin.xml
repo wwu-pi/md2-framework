@@ -191,7 +191,8 @@
          point="org.eclipse.ui.newWizards">
       <wizard
             class="de.wwu.md2.framework.ui.MD2ExecutableExtensionFactory:de.wwu.md2.framework.ui.wizard.MD2NewProjectWizard"
-            id="de.wwu.md2.framework.ui.wizard.MD2NewProjectWizard"
+            id="de.wwu.md2.framework.ui.MD2NewProjectWizard"
+            descriptionImage="bin/de/wwu/md2/framework/ui/wizard/md2_project_wizard_icon.png"
             icon="bin/de/wwu/md2/framework/ui/wizard/md2_project_wizard_icon.png"
             name="MD2 Project"
             project="true">

@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: de.wwu.md2.framework.ui
-Bundle-Vendor: My Company
-Bundle-Version: 1.0.0
+Bundle-Vendor: WWU
+Bundle-Version: 0.2.0
 Bundle-SymbolicName: de.wwu.md2.framework.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.wwu.md2.framework;visibility:=reexport,
