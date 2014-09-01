@@ -18,13 +18,41 @@ function (d_lang, declare, d_domconstruct, _Control, _WidgetBase, DateTextBox, T
         },
         buildRendering: function () {
             var div = d_domconstruct.create("div");
-            var dateWidget = new DateTextBox();
-            var timeWidget = new TimeTextBox();
-            d_domconstruct.place(dateWidget.domNode, div);
-            d_domconstruct.place(timeWidget.domNode, div);
+            var dateDiv = d_domconstruct.create("div", {
+                class: "datetimeboxInner"
+            });
+            var timeDiv = d_domconstruct.create("div", {
+                class: "datetimeboxInner"
+            });
+            var dateWidget = new DateTextBox({});
+            var timeWidget = new TimeTextBox({});
+            d_domconstruct.place(dateWidget.domNode, dateDiv);
+            d_domconstruct.place(timeWidget.domNode, timeDiv);
+            d_domconstruct.place(dateDiv, div);
+            d_domconstruct.place(timeDiv, div);
+            
+            dateWidget.on("change", d_lang.hitch(this, this._updateDate));
+            timeWidget.on("change", d_lang.hitch(this, this._updateTime));
+            
             this._dateWidget = dateWidget;
             this._timeWidget = timeWidget;
             this.domNode = div;
+        },
+        _updateDate: function() {
+            var combinedValue = this._combinedValue || new Date(0);
+            var c = combinedValue;
+            var d = this._dateWidget.getValue();
+            var newVal = d ? new Date(d.getFullYear(), d.getMonth(), d.getDate(), c.getHours(), c.getMinutes(), c.getSeconds()) : null;
+            this._combinedValue = newVal;
+            this.set("value", newVal);
+        },
+        _updateTime: function() {
+            var combinedValue = this._combinedValue || new Date(0);
+            var c = combinedValue;
+            var t = this._timeWidget.getValue();
+            var newVal = t ? new Date(c.getFullYear(), c.getMonth(), c.getDate(), t.getHours(), t.getMinutes(), t.getSeconds()): null;
+            this._combinedValue = newVal;
+            this.set("value", newVal);
         }
     });
     

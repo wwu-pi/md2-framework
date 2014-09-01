@@ -55,8 +55,19 @@
     height: 15px;
 }
 
-.md2widget .dijitTextBox {
+.md2widget .dijitTextBox,
+.datetimebox {
     width: 100%;
+}
+
+.md2widget .datetimebox .datetimeboxInner {
+    box-sizing: border-box;
+    display: inline-block;
+    width: 50%;
+}
+
+.md2widget .datetimebox .datetimeboxInner:first-child {
+    padding-right: 5px;
 }
 
 .md2widget .dijitButton,
