@@ -35,7 +35,7 @@ define([
             var options = [];
             ct_lang.forEachOwnProp(this._enum, function(value, name) {
                 options.push({
-                    id: name,
+                    value: name,
                     name: value
                 });
             }, this);
@@ -43,7 +43,11 @@ define([
         },
         
         _castFromString: function(value) {
-            return ct_lang.getFirstOwnPropNameWithValue(this._enum, value);
+            if (!value.match(/VALUE\d+/)) {
+                return ct_lang.getFirstOwnPropNameWithValue(this._enum, value);
+            } else {
+                return value;
+            }
         },
         
         _castFromNumber: function(value) {

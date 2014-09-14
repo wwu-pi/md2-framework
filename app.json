@@ -41,7 +41,8 @@
             "md2_app_tabTest",
             "md2_app_enumTest",
             "md2_app_insurance",
-            "md2_app_demo"
+            "md2_app_demo",
+            "md2_app_teammeeting"
         ],
         
         // the bundles to skip during load (if empty none are skipped)
