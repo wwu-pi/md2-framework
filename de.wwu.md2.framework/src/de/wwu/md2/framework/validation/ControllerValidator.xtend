@@ -136,7 +136,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 			acceptError(error, task, MD2Package.eINSTANCE.viewElementSetTask_Source, -1, null);
 		} else if (!targetType.equals(sourceType) && targetType.equals("string")) {
 			val warning = '''You are assigning a value of type '«sourceType»' to view element of type string. The string representation of '«sourceType»' will be assigned instead.'''
-			acceptWarning(warning, task, MD2Package.eINSTANCE.attributeSetTask_Source, -1, null);
+			acceptWarning(warning, task, MD2Package.eINSTANCE.viewElementSetTask_Source, -1, null);
 		}
 	}
 	
