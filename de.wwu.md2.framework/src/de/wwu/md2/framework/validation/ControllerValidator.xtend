@@ -100,9 +100,12 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		val targetType = task.pathDefinition.expressionType
 		val sourceType = task.source.expressionType
 		
-		if (!targetType.equals(sourceType)) {
+		if (!targetType.equals(sourceType) && !targetType.equals("string")) {
 			val error = '''Cannot set value of type '«sourceType»' to attribute with value of type '«targetType»'.'''
 			acceptError(error, task, MD2Package.eINSTANCE.attributeSetTask_Source, -1, null);
+		} else if (!targetType.equals(sourceType) && targetType.equals("string")) {
+			val warning = '''You are assigning a value of type '«sourceType»' to an attribute of type string. The string representation of '«sourceType»' will be assigned instead.'''
+			acceptWarning(warning, task, MD2Package.eINSTANCE.attributeSetTask_Source, -1, null);
 		}
 	}
 	
@@ -128,9 +131,12 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		val targetType = task.referencedViewField.expressionType
 		val sourceType = task.source.expressionType
 		
-		if (!targetType.equals(sourceType)) {
+		if (!targetType.equals(sourceType) && !targetType.equals("string")) {
 			val error = '''Cannot set value of type '«sourceType»' to a view element that handles values of type '«targetType»'.'''
 			acceptError(error, task, MD2Package.eINSTANCE.viewElementSetTask_Source, -1, null);
+		} else if (!targetType.equals(sourceType) && targetType.equals("string")) {
+			val warning = '''You are assigning a value of type '«sourceType»' to view element of type string. The string representation of '«sourceType»' will be assigned instead.'''
+			acceptWarning(warning, task, MD2Package.eINSTANCE.attributeSetTask_Source, -1, null);
 		}
 	}
 	
@@ -239,7 +245,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		val stepIndex = workflow.workflowSteps.indexOf(workflowStep)
 		
 		if (stepIndex == workflow.workflowSteps.size - 1) {
-			val error = '''No proceeding step! Cannot define 'proceed' operation on last workflow step.'''
+			val error = '''No subsequent step! Cannot define 'proceed' operation on last workflow step.'''
 			acceptError(error, next, null, -1, null);
 		}
 	}
