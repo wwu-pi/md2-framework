@@ -135,11 +135,13 @@ function(declare, lang, array, topic, string) {
         },
         
         setValue: function(value) {
+            if(!value) {
+                return;
+            }
             if (this._formControl) {
                 var widget = this._formControl.widget;
                 widget.set("value", value.getPlatformValue());
             }
-            
             var oldVal = this._state.currentValue;
             this._state.currentValue = value;
             if (!value.equals(oldVal)) {

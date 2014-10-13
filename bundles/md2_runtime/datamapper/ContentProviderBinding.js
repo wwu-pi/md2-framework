@@ -24,7 +24,8 @@ define([
             var value = undefined;
             this._dataMapper.getContentProviders(fieldname).forEach(function(target) {
                var attribute = target.attribute;
-               value = target.contentProvider.getValue(attribute).getPlatformValue();
+               value = target.contentProvider.getValue(attribute);
+               value = value ? value.getPlatformValue() : value;
                return false;
            });
            return value;
@@ -53,8 +54,8 @@ define([
                     var fieldName = widget.getId();
                     this._watchers._firePropertyChange(
                         fieldName,
-                        oldVal.getPlatformValue(),
-                        newVal.getPlatformValue()
+                        oldVal ? oldVal.getPlatformValue() : oldVal,
+                        newVal ? newVal.getPlatformValue() : newVal
                     );
                     
                     var newValue = this._typeFactory.create(widget._datatype, newVal);
