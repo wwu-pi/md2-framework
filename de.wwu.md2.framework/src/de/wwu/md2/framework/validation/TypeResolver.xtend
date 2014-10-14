@@ -17,6 +17,7 @@ import de.wwu.md2.framework.mD2.DateTimeVal
 import de.wwu.md2.framework.mD2.DateType
 import de.wwu.md2.framework.mD2.DateVal
 import de.wwu.md2.framework.mD2.Div
+import de.wwu.md2.framework.mD2.Enum
 import de.wwu.md2.framework.mD2.EnumType
 import de.wwu.md2.framework.mD2.FloatType
 import de.wwu.md2.framework.mD2.FloatVal
@@ -83,19 +84,57 @@ class TypeResolver {
 	/**
 	 * Recursively resolve last attribute of a path and return its attribute type name.
 	 */
-	def static String resolveAttribute(PathTail pathTail) {
+	def static AttributeType resolveAttribute(PathTail pathTail) {
 		
 		if (pathTail.tail == null) {
-			return pathTail.attributeRef.type.attributeTypeName
+			return pathTail.attributeRef.type
 		}
 		return pathTail.tail.resolveAttribute
+		
+	}
+	
+	def static boolean isValidEnumType(SimpleExpression lhs, SimpleExpression rhs) {
+		
+		val lhsIsEnum = switch lhs {
+			ContentProviderPath: lhs.tail.resolveAttribute instanceof ReferencedType
+					&& (lhs.tail.resolveAttribute as ReferencedType).element instanceof Enum
+			AbstractViewGUIElementRef: lhs.path.tail.resolveAttribute instanceof ReferencedType
+					&& (lhs.path.tail.resolveAttribute as ReferencedType).element instanceof Enum
+			default: false
+		}
+		
+		val rhsIsEnum = switch rhs {
+			ContentProviderPath: rhs.tail.resolveAttribute instanceof ReferencedType
+					&& (rhs.tail.resolveAttribute as ReferencedType).element instanceof Enum
+			AbstractViewGUIElementRef: rhs.path.tail.resolveAttribute instanceof ReferencedType
+					&& (rhs.path.tail.resolveAttribute as ReferencedType).element instanceof Enum
+			default: false
+		}
+		
+		lhsIsEnum && rhs.expressionType.equals("string") || rhsIsEnum && lhs.expressionType.equals("string")
+	}
+	
+	def static getAttributeTypeName(AttributeType type) {
+		
+		switch type {
+			IntegerType: "integer"
+			FloatType: "float"
+			StringType: "string"
+			BooleanType: "boolean"
+			DateType: "date"
+			TimeType: "time"
+			DateTimeType: "datetime"
+			ReferencedType: type.element.name
+			EnumType: "Enum"
+			default: System::err.println("Unexpected AttributeType found: " + type.eClass.name)
+		}
 		
 	}
 	
 	def private static String getAbstractViewGUIElementType(AbstractViewGUIElementRef ref) {
 		
 		if (ref.path != null) {
-			return ref.path.tail.resolveAttribute
+			return ref.path.tail.resolveAttribute.attributeTypeName
 		} else if (ref.simpleType != null) {
 			return ref.simpleType.type.toString
 		} else if (ref.tail == null) {
@@ -109,7 +148,7 @@ class TypeResolver {
 		
 		switch path {
 			LocationProviderPath: "string"
-			ContentProviderPath: path.tail.resolveAttribute
+			ContentProviderPath: path.tail.resolveAttribute.attributeTypeName
 		}
 		
 	}
@@ -144,27 +183,10 @@ class TypeResolver {
 			DateInput: "date"
 			TimeInput: "Time"
 			DateTimeInput: "datetime"
-			OptionInput: "string"
+			OptionInput: viewGUIElement.enumReference?.name ?: "string"
 			Tooltip: "string"
 			Label: "string"
 			default: "undefined"
-		}
-		
-	}
-	
-	def private static getAttributeTypeName(AttributeType type) {
-		
-		switch type {
-			IntegerType: "integer"
-			FloatType: "float"
-			StringType: "string"
-			BooleanType: "boolean"
-			DateType: "date"
-			TimeType: "time"
-			DateTimeType: "datetime"
-			ReferencedType: type.element.name
-			EnumType: "Enum"
-			default: System::err.println("Unexpected AttributeType found: " + type.eClass.name)
 		}
 		
 	}
