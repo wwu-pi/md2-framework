@@ -4,12 +4,11 @@ define([
     "dojo/_base/array",
     "ct/_lang",
     "ct/_when",
-    "ct/request",
-    "ct/store/StoreUtil",
+    "dojo/Deferred",
     "dojo/store/util/QueryResults",
     "dojo/json",
-    "dojo/request/xhr"
-], function(declare, lang, array, ct_lang, ct_when, ct_request, StoreUtil, QueryResults, json, xhr) {
+    "dojo/cookie"
+], function(declare, lang, array, ct_lang, ct_when, Deferred, QueryResults, json, cookie) {
     
     return declare([], {
         
@@ -26,63 +25,34 @@ define([
         
         query: function(query, options) {
             
-            var url = this.url;
-            var parameters = {};
+            var deferred = new Deferred();
             
-            if (query) {
-                this._makePlainJSObjectWithStringValues(query);
-                parameters.filter = this._complexQueryTranslator(query);
-                console && console.debug("[MD2Store] Vanilla query object: ", query);
-                console && console.debug("[MD2Store] Filter string: ", parameters.filter);
-            }
+            setTimeout(lang.hitch(this, function(){
+                var result = cookie(this.entityFactory.datatype);
+                result && (result = json.parse(result));
+                deferred.resolve(this._translateToMD2Types(result));
+            }), 100);
             
-            if (options && options.count) {
-                parameters.limit = options.count;
-            }
-            
-            var promise = ct_when(ct_request({
-                url: url,
-                content: parameters
-            }), function(response) {
-                var result = lang.isArray(response) ? response : [response];
-                var total = result.length;
-                result = StoreUtil.sort(result, options);
-                result.total = total;
-                return this._translateToMD2Types(result);
-            }, this);
-            
-            // need delegate, because the promise is frozen in chrome
-            promise = lang.delegate(promise, {
-                total: promise.then(function(result) {
-                    return result.total;
-                })
-            });
-            
-            return QueryResults(promise);
+            return QueryResults(deferred.promise);
         },
         
         get: function(id) {
-            return ct_when(this.query({__internalId: id}, {count: 1}), lang.hitch(this, function(result) {
+            return ct_when(this.query(), lang.hitch(this, function(result) {
                 result = this._translateToMD2Types(result);
                 return result.length ? result[0] : null;
             }));
         },
         
         put: function(object, options) {
-            options = options || {};
             
-            var jsObject = this._translateToJSTypes(object);
+            var deferred = new Deferred();
+            setTimeout(lang.hitch(this, function(){
+                var jsObject = this._translateToJSTypes(object);
+                cookie(this.entityFactory.datatype, json.stringify(jsObject), { expires: 365 });
+                deferred.resolve([1]);
+            }), 100);
             
-            var headers = lang.mixin({
-                "Content-Type": "application/json",
-                Accept: this.accepts
-            }, this.headers, options.headers || {});
-            
-            return xhr.post(ct_request.getProxiedUrl(this.url, true), {
-                data: json.stringify(jsObject),
-                handleAs: "json",
-                headers : headers
-            });
+            return deferred.promise;
         },
         
         add: function(object, options) {
@@ -90,150 +60,14 @@ define([
         },
         
         remove: function(ids) {
-            /*
-             * Use [GET] {service_url}/delete, because the ESRI proxy is not capable of
-             * handling [DELETE] requests.
-             */
-            return xhr.get(ct_request.getProxiedUrl(this.url.concat("delete/"), true), {
-                query: {
-                    id: ids
-                }
-            });
-        },
-        
-        /**
-         * Tarnsforms an object (not an entity!) with md2 datatypes into a
-         * plain JS object with string values. This is the basis for the filter string.
-         * @param {type} obj
-         * @returns {Object} - Vanilla object
-         */
-        _makePlainJSObjectWithStringValues: function(obj) {
-            ct_lang.forEachOwnProp(obj, function(value, key) {
-                if (value.hasOwnProperty("_platformValue")) {
-                    obj[key] = value.toString();
-                } else if (lang.isObject(value)) {
-                    this._makePlainJSObjectWithStringValues(value);
-                }
-            }, this);
-        },
-        
-        /**
-         * Translates a query in the mongodb JSON-notation that is used by map.apps' ComplexQuery
-         * notation into a query string that is supported by the MD2 backend.
-         * 
-         * @param {Object} query - ComplexQuery as specified in the mongodb JSON-notation.
-         * @returns {string} Filter string as required by the md2 backend.
-         */
-        _complexQueryTranslator: function(query) {
-            var filterString = "";
-            var i = 1;
-            for(var key in query) {
-                if(!query.hasOwnProperty(key)) {
-                    continue;
-                }
-                
-                if(key.charAt(0) === "$") {
-                    switch(key) {
-                        case "$and":
-                            filterString += this._logicalOperator(query[key], "and");
-                            break;
-                        case "$or":
-                            filterString += "(";
-                            filterString += this._logicalOperator(query[key], "or");
-                            filterString += ")";
-                            break;
-                        case "$not":
-                            filterString += "not(";
-                            filterString += this._complexQueryTranslator(query[key]);
-                            filterString += ")";
-                            break;
-                    }
-                } else {
-                    if(lang.isObject(query[key])) {
-                        // nested entity
-                        filterString += this._operatorExpression(query[key], key);
-                    } else {
-                        filterString += key.concat(" equals ", this._quotify(query[key]));
-                    }
-                }
-                
-                if(this._getObjectSize(query) > i) filterString += " and ";
-                i++;
-            }
             
-            return filterString;
-        },
-        
-        _logicalOperator: function(expressionArr, operator) {
-            var partials = [];
-            for(var i = 0; i < expressionArr.length; i++) {
-                partials.push(this._complexQueryTranslator(expressionArr[i]));
-            }
-            return partials.join(" ".concat(operator, " "));
-        },
-        
-        _operatorExpression: function(exp, prop) {
-            var i = 1;
-            var expression = "";
+            var deferred = new Deferred();
+            setTimeout(lang.hitch(this, function(){
+                cookie(this.entityFactory.datatype, "", { expires: 0 });
+                deferred.resolve();
+            }), 100);
             
-            // 
-            // The object might express a range and thus has to be iterated.
-            // E.g. (x > 1 && x < 5) can be represented as follows:
-            // 
-            //     store.query({
-            //       x: {
-            //         $gt: 1,
-            //         $lt: 5
-            //       }
-            //     });
-            // 
-            for(var key in exp) {
-                var value = this._quotify(exp[key]);
-                switch(key) {
-                    case "$not":
-                        expression += "not".concat("(", this._operatorExpression(exp[key], key), ")");
-                        break;
-                    case "$eq":
-                        expression += prop.concat(" equals ", value);
-                        break;
-                    case "$ne":
-                        expression += "not".concat("(", prop, " equals ", value, ")");
-                        break;
-                    case "$gt":
-                        expression += prop.concat(" greater ", value);
-                        break;
-                    case "$lt":
-                        expression += prop.concat(" smaller ", value);
-                        break;
-                    case "$gte":
-                        expression += prop.concat(" >= ", value);
-                        break;
-                    case "$lte":
-                        expression += prop.concat(" <= ", value);
-                        break;
-                }
-                
-                if(this._getObjectSize(exp) > i) expression += " and ";
-                i++;
-            }
-            
-            return (this._getObjectSize(exp) > 1) ? "(" + expression + ")" : expression;
-        },
-        
-        _getObjectSize: function(object) {
-            if(Object.keys) {
-                return Object.keys(object).length;
-            }
-            
-            var size = 0;
-            for(var key in object) {
-                if(object.hasOwnProperty(key)) size++;
-            }
-            return size;
-        },
-        
-        _quotify: function(expr) {
-            return lang.isString(expr) ? "\"".concat(expr, "\"") : expr;
+            return deferred.promise;
         },
         
         /**

@@ -19,7 +19,7 @@ define([
         _enum: null,
         
         toString: function() {
-            return this._enum[this._platformValue];
+            return this._platformValue ? this._enum[this._platformValue] : this._enum["VALUE0"];
         },
         
         isSet: function() {
