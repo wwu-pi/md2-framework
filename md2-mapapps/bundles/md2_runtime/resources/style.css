@@ -1,0 +1,80 @@
+/* 
+ * default style for md2 runtime window
+ */
+
+.md2-tooltipicon {
+    position: relative;
+    top: 3px;
+    height: 15px;
+    width: 15px;
+    padding: 2px;
+    background: #3c3c3c;
+    color: #fff;
+    margin-left: 5px;
+    font-size: 1.3em;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+}
+
+.md2-tooltipicon div {
+    margin: 1px 0 1px 4px;
+}
+
+.md2-spinner-overlay {
+    position: absolute;
+    z-index: 1;
+    height: 100%;
+    width: 100%;
+    background: rgba(0,0,0,.6) url("spinner.gif") no-repeat center center;
+    margin-left: -8px;
+    margin-top: -10px;
+}
+
+.md2widget .ctDataForm .ctFormControl.gridpanel .cell {
+    display: inline-block;
+    width: 50%;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box; /* Firefox 28 and earlier*/
+    padding: 0 5px 0 0;
+    margin: 0;
+}
+
+.md2widget .ctDataForm .ctFormControl.gridpanel .cell.layoutCell {
+    vertical-align: top;
+}
+
+.md2widget .ctDataForm .ctFormControl.gridpanel .labelCell {
+    float: none;
+}
+
+.md2widget .textoutput {
+    cursor: default;
+}
+
+.md2widget .spacerwidget {
+    height: 15px;
+}
+
+.md2widget .dijitTextBox,
+.datetimebox {
+    width: 100%;
+}
+
+.md2widget .datetimebox .datetimeboxInner {
+    box-sizing: border-box;
+    display: inline-block;
+    width: 50%;
+}
+
+.md2widget .datetimebox .datetimeboxInner:first-child {
+    padding-right: 5px;
+}
+
+.md2widget .dijitButton,
+.md2widget .dijitButton .dijitButtonNode {
+    width:100%;
+}
+
+.md2widget .dijitButton .dijitButtonNode {
+    padding: 2px 0 4px;
+}

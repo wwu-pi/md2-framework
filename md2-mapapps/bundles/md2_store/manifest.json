@@ -1,0 +1,14 @@
+{
+    "Bundle-SymbolicName": "md2_store",
+    "Bundle-Version": "1.0",
+    "Bundle-Name": "MD2Store",
+    "Bundle-Localization": [],
+    "Bundle-Main": "",
+    "Require-Bundle": [],
+    
+    "Components": [{
+            "name": "MD2StoreFactory",
+            "provides": ["md2.store.RemoteStore"]
+        }
+    ]
+}
