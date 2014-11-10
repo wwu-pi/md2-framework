@@ -17,13 +17,14 @@ Require-Bundle: de.wwu.md2.framework,
  com.google.inject,
  com.google.guava,
  org.eclipse.xtext.xbase.lib
-Import-Package: org.apache.log4j,
+Import-Package: org.apache.commons.io;version="2.0.1",
  org.apache.commons.logging,
+ org.apache.log4j,
+ org.hamcrest.core,
  org.junit.runner;version="4.5.0",
  org.junit.runner.manipulation;version="4.5.0",
  org.junit.runner.notification;version="4.5.0",
  org.junit.runners;version="4.5.0",
- org.junit.runners.model;version="4.5.0",
- org.hamcrest.core
+ org.junit.runners.model;version="4.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.wwu.md2.framework
