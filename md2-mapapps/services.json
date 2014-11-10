@@ -1,0 +1,14 @@
+{
+    "services": [
+        {
+            "id":"worldTopo",
+            "type":"AGS_TILED",
+            "url":"http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer"
+        },
+        {
+            "id":"streets",
+            "type":"AGS_TILED",
+            "url":"http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer"
+        }
+    ]
+}

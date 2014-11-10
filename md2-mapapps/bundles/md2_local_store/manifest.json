@@ -1,0 +1,14 @@
+{
+    "Bundle-SymbolicName": "md2_local_store",
+    "Bundle-Version": "1.0",
+    "Bundle-Name": "LocalStore",
+    "Bundle-Localization": [],
+    "Bundle-Main": "",
+    "Require-Bundle": [],
+    
+    "Components": [{
+            "name": "LocalStoreFactory",
+            "provides": ["md2.store.LocalStore"]
+        }
+    ]
+}

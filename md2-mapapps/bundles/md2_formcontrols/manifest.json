@@ -1,0 +1,65 @@
+{
+    "Bundle-SymbolicName": "md2_formcontrols",
+    "Bundle-Version": "1.0",
+    "Bundle-Name": "MD2 Form Controls",
+    "Bundle-Description": "FormControl factories that provide MD2 specific controls.",
+    "Bundle-Localization": [],
+    "Bundle-Main": "",
+    "Require-Bundle": [],
+    "Require-Bundle": [
+        {
+            "name": "dataform"
+        }
+    ],
+    "Components": [
+        {
+            "name": "TextOutputFactory",
+            "provides": "dataform.ControlFactory",
+            "properties": {
+                "dataformtype": "textoutput"
+            }
+        },
+        {
+            "name": "SpacerFactory",
+            "provides": "dataform.ControlFactory",
+            "properties": {
+                "dataformtype": "spacer"
+            }
+        },
+        {
+            "name": "TooltipFactory",
+            "provides": "dataform.ControlFactory",
+            "properties": {
+                "dataformtype": "tooltipicon"
+            }
+        },
+        {
+            "name": "DateTimeBoxFactory",
+            "provides": "dataform.ControlFactory",
+            "properties": {
+                "dataformtype": "datetimebox"
+            }
+        },
+        {
+            "name": "ImageFactory",
+            "provides": "dataform.ControlFactory",
+            "properties": {
+                "dataformtype": "simpleimage"
+            }
+        },
+        {
+            "name": "GridPanelFactory",
+            "provides": "dataform.ControlFactory",
+            "properties": {
+                "dataformtype": "md2gridpanel"
+            }
+        },
+        {
+            "name": "StackContainerFactory",
+            "provides": "dataform.ControlFactory",
+            "properties": {
+                "dataformtype": "stackcontainer"
+            }
+        }
+    ]
+}
