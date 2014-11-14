@@ -1,0 +1,6 @@
+package views
+
+GridLayoutPane myView (columns 3){
+	Spacer
+}
+

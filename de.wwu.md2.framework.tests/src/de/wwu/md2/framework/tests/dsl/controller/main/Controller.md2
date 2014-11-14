@@ -1,0 +1,10 @@
+package controllers
+
+main {
+appName "My exemplary App"
+appVersion "1.1"
+modelVersion "1.1"
+onInitialized myAction
+startView myView
+}
+

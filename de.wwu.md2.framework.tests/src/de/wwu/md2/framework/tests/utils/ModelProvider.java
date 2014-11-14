@@ -19,11 +19,13 @@ public class ModelProvider {
 	private static String BASE_URI = System.getProperty("user.dir")
 			+ "/src/de/wwu/md2/framework/tests/";
 
-	public static String MY_MODEL = "dsl/controller/test.md2";
+	public static String SIMPLE_MAIN_MODEL_C = "dsl/controller/main/Main.md2";
+
+	public static String SIMPLE_MAIN_MODEL_V = "dsl/controller/main/View.md2";
 
 	/**
-	 * Load the model from file.
-	 * @param modelUri the model URIs are listed in the ModelProvider as static Srings.
+	 * Load the model from file
+	 * @param modelUri the model URIs are listed in the ModelProvider as static Strings.
 	 * @return md2 model as a string.
 	 * @throws IOException
 	 */
