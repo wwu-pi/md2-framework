@@ -17,9 +17,9 @@ import org.apache.commons.io.IOUtils;
 public class ModelProvider {
 
 	private static String BASE_URI = System.getProperty("user.dir")
-			+ "/src/de/wwu/md2/framework/tests/";
+			+ "/models/de/wwu/md2/framework/tests/";
 
-	public static String SIMPLE_MAIN_MODEL_C = "dsl/controller/main/Main.md2";
+	public static String SIMPLE_MAIN_MODEL_C = "dsl/controller/main/Controller.md2";
 
 	public static String SIMPLE_MAIN_MODEL_V = "dsl/controller/main/View.md2";
 

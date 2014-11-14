@@ -50,6 +50,7 @@ class MainTests {
 	@Test
 	def numberOfMainElementsTest() {
 		1.assertEquals(elements.filter(typeof(Main)).size);
+		
 	}
 
 	@Test
@@ -60,7 +61,7 @@ class MainTests {
 	}
 
 	@Test
-	def onInitialiyedEventTest() {
+	def onInitializedEventTest() {
 		"myAction".assertEquals(main.onInitializedEvent.name)
 	}
 
