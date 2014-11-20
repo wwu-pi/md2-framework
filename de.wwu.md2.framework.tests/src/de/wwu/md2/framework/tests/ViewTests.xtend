@@ -2,10 +2,13 @@ package de.wwu.md2.framework.tests
 
 import com.google.inject.Inject
 import de.wwu.md2.framework.MD2InjectorProvider
+import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam
 import de.wwu.md2.framework.mD2.GridLayoutPaneRowsParam
 import de.wwu.md2.framework.mD2.MD2Model
+import de.wwu.md2.framework.mD2.NamedColorDef
+import de.wwu.md2.framework.mD2.StyleDefinition
 import de.wwu.md2.framework.mD2.View
 import de.wwu.md2.framework.mD2.WidthParam
 import org.eclipse.xtext.junit4.InjectWith
@@ -15,12 +18,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static extension org.junit.Assert.*
-import de.wwu.md2.framework.mD2.Button
-import de.wwu.md2.framework.mD2.StyleBody
-import de.wwu.md2.framework.mD2.Color
-import de.wwu.md2.framework.mD2.NamedColor
-import de.wwu.md2.framework.mD2.NamedColorDef
-import de.wwu.md2.framework.mD2.StyleDefinition
 
 @InjectWith(typeof(MD2InjectorProvider))
 @RunWith(typeof(XtextRunner))
@@ -68,32 +65,38 @@ class ViewTests {
 	
 	@Test
 	def gridlayoutWithButtonTest() {
-		val buttonName = "myButton"
-		val buttonText = "MyButton"
-		val colorRed = "red"
-		val fontSize = 4.2
+		val buttonName1 = "myButton"
+		val buttonText1 = "MyButton"
+		val colorButton1 = "red"
+		val fontSize1 = 4.2
+		
+		val buttonName2 = "myOtherButton"
+		val buttonText2 = "MyOther"
+		val fontSize2 = 2.0
+		val colorButton2 = "blue"
+		val textStyle2 = "normal"
 		
 		val model = '''
 			GridLayoutPane MyGridLayoutWithButtonElement(columns 42) {
-				Button «buttonName» ("«buttonText»") {
+				Button «buttonName1» ("«buttonText1»") {
 					style {
-						color «colorRed»
-						fontSize «fontSize»
+						color «colorButton1»
+						fontSize «fontSize1»
 						textStyle italic bold
 					}
 					disabled true 
 				}
 				
-				Button myOtherButton ("MyOther") {
+				Button «buttonName2» ("«buttonText2»") {
 					style myStyle
 					disabled false
 					width 42%
 				}
 			}
 			style myStyle {
-				color green
-				fontSize 2.0
-				textStyle normal
+				color «colorButton2»
+				fontSize «fontSize2»
+				textStyle «textStyle2»
 			}
 		'''.parse
 		val view = model.modelLayer as View
@@ -104,15 +107,36 @@ class ViewTests {
 		// test first button
 		// --------------------------
 		// test name and text
-		val button = elements.get(0) as Button
-		buttonName.assertEquals(button.name)
-		buttonText.assertEquals(button.text)
+		val button1 = elements.get(0) as Button
+		buttonName1.assertEquals(button1.name)
+		buttonText1.assertEquals(button1.text)
+		true.assertEquals(button1.isDisabled)
 		// test style: color
-		val style = button.style as StyleDefinition
-		val color = style.definition.color as NamedColorDef
-		colorRed.assertEquals(color.color.literal)
-		// test style: fontSize
-		fontSize.assertEquals(style.definition.fontSize) // TODO: why deprecated? check that!
+		val style1 = button1.style as StyleDefinition
+		val color1 = style1.definition.color as NamedColorDef
+		colorButton1.assertEquals(color1.color.literal)
+		// test style: font size
+		fontSize1.assertEquals(style1.definition.fontSize) // TODO: why deprecated? check that!
+		// test style: font style
+		true.assertEquals(style1.definition.bold)
+		true.assertEquals(style1.definition.italic)
+		
+		// --------------------------
+		// test second button
+		// --------------------------
+		val button2 = elements.get(0) as Button
+		buttonName2.assertEquals(button2.name)
+		buttonText2.assertEquals(button2.text)
+		true.assertEquals(button2.isDisabled)
+		// test style: color
+		val style2 = button2.style as StyleDefinition
+		val color2 = style2.definition.color as NamedColorDef
+		color2.assertEquals(color2.color.literal)
+		// test style: font size
+		fontSize2.assertEquals(style2.definition.fontSize) // TODO: why deprecated? check that!
+		// test style: font style
+		true.assertEquals(style2.definition.bold)
+		true.assertEquals(style2.definition.italic)
 	}
 	
 }
