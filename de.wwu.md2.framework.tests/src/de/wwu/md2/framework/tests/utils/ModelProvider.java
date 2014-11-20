@@ -23,7 +23,6 @@ public class ModelProvider {
 
 	public static String SIMPLE_MAIN_MODEL_V = "dsl/controller/main/View.md2";
 	
-	//TODO: should be put into differentpackage 
 	public static String COMPLETE_MODEL_M = "dsl/model/complete/Model.md2";
 
 
