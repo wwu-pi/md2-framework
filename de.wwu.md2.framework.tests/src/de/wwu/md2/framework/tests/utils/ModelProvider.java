@@ -22,6 +22,8 @@ public class ModelProvider {
 	public static String SIMPLE_MAIN_MODEL_C = "dsl/controller/main/Controller.md2";
 
 	public static String SIMPLE_MAIN_MODEL_V = "dsl/controller/main/View.md2";
+	
+	public static String COMPLETE_MODEL_M = "dsl/model/complete/Model.md2"; 
 
 	/**
 	 * Load the model from file

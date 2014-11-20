@@ -1,0 +1,16 @@
+package models
+	        
+entity Person {
+	name : String
+	details : Details
+}
+
+entity Details {
+	street : String
+	city : String
+}
+
+enum Status {
+	"eItem_1",
+	"eItem_2"
+}
