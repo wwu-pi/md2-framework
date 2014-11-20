@@ -1,16 +1,26 @@
 package models
-	        
-entity Person {
-	name : String
-	details : Details
+
+entity Book {
+	title: string
+	isbn: string
+	author: string
+	copies: Copy[]
 }
 
-entity Details {
-	street : String
-	city : String
+entity Copy {
+	id: integer
+	status: Status
+	inPortfolioSince: date
+	borrowedBy: Person
+}
+
+entity Person {
+	ename: string
+	loans: Copy[]
 }
 
 enum Status {
-	"eItem_1",
-	"eItem_2"
+	"borrowed",
+	"reserved",
+	"in shelf"
 }
