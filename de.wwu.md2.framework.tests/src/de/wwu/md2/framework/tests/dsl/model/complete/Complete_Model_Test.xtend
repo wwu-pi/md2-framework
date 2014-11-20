@@ -17,9 +17,9 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.emf.common.util.EList
 import de.wwu.md2.framework.mD2.Model
 import de.wwu.md2.framework.mD2.ModelElement
-import de.wwu.md2.framework.mD2.Entityimport java.util.List
+import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.Enumimport java.util.List
 import de.wwu.md2.framework.mD2.ReferencedType
-import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.impl.ReferencedTypeImpl
 
 @InjectWith(typeof(MD2InjectorProvider))
