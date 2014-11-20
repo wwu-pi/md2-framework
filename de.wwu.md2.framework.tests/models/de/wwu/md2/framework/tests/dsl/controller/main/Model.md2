@@ -1,0 +1,21 @@
+package models
+
+entity Book {
+	title: string
+	isbn: string
+	author: string
+	
+}
+
+entity Copy {
+	id: integer
+	status: Status
+	inPortfolioSince: date
+}
+
+
+enum Status {
+"borrowed",
+"reserved",
+"in shelf"
+}
