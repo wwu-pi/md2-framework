@@ -21,6 +21,7 @@ import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.Enumimport java.util.List
 import de.wwu.md2.framework.mD2.ReferencedType
 import de.wwu.md2.framework.mD2.impl.ReferencedTypeImpl
+import de.wwu.md2.framework.mD2.AttributeTypeimport de.wwu.md2.framework.mD2.StringType
 
 @InjectWith(typeof(MD2InjectorProvider))
 @RunWith(typeof(XtextRunner))
@@ -49,8 +50,6 @@ class Complete_Model_Test {
 		book = elements.filter(typeof(Entity)).head;
 		copy = entities.get(1);	
 		person = entities.get(2);
-		
-		System.out.println(copy.name + ", " + person.name);
 	}
 	
 	@Test
@@ -76,19 +75,37 @@ class Complete_Model_Test {
 	}
 	
 	@Test
+	def PredefinedAttributeTypeTest() {
+		assertTrue(book.attributes.filter[a| a.name.equals("isbn")].head.type instanceof StringType);
+	}
+	
+	
+	@Test
 	def CopyPersonNavigationIntoTwoDirectionsTest() {
 		
 		//check whether there is an attribute of type Person called "borrowedBy" in the Copy entity
 		val borrowedBy = copy.attributes.filter[a| a.type instanceof ReferencedType && a.name.equals("borrowedBy")].head;
 		"Person".assertEquals((borrowedBy.type as ReferencedTypeImpl).element.name);
-		
-		///1.assertEquals(person.attributes.filter[a| a.type.many && a.type instanceof ReferencedType].size);
-		
+				
 		//check whether there is a toMany attribute of type Copy called "loans" in the Person entity
 		val loans = person.attributes.filter[a|a.type.many && a.type instanceof ReferencedType && a.name.equals("loans")].head;
 		"Copy".assertEquals((loans.type as ReferencedTypeImpl).element.name);		
 		
 	}
+	
+	
+	@Test
+	def NumberOfAttributesTest() {
+		4.assertEquals(copy.attributes.size);
+	}
+	
+	
+	@Test
+	def ExtendedAttributeTest() {
+		"PrivateAddress".assertEquals(person.attributes.filter[a| a.name.equals("address")].head.extendedName);
+		"Address only as String!".assertEquals(person.attributes.filter[a| a.name.equals("address")].head.description);
+	}
+	
 	
 	@Test
 	def void parseModelEntity() {

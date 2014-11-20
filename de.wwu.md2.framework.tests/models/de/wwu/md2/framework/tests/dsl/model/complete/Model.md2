@@ -17,6 +17,11 @@ entity Copy {
 entity Person {
 	ename: string
 	loans: Copy[]
+	address: string
+	{
+		name "PrivateAddress"
+		description "Address only as String!"
+	}
 }
 
 enum Status {
