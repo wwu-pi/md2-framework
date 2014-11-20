@@ -17,7 +17,10 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.emf.common.util.EList
 import de.wwu.md2.framework.mD2.Model
 import de.wwu.md2.framework.mD2.ModelElement
-import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.Entityimport java.util.List
+import de.wwu.md2.framework.mD2.Attribute
+import javax.lang.model.type.ReferenceType
+import de.wwu.md2.framework.mD2.ReferencedType
 
 @InjectWith(typeof(MD2InjectorProvider))
 @RunWith(typeof(XtextRunner))
@@ -27,21 +30,30 @@ class ModelTest_AssertNoErrors {
 	@Inject extension ValidationTestHelper
 	MD2Model model_Testmodel;
 	
-	Entity e;
+	Entity book;
 
 	ResourceSet rs;
 	private EList<ModelElement> elements;
+	private List<Entity> entities;
+	private List<Enum> enums;
 
 	@Before
 	def void setUp() {
 		rs = new ResourceSetImpl();
 		model_Testmodel = SIMPLE_MAIN_MODEL_M.load.parse(rs);
 		elements = (model_Testmodel.modelLayer as Model).modelElements;
-		//e = elements.filter(typeof(Entity)).head;
+		entities = elements.filter(typeof(Entity)).toList;
+		enums = elements.filter(typeof(Enum)).toList;
+		book = elements.filter(typeof(Entity)).head;
+		
+	
+	//	e = elements.filter(typeof(Entity)).head;
+	//	e = entities.get(1);
+	//	System.out.println(e.name);
 	}
 	
 	@Test
-	def testAgainstErrors() {
+	def testAgainstAnyErrors() {
 		model_Testmodel.assertNoErrors;
 	}
 	
@@ -50,9 +62,17 @@ class ModelTest_AssertNoErrors {
 		2.assertEquals(elements.filter(typeof(Entity)).size);
 	}
 	
+	
 	//EnumsTest fails - Parser does not count the enum elements
 	@Test
 	def numberOfEnumsTest() {
-		1.assertEquals(elements.filter(typeof(Enum)).size);
+		1.assertEquals(enums.size);
 	}
+	
+	@Test
+	def BookCopyRelationshipTest() {
+		1.assertEquals(book.attributes.filter[a| a.type.many].size);
+	}
+	
+	
 }
