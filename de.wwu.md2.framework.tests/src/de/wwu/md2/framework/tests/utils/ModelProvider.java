@@ -22,7 +22,10 @@ public class ModelProvider {
 	public static String SIMPLE_MAIN_MODEL_C = "dsl/controller/main/Controller.md2";
 
 	public static String SIMPLE_MAIN_MODEL_V = "dsl/controller/main/View.md2";
+	
+	public static String SIMPLE_MAIN_MODEL_M = "dsl/controller/main/Model.md2";
 
+	
 	/**
 	 * Load the model from file
 	 * @param modelUri the model URIs are listed in the ModelProvider as static Strings.
