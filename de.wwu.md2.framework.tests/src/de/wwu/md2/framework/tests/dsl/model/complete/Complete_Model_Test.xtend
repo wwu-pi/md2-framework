@@ -21,7 +21,7 @@ import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.Enumimport java.util.List
 import de.wwu.md2.framework.mD2.ReferencedType
 import de.wwu.md2.framework.mD2.impl.ReferencedTypeImpl
-import de.wwu.md2.framework.mD2.AttributeTypeimport de.wwu.md2.framework.mD2.StringType
+import de.wwu.md2.framework.mD2.StringType
 
 @InjectWith(typeof(MD2InjectorProvider))
 @RunWith(typeof(XtextRunner))
@@ -77,7 +77,6 @@ class Complete_Model_Test {
 		assertTrue(book.attributes.filter[a| a.name.equals("isbn")].head.type instanceof StringType);
 	}
 	
-	
 	@Test
 	def CopyPersonNavigationIntoTwoDirectionsTest() {
 		
@@ -88,15 +87,12 @@ class Complete_Model_Test {
 		//check whether there is a toMany attribute of type Copy called "loans" in the Person entity
 		val loans = person.attributes.filter[a|a.type.many && a.type instanceof ReferencedType && a.name.equals("loans")].head;
 		"Copy".assertEquals((loans.type as ReferencedTypeImpl).element.name);		
-		
 	}
-	
 	
 	@Test
 	def NumberOfAttributesTest() {
 		4.assertEquals(copy.attributes.size);
 	}
-	
 	
 	@Test
 	def ExtendedAttributeTest() {
@@ -104,21 +100,20 @@ class Complete_Model_Test {
 		"Address only as String!".assertEquals(person.attributes.filter[a| a.name.equals("address")].head.description);
 	}
 	
-	
 	@Test
 	def void parseModelEntityTest() {
 		"Copy".assertEquals(copy.name)
 		"Book".assertEquals(book.name)
 		"Person".assertEquals(person.name)
-	    assertEquals(entityA.name, "Person")
-	    assertEquals(entityA.eClass.name, "Entity")
-	    entityB.name.assertEquals("Details")
+	    "Entity".assertEquals(copy.eClass.name)
+	    "Entity".assertEquals(book.eClass.name)
+	    "Entity".assertEquals(person.eClass.name)
 	}
 	
 	@Test
 	def parseModelEnumTest(){
-		val tempEnum = (model_Testmodel.modelLayer as Model).modelElements.head
-		tempEnum.name.assertEquals("Status")
-		(tempEnum instanceof Enum).assertTrue
+		val statusEnum = enums.get(0)
+		"Status".assertEquals(statusEnum.name)
+		"Enum".assertEquals(statusEnum.eClass.name)
 	}
 }
