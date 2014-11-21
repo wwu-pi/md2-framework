@@ -23,6 +23,23 @@ import de.wwu.md2.framework.mD2.ReferencedType
 import de.wwu.md2.framework.mD2.impl.ReferencedTypeImpl
 import de.wwu.md2.framework.mD2.StringType
 
+/*
+ * Set of Tests for the DSLs Model.
+ * What is covered by these tests? Overview:
+ * 
+ * setUp - Load Model
+ * 
+ * testAgainstAnyErrors - general model check
+ * numberOfEntitiesTest - right number of entities?
+ * numberOfEnumsTest - right number of enums?
+ * BookCopyRelationshipTest - relationship of book and copy?
+ * PredefinedAttributeTypeTest - checks one attribute of entity 
+ * CopyPersonNavigationIntoTwoDirections - bidirectional references (incl. toMany Relation)
+ * NumberOfAttributesTest - right number of attributes?
+ * Extended AttributeTest - extended attributes test
+ * parseModelEntityTest - all entities parsed?
+ * parseModelEnumTest - all enums parsed?
+ */
 @InjectWith(typeof(MD2InjectorProvider))
 @RunWith(typeof(XtextRunner))
 class Complete_Model_Test {
@@ -40,6 +57,8 @@ class Complete_Model_Test {
 	private Entity copy;
 	private Entity person;
 
+	
+	//Loads the different Elements of the Model into the corresponding variables
 	@Before
 	def void setUp() {
 		rs = new ResourceSetImpl();
@@ -52,31 +71,38 @@ class Complete_Model_Test {
 		person = entities.get(2);
 	}
 	
+	// General Model check
 	@Test
 	def testAgainstAnyErrors() {
 		model_Testmodel.assertNoErrors;
 	}
 	
+	
+	// Tests, if the amount of entities after parsing, equals the amount of Entities in the model.
 	@Test
 	def numberOfEntitiesTest() {
 		3.assertEquals(elements.filter(typeof(Entity)).size);
 	}
 	
+	// Tests, if the amount of enums after parsing, equals the amount of enums in the model.
 	@Test
 	def numberOfEnumsTest() {
 		1.assertEquals(enums.size);
 	}
 	
+	// Checks the relationship of book and copy
 	@Test
 	def BookCopyRelationshipTest() {
 		1.assertEquals(book.attributes.filter[a| a.type.many && a.type instanceof ReferencedType].size);
 	}
 	
+	// Checks an exemplary attribute of the entity book
 	@Test
 	def PredefinedAttributeTypeTest() {
 		assertTrue(book.attributes.filter[a| a.name.equals("isbn")].head.type instanceof StringType);
 	}
 	
+	// Tests, if bidirectional reference is parsed correctly (incl. a toMany relation)
 	@Test
 	def CopyPersonNavigationIntoTwoDirectionsTest() {
 		
@@ -89,17 +115,24 @@ class Complete_Model_Test {
 		"Copy".assertEquals((loans.type as ReferencedTypeImpl).element.name);		
 	}
 	
+	// Tests, if the number of attributes in entity copy and book are correct
 	@Test
 	def NumberOfAttributesTest() {
-		4.assertEquals(copy.attributes.size);
+		4.assertEquals(copy.attributes.size)
+		4.assertEquals(book.attributes.size)
+		3.assertEquals(person.attributes.size)
+		// Lets check the check
+		0.assertNotEquals(copy.attributes.size)
 	}
 	
+	// Tests, if extended attribute is parsed correctly
 	@Test
 	def ExtendedAttributeTest() {
 		"PrivateAddress".assertEquals(person.attributes.filter[a| a.name.equals("address")].head.extendedName);
 		"Address only as String!".assertEquals(person.attributes.filter[a| a.name.equals("address")].head.description);
 	}
 	
+	// Tests, if the models entities are all present after parsing
 	@Test
 	def void parseModelEntityTest() {
 		"Copy".assertEquals(copy.name)
@@ -110,6 +143,7 @@ class Complete_Model_Test {
 	    "Entity".assertEquals(person.eClass.name)
 	}
 	
+	// Tests, if the models enums are all present after parsing
 	@Test
 	def parseModelEnumTest(){
 		val statusEnum = enums.get(0)
