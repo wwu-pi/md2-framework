@@ -17,7 +17,7 @@ import org.eclipse.xtext.junit4.util.ParseHelper
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static extension org.junit.Assert.*
+import static extension org.junit.Assert.*import de.wwu.md2.framework.mD2.StyleReference
 
 @InjectWith(typeof(MD2InjectorProvider))
 @RunWith(typeof(XtextRunner))
@@ -74,7 +74,7 @@ class ViewTests {
 		val buttonText2 = "MyOther"
 		val fontSize2 = 2.0
 		val colorButton2 = "blue"
-		val textStyle2 = "normal"
+		val textStyle2 = "italic"
 		
 		val model = '''
 			GridLayoutPane MyGridLayoutWithButtonElement(columns 42) {
@@ -116,7 +116,7 @@ class ViewTests {
 		val color1 = style1.definition.color as NamedColorDef
 		colorButton1.assertEquals(color1.color.literal)
 		// test style: font size
-		fontSize1.assertEquals(style1.definition.fontSize) // TODO: why deprecated? check that!
+		new Double(fontSize1).assertEquals(new Double(style1.definition.fontSize)) // TODO: why deprecated? check that!
 		// test style: font style
 		true.assertEquals(style1.definition.bold)
 		true.assertEquals(style1.definition.italic)
@@ -124,19 +124,18 @@ class ViewTests {
 		// --------------------------
 		// test second button
 		// --------------------------
-		val button2 = elements.get(0) as Button
+		val button2 = elements.get(1) as Button
 		buttonName2.assertEquals(button2.name)
 		buttonText2.assertEquals(button2.text)
-		true.assertEquals(button2.isDisabled)
+		false.assertEquals(button2.isDisabled)
 		// test style: color
-		val style2 = button2.style as StyleDefinition
-		val color2 = style2.definition.color as NamedColorDef
-		color2.assertEquals(color2.color.literal)
+		val style2 = button2.style as StyleReference
+		val color2 = style2.reference.body.color as NamedColorDef
+		colorButton2.assertEquals(color2.color.literal)
 		// test style: font size
-		fontSize2.assertEquals(style2.definition.fontSize) // TODO: why deprecated? check that!
+		new Double(fontSize2).assertEquals(new Double(style2.reference.body.fontSize)) // TODO: why deprecated? check that!
 		// test style: font style
-		true.assertEquals(style2.definition.bold)
-		true.assertEquals(style2.definition.italic)
+		true.assertEquals(style2.reference.body.italic)
 	}
 	
 }
