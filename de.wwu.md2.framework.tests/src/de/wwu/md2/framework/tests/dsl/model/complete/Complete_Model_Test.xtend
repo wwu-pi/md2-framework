@@ -47,7 +47,7 @@ class Complete_Model_Test {
 		elements = (model_Testmodel.modelLayer as Model).modelElements;
 		entities = elements.filter(typeof(Entity)).toList;
 		enums = elements.filter(typeof(Enum)).toList;
-		book = elements.filter(typeof(Entity)).head;
+		book = entities.get(0);
 		copy = entities.get(1);	
 		person = entities.get(2);
 	}
@@ -62,8 +62,6 @@ class Complete_Model_Test {
 		3.assertEquals(elements.filter(typeof(Entity)).size);
 	}
 	
-	
-	//TODO: EnumsTest fails - Parser does not count the enum elements
 	@Test
 	def numberOfEnumsTest() {
 		1.assertEquals(enums.size);
@@ -108,32 +106,19 @@ class Complete_Model_Test {
 	
 	
 	@Test
-	def void parseModelEntity() {
-	    //Validate EntityA = Person
-	    // TODO: PROBLEM - 2nd entity cannot be located / found
-	    // val elem = (model.modelLayer as Model).modelElements
-	    val entityA = (model_Testmodel.modelLayer as Model).modelElements.head
+	def void parseModelEntityTest() {
+		"Copy".assertEquals(copy.name)
+		"Book".assertEquals(book.name)
+		"Person".assertEquals(person.name)
 	    assertEquals(entityA.name, "Person")
 	    assertEquals(entityA.eClass.name, "Entity")
-	    val TEMP = entityA.eContents.head
-	    //Validate EntityB = Details
-	    val entityB = (model_Testmodel.modelLayer as Model).modelElements.last
 	    entityB.name.assertEquals("Details")
 	}
 	
 	@Test
-	def parseModelEnum(){
-
-		
+	def parseModelEnumTest(){
 		val tempEnum = (model_Testmodel.modelLayer as Model).modelElements.head
 		tempEnum.name.assertEquals("Status")
 		(tempEnum instanceof Enum).assertTrue
-		val myEnum = tempEnum as Enum
-		//val tempEnumElementfirst = myEnum.enumBody.elements.head
-		//tempEnumElementfirst.assertEquals(statusElementFirst)
-		//val tempEnumElementlast = myEnum.enumBody.elements.last
-		//tempEnumElementlast.assertEquals(statusElementSecond)
 	}
-	
-	
 }
