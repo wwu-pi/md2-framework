@@ -28,8 +28,23 @@ public class MD2Formatter extends AbstractDeclarativeFormatter {
 		c.setLinewrap.after(gridLayoutPaneAccess.leftCurlyBracketKeyword_6)
 		c.setIndentation(gridLayoutPaneAccess.leftCurlyBracketKeyword_6, gridLayoutPaneAccess.rightCurlyBracketKeyword_8)
 		
+		// FlowLayoutPane
+		c.setLinewrap.before(flowLayoutPaneAccess.flowLayoutPaneKeyword_0)
+		c.setLinewrap.after(flowLayoutPaneAccess.leftCurlyBracketKeyword_3)
+		c.setIndentation(flowLayoutPaneAccess.leftCurlyBracketKeyword_3, gridLayoutPaneAccess.rightCurlyBracketKeyword_8)
+		
+		// AlternativesPane
+		c.setLinewrap.before(alternativesPaneAccess.alternativesPaneKeyword_0)
+		c.setLinewrap.after(alternativesPaneAccess.leftCurlyBracketKeyword_3)
+		c.setIndentation(alternativesPaneAccess.leftCurlyBracketKeyword_3, gridLayoutPaneAccess.rightCurlyBracketKeyword_8)
+		
+		// TabbedAlternativesPane
+		c.setLinewrap.before(tabbedAlternativesPaneAccess.tabbedPaneKeyword_0)
+		c.setLinewrap.after(tabbedAlternativesPaneAccess.leftCurlyBracketKeyword_3)
+		c.setIndentation(tabbedAlternativesPaneAccess.leftCurlyBracketKeyword_3, gridLayoutPaneAccess.rightCurlyBracketKeyword_8)
+		
 		// Button
 		c.setLinewrap.before(buttonShorthandDefinitionAccess.buttonKeyword_0)
-				
+		
 	}
 }
