@@ -22,7 +22,27 @@ public class MD2Formatter extends AbstractDeclarativeFormatter {
 	 * which declaratively sets up a FormattingConfig. 
 	 */
 	override configureFormatting(FormattingConfig c) {
+		/*
+		 * general Formatting
+		 */
+ 		//Package
+		c.setLinewrap(2,2,2).after(packageDefinitionAccess.pkgNameAssignment_1)
 		
+		//TODO: How to handle comments 
+
+
+		/*
+		 * WORKFLOW Formatting
+		 */
+		
+
+
+
+
+
+		/*
+		 * VIEW Formatting
+		 */
 		// GridLayoutPane
 		c.setLinewrap.before(gridLayoutPaneAccess.gridLayoutPaneKeyword_0)
 		c.setLinewrap.after(gridLayoutPaneAccess.leftCurlyBracketKeyword_6)
@@ -45,6 +65,39 @@ public class MD2Formatter extends AbstractDeclarativeFormatter {
 		
 		// Button
 		c.setLinewrap.before(buttonShorthandDefinitionAccess.buttonKeyword_0)
+		
+		
+		
+		
+		
+		/*
+		 * CONTROLLER FORMATTING
+		 */
+		
+		
+		
+		
+		
+		
+		
+		/*
+		 * MODEL Formatting
+		 */
+		//Entity
+		c.setLinewrap(2,2,3).before(entityAccess.entityKeyword_0)
+		c.setLinewrap.before(entityAccess.leftCurlyBracketKeyword_2)
+		c.setIndentation(entityAccess.leftCurlyBracketKeyword_2,entityAccess.rightCurlyBracketKeyword_4)
+		c.setLinewrap.before(entityAccess.rightCurlyBracketKeyword_4)
+		c.setLinewrap.before(entityAccess.attributesAssignment_3)
+		c.setLinewrap.before(entityAccess.group)
+		
+		//Enums
+		c.setLinewrap(2,2,3).before(enumAccess.enumKeyword_0)
+		c.setLinewrap.after(enumAccess.leftCurlyBracketKeyword_2)
+		c.setIndentation(enumAccess.leftCurlyBracketKeyword_2,entityAccess.rightCurlyBracketKeyword_4)
+		c.setLinewrap.before(enumAccess.enumBodyAssignment_3)
+		c.setLinewrap.after(enumAccess.enumBodyAssignment_3)
+		
 		
 	}
 }
