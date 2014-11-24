@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.tests
+package de.wwu.md2.framework.tests.dsl.view
 
 import com.google.inject.Inject
 import de.wwu.md2.framework.MD2InjectorProvider
