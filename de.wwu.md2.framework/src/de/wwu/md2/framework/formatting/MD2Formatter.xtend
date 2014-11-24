@@ -22,8 +22,14 @@ public class MD2Formatter extends AbstractDeclarativeFormatter {
 	 * which declaratively sets up a FormattingConfig. 
 	 */
 	override configureFormatting(FormattingConfig c) {
-				
-		c.setLinewrap.before(gridLayoutPaneAccess.gridLayoutPaneKeyword_0)
 		
+		// GridLayoutPane
+		c.setLinewrap.before(gridLayoutPaneAccess.gridLayoutPaneKeyword_0)
+		c.setLinewrap.after(gridLayoutPaneAccess.leftCurlyBracketKeyword_6)
+		c.setIndentation(gridLayoutPaneAccess.leftCurlyBracketKeyword_6, gridLayoutPaneAccess.rightCurlyBracketKeyword_8)
+		
+		// Button
+		c.setLinewrap.before(buttonShorthandDefinitionAccess.buttonKeyword_0)
+				
 	}
 }
