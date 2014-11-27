@@ -33,11 +33,11 @@ public class ModelProvider {
 	
 	public static final String BASIC_CONTROLLER_V = "dsl/controller/View.md2";
 	
-	public static final String FILTERED_CONTENTPROVIDER_C = "dsl/controller/contenProvider/Filtered.md2";
+	public static final String FILTERED_CONTENTPROVIDER_C = "dsl/controller/contentProvider/Filtered.md2";
 	
-	public static final String WHERE_CONTENTPROVIDER_C = "dsl/controller/contenProvider/Where.md2";
+	public static final String WHERE_CONTENTPROVIDER_C = "dsl/controller/contentProvider/Where.md2";
 	
-	public static final String SIMPLE_CONTENTPROVIDER_C = "dsl/controller/contenProvider/Simple.md2";
+	public static final String SIMPLE_CONTENTPROVIDER_C = "dsl/controller/contentProvider/Simple.md2";
 	
 	/**
 	 * Load the model from file
