@@ -1,0 +1,11 @@
+package controllers
+
+contentProvider Complaint filterMultiplizityProvider {
+	providerType filterMultiplizityConnection filter all
+}
+
+remoteConnection filterMultiplizityConnection{
+	uri "localhost:8080"
+	password "admin"
+	user "admin"
+}

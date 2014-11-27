@@ -39,6 +39,10 @@ public class ModelProvider {
 	
 	public static final String SIMPLE_CONTENTPROVIDER_C = "dsl/controller/contentProvider/Simple.md2";
 	
+	//********Validator*****//
+	
+	public static final String FILTER_MULTIPLIZITY_C = "dsl/controller/contentProvider/validator/FilterMultiplizity.md2";
+	
 	/**
 	 * Load the model from file
 	 * @param modelUri the model URIs are listed in the ModelProvider as static Strings.
