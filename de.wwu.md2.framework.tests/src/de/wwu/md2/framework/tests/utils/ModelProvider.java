@@ -21,11 +21,23 @@ public class ModelProvider {
 
 	public static String SIMPLE_MAIN_MODEL_C = "dsl/controller/main/Controller.md2";
 
-	public static String SIMPLE_MAIN_MODEL_V = "dsl/controller/main/View.md2";
+	public static String CONTROLLER_TESTS_V = "dsl/controller/View.md2";
 	
 	public static String COMPLETE_MODEL_M = "dsl/model/complete/Model.md2";
-
-
+	
+	
+	
+	//***Controller***//
+	
+	public static final String BASIC_CONTROLLER_M = "dsl/controller/Model.md2";
+	
+	public static final String BASIC_CONTROLLER_V = "dsl/controller/View.md2";
+	
+	public static final String FILTERED_CONTENTPROVIDER_C = "dsl/controller/contenProvider/Filtered.md2";
+	
+	public static final String WHERE_CONTENTPROVIDER_C = "dsl/controller/contenProvider/Where.md2";
+	
+	public static final String SIMPLE_CONTENTPROVIDER_C = "dsl/controller/contenProvider/Simple.md2";
 	
 	/**
 	 * Load the model from file
