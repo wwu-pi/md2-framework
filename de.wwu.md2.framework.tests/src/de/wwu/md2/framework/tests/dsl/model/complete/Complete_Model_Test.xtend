@@ -108,12 +108,13 @@ class Complete_Model_Test {
 		
 		//check whether there is an attribute of type Person called "borrowedBy" in the Copy entity
 		val borrowedBy = copy.attributes.filter[a| a.type instanceof ReferencedType && a.name.equals("borrowedBy")].head;
-		"Person".assertEquals((borrowedBy.type as ReferencedTypeImpl).element.name);
+		person.assertEquals((borrowedBy.type as ReferencedTypeImpl).element);
 				
 		//check whether there is a toMany attribute of type Copy called "loans" in the Person entity
 		val loans = person.attributes.filter[a|a.type.many && a.type instanceof ReferencedType && a.name.equals("loans")].head;
-		"Copy".assertEquals((loans.type as ReferencedTypeImpl).element.name);		
+		copy.assertEquals((loans.type as ReferencedTypeImpl).element);		
 	}
+	
 	
 	// Tests, if the number of attributes in entity copy and book are correct
 	@Test
