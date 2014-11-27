@@ -17,12 +17,12 @@ class ModelValidator extends AbstractMD2JavaValidator {
         // nothing to do
     }
     
+    public static final String DEFAULTREFERENCEVALUE = "defaultReferenceValue"
     
     /////////////////////////////////////////////////////////
 	/// Validators
 	/////////////////////////////////////////////////////////
 	
-	public static val DEFAULTREFERENCEVALUE = "defaultReferenceValue"
 	
 	/**
 	 * Ensures that no default values are assigned to entities.
