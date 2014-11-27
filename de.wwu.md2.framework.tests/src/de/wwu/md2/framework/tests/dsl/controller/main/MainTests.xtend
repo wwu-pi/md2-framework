@@ -35,7 +35,7 @@ class MainTests {
 	@Before
 	def void setUp() {
 		rs = new ResourceSetImpl();
-		viewModel = SIMPLE_MAIN_MODEL_V.load.parse(rs);
+		viewModel = BASIC_CONTROLLER_V.load.parse(rs);
 		mainModel = SIMPLE_MAIN_MODEL_C.load.parse(rs);
 		elements = (mainModel.modelLayer as Controller).controllerElements;
 		main = elements.filter(typeof(Main)).head;
