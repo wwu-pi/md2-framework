@@ -1,0 +1,16 @@
+package controllers
+
+contentProvider Complaint whereProvider {
+	providerType whereConnection filter first where Complaint.id equals 3 
+	and (Complaint.submitdate > 2014-12-11 or Complaint.submittedby.ename equals 'Karl')
+}
+
+contentProvider Complaint[] whereProvider2 {
+	providerType whereConnection filter all where not Complaint.id < 3
+}
+
+remoteConnection whereConnection{
+	uri "localhost:8080"
+	password "admin"
+	user "admin"
+}

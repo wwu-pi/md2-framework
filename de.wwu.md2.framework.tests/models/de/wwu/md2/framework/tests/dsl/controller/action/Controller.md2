@@ -1,0 +1,14 @@
+package controllers
+
+action CustomAction recursiveAction {
+call recursiveAction
+}
+
+action CustomAction bindAction {
+	bind actions recursiveAction on myView.onClick
+}
+
+action CombinedAction combinedAction{
+	bindAction
+	recursiveAction
+}
