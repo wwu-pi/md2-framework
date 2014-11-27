@@ -22,6 +22,8 @@ class ModelValidator extends AbstractMD2JavaValidator {
 	/// Validators
 	/////////////////////////////////////////////////////////
 	
+	public static val DEFAULTREFERENCEVALUE = "defaultReferenceValue"
+	
 	/**
 	 * Ensures that no default values are assigned to entities.
 	 */
@@ -32,7 +34,7 @@ class ModelValidator extends AbstractMD2JavaValidator {
 			val enumDefault = type.params.filter(AttrEnumDefault).head
 			if (enumDefault != null) {
 				val error = '''Cannot assign a default value to an entity.'''
-				acceptError(error, enumDefault, null, -1, null);
+				acceptError(error, enumDefault, null, -1, DEFAULTREFERENCEVALUE);
 			}
 		}
 	}

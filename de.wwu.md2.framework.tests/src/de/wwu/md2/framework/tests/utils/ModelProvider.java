@@ -25,6 +25,8 @@ public class ModelProvider {
 	
 	public static String COMPLETE_MODEL_M = "dsl/model/complete/Model.md2";
 	
+	public static String VALIDATOR_MODEL_M = "dsl/model/validator/Model.md2";
+	
 	
 	
 	//***Controller***//
