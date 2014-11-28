@@ -3,12 +3,15 @@ package models
 entity Complaint {
 	id: integer
 	status: ComplaintStatus
+	descr: string
 	submitdate: date
 	submittedby: User
 }
 
 entity User {
 	ename: string
+	email: string
+	bday: date
 	address: string
 	{
 		name "PrivateAddress"

@@ -41,6 +41,8 @@ public class ModelProvider {
 	
 	public static final String SIMPLE_CONTENTPROVIDER_C = "dsl/controller/contentProvider/Simple.md2";
 	
+	public static final String VALIDATOR_COMPONENT_C = "dsl/controller/validator/ValidatorComponent.md2";
+
 	//********Validator*****//
 	
 	public static final String FILTER_MULTIPLIZITY_C = "dsl/controller/contentProvider/validator/FilterMultiplizity.md2";
