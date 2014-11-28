@@ -42,8 +42,8 @@ FlowLayoutPane firstView {
 	
 }
 «ENDFILE»
-«FILE "src/" + projectName.replaceAll("\\.", "/") + "/workflow/defaultWorkflow.md2"-»
-package «projectName + ".workflow"»
+«FILE "src/" + projectName.replaceAll("\\.", "/") + "/workflows/defaultWorkflow.md2"-»
+package «projectName + ".workflows"»
 
 /*
  * Implement the workflow here
