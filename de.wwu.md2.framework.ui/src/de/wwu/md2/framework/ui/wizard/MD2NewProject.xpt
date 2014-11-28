@@ -42,6 +42,13 @@ FlowLayoutPane firstView {
 	
 }
 «ENDFILE»
+«FILE "src/" + projectName.replaceAll("\\.", "/") + "/workflow/defaultWorkflow.md2"-»
+package «projectName + ".workflow"»
+
+/*
+ * Implement the workflow here
+ */
+«ENDFILE»
 «FILE ".settings/org.eclipse.core.resources.prefs"-»
 eclipse.preferences.version=1
 encoding/<project>=UTF-8
