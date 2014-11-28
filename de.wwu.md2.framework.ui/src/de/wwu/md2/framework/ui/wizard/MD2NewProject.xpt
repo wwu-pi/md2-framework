@@ -48,6 +48,19 @@ package «projectName + ".workflows"»
 /*
  * Implement the workflow here
  */
+ 
+ WorkflowElement firstController
+	fires BasicEvent {
+		start firstController
+	}
+
+App «projectName»App {
+	WorkflowElements {
+		Startable firstController ("Start Controller 1")
+	}
+	appName "«projectName»"
+}
+
 «ENDFILE»
 «FILE ".settings/org.eclipse.core.resources.prefs"-»
 eclipse.preferences.version=1
