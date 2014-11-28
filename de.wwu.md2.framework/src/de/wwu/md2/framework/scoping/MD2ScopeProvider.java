@@ -50,7 +50,7 @@ public class MD2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	@Inject
 	private QualifiedNameProvider qualifiedNameProvider;
 	
-	public static Collection<EClass> validContainerForAbstractViews = Sets.newHashSet(MD2Package.eINSTANCE.getMain(), MD2Package.eINSTANCE.getWorkflowStep(), MD2Package.eINSTANCE.getSimpleAction());
+	public static Collection<EClass> validContainerForAbstractViews = Sets.newHashSet(MD2Package.eINSTANCE.getMain(), MD2Package.eINSTANCE.getProcessChainStep(), MD2Package.eINSTANCE.getSimpleAction());
 	
 	// Scoping for nested attributes
 	IScope scope_PathTail_attributeRef(PathTail pathTail, EReference attributeRef) {

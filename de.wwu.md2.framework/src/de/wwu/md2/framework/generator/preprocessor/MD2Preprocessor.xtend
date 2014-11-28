@@ -56,14 +56,14 @@ class MD2Preprocessor extends AbstractPreprocessor {
 	}
 	
 	/**
-	 * Actual preprocessing workflow.
+	 * Actual preprocessing processChain.
 	 */
 	private def preprocessModel() {
 		
 		/////////////////////////////////////////////////////////////////////////////
 		//                                                                         //
 		// Collections that are shared between tasks throughout the model          //
-		// pre-processing workflow                                                 //
+		// pre-processing processChain                                                 //
 		//                                                                         //
 		/////////////////////////////////////////////////////////////////////////////
 		
@@ -112,22 +112,22 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		val model = new ProcessModel
 		val view = new ProcessView
 		val viewReferences = new ProcessViewReferences
-		val workflows = new ProcessWorkflow
+		val processChains = new ProcessProcessChain
 		
 		
-		// workflow
+		// processChain
 		
 		controller.replaceDefaultProviderTypeWithConcreteDefinition // new
 		
 		controller.createStartUpActionAndRegisterAsOnInitializedEvent // new
 		
-		controller.createInitialGotoViewOrSetWorkflowAction // new
+		controller.createInitialGotoViewOrSetProcessChainAction // new
 		
 		controller.transformEventBindingAndUnbindingTasksToOneToOneRelations // new
 		
 		controller.calculateParameterSignatureForAllSimpleActions // new
 		
-		workflows.transformWorkflowsToSequenceOfCoreLanguageElements // new
+		processChains.transformProcessChainsToSequenceOfCoreLanguageElements // new
 		
 		conditionalEvents.transformAllCustomEventsToBasicLanguageStructures // new
 		

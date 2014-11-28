@@ -59,7 +59,7 @@ import de.wwu.md2.framework.mD2.ViewElementType;
 import de.wwu.md2.framework.mD2.ViewGUIElement;
 import de.wwu.md2.framework.mD2.ViewGUIElementReference;
 import de.wwu.md2.framework.mD2.WidthParam;
-import de.wwu.md2.framework.mD2.Workflow;
+import de.wwu.md2.framework.mD2.ProcessChain;
 import de.wwu.md2.framework.util.MD2Util;
 
 public class LegacyValidator extends AbstractMD2JavaValidator {
@@ -451,14 +451,14 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 	}
 	
 	/**
-	 * Avoid empty workflows.
-	 * @param workflow
+	 * Avoid empty processChains.
+	 * @param processChain
 	 */
 	@Check
-	public void checkForEmptyWorkflows(Workflow workflow) {
-		if(workflow.getWorkflowSteps().isEmpty()) {
-			acceptWarning("No workflow steps are defined for this workflow. Such workflows have no effect and should be omitted.",
-					workflow, null, -1, null);
+	public void checkForEmptyProcessChains(ProcessChain processChain) {
+		if(processChain.getProcessChainSteps().isEmpty()) {
+			acceptWarning("No processChain steps are defined for this processChain. Such processChains have no effect and should be omitted.",
+					processChain, null, -1, null);
 		}
 	}
 	
