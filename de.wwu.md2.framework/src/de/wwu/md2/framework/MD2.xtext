@@ -27,7 +27,7 @@ MD2Model:
  * a Controller or a Model
  */
 MD2ModelLayer:
-	View | Controller | Model
+	View | Controller | Model | Workflow
 ;
 
 /*
@@ -1699,6 +1699,55 @@ DateTimeTypeParam:
 EnumTypeParam:
 	{AttrIsOptional} optional ?= 'optional' |
 	{AttrEnumDefault} 'default' value = STRING
+;
+
+
+/////////////////////////////////////
+/////////////////////////////////////
+// New Workflow Concept
+/////////////////////////////////////
+/////////////////////////////////////
+
+/*
+ * A workflow allows to construct multiple applications based on WorkflowElements.
+ */
+Workflow: 
+	workflowElements += WorkflowElement+
+	apps += App+
+;
+
+/*
+ * WorkflowElements provide reusable functionality across applications.
+ * They allow the construction of a directed graph via events.
+ */
+WorkflowElement:
+	'WorkflowElement' name=EID
+		('fires' events += Event '{'
+			('start' startedWorkflowElements += [WorkflowElement])*
+		'}')+
+;
+
+Event:
+	name=EID
+;
+
+/*
+ * The application bundles multiple workflow elements.
+ */
+App:
+	'App' name=EID '{'
+		'WorkflowElements {'
+			  workflowElements += WorkflowElementEntry (',' workflowElements += WorkflowElementEntry)*
+		'}'
+	'}'
+;
+
+/*
+ * When referenced in an App, WorkflowElements can be specified as startable from the application's start screen.
+ * The alias determines the corresponding button label.
+ */
+WorkflowElementEntry:
+	workflowReference = [WorkflowElement] ( '(' startable ?= 'startable:' alias=STRING ')' )?
 ;
 
 
