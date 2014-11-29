@@ -752,7 +752,7 @@ SimpleAction:
 	{ProcessChainProceedAction} 'ProcessChainProceed' |
 	{ProcessChainReverseAction} 'ProcessChainReverse' |
 	{ProcessChainGotoAction} 'ProcessChainGoto' '(' wfStep = [ProcessChainStep | QUALIFIED_NAME] ')' |
-	{SetProcessChainAction} 'SetProcessChain' '(' ProcessChain = [ProcessChain] ')' |
+	{SetProcessChainAction} 'SetProcessChain' '(' processChain = [ProcessChain] ')' |
 	
 	// core actions that have to be supported by the platform
 	{GotoViewAction} ('GotoView' '(' view = AbstractViewGUIElementRef ')' ) |
@@ -1274,8 +1274,8 @@ enum LocationField:
  * is at most one ProcessChain active.
  */
 ProcessChain:
-	'ProcessChain' name = EID '{'
-		ProcessChainSteps += ProcessChainStep*
+	'processChain' name = EID '{'
+		processChainSteps += ProcessChainStep*
 	'}'
 ;
 
@@ -1306,7 +1306,7 @@ ProcessChainGoTo:
 	{ProcessChainGoToNext} 'proceed' |
 	{ProcessChainGoToPrevious} 'reverse' |
 	{ProcessChainReturn} 'return' (changeStep ?= 'and' changeDirection = ('proceed' | 'reverse'))? |
-	{ProcessChainGoToStep} 'goto' ProcessChainStep = [ProcessChainStep | QUALIFIED_NAME] ('(' 'returnTo' returnTo = [ProcessChainStep | QUALIFIED_NAME] ')')?
+	{ProcessChainGoToStep} 'goto' processChainStep = [ProcessChainStep | QUALIFIED_NAME] ('(' 'returnTo' returnTo = [ProcessChainStep | QUALIFIED_NAME] ')')?
 ;
 
 ProcessChainGoToSpec:
@@ -1826,7 +1826,7 @@ EID:
 	//	'maxLength' | 'minLength' | 'main' | 'appName' | 'appVersion' | 'defaultConnection' | 'startView' | 'modelVersion' |
 	//	'uri' | 'password' | 'user' | 'key' |
 	//	'cache' | 'providerType' | 'local' | 'filter' | 'where' | 'allowedOperations' | 'first' | 
-	//	'save' | 'load' | 'remove' | 'ProcessChain' | 'step' |
+	//	'save' | 'load' | 'remove' | 'processChain' | 'step' |
 	//	'forwardMessage' | 'backwardMessage' | 'validator' | 'validators' | 
 	//	'unbind' | 'map' | 'unmap' | 'all' | 'call' | 'onTouch' | 'onLeftSwipe' | 'use' | 'for' | 'to' | 'bind' | 'on' | 'from'
 	//	'forwardCondition' | 'forwardOnEvent' | 'backwardCondition' | 'backwardOnEvent' |'view' | 'onInitialized' | 'defaultProcessChain' | 

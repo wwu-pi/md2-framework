@@ -225,13 +225,13 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	@Check
 	def checkThatNoReverseDeclarationsOnFirstProcessChainStep(ProcessChainGoToPrevious reverse) {
 		
-		val ProcessChainStep = reverse.eContainer.eContainer as ProcessChainStep
-		val ProcessChain = ProcessChainStep.eContainer as ProcessChain
+		val processChainStep = reverse.eContainer.eContainer as ProcessChainStep
+		val processChain = processChainStep.eContainer as ProcessChain
 		
-		val stepIndex = ProcessChain.processChainSteps.indexOf(ProcessChainStep)
+		val stepIndex = processChain.processChainSteps.indexOf(processChainStep)
 		
 		if (stepIndex == 0) {
-			val error = '''No preceeding step! Cannot define 'reverse' operation on first ProcessChain step.'''
+			val error = '''No preceeding step! Cannot define 'reverse' operation on first processChain step.'''
 			acceptError(error, reverse, null, -1, null);
 		}
 	}
@@ -242,13 +242,13 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	@Check
 	def checkThatNoProceedDeclarationsOnLastProcessChainStep(ProcessChainGoToNext next) {
 		
-		val ProcessChainStep = next.eContainer.eContainer as ProcessChainStep
-		val ProcessChain = ProcessChainStep.eContainer as ProcessChain
+		val processChainStep = next.eContainer.eContainer as ProcessChainStep
+		val processChain = processChainStep.eContainer as ProcessChain
 		
-		val stepIndex = ProcessChain.processChainSteps.indexOf(ProcessChainStep)
+		val stepIndex = processChain.processChainSteps.indexOf(processChainStep)
 		
-		if (stepIndex == ProcessChain.processChainSteps.size - 1) {
-			val error = '''No subsequent step! Cannot define 'proceed' operation on last ProcessChain step.'''
+		if (stepIndex == processChain.processChainSteps.size - 1) {
+			val error = '''No subsequent step! Cannot define 'proceed' operation on last processChain step.'''
 			acceptError(error, next, null, -1, null);
 		}
 	}
