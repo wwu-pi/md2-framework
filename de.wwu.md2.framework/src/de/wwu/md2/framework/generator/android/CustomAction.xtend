@@ -371,7 +371,7 @@ class CustomActionTemplate {
 				app.getWorkflowManager().goToPreviousStep();
 			'''
 			GotoWorkflowStepAction: '''
-				app.getWorkflowManager().goToStep("«simpleAction.wfStep.name.toFirstUpper»", «IF simpleAction.silentFails»true«ELSE»false«ENDIF»);
+				app.getWorkflowManager().goToStep("«simpleAction.pcStep.name.toFirstUpper»", «IF simpleAction.silentFails»true«ELSE»false«ENDIF»);
 			'''
 			GotoViewAction: getGoToViewCode(resolveViewGUIElement(simpleAction.view), "app", basePackage, dataContainer, activities, fragments)
 			DataAction: '''
@@ -460,7 +460,7 @@ class CustomActionTemplate {
 		switch (simpleAction) {
 			GotoNextWorkflowStepAction: ""
 			GotoPreviousWorkflowStepAction: ""
-			GotoWorkflowStepAction: "_" + simpleAction.wfStep.name.toFirstUpper
+			GotoWorkflowStepAction: "_" + simpleAction.pcStep.name.toFirstUpper
 			GotoViewAction: "_" + getName(resolveViewGUIElement(simpleAction.view))
 			DataAction: "_" + simpleAction.contentProvider.name.toFirstUpper + "_" + 
 				switch (simpleAction.operation) {

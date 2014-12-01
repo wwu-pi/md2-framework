@@ -529,7 +529,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 		// __processChainExecuteAction. For each ProcessChainGotoAction that points to a different step one of these
 		// actions is build and stored in a hash map.
 		processChainGotoActions.forEach[ processChainGotoAction |
-			val processChainStep = processChainGotoAction.wfStep
+			val processChainStep = processChainGotoAction.pcStep
 			if (!createdProcessChainGotoActions.containsKey(processChainStep)) {
 				val customActionName = "__processChainActionEventTrigger_goto" + processChainStep.stringRepresentationOfStep.sha1Hex
 				val eventIdentifier = "__action.goto." + processChainStep.stringRepresentationOfStep
@@ -545,7 +545,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 		processChainGotoActions.forEach[ processChainGotoAction |
 			// build the SimpleActionRef that contains the cross-reference to the actual custom action
 			val actionRef = factory.createActionReference
-			val customAction = createdProcessChainGotoActions.get(processChainGotoAction.wfStep)
+			val customAction = createdProcessChainGotoActions.get(processChainGotoAction.pcStep)
 			actionRef.setActionRef(customAction)
 			
 			val containingActionDef = processChainGotoAction.eContainer as ActionDef

@@ -231,7 +231,7 @@ class ActionClass
 			{
 				GotoNextWorkflowStepAction: '''[GotoNextWorkflowStepAction performAction: [[GotoNextWorkflowStepEvent alloc] init]];'''
 				GotoPreviousWorkflowStepAction: '''[GotoPreviousWorkflowStepAction performAction: [[GotoPreviousWorkflowStepEvent alloc] init]];'''
-				GotoWorkflowStepAction: '''[GotoWorkflowStepAction performAction: [GotoWorkflowStepEvent eventWithWorkflowStepName: @"«action.wfStep.name»"]];'''
+				GotoWorkflowStepAction: '''[GotoWorkflowStepAction performAction: [GotoWorkflowStepEvent eventWithWorkflowStepName: @"«action.pcStep.name»"]];'''
 				GotoViewAction: '''[GotoControllerAction performAction: [GotoControllerEvent eventWithWindow: [AppData window] tabBarController: [AppData tabBarController] currentController: [AppData currentController] nextController: [SpecificAppData «getName(resolveViewGUIElement(action.view)).toFirstLower»Controller]]];'''
 				DataAction:
 				{
@@ -527,7 +527,7 @@ class ActionClass
 			{
 				GotoNextWorkflowStepAction: '''[GotoNextWorkflowStepAction action]'''
 				GotoPreviousWorkflowStepAction: '''[GotoPreviousWorkflowStepAction action]'''
-				GotoWorkflowStepAction: '''[GotoWorkflowStepAction actionWithEvent: [GotoWorkflowStepEvent eventWithWorkflowStepName: @"«action.wfStep.name»"]]'''
+				GotoWorkflowStepAction: '''[GotoWorkflowStepAction actionWithEvent: [GotoWorkflowStepEvent eventWithWorkflowStepName: @"«action.pcStep.name»"]]'''
 				GotoViewAction: '''[GotoControllerAction actionWithEvent: [GotoControllerEvent eventWithWindow: [AppData window] tabBarController: [AppData tabBarController] currentController: [AppData currentController] nextController: [SpecificAppData «getName(resolveViewGUIElement(action.view)).toFirstLower»Controller]]]'''
 				DataAction:
 				{

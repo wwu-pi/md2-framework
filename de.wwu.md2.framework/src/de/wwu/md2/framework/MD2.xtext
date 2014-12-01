@@ -751,7 +751,7 @@ SimpleAction:
 	// virtual actions that are replaced during preprocessing
 	{ProcessChainProceedAction} 'ProcessChainProceed' |
 	{ProcessChainReverseAction} 'ProcessChainReverse' |
-	{ProcessChainGotoAction} 'ProcessChainGoto' '(' wfStep = [ProcessChainStep | QUALIFIED_NAME] ')' |
+	{ProcessChainGotoAction} 'ProcessChainGoto' '(' pcStep = [ProcessChainStep | QUALIFIED_NAME] ')' |
 	{SetProcessChainAction} 'SetProcessChain' '(' processChain = [ProcessChain] ')' |
 	
 	// core actions that have to be supported by the platform
