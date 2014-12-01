@@ -14,10 +14,10 @@ import de.wwu.md2.framework.mD2.Operator
 import de.wwu.md2.framework.mD2.UnmappingTask
 import de.wwu.md2.framework.mD2.ViewElementSetTask
 import de.wwu.md2.framework.mD2.WhereClauseCompareExpression
-import de.wwu.md2.framework.mD2.Workflow
-import de.wwu.md2.framework.mD2.WorkflowGoToNext
-import de.wwu.md2.framework.mD2.WorkflowGoToPrevious
-import de.wwu.md2.framework.mD2.WorkflowStep
+import de.wwu.md2.framework.mD2.ProcessChain
+import de.wwu.md2.framework.mD2.ProcessChainGoToNext
+import de.wwu.md2.framework.mD2.ProcessChainGoToPrevious
+import de.wwu.md2.framework.mD2.ProcessChainStep
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
 
@@ -216,39 +216,39 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	
 	
 	/////////////////////////////////////////////////////////
-	/// Workflow Validators
+	/// ProcessChain Validators
 	/////////////////////////////////////////////////////////
 	
 	/**
-	 * Avoids that reverse operations can be assigned to the first step of a workflow.
+	 * Avoids that reverse operations can be assigned to the first step of a ProcessChain.
 	 */
 	@Check
-	def checkThatNoReverseDeclarationsOnFirstWorkflowStep(WorkflowGoToPrevious reverse) {
+	def checkThatNoReverseDeclarationsOnFirstProcessChainStep(ProcessChainGoToPrevious reverse) {
 		
-		val workflowStep = reverse.eContainer.eContainer as WorkflowStep
-		val workflow = workflowStep.eContainer as Workflow
+		val processChainStep = reverse.eContainer.eContainer as ProcessChainStep
+		val processChain = processChainStep.eContainer as ProcessChain
 		
-		val stepIndex = workflow.workflowSteps.indexOf(workflowStep)
+		val stepIndex = processChain.processChainSteps.indexOf(processChainStep)
 		
 		if (stepIndex == 0) {
-			val error = '''No preceeding step! Cannot define 'reverse' operation on first workflow step.'''
+			val error = '''No preceeding step! Cannot define 'reverse' operation on first processChain step.'''
 			acceptError(error, reverse, null, -1, null);
 		}
 	}
 	
 	/**
-	 * Avoids that proceed operations can be assigned to the last step of a workflow.
+	 * Avoids that proceed operations can be assigned to the last step of a ProcessChain.
 	 */
 	@Check
-	def checkThatNoProceedDeclarationsOnLastWorkflowStep(WorkflowGoToNext next) {
+	def checkThatNoProceedDeclarationsOnLastProcessChainStep(ProcessChainGoToNext next) {
 		
-		val workflowStep = next.eContainer.eContainer as WorkflowStep
-		val workflow = workflowStep.eContainer as Workflow
+		val processChainStep = next.eContainer.eContainer as ProcessChainStep
+		val processChain = processChainStep.eContainer as ProcessChain
 		
-		val stepIndex = workflow.workflowSteps.indexOf(workflowStep)
+		val stepIndex = processChain.processChainSteps.indexOf(processChainStep)
 		
-		if (stepIndex == workflow.workflowSteps.size - 1) {
-			val error = '''No subsequent step! Cannot define 'proceed' operation on last workflow step.'''
+		if (stepIndex == processChain.processChainSteps.size - 1) {
+			val error = '''No subsequent step! Cannot define 'proceed' operation on last processChain step.'''
 			acceptError(error, next, null, -1, null);
 		}
 	}

@@ -125,9 +125,9 @@ class ProcessController extends AbstractPreprocessor {
 	
 	/**
 	 * Create initial GotoViewAction in <i>__startupAction</i> to load the first view. The start-up action goes to
-	 * the view that is defined in the controller's main block. If no startView is specified, a SetWorkflow action
-	 * for the startWorkflow is created instead and added to the <i>__startupAction</i> action. Beware that the
-	 * SetWorkflowAction is replaced in the workflow processing again as it is no core MD2 element.
+	 * the view that is defined in the controller's main block. If no startView is specified, a SetProcessChain action
+	 * for the startProcessChain is created instead and added to the <i>__startupAction</i> action. Beware that the
+	 * SetProcessChainAction is replaced in the workflow processing again as it is no core MD2 element.
 	 * 
 	 * <p>
 	 *   DEPENDENCIES:
@@ -139,7 +139,7 @@ class ProcessController extends AbstractPreprocessor {
 	 *   </li>
 	 * </ul>
 	 */
-	def createInitialGotoViewOrSetWorkflowAction() {
+	def createInitialGotoViewOrSetProcessChainAction() {
 		
 		val main = controllers.map[ ctrl | 
 			ctrl.controllerElements.filter(typeof(Main))
@@ -162,16 +162,16 @@ class ProcessController extends AbstractPreprocessor {
 			main.setStartView(null)
 		}
 		
-		// else if startWorkflow set: create SetWorkflowAction and add it to startupAction
-		else if (main?.startWorkflow != null) {
+		// else if startProcessChain set: create SetProcessChainAction and add it to startupAction
+		else if (main?.startProcessChain != null) {
 			val callTask = factory.createCallTask
 			val simpleActionRef = factory.createSimpleActionRef
-			val setWorkflowAction = factory.createSetWorkflowAction
+			val setProcessChainAction = factory.createSetProcessChainAction
 			callTask.setAction(simpleActionRef)
-			simpleActionRef.setAction(setWorkflowAction)
-			setWorkflowAction.setWorkflow(main.startWorkflow)
+			simpleActionRef.setAction(setProcessChainAction)
+			setProcessChainAction.setProcessChain(main.startProcessChain)
 			startupAction.codeFragments.add(0, callTask);
-			main.setStartWorkflow(null)
+			main.setStartProcessChain(null)
 		}
 	}
 	

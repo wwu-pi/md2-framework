@@ -27,7 +27,7 @@ MD2Model:
  * a Controller or a Model
  */
 MD2ModelLayer:
-	View | Controller | Model
+	View | Controller | Model | Workflow
 ;
 
 /*
@@ -708,7 +708,7 @@ Controller:
  * The ControllerElement is the super type of all possible ControllerElements.
  */
 ControllerElement:
-	ContentProvider | Validator | Action | Workflow | OnConditionEvent | Main | RemoteConnection
+	ContentProvider | Validator | Action | ProcessChain | OnConditionEvent | Main | RemoteConnection
 ;
 
 /////////////////////////////////////
@@ -749,10 +749,10 @@ CombinedAction:
  */
 SimpleAction:
 	// virtual actions that are replaced during preprocessing
-	{WorkflowProceedAction} 'WorkflowProceed' |
-	{WorkflowReverseAction} 'WorkflowReverse' |
-	{WorkflowGotoAction} 'WorkflowGoto' '(' wfStep = [WorkflowStep | QUALIFIED_NAME] ')' |
-	{SetWorkflowAction} 'SetWorkflow' '(' workflow = [Workflow] ')' |
+	{ProcessChainProceedAction} 'ProcessChainProceed' |
+	{ProcessChainReverseAction} 'ProcessChainReverse' |
+	{ProcessChainGotoAction} 'ProcessChainGoto' '(' pcStep = [ProcessChainStep | QUALIFIED_NAME] ')' |
+	{SetProcessChainAction} 'SetProcessChain' '(' processChain = [ProcessChain] ')' |
 	
 	// core actions that have to be supported by the platform
 	{GotoViewAction} ('GotoView' '(' view = AbstractViewGUIElementRef ')' ) |
@@ -1049,7 +1049,7 @@ Main:
 		(
 			('appName' appName = STRING) &
 			('appVersion' appVersion = STRING) &
-			('startView' startView = AbstractViewGUIElementRef | 'startWorkflow' startWorkflow = [Workflow]) &
+			('startView' startView = AbstractViewGUIElementRef | 'startProcessChain' startProcessChain = [ProcessChain]) &
 			('modelVersion' modelVersion = STRING) &
 			('onInitialized' onInitializedEvent = [Action]) &
 			('defaultConnection' defaultConnection = [RemoteConnection])?
@@ -1264,54 +1264,54 @@ enum LocationField:
 
 
 /////////////////////////////////////////
-// Controller layer => Workflows
+// Controller layer => ProcessChains
 /////////////////////////////////////////
 
 /*
- * A Workflow is used to define several steps in which the
+ * A ProcessChain is used to define several steps in which the
  * application can currently be. It is possible to define
- * several Workflows, Workflows can be nested and there
- * is at most one Workflow active.
+ * several ProcessChains, ProcessChains can be nested and there
+ * is at most one ProcessChain active.
  */
-Workflow:
-	'workflow' name = EID '{'
-		workflowSteps += WorkflowStep*
+ProcessChain:
+	'processChain' name = EID '{'
+		processChainSteps += ProcessChainStep*
 	'}'
 ;
 
 /*
- * Each WorkflowStep defines one view that is related to it
- * and will be displayed if the WorkflowStep becomes the
- * current WorkflowStep of the active Workflow. Additionally
+ * Each ProcessChainStep defines one view that is related to it
+ * and will be displayed if the ProcessChainStep becomes the
+ * current ProcessChainStep of the active ProcessChain. Additionally
  * conditions can be defined, that restrict switching to the
- * next or previous WorkflowStep. Also events can be
+ * next or previous ProcessChainStep. Also events can be
  * specified that trigger the change to the next or previous
- * WorkflowStep. Instead of the former mentioned settings,
- * a Workflow can be referred to that will become active
- * while this WorkflowStep is the current one.
+ * ProcessChainStep. Instead of the former mentioned settings,
+ * a ProcessChain can be referred to that will become active
+ * while this ProcessChainStep is the current one.
  */
-WorkflowStep:
+ProcessChainStep:
 	'step' name = EID ':' (
 		('view' view = AbstractViewGUIElementRef) &
-		(gotos += WorkflowGoToDefinition)* &
+		(gotos += ProcessChainGoToDefinition)* &
 		('message' message = SimpleExpression)?
 	)
 ;
 
-WorkflowGoToDefinition:
-	goto = WorkflowGoTo spec = WorkflowGoToSpec
+ProcessChainGoToDefinition:
+	goto = ProcessChainGoTo spec = ProcessChainGoToSpec
 ;
 
-WorkflowGoTo:
-	{WorkflowGoToNext} 'proceed' |
-	{WorkflowGoToPrevious} 'reverse' |
-	{WorkflowReturn} 'return' (changeStep ?= 'and' changeDirection = ('proceed' | 'reverse'))? |
-	{WorkflowGoToStep} 'goto' workflowStep = [WorkflowStep | QUALIFIED_NAME] ('(' 'returnTo' returnTo = [WorkflowStep | QUALIFIED_NAME] ')')?
+ProcessChainGoTo:
+	{ProcessChainGoToNext} 'proceed' |
+	{ProcessChainGoToPrevious} 'reverse' |
+	{ProcessChainReturn} 'return' (changeStep ?= 'and' changeDirection = ('proceed' | 'reverse'))? |
+	{ProcessChainGoToStep} 'goto' processChainStep = [ProcessChainStep | QUALIFIED_NAME] ('(' 'returnTo' returnTo = [ProcessChainStep | QUALIFIED_NAME] ')')?
 ;
 
-WorkflowGoToSpec:
-	{WorkflowGoToSpecShorthand} ('on' events += EventDef+)? |
-	{WorkflowGoToSpecExtended} '{' (
+ProcessChainGoToSpec:
+	{ProcessChainGoToSpecShorthand} ('on' events += EventDef+)? |
+	{ProcessChainGoToSpecExtended} '{' (
 		('on' events += EventDef+)? &
 		('given' (condition = Condition | '{' condition = Condition '}'))? &
 		('then' action = ActionDef)?
@@ -1704,6 +1704,55 @@ EnumTypeParam:
 
 /////////////////////////////////////
 /////////////////////////////////////
+// New Workflow Concept
+/////////////////////////////////////
+/////////////////////////////////////
+
+/*
+ * A workflow allows to construct multiple applications based on WorkflowElements.
+ */
+Workflow: 
+	(workflowElements += WorkflowElement+) &
+	(apps += App+)
+;
+
+/*
+ * WorkflowElements provide reusable functionality across applications.
+ * They allow the construction of a directed graph via events.
+ */
+WorkflowElement:
+	'WorkflowElement' name=EID
+		('fires' events += Event '{'
+			('start' startedWorkflowElements += [WorkflowElement])*
+		'}')+
+;
+
+Event:
+	name=EID
+;
+
+/*
+ * The application bundles multiple workflow elements.
+ */
+App:
+	'App' name=EID '{'
+		'WorkflowElements {'
+			  workflowElements += WorkflowElementEntry (',' workflowElements += WorkflowElementEntry)*
+		'}'
+	'}'
+;
+
+/*
+ * When referenced in an App, WorkflowElements can be specified as startable from the application's start screen.
+ * The alias determines the corresponding button label.
+ */
+WorkflowElementEntry:
+	workflowReference = [WorkflowElement] ( '(' startable ?= 'startable:' alias=STRING ')' )?
+;
+
+
+/////////////////////////////////////
+/////////////////////////////////////
 // Terminal and data type rules
 /////////////////////////////////////
 /////////////////////////////////////
@@ -1777,10 +1826,10 @@ EID:
 	//	'maxLength' | 'minLength' | 'main' | 'appName' | 'appVersion' | 'defaultConnection' | 'startView' | 'modelVersion' |
 	//	'uri' | 'password' | 'user' | 'key' |
 	//	'cache' | 'providerType' | 'local' | 'filter' | 'where' | 'allowedOperations' | 'first' | 
-	//	'save' | 'load' | 'remove' | 'workflow' | 'step' |
+	//	'save' | 'load' | 'remove' | 'processChain' | 'step' |
 	//	'forwardMessage' | 'backwardMessage' | 'validator' | 'validators' | 
 	//	'unbind' | 'map' | 'unmap' | 'all' | 'call' | 'onTouch' | 'onLeftSwipe' | 'use' | 'for' | 'to' | 'bind' | 'on' | 'from'
-	//	'forwardCondition' | 'forwardOnEvent' | 'backwardCondition' | 'backwardOnEvent' |'view' | 'onInitialized' | 'defaultWorkflow' | 
+	//	'forwardCondition' | 'forwardOnEvent' | 'backwardCondition' | 'backwardOnEvent' |'view' | 'onInitialized' | 'defaultProcessChain' | 
 	//	'integer' | 'float' | 'string' | 'boolean' | 'date' | 'time' | 'timestamp' | 'remoteConnection' |  'contentProvider' |
 ;
 
