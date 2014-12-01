@@ -1712,8 +1712,8 @@ EnumTypeParam:
  * A workflow allows to construct multiple applications based on WorkflowElements.
  */
 Workflow: 
-	workflowElements += WorkflowElement+
-	apps += App+
+	(workflowElements += WorkflowElement+) &
+	(apps += App+)
 ;
 
 /*
