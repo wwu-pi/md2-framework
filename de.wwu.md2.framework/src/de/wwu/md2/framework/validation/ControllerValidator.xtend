@@ -22,6 +22,9 @@ import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
 
 import static extension de.wwu.md2.framework.validation.TypeResolver.*
+import de.wwu.md2.framework.mD2.FireEventAction
+import de.wwu.md2.framework.mD2.WorkflowElement
+import de.wwu.md2.framework.mD2.WorkflowElementEntry
 
 /**
  * Valaidators for all controller elements of MD2.
@@ -31,8 +34,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	@Inject
     override register(EValidatorRegistrar registrar) {
         // nothing to do
-    }
-    
+    }   
     
     /////////////////////////////////////////////////////////
 	/// Action Validators
@@ -56,6 +58,19 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 				You tried to apply a '«action.operation»'-operation on a read-only content provider. Only 'load' is allowed in this location.
 			'''
 			acceptError(error, action, MD2Package.eINSTANCE.contentProviderOperationAction_Operation, -1, null);
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	@Check
+	def checkEventExistsInCorrectWorkflowElement(FireEventAction action){
+		val workflowElementInWorkflow = (action.workflowEvent.eContainer as WorkflowElementEntry).workflowElement
+		
+		val workflowElementInController = (action.eContainer.eContainer.eContainer.eContainer as WorkflowElement)
+		if(workflowElementInWorkflow.name != workflowElementInController.name){
+			error("Event not specified in WorkflowElement", MD2Package.eINSTANCE.fireEventAction_WorkflowEvent)
 		}
 	}
 	
