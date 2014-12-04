@@ -708,8 +708,30 @@ Controller:
  * The ControllerElement is the super type of all possible ControllerElements.
  */
 ControllerElement:
-	ContentProvider | Validator | Action | ProcessChain | OnConditionEvent | Main | RemoteConnection
+	ContentProvider | Validator | Main | RemoteConnection | WorkflowElement
 ;
+
+
+/////////////////////////////////////
+// Controller layer => WorkflowElements
+/////////////////////////////////////
+
+
+WorkflowElement:
+	'WorkflowElement' name=EID '{'
+		
+		'onInit' '{'
+			initActions += Action
+		'}'
+		
+		actions += Action+
+		
+	'}'	
+;
+
+
+
+
 
 /////////////////////////////////////
 // Controller layer => Events
@@ -761,6 +783,7 @@ SimpleAction:
 	{DisplayMessageAction} ('DisplayMessage' '(' message = SimpleExpression ')' ) |
 	{ContentProviderOperationAction} ('ContentProviderOperation' '(' operation = AllowedOperation contentProvider = AbstractProviderReference ')') |
 	{ContentProviderResetAction} ('ContentProviderReset' '('contentProvider = ContentProviderReference ')') |
+	{FireEventAction} ('FireEvent' '('workflowEvent = [WorkflowEvent]')') |
 	
 	// TODO -- multi-valued content provider, not supported yet
 	{ContentProviderAddAction} ('ContentProviderAdd' '('contentProvider = ContentProviderReference ')') |
@@ -811,7 +834,7 @@ ElseCodeBlock:
 ;
 
 /*
- * Helper Rule. Each element that can contain codeFragments should inherit from ConatinsCodeFragments. So, the code of the generators and
+ * Helper Rule. Each element that can contain codeFragments should inherit from ContainsCodeFragments. So, the code of the generators and
  * the preprocessing does not have to be adapted each time a new element that has a codeFragments attribute is added.
  */
 ContainsCodeFragments:
@@ -1047,12 +1070,8 @@ DateTimeRangeValidatorParam:
 Main:
 	'main' '{'
 		(
-			('appName' appName = STRING) &
 			('appVersion' appVersion = STRING) &
-			('startView' startView = AbstractViewGUIElementRef | 'startProcessChain' startProcessChain = [ProcessChain]) &
-			('modelVersion' modelVersion = STRING) &
-			('onInitialized' onInitializedEvent = [Action]) &
-			('defaultConnection' defaultConnection = [RemoteConnection])?
+			('modelVersion' modelVersion = STRING)
 		)
 	'}'
 ;
@@ -1712,7 +1731,7 @@ EnumTypeParam:
  * A workflow allows to construct multiple applications based on WorkflowElements.
  */
 Workflow: 
-	(workflowElements += WorkflowElement+) &
+	(workflowElementEntries += WorkflowElementEntry+) &
 	(apps += App+)
 ;
 
@@ -1720,14 +1739,14 @@ Workflow:
  * WorkflowElements provide reusable functionality across applications.
  * They allow the construction of a directed graph via events.
  */
-WorkflowElement:
-	'WorkflowElement' name=EID
-		('fires' events += Event '{'
+WorkflowElementEntry:
+	'WorkflowElement' workflowElement=[WorkflowElement]
+		('fires' events += WorkflowEvent '{'
 			('start' startedWorkflowElements += [WorkflowElement])*
 		'}')+
 ;
 
-Event:
+WorkflowEvent:
 	name=EID
 ;
 
@@ -1736,9 +1755,11 @@ Event:
  */
 App:
 	'App' name=EID '{'
-		'WorkflowElements {'
-			  workflowElements += WorkflowElementEntry (',' workflowElements += WorkflowElementEntry)*
-		'}'
+		('WorkflowElements {'
+			  workflowElements += WorkflowElementReference (',' workflowElements += WorkflowElementReference)*
+		'}') &
+		('appName' appName = STRING) &
+		('defaultConnection' defaultConnection = [RemoteConnection])?
 	'}'
 ;
 
@@ -1746,8 +1767,8 @@ App:
  * When referenced in an App, WorkflowElements can be specified as startable from the application's start screen.
  * The alias determines the corresponding button label.
  */
-WorkflowElementEntry:
-	workflowReference = [WorkflowElement] ( '(' startable ?= 'startable:' alias=STRING ')' )?
+WorkflowElementReference:
+	workflowElementReference = [WorkflowElement] ( '(' startable ?= 'startable:' alias=STRING ')' )?
 ;
 
 
