@@ -62,7 +62,7 @@ class ProjectSettings {
 	def static orgEclipseWstCommonProjectFacetCore() '''
 		<?xml version="1.0" encoding="UTF-8"?>
 		<faceted-project>
-		  <runtime name="GlassFish 3.1.2"/>
+		  <runtime name="GlassFish 4.0"/>
 		  <fixed facet="java"/>
 		  <fixed facet="jst.web"/>
 		  <fixed facet="wst.jsdt.web"/>
