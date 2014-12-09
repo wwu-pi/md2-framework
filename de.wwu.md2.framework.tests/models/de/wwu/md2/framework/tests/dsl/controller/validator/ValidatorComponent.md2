@@ -52,8 +52,8 @@ remoteConnection myConnection {
 //assign Validators to input fields 
 
 action CustomAction assignValidators {
-	bind validator NumberRangeValidator (message "ID must between 1 and 666!") on complaintView.complaintID
-	bind validator NotNullValidator (message "ID must not be null!") on complaintView.complaintID
+	bind validators NotNullValidator (message "ID must not be null!")  NumberRangeValidator (message "ID must between 1 and 666!") on complaintView.complaintID
+	//bind validator NotNullValidator (message "ID must not be null!") on complaintView.complaintID
 	bind validator StringRangeValidator (maxLength 150, minLength 1, message "the string is too short or too long!") on complaintView.descriptionTxt
 	bind validator RegExValidator (regEx "[A-Za-Z]+@[a-z]{2,6}", message "that's not a valid email address") on complaintView.userEmail
 	bind validator DateRangeValidator (min 1900-01-01, 	message "the string is too short or too long!") on complaintView.submitDate

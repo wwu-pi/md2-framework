@@ -19,6 +19,10 @@ import org.eclipse.emf.common.util.EList
 import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.Validator
 import java.util.List
+import de.wwu.md2.framework.mD2.Action
+import de.wwu.md2.framework.mD2.StandardValidator
+import de.wwu.md2.framework.mD2.CustomAction
+import de.wwu.md2.framework.mD2.ValidatorBindingTask
 
 @InjectWith(typeof(MD2InjectorProvider))
 @RunWith(typeof(XtextRunner))
@@ -32,10 +36,10 @@ class ValidatorTests {
 	ResourceSet rs;
 	private EList<ControllerElement> elements;
 	private List<Validator> validators;
+	private List<CustomAction> actions;
 
-
-	//MISSING/TODO: Validators have to be linked with Viewelements -> this is neither done in the model 
-	//nor in the tests
+	private List<StandardValidator> standardvalidators;
+	private List<ValidatorBindingTask> tasks;
 
 	@Before
 	def void setUp() {
@@ -45,6 +49,10 @@ class ValidatorTests {
 		validatorControllerModel = VALIDATOR_COMPONENT_C.load.parse(rs);
 		elements = elements = (validatorControllerModel.modelLayer as Controller).controllerElements;
 		validators = elements.filter(typeof(Validator)).toList;
+		actions = elements.filter(typeof(CustomAction)).toList;
+		standardvalidators = elements.filter(typeof(StandardValidator)).toList;		
+		tasks = actions.get(0).codeFragments.filter(typeof(ValidatorBindingTask)).toList;
+	
 	}
 	
 	@Test
@@ -52,6 +60,7 @@ class ValidatorTests {
 		validatorControllerModel.assertNoErrors;	
 	} 
 	
+	//Tests for validators specified as direct sub elements of controller
 	@Test
 	def validatorNamesTest(){
 		"validateComplaintID".assertEquals(validators.get(0).name);
@@ -65,5 +74,30 @@ class ValidatorTests {
 	def NumberOfValidatorsTest(){
 		5.assertEquals(elements.filter(typeof(Validator)).size);	
 	} 
+
+	//Tests for validators directly defined while binding them to input fields
+	@Test
+	def NumberOfActionsAndTasksInActionsTest(){
+		1.assertEquals(actions.size);
+		4.assertEquals(actions.get(0).codeFragments.filter(typeof(ValidatorBindingTask)).size);	
+	} 
+	
+	@Test
+	def bindingtaskToInputFieldTest(){
+		"complaintID".assertEquals(tasks.get(0).referencedFields.get(0).ref.name);
+		"descriptionTxt".assertEquals(tasks.get(1).referencedFields.get(0).ref.name);
+		"userEmail".assertEquals(tasks.get(2).referencedFields.get(0).ref.name);
+		"submitDate".assertEquals(tasks.get(3).referencedFields.get(0).ref.name);		
+	} 
+	
+		
+	@Test
+	def numberOfValidatorsPerBindingtaskTest(){
+		2.assertEquals(tasks.get(0).validators.size);
+		1.assertEquals(tasks.get(1).validators.size);
+		1.assertEquals(tasks.get(2).validators.size);
+		1.assertEquals(tasks.get(3).validators.size);
+	} 
+	
 	
 }
