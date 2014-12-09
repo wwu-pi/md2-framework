@@ -19,7 +19,6 @@ import org.eclipse.emf.common.util.EList
 import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.Validator
 import java.util.List
-import de.wwu.md2.framework.mD2.StandardValidator
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.ValidatorBindingTask
 
