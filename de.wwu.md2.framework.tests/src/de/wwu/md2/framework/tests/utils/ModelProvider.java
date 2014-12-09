@@ -41,7 +41,9 @@ public class ModelProvider {
 	
 	public static final String SIMPLE_CONTENTPROVIDER_C = "dsl/controller/contentProvider/Simple.md2";
 	
-	public static final String VALIDATOR_COMPONENT_C = "dsl/controller/validator/ValidatorComponent.md2";
+	public static final String VALIDATOR_COMPONENT_C = "dsl/controller/validator/RootValidators.md2";
+
+	public static final String INPUT_FIELD_VALIDATOR_COMPONENT_C = "dsl/controller/validator/InputFieldValidators.md2";
 
 	//********Validator*****//
 	

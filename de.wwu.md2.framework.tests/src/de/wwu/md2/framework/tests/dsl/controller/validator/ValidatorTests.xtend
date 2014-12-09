@@ -19,7 +19,6 @@ import org.eclipse.emf.common.util.EList
 import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.Validator
 import java.util.List
-import de.wwu.md2.framework.mD2.Action
 import de.wwu.md2.framework.mD2.StandardValidator
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.ValidatorBindingTask
@@ -32,13 +31,15 @@ class ValidatorTests {
 	@Inject extension ValidationTestHelper
 	MD2Model mainModel;
 	MD2Model viewModel;
-	MD2Model validatorControllerModel; 
+	MD2Model rootValidatorModel; 
+	MD2Model inputFieldValidatorModel; 
 	ResourceSet rs;
+	
 	private EList<ControllerElement> elements;
 	private List<Validator> validators;
+	
+	private EList<ControllerElement> ifv_elements;
 	private List<CustomAction> actions;
-
-	private List<StandardValidator> standardvalidators;
 	private List<ValidatorBindingTask> tasks;
 
 	@Before
@@ -46,18 +47,22 @@ class ValidatorTests {
 		rs = new ResourceSetImpl();
 		viewModel = BASIC_CONTROLLER_V.load.parse(rs);
 		mainModel = BASIC_CONTROLLER_M.load.parse(rs);
-		validatorControllerModel = VALIDATOR_COMPONENT_C.load.parse(rs);
-		elements = elements = (validatorControllerModel.modelLayer as Controller).controllerElements;
+		rootValidatorModel = VALIDATOR_COMPONENT_C.load.parse(rs);
+		inputFieldValidatorModel = INPUT_FIELD_VALIDATOR_COMPONENT_C.load.parse(rs);
+		
+		elements = (rootValidatorModel.modelLayer as Controller).controllerElements;
 		validators = elements.filter(typeof(Validator)).toList;
-		actions = elements.filter(typeof(CustomAction)).toList;
-		standardvalidators = elements.filter(typeof(StandardValidator)).toList;		
+		
+		ifv_elements = (inputFieldValidatorModel.modelLayer as Controller).controllerElements;
+		actions = ifv_elements.filter(typeof(CustomAction)).toList;
 		tasks = actions.get(0).codeFragments.filter(typeof(ValidatorBindingTask)).toList;
 	
 	}
 	
 	@Test
 	def parseControllerValidatorTest(){
-		validatorControllerModel.assertNoErrors;	
+		rootValidatorModel.assertNoErrors;	
+		inputFieldValidatorModel.assertNoErrors;
 	} 
 	
 	//Tests for validators specified as direct sub elements of controller
