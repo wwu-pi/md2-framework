@@ -2,5 +2,23 @@ package views
 
 GridLayoutPane myView (columns 3){
 	Spacer
+	NumberInput abc
+}
+
+FlowLayoutPane complaintView (vertical) {
+	TextInput descriptionTxt {
+		label "Additional Description"
+		type "textarea"
+	}
+	
+	DateInput submitDate
+	
+	NumberInput complaintID
+	
+	TextInput userEmail {
+		label "Additional Description"
+		type "input"
+	}
+	
 }
 
