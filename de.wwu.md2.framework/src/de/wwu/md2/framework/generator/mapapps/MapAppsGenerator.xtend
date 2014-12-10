@@ -32,6 +32,8 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		
 		fsa.generateFile(rootFolder + "/app.json", generateAppJson(dataContainer).tabsToSpaces(4))
 		
+		fsa.generateFile(bundlesRootFolder + "/bundles.json", generateBundleJson(dataContainer).tabsToSpaces(4))
+		
 		// for each bundle generate
 		for(WorkflowElement workflowElement : dataContainer.controllers.head.controllerElements.filter(WorkflowElement)) {
 			var bundleFolder = bundlesRootFolder + "/" + workflowElement.bundleName 

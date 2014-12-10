@@ -18,6 +18,8 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*import de.wwu.md2.framework.mD2.Workflow
+import de.wwu.md2.framework.mD2.App
+import de.wwu.md2.framework.mD2.WorkflowElement
 
 /**
  * DataContainer to store data that are used throughout the generation process.
@@ -61,6 +63,9 @@ class DataContainer {
 	@Property
 	private Collection<RemoteValidator> remoteValidators
 	
+	@Property
+	private Collection<WorkflowElement> workflowElements
+	
 	
 	///////////////////////////////////////
 	// View Elements
@@ -88,6 +93,14 @@ class DataContainer {
 	private Collection<Enum> enums
 	
 	
+	///////////////////////////////////////
+	// Workflow Elements
+	///////////////////////////////////////
+	
+	@Property
+	private Collection<App> apps
+	
+	
 	/**
 	 * Initializes the sets offered by the data container
 	 */
@@ -102,6 +115,8 @@ class DataContainer {
 		extractElementsFromModels
 		
 		extractRootViews
+		
+		extractElementsFromWorkflows
 	
 	}
 	
@@ -147,6 +162,7 @@ class DataContainer {
 		customActions = newHashSet
 		contentProviders = newHashSet
 		remoteValidators = newHashSet
+		workflowElements = newHashSet
 		
 		customActions = controllers.map[ ctrl |
 			ctrl.controllerElements.filter(CustomAction)
@@ -158,6 +174,10 @@ class DataContainer {
 		
 		remoteValidators = controllers.map[ ctrl |
 			ctrl.controllerElements.filter(RemoteValidator)
+		].flatten.toSet
+		
+		workflowElements = controllers.map[ ctrl | 
+			ctrl.controllerElements.filter(WorkflowElement)
 		].flatten.toSet
 	}
 	
@@ -206,5 +226,17 @@ class DataContainer {
 			elem as ContainerElement
 		].toSet
 	}
+	
+		/**
+	 * Extract all apps.
+	 */
+	def private extractElementsFromWorkflows() {
+		apps = newHashSet
+		
+		apps = workflows.map[ workflow |
+			 workflow.apps
+		].flatten.toSet
+	}
+	
 	
 }

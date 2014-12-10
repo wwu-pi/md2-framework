@@ -2,14 +2,16 @@ package de.wwu.md2.framework.generator.mapapps
 
 import de.wwu.md2.framework.generator.util.DataContainer
 
+import static extension de.wwu.md2.framework.generator.mapapps.util.MD2MapappsUtil.*
+
 class AppClass {
 	
 	def static String generateAppJson(DataContainer dataContainer) '''
 {
-    "appName": "Complaining Citizen",
+    "appName": "«dataContainer.apps.head.appName»",
     "properties": {
-        "id": "Citizenapp",
-        "title": "Complaining Citizen"
+        "id": "«dataContainer.apps.head.name»",
+        "title": "«dataContainer.apps.head.appName»"
     },
     
     "load": {
@@ -44,9 +46,9 @@ class AppClass {
             "md2_models",
             "md2_content_providers",
             
-            "md2_wfe_Locationdetection",
-            
-            "md2_app_ReferenceProject"
+            «FOR elem : dataContainer.workflowElements SEPARATOR ","»
+            "«elem.bundleName»"
+            «ENDFOR»
         ],
         
         // the bundles to skip during load (if empty none are skipped)
@@ -108,5 +110,25 @@ class AppClass {
         }
     }
 }
+	'''
+	
+	def static String generateBundleJson(DataContainer dataContainer) '''
+	{
+	    "md2_runtime": {},
+	    "md2_store": {},
+	    "onlinestatus": {},
+	    "md2_formcontrols": {},
+	    "md2_location_service": {},
+	    "md2_local_store": {},
+	    
+	    "md2_models": {},
+	    "md2_content_providers": {},
+	    
+	    "md2_wfe_Locationdetection": {},
+	    "md2_wfe_Mediacapturing": {},
+	    
+	    "md2_app_ReferenceProject": {}
+	}
+			
 	'''
 }
