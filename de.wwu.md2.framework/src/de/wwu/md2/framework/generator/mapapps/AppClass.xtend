@@ -124,11 +124,9 @@ class AppClass {
 	    "md2_models": {},
 	    "md2_content_providers": {},
 	    
-	    "md2_wfe_Locationdetection": {},
-	    "md2_wfe_Mediacapturing": {},
-	    
-	    "md2_app_ReferenceProject": {}
+	    «FOR elem : dataContainer.workflowElements SEPARATOR ","»
+	    "«elem.bundleName»": {}
+	    «ENDFOR»
 	}
-			
 	'''
 }
