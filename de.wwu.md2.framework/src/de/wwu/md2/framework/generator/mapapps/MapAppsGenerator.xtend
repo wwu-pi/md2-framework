@@ -18,6 +18,7 @@ import static de.wwu.md2.framework.generator.mapapps.ModuleClass.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
+import static extension de.wwu.md2.framework.generator.mapapps.util.MD2MapappsUtil.*
 
 class MapAppsGenerator extends AbstractPlatformGenerator {
 	
@@ -33,7 +34,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		
 		// for each bundle generate
 		for(WorkflowElement workflowElement : dataContainer.controllers.head.controllerElements.filter(WorkflowElement)) {
-			var bundleFolder = bundlesRootFolder + "/md2_wfe_" + workflowElement.name 
+			var bundleFolder = bundlesRootFolder + "/" + workflowElement.bundleName 
 			
 			generateWorkflowElementBundle(fsa, bundleFolder, workflowElement)
 		}
