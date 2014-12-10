@@ -30,17 +30,46 @@ import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.xbase.lib.Pair
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
+import static extension de.wwu.md2.framework.generator.mapapps.util.MD2MapappsUtil.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
 import de.wwu.md2.framework.mD2.Workflow
 import de.wwu.md2.framework.mD2.WorkflowElement
+import de.wwu.md2.framework.generator.preprocessor.ProcessController
 
 class ManifestJson {
 		
-	def static String generateManifestJson(DataContainer dataContainer, ResourceSet processedInput) {
+	def static String generateManifestJsonForModels(DataContainer dataContainer, ResourceSet processedInput) {
 		var appName = dataContainer.workflows?.head.apps?.head.appName
 		'''
 			{
-				"Bundle-SymbolicName": "md2_wfe_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]»",
+			    "Bundle-SymbolicName": "md2_models",
+			    "Bundle-Version": "«dataContainer.main.appVersion»",
+			    "Bundle-Name": "«appName» md2_models",
+			    "Bundle-Description": "Generated MD2 bundle: Models of «appName»",
+			    "Bundle-Localization": [],
+			    "Bundle-Main": "",
+			    "Require-Bundle": [],
+			    "Require-Bundle": [
+			        {
+			            "name": "md2_runtime"
+			        }
+			    ],
+			    "Components": [
+					«val snippets = newArrayList(
+						generateModelsSnippet(dataContainer, processedInput)
+					)»
+					«FOR snippet : snippets.filter(s | !s.toString.trim.empty) SEPARATOR ","»
+						«snippet»
+					«ENDFOR»
+			    ]
+			}
+		'''
+	}
+	def static String generateManifestJsonForContentProviders(DataContainer dataContainer, ResourceSet processedInput) {
+		var appName = dataContainer.workflows?.head.apps?.head.appName
+		'''
+			{
+				"Bundle-SymbolicName": "md2_content_providers»",
 				"Bundle-Version": "«dataContainer.main.appVersion»",
 				"Bundle-Name": "«appName»",
 				"Bundle-Description": "Generated MD2 bundle: «appName»",
@@ -64,12 +93,44 @@ class ManifestJson {
 				],
 				"Components": [
 					«val snippets = newArrayList(
-						generateConfigurationSnippet(dataContainer, processedInput),
-						generateCustomActionsSnippet(dataContainer, processedInput),
-						generateModelsSnippet(dataContainer, processedInput),
-						generateContentProvidersSnippet(dataContainer, processedInput),
-						generateControllerSnippet(dataContainer, processedInput),
-						generateToolSnippet(dataContainer, processedInput)
+						generateContentProvidersSnippet(dataContainer, processedInput)
+					)»
+					«FOR snippet : snippets.filter(s | !s.toString.trim.empty) SEPARATOR ","»
+						«snippet»
+					«ENDFOR»
+				]
+			}
+		'''
+	}
+	def static String generateManifestJsonForWorkflowElement(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) {
+		var appName = dataContainer.workflows?.head.apps?.head.appName
+		'''
+			{
+				"Bundle-SymbolicName": "«workflowElement.bundleName»", //TODO:"md2_wfe_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]»"
+				"Bundle-Version": "«dataContainer.main.appVersion»",
+				"Bundle-Name": "Workflow element «workflowElement.bundleName»",
+				"Bundle-Description": "Generated MD2 workflow element bundle: «workflowElement.bundleName» of «appName»",
+				"Bundle-Localization": [],
+				"Bundle-Main": "",
+				"Require-Bundle": [],
+				"Require-Bundle": [
+			    "Require-Bundle": [
+			        {
+			            "name": "md2_runtime"
+			        },
+			        {
+			            "name": "md2_models"
+			        },
+			        {
+			            "name": "md2_content_providers"
+			        }
+				],
+				"Components": [
+					«val snippets = newArrayList(
+						generateConfigurationSnippet(workflowElement, dataContainer, processedInput)
+						//generateCustomActionsSnippet(workflowElement, dataContainer, processedInput),
+						//generateControllerSnippet(workflowElement, dataContainer, processedInput),
+						//generateToolSnippet(workflowElement, dataContainer, processedInput)
 					)»
 					«FOR snippet : snippets.filter(s | !s.toString.trim.empty) SEPARATOR ","»
 						«snippet»
@@ -79,21 +140,21 @@ class ManifestJson {
 		'''
 	}
 	
-	def private static String generateConfigurationSnippet(DataContainer dataContainer, ResourceSet processedInput) {
+	def private static String generateConfigurationSnippet(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) {
 		var appName = dataContainer.workflows?.head.apps?.head.appName
 		var onInitializedEvent = dataContainer.controllers?.head.controllerElements.filter(WorkflowElement)?.head?.initActions?.head?.name
 		'''
 			{
-				"name": "MD2«processedInput.getBasePackageName.split("\\.").last.toFirstUpper»",
+				"name": "MD2«workflowElement.bundleName»",//TODO: processedInput.getBasePackageName.split("\\.").last.toFirstUpper
 				"impl": "ct/Stateful",
-				"provides": ["md2.app.«processedInput.getBasePackageName».AppDefinition"],
+				"provides": ["md2.app.«workflowElement.bundleName».AppDefinition"], //TODO: «processedInput.getBasePackageName»
 				"propertiesConstructor": true,
 				"properties": {
-					"id": "md2_«processedInput.getBasePackageName.replace(".", "_")»",
-					"windowTitle": "«appName»",
-					"onInitialized": "«onInitializedEvent»",
+					"id": "md2_«workflowElement.bundleName.replace(".", "_")»", processedInput.getBasePackageName.replace(".", "_")
+					"windowTitle": "«workflowElement.bundleName»",
+					"onInitialized": "«ProcessController::startupActionName»",
 					"views": [
-						«FOR view : dataContainer.rootViewContainers SEPARATOR ","»
+						«FOR view : dataContainer.rootViewContainers.get(workflowElement) SEPARATOR ","»
 							{
 								"name": "«view.name»",
 								"dataForm": {

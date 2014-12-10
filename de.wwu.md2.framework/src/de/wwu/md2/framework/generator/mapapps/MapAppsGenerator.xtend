@@ -56,7 +56,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 	def generateWorkflowElementBundle(IExtendedFileSystemAccess fsa, String bundleFolder, WorkflowElement workflowElement) {
 		fsa.generateFile(bundleFolder + "/module.js", generateModuleForWorkflowElement().tabsToSpaces(4))
 		
-		fsa.generateFile(bundleFolder + "/manifest.json", generateManifestJson(dataContainer, processedInput).tabsToSpaces(4))
+		fsa.generateFile(bundleFolder + "/manifest.json", generateManifestJsonForWorkflowElement(workflowElement, dataContainer, processedInput).tabsToSpaces(4))
 		
 		fsa.generateFile(bundleFolder + "/Controller.js", generateController(dataContainer).tabsToSpaces(4))
 		
@@ -70,7 +70,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 	def generateModelsBundle(IExtendedFileSystemAccess fsa, String modelBundleFolder){
 		fsa.generateFile(modelBundleFolder + "/module.js", generateModuleForModels().tabsToSpaces(4))
 		
-		fsa.generateFile(modelBundleFolder + "/manifest.json", generateManifestJson(dataContainer, processedInput).tabsToSpaces(4))
+		fsa.generateFile(modelBundleFolder + "/manifest.json", generateManifestJsonForModels(dataContainer, processedInput).tabsToSpaces(4))
 		
 		fsa.generateFile(modelBundleFolder + "/Models.js", generateModelsInterface(dataContainer).tabsToSpaces(4))
 		
@@ -86,7 +86,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 	
 	def generateContentProvidersBundle (IExtendedFileSystemAccess fsa, String contentProviderBundleFolder){
 		fsa.generateFile(contentProviderBundleFolder + "/module.js", generateModuleForContentProviders(dataContainer).tabsToSpaces(4))
-		fsa.generateFile(contentProviderBundleFolder + "/manifest.js", generateManifestJson(dataContainer, processedInput).tabsToSpaces(4))
+		fsa.generateFile(contentProviderBundleFolder + "/manifest.js", generateManifestJsonForContentProviders(dataContainer, processedInput).tabsToSpaces(4))
 		
 		for (contentProvider : dataContainer.contentProviders) {
 			fsa.generateFile(contentProviderBundleFolder + "/contentproviders/" + contentProvider.name.toFirstUpper + ".js", generateContentProvider(contentProvider, processedInput).tabsToSpaces(4))

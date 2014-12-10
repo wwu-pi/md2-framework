@@ -20,6 +20,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*import de.wwu.md2.framework.mD2.Workflow
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.WorkflowElement
+import java.util.Map
+import java.util.HashMap
 
 /**
  * DataContainer to store data that are used throughout the generation process.
@@ -79,7 +81,7 @@ class DataContainer {
 	 * any view containers that are accessed by a GotoViewAction.
 	 */
 	@Property
-	private Set<ContainerElement> rootViewContainers
+	private Map<WorkflowElement, Set<ContainerElement>> rootViewContainers
 	
 	
 	///////////////////////////////////////
@@ -206,25 +208,25 @@ class DataContainer {
 	 */
 	def private extractRootViews() {
 		
-		rootViewContainers = newHashSet
-		
-		// Get all views that are accessed by GotoViewActions at some time
-		val containers = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(CustomAction).map[ customAction |
-				customAction.eAllContents.toIterable
-			].flatten.filter(GotoViewAction).map[ gotoView |
-				resolveContainerElement(gotoView.view)
-			]
-		].flatten
-		
-		// Calculate root view for each view that is accessed via a GotoViewAction
-		rootViewContainers = containers.map[ container |
-			var EObject elem = container
-			while (!(elem.eContainer instanceof View)) {
-				elem = elem.eContainer
-			}
-			elem as ContainerElement
-		].toSet
+		rootViewContainers = newHashMap
+			
+		for (WorkflowElement workflowElement : workflowElements){
+			// Get all views that are accessed by GotoViewActions at some time
+			val containers = (workflowElement.actions + workflowElement.initActions).filter(CustomAction).map[ customAction |
+					customAction.eAllContents.toIterable
+				].flatten.filter(GotoViewAction).map[ gotoView |
+					resolveContainerElement(gotoView.view)
+				]
+			
+			// Calculate root view for each view that is accessed via a GotoViewAction
+			rootViewContainers.put(workflowElement, containers.map[ container |
+				var EObject elem = container
+				while (!(elem.eContainer instanceof View)) {
+					elem = elem.eContainer
+				}
+				elem as ContainerElement
+			].toSet)
+		}
 	}
 	
 		/**
