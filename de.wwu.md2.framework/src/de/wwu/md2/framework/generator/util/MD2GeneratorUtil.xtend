@@ -68,7 +68,7 @@ class MD2GeneratorUtil {
 	/**
 	 * Creates a camelCase string from the app name declared in the main block of the app.
 	 */
-	def static createAppName(DataContainer dataContainer) '''«FOR part : dataContainer.main.appName.split(" ")»«part.toFirstUpper»«ENDFOR»'''
+	def static createAppName(DataContainer dataContainer) '''MySuperDupaMD2App'''
 	
 	def static createAppClassName(DataContainer dataContainer) {
 		createAppName(dataContainer) + "Application"

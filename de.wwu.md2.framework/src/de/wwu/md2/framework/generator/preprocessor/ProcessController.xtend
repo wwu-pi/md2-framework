@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil
 
 import static extension de.wwu.md2.framework.generator.preprocessor.util.Util.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
+import de.wwu.md2.framework.mD2.WorkflowElement
 
 class ProcessController extends AbstractPreprocessor {
 	
@@ -41,22 +42,21 @@ class ProcessController extends AbstractPreprocessor {
 		
 		val ctrl = controllers.head
 		
+		var workflowElement = ctrl.controllerElements.filter(WorkflowElement)?.head
+		if(workflowElement == null) {
+			workflowElement = factory.createWorkflowElement
+		}
+		
 		// create __startupAction
 		val startupAction = factory.createCustomAction;
 		startupAction.setName(startupActionName)
-		ctrl.controllerElements.add(startupAction)
-		
-		// register __startupAction as onInitializedEvent in main block
-		val main = controllers.map[ c |
-			c.eAllContents.toIterable.filter(Main)
-		].flatten.head
-		val originalStartupAction = main.onInitializedEvent
-		main.setOnInitializedEvent(startupAction)
+		workflowElement.initActions += startupAction
+		ctrl.controllerElements.add(workflowElement)
 		
 		// add original startup action to __startupAction
 		val originalCallTask = factory.createCallTask
 		val originalActionReference = factory.createActionReference
-		originalActionReference.setActionRef(originalStartupAction)
+//		originalActionReference.setActionRef(originalStartupAction)
 		originalCallTask.setAction(originalActionReference)
 		startupAction.codeFragments.add(originalCallTask);
 	}
@@ -79,11 +79,13 @@ class ProcessController extends AbstractPreprocessor {
 			ctrl.controllerElements.filter(Main)
 		].flatten.head
 		
+		var remoteConnection = workflows?.head.apps?.head?.defaultConnection
+		
 		for (contentProvider : contentProviders) {
-			if (contentProvider.^default && main.defaultConnection == null) {
+			if (contentProvider.^default && remoteConnection == null) {
 				contentProvider.setLocal(true)
-			} else if (contentProvider.^default && main.defaultConnection != null) {
-				contentProvider.setConnection(main.defaultConnection)
+			} else if (contentProvider.^default && remoteConnection != null) {
+				contentProvider.setConnection(remoteConnection)
 			}
 		}
 	}
@@ -150,29 +152,29 @@ class ProcessController extends AbstractPreprocessor {
 				.filter( action | action.name.equals(ProcessController::startupActionName))
 		].flatten.head
 		
-		// if startView set: create GotoViewAction and add it to startupAction
-		if (main?.startView != null) {
-			val callTask = factory.createCallTask
-			val simpleActionRef = factory.createSimpleActionRef
-			val gotoViewAction = factory.createGotoViewAction
-			callTask.setAction(simpleActionRef)
-			simpleActionRef.setAction(gotoViewAction)
-			gotoViewAction.setView(main.startView)
-			startupAction.codeFragments.add(0, callTask);
-			main.setStartView(null)
-		}
-		
-		// else if startProcessChain set: create SetProcessChainAction and add it to startupAction
-		else if (main?.startProcessChain != null) {
-			val callTask = factory.createCallTask
-			val simpleActionRef = factory.createSimpleActionRef
-			val setProcessChainAction = factory.createSetProcessChainAction
-			callTask.setAction(simpleActionRef)
-			simpleActionRef.setAction(setProcessChainAction)
-			setProcessChainAction.setProcessChain(main.startProcessChain)
-			startupAction.codeFragments.add(0, callTask);
-			main.setStartProcessChain(null)
-		}
+//		// if startView set: create GotoViewAction and add it to startupAction
+//		if (main?.startView != null) {
+//			val callTask = factory.createCallTask
+//			val simpleActionRef = factory.createSimpleActionRef
+//			val gotoViewAction = factory.createGotoViewAction
+//			callTask.setAction(simpleActionRef)
+//			simpleActionRef.setAction(gotoViewAction)
+//			gotoViewAction.setView(main.startView)
+//			startupAction.codeFragments.add(0, callTask);
+//			main.setStartView(null)
+//		}
+//		
+//		// else if startProcessChain set: create SetProcessChainAction and add it to startupAction
+//		else if (main?.startProcessChain != null) {
+//			val callTask = factory.createCallTask
+//			val simpleActionRef = factory.createSimpleActionRef
+//			val setProcessChainAction = factory.createSetProcessChainAction
+//			callTask.setAction(simpleActionRef)
+//			simpleActionRef.setAction(setProcessChainAction)
+//			setProcessChainAction.setProcessChain(main.startProcessChain)
+//			startupAction.codeFragments.add(0, callTask);
+//			main.setStartProcessChain(null)
+//		}
 	}
 	
 	/**

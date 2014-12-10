@@ -320,7 +320,8 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 				mappingIfBlock.codeFragments.add(callTask)
 			]
 			
-			controller.controllerElements.add(customAction)
+			
+			controller.controllerElements.add(factory.createWorkflowElement)
 		]
 	}
 	
@@ -397,7 +398,7 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 			}
 			
 			// add action to controller
-			controller.controllerElements.add(customAction)
+			controller.controllerElements.add(factory.createWorkflowElement)
 			
 			// add action as call task to startUpAction
 			val startupAction = controllers.map[ ctrl |

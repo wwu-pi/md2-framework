@@ -38,7 +38,7 @@ import de.wwu.md2.framework.mD2.TimeType
 
 import static de.wwu.md2.framework.generator.preprocessor.util.Util.*
 
-import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
+import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*import de.wwu.md2.framework.mD2.WorkflowElement
 
 class ProcessModel extends AbstractPreprocessor {
 	
@@ -268,7 +268,7 @@ class ProcessModel extends AbstractPreprocessor {
 		) {
 			return true
 		}
-		val startupAction = codeFragment.eResource.allContents.filter(Main).last?.onInitializedEvent
+		val startupAction = codeFragment.eResource.allContents.filter(WorkflowElement).last?.initActions.head
 		if (startupAction == null) {
 			return false
 		}

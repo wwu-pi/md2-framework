@@ -2,7 +2,10 @@ package de.wwu.md2.framework.generator.mapapps
 
 import de.wwu.md2.framework.generator.AbstractPlatformGenerator
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
+import de.wwu.md2.framework.mD2.WorkflowElement
+import de.wwu.md2.framework.mD2.CustomAction
 
+import static de.wwu.md2.framework.generator.mapapps.AppClass.*
 import static de.wwu.md2.framework.generator.mapapps.ContentProviderClass.*
 import static de.wwu.md2.framework.generator.mapapps.ControllerClass.*
 import static de.wwu.md2.framework.generator.mapapps.CustomActionClass.*
@@ -24,36 +27,16 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		// Generation work flow
 		/////////////////////////////////////////
 		
-		// Copy resources
-		fsa.copyFileFromProject("resources/images", rootFolder + "/resources")
+		var bundlesRootFolder = rootFolder + "/bundles"
 		
-		// Generate common base elements
-		fsa.generateFile(rootFolder + "/manifest.json", generateManifestJson(dataContainer, processedInput).tabsToSpaces(4))
+		fsa.generateFile(rootFolder + "/app.json", generateAppJson(dataContainer).tabsToSpaces(4))
 		
-		fsa.generateFile(rootFolder + "/module.js", generateModule(dataContainer).tabsToSpaces(4))
-		
-		fsa.generateFile(rootFolder + "/Controller.js", generateController(dataContainer).tabsToSpaces(4))
-		
-		fsa.generateFile(rootFolder + "/CustomActions.js", generateCustomActionsInterface(dataContainer).tabsToSpaces(4))
-		
-		fsa.generateFile(rootFolder + "/Models.js", generateModelsInterface(dataContainer).tabsToSpaces(4))
-		
-		for (customAction : dataContainer.customActions) {
-			fsa.generateFile(rootFolder + "/actions/" + customAction.name.toFirstUpper + ".js", generateCustomAction(customAction).tabsToSpaces(4))
+		// for each bundle generate
+		for(WorkflowElement workflowElement : dataContainer.controllers.head.controllerElements.filter(WorkflowElement)) {
+			var bundleFolder = bundlesRootFolder + "/md2_wfe_" + workflowElement.name 
+			
+			generateWorkflowElementBundle(fsa, bundleFolder, workflowElement)
 		}
-		
-		for (entity : dataContainer.entities) {
-			fsa.generateFile(rootFolder + "/models/" + entity.name.toFirstUpper + ".js", generateEntity(entity).tabsToSpaces(4))
-		}
-		
-		for (^enum : dataContainer.enums) {
-			fsa.generateFile(rootFolder + "/models/" + enum.name.toFirstUpper + ".js", generateEnum(enum).tabsToSpaces(4))
-		}
-		
-		for (contentProvider : dataContainer.contentProviders) {
-			fsa.generateFile(rootFolder + "/contentproviders/" + contentProvider.name.toFirstUpper + ".js", generateContentProvider(contentProvider, processedInput).tabsToSpaces(4))
-		}
-		
 		
 		/////////////////////////////////////////
 		// Build zip file for bundle
@@ -62,6 +45,48 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		val zipFileName = '''md2_app_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]».zip'''
 		fsa.zipDirectory(rootFolder, rootFolder + "/../" + zipFileName);
 		
+	}
+	
+	def generateWorkflowElementBundle(IExtendedFileSystemAccess fsa, String bundleFolder, WorkflowElement workflowElement) {
+		fsa.generateFile(bundleFolder + "/module.js", generateModule(dataContainer).tabsToSpaces(4))
+		
+		fsa.generateFile(bundleFolder + "/manifest.json", generateManifestJson(dataContainer, processedInput).tabsToSpaces(4))
+		
+		fsa.generateFile(bundleFolder + "/Controller.js", generateController(dataContainer).tabsToSpaces(4))
+		
+		fsa.generateFile(bundleFolder + "/CustomActions.js", generateCustomActionsInterface(dataContainer).tabsToSpaces(4))
+		
+		for (customAction : workflowElement.actions.filter(CustomAction)) {
+			fsa.generateFile(bundleFolder + "/actions/" + customAction.name.toFirstUpper + ".js", generateCustomAction(customAction).tabsToSpaces(4))
+		}
+	}
+	
+	def legacy(IExtendedFileSystemAccess fsa, String bundleFolder) {
+		fsa.copyFileFromProject("resources/images", bundleFolder + "/resources")
+		
+		// Generate common base elements
+		fsa.generateFile(bundleFolder + "/manifest.json", generateManifestJson(dataContainer, processedInput).tabsToSpaces(4))
+		
+		fsa.generateFile(bundleFolder + "/module.js", generateModule(dataContainer).tabsToSpaces(4))
+		
+		
+		fsa.generateFile(bundleFolder + "/Models.js", generateModelsInterface(dataContainer).tabsToSpaces(4))
+		
+		for (customAction : dataContainer.customActions) {
+			fsa.generateFile(bundleFolder + "/actions/" + customAction.name.toFirstUpper + ".js", generateCustomAction(customAction).tabsToSpaces(4))
+		}
+		
+		for (entity : dataContainer.entities) {
+			fsa.generateFile(bundleFolder + "/models/" + entity.name.toFirstUpper + ".js", generateEntity(entity).tabsToSpaces(4))
+		}
+		
+		for (^enum : dataContainer.enums) {
+			fsa.generateFile(bundleFolder + "/models/" + enum.name.toFirstUpper + ".js", generateEnum(enum).tabsToSpaces(4))
+		}
+		
+		for (contentProvider : dataContainer.contentProviders) {
+			fsa.generateFile(bundleFolder + "/contentproviders/" + contentProvider.name.toFirstUpper + ".js", generateContentProvider(contentProvider, processedInput).tabsToSpaces(4))
+		}
 	}
 	
 	override getPlatformPrefix() {

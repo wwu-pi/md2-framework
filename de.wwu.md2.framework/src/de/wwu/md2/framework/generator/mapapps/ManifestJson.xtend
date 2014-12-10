@@ -31,73 +31,82 @@ import org.eclipse.xtext.xbase.lib.Pair
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
+import de.wwu.md2.framework.mD2.Workflow
+import de.wwu.md2.framework.mD2.WorkflowElement
 
 class ManifestJson {
-	
-	def static String generateManifestJson(DataContainer dataContainer, ResourceSet processedInput) '''
-		{
-			"Bundle-SymbolicName": "md2_app_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]»",
-			"Bundle-Version": "«dataContainer.main.appVersion»",
-			"Bundle-Name": "«dataContainer.main.appName»",
-			"Bundle-Description": "Generated MD2 bundle: «dataContainer.main.appName»",
-			"Bundle-Localization": [],
-			"Bundle-Main": "",
-			"Require-Bundle": [],
-			"Require-Bundle": [
-				«IF dataContainer.contentProviders.exists[it.local]»
-					{
-						"name": "md2_local_store"
-					},
-				«ENDIF»
-				«IF dataContainer.contentProviders.exists[it.connection != null || it.^default]»
-					{
-						"name": "md2_store"
-					},
-				«ENDIF»
-				{
-					"name": "md2_runtime"
-				}
-			],
-			"Components": [
-				«val snippets = newArrayList(
-					generateConfigurationSnippet(dataContainer, processedInput),
-					generateCustomActionsSnippet(dataContainer, processedInput),
-					generateModelsSnippet(dataContainer, processedInput),
-					generateContentProvidersSnippet(dataContainer, processedInput),
-					generateControllerSnippet(dataContainer, processedInput),
-					generateToolSnippet(dataContainer, processedInput)
-				)»
-				«FOR snippet : snippets.filter(s | !s.toString.trim.empty) SEPARATOR ","»
-					«snippet»
-				«ENDFOR»
-			]
-		}
-	'''
-	
-	def private static String generateConfigurationSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
-		{
-			"name": "MD2«processedInput.getBasePackageName.split("\\.").last.toFirstUpper»",
-			"impl": "ct/Stateful",
-			"provides": ["md2.app.«processedInput.getBasePackageName».AppDefinition"],
-			"propertiesConstructor": true,
-			"properties": {
-				"id": "md2_«processedInput.getBasePackageName.replace(".", "_")»",
-				"windowTitle": "«dataContainer.main.appName»",
-				"onInitialized": "«dataContainer.main.onInitializedEvent.name»",
-				"views": [
-					«FOR view : dataContainer.rootViewContainers SEPARATOR ","»
+		
+	def static String generateManifestJson(DataContainer dataContainer, ResourceSet processedInput) {
+		var appName = dataContainer.workflows?.head.apps?.head.appName
+		'''
+			{
+				"Bundle-SymbolicName": "md2_wfe_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]»",
+				"Bundle-Version": "«dataContainer.main.appVersion»",
+				"Bundle-Name": "«appName»",
+				"Bundle-Description": "Generated MD2 bundle: «appName»",
+				"Bundle-Localization": [],
+				"Bundle-Main": "",
+				"Require-Bundle": [],
+				"Require-Bundle": [
+					«IF dataContainer.contentProviders.exists[it.local]»
 						{
-							"name": "«view.name»",
-							"dataForm": {
-								"dataform-version": "1.0.0",
-								«getViewElement(view, processedInput, false)»
-							}
-						}
+							"name": "md2_local_store"
+						},
+					«ENDIF»
+					«IF dataContainer.contentProviders.exists[it.connection != null || it.^default]»
+						{
+							"name": "md2_store"
+						},
+					«ENDIF»
+					{
+						"name": "md2_runtime"
+					}
+				],
+				"Components": [
+					«val snippets = newArrayList(
+						generateConfigurationSnippet(dataContainer, processedInput),
+						generateCustomActionsSnippet(dataContainer, processedInput),
+						generateModelsSnippet(dataContainer, processedInput),
+						generateContentProvidersSnippet(dataContainer, processedInput),
+						generateControllerSnippet(dataContainer, processedInput),
+						generateToolSnippet(dataContainer, processedInput)
+					)»
+					«FOR snippet : snippets.filter(s | !s.toString.trim.empty) SEPARATOR ","»
+						«snippet»
 					«ENDFOR»
 				]
 			}
-		}
-	'''
+		'''
+	}
+	
+	def private static String generateConfigurationSnippet(DataContainer dataContainer, ResourceSet processedInput) {
+		var appName = dataContainer.workflows?.head.apps?.head.appName
+		var onInitializedEvent = dataContainer.controllers?.head.controllerElements.filter(WorkflowElement)?.head?.initActions?.head?.name
+		'''
+			{
+				"name": "MD2«processedInput.getBasePackageName.split("\\.").last.toFirstUpper»",
+				"impl": "ct/Stateful",
+				"provides": ["md2.app.«processedInput.getBasePackageName».AppDefinition"],
+				"propertiesConstructor": true,
+				"properties": {
+					"id": "md2_«processedInput.getBasePackageName.replace(".", "_")»",
+					"windowTitle": "«appName»",
+					"onInitialized": "«onInitializedEvent»",
+					"views": [
+						«FOR view : dataContainer.rootViewContainers SEPARATOR ","»
+							{
+								"name": "«view.name»",
+								"dataForm": {
+									"dataform-version": "1.0.0",
+									«getViewElement(view, processedInput, false)»
+								}
+							}
+						«ENDFOR»
+					]
+				}
+			}
+		'''
+	}
 	
 	def static generateCustomActionsSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
 		{
@@ -115,33 +124,36 @@ class ManifestJson {
 		}
 	'''
 	
-	def static generateContentProvidersSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
-		«FOR contentProvider : dataContainer.contentProviders SEPARATOR ","»
-			{
-				"name": "«contentProvider.name.toFirstUpper»Provider",
-				"impl": "./contentproviders/«contentProvider.name.toFirstUpper»",
-				"provides": ["md2.app.«processedInput.getBasePackageName».ContentProvider"],
-				«IF !contentProvider.local»
-					"propertiesConstructor": true,
-					"properties": {
-						"uri": "«IF contentProvider.^default»«dataContainer.main.defaultConnection.uri»«ELSE»«contentProvider.connection.uri»«ENDIF»"
-					},
-				«ENDIF»
-				"references": [
-					{
-						«IF contentProvider.local»
-							"name": "_localFactory",
-							"providing": "md2.store.LocalStore",
-						«ELSE»
-							"name": "_remoteFactory",
-							"providing": "md2.store.RemoteStore",
-						«ENDIF»
-						"cardinality": "0..1"
-					}
-				]
-			}
-		«ENDFOR»
-	'''
+	def static generateContentProvidersSnippet(DataContainer dataContainer, ResourceSet processedInput) {
+		var uri = dataContainer.workflows?.head.apps?.head?.defaultConnection?.uri
+		'''
+			«FOR contentProvider : dataContainer.contentProviders SEPARATOR ","»
+				{
+					"name": "«contentProvider.name.toFirstUpper»Provider",
+					"impl": "./contentproviders/«contentProvider.name.toFirstUpper»",
+					"provides": ["md2.app.«processedInput.getBasePackageName».ContentProvider"],
+					«IF !contentProvider.local»
+						"propertiesConstructor": true,
+						"properties": {
+							"uri": "«IF contentProvider.^default»«uri»«ELSE»«contentProvider.connection.uri»«ENDIF»"
+						},
+					«ENDIF»
+					"references": [
+						{
+							«IF contentProvider.local»
+								"name": "_localFactory",
+								"providing": "md2.store.LocalStore",
+							«ELSE»
+								"name": "_remoteFactory",
+								"providing": "md2.store.RemoteStore",
+							«ENDIF»
+							"cardinality": "0..1"
+						}
+					]
+				}
+			«ENDFOR»
+		'''
+	}
 	
 	def static generateControllerSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
 		{
@@ -174,31 +186,34 @@ class ManifestJson {
 		}
 	'''
 	
-	def static generateToolSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
-		{
-			"name": "MD2«processedInput.getBasePackageName.split("\\.").last.toFirstUpper»Tool",
-			"impl": "ct.tools.Tool",
-			"provides": ["ct.tools.Tool"],
-			"propertiesConstructor": true,
-			"properties": {
-				"id": "md2_app_«processedInput.getBasePackageName.replace(".", "_")»_tool",
-				"title": "«dataContainer.main.appName»",
-				"description": "Start «dataContainer.main.appName»",
-				"tooltip": "Start «dataContainer.main.appName»",
-				"toolRole": "toolset",
-				"iconClass": "icon-view-grid",
-				"togglable": true,
-				"activateHandler": "openWindow",
-				"deactivateHandler": "closeWindow"
-			},
-			"references": [
-				{
-					"name": "handlerScope",
-					"providing": "md2.app.«processedInput.getBasePackageName».Controller"
-				}
-			]
-		}
-	'''
+	def static generateToolSnippet(DataContainer dataContainer, ResourceSet processedInput) {
+		var appName = dataContainer.workflows?.head.apps?.head.appName
+		'''
+			{
+				"name": "MD2«processedInput.getBasePackageName.split("\\.").last.toFirstUpper»Tool",
+				"impl": "ct.tools.Tool",
+				"provides": ["ct.tools.Tool"],
+				"propertiesConstructor": true,
+				"properties": {
+					"id": "md2_app_«processedInput.getBasePackageName.replace(".", "_")»_tool",
+					"title": "«appName»",
+					"description": "Start «appName»",
+					"tooltip": "Start «appName»",
+					"toolRole": "toolset",
+					"iconClass": "icon-view-grid",
+					"togglable": true,
+					"activateHandler": "openWindow",
+					"deactivateHandler": "closeWindow"
+				},
+				"references": [
+					{
+						"name": "handlerScope",
+						"providing": "md2.app.«processedInput.getBasePackageName».Controller"
+					}
+				]
+			}
+		'''
+	}
 	
 	
 	////////////////////////////////////////////////////////////////////////////////////////////

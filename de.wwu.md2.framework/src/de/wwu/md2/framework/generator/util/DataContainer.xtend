@@ -17,7 +17,7 @@ import java.util.Set
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 
-import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
+import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*import de.wwu.md2.framework.mD2.Workflow
 
 /**
  * DataContainer to store data that are used throughout the generation process.
@@ -40,6 +40,9 @@ class DataContainer {
 	
 	@Property
 	private Collection<Model> models
+	
+	@Property
+	private Collection<Workflow> workflows
 	
 	
 	///////////////////////////////////////
@@ -110,6 +113,7 @@ class DataContainer {
 		views = newHashSet()
 		controllers = newHashSet()
 		models = newHashSet()
+		workflows = newHashSet()
 		
 		val md2models = input.resources.map[ r |
 			r.contents.filter(MD2Model)
@@ -121,6 +125,7 @@ class DataContainer {
 				View : views.add(modelLayer)
 				Model : models.add(modelLayer)
 				Controller : controllers.add(modelLayer)
+				Workflow : workflows.add(modelLayer)
 			}
 		]
 	}
