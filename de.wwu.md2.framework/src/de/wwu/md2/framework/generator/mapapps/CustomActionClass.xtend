@@ -63,6 +63,7 @@ import static de.wwu.md2.framework.generator.mapapps.Expressions.*
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
+import de.wwu.md2.framework.mD2.FireEventAction
 
 class CustomActionClass {
 	
@@ -259,6 +260,10 @@ class CustomActionClass {
 	
 	def private static dispatch String generateActionCodeFragment(ContentProviderResetAction action, String varName, Map<String, String> imports) '''
 		var «varName» = this.$.actionFactory.getContentProviderResetAction("«action.contentProvider.contentProvider.name»");
+	'''
+	
+	def private static dispatch String generateActionCodeFragment(FireEventAction action, String varName, Map<String, String> imports) '''
+		TODO
 	'''
 	
 	
