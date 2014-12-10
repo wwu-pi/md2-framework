@@ -27,7 +27,12 @@ public class ModelProvider {
 	
 	public static String VALIDATOR_MODEL_M = "dsl/model/validator/Model.md2";
 	
+	//***Workflow***//
 	
+	public static String WORKFLOW_FUNCTION_W = "dsl/workflow/functionTest/workflow.md2";
+	public static String WORKFLOW_FUNCTION_C = "dsl/workflow/functionTest/controller.md2";
+	public static String WORKFLOW_FUNCTION_V = "dsl/workflow/functionTest/view.md2";
+	public static String WORKFLOW_FUNCTION_M = "dsl/workflow/functionTest/model.md2";
 	
 	//***Controller***//
 	

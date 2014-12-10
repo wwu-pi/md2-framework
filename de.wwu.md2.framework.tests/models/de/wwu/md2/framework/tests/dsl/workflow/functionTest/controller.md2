@@ -1,0 +1,27 @@
+package functionTest.controllers
+
+main {
+	appVersion "1.0"
+	modelVersion "1.0"
+}
+
+remoteConnection CitizenAppRemoteConnection {
+	uri "http://localhost:8081/Backend/"
+}
+
+contentProvider Complaint localComplaintProvider {
+	providerType CitizenAppRemoteConnection
+}
+
+WorkflowElement LocationDetection{
+	onInit {
+		action CustomAction init{
+			map LocationDetectionView.streetLbl to :localComplaintProvider.loc.myStreet
+			map LocationDetectionView.cityLbl to :localComplaintProvider.loc.myCity
+		}
+	}
+	
+	action CustomAction next {
+		bind action FireEvent(LocationDetectionEvent) on LocationDetectionView.Next.onClick
+	}
+}

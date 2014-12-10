@@ -1,0 +1,10 @@
+package functionTest.views
+
+GridLayoutPane LocationDetectionView (columns 1, rows 6) {
+	Label TitleLbl ("Enter your location") // better: As Title of Activity
+	Spacer
+	TextInput streetLbl {tooltip "street"}
+	TextInput cityLbl {tooltip "city"}
+	Spacer
+	Button Next {text "Next"}
+}
