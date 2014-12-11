@@ -27,4 +27,11 @@ class ModuleClass {
 			"./CustomActions"
 		], {});
 	'''
+	
+	def static String generateModuleForWorkflowHandler() '''
+		define([
+			"ct/Stateful",
+			"./WorkflowEventHandler"
+		], {});
+	'''
 }

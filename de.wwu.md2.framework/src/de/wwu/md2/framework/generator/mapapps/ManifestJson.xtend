@@ -1,5 +1,6 @@
 package de.wwu.md2.framework.generator.mapapps
 
+import de.wwu.md2.framework.generator.preprocessor.ProcessController
 import de.wwu.md2.framework.generator.util.DataContainer
 import de.wwu.md2.framework.mD2.AlternativesPane
 import de.wwu.md2.framework.mD2.BooleanInput
@@ -26,15 +27,13 @@ import de.wwu.md2.framework.mD2.TimeInput
 import de.wwu.md2.framework.mD2.Tooltip
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.WidthParam
+import de.wwu.md2.framework.mD2.WorkflowElement
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.xbase.lib.Pair
 
-import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.generator.mapapps.util.MD2MapappsUtil.*
+import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
-import de.wwu.md2.framework.mD2.Workflow
-import de.wwu.md2.framework.mD2.WorkflowElement
-import de.wwu.md2.framework.generator.preprocessor.ProcessController
 
 class ManifestJson {
 		
@@ -140,6 +139,107 @@ class ManifestJson {
 					«ENDFOR»
 				]
 			}
+		'''
+	}
+	
+	def static String generateManifestJsonForWorkflowHandler(DataContainer dataContainer, ResourceSet processedInput) {
+		'''
+			{
+			    "Bundle-SymbolicName": "md2_workflow",
+			    "Bundle-Version": "2.0",
+			    "Bundle-Name": "workflow",
+			    "Bundle-Description": "Generated MD2 bundle: workflow",
+			    "Bundle-Localization": [],
+			    "Bundle-Main": "",
+			    "Require-Bundle": [
+			        {
+			            "name": "md2_runtime"
+			        }
+			    ],
+			    "Components": [
+			        {
+			            "name": "WorkflowEventHandler",
+			            "provides": ["md2.workflow.EventHandler"],
+			            "instanceFactory": true,
+			            "references": [
+			                {
+			                    "name": "controller",
+			                    "providing": "md2.app.Citizenapp.controllers",
+			                    "policy": "dynamic",
+			                    "cardinality": "0..n"
+			                }
+			            ]
+			        },
+			        { // Tool is somehow required in order to auto-load this package
+			            // prevents cyclic references, e.g. wfe_Locationdetection -> WorkflowEventHandler -> wfe_Locationdetection
+			            "name": "LoaderTool",
+			            "impl": "ct.tools.Tool",
+			            "provides": ["ct.tools.Tool"],
+			            "propertiesConstructor": true,
+			            "properties": {
+			                "id": "md2_workflow_loader",
+			                "title": "[dummy]",
+			                "description": "[dummy]",
+			                "tooltip": "[dummy]",
+			                "toolRole": "toolset",
+			                "iconClass": "icon-view-grid"
+			            },
+			            "references": [
+			                {
+			                    "name": "_eventHandler",
+			                    "providing": "md2.workflow.EventHandler"
+			                }
+			            ]
+			        }
+			    ]
+			}
+		'''
+	}
+	
+	def static String generateWorkflowEventHandler(DataContainer dataContainer, ResourceSet processedInput) {
+		// TODO: get the right values here...
+		var event = "THE_EVENT"
+		var workflowelement = "THE_WORKFLOW_ELEMENT"
+		'''
+			define([
+			    "dojo/_base/declare", "ct/Hash"
+			],
+			function(declare, Hash) {
+			    
+			    return declare([], {
+			        constructor: function() {
+			            this.controllers = new Hash();
+			        },
+			        createInstance: function() {
+			            alert("hallo");
+			            return {
+			                handleEvent: this.handleEvent,
+			                addController: this.addController,
+			                removeController: this.removeController
+			            };
+			        },
+			        
+			        handleEvent: function(event, workflowelement) {
+			           if (event === "«event»" && workflowelement === "«workflowelement»")
+			           {
+			               // TODO get correct controller from list this.controllers
+			              var wfe = this._mediacapturingController;
+			              wfe.activate();
+			           }
+			        },
+			        
+			        addController: function (controller, properties) {
+			            console.log("controller", controller);
+			            console.log("properties", properties);
+			            var id = controller.get("id"),
+			                    controllers = this.controllers;
+			        },
+			        
+			        removeController: function (controller, properties) {
+			        }
+			        
+			    });
+			});
 		'''
 	}
 	

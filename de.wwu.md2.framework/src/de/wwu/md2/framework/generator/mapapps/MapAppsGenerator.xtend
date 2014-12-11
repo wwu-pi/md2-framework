@@ -43,6 +43,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		
 		generateModelsBundle(fsa, bundlesRootFolder + "/md2_models")
 		generateContentProvidersBundle(fsa, bundlesRootFolder + "/md2_contentproviders")
+		generateWorkflowBundle(fsa, bundlesRootFolder + "/md2_workflows")
 		
 		/////////////////////////////////////////
 		// Build zip file for bundle
@@ -80,8 +81,15 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		
 		for (^enum : dataContainer.enums) {
 			fsa.generateFile(modelBundleFolder + "/models/" + enum.name.toFirstUpper + ".js", generateEnum(enum).tabsToSpaces(4))
-		}
+		}	
+	}
+	
+	def generateWorkflowBundle(IExtendedFileSystemAccess fsa, String modelBundleFolder){
+		fsa.generateFile(modelBundleFolder + "/module.js", generateModuleForWorkflowHandler().tabsToSpaces(4))
 		
+		fsa.generateFile(modelBundleFolder + "/manifest.json", generateManifestJsonForWorkflowHandler(dataContainer, processedInput).tabsToSpaces(4))
+		
+		fsa.generateFile(modelBundleFolder + "/WorkflowEventHandler.js", generateWorkflowEventHandler(dataContainer, processedInput).tabsToSpaces(4))
 	}
 	
 	def generateContentProvidersBundle (IExtendedFileSystemAccess fsa, String contentProviderBundleFolder){
