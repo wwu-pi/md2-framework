@@ -112,8 +112,8 @@ class ManifestJson {
 			{
 				"Bundle-SymbolicName": "«workflowElement.bundleName»", //TODO:"md2_wfe_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]»"
 				"Bundle-Version": "«dataContainer.main.appVersion»",
-				"Bundle-Name": "Workflow element «workflowElement.bundleName»",
-				"Bundle-Description": "Generated MD2 workflow element bundle: «workflowElement.bundleName» of «appName»",
+				"Bundle-Name": "Workflow element «workflowElement.name»",
+				"Bundle-Description": "Generated MD2 workflow element bundle: «workflowElement.name» of «appName»",
 				"Bundle-Localization": [],
 				"Bundle-Main": "",
 				"Require-Bundle": [],
@@ -130,10 +130,10 @@ class ManifestJson {
 				],
 				"Components": [
 					«val snippets = newArrayList(
-						generateConfigurationSnippet(workflowElement, dataContainer, processedInput)
-						//generateCustomActionsSnippet(workflowElement, dataContainer, processedInput),
-						//generateControllerSnippet(workflowElement, dataContainer, processedInput),
-						//generateToolSnippet(workflowElement, dataContainer, processedInput)
+						generateConfigurationSnippet(workflowElement, dataContainer, processedInput),
+						generateCustomActionsSnippet(workflowElement, dataContainer, processedInput),
+						generateControllerSnippet(workflowElement, dataContainer, processedInput),
+						generateToolSnippet(workflowElement, dataContainer, processedInput)
 					)»
 					«FOR snippet : snippets.filter(s | !s.toString.trim.empty) SEPARATOR ","»
 						«snippet»
@@ -144,17 +144,15 @@ class ManifestJson {
 	}
 	
 	def private static String generateConfigurationSnippet(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) {
-		var appName = dataContainer.workflows?.head.apps?.head.appName
-		var onInitializedEvent = dataContainer.controllers?.head.controllerElements.filter(WorkflowElement)?.head?.initActions?.head?.name
 		'''
 			{
-				"name": "MD2«workflowElement.bundleName»",//TODO: processedInput.getBasePackageName.split("\\.").last.toFirstUpper
+				"name": "MD2«workflowElement.name»",//TODO: processedInput.getBasePackageName.split("\\.").last.toFirstUpper
 				"impl": "ct/Stateful",
-				"provides": ["md2.app.«workflowElement.bundleName».AppDefinition"], //TODO: «processedInput.getBasePackageName»
+				"provides": ["md2.app.«workflowElement.name».AppDefinition"], //TODO: «processedInput.getBasePackageName»
 				"propertiesConstructor": true,
 				"properties": {
-					"id": "md2_«workflowElement.bundleName.replace(".", "_")»", processedInput.getBasePackageName.replace(".", "_")
-					"windowTitle": "«workflowElement.bundleName»",
+					"id": "md2_«workflowElement.name.replace(".", "_")»", processedInput.getBasePackageName.replace(".", "_")
+					"windowTitle": "«workflowElement»",
 					"onInitialized": "«ProcessController::startupActionName»",
 					"views": [
 						«FOR view : dataContainer.rootViewContainers.get(workflowElement) SEPARATOR ","»
@@ -172,10 +170,10 @@ class ManifestJson {
 		'''
 	}
 	
-	def static generateCustomActionsSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
+	def static generateCustomActionsSnippet(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) '''
 		{
 			"name": "CustomActions",
-			"provides": ["md2.app.«processedInput.getBasePackageName».CustomActions"],
+			"provides": ["md2.app.«workflowElement.name».CustomActions"], //TODO: processedInput.getBasePackageName
 			"instanceFactory": true
 		}
 	'''
@@ -219,10 +217,10 @@ class ManifestJson {
 		'''
 	}
 	
-	def static generateControllerSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
+	def static generateControllerSnippet(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) '''
 		{
 			"name": "Controller",
-			"provides": ["md2.app.«processedInput.getBasePackageName».Controller"],
+			"provides": ["md2.app.«workflowElement.name».Controller"], //TODO: processedInput.getBasePackageName
 			"instanceFactory": true,
 			"references": [
 				{
@@ -231,38 +229,37 @@ class ManifestJson {
 				},
 				{
 					"name": "_customActions",
-					"providing": "md2.app.«processedInput.getBasePackageName».CustomActions"
+					"providing": "md2.app.«workflowElement.name».CustomActions"
 				},
 				{
 					"name": "_models",
-					"providing": "md2.app.«processedInput.getBasePackageName».Models"
+					"providing": "md2.app.«workflowElement.name».Models"
 				},
 				{
 					"name": "_contentProviders",
-					"providing": "md2.app.«processedInput.getBasePackageName».ContentProvider",
+					"providing": "md2.app.«workflowElement.name».ContentProvider",
 					"cardinality": "0..n"
 				},
 				{
 					"name": "_configBean",
-					"providing": "md2.app.«processedInput.getBasePackageName».AppDefinition"
+					"providing": "md2.app.«workflowElement.name».AppDefinition"
 				}
 			]
 		}
 	'''
 	
-	def static generateToolSnippet(DataContainer dataContainer, ResourceSet processedInput) {
-		var appName = dataContainer.workflows?.head.apps?.head.appName
+	def static generateToolSnippet(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) {
 		'''
 			{
-				"name": "MD2«processedInput.getBasePackageName.split("\\.").last.toFirstUpper»Tool",
+				"name": "MD2«workflowElement.name.split("\\.").last.toFirstUpper»Tool", //TODO: processedInput.getBasePackageName
 				"impl": "ct.tools.Tool",
 				"provides": ["ct.tools.Tool"],
 				"propertiesConstructor": true,
 				"properties": {
-					"id": "md2_app_«processedInput.getBasePackageName.replace(".", "_")»_tool",
-					"title": "«appName»",
-					"description": "Start «appName»",
-					"tooltip": "Start «appName»",
+					"id": "md2_app_«workflowElement.name.replace(".", "_")»_tool",
+					"title": "«workflowElement.name»",
+					"description": "Start «workflowElement.name»", //TODO: Insert good description
+					"tooltip": "Start «workflowElement.name»", //TODO: Insert good tooltip
 					"toolRole": "toolset",
 					"iconClass": "icon-view-grid",
 					"togglable": true,
@@ -272,7 +269,7 @@ class ManifestJson {
 				"references": [
 					{
 						"name": "handlerScope",
-						"providing": "md2.app.«processedInput.getBasePackageName».Controller"
+						"providing": "md2.app.«workflowElement.name».Controller"
 					}
 				]
 			}
