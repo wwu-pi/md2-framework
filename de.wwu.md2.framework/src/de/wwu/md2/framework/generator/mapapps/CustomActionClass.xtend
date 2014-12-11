@@ -263,7 +263,7 @@ class CustomActionClass {
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(FireEventAction action, String varName, Map<String, String> imports) '''
-		TODO
+		//TODO
 	'''
 	
 	

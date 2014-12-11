@@ -102,6 +102,10 @@ class ManifestJson {
 			}
 		'''
 	}
+	
+	/**
+	 * Generates manifest.json code for WorkflowElements.
+	 */
 	def static String generateManifestJsonForWorkflowElement(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) {
 		var appName = dataContainer.workflows?.head.apps?.head.appName
 		'''
@@ -113,7 +117,6 @@ class ManifestJson {
 				"Bundle-Localization": [],
 				"Bundle-Main": "",
 				"Require-Bundle": [],
-				"Require-Bundle": [
 			    "Require-Bundle": [
 			        {
 			            "name": "md2_runtime"
