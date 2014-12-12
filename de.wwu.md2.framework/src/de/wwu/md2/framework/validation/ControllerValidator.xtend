@@ -1,5 +1,7 @@
 package de.wwu.md2.framework.validation
 
+import de.wwu.md2.framework.mD2.SimpleAction
+
 import com.google.inject.Inject
 import de.wwu.md2.framework.mD2.AllowedOperation
 import de.wwu.md2.framework.mD2.AttributeSetTask
@@ -24,7 +26,10 @@ import org.eclipse.xtext.validation.EValidatorRegistrar
 import static extension de.wwu.md2.framework.validation.TypeResolver.*
 import de.wwu.md2.framework.mD2.FireEventAction
 import de.wwu.md2.framework.mD2.WorkflowElement
-import de.wwu.md2.framework.mD2.WorkflowElementEntry
+import de.wwu.md2.framework.mD2.WorkflowElementEntryimport de.wwu.md2.framework.mD2.WorkflowEvent
+import de.wwu.md2.framework.mD2.CustomAction
+import de.wwu.md2.framework.mD2.EventBindingTask
+import java.util.ArrayList
 
 /**
  * Valaidators for all controller elements of MD2.
@@ -62,7 +67,8 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	}
 	
 	/**
-	 * 
+	 * Checks whether an event which is fired in a controller is specified in the corresponding workflowelement
+	 * in the workflowelement file
 	 */
 	@Check
 	def checkEventExistsInCorrectWorkflowElement(FireEventAction action){
@@ -74,6 +80,29 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		}
 	}
 	
+	/*
+	 * Checks whether an event, which is specified in an workflowelemententry is fired in the
+	 * corresponding controller workflowelement
+	 */
+	@Check
+	def checkIfSpecifiedEventsAreFiredInController(WorkflowEvent event){
+		val actions = (event.eContainer as WorkflowElementEntry).workflowElement.actions.filter(typeof(CustomAction))
+		val eventBindingTasks = new ArrayList<EventBindingTask>
+		val fireEventActions = new ArrayList<FireEventAction>
+		
+		for (ac : actions){
+			eventBindingTasks += ac.codeFragments.filter(typeof(EventBindingTask))
+		}
+		
+		for (ev : eventBindingTasks) {
+			fireEventActions += ev.actions.filter(typeof(SimpleAction)).filter(typeof (FireEventAction))
+		}
+		val correspondingEvents = fireEventActions.filter[it.workflowEvent == event]
+		
+		if(correspondingEvents.length == 0){
+			warning("Event " + event.name + " is not fired in the corresponding controller", MD2Package.eINSTANCE.workflowEvent_Name)
+		}
+	}
 	
 	/////////////////////////////////////////////////////////
 	/// Type Validators
