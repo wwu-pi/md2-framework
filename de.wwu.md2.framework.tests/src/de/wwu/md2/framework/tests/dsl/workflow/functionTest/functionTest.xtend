@@ -17,7 +17,7 @@ import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 
 @InjectWith(typeof(MD2InjectorProvider))
 @RunWith(typeof(XtextRunner))
-class functionTest {
+class FunctionTest {
 	
 	@Inject extension ParseHelper<MD2Model>
 	@Inject extension ValidationTestHelper
