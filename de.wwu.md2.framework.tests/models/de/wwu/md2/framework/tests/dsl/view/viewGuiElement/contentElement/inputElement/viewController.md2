@@ -1,0 +1,3 @@
+contentProvider View viewProvider {
+	providerType default
+}

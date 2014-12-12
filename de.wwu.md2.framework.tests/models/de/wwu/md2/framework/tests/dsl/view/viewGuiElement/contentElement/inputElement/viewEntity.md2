@@ -1,0 +1,8 @@
+entity View {
+	theViewName : string
+}
+
+enum ViewEnum {
+	"view1",
+	"view2"
+}

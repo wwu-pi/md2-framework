@@ -34,6 +34,11 @@ public class ModelProvider {
 	public static String WORKFLOW_FUNCTION_V = "dsl/workflow/functionTest/view.md2";
 	public static String WORKFLOW_FUNCTION_M = "dsl/workflow/functionTest/model.md2";
 	
+	//***Views***//
+	public static String VIEW_INPUT_ELEMENTS = "dsl/view/inputElement/inputElements.md2";
+	public static String VIEW_INPUT_ELEMENTS_CONTROLLER = "dsl/view/inputElement/viewController.md2";
+	public static String VIEW_INPUT_ELEMENTS_ENTITY = "dsl/view/inputElement/viewEntity.md2";
+	
 	//***Controller***//
 	
 	public static final String BASIC_CONTROLLER_M = "dsl/controller/Model.md2";
