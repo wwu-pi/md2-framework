@@ -84,12 +84,12 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		}	
 	}
 	
-	def generateWorkflowBundle(IExtendedFileSystemAccess fsa, String modelBundleFolder){
-		fsa.generateFile(modelBundleFolder + "/module.js", generateModuleForWorkflowHandler().tabsToSpaces(4))
+	def generateWorkflowBundle(IExtendedFileSystemAccess fsa, String workflowBundleFolder){
+		fsa.generateFile(workflowBundleFolder + "/module.js", generateModuleForWorkflowHandler().tabsToSpaces(4))
 		
-		fsa.generateFile(modelBundleFolder + "/manifest.json", generateManifestJsonForWorkflowHandler(dataContainer, processedInput).tabsToSpaces(4))
+		fsa.generateFile(workflowBundleFolder + "/manifest.json", generateManifestJsonForWorkflowHandler(dataContainer, processedInput).tabsToSpaces(4))
 		
-		fsa.generateFile(modelBundleFolder + "/WorkflowEventHandler.js", generateWorkflowEventHandler(dataContainer, processedInput).tabsToSpaces(4))
+		fsa.generateFile(workflowBundleFolder + "/WorkflowEventHandler.js", generateWorkflowEventHandler(dataContainer, processedInput).tabsToSpaces(4))
 	}
 	
 	def generateContentProvidersBundle (IExtendedFileSystemAccess fsa, String contentProviderBundleFolder){
