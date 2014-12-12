@@ -716,7 +716,10 @@ ControllerElement:
 // Controller layer => WorkflowElements
 /////////////////////////////////////
 
-
+/*
+ * WorkflowElements are controllers for encapsulated functionality.
+ * The onInit block is performed on initialization of the workflowelement
+ */
 WorkflowElement:
 	'WorkflowElement' name=EID '{'
 		
@@ -1065,7 +1068,7 @@ DateTimeRangeValidatorParam:
 /////////////////////////////////////
 
 /*
- * The Main object contains all basic information about an app.
+ * The Main object contains all basic information about the collection of apps.
  * Each set of models must contain exactly one Main object.
  */
 Main:
@@ -1729,7 +1732,8 @@ EnumTypeParam:
 /////////////////////////////////////
 
 /*
- * A workflow allows to construct multiple applications based on WorkflowElements.
+ * A workflow allows to construct multiple applications based on WorkflowElements and to specify apps that
+ * consist of these workflowelements.
  */
 Workflow: 
 	(workflowElementEntries += WorkflowElementEntry+) &
@@ -1738,7 +1742,8 @@ Workflow:
 
 /*
  * WorkflowElements provide reusable functionality across applications.
- * They allow the construction of a directed graph via events.
+ * They allow the construction of a directed graph via events. For every event,
+ * 0 to n Workflowelements can be started
  */
 WorkflowElementEntry:
 	'WorkflowElement' workflowElement=[WorkflowElement]
@@ -1746,13 +1751,15 @@ WorkflowElementEntry:
 			('start' startedWorkflowElements += [WorkflowElement])*
 		'}')+
 ;
-
+/*
+ *  Workflowevents are used for the navigation in the graph of workflowelements
+ */
 WorkflowEvent:
 	name=EID
 ;
 
 /*
- * The application bundles multiple workflow elements.
+ * The application bundles multiple workflow elements and describes general app information.
  */
 App:
 	'App' name=EID '{'
