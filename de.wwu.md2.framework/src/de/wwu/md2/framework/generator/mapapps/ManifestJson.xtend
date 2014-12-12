@@ -143,11 +143,12 @@ class ManifestJson {
 	}
 	
 	def static String generateManifestJsonForWorkflowHandler(DataContainer dataContainer, ResourceSet processedInput) {
+		var appName = dataContainer.workflows?.head.apps?.head.appName;
 		'''
 			{
 			    "Bundle-SymbolicName": "md2_workflow",
 			    "Bundle-Version": "2.0",
-			    "Bundle-Name": "workflow",
+			    "Bundle-Name": "workflow of «appName»",
 			    "Bundle-Description": "Generated MD2 bundle: workflow",
 			    "Bundle-Localization": [],
 			    "Bundle-Main": "",
@@ -164,7 +165,7 @@ class ManifestJson {
 			            "references": [
 			                {
 			                    "name": "controller",
-			                    "providing": "md2.app.Citizenapp.controllers",
+			                    "providing": "md2.app.«appName».controllers",
 			                    "policy": "dynamic",
 			                    "cardinality": "0..n"
 			                }
