@@ -16,7 +16,7 @@ class AppClass {
     
     "load": {
         // the bundle locations, from where the bundles should be resolved
-        "bundleLocations": ["bundles", "${app}/bundles"],
+        "bundleLocations" : [{"name":"localbundles","noprefetch" : true},"bundles"],
         
         // the bundles to load (if empty: all are loaded)
         "allowedBundles": [
@@ -114,13 +114,6 @@ class AppClass {
 	
 	def static String generateBundleJson(DataContainer dataContainer) '''
 	{
-	    "md2_runtime": {},
-	    "md2_store": {},
-	    "onlinestatus": {},
-	    "md2_formcontrols": {},
-	    "md2_location_service": {},
-	    "md2_local_store": {},
-	    
 	    "md2_models": {},
 	    "md2_content_providers": {},
 	    
