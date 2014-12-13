@@ -88,7 +88,9 @@ Workflow {
             }
 
             // formatter API
-            fragment = formatting.FormatterFragment {}
+            fragment = formatting.FormatterFragment {
+                generateStub = false
+            }
 
             // labeling API
             fragment = labeling.LabelProviderFragment {}
