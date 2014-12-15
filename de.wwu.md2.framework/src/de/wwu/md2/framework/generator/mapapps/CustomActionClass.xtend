@@ -64,6 +64,7 @@ import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
 import de.wwu.md2.framework.mD2.FireEventAction
+import de.wwu.md2.framework.mD2.WorkflowEvent
 
 class CustomActionClass {
 	
@@ -262,8 +263,12 @@ class CustomActionClass {
 		var «varName» = this.$.actionFactory.getContentProviderResetAction("«action.contentProvider.contentProvider.name»");
 	'''
 	
-	def private static dispatch String generateActionCodeFragment(FireEventAction action, String varName, Map<String, String> imports) '''
-		//TODO
+	def private static dispatch String generateActionCodeFragment(FireEventAction action, String varName, Map<String, String> imports) 
+	//TODO: Preprocessing porbably needs to be changed; 
+	//also: getFiredEventAction does not exists in code -> RefImpl.
+	'''
+		var «varName» = this.$.actionFactory.getFireEventAction("«action.workflowEvent.name»");
+		this.$.workflowEventHandler.handleEvent("LocationEvent", "Locationdetection");	
 	'''
 	
 	
@@ -300,6 +305,7 @@ class CustomActionClass {
 		«generateActionCodeFragment(actionDefinition, actionVar, imports)»
 		this.$.eventRegistry.get("global/«event.event.toString»").«IF !isBinding»un«ENDIF»registerAction(«actionVar»);
 	'''
+	
 	
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////
