@@ -291,6 +291,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 		
 		val customAction = factory.createCustomAction
 		customAction.setName("__processChainExecuteStepAction")
+		//TODO: create on customAction for each workflowelement and add each to the workflowElement. Next line is only a dirty bug fix.
 		controller.controllerElements.add(factory.createWorkflowElement)
 		
 		val conditionalCodeFragment = factory.createConditionalCodeFragment

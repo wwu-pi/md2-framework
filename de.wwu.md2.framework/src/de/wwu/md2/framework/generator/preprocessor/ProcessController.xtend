@@ -56,7 +56,7 @@ class ProcessController extends AbstractPreprocessor {
 		// add original startup action to __startupAction
 		val originalCallTask = factory.createCallTask
 		val originalActionReference = factory.createActionReference
-//		originalActionReference.setActionRef(originalStartupAction)
+		// originalActionReference.setActionRef(originalStartupAction)
 		originalCallTask.setAction(originalActionReference)
 		startupAction.codeFragments.add(originalCallTask);
 	}
