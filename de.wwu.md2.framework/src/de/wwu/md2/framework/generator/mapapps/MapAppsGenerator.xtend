@@ -12,6 +12,7 @@ import static de.wwu.md2.framework.generator.mapapps.CustomActionClass.*
 import static de.wwu.md2.framework.generator.mapapps.CustomActionsInterfaceClass.*
 import static de.wwu.md2.framework.generator.mapapps.EntityClass.*
 import static de.wwu.md2.framework.generator.mapapps.EnumClass.*
+import static de.wwu.md2.framework.generator.mapapps.EventHandlerClass.*
 import static de.wwu.md2.framework.generator.mapapps.ManifestJson.*
 import static de.wwu.md2.framework.generator.mapapps.ModelsInterfaceClass.*
 import static de.wwu.md2.framework.generator.mapapps.ModuleClass.*
