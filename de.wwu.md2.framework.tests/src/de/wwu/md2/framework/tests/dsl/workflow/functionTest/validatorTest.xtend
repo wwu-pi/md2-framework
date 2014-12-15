@@ -27,7 +27,7 @@ class validatorTest {
 	MD2Model controllerModel;
 	MD2Model viewModel;
 	MD2Model modelModel;
-		ResourceSet rs;
+	ResourceSet rs;
 		
 	@Before
 	def void setUp() {
@@ -41,15 +41,11 @@ class validatorTest {
 	@Test
 	def checkIfSpecifiedEventsAreFiredInControllerTest(){
 		workflowModel.assertNoErrors();
-		//workflowModel.assertNoIssues();
 		workflowModel.assertWarning(MD2Package::eINSTANCE.workflowEvent,ControllerValidator::FIREEVENT)
 	}
 	
 	@Test
 	def checkEventExistsInCorrectWorkflowElementTest(){
-		//controllerModel.assertNoErrors();
-		//controllerModel.assertNoIssues();
 		controllerModel.assertError(MD2Package::eINSTANCE.fireEventAction,ControllerValidator::EVENTREFERENCE);
 	}
-	
 }

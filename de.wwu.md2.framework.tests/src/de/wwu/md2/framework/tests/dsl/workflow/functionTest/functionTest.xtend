@@ -42,6 +42,5 @@ class functionTest {
 		controllerModel.assertNoErrors;
 		viewModel.assertNoErrors;
 		modelModel.assertNoErrors;
-	}
-	
+	}	
 }

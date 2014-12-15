@@ -13,9 +13,10 @@ WorkflowElement SubmitComplaint
 	fires SubmitEvent {
 		start LocationDetection
 	}
-	fires anotherEvent{
+	fires anotherEvent {
 		start LocationDetection
 	}
+
 App Citizenapp {
 	WorkflowElements {
 		LocationDetection (startable: "Start Controller 1"),
