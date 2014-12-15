@@ -15,6 +15,8 @@ import org.eclipse.xtext.scoping.Scopes;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 import org.eclipse.xtext.scoping.impl.FilteringScope;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -31,6 +33,8 @@ import de.wwu.md2.framework.mD2.ContentProviderReference;
 import de.wwu.md2.framework.mD2.DataType;
 import de.wwu.md2.framework.mD2.Entity;
 import de.wwu.md2.framework.mD2.EntityPath;
+import de.wwu.md2.framework.mD2.FireEventAction;
+import de.wwu.md2.framework.mD2.MD2Model;
 import de.wwu.md2.framework.mD2.MD2Package;
 import de.wwu.md2.framework.mD2.ModelElement;
 import de.wwu.md2.framework.mD2.PathTail;
@@ -40,6 +44,7 @@ import de.wwu.md2.framework.mD2.ViewElementType;
 import de.wwu.md2.framework.mD2.ViewGUIElementReference;
 import de.wwu.md2.framework.mD2.Workflow;
 import de.wwu.md2.framework.mD2.WorkflowElement;
+import de.wwu.md2.framework.util.MD2Util;
 
 /**
  * This class contains custom scoping description.
@@ -55,6 +60,31 @@ public class MD2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	
 	public static Collection<EClass> validContainerForAbstractViews = Sets.newHashSet(MD2Package.eINSTANCE.getMain(), MD2Package.eINSTANCE.getProcessChainStep(), MD2Package.eINSTANCE.getSimpleAction());
 	
+
+
+	@Inject
+	private MD2Util util;
+	
+	IScope scope_FireEventAction_workflowEvent(final FireEventAction context,
+			EReference ref) {
+		System.out.println("Hello.");
+		System.err.println("Hellooo!!!");
+
+		WorkflowElement wfe = getContainingWorkflowElement(context);
+		EReference workflow_WorkflowElementEntries = MD2Package.eINSTANCE.getWorkflow_WorkflowElementEntries();
+		Collection<MD2Model> allMD2Models = util.getAllMD2Models(context.eResource());
+		throw new NotImplementedException();
+		// return Scopes.scopeFor();
+	}
+	
+	private WorkflowElement getContainingWorkflowElement(FireEventAction context) {
+		EObject current = context;
+		while (!(current.eContainer() instanceof WorkflowElement)) {
+			current = current.eContainer();
+		}
+		return (WorkflowElement)current.eContainer();
+	}
+
 	// Scoping for nested attributes
 	IScope scope_PathTail_attributeRef(PathTail pathTail, EReference attributeRef) {
 		Set<EObject> resultSet = Sets.newHashSet();
