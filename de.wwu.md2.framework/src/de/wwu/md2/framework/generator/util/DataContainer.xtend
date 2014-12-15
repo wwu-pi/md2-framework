@@ -22,6 +22,9 @@ import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.WorkflowElement
 import java.util.Map
 import java.util.HashMap
+import de.wwu.md2.framework.mD2.EventBindingTask
+import de.wwu.md2.framework.mD2.SimpleActionRef
+import de.wwu.md2.framework.mD2.FireEventAction
 
 /**
  * DataContainer to store data that are used throughout the generation process.
@@ -229,7 +232,7 @@ class DataContainer {
 		}
 	}
 	
-		/**
+	/**
 	 * Extract all apps.
 	 */
 	def private extractElementsFromWorkflows() {
@@ -238,6 +241,20 @@ class DataContainer {
 		apps = workflows.map[ workflow |
 			 workflow.apps
 		].flatten.toSet
+	}
+	
+	
+	def public getEventsFromWorkflowElement(WorkflowElement wfe)
+	{
+		var customActions = wfe.actions.filter(CustomAction).map[custAction | custAction.codeFragments].flatten.toSet
+		
+		var actions = customActions.filter(EventBindingTask).map[tasks | tasks.actions].flatten.toSet
+
+		var fireEventActions = actions.filter(SimpleActionRef).map[ref|ref.action].filter(typeof(FireEventAction))
+	
+		var events = fireEventActions.map[fea | fea.workflowEvent]
+		
+		return events
 	}
 	
 	
