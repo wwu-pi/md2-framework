@@ -95,7 +95,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 	
 	def generateContentProvidersBundle (IExtendedFileSystemAccess fsa, String contentProviderBundleFolder){
 		fsa.generateFile(contentProviderBundleFolder + "/module.js", generateModuleForContentProviders(dataContainer).tabsToSpaces(4))
-		fsa.generateFile(contentProviderBundleFolder + "/manifest.js", generateManifestJsonForContentProviders(dataContainer, processedInput).tabsToSpaces(4))
+		fsa.generateFile(contentProviderBundleFolder + "/manifest.json", generateManifestJsonForContentProviders(dataContainer, processedInput).tabsToSpaces(4))
 		
 		for (contentProvider : dataContainer.contentProviders) {
 			fsa.generateFile(contentProviderBundleFolder + "/contentproviders/" + contentProvider.name.toFirstUpper + ".js", generateContentProvider(contentProvider, processedInput).tabsToSpaces(4))
