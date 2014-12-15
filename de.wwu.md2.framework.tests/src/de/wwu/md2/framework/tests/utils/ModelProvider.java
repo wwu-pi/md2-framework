@@ -27,12 +27,28 @@ public class ModelProvider {
 	
 	public static String VALIDATOR_MODEL_M = "dsl/model/validator/Model.md2";
 	
+	
+	//***Project***//
+	
+	public static String PROJECT_VALIDATOR_MEC_CIW = "dsl/project/validator/modelElementPackageCongruence/controllerInWorkflow.md2";
+	public static String PROJECT_VALIDATOR_MEC_MIW = "dsl/project/validator/modelElementPackageCongruence/modelInWorkflow.md2";
+	public static String PROJECT_VALIDATOR_MEC_VIM = "dsl/project/validator/modelElementPackageCongruence/viewInModel.md2";
+	public static String PROJECT_VALIDATOR_MEC_WIM = "dsl/project/validator/modelElementPackageCongruence/workflowInModel.md2";
+	public static String PROJECT_VALIDATOR_MEC_CIC = "dsl/project/validator/modelElementPackageCongruence/controllerInController.md2";
+	
+
 	//***Workflow***//
 	
 	public static String WORKFLOW_FUNCTION_W = "dsl/workflow/functionTest/workflow.md2";
 	public static String WORKFLOW_FUNCTION_C = "dsl/workflow/functionTest/controller.md2";
 	public static String WORKFLOW_FUNCTION_V = "dsl/workflow/functionTest/view.md2";
 	public static String WORKFLOW_FUNCTION_M = "dsl/workflow/functionTest/model.md2";
+
+	public static String WORKFLOW_VALIDATOR_W = "dsl/workflow/validator/workflow.md2";
+	public static String WORKFLOW_VALIDATOR_C = "dsl/workflow/validator/controller.md2";
+	public static String WORKFLOW_VALIDATOR_V = "dsl/workflow/validator/view.md2";
+	public static String WORKFLOW_VALIDATOR_M = "dsl/workflow/validator/model.md2";
+	
 	
 	//***Controller***//
 	
