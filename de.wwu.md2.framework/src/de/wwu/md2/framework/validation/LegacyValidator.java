@@ -60,6 +60,7 @@ import de.wwu.md2.framework.mD2.ViewGUIElement;
 import de.wwu.md2.framework.mD2.ViewGUIElementReference;
 import de.wwu.md2.framework.mD2.WidthParam;
 import de.wwu.md2.framework.mD2.ProcessChain;
+import de.wwu.md2.framework.mD2.Workflow;
 import de.wwu.md2.framework.util.MD2Util;
 
 public class LegacyValidator extends AbstractMD2JavaValidator {
@@ -76,43 +77,6 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
         // nothing to do
     }
 	
-	/////////////////////////////////////////////////////////
-	/// General
-	/////////////////////////////////////////////////////////
-	
-	/**
-	 * Enforce that the declared package name complies with the actual package location
-	 * 
-	 * @param model
-	 */
-	@Check
-	public void checkPackageNameCompliesWithLocation(MD2Model model) {
-		String pkgName = util.getPackageNameFromPath(model.eResource().getURI());
-		if(!model.getPackage().getPkgName().equals(pkgName)) {
-			warning("The specified package does not match the actual location of the file", MD2Package.eINSTANCE.getMD2Model_Package());
-		}
-	}
-	
-	/**
-	 * Ensure that all elements belonging to a certain layer are stored in the appropriate
-	 * package. If e.g. a view is stored in the package models throw an error.
-	 * 
-	 * @param model
-	 */
-	@Check
-	public void checkModelElemenetCompliesWithPackage(MD2Model model) {
-		
-		// split package name
-		List<String> lst = Arrays.asList(model.getPackage().getPkgName().split("\\."));
-		
-		if (model.getModelLayer() instanceof Model && !lst.contains("models")) {
-			error("You tried to put a model element in a non-model package", MD2Package.eINSTANCE.getMD2Model_ModelLayer());
-		} else if (model.getModelLayer() instanceof View && !lst.contains("views")) {
-			error("You tried to put a view element in a non-view package", MD2Package.eINSTANCE.getMD2Model_ModelLayer());
-		} else if (model.getModelLayer() instanceof Controller && !lst.contains("controllers")) {
-			error("You tried to put a controller element in a non-controller package", MD2Package.eINSTANCE.getMD2Model_ModelLayer());
-		}
-	}
 	
 	
 	/////////////////////////////////////////////////////////

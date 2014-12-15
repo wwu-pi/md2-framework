@@ -8,7 +8,7 @@ import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
 
 /**
- * Valaidators for all model elements of MD2.
+ * Validators for all model elements of MD2.
  */
 class ModelValidator extends AbstractMD2JavaValidator {
 	
