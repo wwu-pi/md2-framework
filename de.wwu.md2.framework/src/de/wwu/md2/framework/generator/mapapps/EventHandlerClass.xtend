@@ -19,29 +19,26 @@ class EventHandlerClass {
 			        constructor: function() {
 			            this.controllers = new Hash();
 			        },
-			        createInstance: function() {
-			            alert("hallo");
+			        createInstance: function() {  
 			            return {
 			                handleEvent: this.handleEvent,
 			                addController: this.addController,
-			                removeController: this.removeController
+			                removeController: this.removeController,
+			                instance: this
 			            };
 			        },
 			        
 			        handleEvent: function(event, workflowelement) {
 			           if (event === "«event»" && workflowelement === "«workflowelement»")
 			           {
-			               // TODO get correct controller from list this.controllers
-			              var wfe = this._mediacapturingController;
-			              wfe.activate();
+							this.instance.controllers.get("md2.wfe.Locationdetection.Controller").closeWindow();
+			              	this.instance.controllers.get("md2.wfe.Locationdetection.Controller")._isFirstExecution = true;
+			            	this.instance.controllers.get("md2.wfe.MediaCapturing.Controller").openWindow();
 			           }
 			        },
 			        
 			        addController: function (controller, properties) {
-			            console.log("controller", controller);
-			            console.log("properties", properties);
-			            var id = controller.get("id"),
-			                    controllers = this.controllers;
+							this.controllers.set(properties.objectClass[0],controller);
 			        },
 			        
 			        removeController: function (controller, properties) {
