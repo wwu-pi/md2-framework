@@ -179,17 +179,6 @@ public class MD2ScopeProvider extends AbstractDeclarativeScopeProvider {
 		return delegateGetScope(context, ref);
 	}
 	
-	/**
-	 * Provides autocompletion for referenceable WorkflowElements in the App definition.
-	 * @param context provides the App object
-	 * @param ref
-	 * @return scope for WorkflowElements
-	 */
-	IScope scope_App_WorkflowELementRef(final App context, EReference ref) {
-		Iterable<WorkflowElement> elements = ((Workflow) context.eContainer()).getWorkflowElements();
-		return Scopes.scopeFor(elements);
-	}
-	
 //	// Scoping for referenced (to be copied) view elements in Workflows conditions
 //	IScope scope_AbstractViewGUIElementRef_ref(final GuiElementStateExpression context, EReference ref) {
 //		EObject parent = context;
