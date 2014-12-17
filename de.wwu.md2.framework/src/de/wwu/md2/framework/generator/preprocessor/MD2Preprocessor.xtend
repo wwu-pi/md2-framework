@@ -143,21 +143,21 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		autoGenerator.createAutoGenerationAction(autoGenerators)  // revisited
 		
-		autoGenerator.createViewElementsForAutoGeneratorAction(autoGenerators) //
+		autoGenerator.createViewElementsForAutoGeneratorAction(autoGenerators) // revisited
 		
-		viewReferences.cloneContainerElementReferencesIntoParentContainer(clonedElements, containerRefs) //
+		viewReferences.cloneContainerElementReferencesIntoParentContainer(clonedElements, containerRefs) // revisited
 		
-		viewReferences.cloneViewElementReferencesIntoParentContainer(clonedElements, viewRefsDone) //
+		viewReferences.cloneViewElementReferencesIntoParentContainer(clonedElements, viewRefsDone) // revisited 
 		
 		viewReferences.replaceStyleRefernces // revisited
 		
-		viewReferences.simplifyReferencesToAbstractViewGUIElements(clonedElements,autoGenerator.autoGenerationActionName) //
+		viewReferences.simplifyReferencesToAbstractViewGUIElements(clonedElements,autoGenerator.autoGenerationActionName) // revisited
 		
-		model.createValidatorsForModelConstraints(autoGenerator.autoGenerationActionName) //
+		model.createValidatorsForModelConstraints(autoGenerator.autoGenerationActionName) // revisited
 		
 		viewReferences.copyAllCustomCodeFragmentsToClonedGUIElements(clonedElements, clonedCodeFragments) // 
 		
-		viewReferences.removeAllCustomCodeFragmentsThatReferenceUnusedGUIElements(clonedCodeFragments) // 
+		viewReferences.removeAllCustomCodeFragmentsThatReferenceUnusedGUIElements(clonedCodeFragments) // revisited
 		
 		view.transformInputsWithLabelsAndTooltipsToLayouts // 
 		
@@ -174,11 +174,11 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		// after clean-up calculate all grid and element sizes and fill empty cells with spacers,
 		// so that calculations are avoided during the actual generation process
-		view.transformFlowLayoutsToGridLayouts // 
+		view.transformFlowLayoutsToGridLayouts // revisited
 		
-		view.calculateNumRowsAndNumColumnsParameters // 
+		view.calculateNumRowsAndNumColumnsParameters // revisited
 		
-		view.fillUpGridLayoutsWithSpacers // 
+		view.fillUpGridLayoutsWithSpacers // revisited
 		
 		view.calculateAllViewElementWidths // 
 		
