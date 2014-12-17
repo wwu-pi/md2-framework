@@ -25,6 +25,7 @@ import static extension de.wwu.md2.framework.validation.TypeResolver.*
 import de.wwu.md2.framework.mD2.FireEventAction
 import de.wwu.md2.framework.mD2.WorkflowElement
 import de.wwu.md2.framework.mD2.WorkflowElementEntry
+import org.eclipse.emf.ecore.EObject
 
 /**
  * Valaidators for all controller elements of MD2.
@@ -68,12 +69,19 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	def checkEventExistsInCorrectWorkflowElement(FireEventAction action){
 		val workflowElementInWorkflow = (action.workflowEvent.eContainer as WorkflowElementEntry).workflowElement
 		
-		val workflowElementInController = (action.eContainer.eContainer.eContainer.eContainer as WorkflowElement)
+		val workflowElementInController = action.containingWorkflowElement
 		if(workflowElementInWorkflow.name != workflowElementInController.name){
 			error("Event not specified in WorkflowElement", MD2Package.eINSTANCE.fireEventAction_WorkflowEvent)
 		}
 	}
 	
+	def static getContainingWorkflowElement(FireEventAction context) {
+		var EObject current = context;
+		while (!(current.eContainer() instanceof WorkflowElement)) {
+			current = current.eContainer;
+		}
+		return current.eContainer as WorkflowElement;
+	}
 	
 	/////////////////////////////////////////////////////////
 	/// Type Validators
