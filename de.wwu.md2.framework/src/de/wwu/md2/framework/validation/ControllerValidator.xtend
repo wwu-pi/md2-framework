@@ -58,20 +58,6 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		}
 	}
 	
-	/**
-	 * 
-	 
-	@Check
-	def checkEventExistsInCorrectWorkflowElement(FireEventAction action){
-		val workflowElementInWorkflow = (action.workflowEvent.eContainer as WorkflowElementEntry).workflowElement
-		
-		val workflowElementInController = (action.eContainer.eContainer.eContainer.eContainer as WorkflowElement)
-		if(workflowElementInWorkflow.name != workflowElementInController.name){
-			error("Event not specified in WorkflowElement", MD2Package.eINSTANCE.fireEventAction_WorkflowEvent)
-		}
-	}
-	
-	*/
 	/////////////////////////////////////////////////////////
 	/// Type Validators
 	/////////////////////////////////////////////////////////
