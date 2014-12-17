@@ -65,6 +65,9 @@ import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
 import de.wwu.md2.framework.mD2.FireEventAction
 import de.wwu.md2.framework.mD2.WorkflowEvent
+import de.wwu.md2.framework.mD2.WorkflowElement
+import de.wwu.md2.framework.mD2.Action
+import org.eclipse.emf.ecore.EObject
 
 class CustomActionClass {
 	
@@ -267,9 +270,19 @@ class CustomActionClass {
 	//TODO: Preprocessing porbably needs to be changed; 
 	//also: getFiredEventAction does not exists in code -> RefImpl.
 	'''
-		var «varName» = this.$.actionFactory.getFireEventAction("«action.workflowEvent.name»");
-		this.$.workflowEventHandler.handleEvent("LocationEvent", "Locationdetection");	
+		var «varName» = this.$.actionFactory.getFireEventAction("«(action.containingWorkflowElement).name»","«action.workflowEvent.name»");
 	'''
+	
+	def public static WorkflowElement getContainingWorkflowElement(FireEventAction context)
+	{
+		var EObject current = context;
+		while(!(current.eContainer() instanceof WorkflowElement))
+		{
+			current = current.eContainer();
+		}
+		
+		return (current.eContainer() as WorkflowElement);
+	}
 	
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////
