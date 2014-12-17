@@ -20,8 +20,6 @@ public class ModelProvider {
 			+ "/models/de/wwu/md2/framework/tests/";
 
 	public static String SIMPLE_MAIN_MODEL_C = "dsl/controller/main/Controller.md2";
-
-	public static String CONTROLLER_TESTS_V = "dsl/controller/View.md2";
 	
 	public static String COMPLETE_MODEL_M = "dsl/model/complete/Model.md2";
 	

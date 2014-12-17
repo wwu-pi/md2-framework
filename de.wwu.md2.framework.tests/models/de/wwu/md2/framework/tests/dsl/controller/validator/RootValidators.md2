@@ -7,7 +7,7 @@ validator NumberRangeValidator validateComplaintID
 	message "ID must between 1 and 666!"
 }
 
-validator StringRangeValidator validateDesctription
+validator StringRangeValidator validateDescription
 {
 	maxLength 150
 	minLength 1
