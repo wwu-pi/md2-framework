@@ -118,6 +118,7 @@ class AppClass {
 	{
 	    "md2_models": {},
 	    "md2_content_providers": {},
+	    "md2_workflow" : {},
 	    
 	    «FOR elem : dataContainer.workflowElements SEPARATOR ","»
 	    "«elem.bundleName»": {}
