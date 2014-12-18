@@ -4,15 +4,34 @@ import de.wwu.md2.framework.generator.util.DataContainer
 
 class ModuleClass {
 	
-	def static String generateModule(DataContainer dataContainer) '''
+	def static String generateModuleForModels() '''
+		define([
+			"./Models"
+		], {});
+	'''
+	
+	
+	def static String generateModuleForContentProviders(DataContainer dataContainer) '''
+		define([
+			«FOR contentProvider : dataContainer.contentProviders SEPARATOR "," »
+				"./contentproviders/«contentProvider.name.toFirstUpper»"
+			«ENDFOR»
+		], {});
+	'''
+	
+	
+	def static String generateModuleForWorkflowElement() '''
 		define([
 			"ct/Stateful",
-			«FOR contentProvider : dataContainer.contentProviders»
-				"./contentproviders/«contentProvider.name.toFirstUpper»",
-			«ENDFOR»
 			"./Controller",
-			"./CustomActions",
-			"./Models"
+			"./CustomActions"
+		], {});
+	'''
+	
+	def static String generateModuleForWorkflowHandler() '''
+		define([
+			"ct/Stateful",
+			"./WorkflowEventHandler"
 		], {});
 	'''
 }

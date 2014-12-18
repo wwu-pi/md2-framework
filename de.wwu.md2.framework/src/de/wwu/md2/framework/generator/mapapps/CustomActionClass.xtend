@@ -63,6 +63,11 @@ import static de.wwu.md2.framework.generator.mapapps.Expressions.*
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
+import de.wwu.md2.framework.mD2.FireEventAction
+import de.wwu.md2.framework.mD2.WorkflowEvent
+import de.wwu.md2.framework.mD2.WorkflowElement
+import de.wwu.md2.framework.mD2.Action
+import org.eclipse.emf.ecore.EObject
 
 class CustomActionClass {
 	
@@ -261,6 +266,24 @@ class CustomActionClass {
 		var «varName» = this.$.actionFactory.getContentProviderResetAction("«action.contentProvider.contentProvider.name»");
 	'''
 	
+	def private static dispatch String generateActionCodeFragment(FireEventAction action, String varName, Map<String, String> imports) 
+	//TODO: Preprocessing porbably needs to be changed; 
+	//also: getFiredEventAction does not exists in code -> RefImpl.
+	'''
+		var «varName» = this.$.actionFactory.getFireEventAction("«(action.containingWorkflowElement).name»","«action.workflowEvent.name»");
+	'''
+	
+	def public static WorkflowElement getContainingWorkflowElement(FireEventAction context)
+	{
+		var EObject current = context;
+		while(!(current.eContainer() instanceof WorkflowElement))
+		{
+			current = current.eContainer();
+		}
+		
+		return (current.eContainer() as WorkflowElement);
+	}
+	
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// Event
@@ -295,6 +318,7 @@ class CustomActionClass {
 		«generateActionCodeFragment(actionDefinition, actionVar, imports)»
 		this.$.eventRegistry.get("global/«event.event.toString»").«IF !isBinding»un«ENDIF»registerAction(«actionVar»);
 	'''
+	
 	
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////

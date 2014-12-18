@@ -7,7 +7,7 @@ import de.wwu.md2.framework.mD2.View
 import java.util.Set
 import org.eclipse.emf.ecore.resource.ResourceSet
 
-import static de.wwu.md2.framework.generator.preprocessor.util.Util.*
+import static de.wwu.md2.framework.generator.preprocessor.util.Util.*import de.wwu.md2.framework.mD2.Workflow
 
 abstract class AbstractPreprocessor {
 	
@@ -32,6 +32,11 @@ abstract class AbstractPreprocessor {
 	 * Set of all controllers.
 	 */
 	protected static Set<Controller> controllers
+	
+		/**
+	 * Set of all workflows.
+	 */
+	protected static Set<Workflow> workflows
 	
 	/**
 	 * Set of all views.
@@ -77,6 +82,7 @@ abstract class AbstractPreprocessor {
 		views = newHashSet()
 		controllers = newHashSet()
 		models = newHashSet()
+		workflows = newHashSet()
 		
 		val md2models = workingInput.resources.map[ r |
 			r.contents.filter(MD2Model)
@@ -88,6 +94,7 @@ abstract class AbstractPreprocessor {
 				View : views.add(modelLayer)
 				Model : models.add(modelLayer)
 				Controller : controllers.add(modelLayer)
+				Workflow : workflows.add(modelLayer)
 			}
 		]
 	}
@@ -123,6 +130,12 @@ abstract class AbstractPreprocessor {
 			workingInput.resources.head.contents.add(md2model);
 		}
 		
+		if (workflows.empty) {
+			val md2model = factory.createMD2Model
+			val workflow = factory.createWorkflow
+			md2model.setModelLayer(workflow)
+			workingInput.resources.head.contents.add(md2model);
+		}
 	}
 	
 }

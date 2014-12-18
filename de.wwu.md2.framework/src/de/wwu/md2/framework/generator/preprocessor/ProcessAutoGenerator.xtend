@@ -77,8 +77,11 @@ class ProcessAutoGenerator extends AbstractPreprocessor {
 				
 				// create __autoGenerationAction
 				val autoGenAction = factory.createCustomAction();
-				autoGenAction.setName(autoGenerationActionName)
-				ctrl.controllerElements.add(autoGenAction)
+				autoGenAction.setName(autoGenerationActionName)			
+				val workflowElement = factory.createWorkflowElement
+				workflowElement.actions += autoGenAction
+				ctrl.controllerElements.add(workflowElement)
+				
 				
 				// add __autoGenerationAction action to __startupAction
 				val autoGenCallTask = factory.createCallTask

@@ -63,7 +63,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		/////////////////////////////////////////////////////////////////////////////
 		//                                                                         //
 		// Collections that are shared between tasks throughout the model          //
-		// pre-processing processChain                                                 //
+		// pre-processing processChain                                             //
 		//                                                                         //
 		/////////////////////////////////////////////////////////////////////////////
 		
@@ -117,51 +117,51 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		// processChain
 		
-		controller.replaceDefaultProviderTypeWithConcreteDefinition // new
+		controller.replaceDefaultProviderTypeWithConcreteDefinition // revisited
 		
-		controller.createStartUpActionAndRegisterAsOnInitializedEvent // new
+		controller.createStartUpActionAndRegisterAsOnInitializedEvent // revisited
 		
-		controller.createInitialGotoViewOrSetProcessChainAction // new
+		controller.createInitialGotoViewOrSetProcessChainAction // revisited
 		
-		controller.transformEventBindingAndUnbindingTasksToOneToOneRelations // new
+		controller.transformEventBindingAndUnbindingTasksToOneToOneRelations // revisited
 		
-		controller.calculateParameterSignatureForAllSimpleActions // new
+		controller.calculateParameterSignatureForAllSimpleActions // revisited
 		
-		processChains.transformProcessChainsToSequenceOfCoreLanguageElements // new
+		processChains.transformProcessChainsToSequenceOfCoreLanguageElements // !!!!!!
 		
-		conditionalEvents.transformAllCustomEventsToBasicLanguageStructures // new
+		conditionalEvents.transformAllCustomEventsToBasicLanguageStructures // !!!!!!
 		
-		model.transformImplicitEnums
+		model.transformImplicitEnums // revisited
 		
 		view.setFlowLayoutPaneDefaultParameters // revisited
 		
-		view.duplicateSpacers // refactored
+		view.duplicateSpacers // revisited
 		
 		view.replaceNamedColorsWithHexColors // revisited
 		
-		controller.replaceCombinedActionWithCustomAction // refactored
+		controller.replaceCombinedActionWithCustomAction // revisited
 		
-		autoGenerator.createAutoGenerationAction(autoGenerators)  // refactored
+		autoGenerator.createAutoGenerationAction(autoGenerators)  // revisited
 		
-		autoGenerator.createViewElementsForAutoGeneratorAction(autoGenerators)
+		autoGenerator.createViewElementsForAutoGeneratorAction(autoGenerators) // revisited
 		
-		viewReferences.cloneContainerElementReferencesIntoParentContainer(clonedElements, containerRefs)
+		viewReferences.cloneContainerElementReferencesIntoParentContainer(clonedElements, containerRefs) // revisited
 		
-		viewReferences.cloneViewElementReferencesIntoParentContainer(clonedElements, viewRefsDone)
+		viewReferences.cloneViewElementReferencesIntoParentContainer(clonedElements, viewRefsDone) // revisited 
 		
-		viewReferences.replaceStyleRefernces
+		viewReferences.replaceStyleRefernces // revisited
 		
-		viewReferences.simplifyReferencesToAbstractViewGUIElements(clonedElements,autoGenerator.autoGenerationActionName)
+		viewReferences.simplifyReferencesToAbstractViewGUIElements(clonedElements,autoGenerator.autoGenerationActionName) // revisited
 		
-		model.createValidatorsForModelConstraints(autoGenerator.autoGenerationActionName)
+		model.createValidatorsForModelConstraints(autoGenerator.autoGenerationActionName) // revisited
 		
 		viewReferences.copyAllCustomCodeFragmentsToClonedGUIElements(clonedElements, clonedCodeFragments) // revisited
 		
-		viewReferences.removeAllCustomCodeFragmentsThatReferenceUnusedGUIElements(clonedCodeFragments) // new
+		viewReferences.removeAllCustomCodeFragmentsThatReferenceUnusedGUIElements(clonedCodeFragments) // revisited
 		
-		view.transformInputsWithLabelsAndTooltipsToLayouts // new
+		view.transformInputsWithLabelsAndTooltipsToLayouts // revisited
 		
-		view.createDisableActionsForAllDisabledViewElements // new
+		view.createDisableActionsForAllDisabledViewElements // revisited 
 		
 		// Remove redundant elements
 		val Collection<EObject> objectsToRemove = newHashSet
@@ -174,13 +174,13 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		// after clean-up calculate all grid and element sizes and fill empty cells with spacers,
 		// so that calculations are avoided during the actual generation process
-		view.transformFlowLayoutsToGridLayouts // new
+		view.transformFlowLayoutsToGridLayouts // revisited
 		
-		view.calculateNumRowsAndNumColumnsParameters // new
+		view.calculateNumRowsAndNumColumnsParameters // revisited
 		
-		view.fillUpGridLayoutsWithSpacers // new
+		view.fillUpGridLayoutsWithSpacers // revisited
 		
-		view.calculateAllViewElementWidths // new
+		view.calculateAllViewElementWidths // revisited
 		
 		
 		// Return new ResourceSet

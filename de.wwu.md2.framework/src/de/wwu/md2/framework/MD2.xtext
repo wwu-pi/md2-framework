@@ -1750,9 +1750,13 @@ Workflow:
  */
 WorkflowElementEntry:
 	'WorkflowElement' workflowElement=[WorkflowElement]
-		('fires' events += WorkflowEvent '{'
-			('start' startedWorkflowElements += [WorkflowElement])*
-		'}')+
+		firedEvents += FireEventEntry+
+;
+
+FireEventEntry:
+	'fires' event = WorkflowEvent '{'
+			'start' startedWorkflowElement = [WorkflowElement]
+		'}'
 ;
 /*
  *  Workflowevents are used for the navigation in the graph of workflowelements

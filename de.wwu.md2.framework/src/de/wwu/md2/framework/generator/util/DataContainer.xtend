@@ -17,7 +17,14 @@ import java.util.Set
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 
-import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
+import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*import de.wwu.md2.framework.mD2.Workflow
+import de.wwu.md2.framework.mD2.App
+import de.wwu.md2.framework.mD2.WorkflowElement
+import java.util.Map
+import java.util.HashMap
+import de.wwu.md2.framework.mD2.EventBindingTask
+import de.wwu.md2.framework.mD2.SimpleActionRef
+import de.wwu.md2.framework.mD2.FireEventAction
 
 /**
  * DataContainer to store data that are used throughout the generation process.
@@ -41,6 +48,9 @@ class DataContainer {
 	@Property
 	private Collection<Model> models
 	
+	@Property
+	private Collection<Workflow> workflows
+	
 	
 	///////////////////////////////////////
 	// Controller Elements
@@ -58,6 +68,9 @@ class DataContainer {
 	@Property
 	private Collection<RemoteValidator> remoteValidators
 	
+	@Property
+	private Collection<WorkflowElement> workflowElements
+	
 	
 	///////////////////////////////////////
 	// View Elements
@@ -71,7 +84,7 @@ class DataContainer {
 	 * any view containers that are accessed by a GotoViewAction.
 	 */
 	@Property
-	private Set<ContainerElement> rootViewContainers
+	private Map<WorkflowElement, Set<ContainerElement>> rootViewContainers
 	
 	
 	///////////////////////////////////////
@@ -83,6 +96,14 @@ class DataContainer {
 	
 	@Property
 	private Collection<Enum> enums
+	
+	
+	///////////////////////////////////////
+	// Workflow Elements
+	///////////////////////////////////////
+	
+	@Property
+	private Collection<App> apps
 	
 	
 	/**
@@ -99,6 +120,8 @@ class DataContainer {
 		extractElementsFromModels
 		
 		extractRootViews
+		
+		extractElementsFromWorkflows
 	
 	}
 	
@@ -110,6 +133,7 @@ class DataContainer {
 		views = newHashSet()
 		controllers = newHashSet()
 		models = newHashSet()
+		workflows = newHashSet()
 		
 		val md2models = input.resources.map[ r |
 			r.contents.filter(MD2Model)
@@ -121,6 +145,7 @@ class DataContainer {
 				View : views.add(modelLayer)
 				Model : models.add(modelLayer)
 				Controller : controllers.add(modelLayer)
+				Workflow : workflows.add(modelLayer)
 			}
 		]
 	}
@@ -142,6 +167,7 @@ class DataContainer {
 		customActions = newHashSet
 		contentProviders = newHashSet
 		remoteValidators = newHashSet
+		workflowElements = newHashSet
 		
 		customActions = controllers.map[ ctrl |
 			ctrl.controllerElements.filter(CustomAction)
@@ -153,6 +179,10 @@ class DataContainer {
 		
 		remoteValidators = controllers.map[ ctrl |
 			ctrl.controllerElements.filter(RemoteValidator)
+		].flatten.toSet
+		
+		workflowElements = controllers.map[ ctrl | 
+			ctrl.controllerElements.filter(WorkflowElement)
 		].flatten.toSet
 	}
 	
@@ -181,25 +211,51 @@ class DataContainer {
 	 */
 	def private extractRootViews() {
 		
-		rootViewContainers = newHashSet
-		
-		// Get all views that are accessed by GotoViewActions at some time
-		val containers = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(CustomAction).map[ customAction |
-				customAction.eAllContents.toIterable
-			].flatten.filter(GotoViewAction).map[ gotoView |
-				resolveContainerElement(gotoView.view)
-			]
-		].flatten
-		
-		// Calculate root view for each view that is accessed via a GotoViewAction
-		rootViewContainers = containers.map[ container |
-			var EObject elem = container
-			while (!(elem.eContainer instanceof View)) {
-				elem = elem.eContainer
-			}
-			elem as ContainerElement
-		].toSet
+		rootViewContainers = newHashMap
+			
+		for (WorkflowElement workflowElement : workflowElements){
+			// Get all views that are accessed by GotoViewActions at some time
+			val containers = (workflowElement.actions + workflowElement.initActions).filter(CustomAction).map[ customAction |
+					customAction.eAllContents.toIterable
+				].flatten.filter(GotoViewAction).map[ gotoView |
+					resolveContainerElement(gotoView.view)
+				]
+			
+			// Calculate root view for each view that is accessed via a GotoViewAction
+			rootViewContainers.put(workflowElement, containers.map[ container |
+				var EObject elem = container
+				while (!(elem.eContainer instanceof View)) {
+					elem = elem.eContainer
+				}
+				elem as ContainerElement
+			].toSet)
+		}
 	}
+	
+	/**
+	 * Extract all apps.
+	 */
+	def private extractElementsFromWorkflows() {
+		apps = newHashSet
+		
+		apps = workflows.map[ workflow |
+			 workflow.apps
+		].flatten.toSet
+	}
+	
+	
+	def public getEventsFromWorkflowElement(WorkflowElement wfe)
+	{
+		var customActions = wfe.actions.filter(CustomAction).map[custAction | custAction.codeFragments].flatten.toSet
+		
+		var actions = customActions.filter(EventBindingTask).map[tasks | tasks.actions].flatten.toSet
+
+		var fireEventActions = actions.filter(SimpleActionRef).map[ref|ref.action].filter(typeof(FireEventAction))
+	
+		var events = fireEventActions.map[fea | fea.workflowEvent]
+		
+		return events
+	}
+	
 	
 }

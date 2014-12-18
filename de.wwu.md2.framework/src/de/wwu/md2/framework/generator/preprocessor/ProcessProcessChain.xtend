@@ -192,7 +192,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 				"__processChainActionEventTrigger_" + str.sha1Hex, str, entity, contentProvider, processChainAction
 			)
 			
-			controller.controllerElements.add(customAction)
+//			controller.controllerElements.add(customAction)
 			eventActionMap.put(event, customAction)
 		]
 		
@@ -210,7 +210,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 		// create custom action to register all events
 		val customAction = factory.createCustomAction
 		customAction.setName("__registerProcessChainActionEventTrigger")
-		controller.controllerElements.add(customAction)
+		controller.controllerElements.add(factory.createWorkflowElement)
 		
 		// for each event create event binding task
 		eventActionMap.forEach[ event, action |
@@ -291,7 +291,8 @@ class ProcessProcessChain extends AbstractPreprocessor {
 		
 		val customAction = factory.createCustomAction
 		customAction.setName("__processChainExecuteStepAction")
-		controller.controllerElements.add(customAction)
+		//TODO: create on customAction for each workflowelement and add each to the workflowElement. Next line is only a dirty bug fix.
+		controller.controllerElements.add(factory.createWorkflowElement)
 		
 		val conditionalCodeFragment = factory.createConditionalCodeFragment
 		if (!processChainSteps.empty) {
@@ -381,7 +382,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 				
 				val customAction = factory.createCustomAction
 				customAction.setName("__processChainSetProcessChain" + processChain.name.toFirstUpper + "Action")
-				controller.controllerElements.add(customAction)
+				controller.controllerElements.add(factory.createWorkflowElement)
 				createdSetProcessChainActions.put(processChain, customAction)
 				
 				// create attribute set task
@@ -453,7 +454,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 		val customAction = buildProcessChainActionTriggerAction(
 			"__processChainActionEventTrigger_proceed", "__action.proceed", entity, contentProvider, processChainAction
 		)
-		controller.controllerElements.add(customAction)
+		controller.controllerElements.add(factory.createWorkflowElement)
 		
 		// Replace all ProcessChainProceedActions with the newly created custom action.
 		processChainProceedActions.forEach[ processChainProceedAction |
@@ -491,7 +492,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 		val customAction = buildProcessChainActionTriggerAction(
 			"__processChainActionEventTrigger_reverse", "__action.reverse", entity, contentProvider, processChainAction
 		)
-		controller.controllerElements.add(customAction)
+		controller.controllerElements.add(factory.createWorkflowElement)
 		
 		// Replace all ProcessChainReverseActions with the newly created custom action.
 		processChainReverseActions.forEach[ processChainReverseAction |
@@ -537,7 +538,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 					customActionName, eventIdentifier, entity, contentProvider, processChainAction
 				)
 				createdProcessChainGotoActions.put(processChainStep, customAction)
-				controller.controllerElements.add(customAction)
+				controller.controllerElements.add(factory.createWorkflowElement)
 			}
 		]
 		
@@ -592,7 +593,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 		// createAction
 		val customAction = factory.createCustomAction
 		customAction.setName("__processChainProcessingAction")
-		controller.controllerElements.add(customAction)
+		controller.controllerElements.add(factory.createWorkflowElement)
 		
 		// add conditional code fragment to the custom action
 		val conditionalCodeFragment = factory.createConditionalCodeFragment
