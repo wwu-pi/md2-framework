@@ -63,7 +63,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	
 	/**
 	 * 
-	 */
+	 
 	@Check
 	def checkEventExistsInCorrectWorkflowElement(FireEventAction action){
 		val workflowElementInWorkflow = (action.workflowEvent.eContainer as WorkflowElementEntry).workflowElement
@@ -74,7 +74,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		}
 	}
 	
-	
+	*/
 	/////////////////////////////////////////////////////////
 	/// Type Validators
 	/////////////////////////////////////////////////////////

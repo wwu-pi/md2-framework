@@ -112,6 +112,8 @@ class AppClass {
 }
 	'''
 	
+	// Generate the "allowed-bundle" string for each workflow element
+	
 	def static String generateBundleJson(DataContainer dataContainer) '''
 	{
 	    "md2_models": {},

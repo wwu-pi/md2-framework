@@ -25,7 +25,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 	override doGenerate(IExtendedFileSystemAccess fsa) {
 		
 		/////////////////////////////////////////
-		// Generation work flow
+		// Generation of the application and all its bundles
 		/////////////////////////////////////////
 		
 		var bundlesRootFolder = rootFolder + "/bundles"
@@ -34,7 +34,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		
 		fsa.generateFile(bundlesRootFolder + "/bundles.json", generateBundleJson(dataContainer).tabsToSpaces(4))
 		
-		// for each bundle generate
+		// Generate a separate bundle for each workflow element specified in the application model
 		for(WorkflowElement workflowElement : dataContainer.controllers.head.controllerElements.filter(WorkflowElement)) {
 			var bundleFolder = bundlesRootFolder + "/" + workflowElement.bundleName 
 			
@@ -46,13 +46,18 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		generateWorkflowBundle(fsa, bundlesRootFolder + "/md2_workflows")
 		
 		/////////////////////////////////////////
-		// Build zip file for bundle
+		// Build zip file for application
 		/////////////////////////////////////////
 		
 		val zipFileName = '''md2_app_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]».zip'''
 		fsa.zipDirectory(rootFolder, rootFolder + "/../" + zipFileName);
 		
 	}
+	
+	/* Generate a bundle for each workflow element specified in the application model. 
+	 * Each bundle contains its own manifest.json, module.js, Controller.js and CustomActions.js.
+	 * All custom actions are inserted into a separate folder called "actions".
+	 */
 	
 	def generateWorkflowElementBundle(IExtendedFileSystemAccess fsa, String bundleFolder, WorkflowElement workflowElement) {
 		fsa.generateFile(bundleFolder + "/module.js", generateModuleForWorkflowElement().tabsToSpaces(4))
@@ -63,10 +68,16 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		
 		fsa.generateFile(bundleFolder + "/CustomActions.js", generateCustomActionsInterface(dataContainer).tabsToSpaces(4))
 		
+		//Put all custom actions in an additional folder
 		for (customAction : workflowElement.actions.filter(CustomAction)) {
 			fsa.generateFile(bundleFolder + "/actions/" + customAction.name.toFirstUpper + ".js", generateCustomAction(customAction).tabsToSpaces(4))
 		}
 	}
+	
+	/* Generate a bundle for the model specified in the application model. 
+	 * This bundle contains its own manifest.json, module.js and Models.js.
+	 * All entities and enums specified in the application model are inserted into a separate folder called "models".
+	 */	
 	
 	def generateModelsBundle(IExtendedFileSystemAccess fsa, String modelBundleFolder){
 		fsa.generateFile(modelBundleFolder + "/module.js", generateModuleForModels().tabsToSpaces(4))
@@ -75,15 +86,21 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		
 		fsa.generateFile(modelBundleFolder + "/Models.js", generateModelsInterface(dataContainer).tabsToSpaces(4))
 		
+		//put all entities in the in an additional folder called models
 		for (entity : dataContainer.entities) {
 			fsa.generateFile(modelBundleFolder + "/models/" + entity.name.toFirstUpper + ".js", generateEntity(entity).tabsToSpaces(4))
 		}
 		
+		//put all enums in the in an additional folder called models
 		for (^enum : dataContainer.enums) {
 			fsa.generateFile(modelBundleFolder + "/models/" + enum.name.toFirstUpper + ".js", generateEnum(enum).tabsToSpaces(4))
 		}	
 	}
 	
+	/* Generate a bundle for the workflow event handler. This event handler is responsible for starting and finishing 
+	 * workflow elements based on events fired by workflow elements.
+	 * The bundle contains its own manifest.json, module.js and a class called WorkflowEventHandler.js.
+	 */	
 	def generateWorkflowBundle(IExtendedFileSystemAccess fsa, String workflowBundleFolder){
 		fsa.generateFile(workflowBundleFolder + "/module.js", generateModuleForWorkflowHandler().tabsToSpaces(4))
 		
@@ -92,10 +109,14 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		fsa.generateFile(workflowBundleFolder + "/WorkflowEventHandler.js", generateWorkflowEventHandler(dataContainer, processedInput).tabsToSpaces(4))
 	}
 	
+	/* Generate a bundle for the content providers specified in the application model.  
+	 * This bundle contains its own manifest.json, module.js and Models.js. and a folder in which all content providers are inserted.
+	 */	
 	def generateContentProvidersBundle (IExtendedFileSystemAccess fsa, String contentProviderBundleFolder){
 		fsa.generateFile(contentProviderBundleFolder + "/module.js", generateModuleForContentProviders(dataContainer).tabsToSpaces(4))
 		fsa.generateFile(contentProviderBundleFolder + "/manifest.js", generateManifestJsonForContentProviders(dataContainer, processedInput).tabsToSpaces(4))
 		
+		//put all content providers in the in an additional folder called "contentproviders"
 		for (contentProvider : dataContainer.contentProviders) {
 			fsa.generateFile(contentProviderBundleFolder + "/contentproviders/" + contentProvider.name.toFirstUpper + ".js", generateContentProvider(contentProvider, processedInput).tabsToSpaces(4))
 		}
