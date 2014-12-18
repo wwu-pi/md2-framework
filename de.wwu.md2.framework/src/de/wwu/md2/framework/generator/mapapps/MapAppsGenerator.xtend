@@ -12,6 +12,7 @@ import static de.wwu.md2.framework.generator.mapapps.CustomActionClass.*
 import static de.wwu.md2.framework.generator.mapapps.CustomActionsInterfaceClass.*
 import static de.wwu.md2.framework.generator.mapapps.EntityClass.*
 import static de.wwu.md2.framework.generator.mapapps.EnumClass.*
+import static de.wwu.md2.framework.generator.mapapps.EventHandlerClass.*
 import static de.wwu.md2.framework.generator.mapapps.ManifestJson.*
 import static de.wwu.md2.framework.generator.mapapps.ModelsInterfaceClass.*
 import static de.wwu.md2.framework.generator.mapapps.ModuleClass.*
@@ -114,7 +115,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 	 */	
 	def generateContentProvidersBundle (IExtendedFileSystemAccess fsa, String contentProviderBundleFolder){
 		fsa.generateFile(contentProviderBundleFolder + "/module.js", generateModuleForContentProviders(dataContainer).tabsToSpaces(4))
-		fsa.generateFile(contentProviderBundleFolder + "/manifest.js", generateManifestJsonForContentProviders(dataContainer, processedInput).tabsToSpaces(4))
+		fsa.generateFile(contentProviderBundleFolder + "/manifest.json", generateManifestJsonForContentProviders(dataContainer, processedInput).tabsToSpaces(4))
 		
 		//put all content providers in the in an additional folder called "contentproviders"
 		for (contentProvider : dataContainer.contentProviders) {

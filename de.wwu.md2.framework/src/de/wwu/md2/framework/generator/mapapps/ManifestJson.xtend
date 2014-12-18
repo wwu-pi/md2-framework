@@ -41,13 +41,7 @@ class ManifestJson {
 		var appName = dataContainer.workflows?.head.apps?.head.appName
 		'''
 			{
-			    "Bundle-SymbolicName": "md2_models",
-			    "Bundle-Version": "«dataContainer.main.appVersion»",
-			    "Bundle-Name": "«appName» md2_models",
-			    "Bundle-Description": "Generated MD2 bundle: Models of «appName»",
-			    "Bundle-Localization": [],
-			    "Bundle-Main": "",
-			    "Require-Bundle": [],
+			    «generateBundlePropertiesSnippet(dataContainer, "model")»
 			    "Require-Bundle": [
 			        {
 			            "name": "md2_runtime"
@@ -68,13 +62,7 @@ class ManifestJson {
 		var appName = dataContainer.workflows?.head.apps?.head.appName
 		'''
 			{
-				"Bundle-SymbolicName": "md2_content_providers»",
-				"Bundle-Version": "«dataContainer.main.appVersion»",
-				"Bundle-Name": "«appName»",
-				"Bundle-Description": "Generated MD2 bundle: «appName»",
-				"Bundle-Localization": [],
-				"Bundle-Main": "",
-				"Require-Bundle": [],
+				«generateBundlePropertiesSnippet(dataContainer, "content_provider")»
 				"Require-Bundle": [
 					«IF dataContainer.contentProviders.exists[it.local]»
 						{
@@ -125,7 +113,10 @@ class ManifestJson {
 			        },
 			        {
 			            "name": "md2_content_providers"
-			        }
+			        },
+					{
+						"name": "md2_workflow"
+					}
 				],
 				"Components": [
 					«val snippets = newArrayList(
@@ -143,14 +134,10 @@ class ManifestJson {
 	}
 	
 	def static String generateManifestJsonForWorkflowHandler(DataContainer dataContainer, ResourceSet processedInput) {
+		var appName = dataContainer.workflows?.head.apps?.head.appName;
 		'''
 			{
-			    "Bundle-SymbolicName": "md2_workflow",
-			    "Bundle-Version": "2.0",
-			    "Bundle-Name": "workflow",
-			    "Bundle-Description": "Generated MD2 bundle: workflow",
-			    "Bundle-Localization": [],
-			    "Bundle-Main": "",
+				«generateBundlePropertiesSnippet(dataContainer, "workflow")»
 			    "Require-Bundle": [
 			        {
 			            "name": "md2_runtime"
@@ -161,33 +148,13 @@ class ManifestJson {
 			            "name": "WorkflowEventHandler",
 			            "provides": ["md2.workflow.EventHandler"],
 			            "instanceFactory": true,
+			            "immediate": true,
 			            "references": [
 			                {
 			                    "name": "controller",
-			                    "providing": "md2.app.Citizenapp.controllers",
+			                    "providing": "md2.app.«appName».controllers",
 			                    "policy": "dynamic",
 			                    "cardinality": "0..n"
-			                }
-			            ]
-			        },
-			        { // Tool is somehow required in order to auto-load this package
-			            // prevents cyclic references, e.g. wfe_Locationdetection -> WorkflowEventHandler -> wfe_Locationdetection
-			            "name": "LoaderTool",
-			            "impl": "ct.tools.Tool",
-			            "provides": ["ct.tools.Tool"],
-			            "propertiesConstructor": true,
-			            "properties": {
-			                "id": "md2_workflow_loader",
-			                "title": "[dummy]",
-			                "description": "[dummy]",
-			                "tooltip": "[dummy]",
-			                "toolRole": "toolset",
-			                "iconClass": "icon-view-grid"
-			            },
-			            "references": [
-			                {
-			                    "name": "_eventHandler",
-			                    "providing": "md2.workflow.EventHandler"
 			                }
 			            ]
 			        }
@@ -196,51 +163,22 @@ class ManifestJson {
 		'''
 	}
 	
-	def static String generateWorkflowEventHandler(DataContainer dataContainer, ResourceSet processedInput) {
-		// TODO: get the right values here...
-		var event = "THE_EVENT"
-		var workflowelement = "THE_WORKFLOW_ELEMENT"
-		'''
-			define([
-			    "dojo/_base/declare", "ct/Hash"
-			],
-			function(declare, Hash) {
-			    
-			    return declare([], {
-			        constructor: function() {
-			            this.controllers = new Hash();
-			        },
-			        createInstance: function() {
-			            alert("hallo");
-			            return {
-			                handleEvent: this.handleEvent,
-			                addController: this.addController,
-			                removeController: this.removeController
-			            };
-			        },
-			        
-			        handleEvent: function(event, workflowelement) {
-			           if (event === "«event»" && workflowelement === "«workflowelement»")
-			           {
-			               // TODO get correct controller from list this.controllers
-			              var wfe = this._mediacapturingController;
-			              wfe.activate();
-			           }
-			        },
-			        
-			        addController: function (controller, properties) {
-			            console.log("controller", controller);
-			            console.log("properties", properties);
-			            var id = controller.get("id"),
-			                    controllers = this.controllers;
-			        },
-			        
-			        removeController: function (controller, properties) {
-			        }
-			        
-			    });
-			});
-		'''
+	
+	def private static generateBundlePropertiesSnippet(DataContainer dataContainer, String type){
+	var appName = dataContainer.workflows?.head.apps?.head.appName;
+				
+	'''«IF (type=="workflow")»
+		"Bundle-SymbolicName": "md2_workflow",
+		"Bundle-Name": "«appName» «type»",
+		"Bundle-Description": "Generated MD2 bundle: «type» of «appName»",
+		«ELSE»
+		"Bundle-SymbolicName": "md2_«type»s"
+		"Bundle-Name": "«appName» «type»s",
+		"Bundle-Description": "Generated MD2 bundle: «type»s of «appName»",
+		«ENDIF»"Bundle-Version": "2.0",
+"Bundle-Localization": [],
+"Bundle-Main": "",'''
+		
 	}
 	
 	def private static String generateConfigurationSnippet(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) {
@@ -317,10 +255,13 @@ class ManifestJson {
 		'''
 	}
 	
-	def static generateControllerSnippet(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) '''
+	def static generateControllerSnippet(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) 
+	{
+	var appName = dataContainer.workflows?.head.apps?.head.appName;
+	'''
 		{
 			"name": "Controller",
-			"provides": ["md2.app.«workflowElement.name».Controller"], //TODO: processedInput.getBasePackageName
+			"provides": ["md2.wfe.«workflowElement.name».Controller","md2.app.«appName».controllers"], //TODO: processedInput.getBasePackageName
 			"instanceFactory": true,
 			"references": [
 				{
@@ -329,24 +270,29 @@ class ManifestJson {
 				},
 				{
 					"name": "_customActions",
-					"providing": "md2.app.«workflowElement.name».CustomActions"
+					"providing": "md2.wfe.«workflowElement.name».CustomActions"
 				},
 				{
 					"name": "_models",
-					"providing": "md2.app.«workflowElement.name».Models"
+					"providing": "md2.app.«appName».Models"
 				},
 				{
 					"name": "_contentProviders",
-					"providing": "md2.app.«workflowElement.name».ContentProvider",
+					"providing": "md2.app.«appName».ContentProvider",
 					"cardinality": "0..n"
 				},
 				{
 					"name": "_configBean",
-					"providing": "md2.app.«workflowElement.name».AppDefinition"
+					"providing": "md2.wfe.«workflowElement.name».AppDefinition"
+				},
+				{
+					"name": "_workflowEventHandler",
+					"providing": "md2.workflow.EventHandler"
 				}
 			]
 		}
 	'''
+	}
 	
 	def static generateToolSnippet(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) {
 		'''
@@ -356,7 +302,7 @@ class ManifestJson {
 				"provides": ["ct.tools.Tool"],
 				"propertiesConstructor": true,
 				"properties": {
-					"id": "md2_app_«workflowElement.name.replace(".", "_")»_tool",
+					"id": "md2_wfe_«workflowElement.name.replace(".", "_")»_tool",
 					"title": "«workflowElement.name»",
 					"description": "Start «workflowElement.name»", //TODO: Insert good description
 					"tooltip": "Start «workflowElement.name»", //TODO: Insert good tooltip
@@ -369,7 +315,7 @@ class ManifestJson {
 				"references": [
 					{
 						"name": "handlerScope",
-						"providing": "md2.app.«workflowElement.name».Controller"
+						"providing": "md2.wfe.«workflowElement.name».Controller"
 					}
 				]
 			}
