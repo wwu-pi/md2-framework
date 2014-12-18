@@ -155,13 +155,13 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		model.createValidatorsForModelConstraints(autoGenerator.autoGenerationActionName) // revisited
 		
-		viewReferences.copyAllCustomCodeFragmentsToClonedGUIElements(clonedElements, clonedCodeFragments) // 
+		viewReferences.copyAllCustomCodeFragmentsToClonedGUIElements(clonedElements, clonedCodeFragments) // revisited
 		
 		viewReferences.removeAllCustomCodeFragmentsThatReferenceUnusedGUIElements(clonedCodeFragments) // revisited
 		
-		view.transformInputsWithLabelsAndTooltipsToLayouts // 
+		view.transformInputsWithLabelsAndTooltipsToLayouts // revisited
 		
-		view.createDisableActionsForAllDisabledViewElements // 
+		view.createDisableActionsForAllDisabledViewElements // revisited 
 		
 		// Remove redundant elements
 		val Collection<EObject> objectsToRemove = newHashSet
@@ -180,7 +180,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		view.fillUpGridLayoutsWithSpacers // revisited
 		
-		view.calculateAllViewElementWidths // 
+		view.calculateAllViewElementWidths // revisited
 		
 		
 		// Return new ResourceSet
