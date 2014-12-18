@@ -62,29 +62,6 @@ public class MD2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	
 
 
-	@Inject
-	private MD2Util util;
-	
-	IScope scope_FireEventAction_workflowEvent(final FireEventAction context,
-			EReference ref) {
-		System.out.println("Hello.");
-		System.err.println("Hellooo!!!");
-
-		WorkflowElement wfe = getContainingWorkflowElement(context);
-		EReference workflow_WorkflowElementEntries = MD2Package.eINSTANCE.getWorkflow_WorkflowElementEntries();
-		Collection<MD2Model> allMD2Models = util.getAllMD2Models(context.eResource());
-		throw new NotImplementedException();
-		// return Scopes.scopeFor();
-	}
-	
-	private WorkflowElement getContainingWorkflowElement(FireEventAction context) {
-		EObject current = context;
-		while (!(current.eContainer() instanceof WorkflowElement)) {
-			current = current.eContainer();
-		}
-		return (WorkflowElement)current.eContainer();
-	}
-
 	// Scoping for nested attributes
 	IScope scope_PathTail_attributeRef(PathTail pathTail, EReference attributeRef) {
 		Set<EObject> resultSet = Sets.newHashSet();
