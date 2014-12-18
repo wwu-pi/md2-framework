@@ -724,6 +724,10 @@ WorkflowElement:
 	'WorkflowElement' name=EID '{'
 		
 		('defaultProcessChain' defaultProcessChain = [ProcessChain]
+			
+		'firing' '{'
+			firingEvents += WorkflowEvent
+		'}'
 		
 		'onInit' '{'
 			initActions += Action
@@ -1754,7 +1758,7 @@ WorkflowElementEntry:
 ;
 
 FireEventEntry:
-	'fires' event = WorkflowEvent '{'
+	'fires' event = [WorkflowEvent] '{'
 			'start' startedWorkflowElement = [WorkflowElement]
 		'}'
 ;
