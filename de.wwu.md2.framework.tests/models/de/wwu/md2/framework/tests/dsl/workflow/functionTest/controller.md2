@@ -14,7 +14,7 @@ contentProvider Complaint localComplaintProvider {
 }
 
 WorkflowElement LocationDetection{
-	defaultProcessChain LocationDetection
+	defaultProcessChain LocationProcessChain
 	onInit {
 		action CustomAction init{
 			map LocationDetectionView.streetLbl to :localComplaintProvider.loc.myStreet
