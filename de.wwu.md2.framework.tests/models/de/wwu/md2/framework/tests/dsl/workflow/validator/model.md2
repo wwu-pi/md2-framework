@@ -1,0 +1,25 @@
+package CurrentStateProject.models
+
+entity Complaint {
+	loc: Location  // use current MD2 location instead!--> No, current MD2 location is a content provider, not an entity!
+	descriptions : string
+	feedback : string
+	status : ComplaintStatus
+}
+
+entity Location {
+	myStreet: string
+	myStreetNo: string
+	myPostalCode: integer
+	myCity: string
+	myCountry: string
+	myLatitude: float
+	myLongitude: float
+}
+
+enum ComplaintStatus {
+	"User is filling out complaint",
+	"Complaint is sent to administration",
+	"Complaint is in process",
+	"Complaint has been handled by the administration"
+}

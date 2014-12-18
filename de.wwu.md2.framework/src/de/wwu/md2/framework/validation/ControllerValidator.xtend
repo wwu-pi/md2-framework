@@ -1,5 +1,7 @@
 package de.wwu.md2.framework.validation
 
+import de.wwu.md2.framework.mD2.SimpleAction
+
 import com.google.inject.Inject
 import de.wwu.md2.framework.mD2.AllowedOperation
 import de.wwu.md2.framework.mD2.AttributeSetTask
@@ -24,7 +26,11 @@ import org.eclipse.xtext.validation.EValidatorRegistrar
 import static extension de.wwu.md2.framework.validation.TypeResolver.*
 import de.wwu.md2.framework.mD2.FireEventAction
 import de.wwu.md2.framework.mD2.WorkflowElement
-import de.wwu.md2.framework.mD2.WorkflowElementEntry
+import de.wwu.md2.framework.mD2.WorkflowElementEntryimport de.wwu.md2.framework.mD2.WorkflowEvent
+import de.wwu.md2.framework.mD2.CustomAction
+import de.wwu.md2.framework.mD2.EventBindingTask
+import java.util.ArrayList
+import de.wwu.md2.framework.mD2.SimpleActionRef
 
 /**
  * Valaidators for all controller elements of MD2.
@@ -39,6 +45,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
     /////////////////////////////////////////////////////////
 	/// Action Validators
 	/////////////////////////////////////////////////////////
+	
 	
 	/**
 	 * Ensures that the operations 'save' and 'remove' can only be used for none-read-only content providers
@@ -61,8 +68,10 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		}
 	}
 	
+	public static final String EVENTREFERENCE = "EventReference";
 	/**
-	 * 
+	 * Checks whether an event which is fired in a controller is specified in the corresponding WorkflowElement
+	 * in the workflow file.
 	 */
 	@Check
 	def checkEventExistsInCorrectWorkflowElement(FireEventAction action){
@@ -70,10 +79,36 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		
 		val workflowElementInController = (action.eContainer.eContainer.eContainer.eContainer as WorkflowElement)
 		if(workflowElementInWorkflow.name != workflowElementInController.name){
-			error("Event not specified in WorkflowElement", MD2Package.eINSTANCE.fireEventAction_WorkflowEvent)
+			error("Event is not specified in WorkflowElement", MD2Package.eINSTANCE.fireEventAction_WorkflowEvent, -1, EVENTREFERENCE)
 		}
 	}
 	
+	
+	public static final String FIREEVENT = "FireEvent";
+	/**
+	 * Checks whether an event, which is specified in an WorkflowElementEntry is fired in the
+	 * corresponding controller WorkflowElement.
+	 */
+	@Check
+	def checkIfSpecifiedEventsAreFiredInController(WorkflowEvent event){
+		val actions = (event.eContainer as WorkflowElementEntry).workflowElement.actions.filter(typeof(CustomAction))
+		val eventBindingTasks = new ArrayList<EventBindingTask>
+		val fireEventActions = new ArrayList<FireEventAction>
+		
+		for (ac : actions){
+			eventBindingTasks += ac.codeFragments.filter(typeof(EventBindingTask))
+		}
+		
+		for (ev : eventBindingTasks) {
+			val _fireEventActions = ev.actions.filter(typeof(SimpleActionRef)).map[it.action].filter(typeof (FireEventAction))
+			fireEventActions.addAll(_fireEventActions)
+		}
+		val correspondingEvents = fireEventActions.filter[it.workflowEvent == event]
+		
+		if(correspondingEvents.length == 0){
+			warning("Event " + event.name + " is not fired in the corresponding controller", MD2Package.eINSTANCE.workflowEvent_Name, -1, FIREEVENT)
+		}
+	}
 	
 	/////////////////////////////////////////////////////////
 	/// Type Validators

@@ -1,0 +1,41 @@
+package CurrentStateProject.controllers
+
+main {
+	appVersion "1.0"
+	modelVersion "1.0"
+}
+remoteConnection CitizenAppRemoteConnection {
+	uri "http://localhost:8081/Backend/"
+}
+contentProvider Complaint localComplaintProvider {
+	providerType CitizenAppRemoteConnection
+}
+
+WorkflowElement LocationDetection{
+	onInit {
+		action CustomAction init{
+
+			}
+		}	
+	action CustomAction next {
+		bind action FireEvent(LocationEvent) on LocationVerifyView.Next2.onClick
+	}
+	processChain LocationProcessChain{
+		step LocationDetection: 
+			view LocationDetectionView
+	}
+}
+
+WorkflowElement SubmitComplaint {
+	onInit {
+		action CustomAction init {
+		}
+	}	
+	action CustomAction next {
+		bind action FireEvent(LocationEvent) on LocationVerifyView.Next2.onClick
+	}
+	processChain ComplaintProcessChain {
+		step SubmitComplaint:
+			view SubmitComplaintView
+	}
+}

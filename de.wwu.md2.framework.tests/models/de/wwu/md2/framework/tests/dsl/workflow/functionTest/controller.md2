@@ -24,4 +24,9 @@ WorkflowElement LocationDetection{
 	action CustomAction next {
 		bind action FireEvent(LocationDetectionEvent) on LocationDetectionView.Next.onClick
 	}
+	
+	processChain LocationProcessChain{
+        step LocationDetection: 
+            view LocationDetectionView
+    }
 }

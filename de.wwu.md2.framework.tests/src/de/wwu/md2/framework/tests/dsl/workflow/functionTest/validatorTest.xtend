@@ -14,33 +14,38 @@ import static extension de.wwu.md2.framework.tests.utils.ModelProvider.*
 
 import org.junit.Test
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import de.wwu.md2.framework.validation.ControllerValidator
+import de.wwu.md2.framework.mD2.MD2Package
 
 @InjectWith(typeof(MD2InjectorProvider))
 @RunWith(typeof(XtextRunner))
-class functionTest {
+class validatorTest {
 	
 	@Inject extension ParseHelper<MD2Model>
 	@Inject extension ValidationTestHelper
 	MD2Model workflowModel;
 	MD2Model controllerModel;
-	MD2Model modelModel;
 	MD2Model viewModel;
+	MD2Model modelModel;
 	ResourceSet rs;
-
+		
 	@Before
 	def void setUp() {
 		rs = new ResourceSetImpl();
-		workflowModel = WORKFLOW_FUNCTION_W.load.parse(rs);
-		controllerModel = WORKFLOW_FUNCTION_C.load.parse(rs);
-		viewModel = WORKFLOW_FUNCTION_V.load.parse(rs);
-		modelModel =  WORKFLOW_FUNCTION_M.load.parse(rs);
+		workflowModel = WORKFLOW_VALIDATOR_W.load.parse(rs);
+		controllerModel = WORKFLOW_VALIDATOR_C.load.parse(rs);
+		viewModel = WORKFLOW_VALIDATOR_V.load.parse(rs);
+		modelModel = WORKFLOW_VALIDATOR_M.load.parse(rs);
 	}
 	
 	@Test
-	def simpleWorkflowTest(){
-		workflowModel.assertNoErrors;
-		controllerModel.assertNoErrors;
-		viewModel.assertNoErrors;
-		modelModel.assertNoErrors;
-	}	
+	def checkIfSpecifiedEventsAreFiredInControllerTest(){
+		workflowModel.assertNoErrors();
+		workflowModel.assertWarning(MD2Package::eINSTANCE.workflowEvent,ControllerValidator::FIREEVENT)
+	}
+	
+	@Test
+	def checkEventExistsInCorrectWorkflowElementTest(){
+		controllerModel.assertError(MD2Package::eINSTANCE.fireEventAction,ControllerValidator::EVENTREFERENCE);
+	}
 }
