@@ -8,7 +8,7 @@ import java.util.Collection
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 
-import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
+import static extension org.eclipse.emf.ecore.util.EcoreUtil.*import de.wwu.md2.framework.mD2.WorkflowElement
 
 /**
  * Do a Model-to-Model transformation before the actual code generation process
@@ -93,6 +93,9 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		//     of any root view. In such cases remove the custom code fragment in another step.
 		val clonedCodeFragments = newHashMap
 		
+		val workflowElements = workingInput.resources.map[ r |
+			r.allContents.toIterable.filter(WorkflowElement)
+		].flatten.toList
 		
 		/////////////////////////////////////////////////////////////////////////////
 		//                                                                         //
@@ -113,23 +116,29 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		val view = new ProcessView
 		val viewReferences = new ProcessViewReferences
 		val processChains = new ProcessProcessChain
-		
-		
+				
 		// processChain
 		
 		controller.replaceDefaultProviderTypeWithConcreteDefinition // revisited
 		
-		controller.createStartUpActionAndRegisterAsOnInitializedEvent // revisited
+		workflowElements.forEach[wfe | 
+			
+			controller.createStartUpActionAndRegisterAsOnInitializedEvent(wfe) // revisited
+
+			controller.createInitialGotoViewOrSetProcessChainAction(wfe) // revisited
 		
-		controller.createInitialGotoViewOrSetProcessChainAction // revisited
+			controller.transformEventBindingAndUnbindingTasksToOneToOneRelations(wfe) // revisited
 		
-		controller.transformEventBindingAndUnbindingTasksToOneToOneRelations // revisited
+			controller.calculateParameterSignatureForAllSimpleActions(wfe) // revisited
+		]
 		
-		controller.calculateParameterSignatureForAllSimpleActions // revisited
-		
+		// unclear, if wfe specific, contains wfe specific parts, but also the processStateContentProvider, which is global
 		processChains.transformProcessChainsToSequenceOfCoreLanguageElements // !!!!!!
 		
-		conditionalEvents.transformAllCustomEventsToBasicLanguageStructures // !!!!!!
+		workflowElements.forEach[wfe | 
+			
+			conditionalEvents.transformAllCustomEventsToBasicLanguageStructures (wfe) // !!!!!!
+		]
 		
 		model.transformImplicitEnums // revisited
 		
@@ -139,18 +148,22 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		view.replaceNamedColorsWithHexColors // revisited
 		
-		controller.replaceCombinedActionWithCustomAction // revisited
+		workflowElements.forEach[wfe | 
+			
+			controller.replaceCombinedActionWithCustomAction(wfe) // revisited
 		
-		autoGenerator.createAutoGenerationAction(autoGenerators)  // revisited
+			autoGenerator.createAutoGenerationAction(autoGenerators, wfe)  // revisited
 		
-		autoGenerator.createViewElementsForAutoGeneratorAction(autoGenerators) // revisited
+			autoGenerator.createViewElementsForAutoGeneratorAction(autoGenerators, wfe) // revisited
+		]
 		
 		viewReferences.cloneContainerElementReferencesIntoParentContainer(clonedElements, containerRefs) // revisited
 		
 		viewReferences.cloneViewElementReferencesIntoParentContainer(clonedElements, viewRefsDone) // revisited 
 		
-		viewReferences.replaceStyleRefernces // revisited
+		viewReferences.replaceStyleReferences // revisited
 		
+		//WFE CHANGES CHECK up till here
 		viewReferences.simplifyReferencesToAbstractViewGUIElements(clonedElements,autoGenerator.autoGenerationActionName) // revisited
 		
 		model.createValidatorsForModelConstraints(autoGenerator.autoGenerationActionName) // revisited

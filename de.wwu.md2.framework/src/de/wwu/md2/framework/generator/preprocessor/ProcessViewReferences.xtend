@@ -93,7 +93,7 @@ class ProcessViewReferences extends AbstractPreprocessor {
 	/**
 	 * Replace style reference with referenced style definition.
 	 */
-	def replaceStyleRefernces() {
+	def replaceStyleReferences() {
 		val styleRefs = views.map[ view |
 			view.eAllContents.toIterable.filter(StyleReference)
 		].flatten.toList

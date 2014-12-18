@@ -38,10 +38,10 @@ class ProcessController extends AbstractPreprocessor {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def createStartUpActionAndRegisterAsOnInitializedEvent() {
+	def createStartUpActionAndRegisterAsOnInitializedEvent(WorkflowElement wfe) {
+		// TODO: wfe Changes
 		
 		val ctrl = controllers.head
-		
 		var workflowElement = ctrl.controllerElements.filter(WorkflowElement)?.head
 		if(workflowElement == null) {
 			workflowElement = factory.createWorkflowElement
@@ -98,7 +98,8 @@ class ProcessController extends AbstractPreprocessor {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def replaceCombinedActionWithCustomAction() {
+	def replaceCombinedActionWithCustomAction(WorkflowElement wfe) {
+		// TODO: wfe changes
 		val combinedActions = controllers.map[ ctrl | 
 			ctrl.controllerElements.filter(CombinedAction)
 		].flatten
@@ -141,7 +142,8 @@ class ProcessController extends AbstractPreprocessor {
 	 *   </li>
 	 * </ul>
 	 */
-	def createInitialGotoViewOrSetProcessChainAction() {
+	def createInitialGotoViewOrSetProcessChainAction(WorkflowElement wfe) {
+		// TODO: wfe changes
 		
 		val main = controllers.map[ ctrl | 
 			ctrl.controllerElements.filter(typeof(Main))
@@ -185,7 +187,8 @@ class ProcessController extends AbstractPreprocessor {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def calculateParameterSignatureForAllSimpleActions() {
+	def calculateParameterSignatureForAllSimpleActions(WorkflowElement wfe) {
+		// TODO: wfe changes
 		val simpleActions = controllers.map[ ctrl | 
 			ctrl.eAllContents.toIterable.filter(SimpleAction)
 		].flatten
@@ -218,7 +221,9 @@ class ProcessController extends AbstractPreprocessor {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def transformEventBindingAndUnbindingTasksToOneToOneRelations() {
+	def transformEventBindingAndUnbindingTasksToOneToOneRelations(WorkflowElement wfe) {
+		
+		// TODO: wfe changes
 		
 		////////////////////////////////////////////////////
 		// transform all binding tasks
