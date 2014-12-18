@@ -20,7 +20,6 @@ import de.wwu.md2.framework.mD2.ModelElement
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.Enumimport java.util.List
 import de.wwu.md2.framework.mD2.ReferencedType
-import de.wwu.md2.framework.mD2.impl.ReferencedTypeImpl
 import de.wwu.md2.framework.mD2.StringType
 
 /*
@@ -48,7 +47,6 @@ class Complete_Model_Test {
 	@Inject extension ValidationTestHelper
 	MD2Model model_Testmodel;
 	
-
 	ResourceSet rs;
 	private EList<ModelElement> elements;
 	private List<Entity> entities;
@@ -57,7 +55,6 @@ class Complete_Model_Test {
 	private Entity copy;
 	private Entity person;
 
-	
 	//Loads the different Elements of the Model into the corresponding variables
 	@Before
 	def void setUp() {
@@ -77,7 +74,6 @@ class Complete_Model_Test {
 		model_Testmodel.assertNoErrors;
 	}
 	
-	
 	// Tests, if the amount of entities after parsing, equals the amount of Entities in the model.
 	@Test
 	def numberOfEntitiesTest() {
@@ -93,7 +89,11 @@ class Complete_Model_Test {
 	// Checks the relationship of book and copy
 	@Test
 	def BookCopyRelationshipTest() {
-		1.assertEquals(book.attributes.filter[a| a.type.many && a.type instanceof ReferencedType].size);
+	    var referencedObjects = book.attributes.filter[a | a.type.many && a.type instanceof ReferencedType]
+	    // Assert only one referencing attribute
+		1.assertEquals(referencedObjects.size);
+		// Assert array is of type Copy
+		copy.assertEquals((referencedObjects.head.type as ReferencedType).element)
 	}
 	
 	// Checks an exemplary attribute of the entity book
@@ -105,14 +105,14 @@ class Complete_Model_Test {
 	// Tests, if bidirectional reference is parsed correctly (incl. a toMany relation)
 	@Test
 	def CopyPersonNavigationIntoTwoDirectionsTest() {
-		
-		//check whether there is an attribute of type Person called "borrowedBy" in the Copy entity
-		val borrowedBy = copy.attributes.filter[a| a.type instanceof ReferencedType && a.name.equals("borrowedBy")].head;
-		person.assertEquals((borrowedBy.type as ReferencedTypeImpl).element);
+	    
+		// Check whether there is an attribute of type Person called "borrowedBy" in the Copy entity
+		val borrowedBy = copy.attributes.filter[a | a.type instanceof ReferencedType && a.name.equals("borrowedBy")].head;
+		person.assertEquals((borrowedBy.type as ReferencedType).element);
 				
-		//check whether there is a toMany attribute of type Copy called "loans" in the Person entity
-		val loans = person.attributes.filter[a|a.type.many && a.type instanceof ReferencedType && a.name.equals("loans")].head;
-		copy.assertEquals((loans.type as ReferencedTypeImpl).element);		
+		// Check whether there is a toMany attribute of type Copy called "loans" in the Person entity
+		val loans = person.attributes.filter[a | a.type.many && a.type instanceof ReferencedType && a.name.equals("loans")].head;
+		copy.assertEquals((loans.type as ReferencedType).element);		
 	}
 	
 	
@@ -126,11 +126,12 @@ class Complete_Model_Test {
 		0.assertNotEquals(copy.attributes.size)
 	}
 	
-	// Tests, if extended attribute is parsed correctly
+	// Tests, if the extended attribute is parsed correctly
 	@Test
 	def ExtendedAttributeTest() {
-		"PrivateAddress".assertEquals(person.attributes.filter[a| a.name.equals("address")].head.extendedName);
-		"Address only as String!".assertEquals(person.attributes.filter[a| a.name.equals("address")].head.description);
+	    val _address = person.attributes.filter[it.name.equals("address")].head
+		"PrivateAddress".assertEquals(_address.extendedName);
+		"Address only as String!".assertEquals(_address.description);
 	}
 	
 	// Tests, if the models entities are all present after parsing
