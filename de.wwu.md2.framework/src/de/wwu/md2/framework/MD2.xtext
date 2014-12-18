@@ -1077,7 +1077,8 @@ Main:
 	'main' '{'
 		(
 			('appVersion' appVersion = STRING) &
-			('modelVersion' modelVersion = STRING)
+			('modelVersion' modelVersion = STRING) &
+			('defaultConnection' defaultConnection = [RemoteConnection])?
 		)
 	'}'
 ;

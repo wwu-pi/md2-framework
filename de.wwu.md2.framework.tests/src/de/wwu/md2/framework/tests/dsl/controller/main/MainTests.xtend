@@ -26,46 +26,14 @@ class MainTests {
 	@Inject extension ParseHelper<MD2Model>
 	@Inject extension ValidationTestHelper
 	MD2Model mainModel;
-	MD2Model viewModel;
-	ResourceSet rs;
-
-	private Main main;
-	private EList<ControllerElement> elements;
 
 	@Before
 	def void setUp() {
-		rs = new ResourceSetImpl();
-		viewModel = BASIC_CONTROLLER_V.load.parse(rs);
-		mainModel = SIMPLE_MAIN_MODEL_C.load.parse(rs);
-		elements = (mainModel.modelLayer as Controller).controllerElements;
-		main = elements.filter(typeof(Main)).head;
+		mainModel = SIMPLE_MAIN_MODEL_C.load.parse();
 	}
 
 	@Test
-	def testPackage() {
+	def testModel() {
 		mainModel.assertNoErrors;
-	}
-
-	@Test
-	def numberOfMainElementsTest() {
-		1.assertEquals(elements.filter(typeof(Main)).size);
-		
-	}
-
-	@Test
-	def simpleFieldsTest() {
-		"My exemplary App".assertEquals(main.appName)
-		"1.1".assertEquals(main.appVersion)
-		"1.1".assertEquals(main.modelVersion)
-	}
-
-	@Test
-	def onInitializedEventTest() {
-		"myAction".assertEquals(main.onInitializedEvent.name)
-	}
-
-	@Test
-	def startViewTest() {
-		"myView".assertEquals(main.startView.ref.name)
 	}
 }
