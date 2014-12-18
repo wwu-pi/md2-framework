@@ -723,9 +723,11 @@ ControllerElement:
 WorkflowElement:
 	'WorkflowElement' name=EID '{'
 		
+		('defaultProcessChain' defaultProcessChain = [ProcessChain]
+		
 		'onInit' '{'
 			initActions += Action
-		'}'
+		'}')
 		
 		((actions += Action+) &
 		(processChain += ProcessChain))
