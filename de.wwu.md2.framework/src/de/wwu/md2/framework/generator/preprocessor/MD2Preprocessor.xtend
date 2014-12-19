@@ -130,12 +130,9 @@ class MD2Preprocessor extends AbstractPreprocessor {
 			controller.calculateParameterSignatureForAllSimpleActions(wfe) // done
 		]
 		
-		// unclear, if wfe specific, contains wfe specific parts, but also the processStateContentProvider, which is global
-		processChains.transformProcessChainsToSequenceOfCoreLanguageElements // !!!!!!
-		
-		workflowElements.forEach[wfe | 
-			
-			conditionalEvents.transformAllCustomEventsToBasicLanguageStructures (wfe) // !!!!!!
+		workflowElements.forEach[wfe |
+			processChains.transformProcessChainsToSequenceOfCoreLanguageElements(wfe) // !!!!!!
+			conditionalEvents.transformAllCustomEventsToBasicLanguageStructures(wfe) // done
 		]
 		
 		model.transformImplicitEnums // done
@@ -164,14 +161,16 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		//WFE CHANGES CHECK up till here
 		
         workflowElements.forEach[wfe |
+        	
             viewReferences.simplifyReferencesToAbstractViewGUIElements(wfe, clonedElements, autoGenerator.autoGenerationActionName) // done
-        ]
 		
-		model.createValidatorsForModelConstraints(autoGenerator.autoGenerationActionName) // revisited
+			model.createValidatorsForModelConstraints(autoGenerator.autoGenerationActionName, wfe) // done
+			
+			viewReferences.copyAllCustomCodeFragmentsToClonedGUIElements(clonedElements, clonedCodeFragments, wfe) // done
 		
-		viewReferences.copyAllCustomCodeFragmentsToClonedGUIElements(clonedElements, clonedCodeFragments) // revisited
+			viewReferences.removeAllCustomCodeFragmentsThatReferenceUnusedGUIElements(clonedCodeFragments, wfe) // done
+		]
 		
-		viewReferences.removeAllCustomCodeFragmentsThatReferenceUnusedGUIElements(clonedCodeFragments) // revisited
 		
 		view.transformInputsWithLabelsAndTooltipsToLayouts // done
 		
@@ -188,7 +187,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		// after clean-up calculate all grid and element sizes and fill empty cells with spacers,
 		// so that calculations are avoided during the actual generation process
-		view.transformFlowLayoutsToGridLayouts // revisited
+		view.transformFlowLayoutsToGridLayouts // done 
 		
 		view.calculateNumRowsAndNumColumnsParameters // revisited
 		

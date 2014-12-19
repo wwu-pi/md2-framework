@@ -113,7 +113,7 @@ class ProcessView extends AbstractPreprocessor {
 		// This information is required to update all cross references after the replacement process.
 		val rememberReplacedFloatLayoutsMap = newHashMap
 		
-		views.forEach[ view |
+		view.viewElements.forEach[ view |
 			
 			var iterator = view.eAllContents
 			while(iterator.hasNext) {

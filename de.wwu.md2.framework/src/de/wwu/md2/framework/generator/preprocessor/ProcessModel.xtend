@@ -73,22 +73,20 @@ class ProcessModel extends AbstractPreprocessor {
 	 * 
 	 * TODO change => each time an entity is mapped, the according validator is mapped as well!!
 	 */
-	def createValidatorsForModelConstraints(String autoGenerationActionName) {
-		val mappingTasks = controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable.filter(typeof(MappingTask)).filter([isCalledAtStartup(it, autoGenerationActionName)])
-		].flatten.toList
+	def createValidatorsForModelConstraints(String autoGenerationActionName, WorkflowElement wfe) {
+		val mappingTasks = wfe.eAllContents.toIterable.filter(MappingTask).filter([isCalledAtStartup(it, autoGenerationActionName)]).toList
 		
-		val autogenAction = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(typeof(CustomAction)).filter(action | action.name == autoGenerationActionName)
-		].flatten.last
+		val autogenAction = wfe.eAllContents.toIterable.filter(CustomAction).filter(action | action.name == autoGenerationActionName).last
 		
-		mappingTasks.filter([it.pathDefinition instanceof ContentProviderPath && (it.pathDefinition as ContentProviderPath).contentProviderRef.type instanceof ReferencedModelType]).forEach [ mappingTask |
-			val validatorBindingTask = modelConstraintToValidator(mappingTask, autogenAction)
-			
-			if (validatorBindingTask != null && validatorBindingTask.validators.size > 0) {
-				autogenAction?.codeFragments.add(validatorBindingTask)
-			}
-		]
+		mappingTasks.filter([it.pathDefinition instanceof ContentProviderPath 
+			  			 && (it.pathDefinition as ContentProviderPath).contentProviderRef.type instanceof ReferencedModelType
+			]).forEach [ mappingTask |
+				val validatorBindingTask = modelConstraintToValidator(mappingTask, autogenAction)
+				
+				if (validatorBindingTask != null && validatorBindingTask.validators.size > 0) {
+					autogenAction?.codeFragments.add(validatorBindingTask)
+				}
+			]
 	}
 	
 	private def modelConstraintToValidator(MappingTask mappingTask, CustomAction autogenAction) {
