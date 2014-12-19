@@ -21,7 +21,7 @@ import de.wwu.md2.framework.mD2.SimpleActionRef
 import java.util.HashMap
 
 import static extension de.wwu.md2.framework.generator.preprocessor.util.Helper.*
-import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
+import static extension org.eclipse.emf.ecore.util.EcoreUtil.*import de.wwu.md2.framework.mD2.WorkflowElement
 
 /**
  * Transforms all OnConditionEvents to core language elements (Entities, ContentProviders, OnChangeEvents, CustomActions).
@@ -110,7 +110,8 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 	 *   </li>
 	 * </ul>
 	 */
-	def transformAllCustomEventsToBasicLanguageStructures() {
+	def transformAllCustomEventsToBasicLanguageStructures(WorkflowElement wfe) {
+		// TODO: wfe changes
 		
 		// only run this task if there are conditional events present
 		val hasConditionalEvents = controllers.map[ ctrl |

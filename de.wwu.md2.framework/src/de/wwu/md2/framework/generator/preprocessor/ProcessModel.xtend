@@ -47,7 +47,7 @@ class ProcessModel extends AbstractPreprocessor {
 	 * Change AttributeType from EnumType to ReferencedType.
 	 */
 	def transformImplicitEnums() {
-		val Iterable<Attribute> enumAttributes = workingInput.resources.map(r|r.allContents.toIterable.filter(typeof(Attribute)).filter(attr | attr.type instanceof EnumType)).flatten.toList
+		val Iterable<Attribute> enumAttributes = model.eAllContents.toIterable.filter(typeof(Attribute)).filter(attr | attr.type instanceof EnumType).toList
 		enumAttributes.forEach [ enumAttr |
 			// Assume structure: Model -> Entity -> Attribute
 			val parentEntity = enumAttr.eContainer as Entity
