@@ -415,18 +415,6 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 	}
 	
 	/**
-	 * Avoid empty processChains.
-	 * @param processChain
-	 */
-	@Check
-	public void checkForEmptyProcessChains(ProcessChain processChain) {
-		if(processChain.getProcessChainSteps().isEmpty()) {
-			acceptWarning("No processChain steps are defined for this processChain. Such processChains have no effect and should be omitted.",
-					processChain, null, -1, null);
-		}
-	}
-	
-	/**
 	 * This validator avoids the assignment of none-toMany content providers (providing X[]) to ContentProviderAddActions.
 	 * @param addAction
 	 */

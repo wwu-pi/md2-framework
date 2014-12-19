@@ -62,6 +62,8 @@ public class ModelProvider {
 	public static final String VALIDATOR_COMPONENT_C = "dsl/controller/validator/RootValidators.md2";
 
 	public static final String INPUT_FIELD_VALIDATOR_COMPONENT_C = "dsl/controller/validator/InputFieldValidators.md2";
+	
+	public static final String EMPTY_PROCESS_CHAIN_C = "dsl/controller/validator/EmptyProcessChain.md2";
 
 	//********Validator*****//
 	

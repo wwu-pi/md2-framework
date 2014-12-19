@@ -729,8 +729,8 @@ WorkflowElement:
 			initActions += Action
 		'}')
 		
-		((actions += Action+) &
-		(processChain += ProcessChain))
+		((actions += Action*) &
+		(processChain += ProcessChain+))
 		
 	'}'	
 ;
