@@ -22,6 +22,8 @@ import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
 
 import static extension de.wwu.md2.framework.validation.TypeResolver.*
+import de.wwu.md2.framework.mD2.WorkflowElementEntry
+import de.wwu.md2.framework.util.GetFiredEventsHelper
 
 /**
  * Valaidators for all controller elements of MD2.
@@ -34,6 +36,9 @@ class ControllerValidator extends AbstractMD2JavaValidator {
     }
     
     public static final String EMPTYPROCESSCHAIN = "emptyProcessChain";
+    
+    @Inject
+    GetFiredEventsHelper helper;
     
     /////////////////////////////////////////////////////////
 	/// Action Validators
@@ -60,20 +65,35 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		}
 	}
 	
+	public static final String EVENTSINCONTROLLER = "EventsInController";
+	
 	/**
-	 * 
-	 
+	 * For each Workflow Element Entry of a workflow model, this
+	 * method checks whether all Workflow Events fired by the corresponding
+	 * Workflow Element are handled.
+	 */
 	@Check
-	def checkEventExistsInCorrectWorkflowElement(FireEventAction action){
-		val workflowElementInWorkflow = (action.workflowEvent.eContainer as WorkflowElementEntry).workflowElement
+	def checkAllEventsOfWorkflowElementHandled(WorkflowElementEntry workflowElementEntry){
+		// get names of all events expected in *Workflow.md2
+		val expectedEvents = workflowElementEntry.firedEvents.map[it.event.name]
 		
-		val workflowElementInController = (action.eContainer.eContainer.eContainer.eContainer as WorkflowElement)
-		if(workflowElementInWorkflow.name != workflowElementInController.name){
-			error("Event not specified in WorkflowElement", MD2Package.eINSTANCE.fireEventAction_WorkflowEvent)
-		}
+		// get names of all events fired in *Controller.md2
+		val actuallyFiredEvents = helper.getFiredEvents(workflowElementEntry.workflowElement).map[
+			it.name
+		].toSet
+		
+		// Calculate difference
+		val eventsInControllerButNotInWorkflow = actuallyFiredEvents.filter[!expectedEvents.contains(it)]
+		
+		// Show error
+		eventsInControllerButNotInWorkflow.forEach[ eventName |
+			error("The event " + eventName + " specified in WorkflowElement is not caught",
+				MD2Package.eINSTANCE.workflowElementEntry_WorkflowElement, -1, EVENTSINCONTROLLER
+			)
+		]
 	}
 	
-	*/
+	
 	/////////////////////////////////////////////////////////
 	/// Type Validators
 	/////////////////////////////////////////////////////////

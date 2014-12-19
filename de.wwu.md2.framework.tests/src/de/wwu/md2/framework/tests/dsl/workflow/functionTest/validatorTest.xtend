@@ -39,13 +39,8 @@ class validatorTest {
 	}
 	
 	@Test
-	def checkIfSpecifiedEventsAreFiredInControllerTest(){
-		workflowModel.assertNoErrors();
-		workflowModel.assertWarning(MD2Package::eINSTANCE.workflowEvent,ControllerValidator::FIREEVENT)
+	def checkAllEventsOfWorkflowElementHandledTest(){
+		workflowModel.assertError(MD2Package::eINSTANCE.workflowElementEntry,ControllerValidator::EVENTSINCONTROLLER)
 	}
 	
-	@Test
-	def checkEventExistsInCorrectWorkflowElementTest(){
-		controllerModel.assertError(MD2Package::eINSTANCE.fireEventAction,ControllerValidator::EVENTREFERENCE);
-	}
 }

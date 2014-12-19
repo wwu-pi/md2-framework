@@ -24,6 +24,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil
 import static extension de.wwu.md2.framework.generator.preprocessor.util.Util.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import de.wwu.md2.framework.mD2.WorkflowElement
+import de.wwu.md2.framework.mD2.SetProcessChainAction
 
 class ProcessController extends AbstractPreprocessor {
 	
@@ -38,27 +39,25 @@ class ProcessController extends AbstractPreprocessor {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def createStartUpActionAndRegisterAsOnInitializedEvent() {
-		
-		val ctrl = controllers.head
-		
-		var workflowElement = ctrl.controllerElements.filter(WorkflowElement)?.head
-		if(workflowElement == null) {
-			workflowElement = factory.createWorkflowElement
-		}
-		
+	def createStartUpActionAndRegisterAsOnInitializedEvent(WorkflowElement wfe) {
 		// create __startupAction
 		val startupAction = factory.createCustomAction;
 		startupAction.setName(startupActionName)
-		workflowElement.initActions += startupAction
-		ctrl.controllerElements.add(workflowElement)
+		wfe.actions.add(startupAction)
 		
-		// add original startup action to __startupAction
-		val originalCallTask = factory.createCallTask
-		val originalActionReference = factory.createActionReference
-		// originalActionReference.setActionRef(originalStartupAction)
-		originalCallTask.setAction(originalActionReference)
-		startupAction.codeFragments.add(originalCallTask);
+		// register __startupAction as init action in workflow element
+		var initActions = wfe.initActions		
+		wfe.initActions.clear		
+		wfe.initActions += startupAction
+		
+		// add original startup actions to __startupAction
+		initActions.forEach[initAction | 
+			val originalCallTask = factory.createCallTask
+			val originalActionReference = factory.createActionReference
+			originalActionReference.setActionRef(initAction)
+			originalCallTask.setAction(originalActionReference)
+			startupAction.codeFragments.add(originalCallTask);
+		]
 	}
 	
 	/**
@@ -71,15 +70,11 @@ class ProcessController extends AbstractPreprocessor {
 	 * </p>
 	 */
 	def replaceDefaultProviderTypeWithConcreteDefinition() {
-		val contentProviders = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(ContentProvider)
-		].flatten
+		val contentProviders = controller.controllerElements.filter(ContentProvider)
 		
-		val main = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(Main)
-		].flatten.head
+		val main = controller.controllerElements.filter(Main).head
 		
-		var remoteConnection = workflows?.head.apps?.head?.defaultConnection
+		var remoteConnection = main.defaultConnection
 		
 		for (contentProvider : contentProviders) {
 			if (contentProvider.^default && remoteConnection == null) {
@@ -98,10 +93,9 @@ class ProcessController extends AbstractPreprocessor {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def replaceCombinedActionWithCustomAction() {
-		val combinedActions = controllers.map[ ctrl | 
-			ctrl.controllerElements.filter(CombinedAction)
-		].flatten
+	def replaceCombinedActionWithCustomAction(WorkflowElement wfe) {
+		// TODO: wfe changes
+		val combinedActions = wfe.eAllContents.filter(CombinedAction)
 		
 		combinedActions.forEach[ combinedAction |
 			val custAction = factory.createCustomAction()
@@ -141,40 +135,26 @@ class ProcessController extends AbstractPreprocessor {
 	 *   </li>
 	 * </ul>
 	 */
-	def createInitialGotoViewOrSetProcessChainAction() {
+	def setInitialProcessChainAction(WorkflowElement wfe) {
 		
-		val main = controllers.map[ ctrl | 
-			ctrl.controllerElements.filter(typeof(Main))
-		].flatten.head
+		//TODO: code fragment in comment can be totally removed when DSL is changed 
+		//-> we probably only need one initAction per workflow element
+		//val startupAction = wfe.eAllContents.filter(CustomAction)
+		//		.filter( action | action.name.equals(ProcessController::startupActionName))
+
+		val initAction = wfe.initActions.filter(CustomAction).head
 		
-		val startupAction = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(CustomAction)
-				.filter( action | action.name.equals(ProcessController::startupActionName))
-		].flatten.head
-		
-//		// if startView set: create GotoViewAction and add it to startupAction
-//		if (main?.startView != null) {
-//			val callTask = factory.createCallTask
-//			val simpleActionRef = factory.createSimpleActionRef
-//			val gotoViewAction = factory.createGotoViewAction
-//			callTask.setAction(simpleActionRef)
-//			simpleActionRef.setAction(gotoViewAction)
-//			gotoViewAction.setView(main.startView)
-//			startupAction.codeFragments.add(0, callTask);
-//			main.setStartView(null)
-//		}
-//		
-//		// else if startProcessChain set: create SetProcessChainAction and add it to startupAction
-//		else if (main?.startProcessChain != null) {
-//			val callTask = factory.createCallTask
-//			val simpleActionRef = factory.createSimpleActionRef
-//			val setProcessChainAction = factory.createSetProcessChainAction
-//			callTask.setAction(simpleActionRef)
-//			simpleActionRef.setAction(setProcessChainAction)
-//			setProcessChainAction.setProcessChain(main.startProcessChain)
-//			startupAction.codeFragments.add(0, callTask);
-//			main.setStartProcessChain(null)
-//		}
+		if (wfe.defaultProcessChain != null)
+		{
+			val callTask = factory.createCallTask
+			val simpleActionRef = factory.createSimpleActionRef
+			val setProcessChainAction = factory.createSetProcessChainAction
+			callTask.setAction(simpleActionRef)
+			simpleActionRef.setAction(setProcessChainAction)
+			setProcessChainAction.setProcessChain(wfe.defaultProcessChain)
+			initAction.codeFragments.add(0, callTask);
+			wfe.setDefaultProcessChain(null)
+		}
 	}
 	
 	/**
@@ -185,11 +165,10 @@ class ProcessController extends AbstractPreprocessor {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def calculateParameterSignatureForAllSimpleActions() {
-		val simpleActions = controllers.map[ ctrl | 
-			ctrl.eAllContents.toIterable.filter(SimpleAction)
-		].flatten
+	def calculateParameterSignatureForAllSimpleActions(WorkflowElement wfe) {
 		
+		val simpleActions = wfe.eAllContents.toIterable.filter(SimpleAction).toList
+				
 		for (simpleAction : simpleActions) {
 			simpleAction.setParameterSignature(simpleAction.calculateParameterSignatureHash)
 		}
@@ -218,15 +197,14 @@ class ProcessController extends AbstractPreprocessor {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def transformEventBindingAndUnbindingTasksToOneToOneRelations() {
+	def transformEventBindingAndUnbindingTasksToOneToOneRelations(WorkflowElement wfe) {
 		
 		////////////////////////////////////////////////////
 		// transform all binding tasks
 		////////////////////////////////////////////////////
 		
-		val bindingTasks = controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable.filter(EventBindingTask)
-		].flatten.toList
+		var bindingTasks = wfe.eAllContents.toIterable.filter(EventBindingTask).toList
+	
 		
 		for (bindingTask : bindingTasks) {
 			val actions = bindingTask.actions
@@ -250,9 +228,7 @@ class ProcessController extends AbstractPreprocessor {
 		// transform all unbinding tasks
 		////////////////////////////////////////////////////
 		
-		val unbindingTasks = controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable.filter(EventUnbindTask)
-		].flatten
+		val unbindingTasks = wfe.eAllContents.toIterable.filter(EventUnbindTask).toList
 		
 		for (unbindingTask : unbindingTasks) {
 			val actions = unbindingTask.actions

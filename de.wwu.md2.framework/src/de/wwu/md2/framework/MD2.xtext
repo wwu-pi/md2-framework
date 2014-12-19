@@ -724,7 +724,7 @@ WorkflowElement:
 	'WorkflowElement' name=EID '{'
 		
 		('defaultProcessChain' defaultProcessChain = [ProcessChain]
-		
+			
 		'onInit' '{'
 			initActions += Action
 		'}')
@@ -789,7 +789,7 @@ SimpleAction:
 	{DisplayMessageAction} ('DisplayMessage' '(' message = SimpleExpression ')' ) |
 	{ContentProviderOperationAction} ('ContentProviderOperation' '(' operation = AllowedOperation contentProvider = AbstractProviderReference ')') |
 	{ContentProviderResetAction} ('ContentProviderReset' '('contentProvider = ContentProviderReference ')') |
-	{FireEventAction} ('FireEvent' '('workflowEvent = [WorkflowEvent]')') |
+	{FireEventAction} ('FireEvent' '('workflowEvent = WorkflowEvent')') |
 	
 	// TODO -- multi-valued content provider, not supported yet
 	{ContentProviderAddAction} ('ContentProviderAdd' '('contentProvider = ContentProviderReference ')') |
@@ -1750,11 +1750,11 @@ Workflow:
  */
 WorkflowElementEntry:
 	'WorkflowElement' workflowElement=[WorkflowElement]
-		firedEvents += FireEventEntry+
+	firedEvents += FireEventEntry+
 ;
 
 FireEventEntry:
-	'fires' event = WorkflowEvent '{'
+	'fires' event = [WorkflowEvent] '{'
 			'start' startedWorkflowElement = [WorkflowElement]
 		'}'
 ;

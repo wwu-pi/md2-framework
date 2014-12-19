@@ -46,7 +46,7 @@ class ProcessView extends AbstractPreprocessor {
 	 * </p>
 	 */
 	def setFlowLayoutPaneDefaultParameters() {
-		val Iterable<FlowLayoutPane> flowLayoutPanes = workingInput.resources.map(r|r.allContents.toIterable.filter(typeof(FlowLayoutPane))).flatten
+		val Iterable<FlowLayoutPane> flowLayoutPanes = view.eAllContents.toIterable.filter(typeof(FlowLayoutPane))
 		for (flowLayoutPane : flowLayoutPanes) {
 			if(!flowLayoutPane.params.exists(p | p instanceof FlowLayoutPaneFlowDirectionParam)) {
 				val flowDirectionParam = factory.createFlowLayoutPaneFlowDirectionParam
@@ -65,9 +65,7 @@ class ProcessView extends AbstractPreprocessor {
 	 */
 	def duplicateSpacers() {
 		
-		val spacers = views.map[ view |
-			view.eAllContents.toIterable.filter(Spacer)
-		].flatten
+		val spacers = view.eAllContents.toIterable.filter(Spacer)
 		
 		for (spacer : spacers) {
 			if (spacer.number > 1) {
@@ -592,10 +590,8 @@ class ProcessView extends AbstractPreprocessor {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def replaceNamedColorsWithHexColors() {
-		val namedColorDefs = views.map[ view |
-			view.eAllContents.toIterable.filter(NamedColorDef)
-		].flatten
+	def replaceNamedColorsWithHexColors() {		
+		val namedColorDefs = view.eAllContents.toIterable.filter(NamedColorDef)
 		
 		for (namedColorDef : namedColorDefs) {
 			val hexColorDef = factory.createHexColorDef
