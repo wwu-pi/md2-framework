@@ -1,0 +1,5 @@
+package TestProject.workflows
+
+remoteConnection testConnection {
+    uri "test"
+}

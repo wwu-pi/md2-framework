@@ -15,6 +15,7 @@ import org.eclipse.xtext.validation.ComposedChecks;
  */
 @ComposedChecks(validators= {
 	LegacyValidator.class,
+	ProjectValidator.class,
 	ControllerValidator.class,
 	ModelValidator.class,
 	ViewValidator.class
