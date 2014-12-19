@@ -40,6 +40,7 @@ import de.wwu.md2.framework.mD2.ViewElementType;
 import de.wwu.md2.framework.mD2.ViewGUIElementReference;
 import de.wwu.md2.framework.mD2.WorkflowElementEntry;
 import de.wwu.md2.framework.mD2.WorkflowEvent;
+import de.wwu.md2.framework.mD2.impl.FireEventEntryImpl;
 
 /**
  * This class contains custom scoping description.
@@ -63,6 +64,16 @@ public class MD2ScopeProvider extends AbstractDeclarativeScopeProvider {
 		WorkflowElementEntry wfe = (WorkflowElementEntry)(fireEventEntry.eContainer());
 		
 		Set<WorkflowEvent> firedEvents = helper.getFiredEvents(wfe.getWorkflowElement());
+		
+		
+		// Remove those that are already handled
+		for (FireEventEntry otherFireEventEntry : wfe.getFiredEvents()) {
+			if (otherFireEventEntry == fireEventEntry) {
+				continue;
+			}
+			
+			firedEvents.remove(((FireEventEntryImpl)otherFireEventEntry).basicGetEvent());
+		}
 		
 		return Scopes.scopeFor(firedEvents);
 	}
