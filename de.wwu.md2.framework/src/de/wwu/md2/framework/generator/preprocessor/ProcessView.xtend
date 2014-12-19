@@ -189,7 +189,7 @@ class ProcessView extends AbstractPreprocessor {
 	 * </ul>
 	 */
 	def calculateNumRowsAndNumColumnsParameters() {
-		val gridLayoutPanes = views.map[ view |
+		val gridLayoutPanes = view.viewElements.map[ view |
 			view.eAllContents.toIterable.filter(GridLayoutPane)
 		].flatten
 		

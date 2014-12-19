@@ -189,7 +189,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		// so that calculations are avoided during the actual generation process
 		view.transformFlowLayoutsToGridLayouts // done 
 		
-		view.calculateNumRowsAndNumColumnsParameters // revisited
+		view.calculateNumRowsAndNumColumnsParameters // done
 		
 		view.fillUpGridLayoutsWithSpacers // revisited
 		
