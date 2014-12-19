@@ -725,10 +725,6 @@ WorkflowElement:
 		
 		('defaultProcessChain' defaultProcessChain = [ProcessChain]
 			
-		'firing' '{'
-			firingEvents += WorkflowEvent
-		'}'
-		
 		'onInit' '{'
 			initActions += Action
 		'}')
@@ -793,7 +789,7 @@ SimpleAction:
 	{DisplayMessageAction} ('DisplayMessage' '(' message = SimpleExpression ')' ) |
 	{ContentProviderOperationAction} ('ContentProviderOperation' '(' operation = AllowedOperation contentProvider = AbstractProviderReference ')') |
 	{ContentProviderResetAction} ('ContentProviderReset' '('contentProvider = ContentProviderReference ')') |
-	{FireEventAction} ('FireEvent' '('workflowEvent = [WorkflowEvent]')') |
+	{FireEventAction} ('FireEvent' '('workflowEvent = WorkflowEvent')') |
 	
 	// TODO -- multi-valued content provider, not supported yet
 	{ContentProviderAddAction} ('ContentProviderAdd' '('contentProvider = ContentProviderReference ')') |
@@ -1754,7 +1750,7 @@ Workflow:
  */
 WorkflowElementEntry:
 	'WorkflowElement' workflowElement=[WorkflowElement]
-		firedEvents += FireEventEntry+
+	firedEvents += FireEventEntry+
 ;
 
 FireEventEntry:

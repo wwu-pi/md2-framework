@@ -23,6 +23,7 @@ import org.eclipse.xtext.validation.EValidatorRegistrar
 
 import static extension de.wwu.md2.framework.validation.TypeResolver.*
 import de.wwu.md2.framework.mD2.WorkflowElementEntry
+import de.wwu.md2.framework.scoping.MD2ScopingHelper
 
 /**
  * Valaidators for all controller elements of MD2.
@@ -33,6 +34,9 @@ class ControllerValidator extends AbstractMD2JavaValidator {
     override register(EValidatorRegistrar registrar) {
         // nothing to do
     }   
+    
+    @Inject
+    MD2ScopingHelper helper;
     
     /////////////////////////////////////////////////////////
 	/// Action Validators
@@ -60,52 +64,24 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	}
 	
 	/**
-	 * 
+	 * For each Workflow Element Entry of a workflow model, this
+	 * method checks whether all Workflow Events fired by the corresponding
+	 * Workflow Element are handled.
 	 */
 	@Check
-	def checkEventExistsInCorrectWorkflowElement(WorkflowElementEntry workflowElementEntry){
-		// get all events expected in *Workflow.md2
-		val expectedEvents = workflowElementEntry.events.map[ it.name ] // firedEvents
+	def checkAllEventsOfWorkflowElementHandled(WorkflowElementEntry workflowElementEntry){
+		// get names of all events expected in *Workflow.md2
+		val expectedEvents = workflowElementEntry.firedEvents.map[it.event.name]
 		
-		// get all events fired in *Controller.md2
-		/*val allFragments = workflowElementEntry.workflowElement.actions.
-			filter(CustomAction).
-			map[ action |
-				action.codeFragments
-			].flatten
+		// get names of all events fired in *Controller.md2
+		val actuallyFiredEvents = helper.getFiredEvents(workflowElementEntry.workflowElement).map[
+			it.name
+		].toSet
 		
-		val bindingActions = allFragments.filter(EventBindingTask).map[ task | 
-			task.actions].flatten
-		val unbindingActions = allFragments.filter(EventUnbindTask).map[ task | 
-			task.actions].flatten
-		val callActions = allFragments.filter(CallTask).map[ task | 
-			task.action]
-			
-		val allActions = bindingActions + unbindingActions + callActions
-		
-		val fireEventActions = allActions.filter(SimpleActionRef).map[simpleAction |
-				simpleAction.action ].filter(FireEventAction)
-			
-		val actuallyFiredEvents = fireEventActions.map[ event | event.workflowEvent.name ].toSet
-		*/
-		val actuallyFiredEvents = workflowElementEntry.workflowElement.workflowEvents
-		
-		// Calculate differences
-		val eventsInWorkflowButNotInController = expectedEvents.filter[ev | !actuallyFiredEvents.contains(ev)]
-		
+		// Calculate difference
 		val eventsInControllerButNotInWorkflow = actuallyFiredEvents.filter[!expectedEvents.contains(it)]
 		
-		// Show errors
-		eventsInWorkflowButNotInController.forEach[ eventName |
-			val event = workflowElementEntry.events.findFirst[it.name == eventName] 
-			
-			error("Trying to catch an event not specified in WorkflowElement",
-				//event,
-				//MD2Package.eINSTANCE.workflowElementEntry_Events
-				MD2Package.eINSTANCE.workflowElementEntry_WorkflowElement
-			)
-		]
-		
+		// Show error
 		eventsInControllerButNotInWorkflow.forEach[ eventName |
 			error("The event " + eventName + " specified in WorkflowElement is not caught",
 				MD2Package.eINSTANCE.workflowElementEntry_WorkflowElement
