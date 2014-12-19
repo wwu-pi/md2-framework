@@ -150,7 +150,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 			
 			controller.replaceCombinedActionWithCustomAction(wfe) // revisited
 		
-			autoGenerator.createAutoGenerationAction(autoGenerators, wfe)  // revisited
+			autoGenerator.createAutoGenerationAction(autoGenerators, wfe)  // done
 		
 			autoGenerator.createViewElementsForAutoGeneratorAction(autoGenerators, wfe) // revisited
 		]
