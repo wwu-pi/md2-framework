@@ -127,7 +127,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 			controller.transformEventBindingAndUnbindingTasksToOneToOneRelations(wfe) // done
 		
-			controller.calculateParameterSignatureForAllSimpleActions(wfe) // revisited
+			controller.calculateParameterSignatureForAllSimpleActions(wfe) // done
 		]
 		
 		// unclear, if wfe specific, contains wfe specific parts, but also the processStateContentProvider, which is global

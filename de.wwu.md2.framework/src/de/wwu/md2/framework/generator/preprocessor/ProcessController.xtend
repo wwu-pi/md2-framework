@@ -182,11 +182,9 @@ class ProcessController extends AbstractPreprocessor {
 	 * </p>
 	 */
 	def calculateParameterSignatureForAllSimpleActions(WorkflowElement wfe) {
-		// TODO: wfe changes
-		val simpleActions = controllers.map[ ctrl | 
-			ctrl.eAllContents.toIterable.filter(SimpleAction)
-		].flatten
 		
+		val simpleActions = wfe.eAllContents.toIterable.filter(SimpleAction).toList
+				
 		for (simpleAction : simpleActions) {
 			simpleAction.setParameterSignature(simpleAction.calculateParameterSignatureHash)
 		}
