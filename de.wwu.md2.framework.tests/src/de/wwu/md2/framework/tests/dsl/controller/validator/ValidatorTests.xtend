@@ -21,6 +21,9 @@ import de.wwu.md2.framework.mD2.Validator
 import java.util.List
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.ValidatorBindingTask
+import de.wwu.md2.framework.mD2.MD2Package
+import de.wwu.md2.framework.validation.ControllerValidator
+import de.wwu.md2.framework.mD2.WorkflowElement
 
 @InjectWith(typeof(MD2InjectorProvider))
 @RunWith(typeof(XtextRunner))
@@ -32,6 +35,7 @@ class ValidatorTests {
 	MD2Model viewModel;
 	MD2Model rootValidatorModel; 
 	MD2Model inputFieldValidatorModel; 
+	MD2Model emptyProcessChainModel;
 	ResourceSet rs;
 	
 	private EList<ControllerElement> elements;
@@ -48,6 +52,7 @@ class ValidatorTests {
 		mainModel = BASIC_CONTROLLER_M.load.parse(rs);
 		rootValidatorModel = VALIDATOR_COMPONENT_C.load.parse(rs);
 		inputFieldValidatorModel = INPUT_FIELD_VALIDATOR_COMPONENT_C.load.parse(rs);
+		emptyProcessChainModel = EMPTY_PROCESS_CHAIN_C.load.parse;
 		
 		elements = (rootValidatorModel.modelLayer as Controller).controllerElements;
 		validators = elements.filter(typeof(Validator)).toList;
@@ -101,7 +106,12 @@ class ValidatorTests {
 		1.assertEquals(tasks.get(1).validators.size);
 		1.assertEquals(tasks.get(2).validators.size);
 		1.assertEquals(tasks.get(3).validators.size);
-	} 
+	}
+	
+	@Test
+	def checkForEmptyProcessChainsTest(){
+	    emptyProcessChainModel.assertWarning(MD2Package::eINSTANCE.processChain, ControllerValidator::EMPTYPROCESSCHAIN);
+	}
 	
 	
 }

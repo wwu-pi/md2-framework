@@ -31,7 +31,9 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	@Inject
     override register(EValidatorRegistrar registrar) {
         // nothing to do
-    }   
+    }
+    
+    public static final String EMPTYPROCESSCHAIN = "emptyProcessChain";
     
     /////////////////////////////////////////////////////////
 	/// Action Validators
@@ -263,5 +265,18 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 			val error = '''No subsequent step! Cannot define 'proceed' operation on last processChain step.'''
 			acceptError(error, next, null, -1, null);
 		}
-	}	
+	}
+	
+	/**
+     * Avoid empty processChains.
+     * @param processChain
+     */
+    @Check
+    def checkForEmptyProcessChains(ProcessChain processChain) {
+        if(processChain.processChainSteps.empty) {
+            acceptWarning("No processChain steps are defined for this processChain. A processChain should have at least one step showing a view.",
+                    processChain, null, -1, EMPTYPROCESSCHAIN);
+        }
+    }
+	
 }

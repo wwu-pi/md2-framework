@@ -1,0 +1,15 @@
+package TestProject.controllers
+
+WorkflowElement Test {
+    defaultProcessChain TestChain
+    
+    onInit {
+        action CustomAction init {
+        
+        }
+    }
+    
+    processChain TestChain {
+    
+    }
+}
