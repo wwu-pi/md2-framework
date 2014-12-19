@@ -121,7 +121,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		workflowElements.forEach[wfe | 
 			
-			controller.createStartUpActionAndRegisterAsOnInitializedEvent(wfe) // revisited
+			controller.createStartUpActionAndRegisterAsOnInitializedEvent(wfe) // done
 
 			controller.createInitialGotoViewOrSetProcessChainAction(wfe) // revisited
 		

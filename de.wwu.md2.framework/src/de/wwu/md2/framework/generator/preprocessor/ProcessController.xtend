@@ -39,26 +39,24 @@ class ProcessController extends AbstractPreprocessor {
 	 * </p>
 	 */
 	def createStartUpActionAndRegisterAsOnInitializedEvent(WorkflowElement wfe) {
-		// TODO: wfe Changes
-		
-		val ctrl = controllers.head
-		var workflowElement = ctrl.controllerElements.filter(WorkflowElement)?.head
-		if(workflowElement == null) {
-			workflowElement = factory.createWorkflowElement
-		}
-		
 		// create __startupAction
 		val startupAction = factory.createCustomAction;
 		startupAction.setName(startupActionName)
-		workflowElement.initActions += startupAction
-		ctrl.controllerElements.add(workflowElement)
+		wfe.actions.add(startupAction)
 		
-		// add original startup action to __startupAction
-		val originalCallTask = factory.createCallTask
-		val originalActionReference = factory.createActionReference
-		// originalActionReference.setActionRef(originalStartupAction)
-		originalCallTask.setAction(originalActionReference)
-		startupAction.codeFragments.add(originalCallTask);
+		// register __startupAction as init action in workflow element
+		var initActions = wfe.initActions		
+		wfe.initActions.clear		
+		wfe.initActions += startupAction
+		
+		// add original startup actions to __startupAction
+		initActions.forEach[initAction | 
+			val originalCallTask = factory.createCallTask
+			val originalActionReference = factory.createActionReference
+			originalActionReference.setActionRef(initAction)
+			originalCallTask.setAction(originalActionReference)
+			startupAction.codeFragments.add(originalCallTask);
+		]
 	}
 	
 	/**
