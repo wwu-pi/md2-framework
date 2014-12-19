@@ -130,8 +130,10 @@ class MD2Preprocessor extends AbstractPreprocessor {
 			controller.calculateParameterSignatureForAllSimpleActions(wfe) // done
 		]
 		
+		
+		processChains.transformProcessChainsToSequenceOfCoreLanguageElements() // done
+		
 		workflowElements.forEach[wfe |
-			processChains.transformProcessChainsToSequenceOfCoreLanguageElements(wfe) // !!!!!!
 			conditionalEvents.transformAllCustomEventsToBasicLanguageStructures(wfe) // done
 		]
 		

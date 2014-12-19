@@ -80,35 +80,39 @@ class ProcessProcessChain extends AbstractPreprocessor {
 	 *   </li>
 	 * </ul>
 	 */
-	def transformProcessChainsToSequenceOfCoreLanguageElements(WorkflowElement wfe) {
+	def transformProcessChainsToSequenceOfCoreLanguageElements() {
 		
 		// only run this task if there are processChains present
-		val hasProcessChains = wfe.eAllContents.exists( e | e instanceof ProcessChain)
+		val hasProcessChains = controller.eAllContents.exists( e | e instanceof ProcessChain)
 		
 		if (!hasProcessChains) {
 			return
 		}
 		
-		
+		val workflowElements = controller.controllerElements.filter(WorkflowElement)
 		//////////////////////////////////////
 		// Sub-Steps
 		//////////////////////////////////////
 		
 		// Transform ProcessChain element
+		
+		//TODO: Is it sufficient to have only one of those three objects but call all other methods multiple times (e.g. returnStepStack)
 		val returnStepStack = createReturnStepStack
 		val controllerStateEntity = createProcessChainControllerStateEntity
 		val controllerStateCP = createProcessChainControllerStateContentProvider(controllerStateEntity)
-		val processChainExecuteStepAction = createExecuteStepCustomAction(controllerStateEntity, controllerStateCP)
-		val processChainAction = createProcessChainProcessAction(controllerStateEntity, controllerStateCP, processChainExecuteStepAction, returnStepStack)
-		val eventActionMap = createProcessChainActionTriggerActions(controllerStateEntity, controllerStateCP, processChainAction)
-		registerProcessChainActionTriggerActionsOnStartup(eventActionMap)
+		workflowElements.forEach[wfe |
+			val processChainExecuteStepAction = createExecuteStepCustomAction(controllerStateEntity, controllerStateCP, wfe)
+			val processChainAction = createProcessChainProcessAction(controllerStateEntity, controllerStateCP, processChainExecuteStepAction, returnStepStack, wfe)
+			val eventActionMap = createProcessChainActionTriggerActions(controllerStateEntity, controllerStateCP, processChainAction, wfe)
+			registerProcessChainActionTriggerActionsOnStartup(eventActionMap, wfe)
 		
-		// Transform all SimpleActions for the processChain control
-		transformSetProcessChainActionToCustomActionCall(controllerStateEntity, controllerStateCP, processChainExecuteStepAction)
-		transformProcessChainProceedActionToCustomActionCall(controllerStateEntity, controllerStateCP, processChainExecuteStepAction)
-		transformProcessChainReverseActionToCustomActionCall(controllerStateEntity, controllerStateCP, processChainExecuteStepAction)
-		transformProcessChainGotoActionToCustomActionCall(controllerStateEntity, controllerStateCP, processChainExecuteStepAction)
 		
+			// Transform all SimpleActions for the processChain control
+			transformSetProcessChainActionToCustomActionCall(controllerStateEntity, controllerStateCP, processChainExecuteStepAction, wfe)
+			transformProcessChainProceedActionToCustomActionCall(controllerStateEntity, controllerStateCP, processChainExecuteStepAction, wfe)
+			transformProcessChainReverseActionToCustomActionCall(controllerStateEntity, controllerStateCP, processChainExecuteStepAction, wfe)
+			transformProcessChainGotoActionToCustomActionCall(controllerStateEntity, controllerStateCP, processChainExecuteStepAction, wfe)
+		]
 		// Remove actual processChain after everything has been transformed
 		removeProcessChains
 	}
@@ -128,7 +132,6 @@ class ProcessProcessChain extends AbstractPreprocessor {
 	 * </pre>
 	 */
 	private def createProcessChainControllerStateEntity() {
-		val model = models.last
 		
 		// Create entity
 		val stringType = factory.createStringType
@@ -147,7 +150,6 @@ class ProcessProcessChain extends AbstractPreprocessor {
 	 * Create content provider for <code>__ProcessChainControllerState</code> entity.
 	 */
 	private def createProcessChainControllerStateContentProvider(Entity controllerStateEntity) {
-		val controller = controllers.last
 		
 		// Create content provider
 		val contentProvider = factory.createComplexContentProvider(
@@ -167,13 +169,9 @@ class ProcessProcessChain extends AbstractPreprocessor {
 	 * processChain processing action. These actions are then bound to the according events. This can be seen as a workaround, because
 	 * in MD2 there is no way to find out which event triggered a particular action.
 	 */
-	private def createProcessChainActionTriggerActions(Entity entity, ContentProvider contentProvider, CustomAction processChainAction) {
+	private def createProcessChainActionTriggerActions(Entity entity, ContentProvider contentProvider, CustomAction processChainAction, WorkflowElement wfe) {
 		
-		val processChains = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(ProcessChain)
-		].flatten
-		
-		val controller = controllers.last
+		val processChains = wfe.processChain
 		
 		// get all events of all processChains
 		val gotos = processChains.map(wf | wf.processChainSteps).flatten.map(step | step.gotos).flatten
@@ -190,7 +188,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 				"__processChainActionEventTrigger_" + str.sha1Hex, str, entity, contentProvider, processChainAction
 			)
 			
-//			controller.controllerElements.add(customAction)
+			wfe.actions.add(customAction)
 			eventActionMap.put(event, customAction)
 		]
 		
@@ -201,14 +199,12 @@ class ProcessProcessChain extends AbstractPreprocessor {
 	 * For each event that occurs in any of the processChain steps, create event binding tasks in the startup action that
 	 * trigger the ProcessChainActionTriggerActions created in the step <i>createProcessChainActionTriggerActions</i>.
 	 */
-	private def registerProcessChainActionTriggerActionsOnStartup(HashMap<EventDef, CustomAction> eventActionMap) {
-		
-		val controller = controllers.last
+	private def registerProcessChainActionTriggerActionsOnStartup(HashMap<EventDef, CustomAction> eventActionMap, WorkflowElement wfe) {
 		
 		// create custom action to register all events
 		val customAction = factory.createCustomAction
 		customAction.setName("__registerProcessChainActionEventTrigger")
-		controller.controllerElements.add(factory.createWorkflowElement)
+		wfe.actions.add(customAction)
 		
 		// for each event create event binding task
 		eventActionMap.forEach[ event, action |
@@ -223,10 +219,12 @@ class ProcessProcessChain extends AbstractPreprocessor {
 		]
 		
 		// add action as call task to startUpAction
-		val startupAction = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(CustomAction)
-				.filter( action | action.name.equals(ProcessController::startupActionName))
-		].flatten.last
+		val startupAction = wfe.initActions.filter(CustomAction).head
+//		TODO: code fragment in comment can be totally removed when DSL is changed 
+//		val startupAction = controllers.map[ ctrl |
+//			ctrl.controllerElements.filter(CustomAction)
+//				.filter( action | action.name.equals(ProcessController::startupActionName))
+//		].flatten.last
 		val callTask = factory.createCallTask
 		val actionDef = factory.createActionReference
 		actionDef.setActionRef(customAction)
@@ -240,9 +238,6 @@ class ProcessProcessChain extends AbstractPreprocessor {
 	 * content provider.
 	 */
 	private def createReturnStepStack() {
-		
-		val controller = controllers.last
-		val model = models.last
 		
 		val stringType = factory.createStringType
 		val stack = factory.createComplexStack(
@@ -277,20 +272,16 @@ class ProcessProcessChain extends AbstractPreprocessor {
 	 * }
 	 * </pre>
 	 */
-	private def createExecuteStepCustomAction(Entity entity, ContentProvider contentProvider) {
+	private def createExecuteStepCustomAction(Entity entity, ContentProvider contentProvider, WorkflowElement wfe) {
 		
-		val processChainSteps = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(ProcessChain).map[ w |
-				w.processChainSteps
+		val processChainSteps = wfe.processChain.map[ p |
+				p.processChainSteps
 			].flatten
-		].flatten
-		
-		val controller = controllers.last
 		
 		val customAction = factory.createCustomAction
 		customAction.setName("__processChainExecuteStepAction")
 		//TODO: create on customAction for each workflowelement and add each to the workflowElement. Next line is only a dirty bug fix.
-		controller.controllerElements.add(factory.createWorkflowElement)
+		wfe.actions.add(customAction)
 		
 		val conditionalCodeFragment = factory.createConditionalCodeFragment
 		if (!processChainSteps.empty) {
@@ -331,8 +322,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 	 * from the model.
 	 */
 	private def removeProcessChains() {
-		val processChains = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(ProcessChain)
+		val processChains = controller.controllerElements.filter(WorkflowElement).map[w|w.processChain
 		].flatten
 		
 		while (!processChains.empty) {
@@ -354,16 +344,11 @@ class ProcessProcessChain extends AbstractPreprocessor {
 	 * in a second step all SetProcessChainActions are replaced with the newly created custom actions.
 	 */
 	private def transformSetProcessChainActionToCustomActionCall(
-		Entity entity, ContentProvider contentProvider, CustomAction processChainExecuteStepAction
+		Entity entity, ContentProvider contentProvider, CustomAction processChainExecuteStepAction, WorkflowElement wfe
 	) {
-		
-		// get random controller element to place the action in
-		val controller = controllers.last
-		
+			
 		// get all SetProcessChainActions
-		val setProcessChainActions = controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable.filter(SetProcessChainAction)
-		].flatten
+		val setProcessChainActions = wfe.eAllContents.toIterable.filter(SetProcessChainAction)
 		
 		// remember all SetProcessChain###Actions that are already created, so that for each processChain only one such
 		// action is created
@@ -380,7 +365,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 				
 				val customAction = factory.createCustomAction
 				customAction.setName("__processChainSetProcessChain" + processChain.name.toFirstUpper + "Action")
-				controller.controllerElements.add(factory.createWorkflowElement)
+				wfe.actions.add(customAction)
 				createdSetProcessChainActions.put(processChain, customAction)
 				
 				// create attribute set task
@@ -433,15 +418,11 @@ class ProcessProcessChain extends AbstractPreprocessor {
 	 * called "__action.proceed".
 	 */
 	private def transformProcessChainProceedActionToCustomActionCall(
-		Entity entity, ContentProvider contentProvider, CustomAction processChainAction
+		Entity entity, ContentProvider contentProvider, CustomAction processChainAction, WorkflowElement wfe
 	) {
-		// get random controller element to place the action in
-		val controller = controllers.last
 		
 		// get all ProcessChainProceedActions
-		val processChainProceedActions = controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable.filter(ProcessChainProceedAction)
-		].flatten
+		val processChainProceedActions = wfe.eAllContents.toIterable.filter(ProcessChainProceedAction)
 		
 		if (processChainProceedActions.empty) {
 			return
@@ -452,7 +433,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 		val customAction = buildProcessChainActionTriggerAction(
 			"__processChainActionEventTrigger_proceed", "__action.proceed", entity, contentProvider, processChainAction
 		)
-		controller.controllerElements.add(factory.createWorkflowElement)
+		wfe.actions.add(customAction)
 		
 		// Replace all ProcessChainProceedActions with the newly created custom action.
 		processChainProceedActions.forEach[ processChainProceedAction |
@@ -471,15 +452,11 @@ class ProcessProcessChain extends AbstractPreprocessor {
 	 * called "__action.reverse".
 	 */
 	private def transformProcessChainReverseActionToCustomActionCall(
-		Entity entity, ContentProvider contentProvider, CustomAction processChainAction
+		Entity entity, ContentProvider contentProvider, CustomAction processChainAction, WorkflowElement wfe
 	) {
-		// get random controller element to place the action in
-		val controller = controllers.last
 		
 		// get all ProcessChainReverseActions
-		val processChainReverseActions = controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable.filter(ProcessChainReverseAction)
-		].flatten
+		val processChainReverseActions = wfe.eAllContents.toIterable.filter(ProcessChainReverseAction)
 		
 		if (processChainReverseActions.empty) {
 			return
@@ -490,7 +467,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 		val customAction = buildProcessChainActionTriggerAction(
 			"__processChainActionEventTrigger_reverse", "__action.reverse", entity, contentProvider, processChainAction
 		)
-		controller.controllerElements.add(factory.createWorkflowElement)
+		wfe.actions.add(customAction)
 		
 		// Replace all ProcessChainReverseActions with the newly created custom action.
 		processChainReverseActions.forEach[ processChainReverseAction |
@@ -510,15 +487,11 @@ class ProcessProcessChain extends AbstractPreprocessor {
 	 * <i>stringRepresentationOfStep</i>.
 	 */
 	private def transformProcessChainGotoActionToCustomActionCall(
-		Entity entity, ContentProvider contentProvider, CustomAction processChainAction
+		Entity entity, ContentProvider contentProvider, CustomAction processChainAction, WorkflowElement wfe
 	) {
-		// get random controller element to place the action in
-		val controller = controllers.last
-		
+
 		// get all ProcessChainGotoActions
-		val processChainGotoActions = controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable.filter(ProcessChainGotoAction)
-		].flatten
+		val processChainGotoActions =wfe.eAllContents.toIterable.filter(ProcessChainGotoAction)
 		
 		// remember all __processChainActionEventTrigger_goto### actions that are already created, so that for each step
 		// only one such action is created
@@ -536,7 +509,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 					customActionName, eventIdentifier, entity, contentProvider, processChainAction
 				)
 				createdProcessChainGotoActions.put(processChainStep, customAction)
-				controller.controllerElements.add(factory.createWorkflowElement)
+				wfe.actions.add(customAction)
 			}
 		]
 		
@@ -580,18 +553,14 @@ class ProcessProcessChain extends AbstractPreprocessor {
 	 * </pre>
 	 */
 	private def createProcessChainProcessAction(
-		Entity entity, ContentProvider contentProvider, CustomAction processChainExecuteStepAction, HashMap<String, EObject> stack
+		Entity entity, ContentProvider contentProvider, CustomAction processChainExecuteStepAction, HashMap<String, EObject> stack, WorkflowElement wfe
 	) {
-		val processChains = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(ProcessChain)
-		].flatten
-		
-		val controller = controllers.last
-		
+		val processChains = wfe.processChain
+				
 		// createAction
 		val customAction = factory.createCustomAction
 		customAction.setName("__processChainProcessingAction")
-		controller.controllerElements.add(factory.createWorkflowElement)
+		wfe.actions.add(customAction)
 		
 		// add conditional code fragment to the custom action
 		val conditionalCodeFragment = factory.createConditionalCodeFragment
