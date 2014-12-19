@@ -162,7 +162,10 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		viewReferences.replaceStyleReferences // done
 		
 		//WFE CHANGES CHECK up till here
-		viewReferences.simplifyReferencesToAbstractViewGUIElements(clonedElements,autoGenerator.autoGenerationActionName) // revisited
+		
+        workflowElements.forEach[wfe |
+            viewReferences.simplifyReferencesToAbstractViewGUIElements(wfe, clonedElements, autoGenerator.autoGenerationActionName) // done
+        ]
 		
 		model.createValidatorsForModelConstraints(autoGenerator.autoGenerationActionName) // revisited
 		

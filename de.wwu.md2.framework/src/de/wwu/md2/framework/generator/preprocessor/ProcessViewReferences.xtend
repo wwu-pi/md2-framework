@@ -37,6 +37,7 @@ import static de.wwu.md2.framework.generator.preprocessor.util.Util.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
+import de.wwu.md2.framework.mD2.WorkflowElement
 
 class ProcessViewReferences extends AbstractPreprocessor {
 	
@@ -268,16 +269,10 @@ class ProcessViewReferences extends AbstractPreprocessor {
 	 * Simplify references to AbstractViewGUIElements (auto-generated and/or cloned)
 	 * Set ViewGUIElement to head ref
 	 */
-	def simplifyReferencesToAbstractViewGUIElements(
-		HashMap<ViewElementType, ViewElementType> clonedElements, String autoGenerationActionName
-	) {
-		val abstractRefs = workingInput.resources.map[ r |
-			r.allContents.toIterable.filter(AbstractViewGUIElementRef).filter([!(it.eContainer instanceof AbstractViewGUIElementRef)])
-		].flatten
+	def simplifyReferencesToAbstractViewGUIElements(WorkflowElement wfe, HashMap<ViewElementType, ViewElementType> clonedElements, String autoGenerationActionName) {
+		val abstractRefs = wfe.eAllContents.toIterable.filter(AbstractViewGUIElementRef).filter([!(it.eContainer instanceof AbstractViewGUIElementRef)])
 		
-		val autogenAction = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(CustomAction).filter(action | action.name == autoGenerationActionName)
-		].flatten.last
+		val autogenAction = wfe.eAllContents.filter(CustomAction).filter(action | action.name == autoGenerationActionName).last
 		
 		abstractRefs.forEach[ abstractRef |
 			abstractRef.ref = resolveAbstractViewGUIElementRef(abstractRef, null, clonedElements, autogenAction)
