@@ -34,6 +34,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
+import de.wwu.md2.framework.mD2.WorkflowElement
 
 class ProcessView extends AbstractPreprocessor {
 	
@@ -527,36 +528,36 @@ class ProcessView extends AbstractPreprocessor {
 	 *   </li>
 	 * </ul>
 	 */
-	def createDisableActionsForAllDisabledViewElements() {
+	def createDisableActionsForAllDisabledViewElements(WorkflowElement wfe) {
 		
 		// get all views that are accessed by GotoViewActions at some time
-		val accessibleViews = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(CustomAction).map[ customAction |
-				customAction.eAllContents.toIterable
-			].flatten.filter(GotoViewAction).map[ gotoView |
+		val accessibleViews = wfe.eAllContents.filter(CustomAction).map[ customAction |
+			customAction.eAllContents.toIterable].filter(GotoViewAction).map[ gotoView |
 				resolveContainerElement(gotoView.view)
-			]
-		].flatten.toSet
+			].toSet
 		
 		// get all GUI elements that are contained in an accessible view
-		val guiElements = views.map[ view |
-			view.eAllContents.toIterable.filter(ViewGUIElement).filter[ e |
-				var EObject eObject = e
-				var isContained = false
-				while (!(eObject instanceof View) && !isContained) {
-					isContained = accessibleViews.contains(eObject)
-					eObject = eObject.eContainer
-				}
-				isContained
-			]
-		].flatten
+		val guiElements = view.eAllContents.filter(ViewGUIElement).filter[viewGuiElement |
+			var EObject eObject = viewGuiElement
+			var isContained = false
+			while (!(eObject instanceof View) && !isContained) {
+				isContained = accessibleViews.contains(eObject)
+				eObject = eObject.eContainer
+			}
+			isContained
+		]
 		
-		val startupAction = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(CustomAction)
-				.filter( action | action.name.equals(ProcessController::startupActionName))
-		].flatten.last
+
 		
-		for (guiElement : guiElements) {
+		//TODO: code fragment in comment can be totally removed when DSL is changed 
+		//-> we probably only need one initAction per workflow element
+		//		val startupAction = wfe.eAllContents.filter(CustomAction).filter[
+		//			action | action.name.equals(ProcessController::startupActionName)
+		//		]
+
+		val startupAction = wfe.initActions.filter(CustomAction).head
+		
+		for (guiElement : guiElements.toIterable) {
 			
 			val isDisabled = switch (guiElement) {
 				InputElement: guiElement.isDisabled

@@ -159,9 +159,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		viewReferences.cloneViewElementReferencesIntoParentContainer(clonedElements, viewRefsDone) // done 
 		
 		viewReferences.replaceStyleReferences // done
-		
-		//WFE CHANGES CHECK up till here
-		
+				
         workflowElements.forEach[wfe |
         	
             viewReferences.simplifyReferencesToAbstractViewGUIElements(wfe, clonedElements, autoGenerator.autoGenerationActionName) // done
@@ -176,7 +174,9 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		view.transformInputsWithLabelsAndTooltipsToLayouts // done
 		
-		view.createDisableActionsForAllDisabledViewElements // revisited 
+		workflowElements.forEach[wfe |
+			view.createDisableActionsForAllDisabledViewElements(wfe) // done (with TODO)
+		] 
 		
 		// Remove redundant elements
 		val Collection<EObject> objectsToRemove = newHashSet
