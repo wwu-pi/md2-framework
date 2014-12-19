@@ -71,6 +71,7 @@ abstract class AbstractPreprocessor {
 	def setNewModel(ResourceSet input) {
 		workingInput = copyModel(input)
 		extractModels
+		removeEmptyResources
 	}
 	
 	/**
@@ -153,6 +154,22 @@ abstract class AbstractPreprocessor {
 		workflow = factory.createWorkflow
 		md2modelWorkflow.setModelLayer(workflow)
 		workingInput.resources.head.contents.add(md2modelWorkflow)
+	}
+	
+	
+	/**
+	 * Remove resources that don't contain any content.
+	 */
+	private def removeEmptyResources(){
+		val resourcesToBeDeleted = newHashSet
+		workingInput.resources.forEach[res| 
+			if (res.contents.size == 0) {
+				resourcesToBeDeleted.add(res)
+			}
+		]
+		resourcesToBeDeleted.forEach[res |
+			workingInput.resources.remove(res)
+		]
 	}
 	
 }
