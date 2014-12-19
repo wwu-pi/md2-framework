@@ -70,9 +70,7 @@ class ProcessViewReferences extends AbstractPreprocessor {
 	) {
 		var repeat = true
 		while (repeat) {
-			val viewRefs = workingInput.resources.map[ r |
-				r.allContents.toIterable.filter(typeof(ViewGUIElementReference))
-			].flatten.toList.sort([obj1, obj2 |
+			val viewRefs = view.eAllContents.toIterable.filter(ViewGUIElementReference).toList.sort([obj1, obj2 |
 				return countContainers(obj2, 0) - countContainers(obj1, 0)
 			])
 			val size = viewRefsDone.size 
