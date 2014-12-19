@@ -39,6 +39,9 @@ class Validator_Model_Test {
 		unsupportedFeatures = MODEL_VALIDATOR_UNSUPPORTED_FEATURES.load.parse
 	}
 	
+	/**
+	 * Checks whether the error for defaults assigned to entities is thrown.
+	 */
 	@Test
 	def defaultValueForReferenceTest() {
 		defaultReferenceValue.assertError(MD2Package::eINSTANCE.attrEnumDefault, ModelValidator::DEFAULTREFERENCEVALUE)
