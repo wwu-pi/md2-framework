@@ -31,7 +31,7 @@ import org.eclipse.emf.ecore.EObject
 
 import static extension de.wwu.md2.framework.generator.preprocessor.util.Helper.*
 import static extension org.apache.commons.codec.digest.DigestUtils.*
-import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
+import static extension org.eclipse.emf.ecore.util.EcoreUtil.*import de.wwu.md2.framework.mD2.WorkflowElement
 
 class ProcessProcessChain extends AbstractPreprocessor {
 	
@@ -80,12 +80,10 @@ class ProcessProcessChain extends AbstractPreprocessor {
 	 *   </li>
 	 * </ul>
 	 */
-	def transformProcessChainsToSequenceOfCoreLanguageElements() {
+	def transformProcessChainsToSequenceOfCoreLanguageElements(WorkflowElement wfe) {
 		
 		// only run this task if there are processChains present
-		val hasProcessChains = workingInput.resources.map[ r |
-			r.allContents.toIterable.findFirst( e | e instanceof ProcessChain)
-		].exists(e | e != null)
+		val hasProcessChains = wfe.eAllContents.exists( e | e instanceof ProcessChain)
 		
 		if (!hasProcessChains) {
 			return

@@ -130,10 +130,8 @@ class MD2Preprocessor extends AbstractPreprocessor {
 			controller.calculateParameterSignatureForAllSimpleActions(wfe) // done
 		]
 		
-		// unclear, if wfe specific, contains wfe specific parts, but also the processStateContentProvider, which is global
-		processChains.transformProcessChainsToSequenceOfCoreLanguageElements // !!!!!!
-
 		workflowElements.forEach[wfe |
+			processChains.transformProcessChainsToSequenceOfCoreLanguageElements(wfe) // !!!!!!
 			conditionalEvents.transformAllCustomEventsToBasicLanguageStructures(wfe) // done
 		]
 		
