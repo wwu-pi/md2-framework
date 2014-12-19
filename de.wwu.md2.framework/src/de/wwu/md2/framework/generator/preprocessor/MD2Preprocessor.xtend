@@ -191,7 +191,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		view.calculateNumRowsAndNumColumnsParameters // done
 		
-		view.fillUpGridLayoutsWithSpacers // revisited
+		view.fillUpGridLayoutsWithSpacers // done
 		
 		view.calculateAllViewElementWidths // revisited
 		

@@ -239,7 +239,7 @@ class ProcessView extends AbstractPreprocessor {
 	 * </ul>
 	 */
 	def fillUpGridLayoutsWithSpacers() {
-		val Iterable<GridLayoutPane> gridLayoutPanes = views.map[ view |
+		val Iterable<GridLayoutPane> gridLayoutPanes = view.viewElements.map[ view |
 			view.eAllContents.toIterable.filter(GridLayoutPane)
 		].flatten
 		
