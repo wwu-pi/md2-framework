@@ -38,9 +38,23 @@ class validatorTest {
 		modelModel = WORKFLOW_VALIDATOR_M.load.parse(rs);
 	}
 	
+	/**
+	 * checks whether validator throws an error if
+	 * not all events of a worklow element are handled in the corresponding
+	 * workflowelemententry
+	 */
 	@Test
 	def checkAllEventsOfWorkflowElementHandledTest(){
 		workflowModel.assertError(MD2Package::eINSTANCE.workflowElementEntry,ControllerValidator::EVENTSINCONTROLLER)
+	}
+	
+	/**
+	 * checks whether validator throws an error if there are fireeventactions
+	 * in the init block of a workflowelement
+	 */
+	@Test
+	def checkNoFireEventActionInInitBlockTest(){
+		controllerModel.assertError(MD2Package::eINSTANCE.fireEventAction,ControllerValidator::EVENTININIT)
 	}
 	
 }
