@@ -132,10 +132,9 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		// unclear, if wfe specific, contains wfe specific parts, but also the processStateContentProvider, which is global
 		processChains.transformProcessChainsToSequenceOfCoreLanguageElements // !!!!!!
-		
-		workflowElements.forEach[wfe | 
-			
-			conditionalEvents.transformAllCustomEventsToBasicLanguageStructures (wfe) // !!!!!!
+
+		workflowElements.forEach[wfe |
+			conditionalEvents.transformAllCustomEventsToBasicLanguageStructures(wfe) // done
 		]
 		
 		model.transformImplicitEnums // done
