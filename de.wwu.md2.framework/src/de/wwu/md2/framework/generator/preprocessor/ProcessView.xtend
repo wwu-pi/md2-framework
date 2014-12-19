@@ -190,9 +190,7 @@ class ProcessView extends AbstractPreprocessor {
 	 * </ul>
 	 */
 	def calculateNumRowsAndNumColumnsParameters() {
-		val gridLayoutPanes = view.viewElements.map[ view |
-			view.eAllContents.toIterable.filter(GridLayoutPane)
-		].flatten
+		val gridLayoutPanes = view.eAllContents.toIterable.filter(GridLayoutPane)
 		
 		for (gridLayoutPane : gridLayoutPanes) {
 			var numberOfContainedElements = gridLayoutPane.elements.size
@@ -240,9 +238,7 @@ class ProcessView extends AbstractPreprocessor {
 	 * </ul>
 	 */
 	def fillUpGridLayoutsWithSpacers() {
-		val Iterable<GridLayoutPane> gridLayoutPanes = view.viewElements.map[ view |
-			view.eAllContents.toIterable.filter(GridLayoutPane)
-		].flatten
+		val Iterable<GridLayoutPane> gridLayoutPanes = view.eAllContents.toIterable.filter(GridLayoutPane)
 		
 		for (gridLayoutPane : gridLayoutPanes) {
 			val numberOfContainedElements = gridLayoutPane.elements.size
