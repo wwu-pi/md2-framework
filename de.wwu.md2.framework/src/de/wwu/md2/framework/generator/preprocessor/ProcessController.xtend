@@ -252,9 +252,8 @@ class ProcessController extends AbstractPreprocessor {
 	 * Replace custom validators with standard validator definitions.
 	 */
 	def replaceCustomValidatorsWithStandardValidatorDefinitions() {
-		val Iterable<CustomizedValidatorType> validators = controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable.filter(CustomizedValidatorType)
-		].flatten
+	    
+	    val Iterable<CustomizedValidatorType> validators = controller.eAllContents.toIterable.filter(CustomizedValidatorType)
 		
 		validators.forEach [ validator |
 			val customizedValidatorToReplace = validator.validator
