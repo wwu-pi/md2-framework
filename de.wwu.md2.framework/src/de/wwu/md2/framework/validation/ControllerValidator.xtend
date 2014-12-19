@@ -23,7 +23,7 @@ import org.eclipse.xtext.validation.EValidatorRegistrar
 
 import static extension de.wwu.md2.framework.validation.TypeResolver.*
 import de.wwu.md2.framework.mD2.WorkflowElementEntry
-import de.wwu.md2.framework.scoping.MD2ScopingHelper
+import de.wwu.md2.framework.util.GetFiredEventsHelper
 
 /**
  * Valaidators for all controller elements of MD2.
@@ -36,7 +36,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
     }   
     
     @Inject
-    MD2ScopingHelper helper;
+    GetFiredEventsHelper helper;
     
     /////////////////////////////////////////////////////////
 	/// Action Validators

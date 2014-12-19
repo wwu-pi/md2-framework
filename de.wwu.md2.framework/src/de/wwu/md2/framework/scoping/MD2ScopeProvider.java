@@ -41,6 +41,7 @@ import de.wwu.md2.framework.mD2.ViewGUIElementReference;
 import de.wwu.md2.framework.mD2.WorkflowElementEntry;
 import de.wwu.md2.framework.mD2.WorkflowEvent;
 import de.wwu.md2.framework.mD2.impl.FireEventEntryImpl;
+import de.wwu.md2.framework.util.GetFiredEventsHelper;
 
 /**
  * This class contains custom scoping description.
@@ -55,7 +56,7 @@ public class MD2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	private QualifiedNameProvider qualifiedNameProvider;
 	
 	@Inject
-	private MD2ScopingHelper helper;
+	private GetFiredEventsHelper helper;
 	
 	public static Collection<EClass> validContainerForAbstractViews = Sets.newHashSet(MD2Package.eINSTANCE.getMain(), MD2Package.eINSTANCE.getProcessChainStep(), MD2Package.eINSTANCE.getSimpleAction());
 	
@@ -72,7 +73,9 @@ public class MD2ScopeProvider extends AbstractDeclarativeScopeProvider {
 				continue;
 			}
 			
-			firedEvents.remove(((FireEventEntryImpl)otherFireEventEntry).basicGetEvent());
+			firedEvents.remove(
+					((FireEventEntryImpl)otherFireEventEntry).basicGetEvent()
+					);
 		}
 		
 		return Scopes.scopeFor(firedEvents);

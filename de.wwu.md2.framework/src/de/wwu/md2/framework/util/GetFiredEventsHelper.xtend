@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.scoping;
+package de.wwu.md2.framework.util;
 
 import de.wwu.md2.framework.mD2.WorkflowElement
 import de.wwu.md2.framework.mD2.CustomAction
@@ -8,7 +8,7 @@ import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.SimpleActionRef
 import de.wwu.md2.framework.mD2.FireEventAction
 
-public class MD2ScopingHelper {
+public class GetFiredEventsHelper {
 	
 	/**
 	 * Calculate the set of all Workflow Events that are fired by actions in a Workflow Element
