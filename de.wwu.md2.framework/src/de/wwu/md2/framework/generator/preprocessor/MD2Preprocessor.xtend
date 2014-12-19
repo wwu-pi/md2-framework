@@ -172,7 +172,6 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		]
 		
 		
-		
 		view.transformInputsWithLabelsAndTooltipsToLayouts // revisited
 		
 		view.createDisableActionsForAllDisabledViewElements // revisited 
@@ -188,7 +187,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		// after clean-up calculate all grid and element sizes and fill empty cells with spacers,
 		// so that calculations are avoided during the actual generation process
-		view.transformFlowLayoutsToGridLayouts // revisited
+		view.transformFlowLayoutsToGridLayouts // done 
 		
 		view.calculateNumRowsAndNumColumnsParameters // revisited
 		
