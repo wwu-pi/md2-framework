@@ -21,21 +21,62 @@ class Validator_Model_Test {
 	
 	@Inject extension ParseHelper<MD2Model>
 	@Inject extension ValidationTestHelper
-	MD2Model model_Testmodel;
+	MD2Model defaultReferenceValue;
+	MD2Model entityEnumUppercase;
+	MD2Model attributeLowercase;
+	MD2Model repeatedParameter;
+	MD2Model unsupportedFeatures;
 	
 	ResourceSet rs;
 	
-		//Loads the different Elements of the Model into the corresponding variables
 	@Before
 	def void setUp() {
 		rs = new ResourceSetImpl();
-		model_Testmodel = VALIDATOR_MODEL_M.load.parse(rs);
-
+		defaultReferenceValue = VALIDATOR_MODEL_M.load.parse(rs)
+		entityEnumUppercase = MODEL_VALIDATOR_UPPERCASE_ENTITY.load.parse
+		attributeLowercase = MODEL_VALIDATOR_LOWERCASE_ATTRIBUTE.load.parse
+		repeatedParameter = MODEL_VALIDATOR_REPEATED_PARAMETERS.load.parse
+		unsupportedFeatures = MODEL_VALIDATOR_UNSUPPORTED_FEATURES.load.parse
 	}
 	
+	/**
+	 * Checks whether the error for defaults assigned to entities is thrown.
+	 */
 	@Test
-	def testDefaultValueForReference() {
-		model_Testmodel.assertError(MD2Package::eINSTANCE.attrEnumDefault,ModelValidator::DEFAULTREFERENCEVALUE)
+	def defaultValueForReferenceTest() {
+		defaultReferenceValue.assertError(MD2Package::eINSTANCE.attrEnumDefault, ModelValidator::DEFAULTREFERENCEVALUE)
 	}
 	
+	/**
+	 * Checks whether the error for a non-capitalized entity is thrown. 
+	 */
+	@Test
+	def checkEntitiesStartsWithCapitalTest() {
+	    entityEnumUppercase.assertWarning(MD2Package::eINSTANCE.modelElement, ModelValidator::ENTITYENUMUPPERCASE)
+	}
+	
+	/**
+	 * Checks whether the error for capitalized attributes is thrown.
+	 */
+	@Test
+	def checkAttributeStartsWithCapitalTest() {
+	    attributeLowercase.assertWarning(MD2Package::eINSTANCE.attribute, ModelValidator::ATTRIBUTELOWERCASE)
+	}
+	
+	/**
+	 * Checks whether the error for repeated declarations of parameters is thrown.
+	 */
+	@Test
+	def checkRepeatedParamsTest() {
+        //repeatedParameter.assertNoErrors
+	    repeatedParameter.assertError(MD2Package::eINSTANCE.attributeType, ModelValidator::REPEATEDPARAMS)
+	}
+	
+	/**
+	 * Checks whether the warning for unsupported language features is thrown.
+	 */
+	@Test
+	def checkAttributeTypeParam() {
+	    unsupportedFeatures.assertWarning(MD2Package::eINSTANCE.attributeTypeParam, ModelValidator::UNSUPPORTEDPARAMTYPE)
+	}
 }
