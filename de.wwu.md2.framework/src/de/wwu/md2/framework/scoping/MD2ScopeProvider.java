@@ -64,15 +64,19 @@ public class MD2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	IScope scope_FireEventEntry_event(FireEventEntry fireEventEntry, EReference eventRef) {
 		WorkflowElementEntry wfe = (WorkflowElementEntry)(fireEventEntry.eContainer());
 		
+		// Get set of all Workflow Events fired within the Workflow Element
 		Set<WorkflowEvent> firedEvents = helper.getFiredEvents(wfe.getWorkflowElement());
 		
-		
-		// Remove those that are already handled
+		// Remove those that are already handled in other FireEventEntries
 		for (FireEventEntry otherFireEventEntry : wfe.getFiredEvents()) {
+			// Really only consider others
 			if (otherFireEventEntry == fireEventEntry) {
 				continue;
 			}
 			
+			// remove Entry:
+			// requires access to implementation, because getEvent() causes
+			// exceptions with cyclic references when trying to resolve the Workflow Event
 			firedEvents.remove(
 					((FireEventEntryImpl)otherFireEventEntry).basicGetEvent()
 					);
