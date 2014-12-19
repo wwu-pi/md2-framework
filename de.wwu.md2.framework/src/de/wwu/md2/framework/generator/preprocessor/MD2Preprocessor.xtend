@@ -142,7 +142,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		view.setFlowLayoutPaneDefaultParameters // revisited
 		
-		view.duplicateSpacers // revisited
+		view.duplicateSpacers // done
 		
 		view.replaceNamedColorsWithHexColors // revisited
 		

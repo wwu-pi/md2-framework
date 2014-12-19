@@ -65,9 +65,7 @@ class ProcessView extends AbstractPreprocessor {
 	 */
 	def duplicateSpacers() {
 		
-		val spacers = views.map[ view |
-			view.eAllContents.toIterable.filter(Spacer)
-		].flatten
+		val spacers = view.eAllContents.toIterable.filter(Spacer)
 		
 		for (spacer : spacers) {
 			if (spacer.number > 1) {
