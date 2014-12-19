@@ -138,7 +138,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 			conditionalEvents.transformAllCustomEventsToBasicLanguageStructures (wfe) // !!!!!!
 		]
 		
-		model.transformImplicitEnums // revisited
+		model.transformImplicitEnums // done
 		
 		view.setFlowLayoutPaneDefaultParameters // revisited
 		
