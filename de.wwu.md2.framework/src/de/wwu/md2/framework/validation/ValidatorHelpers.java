@@ -102,7 +102,7 @@ public class ValidatorHelpers {
 				String name = ((EObject)param).eClass().getName();
 				if(set.contains(name)) {
 					acceptor.acceptError("Parameter \"" + eClassToNameMapping.get(name)
-							+ "\" has been defined multiple times", element, literal, -1, null);
+							+ "\" has been defined multiple times", element, literal, -1, ModelValidator.REPEATEDPARAMS);
 					break;
 				} else {
 					set.add(name);

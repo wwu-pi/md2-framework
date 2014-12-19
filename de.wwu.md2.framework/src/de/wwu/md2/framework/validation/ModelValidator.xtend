@@ -6,6 +6,12 @@ import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.ReferencedType
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
+import de.wwu.md2.framework.mD2.ModelElement
+import de.wwu.md2.framework.mD2.MD2Package
+import de.wwu.md2.framework.mD2.Attribute
+import de.wwu.md2.framework.mD2.AttributeType
+import de.wwu.md2.framework.mD2.AttributeTypeParam
+import com.google.common.collect.Sets
 
 /**
  * Validators for all model elements of MD2.
@@ -17,7 +23,14 @@ class ModelValidator extends AbstractMD2JavaValidator {
         // nothing to do
     }
     
+    @Inject
+    private ValidatorHelpers helper;
+    
     public static final String DEFAULTREFERENCEVALUE = "defaultReferenceValue"
+    public static final String ENTITYENUMUPPERCASE = "entityEnumUppercase"
+    public static final String ATTRIBUTELOWERCASE = "attributeLowercase"
+    public static final String REPEATEDPARAMS = "repeatedParams"
+    public static final String UNSUPPORTEDPARAMTYPE = "unsupportedParamType"
     
     /////////////////////////////////////////////////////////
 	/// Validators
@@ -39,5 +52,69 @@ class ModelValidator extends AbstractMD2JavaValidator {
 		}
 	}
 	
+	/**
+     * Enforce conventions:
+     * Warn the user if the defined entity or enum does not start with an upper case letter
+     * 
+     * @param modelElement
+     */
+    @Check
+    def checkEntityStartsWithCapital(ModelElement modelElement) {
+        if(!Character.isUpperCase(modelElement.name.charAt(0))) {
+            warning("Entity and Enum identifiers should start with an upper case letter", MD2Package.eINSTANCE.modelElement_Name, -1, ENTITYENUMUPPERCASE);
+        }
+    }
 	
+	/**
+     * Enforce conventions:
+     * Warn the user if the attribute name of an entity does not start with a lower case letter
+     * 
+     * @param feature
+     */
+    @Check
+    def checkAttributeStartsWithCapital(Attribute attribute) {        
+        if(!Character.isLowerCase(attribute.name.charAt(0))) {
+            warning("Attribute should start with a lower case letter", MD2Package.eINSTANCE.attribute_Name, -1, ATTRIBUTELOWERCASE);
+        }
+    }
+    
+    /**
+     * Prevent from defining the same parameter multiple times for the entity attribute constraint
+     * 
+     * @param attribute
+     */
+    @Check
+    def checkRepeatedParams(AttributeType attributeType) {
+        helper.repeatedParamsError(attributeType, null, this,
+                "AttrIsOptional", "optional",
+                "AttrIdentifier", "identifier",             
+                "AttrIntMax", "max", "AttrIntMin", "min",
+                "AttrFloatMax", "max", "AttrFloatMin", "min",
+                "AttrStringMax", "maxLength", "AttrStringMin", "minLength",
+                "AttrDateMax", "max", "AttrDateMin", "min",
+                "AttrTimeMax", "max", "AttrTimeMin", "min",
+                "AttrDateTimeMax", "max", "AttrDateTimeMin", "min");
+    }
+	
+	/**
+     * Inform the user about unsupported language features.
+     * @param attributeTypeParam
+     */
+    @Check
+    def checkAttributeTypeParam(AttributeTypeParam attributeTypeParam) {
+        var unsupportedParamTypes = Sets.newHashSet(
+            MD2Package.eINSTANCE.attrDateMax,
+            MD2Package.eINSTANCE.attrDateMin,
+            MD2Package.eINSTANCE.attrTimeMax,
+            MD2Package.eINSTANCE.attrTimeMin,
+            MD2Package.eINSTANCE.attrDateTimeMax,
+            MD2Package.eINSTANCE.attrDateTimeMin
+        );
+        
+        if (unsupportedParamTypes.contains(attributeTypeParam.eClass)) {
+            warning("Unsupported language feature: " + attributeTypeParam.eClass.name + ". Using this parameter will have no effect.",
+                MD2Package.eINSTANCE.attributeTypeParam.EIDAttribute, -1, UNSUPPORTEDPARAMTYPE
+            );
+        }
+    }
 }

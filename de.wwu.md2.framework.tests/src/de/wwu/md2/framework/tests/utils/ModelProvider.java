@@ -69,6 +69,13 @@ public class ModelProvider {
 	
 	public static final String FILTER_MULTIPLIZITY_C = "dsl/controller/contentProvider/validator/FilterMultiplizity.md2";
 	
+	// Model Validators
+	
+	public static final String MODEL_VALIDATOR_LOWERCASE_ATTRIBUTE = "dsl/model/validator/LowercaseAttribute.md2";
+	public static final String MODEL_VALIDATOR_REPEATED_PARAMETERS = "dsl/model/validator/RepeatedParameters.md2";
+	public static final String MODEL_VALIDATOR_UNSUPPORTED_FEATURES = "dsl/model/validator/UnsupportedFeatures.md2";
+	public static final String MODEL_VALIDATOR_UPPERCASE_ENTITY = "dsl/model/validator/UppercaseEntity.md2";
+	
 	/**
 	 * Load the model from file
 	 * @param modelUri the model URIs are listed in the ModelProvider as static Strings.

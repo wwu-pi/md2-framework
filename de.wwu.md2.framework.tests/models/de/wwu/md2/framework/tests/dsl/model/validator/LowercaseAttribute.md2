@@ -1,0 +1,5 @@
+package TestProject.models
+
+entity LowerCaseTest {
+    Test2: string
+}
