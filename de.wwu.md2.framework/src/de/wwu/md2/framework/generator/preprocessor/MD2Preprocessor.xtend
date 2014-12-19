@@ -125,7 +125,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 
 			controller.createInitialGotoViewOrSetProcessChainAction(wfe) // revisited
 		
-			controller.transformEventBindingAndUnbindingTasksToOneToOneRelations(wfe) // revisited
+			controller.transformEventBindingAndUnbindingTasksToOneToOneRelations(wfe) // done
 		
 			controller.calculateParameterSignatureForAllSimpleActions(wfe) // revisited
 		]

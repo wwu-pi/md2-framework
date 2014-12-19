@@ -217,15 +217,12 @@ class ProcessController extends AbstractPreprocessor {
 	 */
 	def transformEventBindingAndUnbindingTasksToOneToOneRelations(WorkflowElement wfe) {
 		
-		// TODO: wfe changes
-		
 		////////////////////////////////////////////////////
 		// transform all binding tasks
 		////////////////////////////////////////////////////
 		
-		val bindingTasks = controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable.filter(EventBindingTask)
-		].flatten.toList
+		var bindingTasks = wfe.eAllContents.toIterable.filter(EventBindingTask).toList
+	
 		
 		for (bindingTask : bindingTasks) {
 			val actions = bindingTask.actions
@@ -249,9 +246,7 @@ class ProcessController extends AbstractPreprocessor {
 		// transform all unbinding tasks
 		////////////////////////////////////////////////////
 		
-		val unbindingTasks = controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable.filter(EventUnbindTask)
-		].flatten
+		val unbindingTasks = wfe.eAllContents.toIterable.filter(EventUnbindTask).toList
 		
 		for (unbindingTask : unbindingTasks) {
 			val actions = unbindingTask.actions
