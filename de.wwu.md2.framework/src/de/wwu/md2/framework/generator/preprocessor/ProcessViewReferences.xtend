@@ -116,14 +116,18 @@ class ProcessViewReferences extends AbstractPreprocessor {
 	 * </ul>
 	 */
 	def copyAllCustomCodeFragmentsToClonedGUIElements(
-		HashMap<ViewElementType, ViewElementType> clonedElements, HashMap<CustomCodeFragment, ViewElementType> clonedCodeFragments
+		HashMap<ViewElementType, 
+		ViewElementType> clonedElements, 
+		HashMap<CustomCodeFragment, 
+		ViewElementType> clonedCodeFragments,
+		WorkflowElement wfe
 	) {
 		
-		val codeFragments = controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable.filter(CustomCodeFragment)
-		].flatten.toList
+		val codeFragments = wfe.eAllContents.toIterable.filter(CustomCodeFragment).toList
 		
 		for (codeFragment : codeFragments) {
+			// TODO: multiple switch-cases eventually reduce from three to six,
+			// because they are similar (e.g., what is done in EventBindingTask is similar to EventUnbindingTask)
 			switch (codeFragment) {
 				EventBindingTask: {
 					codeFragment.events.filter(typeof(ViewElementEventRef)).forEach [ eventRef |
