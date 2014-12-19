@@ -46,7 +46,7 @@ class ProcessView extends AbstractPreprocessor {
 	 * </p>
 	 */
 	def setFlowLayoutPaneDefaultParameters() {
-		val Iterable<FlowLayoutPane> flowLayoutPanes = workingInput.resources.map(r|r.allContents.toIterable.filter(typeof(FlowLayoutPane))).flatten
+		val Iterable<FlowLayoutPane> flowLayoutPanes = view.eAllContents.toIterable.filter(typeof(FlowLayoutPane))
 		for (flowLayoutPane : flowLayoutPanes) {
 			if(!flowLayoutPane.params.exists(p | p instanceof FlowLayoutPaneFlowDirectionParam)) {
 				val flowDirectionParam = factory.createFlowLayoutPaneFlowDirectionParam

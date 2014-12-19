@@ -140,7 +140,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		model.transformImplicitEnums // done
 		
-		view.setFlowLayoutPaneDefaultParameters // revisited
+		view.setFlowLayoutPaneDefaultParameters // done
 		
 		view.duplicateSpacers // done
 		
