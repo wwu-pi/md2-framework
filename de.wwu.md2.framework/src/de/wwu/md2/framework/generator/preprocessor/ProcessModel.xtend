@@ -96,8 +96,7 @@ class ProcessModel extends AbstractPreprocessor {
 			return null
 		}
 		
-		val ctrl = controllers.last
-		if (autogenAction == null || ctrl == null) return null
+		if (autogenAction == null) return null
 		val validatorBindingTask = factory.createValidatorBindingTask()
 		validatorBindingTask.referencedFields.add(copyElement(mappingTask.referencedViewField) as AbstractViewGUIElementRef)
 		val attr = (mappingTask.pathDefinition as ContentProviderPath).getReferencedAttribute
