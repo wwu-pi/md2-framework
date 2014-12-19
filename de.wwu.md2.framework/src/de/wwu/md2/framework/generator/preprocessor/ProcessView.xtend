@@ -298,10 +298,7 @@ class ProcessView extends AbstractPreprocessor {
 	def calculateAllViewElementWidths() {
 		
 		// step 1
-		val containerElements = views.map[ view |
-			view.eAllContents.toIterable.filter(ContainerElement)
-				.filter(containerElem | !(containerElem instanceof TabbedAlternativesPane))
-		].flatten
+		val containerElements = view.eAllContents.toIterable.filter(ContainerElement).filter[ce | !(ce instanceof TabbedAlternativesPane)]
 		
 		for (contentContainer : containerElements.filter(GridLayoutPane)) {
 			val allChilds = contentContainer.elements.filter(ViewGUIElement).toList
