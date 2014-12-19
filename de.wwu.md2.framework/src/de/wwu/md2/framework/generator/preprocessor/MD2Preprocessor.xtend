@@ -117,7 +117,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 				
 		// processChain
 		
-		controller.replaceDefaultProviderTypeWithConcreteDefinition // revisited
+		controller.replaceDefaultProviderTypeWithConcreteDefinition // done
 		
 		workflowElements.forEach[wfe | 
 			

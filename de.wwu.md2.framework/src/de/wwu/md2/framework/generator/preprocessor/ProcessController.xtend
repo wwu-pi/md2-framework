@@ -71,15 +71,11 @@ class ProcessController extends AbstractPreprocessor {
 	 * </p>
 	 */
 	def replaceDefaultProviderTypeWithConcreteDefinition() {
-		val contentProviders = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(ContentProvider)
-		].flatten
+		val contentProviders = controller.controllerElements.filter(ContentProvider)
 		
-		val main = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(Main)
-		].flatten.head
+		val main = controller.controllerElements.filter(Main).head
 		
-		var remoteConnection = workflows?.head.apps?.head?.defaultConnection
+		var remoteConnection = main.defaultConnection
 		
 		for (contentProvider : contentProviders) {
 			if (contentProvider.^default && remoteConnection == null) {
