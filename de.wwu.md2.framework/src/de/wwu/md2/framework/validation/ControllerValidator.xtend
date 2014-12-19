@@ -63,6 +63,8 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		}
 	}
 	
+	public static final String EVENTSINCONTROLLER = "EventsInController";
+	
 	/**
 	 * For each Workflow Element Entry of a workflow model, this
 	 * method checks whether all Workflow Events fired by the corresponding
@@ -84,7 +86,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		// Show error
 		eventsInControllerButNotInWorkflow.forEach[ eventName |
 			error("The event " + eventName + " specified in WorkflowElement is not caught",
-				MD2Package.eINSTANCE.workflowElementEntry_WorkflowElement
+				MD2Package.eINSTANCE.workflowElementEntry_WorkflowElement, -1, EVENTSINCONTROLLER
 			)
 		]
 	}

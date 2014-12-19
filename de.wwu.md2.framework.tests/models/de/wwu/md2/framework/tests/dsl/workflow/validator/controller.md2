@@ -12,13 +12,16 @@ contentProvider Complaint localComplaintProvider {
 }
 
 WorkflowElement LocationDetection{
+	defaultProcessChain LocationProcessChain
 	onInit {
 		action CustomAction init{
-
 			}
 		}	
 	action CustomAction next {
 		bind action FireEvent(LocationEvent) on LocationVerifyView.Next2.onClick
+	}
+	action CustomAction next2 {
+		bind action FireEvent(SubmitEvent) on LocationVerifyView.Next2.onClick
 	}
 	processChain LocationProcessChain{
 		step LocationDetection: 
@@ -26,16 +29,3 @@ WorkflowElement LocationDetection{
 	}
 }
 
-WorkflowElement SubmitComplaint {
-	onInit {
-		action CustomAction init {
-		}
-	}	
-	action CustomAction next {
-		bind action FireEvent(LocationEvent) on LocationVerifyView.Next2.onClick
-	}
-	processChain ComplaintProcessChain {
-		step SubmitComplaint:
-			view SubmitComplaintView
-	}
-}
