@@ -157,7 +157,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 				
 		viewReferences.cloneContainerElementReferencesIntoParentContainer(clonedElements, containerRefs) // done
 		
-		viewReferences.cloneViewElementReferencesIntoParentContainer(clonedElements, viewRefsDone) // revisited 
+		viewReferences.cloneViewElementReferencesIntoParentContainer(clonedElements, viewRefsDone) // done 
 		
 		viewReferences.replaceStyleReferences // done
 		
