@@ -166,7 +166,10 @@ class MD2Preprocessor extends AbstractPreprocessor {
             viewReferences.simplifyReferencesToAbstractViewGUIElements(wfe, clonedElements, autoGenerator.autoGenerationActionName) // done
         ]
 		
-		model.createValidatorsForModelConstraints(autoGenerator.autoGenerationActionName) // revisited
+		workflowElements.forEach[wfe | 
+		
+			model.createValidatorsForModelConstraints(autoGenerator.autoGenerationActionName, wfe) // done
+		]
 		
 		viewReferences.copyAllCustomCodeFragmentsToClonedGUIElements(clonedElements, clonedCodeFragments) // revisited
 		
