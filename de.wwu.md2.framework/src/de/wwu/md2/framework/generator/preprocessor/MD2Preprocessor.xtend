@@ -123,7 +123,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 			
 			controller.createStartUpActionAndRegisterAsOnInitializedEvent(wfe) // done
 
-			controller.createInitialGotoViewOrSetProcessChainAction(wfe) // revisited
+			controller.setInitialProcessChainAction(wfe) // done
 		
 			controller.transformEventBindingAndUnbindingTasksToOneToOneRelations(wfe) // done
 		
