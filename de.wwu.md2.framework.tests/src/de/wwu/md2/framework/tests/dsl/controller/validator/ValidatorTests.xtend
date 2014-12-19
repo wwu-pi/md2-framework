@@ -58,7 +58,8 @@ class ValidatorTests {
 		validators = elements.filter(typeof(Validator)).toList;
 		
 		ifv_elements = (inputFieldValidatorModel.modelLayer as Controller).controllerElements;
-		actions = ifv_elements.filter(typeof(CustomAction)).toList;
+		var workflowElement = ifv_elements.filter(typeof(WorkflowElement)).head as WorkflowElement;
+		actions = workflowElement.actions.filter(typeof(CustomAction)).toList;
 		tasks = actions.get(0).codeFragments.filter(typeof(ValidatorBindingTask)).toList;
 	
 	}
@@ -73,7 +74,7 @@ class ValidatorTests {
 	@Test
 	def validatorNamesTest(){
 		"validateComplaintID".assertEquals(validators.get(0).name);
-		"validateDesctription".assertEquals(validators.get(1).name);
+		"validateDescription".assertEquals(validators.get(1).name);
 		"validateUserEmail".assertEquals(validators.get(2).name);
 		"validateDate".assertEquals(validators.get(3).name);
 		"myRemoteValidator".assertEquals(validators.get(4).name);	
