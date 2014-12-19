@@ -24,6 +24,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil
 import static extension de.wwu.md2.framework.generator.preprocessor.util.Util.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import de.wwu.md2.framework.mD2.WorkflowElement
+import de.wwu.md2.framework.mD2.SetProcessChainAction
 
 class ProcessController extends AbstractPreprocessor {
 	
@@ -136,41 +137,26 @@ class ProcessController extends AbstractPreprocessor {
 	 *   </li>
 	 * </ul>
 	 */
-	def createInitialGotoViewOrSetProcessChainAction(WorkflowElement wfe) {
-		// TODO: wfe changes
+	def setInitialProcessChainAction(WorkflowElement wfe) {
 		
-		val main = controllers.map[ ctrl | 
-			ctrl.controllerElements.filter(typeof(Main))
-		].flatten.head
+		//TODO: code fragment in comment can be totally removed when DSL is changed 
+		//-> we probably only need one initAction per workflow element
+		//val startupAction = wfe.eAllContents.filter(CustomAction)
+		//		.filter( action | action.name.equals(ProcessController::startupActionName))
+
+		val initAction = wfe.initActions.filter(CustomAction).head
 		
-		val startupAction = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(CustomAction)
-				.filter( action | action.name.equals(ProcessController::startupActionName))
-		].flatten.head
-		
-//		// if startView set: create GotoViewAction and add it to startupAction
-//		if (main?.startView != null) {
-//			val callTask = factory.createCallTask
-//			val simpleActionRef = factory.createSimpleActionRef
-//			val gotoViewAction = factory.createGotoViewAction
-//			callTask.setAction(simpleActionRef)
-//			simpleActionRef.setAction(gotoViewAction)
-//			gotoViewAction.setView(main.startView)
-//			startupAction.codeFragments.add(0, callTask);
-//			main.setStartView(null)
-//		}
-//		
-//		// else if startProcessChain set: create SetProcessChainAction and add it to startupAction
-//		else if (main?.startProcessChain != null) {
-//			val callTask = factory.createCallTask
-//			val simpleActionRef = factory.createSimpleActionRef
-//			val setProcessChainAction = factory.createSetProcessChainAction
-//			callTask.setAction(simpleActionRef)
-//			simpleActionRef.setAction(setProcessChainAction)
-//			setProcessChainAction.setProcessChain(main.startProcessChain)
-//			startupAction.codeFragments.add(0, callTask);
-//			main.setStartProcessChain(null)
-//		}
+		if (wfe.defaultProcessChain != null)
+		{
+			val callTask = factory.createCallTask
+			val simpleActionRef = factory.createSimpleActionRef
+			val setProcessChainAction = factory.createSetProcessChainAction
+			callTask.setAction(simpleActionRef)
+			simpleActionRef.setAction(setProcessChainAction)
+			setProcessChainAction.setProcessChain(wfe.defaultProcessChain)
+			initAction.codeFragments.add(0, callTask);
+			wfe.setDefaultProcessChain(null)
+		}
 	}
 	
 	/**
