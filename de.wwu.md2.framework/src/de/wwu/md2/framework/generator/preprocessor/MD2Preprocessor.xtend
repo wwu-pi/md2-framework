@@ -144,7 +144,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		view.duplicateSpacers // done
 		
-		view.replaceNamedColorsWithHexColors // revisited
+		view.replaceNamedColorsWithHexColors // done
 		
 		workflowElements.forEach[wfe | 
 			

@@ -590,10 +590,8 @@ class ProcessView extends AbstractPreprocessor {
 	 *   DEPENDENCIES: None
 	 * </p>
 	 */
-	def replaceNamedColorsWithHexColors() {
-		val namedColorDefs = views.map[ view |
-			view.eAllContents.toIterable.filter(NamedColorDef)
-		].flatten
+	def replaceNamedColorsWithHexColors() {		
+		val namedColorDefs = view.eAllContents.toIterable.filter(NamedColorDef)
 		
 		for (namedColorDef : namedColorDefs) {
 			val hexColorDef = factory.createHexColorDef
