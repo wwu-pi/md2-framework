@@ -151,10 +151,10 @@ class MD2Preprocessor extends AbstractPreprocessor {
 			controller.replaceCombinedActionWithCustomAction(wfe) // done
 		
 			autoGenerator.createAutoGenerationAction(autoGenerators, wfe)  // revisited
-		
-			autoGenerator.createViewElementsForAutoGeneratorAction(autoGenerators, wfe) // revisited
 		]
 		
+		autoGenerator.createViewElementsForAutoGeneratorAction(autoGenerators) // done
+				
 		viewReferences.cloneContainerElementReferencesIntoParentContainer(clonedElements, containerRefs) // done
 		
 		viewReferences.cloneViewElementReferencesIntoParentContainer(clonedElements, viewRefsDone) // revisited 
