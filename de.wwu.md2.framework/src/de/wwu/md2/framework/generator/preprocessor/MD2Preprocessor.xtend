@@ -167,11 +167,13 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		workflowElements.forEach[wfe | 
 		
 			model.createValidatorsForModelConstraints(autoGenerator.autoGenerationActionName, wfe) // done
+			
+			viewReferences.removeAllCustomCodeFragmentsThatReferenceUnusedGUIElements(clonedCodeFragments, wfe) // done
 		]
 		
 		viewReferences.copyAllCustomCodeFragmentsToClonedGUIElements(clonedElements, clonedCodeFragments) // revisited
 		
-		viewReferences.removeAllCustomCodeFragmentsThatReferenceUnusedGUIElements(clonedCodeFragments) // revisited
+		
 		
 		view.transformInputsWithLabelsAndTooltipsToLayouts // revisited
 		

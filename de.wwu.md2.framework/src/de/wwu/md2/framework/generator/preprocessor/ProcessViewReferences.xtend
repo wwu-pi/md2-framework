@@ -235,16 +235,12 @@ class ProcessViewReferences extends AbstractPreprocessor {
 	 * </ul>
 	 */
 	def removeAllCustomCodeFragmentsThatReferenceUnusedGUIElements(
-		HashMap<CustomCodeFragment, ViewElementType> clonedCodeFragments
+		HashMap<CustomCodeFragment, ViewElementType> clonedCodeFragments, WorkflowElement wfe
 	) {
-		val gotoViewActions = controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable.filter(GotoViewAction)
-		].flatten
+		val gotoViewActions = wfe.eAllContents.toIterable.filter(GotoViewAction)
 		
 		// get all containers that are used as views
-		val rootViews = gotoViewActions.map[ action |
-			action.view.resolveViewElement
-		].toSet
+		val rootViews = gotoViewActions.map[ action | action.view.resolveViewElement].toSet
 		
 		// check for all cloned code fragments if they are child of any of the root views
 		// => if not remove code fragment
