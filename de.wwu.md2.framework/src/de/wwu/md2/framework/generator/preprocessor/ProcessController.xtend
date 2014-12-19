@@ -95,9 +95,7 @@ class ProcessController extends AbstractPreprocessor {
 	 */
 	def replaceCombinedActionWithCustomAction(WorkflowElement wfe) {
 		// TODO: wfe changes
-		val combinedActions = controllers.map[ ctrl | 
-			ctrl.controllerElements.filter(CombinedAction)
-		].flatten
+		val combinedActions = wfe.eAllContents.filter(CombinedAction)
 		
 		combinedActions.forEach[ combinedAction |
 			val custAction = factory.createCustomAction()

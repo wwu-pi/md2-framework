@@ -140,7 +140,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		model.transformImplicitEnums // done
 		
-		view.setFlowLayoutPaneDefaultParameters // revisited
+		view.setFlowLayoutPaneDefaultParameters // done
 		
 		view.duplicateSpacers // done
 		
@@ -148,14 +148,14 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		workflowElements.forEach[wfe | 
 			
-			controller.replaceCombinedActionWithCustomAction(wfe) // revisited
+			controller.replaceCombinedActionWithCustomAction(wfe) // done
 		
 			autoGenerator.createAutoGenerationAction(autoGenerators, wfe)  // done
-		
-			autoGenerator.createViewElementsForAutoGeneratorAction(autoGenerators, wfe) // revisited
 		]
 		
-		viewReferences.cloneContainerElementReferencesIntoParentContainer(clonedElements, containerRefs) // revisited
+		autoGenerator.createViewElementsForAutoGeneratorAction(autoGenerators) // done
+				
+		viewReferences.cloneContainerElementReferencesIntoParentContainer(clonedElements, containerRefs) // done
 		
 		viewReferences.cloneViewElementReferencesIntoParentContainer(clonedElements, viewRefsDone) // revisited 
 		
