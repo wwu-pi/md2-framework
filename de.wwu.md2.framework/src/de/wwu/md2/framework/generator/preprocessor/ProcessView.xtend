@@ -452,9 +452,8 @@ class ProcessView extends AbstractPreprocessor {
 	 * </ul>
 	 */
 	def transformInputsWithLabelsAndTooltipsToLayouts() {
-		val Iterable<InputElement> inputs = views.map[ view |
-			view.eAllContents.toIterable.filter(InputElement)
-		].flatten
+	    
+	    val inputs = view.eAllContents.toIterable.filter(InputElement)
 		
 		for (input : inputs) {
 			if(input.eIsSet(MD2Package.eINSTANCE.inputElement_LabelText) || input.eIsSet(MD2Package.eINSTANCE.inputElement_TooltipText)) {

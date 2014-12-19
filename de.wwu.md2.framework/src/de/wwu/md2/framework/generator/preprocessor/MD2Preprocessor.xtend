@@ -173,7 +173,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		viewReferences.removeAllCustomCodeFragmentsThatReferenceUnusedGUIElements(clonedCodeFragments) // revisited
 		
-		view.transformInputsWithLabelsAndTooltipsToLayouts // revisited
+		view.transformInputsWithLabelsAndTooltipsToLayouts // done
 		
 		view.createDisableActionsForAllDisabledViewElements // revisited 
 		
