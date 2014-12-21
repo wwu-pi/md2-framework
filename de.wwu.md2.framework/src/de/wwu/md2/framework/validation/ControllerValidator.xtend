@@ -68,7 +68,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		val fireEventActions = allActions.filter(SimpleActionRef).map[it.action].filter(FireEventAction)
 		
 		fireEventActions.forEach[
-			acceptError(it.workflowEvent.name + ": WorkflowEvents must not be fired in initBlock!", it, MD2Package.eINSTANCE.fireEventAction_WorkflowEvent , -1, EVENTININIT)
+			acceptError(it.workflowEvent.name + ": Workflow events must not be fired inside the onInit block!", it, MD2Package.eINSTANCE.fireEventAction_WorkflowEvent , -1, EVENTININIT)
 		]
 		
 	}
