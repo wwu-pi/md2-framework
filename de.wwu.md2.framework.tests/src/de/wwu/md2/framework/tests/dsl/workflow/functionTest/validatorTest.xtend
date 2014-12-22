@@ -39,9 +39,9 @@ class validatorTest {
 	}
 	
 	/**
-	 * checks whether validator throws an error if
-	 * not all events of a worklow element are handled in the corresponding
-	 * workflowelemententry
+	 * Checks whether the validator throws an error if
+	 * not all events of a worklowElement are handled in the corresponding
+	 * workflowElementEntry.
 	 */
 	@Test
 	def checkAllEventsOfWorkflowElementHandledTest(){
@@ -49,8 +49,8 @@ class validatorTest {
 	}
 	
 	/**
-	 * checks whether validator throws an error if there are fireeventactions
-	 * in the init block of a workflowelement
+	 * Checks whether the validator throws an error if there are fireEventActions
+	 * in the init block of a workflowElement.
 	 */
 	@Test
 	def checkNoFireEventActionInInitBlockTest(){

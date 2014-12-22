@@ -54,7 +54,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	public static final String EVENTININIT = "EventInInitBlock"
 	
 	/**
-	 * throws errors if a Workflowevent is fired in the init Block of a Workflowelement
+	 * Throws errors if a WorkflowEvent is fired in the init Block of a WorkflowElement.
 	 */
 	@Check
 	def checkNoFireEventActionInInitBlock(WorkflowElement wfe){
