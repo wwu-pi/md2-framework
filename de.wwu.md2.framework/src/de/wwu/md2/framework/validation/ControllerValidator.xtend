@@ -24,6 +24,13 @@ import org.eclipse.xtext.validation.EValidatorRegistrar
 import static extension de.wwu.md2.framework.validation.TypeResolver.*
 import de.wwu.md2.framework.mD2.WorkflowElementEntry
 import de.wwu.md2.framework.util.GetFiredEventsHelper
+import de.wwu.md2.framework.mD2.WorkflowElement
+import de.wwu.md2.framework.mD2.CustomAction
+import de.wwu.md2.framework.mD2.EventBindingTask
+import de.wwu.md2.framework.mD2.EventUnbindTask
+import de.wwu.md2.framework.mD2.CallTask
+import de.wwu.md2.framework.mD2.SimpleActionRef
+import de.wwu.md2.framework.mD2.FireEventAction
 
 /**
  * Valaidators for all controller elements of MD2.
@@ -44,6 +51,27 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	/// Action Validators
 	/////////////////////////////////////////////////////////
 	
+	public static final String EVENTININIT = "EventInInitBlock"
+	
+	/**
+	 * Throws errors if a WorkflowEvent is fired in the init Block of a WorkflowElement.
+	 */
+	@Check
+	def checkNoFireEventActionInInitBlock(WorkflowElement wfe){
+		val initActions = wfe.initActions.filter(CustomAction).map[it.codeFragments].flatten
+		
+		val bindActions = initActions.filter(EventBindingTask).map[it.actions].flatten
+		val unbindActions = initActions.filter(EventUnbindTask).map[it.actions].flatten
+		val callActions = initActions.filter(CallTask).map[it.action]
+		
+		val allActions = bindActions + unbindActions + callActions
+		val fireEventActions = allActions.filter(SimpleActionRef).map[it.action].filter(FireEventAction)
+		
+		fireEventActions.forEach[
+			acceptError(it.workflowEvent.name + ": Workflow events must not be fired inside the onInit block!", it, MD2Package.eINSTANCE.fireEventAction_WorkflowEvent , -1, EVENTININIT)
+		]
+		
+	}
 	/**
 	 * Ensures that the operations 'save' and 'remove' can only be used for none-read-only content providers
 	 * in the ContentProviderOperationAction.
