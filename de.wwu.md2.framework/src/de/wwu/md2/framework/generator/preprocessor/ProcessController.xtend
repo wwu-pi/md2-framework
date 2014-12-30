@@ -46,7 +46,7 @@ class ProcessController extends AbstractPreprocessor {
 		wfe.actions.add(startupAction)
 		
 		// register __startupAction as init action in workflow element
-		var initActions = wfe.initActions		
+		var initActions = wfe.initActions.copyAll	
 		wfe.initActions.clear		
 		wfe.initActions += startupAction
 		

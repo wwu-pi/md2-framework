@@ -72,12 +72,13 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		
 		fsa.generateFile(bundleFolder + "/Controller.js", generateController(dataContainer).tabsToSpaces(4))
 		
-		fsa.generateFile(bundleFolder + "/CustomActions.js", generateCustomActionsInterface(dataContainer).tabsToSpaces(4))
+		fsa.generateFile(bundleFolder + "/CustomActions.js", generateCustomActionsInterface(dataContainer, workflowElement).tabsToSpaces(4))
 		
 		//Put all custom actions in an additional folder
 		for (customAction : workflowElement.actions.filter(CustomAction)) {
 			fsa.generateFile(bundleFolder + "/actions/" + customAction.name.toFirstUpper + ".js", generateCustomAction(customAction).tabsToSpaces(4))
 		}
+		
 	}
 	
 	/* Generate a bundle for the model specified in the application model. 

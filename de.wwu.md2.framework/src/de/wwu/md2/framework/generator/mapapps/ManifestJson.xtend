@@ -185,7 +185,7 @@ class ManifestJson {
 			{
 				"name": "MD2«workflowElement.name»",//TODO: processedInput.getBasePackageName.split("\\.").last.toFirstUpper
 				"impl": "ct/Stateful",
-				"provides": ["md2.app.«workflowElement.name».AppDefinition"], //TODO: «processedInput.getBasePackageName»
+				"provides": ["md2.wfe.«workflowElement.name».AppDefinition"], //TODO: «processedInput.getBasePackageName»
 				"propertiesConstructor": true,
 				"properties": {
 					"id": "md2_«workflowElement.name.replace(".", "_")»", //TODO: processedInput.getBasePackageName.replace(".", "_")
@@ -210,7 +210,7 @@ class ManifestJson {
 	def static generateCustomActionsSnippet(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) '''
 		{
 			"name": "CustomActions",
-			"provides": ["md2.app.«workflowElement.name».CustomActions"], //TODO: processedInput.getBasePackageName
+			"provides": ["md2.wfe.«workflowElement.name».CustomActions"], //TODO: processedInput.getBasePackageName
 			"instanceFactory": true
 		}
 	'''

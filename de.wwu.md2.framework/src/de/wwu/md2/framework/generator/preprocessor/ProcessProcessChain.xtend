@@ -348,7 +348,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 	) {
 			
 		// get all SetProcessChainActions
-		val setProcessChainActions = wfe.eAllContents.toIterable.filter(SetProcessChainAction)
+		val setProcessChainActions = wfe.eAllContents.toIterable.filter(SetProcessChainAction).toList
 		
 		// remember all SetProcessChain###Actions that are already created, so that for each processChain only one such
 		// action is created
