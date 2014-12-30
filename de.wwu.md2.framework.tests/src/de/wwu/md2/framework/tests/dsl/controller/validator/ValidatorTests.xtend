@@ -61,13 +61,13 @@ class ValidatorTests {
 		var workflowElement = ifv_elements.filter(typeof(WorkflowElement)).head as WorkflowElement;
 		actions = workflowElement.actions.filter(typeof(CustomAction)).toList;
 		tasks = actions.get(0).codeFragments.filter(typeof(ValidatorBindingTask)).toList;
-	
 	}
 	
 	@Test
 	def parseControllerValidatorTest(){
 		rootValidatorModel.assertNoErrors;	
 		inputFieldValidatorModel.assertNoErrors;
+		emptyProcessChainModel.assertNoErrors;
 	} 
 	
 	//Tests for validators specified as direct sub elements of controller
@@ -90,7 +90,7 @@ class ValidatorTests {
 	//Tests for validators directly defined while binding them to input fields
 	@Test
 	def NumberOfActionsAndTasksInActionsTest(){
-		1.assertEquals(actions.size);
+		2.assertEquals(actions.size);
 		6.assertEquals(actions.get(0).codeFragments.filter(typeof(ValidatorBindingTask)).size);	
 	} 
 	

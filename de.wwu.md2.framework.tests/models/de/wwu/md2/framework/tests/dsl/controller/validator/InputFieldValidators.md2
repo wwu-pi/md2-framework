@@ -3,10 +3,9 @@ package controllers
 WorkflowElement Test {
     defaultProcessChain MyProcessChain
     onInit {
-        action CustomAction init{
-        }
+        init
     }
-    
+   
     processChain MyProcessChain {
     step MediaCapturing:
         view myView
@@ -20,6 +19,11 @@ WorkflowElement Test {
        bind validator TimeRangeValidator (min 03:00:00+02:00,   message "the string is too short or too long!") on borrowBookView.borrowedTime
        bind validator DateTimeRangeValidator (min 1900-01-01T03:00:00+02:00,   message "the string is too short or too long!") on borrowBookView.borrowedDateTime    
     }   
+    
+     
+    action CustomAction init{
+    }
+    
 }
 
 

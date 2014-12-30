@@ -4,10 +4,12 @@ WorkflowElement Test {
     defaultProcessChain TestChain
     
     onInit {
-        action CustomAction init {
+        init
+    }
+    
+    action CustomAction init {
         
         }
-    }
     
     processChain TestChain {
     
