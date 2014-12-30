@@ -77,27 +77,31 @@ class ValidatorTests {
 		"validateDescription".assertEquals(validators.get(1).name);
 		"validateUserEmail".assertEquals(validators.get(2).name);
 		"validateDate".assertEquals(validators.get(3).name);
-		"myRemoteValidator".assertEquals(validators.get(4).name);	
+		"validateDateTime".assertEquals(validators.get(4).name);
+		"validateTime".assertEquals(validators.get(5).name);
+		"myRemoteValidator".assertEquals(validators.get(6).name);	
 	}
 	
 	@Test
 	def NumberOfValidatorsTest(){
-		5.assertEquals(elements.filter(typeof(Validator)).size);	
+		7.assertEquals(elements.filter(typeof(Validator)).size);	
 	} 
 
 	//Tests for validators directly defined while binding them to input fields
 	@Test
 	def NumberOfActionsAndTasksInActionsTest(){
 		1.assertEquals(actions.size);
-		4.assertEquals(actions.get(0).codeFragments.filter(typeof(ValidatorBindingTask)).size);	
+		6.assertEquals(actions.get(0).codeFragments.filter(typeof(ValidatorBindingTask)).size);	
 	} 
 	
 	@Test
 	def bindingtaskToInputFieldTest(){
-		"complaintID".assertEquals(tasks.get(0).referencedFields.get(0).ref.name);
-		"descriptionTxt".assertEquals(tasks.get(1).referencedFields.get(0).ref.name);
+		"userID".assertEquals(tasks.get(0).referencedFields.get(0).ref.name);
+		"personName".assertEquals(tasks.get(1).referencedFields.get(0).ref.name);
 		"userEmail".assertEquals(tasks.get(2).referencedFields.get(0).ref.name);
-		"submitDate".assertEquals(tasks.get(3).referencedFields.get(0).ref.name);		
+		"inStockSince".assertEquals(tasks.get(3).referencedFields.get(0).ref.name);		
+		"borrowedTime".assertEquals(tasks.get(4).referencedFields.get(0).ref.name);
+		"borrowedDateTime".assertEquals(tasks.get(5).referencedFields.get(0).ref.name);
 	} 
 	
 		
@@ -107,6 +111,8 @@ class ValidatorTests {
 		1.assertEquals(tasks.get(1).validators.size);
 		1.assertEquals(tasks.get(2).validators.size);
 		1.assertEquals(tasks.get(3).validators.size);
+		1.assertEquals(tasks.get(4).validators.size);
+		1.assertEquals(tasks.get(5).validators.size);
 	}
 	
 	@Test
