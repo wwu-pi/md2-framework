@@ -30,7 +30,7 @@ public class MD2RuntimeModule extends de.wwu.md2.framework.AbstractMD2RuntimeMod
 		//multiGenBinder.addBinding().to(AndroidGenerator.class);
 		//multiGenBinder.addBinding().to(IOSGenerator.class);
 		multiGenBinder.addBinding().to(BackendGenerator.class);
-		multiGenBinder.addBinding().to(TestGenerator.class);
+		//multiGenBinder.addBinding().to(TestGenerator.class);
 		multiGenBinder.addBinding().to(MapAppsGenerator.class);
 		
 		binder.bind(Boolean.class).annotatedWith(Names.named("Debug MD2GeneratorUtil")).toInstance(true);
