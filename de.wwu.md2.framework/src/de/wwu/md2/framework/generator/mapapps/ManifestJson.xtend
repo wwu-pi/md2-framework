@@ -103,7 +103,6 @@ class ManifestJson {
 				"Bundle-Description": "Generated MD2 workflow element bundle: «workflowElement.name» of «appName»",
 				"Bundle-Localization": [],
 				"Bundle-Main": "",
-				"Require-Bundle": [],
 			    "Require-Bundle": [
 			        {
 			            "name": "md2_runtime"
@@ -172,7 +171,7 @@ class ManifestJson {
 		"Bundle-Name": "«appName» «type»",
 		"Bundle-Description": "Generated MD2 bundle: «type» of «appName»",
 		«ELSE»
-		"Bundle-SymbolicName": "md2_«type»s"
+		"Bundle-SymbolicName": "md2_«type»s",
 		"Bundle-Name": "«appName» «type»s",
 		"Bundle-Description": "Generated MD2 bundle: «type»s of «appName»",
 		«ENDIF»"Bundle-Version": "2.0",
@@ -189,7 +188,7 @@ class ManifestJson {
 				"provides": ["md2.app.«workflowElement.name».AppDefinition"], //TODO: «processedInput.getBasePackageName»
 				"propertiesConstructor": true,
 				"properties": {
-					"id": "md2_«workflowElement.name.replace(".", "_")»", processedInput.getBasePackageName.replace(".", "_")
+					"id": "md2_«workflowElement.name.replace(".", "_")»", //TODO: processedInput.getBasePackageName.replace(".", "_")
 					"windowTitle": "«workflowElement»",
 					"onInitialized": "«ProcessController::startupActionName»",
 					"views": [
