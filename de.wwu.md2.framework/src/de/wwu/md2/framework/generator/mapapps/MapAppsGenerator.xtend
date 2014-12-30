@@ -20,6 +20,7 @@ import static de.wwu.md2.framework.generator.mapapps.ModuleClass.*
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
 import static extension de.wwu.md2.framework.generator.mapapps.util.MD2MapappsUtil.*
+import static de.wwu.md2.framework.util.MD2Util.*
 
 class MapAppsGenerator extends AbstractPlatformGenerator {
 	
@@ -30,6 +31,10 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		/////////////////////////////////////////
 		
 		var bundlesRootFolder = rootFolder + "/bundles"
+		
+		// Copy static map.apps files (map layers)
+        fsa.generateFileFromInputStream(getSystemResource("/mapapps/services-init.json"), rootFolder + "/services-init.json")
+        fsa.generateFileFromInputStream(getSystemResource("/mapapps/services.json"), rootFolder + "/services.json")
 		
 		fsa.generateFile(rootFolder + "/app.json", generateAppJson(dataContainer).tabsToSpaces(4))
 		
