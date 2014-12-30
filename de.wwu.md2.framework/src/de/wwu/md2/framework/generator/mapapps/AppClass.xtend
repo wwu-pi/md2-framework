@@ -43,6 +43,7 @@ class AppClass {
             "onlinestatus",
             "md2_formcontrols",
             
+            "md2_workflow",
             "md2_models",
             "md2_content_providers",
             
