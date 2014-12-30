@@ -218,7 +218,7 @@ class ManifestJson {
 	def static generateModelsSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
 		{
 			"name": "Models",
-			"provides": ["md2.app.«processedInput.getBasePackageName».Models"],
+			"provides": ["md2.app.«dataContainer.workflows?.head.apps?.head.appName».Models"],
 			"instanceFactory": true
 		}
 	'''
@@ -230,7 +230,7 @@ class ManifestJson {
 				{
 					"name": "«contentProvider.name.toFirstUpper»Provider",
 					"impl": "./contentproviders/«contentProvider.name.toFirstUpper»",
-					"provides": ["md2.app.«processedInput.getBasePackageName».ContentProvider"],
+					"provides": ["md2.app.«dataContainer.workflows?.head.apps?.head.appName».ContentProvider"],
 					«IF !contentProvider.local»
 						"propertiesConstructor": true,
 						"properties": {
