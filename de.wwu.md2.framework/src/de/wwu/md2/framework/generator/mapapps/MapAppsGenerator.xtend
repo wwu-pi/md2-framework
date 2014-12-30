@@ -48,7 +48,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		}
 		
 		generateModelsBundle(fsa, bundlesRootFolder + "/md2_models")
-		generateContentProvidersBundle(fsa, bundlesRootFolder + "/md2_contentproviders")
+		generateContentProvidersBundle(fsa, bundlesRootFolder + "/md2_content_providers")
 		generateWorkflowBundle(fsa, bundlesRootFolder + "/md2_workflow")
 		
 		/////////////////////////////////////////
