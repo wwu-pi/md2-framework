@@ -34,6 +34,7 @@ import org.eclipse.xtext.xbase.lib.Pair
 import static extension de.wwu.md2.framework.generator.mapapps.util.MD2MapappsUtil.*
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
+import de.wwu.md2.framework.mD2.WorkflowElementReference
 
 class ManifestJson {
 		
@@ -294,7 +295,17 @@ class ManifestJson {
 	}
 	
 	def static generateToolSnippet(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) {
+		val wfeReferences = processedInput.allContents.filter(typeof (WorkflowElementReference)).toList.filter(wfe | wfe.startable == true)
+		val startableWFE = wfeReferences.filter(wfe | wfe.workflowElementReference.name == workflowElement.name).toList
+		var startableAlias = ""
+		var isStartable = false
+		if (startableWFE.size == 1){
+			isStartable = true
+			startableAlias = startableWFE.get(0).alias
+		}
+		
 		'''
+		«IF isStartable»
 			{
 				"name": "MD2«workflowElement.name.split("\\.").last.toFirstUpper»Tool", //TODO: processedInput.getBasePackageName
 				"impl": "ct.tools.Tool",
@@ -302,7 +313,7 @@ class ManifestJson {
 				"propertiesConstructor": true,
 				"properties": {
 					"id": "md2_wfe_«workflowElement.name.replace(".", "_")»_tool",
-					"title": "«workflowElement.name»",
+					"title": "«startableAlias»",
 					"description": "Start «workflowElement.name»", //TODO: Insert good description
 					"tooltip": "Start «workflowElement.name»", //TODO: Insert good tooltip
 					"toolRole": "toolset",
@@ -318,6 +329,7 @@ class ManifestJson {
 					}
 				]
 			}
+		«ENDIF»
 		'''
 	}
 	
