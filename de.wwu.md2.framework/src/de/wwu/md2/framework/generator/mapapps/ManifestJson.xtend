@@ -302,17 +302,13 @@ class ManifestJson {
 	 * alias.
 	 */
 	def static generateToolSnippet(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) {
-		val wfeReferences = processedInput.allContents.filter(typeof (WorkflowElementReference)).toList.filter(wfe | wfe.startable == true)
-		val startableWFE = wfeReferences.filter(wfe | wfe.workflowElementReference.name == workflowElement.name).toList
-		var startableAlias = ""
-		var isStartable = false
-		if (startableWFE.size == 1){
-			isStartable = true
-			startableAlias = startableWFE.get(0).alias
-		}
+		val wfeReferences = processedInput.allContents.filter(typeof (WorkflowElementReference)).filter[it.startable == true]
+		val startableWFE = wfeReferences.filter[it.workflowElementReference.name == workflowElement.name].toList
+		var isStartable = (startableWFE.size == 1)
 		
 		'''
 		«IF isStartable»
+            «val startableAlias = startableWFE.get(0).alias»
 			{
 				"name": "MD2«workflowElement.name.split("\\.").last.toFirstUpper»Tool", //TODO: processedInput.getBasePackageName
 				"impl": "ct.tools.Tool",
