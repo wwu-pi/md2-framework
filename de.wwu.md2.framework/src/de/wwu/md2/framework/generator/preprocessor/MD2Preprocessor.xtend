@@ -130,12 +130,11 @@ class MD2Preprocessor extends AbstractPreprocessor {
 			controller.calculateParameterSignatureForAllSimpleActions(wfe) // done
 		]
 		
-		// unclear, if wfe specific, contains wfe specific parts, but also the processStateContentProvider, which is global
-		processChains.transformProcessChainsToSequenceOfCoreLanguageElements // !!!!!!
 		
-		workflowElements.forEach[wfe | 
-			
-			conditionalEvents.transformAllCustomEventsToBasicLanguageStructures (wfe) // !!!!!!
+		processChains.transformProcessChainsToSequenceOfCoreLanguageElements() // done
+		
+		workflowElements.forEach[wfe |
+			conditionalEvents.transformAllCustomEventsToBasicLanguageStructures(wfe) // done
 		]
 		
 		model.transformImplicitEnums // done
@@ -151,31 +150,33 @@ class MD2Preprocessor extends AbstractPreprocessor {
 			controller.replaceCombinedActionWithCustomAction(wfe) // done
 		
 			autoGenerator.createAutoGenerationAction(autoGenerators, wfe)  // done
+			
+			autoGenerator.createViewElementsForAutoGeneratorAction(autoGenerators, wfe) // done
 		]
-		
-		autoGenerator.createViewElementsForAutoGeneratorAction(autoGenerators) // done
 				
 		viewReferences.cloneContainerElementReferencesIntoParentContainer(clonedElements, containerRefs) // done
 		
 		viewReferences.cloneViewElementReferencesIntoParentContainer(clonedElements, viewRefsDone) // done 
 		
 		viewReferences.replaceStyleReferences // done
-		
-		//WFE CHANGES CHECK up till here
-		
+				
         workflowElements.forEach[wfe |
+        	
             viewReferences.simplifyReferencesToAbstractViewGUIElements(wfe, clonedElements, autoGenerator.autoGenerationActionName) // done
-        ]
 		
-		model.createValidatorsForModelConstraints(autoGenerator.autoGenerationActionName) // revisited
+			model.createValidatorsForModelConstraints(autoGenerator.autoGenerationActionName, wfe) // done
+			
+			viewReferences.copyAllCustomCodeFragmentsToClonedGUIElements(clonedElements, clonedCodeFragments, wfe) // done
 		
-		viewReferences.copyAllCustomCodeFragmentsToClonedGUIElements(clonedElements, clonedCodeFragments) // revisited
+			viewReferences.removeAllCustomCodeFragmentsThatReferenceUnusedGUIElements(clonedCodeFragments, wfe) // done
+		]
 		
-		viewReferences.removeAllCustomCodeFragmentsThatReferenceUnusedGUIElements(clonedCodeFragments) // revisited
 		
-		view.transformInputsWithLabelsAndTooltipsToLayouts // revisited
+		view.transformInputsWithLabelsAndTooltipsToLayouts // done
 		
-		view.createDisableActionsForAllDisabledViewElements // revisited 
+		workflowElements.forEach[wfe |
+			view.createDisableActionsForAllDisabledViewElements(wfe) // done (with TODO)
+		] 
 		
 		// Remove redundant elements
 		val Collection<EObject> objectsToRemove = newHashSet
@@ -188,13 +189,13 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		
 		// after clean-up calculate all grid and element sizes and fill empty cells with spacers,
 		// so that calculations are avoided during the actual generation process
-		view.transformFlowLayoutsToGridLayouts // revisited
+		view.transformFlowLayoutsToGridLayouts // done 
 		
-		view.calculateNumRowsAndNumColumnsParameters // revisited
+		view.calculateNumRowsAndNumColumnsParameters // done
 		
-		view.fillUpGridLayoutsWithSpacers // revisited
+		view.fillUpGridLayoutsWithSpacers // done
 		
-		view.calculateAllViewElementWidths // revisited
+		view.calculateAllViewElementWidths // done
 		
 		
 		// Return new ResourceSet

@@ -34,6 +34,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
+import de.wwu.md2.framework.mD2.WorkflowElement
 
 class ProcessView extends AbstractPreprocessor {
 	
@@ -46,7 +47,7 @@ class ProcessView extends AbstractPreprocessor {
 	 * </p>
 	 */
 	def setFlowLayoutPaneDefaultParameters() {
-		val Iterable<FlowLayoutPane> flowLayoutPanes = view.eAllContents.toIterable.filter(typeof(FlowLayoutPane))
+		val Iterable<FlowLayoutPane> flowLayoutPanes = view.eAllContents.toIterable.filter(typeof(FlowLayoutPane)).toList
 		for (flowLayoutPane : flowLayoutPanes) {
 			if(!flowLayoutPane.params.exists(p | p instanceof FlowLayoutPaneFlowDirectionParam)) {
 				val flowDirectionParam = factory.createFlowLayoutPaneFlowDirectionParam
@@ -113,54 +114,51 @@ class ProcessView extends AbstractPreprocessor {
 		// This information is required to update all cross references after the replacement process.
 		val rememberReplacedFloatLayoutsMap = newHashMap
 		
-		views.forEach[ view |
-			
-			var iterator = view.eAllContents
-			while(iterator.hasNext) {
-				val next = iterator.next
-				if (next instanceof FlowLayoutPane) {
-					val flowLayoutPane = next as FlowLayoutPane
-					
-					// reset iterator after each match to avoid concurrent modification exceptions
-					// => is iterating over the tree while replacing flowLayouts with gridLayouts
-					// TODO can be really slow on big trees (optimization by only iterating views)
-					iterator = view.eAllContents
-					
-					// calculate columns and rows params for the new GridLayout
-					val numberOfContainedElements = flowLayoutPane.elements.size
-					val directionParameter = flowLayoutPane.params.filter(typeof(FlowLayoutPaneFlowDirectionParam)).last
-					val columnsParam = factory.createGridLayoutPaneColumnsParam
-					val rowsParam = factory.createGridLayoutPaneRowsParam
-					
-					switch (directionParameter.flowDirection) {
-						case FlowDirection::HORIZONTAL: {
-							columnsParam.setValue(numberOfContainedElements)
-							rowsParam.setValue(1)
-						}
-						case FlowDirection::VERTICAL: {
-							columnsParam.setValue(1)
-							rowsParam.setValue(numberOfContainedElements)
-						}
+		var iterator = view.eAllContents
+		while(iterator.hasNext) {
+			val next = iterator.next
+			if (next instanceof FlowLayoutPane) {
+				val flowLayoutPane = next as FlowLayoutPane
+				
+				// reset iterator after each match to avoid concurrent modification exceptions
+				// => is iterating over the tree while replacing flowLayouts with gridLayouts
+				// TODO can be really slow on big trees (optimization by only iterating views)
+				iterator = view.eAllContents
+				
+				// calculate columns and rows params for the new GridLayout
+				val numberOfContainedElements = flowLayoutPane.elements.size
+				val directionParameter = flowLayoutPane.params.filter(typeof(FlowLayoutPaneFlowDirectionParam)).last
+				val columnsParam = factory.createGridLayoutPaneColumnsParam
+				val rowsParam = factory.createGridLayoutPaneRowsParam
+				
+				switch (directionParameter.flowDirection) {
+					case FlowDirection::HORIZONTAL: {
+						columnsParam.setValue(numberOfContainedElements)
+						rowsParam.setValue(1)
 					}
-					
-					// Create new GridLayout and copy attributes
-					val newGridLayoutPane = factory.createGridLayoutPane
-					newGridLayoutPane.setName(flowLayoutPane.name)
-					val commonParams = flowLayoutPane.params.filter(typeof(CommonContainerParam))
-					newGridLayoutPane.params.addAll(commonParams)
-					
-					// copy child elements
-					val elements = flowLayoutPane.elements
-					newGridLayoutPane.elements.addAll(elements)
-					
-					// set calculated columns and rows parameter and replace the FlowLayout with the newly created GridLayout
-					newGridLayoutPane.params.addAll(columnsParam, rowsParam)
-					flowLayoutPane.replace(newGridLayoutPane)
-					
-					rememberReplacedFloatLayoutsMap.put(flowLayoutPane, newGridLayoutPane)
+					case FlowDirection::VERTICAL: {
+						columnsParam.setValue(1)
+						rowsParam.setValue(numberOfContainedElements)
+					}
 				}
+				
+				// Create new GridLayout and copy attributes
+				val newGridLayoutPane = factory.createGridLayoutPane
+				newGridLayoutPane.setName(flowLayoutPane.name)
+				val commonParams = flowLayoutPane.params.filter(typeof(CommonContainerParam))
+				newGridLayoutPane.params.addAll(commonParams)
+				
+				// copy child elements
+				val elements = flowLayoutPane.elements
+				newGridLayoutPane.elements.addAll(elements)
+				
+				// set calculated columns and rows parameter and replace the FlowLayout with the newly created GridLayout
+				newGridLayoutPane.params.addAll(columnsParam, rowsParam)
+				flowLayoutPane.replace(newGridLayoutPane)
+				
+				rememberReplacedFloatLayoutsMap.put(flowLayoutPane, newGridLayoutPane)
 			}
-		]
+		}
 		
 		// Change all cross references to the new grid layout
 		val usageReferencesMap = EcoreUtil.UsageCrossReferencer.findAll(rememberReplacedFloatLayoutsMap.keySet, workingInput)
@@ -189,9 +187,7 @@ class ProcessView extends AbstractPreprocessor {
 	 * </ul>
 	 */
 	def calculateNumRowsAndNumColumnsParameters() {
-		val gridLayoutPanes = views.map[ view |
-			view.eAllContents.toIterable.filter(GridLayoutPane)
-		].flatten
+		val gridLayoutPanes = view.eAllContents.toIterable.filter(GridLayoutPane).toList
 		
 		for (gridLayoutPane : gridLayoutPanes) {
 			var numberOfContainedElements = gridLayoutPane.elements.size
@@ -239,9 +235,7 @@ class ProcessView extends AbstractPreprocessor {
 	 * </ul>
 	 */
 	def fillUpGridLayoutsWithSpacers() {
-		val Iterable<GridLayoutPane> gridLayoutPanes = views.map[ view |
-			view.eAllContents.toIterable.filter(GridLayoutPane)
-		].flatten
+		val Iterable<GridLayoutPane> gridLayoutPanes = view.eAllContents.toIterable.filter(GridLayoutPane).toList
 		
 		for (gridLayoutPane : gridLayoutPanes) {
 			val numberOfContainedElements = gridLayoutPane.elements.size
@@ -298,10 +292,7 @@ class ProcessView extends AbstractPreprocessor {
 	def calculateAllViewElementWidths() {
 		
 		// step 1
-		val containerElements = views.map[ view |
-			view.eAllContents.toIterable.filter(ContainerElement)
-				.filter(containerElem | !(containerElem instanceof TabbedAlternativesPane))
-		].flatten
+		val containerElements = view.eAllContents.toIterable.filter(ContainerElement).filter[ce | !(ce instanceof TabbedAlternativesPane)].toList
 		
 		for (contentContainer : containerElements.filter(GridLayoutPane)) {
 			val allChilds = contentContainer.elements.filter(ViewGUIElement).toList
@@ -452,9 +443,8 @@ class ProcessView extends AbstractPreprocessor {
 	 * </ul>
 	 */
 	def transformInputsWithLabelsAndTooltipsToLayouts() {
-		val Iterable<InputElement> inputs = views.map[ view |
-			view.eAllContents.toIterable.filter(InputElement)
-		].flatten
+	    
+	    val inputs = view.eAllContents.toIterable.filter(InputElement).toList
 		
 		for (input : inputs) {
 			if(input.eIsSet(MD2Package.eINSTANCE.inputElement_LabelText) || input.eIsSet(MD2Package.eINSTANCE.inputElement_TooltipText)) {
@@ -531,36 +521,36 @@ class ProcessView extends AbstractPreprocessor {
 	 *   </li>
 	 * </ul>
 	 */
-	def createDisableActionsForAllDisabledViewElements() {
+	def createDisableActionsForAllDisabledViewElements(WorkflowElement wfe) {
 		
 		// get all views that are accessed by GotoViewActions at some time
-		val accessibleViews = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(CustomAction).map[ customAction |
-				customAction.eAllContents.toIterable
-			].flatten.filter(GotoViewAction).map[ gotoView |
+		val accessibleViews = wfe.eAllContents.filter(CustomAction).map[ customAction |
+			customAction.eAllContents.toIterable].filter(GotoViewAction).map[ gotoView |
 				resolveContainerElement(gotoView.view)
-			]
-		].flatten.toSet
+			].toSet
 		
 		// get all GUI elements that are contained in an accessible view
-		val guiElements = views.map[ view |
-			view.eAllContents.toIterable.filter(ViewGUIElement).filter[ e |
-				var EObject eObject = e
-				var isContained = false
-				while (!(eObject instanceof View) && !isContained) {
-					isContained = accessibleViews.contains(eObject)
-					eObject = eObject.eContainer
-				}
-				isContained
-			]
-		].flatten
+		val guiElements = view.eAllContents.filter(ViewGUIElement).filter[viewGuiElement |
+			var EObject eObject = viewGuiElement
+			var isContained = false
+			while (!(eObject instanceof View) && !isContained) {
+				isContained = accessibleViews.contains(eObject)
+				eObject = eObject.eContainer
+			}
+			isContained
+		]
 		
-		val startupAction = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(CustomAction)
-				.filter( action | action.name.equals(ProcessController::startupActionName))
-		].flatten.last
+
 		
-		for (guiElement : guiElements) {
+		//TODO: code fragment in comment can be totally removed when DSL is changed 
+		//-> we probably only need one initAction per workflow element
+		//		val startupAction = wfe.eAllContents.filter(CustomAction).filter[
+		//			action | action.name.equals(ProcessController::startupActionName)
+		//		]
+
+		val startupAction = wfe.initActions.filter(CustomAction).head
+		
+		for (guiElement : guiElements.toList) {
 			
 			val isDisabled = switch (guiElement) {
 				InputElement: guiElement.isDisabled
@@ -591,7 +581,7 @@ class ProcessView extends AbstractPreprocessor {
 	 * </p>
 	 */
 	def replaceNamedColorsWithHexColors() {		
-		val namedColorDefs = view.eAllContents.toIterable.filter(NamedColorDef)
+		val namedColorDefs = view.eAllContents.toIterable.filter(NamedColorDef).toList
 		
 		for (namedColorDef : namedColorDefs) {
 			val hexColorDef = factory.createHexColorDef

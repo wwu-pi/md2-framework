@@ -20,6 +20,7 @@ import static de.wwu.md2.framework.generator.mapapps.ModuleClass.*
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
 import static extension de.wwu.md2.framework.generator.mapapps.util.MD2MapappsUtil.*
+import static de.wwu.md2.framework.util.MD2Util.*
 
 class MapAppsGenerator extends AbstractPlatformGenerator {
 	
@@ -30,6 +31,10 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		/////////////////////////////////////////
 		
 		var bundlesRootFolder = rootFolder + "/bundles"
+		
+		// Copy static map.apps files (map layers)
+        fsa.generateFileFromInputStream(getSystemResource("/mapapps/services-init.json"), rootFolder + "/services-init.json")
+        fsa.generateFileFromInputStream(getSystemResource("/mapapps/services.json"), rootFolder + "/services.json")
 		
 		fsa.generateFile(rootFolder + "/app.json", generateAppJson(dataContainer).tabsToSpaces(4))
 		
@@ -43,7 +48,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		}
 		
 		generateModelsBundle(fsa, bundlesRootFolder + "/md2_models")
-		generateContentProvidersBundle(fsa, bundlesRootFolder + "/md2_contentproviders")
+		generateContentProvidersBundle(fsa, bundlesRootFolder + "/md2_content_providers")
 		generateWorkflowBundle(fsa, bundlesRootFolder + "/md2_workflow")
 		
 		/////////////////////////////////////////
@@ -67,12 +72,13 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		
 		fsa.generateFile(bundleFolder + "/Controller.js", generateController(dataContainer).tabsToSpaces(4))
 		
-		fsa.generateFile(bundleFolder + "/CustomActions.js", generateCustomActionsInterface(dataContainer).tabsToSpaces(4))
+		fsa.generateFile(bundleFolder + "/CustomActions.js", generateCustomActionsInterface(dataContainer, workflowElement).tabsToSpaces(4))
 		
 		//Put all custom actions in an additional folder
 		for (customAction : workflowElement.actions.filter(CustomAction)) {
 			fsa.generateFile(bundleFolder + "/actions/" + customAction.name.toFirstUpper + ".js", generateCustomAction(customAction).tabsToSpaces(4))
 		}
+		
 	}
 	
 	/* Generate a bundle for the model specified in the application model. 
@@ -119,7 +125,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		
 		//put all content providers in the in an additional folder called "contentproviders"
 		for (contentProvider : dataContainer.contentProviders) {
-			fsa.generateFile(contentProviderBundleFolder + "/contentproviders/" + contentProvider.name.toFirstUpper + ".js", generateContentProvider(contentProvider, processedInput).tabsToSpaces(4))
+			fsa.generateFile(contentProviderBundleFolder + "/contentproviders/" + contentProvider.name.toFirstUpper + ".js", generateContentProvider(contentProvider, dataContainer, processedInput).tabsToSpaces(4))
 		}
 	}
 	

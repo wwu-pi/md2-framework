@@ -46,7 +46,7 @@ class ProcessController extends AbstractPreprocessor {
 		wfe.actions.add(startupAction)
 		
 		// register __startupAction as init action in workflow element
-		var initActions = wfe.initActions		
+		var initActions = wfe.initActions.copyAll	
 		wfe.initActions.clear		
 		wfe.initActions += startupAction
 		
@@ -252,9 +252,8 @@ class ProcessController extends AbstractPreprocessor {
 	 * Replace custom validators with standard validator definitions.
 	 */
 	def replaceCustomValidatorsWithStandardValidatorDefinitions() {
-		val Iterable<CustomizedValidatorType> validators = controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable.filter(CustomizedValidatorType)
-		].flatten
+	    
+	    val Iterable<CustomizedValidatorType> validators = controller.eAllContents.toIterable.filter(CustomizedValidatorType)
 		
 		validators.forEach [ validator |
 			val customizedValidatorToReplace = validator.validator

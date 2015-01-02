@@ -71,6 +71,7 @@ abstract class AbstractPreprocessor {
 	def setNewModel(ResourceSet input) {
 		workingInput = copyModel(input)
 		extractModels
+		removeEmptyResources
 	}
 	
 	/**
@@ -78,29 +79,49 @@ abstract class AbstractPreprocessor {
 	 * This is done to avoid that they have to be recollected over and over again throughout the preprocessing process.
 	 */
 	private def extractModels() {
-		
+
 		// Save current md2models
-		val md2models = workingInput.resources.map[ r |
+		val md2models = workingInput.resources.map [ r |
 			r.contents.filter(MD2Model)
-		].flatten
-		
+		].flatten.toList
+
 		// Initialize new dummy models
 		initializeModels
-		
+
 		// Add resources to dummy model
-		md2models.forEach[ md2model |
+		md2models.forEach [ md2model |
 			val modelLayer = md2model.modelLayer
 			switch modelLayer {
-				View : view.viewElements += modelLayer.viewElements
-				Model : model.modelElements += modelLayer.modelElements
-				Controller : controller.controllerElements += modelLayer.controllerElements
-				Workflow : {workflow.workflowElementEntries += modelLayer.workflowElementEntries
-							workflow.apps += modelLayer.apps }
+				View: {
+					view.viewElements += modelLayer.viewElements
+					if((view.eContainer as MD2Model).package == null) (view.eContainer as MD2Model).package = md2model.
+						package
+				}
+				Model: {
+					model.modelElements += modelLayer.modelElements
+					if((model.eContainer as MD2Model).package == null) (model.eContainer as MD2Model).package = md2model.
+						package
+				}
+				Controller: {
+					controller.controllerElements += modelLayer.controllerElements
+					if((controller.eContainer as MD2Model).package == null) (controller.eContainer as MD2Model).package = md2model.
+						package
+				}
+				Workflow: {
+					workflow.workflowElementEntries += modelLayer.workflowElementEntries
+					workflow.apps += modelLayer.apps
+					if((workflow.eContainer as MD2Model).package == null) (workflow.eContainer as MD2Model).package = md2model.
+						package
+				}
 			}
 		]
+
 		// In the end remove the former models, since they are completely represented by the dummy models
-		while (md2models.size>0) md2models.head.remove
-		
+		while (md2models.size > 0) {
+			md2models.head.remove
+			md2models.remove(md2models.head)
+		}
+
 	}
 	
 	/**
@@ -133,6 +154,22 @@ abstract class AbstractPreprocessor {
 		workflow = factory.createWorkflow
 		md2modelWorkflow.setModelLayer(workflow)
 		workingInput.resources.head.contents.add(md2modelWorkflow)
+	}
+	
+	
+	/**
+	 * Remove resources that don't contain any content.
+	 */
+	private def removeEmptyResources(){
+		val resourcesToBeDeleted = newHashSet
+		workingInput.resources.forEach[res| 
+			if (res.contents.size == 0) {
+				resourcesToBeDeleted.add(res)
+			}
+		]
+		resourcesToBeDeleted.forEach[res |
+			workingInput.resources.remove(res)
+		]
 	}
 	
 }

@@ -152,7 +152,7 @@ class MD2GeneratorUtil {
 	 */
 	def static resolveContentProviderName(AbstractContentProviderPath abstractPath) {
 		switch (abstractPath) {
-			ContentProviderPath: abstractPath.contentProviderRef.name
+			ContentProviderPath: abstractPath.contentProviderRef.name.toFirstLower
 			LocationProviderPath: "location"
 		}
 	}
@@ -163,7 +163,7 @@ class MD2GeneratorUtil {
 	 */
 	def static resolveContentProviderName(AbstractProviderReference abstractProviderReference) {
 		switch (abstractProviderReference) {
-			ContentProviderReference: abstractProviderReference.contentProvider.name
+			ContentProviderReference: abstractProviderReference.contentProvider.name.toFirstLower
 			LocationProviderReference: "location"
 		}
 	}

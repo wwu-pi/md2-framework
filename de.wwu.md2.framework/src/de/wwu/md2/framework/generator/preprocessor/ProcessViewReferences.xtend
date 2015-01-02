@@ -116,14 +116,18 @@ class ProcessViewReferences extends AbstractPreprocessor {
 	 * </ul>
 	 */
 	def copyAllCustomCodeFragmentsToClonedGUIElements(
-		HashMap<ViewElementType, ViewElementType> clonedElements, HashMap<CustomCodeFragment, ViewElementType> clonedCodeFragments
+		HashMap<ViewElementType, 
+		ViewElementType> clonedElements, 
+		HashMap<CustomCodeFragment, 
+		ViewElementType> clonedCodeFragments,
+		WorkflowElement wfe
 	) {
 		
-		val codeFragments = controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable.filter(CustomCodeFragment)
-		].flatten.toList
+		val codeFragments = wfe.eAllContents.toIterable.filter(CustomCodeFragment).toList
 		
 		for (codeFragment : codeFragments) {
+			// TODO: multiple switch-cases eventually reduce from three to six,
+			// because they are similar (e.g., what is done in EventBindingTask is similar to EventUnbindingTask)
 			switch (codeFragment) {
 				EventBindingTask: {
 					codeFragment.events.filter(typeof(ViewElementEventRef)).forEach [ eventRef |
@@ -235,16 +239,12 @@ class ProcessViewReferences extends AbstractPreprocessor {
 	 * </ul>
 	 */
 	def removeAllCustomCodeFragmentsThatReferenceUnusedGUIElements(
-		HashMap<CustomCodeFragment, ViewElementType> clonedCodeFragments
+		HashMap<CustomCodeFragment, ViewElementType> clonedCodeFragments, WorkflowElement wfe
 	) {
-		val gotoViewActions = controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable.filter(GotoViewAction)
-		].flatten
+		val gotoViewActions = wfe.eAllContents.toIterable.filter(GotoViewAction)
 		
 		// get all containers that are used as views
-		val rootViews = gotoViewActions.map[ action |
-			action.view.resolveViewElement
-		].toSet
+		val rootViews = gotoViewActions.map[ action | action.view.resolveViewElement].toSet
 		
 		// check for all cloned code fragments if they are child of any of the root views
 		// => if not remove code fragment
