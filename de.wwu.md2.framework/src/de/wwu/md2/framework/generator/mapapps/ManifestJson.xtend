@@ -322,7 +322,7 @@ class ManifestJson {
 					"id": "md2_wfe_«workflowElement.name.replace(".", "_")»_tool",
 					"title": "«startableAlias»",
 					"description": "Start «workflowElement.name»", //TODO: Insert good description
-					"tooltip": "Start «workflowElement.name»", //TODO: Insert good tooltip
+					"tooltip": "«startableAlias»", //TODO: Insert good tooltip
 					"toolRole": "toolset",
 					"iconClass": "icon-view-grid",
 					"togglable": true,
