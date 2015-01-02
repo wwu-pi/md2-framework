@@ -125,7 +125,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		
 		//put all content providers in the in an additional folder called "contentproviders"
 		for (contentProvider : dataContainer.contentProviders) {
-			fsa.generateFile(contentProviderBundleFolder + "/contentproviders/" + contentProvider.name.toFirstUpper + ".js", generateContentProvider(contentProvider, processedInput).tabsToSpaces(4))
+			fsa.generateFile(contentProviderBundleFolder + "/contentproviders/" + contentProvider.name.toFirstUpper + ".js", generateContentProvider(contentProvider, dataContainer, processedInput).tabsToSpaces(4))
 		}
 	}
 	

@@ -182,6 +182,7 @@ class ManifestJson {
 	}
 	
 	def private static String generateConfigurationSnippet(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) {
+	    var appName = dataContainer.workflows?.head.apps?.head.appName;
 		'''
 			{
 				"name": "MD2«workflowElement.name»",//TODO: processedInput.getBasePackageName.split("\\.").last.toFirstUpper
@@ -189,6 +190,7 @@ class ManifestJson {
 				"provides": ["md2.wfe.«workflowElement.name».AppDefinition"], //TODO: «processedInput.getBasePackageName»
 				"propertiesConstructor": true,
 				"properties": {
+				    "appId": "md2_«appName»",
 					"id": "md2_«workflowElement.name.replace(".", "_")»", //TODO: processedInput.getBasePackageName.replace(".", "_")
 					"windowTitle": "«workflowElement»",
 					"onInitialized": "«ProcessController::startupActionName»",
