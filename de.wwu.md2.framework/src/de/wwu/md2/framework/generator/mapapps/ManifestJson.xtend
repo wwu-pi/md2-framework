@@ -294,6 +294,11 @@ class ManifestJson {
 	'''
 	}
 	
+	/**
+	 * Generates a "Tool" code snippet for every "startable" WorkflowElement.
+	 * The title of the mapapps tool within the application is set to its startable
+	 * alias.
+	 */
 	def static generateToolSnippet(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) {
 		val wfeReferences = processedInput.allContents.filter(typeof (WorkflowElementReference)).toList.filter(wfe | wfe.startable == true)
 		val startableWFE = wfeReferences.filter(wfe | wfe.workflowElementReference.name == workflowElement.name).toList
