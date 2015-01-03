@@ -726,7 +726,7 @@ WorkflowElement:
 		('defaultProcessChain' defaultProcessChain = [ProcessChain]
 			
 		'onInit' '{'
-			initActions += [Action]
+            initActions += [Action] (',' initActions += [Action])*
 		'}')
 		
 		((actions += Action*) &
