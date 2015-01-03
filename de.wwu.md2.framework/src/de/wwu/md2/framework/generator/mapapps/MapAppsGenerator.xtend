@@ -26,38 +26,38 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 	
 	override doGenerate(IExtendedFileSystemAccess fsa) {
 		
-		/////////////////////////////////////////
-		// Generation of the application and all its bundles
-		/////////////////////////////////////////
-		
-		var bundlesRootFolder = rootFolder + "/bundles"
-		
-		// Copy static map.apps files (map layers)
-        fsa.generateFileFromInputStream(getSystemResource("/mapapps/services-init.json"), rootFolder + "/services-init.json")
-        fsa.generateFileFromInputStream(getSystemResource("/mapapps/services.json"), rootFolder + "/services.json")
-		
-		fsa.generateFile(rootFolder + "/app.json", generateAppJson(dataContainer).tabsToSpaces(4))
-		
-		fsa.generateFile(bundlesRootFolder + "/bundles.json", generateBundleJson(dataContainer).tabsToSpaces(4))
-		
-		// Generate a separate bundle for each workflow element specified in the application model
-		for(WorkflowElement workflowElement : dataContainer.controllers.head.controllerElements.filter(WorkflowElement)) {
-			var bundleFolder = bundlesRootFolder + "/" + workflowElement.bundleName 
-			
-			generateWorkflowElementBundle(fsa, bundleFolder, workflowElement)
-		}
-		
-		generateModelsBundle(fsa, bundlesRootFolder + "/md2_models")
-		generateContentProvidersBundle(fsa, bundlesRootFolder + "/md2_content_providers")
-		generateWorkflowBundle(fsa, bundlesRootFolder + "/md2_workflow")
-		
-		/////////////////////////////////////////
-		// Build zip file for application
-		/////////////////////////////////////////
-		
-		val zipFileName = '''md2_app_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]».zip'''
-		fsa.zipDirectory(rootFolder, rootFolder + "/../" + zipFileName);
-		
+		for(app : dataContainer.apps){
+		    
+		    dataContainer.app = app
+		    		    
+		    //TODO: fix paths
+		    val rootFolder = rootFolder + "/" + app.name
+		    val bundlesRootFolder = rootFolder + "/bundles"
+		    
+		    // Copy static map.apps files (map layers)
+		    fsa.generateFileFromInputStream(getSystemResource("/mapapps/services-init.json"), rootFolder + "/services-init.json")
+            fsa.generateFileFromInputStream(getSystemResource("/mapapps/services.json"), rootFolder + "/services.json")
+            
+            // Generate app-specific app.json and bundles.json files
+            fsa.generateFile(rootFolder + "/app.json", generateAppJson(dataContainer).tabsToSpaces(4))
+            fsa.generateFile(bundlesRootFolder + "/bundles.json", generateBundleJson(dataContainer).tabsToSpaces(4))
+            
+            // Generate a separate bundle for each workflow element specified in the application model
+            for(WorkflowElement workflowElement : dataContainer.workflowElementsForApp) {
+                var bundleFolder = bundlesRootFolder + "/" + workflowElement.bundleName 
+                generateWorkflowElementBundle(fsa, bundleFolder, workflowElement)
+            }
+            
+            generateModelsBundle(fsa, bundlesRootFolder + "/md2_models")
+            generateContentProvidersBundle(fsa, bundlesRootFolder + "/md2_content_providers")
+            generateWorkflowBundle(fsa, bundlesRootFolder + "/md2_workflow")
+            
+            /////////////////////////////////////////
+            // Build zip file for application
+            /////////////////////////////////////////
+            val zipFileName = '''md2_app_«app.name».zip'''
+            fsa.zipDirectory(rootFolder, rootFolder + "/../" + zipFileName);
+		}		
 	}
 	
 	/* Generate a bundle for each workflow element specified in the application model. 
@@ -68,7 +68,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 	def generateWorkflowElementBundle(IExtendedFileSystemAccess fsa, String bundleFolder, WorkflowElement workflowElement) {
 		fsa.generateFile(bundleFolder + "/module.js", generateModuleForWorkflowElement().tabsToSpaces(4))
 		
-		fsa.generateFile(bundleFolder + "/manifest.json", generateManifestJsonForWorkflowElement(workflowElement, dataContainer, processedInput).tabsToSpaces(4))
+		fsa.generateFile(bundleFolder + "/manifest.json", generateManifestJsonForWorkflowElement(workflowElement, dataContainer).tabsToSpaces(4))
 		
 		fsa.generateFile(bundleFolder + "/Controller.js", generateController(dataContainer).tabsToSpaces(4))
 		
@@ -89,7 +89,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 	def generateModelsBundle(IExtendedFileSystemAccess fsa, String modelBundleFolder){
 		fsa.generateFile(modelBundleFolder + "/module.js", generateModuleForModels().tabsToSpaces(4))
 		
-		fsa.generateFile(modelBundleFolder + "/manifest.json", generateManifestJsonForModels(dataContainer, processedInput).tabsToSpaces(4))
+		fsa.generateFile(modelBundleFolder + "/manifest.json", generateManifestJsonForModels(dataContainer).tabsToSpaces(4))
 		
 		fsa.generateFile(modelBundleFolder + "/Models.js", generateModelsInterface(dataContainer).tabsToSpaces(4))
 		
@@ -111,9 +111,9 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 	def generateWorkflowBundle(IExtendedFileSystemAccess fsa, String workflowBundleFolder){
 		fsa.generateFile(workflowBundleFolder + "/module.js", generateModuleForWorkflowHandler().tabsToSpaces(4))
 		
-		fsa.generateFile(workflowBundleFolder + "/manifest.json", generateManifestJsonForWorkflowHandler(dataContainer, processedInput).tabsToSpaces(4))
+		fsa.generateFile(workflowBundleFolder + "/manifest.json", generateManifestJsonForWorkflowHandler(dataContainer).tabsToSpaces(4))
 		
-		fsa.generateFile(workflowBundleFolder + "/WorkflowEventHandler.js", generateWorkflowEventHandler(dataContainer, processedInput).tabsToSpaces(4))
+		fsa.generateFile(workflowBundleFolder + "/WorkflowEventHandler.js", generateWorkflowEventHandler(dataContainer).tabsToSpaces(4))
 	}
 	
 	/* Generate a bundle for the content providers specified in the application model.  
@@ -121,16 +121,16 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 	 */	
 	def generateContentProvidersBundle (IExtendedFileSystemAccess fsa, String contentProviderBundleFolder){
 		fsa.generateFile(contentProviderBundleFolder + "/module.js", generateModuleForContentProviders(dataContainer).tabsToSpaces(4))
-		fsa.generateFile(contentProviderBundleFolder + "/manifest.json", generateManifestJsonForContentProviders(dataContainer, processedInput).tabsToSpaces(4))
+		fsa.generateFile(contentProviderBundleFolder + "/manifest.json", generateManifestJsonForContentProviders(dataContainer).tabsToSpaces(4))
 		
 		//put all content providers in the in an additional folder called "contentproviders"
 		for (contentProvider : dataContainer.contentProviders) {
-			fsa.generateFile(contentProviderBundleFolder + "/contentproviders/" + contentProvider.name.toFirstUpper + ".js", generateContentProvider(contentProvider, dataContainer, processedInput).tabsToSpaces(4))
+			fsa.generateFile(contentProviderBundleFolder + "/contentproviders/" + contentProvider.name.toFirstUpper + ".js", generateContentProvider(contentProvider, dataContainer).tabsToSpaces(4))
 		}
 	}
 	
 	//TODO: Find correct location
-//		fsa.copyFileFromProject("resources/images", bundleFolder + "/resources")
+    //fsa.copyFileFromProject("resources/images", bundleFolder + "/resources")
 	
 	override getPlatformPrefix() {
 		"mapapps"

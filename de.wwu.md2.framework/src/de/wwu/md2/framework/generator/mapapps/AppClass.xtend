@@ -8,10 +8,10 @@ class AppClass {
 	
 	def static String generateAppJson(DataContainer dataContainer) '''
 {
-    "appName": "«dataContainer.apps.head.appName»",
+    "appName": "«dataContainer.app.appName»",
     "properties": {
-        "id": "«dataContainer.apps.head.name»",
-        "title": "«dataContainer.apps.head.appName»"
+        "id": "«dataContainer.app.name»",
+        "title": "«dataContainer.app.appName»"
     },
     
     "load": {
@@ -47,8 +47,8 @@ class AppClass {
             "md2_models",
             "md2_content_providers",
             
-            «FOR elem : dataContainer.workflowElements SEPARATOR ","»
-            "«elem.bundleName»"
+            «FOR elem : dataContainer.workflowElementsForApp SEPARATOR ","»
+                "«elem.bundleName»"
             «ENDFOR»
         ],
         
@@ -121,8 +121,8 @@ class AppClass {
 	    "md2_content_providers": {},
 	    "md2_workflow" : {},
 	    
-	    «FOR elem : dataContainer.workflowElements SEPARATOR ","»
-	    "«elem.bundleName»": {}
+	    «FOR elem : dataContainer.workflowElementsForApp SEPARATOR ","»
+	       "«elem.bundleName»": {}
 	    «ENDFOR»
 	}
 	'''

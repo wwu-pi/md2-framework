@@ -31,25 +31,23 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		/////////////////////////////////////////
 		
 		// Generate models, web services and beans
-		dataContainer.models.forEach [model |
-			model.modelElements.filter(typeof(ModelElement)).forEach[modelElement |
-				fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/models/"
-					+ modelElement.name.toFirstUpper + ".java", createModel(rootFolder, modelElement))
-				
-				val isUsedInRemoteContentProvider = dataContainer.contentProviders.exists[ c |
-					c.type instanceof ReferencedModelType
-					&& !c.local
-					&& (c.type as ReferencedModelType).entity.identityEquals(modelElement)
-				]
-				
-				// web services and beans for an entity are only generated if they are used in any remote content provider
-				if(modelElement instanceof Entity && isUsedInRemoteContentProvider) {
-					fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/"
-						+ modelElement.name.toFirstUpper + "WS.java", createEntityWS(rootFolder, modelElement as Entity))
-					fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/beans/"
-						+ modelElement.name.toFirstUpper + "Bean.java", createEntityBean(rootFolder, modelElement as Entity))
-				}
+		dataContainer.model.modelElements.filter(typeof(ModelElement)).forEach[modelElement |
+			fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/models/"
+				+ modelElement.name.toFirstUpper + ".java", createModel(rootFolder, modelElement))
+			
+			val isUsedInRemoteContentProvider = dataContainer.contentProviders.exists[ c |
+				c.type instanceof ReferencedModelType
+				&& !c.local
+				&& (c.type as ReferencedModelType).entity.identityEquals(modelElement)
 			]
+			
+			// web services and beans for an entity are only generated if they are used in any remote content provider
+			if(modelElement instanceof Entity && isUsedInRemoteContentProvider) {
+				fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/"
+					+ modelElement.name.toFirstUpper + "WS.java", createEntityWS(rootFolder, modelElement as Entity))
+				fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/beans/"
+					+ modelElement.name.toFirstUpper + "Bean.java", createEntityBean(rootFolder, modelElement as Entity))
+			}
 		]
 		
 		// Generate datatype wrapper

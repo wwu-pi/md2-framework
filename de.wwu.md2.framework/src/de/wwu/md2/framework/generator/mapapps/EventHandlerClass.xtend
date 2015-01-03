@@ -1,7 +1,6 @@
 package de.wwu.md2.framework.generator.mapapps
 
 import de.wwu.md2.framework.generator.util.DataContainer
-import org.eclipse.emf.ecore.resource.ResourceSet
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.EventBindingTask
 import de.wwu.md2.framework.mD2.WorkflowElement
@@ -13,7 +12,7 @@ import org.eclipse.xtend2.lib.StringConcatenation
 
 class EventHandlerClass {
 
-    def static String generateWorkflowEventHandler(DataContainer dataContainer, ResourceSet processedInput) {
+    def static String generateWorkflowEventHandler(DataContainer dataContainer) {
 
         // TODO: get the right values here...
         '''
@@ -37,7 +36,7 @@ class EventHandlerClass {
                     
                     handleEvent: function(event, workflowelement) {
                       if
-                    «FOR wfe : dataContainer.workflowElements SEPARATOR StringConcatenation::DEFAULT_LINE_DELIMITER + "else if"»
+                    «FOR wfe : dataContainer.workflowElementsForApp SEPARATOR StringConcatenation::DEFAULT_LINE_DELIMITER + "else if"»
                         «FOR event : getEventsFromWorkflowElement(wfe) SEPARATOR StringConcatenation::DEFAULT_LINE_DELIMITER + "else if"»
                             (event === "«event.name»" && workflowelement === "«wfe.name»")
                             {  this.instance.controllers.get("md2.wfe.«wfe.name».Controller").closeWindow();
@@ -83,7 +82,7 @@ class EventHandlerClass {
 	 */
     def private static WorkflowElement getNextWorkflowElement(DataContainer dataContainer, WorkflowElement wfe,
         WorkflowEvent e) {
-        var wfes = dataContainer.workflows.head.workflowElementEntries
+        var wfes = dataContainer.workflow.workflowElementEntries
 
         for (WorkflowElementEntry entry : wfes) {
             if (entry.workflowElement.equals(wfe)) {
