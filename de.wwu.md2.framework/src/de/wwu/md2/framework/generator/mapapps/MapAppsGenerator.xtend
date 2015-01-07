@@ -29,8 +29,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		
 		for(app : dataContainer.apps){
 		    		    		    
-		    //TODO: fix paths
-		    val rootFolder = rootFolder + "/" + app.name
+		    val rootFolder = rootFolder + "/md2_app_" + app.name
 		    val bundlesRootFolder = rootFolder + "/bundles"
 		    
 		    // Copy static map.apps files (map layers)
@@ -136,7 +135,8 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 	}
 	
 	override getDefaultSubfolder() {
-		"md2_app_" + processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]
+		//"md2_app_" + processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]
+		return null
 	}
 	
 }
