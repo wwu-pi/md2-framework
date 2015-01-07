@@ -106,13 +106,6 @@ class DataContainer {
 	
 	
 	/**
-	 * Stores a reference to the current app.
-	 */
-	@Property
-	private App app
-	
-	
-	/**
 	 * Initializes the sets offered by the data container
 	 */
 	new(ResourceSet input) {
@@ -243,10 +236,7 @@ class DataContainer {
 	/**
 	 * Returns all workflows associated with the current app.
 	 */
-	def public workflowElementsForApp() {
-	    if(app == null){
-	        throw new IllegalStateException("No app has been set for the DataContainer.")
-	    }
+	def public workflowElementsForApp(App app) {
 	    val wfes = app.workflowElements.map[it.workflowElementReference].toSet
 	    return wfes
 	}

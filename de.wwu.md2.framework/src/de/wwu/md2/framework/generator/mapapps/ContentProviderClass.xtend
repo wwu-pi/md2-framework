@@ -15,12 +15,13 @@ import static de.wwu.md2.framework.generator.mapapps.Expressions.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import de.wwu.md2.framework.generator.util.DataContainer
+import de.wwu.md2.framework.mD2.App
 
 class ContentProviderClass {
 	
-	def static String generateContentProvider(ContentProvider contentProvider, DataContainer dataContainer) '''
+	def static String generateContentProvider(ContentProvider contentProvider, DataContainer dataContainer, App app) '''
 		«val imports = newLinkedHashMap("declare" -> "dojo/_base/declare", "ContentProvider" -> "md2_runtime/contentprovider/ContentProvider")»
-		«val body = generateContentProviderBody(contentProvider, dataContainer, imports)»
+		«val body = generateContentProviderBody(contentProvider, dataContainer, app, imports)»
 		define([
 			«FOR key : imports.keySet SEPARATOR ","»
 				"«imports.get(key)»"
@@ -32,7 +33,7 @@ class ContentProviderClass {
 		});
 	'''
 	
-	def static String generateContentProviderBody(ContentProvider contentProvider, DataContainer dataContainer, Map<String, String> imports) '''
+	def static String generateContentProviderBody(ContentProvider contentProvider, DataContainer dataContainer, App app, Map<String, String> imports) '''
 		/**
 		 * ContentProvider Factory
 		 */
@@ -45,7 +46,7 @@ class ContentProviderClass {
 				«ELSE»
 					«generateRemoteBody(contentProvider)»
 				«ENDIF»
-				var appId = "md2_«dataContainer.app.appName»";
+				var appId = "md2_«app.appName»";
 				
 				«IF contentProvider.filter»
 					var filter = function() {

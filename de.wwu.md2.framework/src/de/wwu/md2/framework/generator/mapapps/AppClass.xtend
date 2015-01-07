@@ -3,15 +3,16 @@ package de.wwu.md2.framework.generator.mapapps
 import de.wwu.md2.framework.generator.util.DataContainer
 
 import static extension de.wwu.md2.framework.generator.mapapps.util.MD2MapappsUtil.*
+import de.wwu.md2.framework.mD2.App
 
 class AppClass {
 	
-	def static String generateAppJson(DataContainer dataContainer) '''
+	def static String generateAppJson(DataContainer dataContainer, App app) '''
 {
-    "appName": "«dataContainer.app.appName»",
+    "appName": "«app.appName»",
     "properties": {
-        "id": "«dataContainer.app.name»",
-        "title": "«dataContainer.app.appName»"
+        "id": "«app.name»",
+        "title": "«app.appName»"
     },
     
     "load": {
@@ -47,7 +48,7 @@ class AppClass {
             "md2_models",
             "md2_content_providers",
             
-            «FOR elem : dataContainer.workflowElementsForApp SEPARATOR ","»
+            «FOR elem : dataContainer.workflowElementsForApp(app) SEPARATOR ","»
                 "«elem.bundleName»"
             «ENDFOR»
         ],
@@ -115,13 +116,13 @@ class AppClass {
 	
 	// Generate the "allowed-bundle" string for each workflow element
 	
-	def static String generateBundleJson(DataContainer dataContainer) '''
+	def static String generateBundleJson(DataContainer dataContainer, App app) '''
 	{
 	    "md2_models": {},
 	    "md2_content_providers": {},
 	    "md2_workflow" : {},
 	    
-	    «FOR elem : dataContainer.workflowElementsForApp SEPARATOR ","»
+	    «FOR elem : dataContainer.workflowElementsForApp(app) SEPARATOR ","»
 	       "«elem.bundleName»": {}
 	    «ENDFOR»
 	}

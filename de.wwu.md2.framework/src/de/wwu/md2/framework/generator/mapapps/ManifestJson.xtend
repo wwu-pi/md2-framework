@@ -33,14 +33,15 @@ import org.eclipse.xtext.xbase.lib.Pair
 import static extension de.wwu.md2.framework.generator.mapapps.util.MD2MapappsUtil.*
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
+import de.wwu.md2.framework.mD2.App
 
 class ManifestJson {
 		
-	def static String generateManifestJsonForModels(DataContainer dataContainer) {
-		var appName = dataContainer.app.appName
+	def static String generateManifestJsonForModels(DataContainer dataContainer, App app) {
+		var appName = app.appName
 		'''
 			{
-			    «generateBundlePropertiesSnippet(dataContainer, "model")»
+			    «generateBundlePropertiesSnippet(dataContainer, app, "model")»
 			    "Require-Bundle": [
 			        {
 			            "name": "md2_runtime"
@@ -48,7 +49,7 @@ class ManifestJson {
 			    ],
 			    "Components": [
 					«val snippets = newArrayList(
-						generateModelsSnippet(dataContainer)
+						generateModelsSnippet(dataContainer, app)
 					)»
 					«FOR snippet : snippets.filter(s | !s.toString.trim.empty) SEPARATOR ","»
 						«snippet»
@@ -57,11 +58,11 @@ class ManifestJson {
 			}
 		'''
 	}
-	def static String generateManifestJsonForContentProviders(DataContainer dataContainer) {
-		var appName = dataContainer.app.appName
+	def static String generateManifestJsonForContentProviders(DataContainer dataContainer, App app) {
+		var appName = app.appName
 		'''
 			{
-				«generateBundlePropertiesSnippet(dataContainer, "content_provider")»
+				«generateBundlePropertiesSnippet(dataContainer, app, "content_provider")»
 				"Require-Bundle": [
 					«IF dataContainer.contentProviders.exists[it.local]»
 						{
@@ -79,7 +80,7 @@ class ManifestJson {
 				],
 				"Components": [
 					«val snippets = newArrayList(
-						generateContentProvidersSnippet(dataContainer)
+						generateContentProvidersSnippet(dataContainer, app)
 					)»
 					«FOR snippet : snippets.filter(s | !s.toString.trim.empty) SEPARATOR ","»
 						«snippet»
@@ -92,8 +93,8 @@ class ManifestJson {
 	/**
 	 * Generates manifest.json code for WorkflowElements.
 	 */
-	def static String generateManifestJsonForWorkflowElement(WorkflowElement workflowElement, DataContainer dataContainer) {
-		var appName = dataContainer.app.appName
+	def static String generateManifestJsonForWorkflowElement(WorkflowElement workflowElement, DataContainer dataContainer, App app) {
+		var appName = app.appName
 		'''
 			{
 				"Bundle-SymbolicName": "«workflowElement.bundleName»",
@@ -118,10 +119,10 @@ class ManifestJson {
 				],
 				"Components": [
 					«val snippets = newArrayList(
-						generateConfigurationSnippet(workflowElement, dataContainer),
+						generateConfigurationSnippet(workflowElement, dataContainer, app),
 						generateCustomActionsSnippet(workflowElement, dataContainer),
-						generateControllerSnippet(workflowElement, dataContainer),
-						generateToolSnippet(workflowElement, dataContainer)
+						generateControllerSnippet(workflowElement, dataContainer, app),
+						generateToolSnippet(workflowElement, dataContainer, app)
 					)»
 					«FOR snippet : snippets.filter(s | !s.toString.trim.empty) SEPARATOR ","»
 						«snippet»
@@ -131,11 +132,11 @@ class ManifestJson {
 		'''
 	}
 	
-	def static String generateManifestJsonForWorkflowHandler(DataContainer dataContainer) {
-		var appName = dataContainer.app.appName
+	def static String generateManifestJsonForWorkflowHandler(DataContainer dataContainer, App app) {
+		var appName = app.appName
 		'''
 			{
-				«generateBundlePropertiesSnippet(dataContainer, "workflow")»
+				«generateBundlePropertiesSnippet(dataContainer, app, "workflow")»
 			    "Require-Bundle": [
 			        {
 			            "name": "md2_runtime"
@@ -162,8 +163,8 @@ class ManifestJson {
 	}
 	
 	
-	def private static generateBundlePropertiesSnippet(DataContainer dataContainer, String type){
-        var appName = dataContainer.app.appName
+	def private static generateBundlePropertiesSnippet(DataContainer dataContainer, App app, String type){
+        var appName = app.appName
 				
         '''«IF (type=="workflow")»
             "Bundle-SymbolicName": "md2_workflow",
@@ -178,8 +179,8 @@ class ManifestJson {
         "Bundle-Main": "",'''		
 	}
 	
-	def private static String generateConfigurationSnippet(WorkflowElement workflowElement, DataContainer dataContainer) {
-	    var appName = dataContainer.app.appName
+	def private static String generateConfigurationSnippet(WorkflowElement workflowElement, DataContainer dataContainer, App app) {
+	    var appName = app.appName
 		'''
 			{
 				"name": "MD2«workflowElement.name»",//TODO: processedInput.getBasePackageName.split("\\.").last.toFirstUpper
@@ -215,22 +216,22 @@ class ManifestJson {
 		}
 	'''
 	
-	def static generateModelsSnippet(DataContainer dataContainer) '''
+	def static generateModelsSnippet(DataContainer dataContainer, App app) '''
 		{
 			"name": "Models",
-			"provides": ["md2.app.«dataContainer.app.appName».Models"],
+			"provides": ["md2.app.«app.appName».Models"],
 			"instanceFactory": true
 		}
 	'''
 	
-	def static generateContentProvidersSnippet(DataContainer dataContainer) {
-		var uri = dataContainer.app.defaultConnection?.uri
+	def static generateContentProvidersSnippet(DataContainer dataContainer, App app) {
+		var uri = app.defaultConnection?.uri
 		'''
 			«FOR contentProvider : dataContainer.contentProviders SEPARATOR ","»
 				{
 					"name": "«contentProvider.name.toFirstUpper»Provider",
 					"impl": "./contentproviders/«contentProvider.name.toFirstUpper»",
-					"provides": ["md2.app.«dataContainer.app.appName».ContentProvider"],
+					"provides": ["md2.app.«app.appName».ContentProvider"],
 					«IF !contentProvider.local»
 						"propertiesConstructor": true,
 						"properties": {
@@ -254,9 +255,9 @@ class ManifestJson {
 		'''
 	}
 	
-	def static generateControllerSnippet(WorkflowElement workflowElement, DataContainer dataContainer) 
+	def static generateControllerSnippet(WorkflowElement workflowElement, DataContainer dataContainer, App app) 
 	{
-	var appName = dataContainer.app.appName;
+	var appName = app.appName;
 	'''
 		{
 			"name": "Controller",
@@ -298,8 +299,8 @@ class ManifestJson {
 	 * The title of the mapapps tool within the application is set to its startable
 	 * alias.
 	 */
-	def static generateToolSnippet(WorkflowElement workflowElement, DataContainer dataContainer) {
-		val wfeReferences = dataContainer.app.workflowElements.filter[it.startable == true]
+	def static generateToolSnippet(WorkflowElement workflowElement, DataContainer dataContainer, App app) {
+		val wfeReferences = app.workflowElements.filter[it.startable == true]
 		val startableWFE = wfeReferences.filter[it.workflowElementReference.name == workflowElement.name].toList
 		var isStartable = (startableWFE.size == 1)
 		

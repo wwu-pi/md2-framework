@@ -9,10 +9,11 @@ import de.wwu.md2.framework.mD2.FireEventAction
 import de.wwu.md2.framework.mD2.WorkflowElementEntry
 import de.wwu.md2.framework.mD2.WorkflowEvent
 import org.eclipse.xtend2.lib.StringConcatenation
+import de.wwu.md2.framework.mD2.App
 
 class EventHandlerClass {
 
-    def static String generateWorkflowEventHandler(DataContainer dataContainer) {
+    def static String generateWorkflowEventHandler(DataContainer dataContainer, App app) {
 
         // TODO: get the right values here...
         '''
@@ -36,7 +37,7 @@ class EventHandlerClass {
                     
                     handleEvent: function(event, workflowelement) {
                       if
-                    «FOR wfe : dataContainer.workflowElementsForApp SEPARATOR StringConcatenation::DEFAULT_LINE_DELIMITER + "else if"»
+                    «FOR wfe : dataContainer.workflowElementsForApp(app) SEPARATOR StringConcatenation::DEFAULT_LINE_DELIMITER + "else if"»
                         «FOR event : getEventsFromWorkflowElement(wfe) SEPARATOR StringConcatenation::DEFAULT_LINE_DELIMITER + "else if"»
                             (event === "«event.name»" && workflowelement === "«wfe.name»")
                             {  this.instance.controllers.get("md2.wfe.«wfe.name».Controller").closeWindow();
