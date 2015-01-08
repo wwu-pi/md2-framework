@@ -1,3 +1,5 @@
+package views.flowLayoutPane
+
 FlowLayoutPane gridLayoutPane (horizontal) {
 	Label TitleLbl ("The Location") 
 	Spacer

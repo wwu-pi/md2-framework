@@ -1,3 +1,5 @@
-contentProvider View viewProvider {
+package controllers.inputElements
+
+contentProvider View[] viewProvider {
 	providerType default
 }

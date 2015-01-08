@@ -1,3 +1,5 @@
+package views.inputElements
+
 GridLayoutPane LocationDetectionView2 (columns 2, rows 9) {
 	Label TitleLbl ("The Location") 
 	Spacer

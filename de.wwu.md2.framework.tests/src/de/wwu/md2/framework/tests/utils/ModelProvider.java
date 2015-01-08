@@ -34,11 +34,6 @@ public class ModelProvider {
 	public static String WORKFLOW_FUNCTION_V = "dsl/workflow/functionTest/view.md2";
 	public static String WORKFLOW_FUNCTION_M = "dsl/workflow/functionTest/model.md2";
 	
-	//***Views***//
-	public static String VIEW_INPUT_ELEMENTS = "dsl/view/inputElement/inputElements.md2";
-	public static String VIEW_INPUT_ELEMENTS_CONTROLLER = "dsl/view/inputElement/viewController.md2";
-	public static String VIEW_INPUT_ELEMENTS_ENTITY = "dsl/view/inputElement/viewEntity.md2";
-	
 	//***Controller***//
 	
 	public static final String BASIC_CONTROLLER_M = "dsl/controller/Model.md2";
@@ -58,6 +53,17 @@ public class ModelProvider {
 	//********Validator*****//
 	
 	public static final String FILTER_MULTIPLIZITY_C = "dsl/controller/contentProvider/validator/FilterMultiplizity.md2";
+	
+	/** views **/
+	public static final String CONTENT_CONTAINER_FLOW_LAYOUT_V = "dsl/view/viewGuiElement/containerElement/contentContainer/flowLayoutPane.md2";
+	public static final String CONTENT_CONTAINER_GRID_LAYOUT_V = "dsl/view/viewGuiElement/containerElement/contentContainer/gridLayoutPane.md2";
+	public static final String SUB_VIEW_CONTAINER_ALTERNATIVE_LAYOUT_V = "dsl/view/viewGuiElement/containerElement/subViewContainer/alternativePane.md2";
+	public static final String SUB_VIEW_CONTAINER_ALTERNATIVE_TABBED_LAYOUT_V = "dsl/view/viewGuiElement/containerElement/subViewContainer/tabbedPane.md2";
+	public static final String VIEW_INPUT_ELEMENTS_ENTITY = "dsl/view/viewGuiElement/contentElement/inputElement/viewEntity.md2";
+	public static final String VIEW_INPUT_ELEMENTS_CONTROLLER = "dsl/view/viewGuiElement/contentElement/inputElement/viewController.md2";
+	public static final String VIEW_INPUT_ELEMENTS_V = "dsl/view/viewGuiElement/contentElement/inputElement/inputElements.md2";
+	
+	
 	
 	/**
 	 * Load the model from file

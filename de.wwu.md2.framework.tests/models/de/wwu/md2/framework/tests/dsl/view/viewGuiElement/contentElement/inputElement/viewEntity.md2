@@ -1,3 +1,5 @@
+package models.inputElements
+
 entity View {
 	theViewName : string
 }

@@ -1,3 +1,5 @@
+package views.gridLayoutPane
+
 GridLayoutPane gridLayoutPane (columns 2, rows 9) {
 	Label TitleLbl ("The Location") 
 	Spacer

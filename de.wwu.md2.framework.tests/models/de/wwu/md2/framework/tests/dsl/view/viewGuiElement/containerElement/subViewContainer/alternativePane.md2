@@ -1,3 +1,5 @@
+package views.alternative
+
 AlternativesPane alterPane (width 20%) {
 	AlternativesPane innerPane(width 40%) {
 		GridLayoutPane innerInnerPane(columns 5, rows 3) {

@@ -1,4 +1,4 @@
-package CurrentStateProject.views
+package views.tabbed
 
 TabbedPane tabbedPane () {
 	AlternativesPane innerPane(width 40%) {
