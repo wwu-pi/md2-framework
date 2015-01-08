@@ -192,7 +192,7 @@ class ManifestJson {
 				"properties": {
 				    "appId": "md2_«appName»",
 					"id": "md2_«workflowElement.name.replace(".", "_")»", //TODO: processedInput.getBasePackageName.replace(".", "_")
-					"windowTitle": "«workflowElement»",
+					"windowTitle": "«workflowElement.name»",
 					"onInitialized": "«ProcessController::startupActionName»",
 					"views": [
 						«FOR view : dataContainer.rootViewContainers.get(workflowElement) SEPARATOR ","»
