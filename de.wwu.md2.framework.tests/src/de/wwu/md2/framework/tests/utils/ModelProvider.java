@@ -75,6 +75,15 @@ public class ModelProvider {
 	public static final String MODEL_VALIDATOR_REPEATED_PARAMETERS = "dsl/model/validator/RepeatedParameters.md2";
 	public static final String MODEL_VALIDATOR_UNSUPPORTED_FEATURES = "dsl/model/validator/UnsupportedFeatures.md2";
 	public static final String MODEL_VALIDATOR_UPPERCASE_ENTITY = "dsl/model/validator/UppercaseEntity.md2";
+
+	/** views **/
+	public static final String CONTENT_CONTAINER_FLOW_LAYOUT_V = "dsl/view/viewGuiElement/containerElement/contentContainer/flowLayoutPane.md2";
+	public static final String CONTENT_CONTAINER_GRID_LAYOUT_V = "dsl/view/viewGuiElement/containerElement/contentContainer/gridLayoutPane.md2";
+	public static final String SUB_VIEW_CONTAINER_ALTERNATIVE_LAYOUT_V = "dsl/view/viewGuiElement/containerElement/subViewContainer/alternativePane.md2";
+	public static final String SUB_VIEW_CONTAINER_ALTERNATIVE_TABBED_LAYOUT_V = "dsl/view/viewGuiElement/containerElement/subViewContainer/tabbedPane.md2";
+	public static final String VIEW_INPUT_ELEMENTS_ENTITY = "dsl/view/viewGuiElement/contentElement/inputElement/viewEntity.md2";
+	public static final String VIEW_INPUT_ELEMENTS_CONTROLLER = "dsl/view/viewGuiElement/contentElement/inputElement/viewController.md2";
+	public static final String VIEW_INPUT_ELEMENTS_V = "dsl/view/viewGuiElement/contentElement/inputElement/inputElements.md2";
 	
 	/**
 	 * Load the model from file

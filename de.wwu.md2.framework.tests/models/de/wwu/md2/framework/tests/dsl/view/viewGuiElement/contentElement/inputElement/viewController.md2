@@ -1,0 +1,14 @@
+package controllers.inputElements
+
+main {
+	appVersion "1.0"
+	modelVersion "1.0"
+}
+
+contentProvider AutoGenTest autoGenTestProvider {
+	providerType default
+}
+
+contentProvider View[] viewProvider {
+	providerType default
+}
