@@ -8,3 +8,14 @@ enum ViewEnum {
 	"view1",
 	"view2"
 }
+
+entity AutoGenTest {
+	textvalue : string
+	enumvalue : EnumValue
+	ignoredvalue : string
+}
+
+enum EnumValue {
+	"Hello",
+	"World"
+}

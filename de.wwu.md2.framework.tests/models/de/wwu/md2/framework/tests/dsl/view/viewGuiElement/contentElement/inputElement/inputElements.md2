@@ -1,6 +1,6 @@
 package views.inputElements
 
-GridLayoutPane LocationDetectionView2 (columns 2, rows 9) {
+GridLayoutPane LocationDetectionView2 (columns 2, rows 10) {
 	Label TitleLbl ("The Location") 
 	Spacer
 	
@@ -134,4 +134,13 @@ GridLayoutPane LocationDetectionView2 (columns 2, rows 9) {
 		width 20%
 		textProposition : viewProvider . theViewName
 	}
+	
+	Spacer
+	
+	AutoGenerator AutoGenTestAutogenerator {
+		width 40%
+		disabled false
+		contentProvider : autoGenTestProvider (exclude AutoGenTest.ignoredvalue)
+	}
+	
 }
