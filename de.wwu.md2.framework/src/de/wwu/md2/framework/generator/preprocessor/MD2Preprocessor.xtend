@@ -168,9 +168,9 @@ class MD2Preprocessor extends AbstractPreprocessor {
 			
 			viewReferences.copyAllCustomCodeFragmentsToClonedGUIElements(clonedElements, clonedCodeFragments, wfe) // done
 		
-			viewReferences.removeAllCustomCodeFragmentsThatReferenceUnusedGUIElements(clonedCodeFragments, wfe) // done
 		]
 		
+        viewReferences.removeAllCustomCodeFragmentsThatReferenceUnusedGUIElements(clonedCodeFragments) // done
 		
 		view.transformInputsWithLabelsAndTooltipsToLayouts // done
 		
