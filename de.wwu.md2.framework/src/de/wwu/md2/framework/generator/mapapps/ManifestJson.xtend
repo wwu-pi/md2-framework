@@ -296,7 +296,7 @@ class ManifestJson {
 					"providing": "md2.workflow.EventHandler"
 				},
 				{
-					"name": "workflowStateHandler",
+					"name": "_workflowStateHandler",
 					"providing": "md2.workflow.WorkflowStateHandler"
 				}
 			]
