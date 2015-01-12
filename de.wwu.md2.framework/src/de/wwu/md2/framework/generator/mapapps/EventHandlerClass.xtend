@@ -43,8 +43,9 @@ class EventHandlerClass {
                             {  this.instance.controllers.get("md2.wfe.«wfe.name».Controller").closeWindow();
                                this.instance.controllers.get("md2.wfe.«wfe.name».Controller")._isFirstExecution = true;
                                «IF (getNextWorkflowElement(dataContainer, wfe, event) != null)»
+                                   this.instance.workflowStateHandler.setLastWindow("md2_"+workflowelement,  "md2_«getNextWorkflowElement(dataContainer, wfe, event).name»");
                                    this.instance.controllers.get("md2.wfe.«getNextWorkflowElement(dataContainer, wfe, event).name».Controller").openWindow();
-                            «ENDIF»
+                               «ENDIF»
                             }
                         «ENDFOR»
                     «ENDFOR»

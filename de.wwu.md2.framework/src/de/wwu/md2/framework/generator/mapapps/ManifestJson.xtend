@@ -155,6 +155,10 @@ class ManifestJson {
 			                    "providing": "md2.app.«appName».controllers",
 			                    "policy": "dynamic",
 			                    "cardinality": "0..n"
+			                },
+			                {
+			                    "name": "workflowStateHandler",
+			                    "providing": "md2.workflow.WorkflowStateHandler"
 			                }
 			            ]
 			        }
@@ -290,6 +294,10 @@ class ManifestJson {
 				{
 					"name": "_workflowEventHandler",
 					"providing": "md2.workflow.EventHandler"
+				},
+				{
+					"name": "workflowStateHandler",
+					"providing": "md2.workflow.WorkflowStateHandler"
 				}
 			]
 		}
