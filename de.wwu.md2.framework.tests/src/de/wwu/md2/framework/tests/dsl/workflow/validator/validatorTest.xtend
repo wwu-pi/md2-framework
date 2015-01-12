@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.tests.dsl.workflow.functionTest
+package de.wwu.md2.framework.tests.dsl.workflow.validator
 
 import org.eclipse.xtext.junit4.InjectWith
 import de.wwu.md2.framework.MD2InjectorProvider
