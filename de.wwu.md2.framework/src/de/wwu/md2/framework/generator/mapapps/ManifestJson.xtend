@@ -28,21 +28,20 @@ import de.wwu.md2.framework.mD2.Tooltip
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.WidthParam
 import de.wwu.md2.framework.mD2.WorkflowElement
-import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.xbase.lib.Pair
 
 import static extension de.wwu.md2.framework.generator.mapapps.util.MD2MapappsUtil.*
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
-import de.wwu.md2.framework.mD2.WorkflowElementReference
+import de.wwu.md2.framework.mD2.App
 
 class ManifestJson {
 		
-	def static String generateManifestJsonForModels(DataContainer dataContainer, ResourceSet processedInput) {
-		var appName = dataContainer.workflows?.head.apps?.head.appName
+	def static String generateManifestJsonForModels(DataContainer dataContainer, App app) {
+		var appName = app.appName
 		'''
 			{
-			    «generateBundlePropertiesSnippet(dataContainer, "model")»
+			    «generateBundlePropertiesSnippet(dataContainer, app, "model")»
 			    "Require-Bundle": [
 			        {
 			            "name": "md2_runtime"
@@ -50,7 +49,7 @@ class ManifestJson {
 			    ],
 			    "Components": [
 					«val snippets = newArrayList(
-						generateModelsSnippet(dataContainer, processedInput)
+						generateModelsSnippet(dataContainer, app)
 					)»
 					«FOR snippet : snippets.filter(s | !s.toString.trim.empty) SEPARATOR ","»
 						«snippet»
@@ -59,11 +58,11 @@ class ManifestJson {
 			}
 		'''
 	}
-	def static String generateManifestJsonForContentProviders(DataContainer dataContainer, ResourceSet processedInput) {
-		var appName = dataContainer.workflows?.head.apps?.head.appName
+	def static String generateManifestJsonForContentProviders(DataContainer dataContainer, App app) {
+		var appName = app.appName
 		'''
 			{
-				«generateBundlePropertiesSnippet(dataContainer, "content_provider")»
+				«generateBundlePropertiesSnippet(dataContainer, app, "content_provider")»
 				"Require-Bundle": [
 					«IF dataContainer.contentProviders.exists[it.local]»
 						{
@@ -81,7 +80,7 @@ class ManifestJson {
 				],
 				"Components": [
 					«val snippets = newArrayList(
-						generateContentProvidersSnippet(dataContainer, processedInput)
+						generateContentProvidersSnippet(dataContainer, app)
 					)»
 					«FOR snippet : snippets.filter(s | !s.toString.trim.empty) SEPARATOR ","»
 						«snippet»
@@ -94,11 +93,11 @@ class ManifestJson {
 	/**
 	 * Generates manifest.json code for WorkflowElements.
 	 */
-	def static String generateManifestJsonForWorkflowElement(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) {
-		var appName = dataContainer.workflows?.head.apps?.head.appName
+	def static String generateManifestJsonForWorkflowElement(WorkflowElement workflowElement, DataContainer dataContainer, App app) {
+		var appName = app.appName
 		'''
 			{
-				"Bundle-SymbolicName": "«workflowElement.bundleName»", //TODO:"md2_wfe_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]»"
+				"Bundle-SymbolicName": "«workflowElement.bundleName»",
 				"Bundle-Version": "«dataContainer.main.appVersion»",
 				"Bundle-Name": "Workflow element «workflowElement.name»",
 				"Bundle-Description": "Generated MD2 workflow element bundle: «workflowElement.name» of «appName»",
@@ -120,10 +119,10 @@ class ManifestJson {
 				],
 				"Components": [
 					«val snippets = newArrayList(
-						generateConfigurationSnippet(workflowElement, dataContainer, processedInput),
-						generateCustomActionsSnippet(workflowElement, dataContainer, processedInput),
-						generateControllerSnippet(workflowElement, dataContainer, processedInput),
-						generateToolSnippet(workflowElement, dataContainer, processedInput)
+						generateConfigurationSnippet(workflowElement, dataContainer, app),
+						generateCustomActionsSnippet(workflowElement, dataContainer),
+						generateControllerSnippet(workflowElement, dataContainer, app),
+						generateToolSnippet(workflowElement, dataContainer, app)
 					)»
 					«FOR snippet : snippets.filter(s | !s.toString.trim.empty) SEPARATOR ","»
 						«snippet»
@@ -133,11 +132,11 @@ class ManifestJson {
 		'''
 	}
 	
-	def static String generateManifestJsonForWorkflowHandler(DataContainer dataContainer, ResourceSet processedInput) {
-		var appName = dataContainer.workflows?.head.apps?.head.appName;
+	def static String generateManifestJsonForWorkflowHandler(DataContainer dataContainer, App app) {
+		var appName = app.appName
 		'''
 			{
-				«generateBundlePropertiesSnippet(dataContainer, "workflow")»
+				«generateBundlePropertiesSnippet(dataContainer, app, "workflow")»
 			    "Require-Bundle": [
 			        {
 			            "name": "md2_runtime"
@@ -164,30 +163,29 @@ class ManifestJson {
 	}
 	
 	
-	def private static generateBundlePropertiesSnippet(DataContainer dataContainer, String type){
-	var appName = dataContainer.workflows?.head.apps?.head.appName;
+	def private static generateBundlePropertiesSnippet(DataContainer dataContainer, App app, String type){
+        var appName = app.appName
 				
-	'''«IF (type=="workflow")»
-		"Bundle-SymbolicName": "md2_workflow",
-		"Bundle-Name": "«appName» «type»",
-		"Bundle-Description": "Generated MD2 bundle: «type» of «appName»",
-		«ELSE»
-		"Bundle-SymbolicName": "md2_«type»s",
-		"Bundle-Name": "«appName» «type»s",
-		"Bundle-Description": "Generated MD2 bundle: «type»s of «appName»",
-		«ENDIF»"Bundle-Version": "2.0",
-"Bundle-Localization": [],
-"Bundle-Main": "",'''
-		
+        '''«IF (type=="workflow")»
+            "Bundle-SymbolicName": "md2_workflow",
+            "Bundle-Name": "«appName» «type»",
+            "Bundle-Description": "Generated MD2 bundle: «type» of «appName»",
+    	«ELSE»
+            "Bundle-SymbolicName": "md2_«type»s",
+            "Bundle-Name": "«appName» «type»s",
+            "Bundle-Description": "Generated MD2 bundle: «type»s of «appName»",
+        «ENDIF»"Bundle-Version": "2.0",
+        "Bundle-Localization": [],
+        "Bundle-Main": "",'''		
 	}
 	
-	def private static String generateConfigurationSnippet(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) {
-	    var appName = dataContainer.workflows?.head.apps?.head.appName;
+	def private static String generateConfigurationSnippet(WorkflowElement workflowElement, DataContainer dataContainer, App app) {
+	    var appName = app.appName
 		'''
 			{
 				"name": "MD2«workflowElement.name»",//TODO: processedInput.getBasePackageName.split("\\.").last.toFirstUpper
 				"impl": "ct/Stateful",
-				"provides": ["md2.wfe.«workflowElement.name».AppDefinition"], //TODO: «processedInput.getBasePackageName»
+				"provides": ["md2.wfe.«workflowElement.name».AppDefinition"],
 				"propertiesConstructor": true,
 				"properties": {
 				    "appId": "md2_«appName»",
@@ -200,7 +198,7 @@ class ManifestJson {
 								"name": "«view.name»",
 								"dataForm": {
 									"dataform-version": "1.0.0",
-									«getViewElement(view, processedInput, false)»
+									«getViewElement(view, false)»
 								}
 							}
 						«ENDFOR»
@@ -210,7 +208,7 @@ class ManifestJson {
 		'''
 	}
 	
-	def static generateCustomActionsSnippet(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) '''
+	def static generateCustomActionsSnippet(WorkflowElement workflowElement, DataContainer dataContainer) '''
 		{
 			"name": "CustomActions",
 			"provides": ["md2.wfe.«workflowElement.name».CustomActions"], //TODO: processedInput.getBasePackageName
@@ -218,22 +216,22 @@ class ManifestJson {
 		}
 	'''
 	
-	def static generateModelsSnippet(DataContainer dataContainer, ResourceSet processedInput) '''
+	def static generateModelsSnippet(DataContainer dataContainer, App app) '''
 		{
 			"name": "Models",
-			"provides": ["md2.app.«dataContainer.workflows?.head.apps?.head.appName».Models"],
+			"provides": ["md2.app.«app.appName».Models"],
 			"instanceFactory": true
 		}
 	'''
 	
-	def static generateContentProvidersSnippet(DataContainer dataContainer, ResourceSet processedInput) {
-		var uri = dataContainer.workflows?.head.apps?.head?.defaultConnection?.uri
+	def static generateContentProvidersSnippet(DataContainer dataContainer, App app) {
+		var uri = app.defaultConnection?.uri
 		'''
 			«FOR contentProvider : dataContainer.contentProviders SEPARATOR ","»
 				{
 					"name": "«contentProvider.name.toFirstUpper»Provider",
 					"impl": "./contentproviders/«contentProvider.name.toFirstUpper»",
-					"provides": ["md2.app.«dataContainer.workflows?.head.apps?.head.appName».ContentProvider"],
+					"provides": ["md2.app.«app.appName».ContentProvider"],
 					«IF !contentProvider.local»
 						"propertiesConstructor": true,
 						"properties": {
@@ -257,9 +255,9 @@ class ManifestJson {
 		'''
 	}
 	
-	def static generateControllerSnippet(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) 
+	def static generateControllerSnippet(WorkflowElement workflowElement, DataContainer dataContainer, App app) 
 	{
-	var appName = dataContainer.workflows?.head.apps?.head.appName;
+	var appName = app.appName;
 	'''
 		{
 			"name": "Controller",
@@ -301,8 +299,8 @@ class ManifestJson {
 	 * The title of the mapapps tool within the application is set to its startable
 	 * alias.
 	 */
-	def static generateToolSnippet(WorkflowElement workflowElement, DataContainer dataContainer, ResourceSet processedInput) {
-		val wfeReferences = processedInput.allContents.filter(typeof (WorkflowElementReference)).filter[it.startable == true]
+	def static generateToolSnippet(WorkflowElement workflowElement, DataContainer dataContainer, App app) {
+		val wfeReferences = app.workflowElements.filter[it.startable == true]
 		val startableWFE = wfeReferences.filter[it.workflowElementReference.name == workflowElement.name].toList
 		var isStartable = (startableWFE.size == 1)
 		
@@ -353,7 +351,7 @@ class ManifestJson {
 	 * Container Elements
 	 ***************************************************************/
 	
-	def private static dispatch String getViewElement(GridLayoutPane gridLayout, ResourceSet processedInput, boolean isSubView) '''
+	def private static dispatch String getViewElement(GridLayoutPane gridLayout, boolean isSubView) '''
 		"type": "md2gridpanel",
 		"cols": "«gridLayout.params.filter(typeof(GridLayoutPaneColumnsParam)).head.value»",
 		"valueClass": "layoutCell",
@@ -363,15 +361,15 @@ class ManifestJson {
 			«FOR element : gridLayout.elements.filter(typeof(ViewGUIElement)) SEPARATOR ","»
 				{
 					«switch element {
-						ContentElement: getViewElement(element, processedInput)
-						ContainerElement: getViewElement(element, processedInput, false)
+						ContentElement: getViewElement(element)
+						ContainerElement: getViewElement(element, false)
 					}»
 				}
 			«ENDFOR»
 		]
 	'''
 	
-	def private static dispatch String getViewElement(TabbedAlternativesPane tabbedPane, ResourceSet processedInput, boolean isSubView) '''
+	def private static dispatch String getViewElement(TabbedAlternativesPane tabbedPane, boolean isSubView) '''
 		"type": "tabpanel",
 		"valueClass": "layoutCell",
 		«generateStyle(null, "width" -> '''100%''')»,
@@ -380,13 +378,13 @@ class ManifestJson {
 			«FOR element : tabbedPane.elements.filter(typeof(ContainerElement)) SEPARATOR ","»
 				{
 					"title": "«element.tabName»",
-					«getViewElement(element, processedInput, true)»
+					«getViewElement(element, true)»
 				}
 			«ENDFOR»
 		]
 	'''
 	
-	def private static dispatch String getViewElement(AlternativesPane alternativesPane, ResourceSet processedInput, boolean isSubView) '''
+	def private static dispatch String getViewElement(AlternativesPane alternativesPane, boolean isSubView) '''
 		"type": "stackcontainer",
 		"valueClass": "layoutCell",
 		«generateStyle(null, "width" -> '''«alternativesPane.params.filter(typeof(WidthParam)).head.width»%''')»,
@@ -394,7 +392,7 @@ class ManifestJson {
 		"children": [
 			«FOR element : alternativesPane.elements.filter(typeof(ContainerElement)) SEPARATOR ","»
 				{
-					«getViewElement(element, processedInput, true)»
+					«getViewElement(element, true)»
 				}
 			«ENDFOR»
 		]
@@ -405,27 +403,27 @@ class ManifestJson {
 	 * Content Elements => Various
 	 ***************************************************************/
 	 
-	def private static dispatch String getViewElement(Image image, ResourceSet processedInput) '''
+	def private static dispatch String getViewElement(Image image) '''
 		"type": "simpleimage",
-		"src": "md2_app_«processedInput.getBasePackageName.split("\\.").reduce[ s1, s2 | s1 + "_" + s2]»:./resources/«image.src»",
+		"src": "md2_app_", //TODO: fix url
 		«IF image.imgWidth > 0»"imgW": «image.imgWidth»,«ENDIF»
 		«IF image.imgHeight > 0»"imgH": «image.imgHeight»,«ENDIF»
 		«generateStyle(null, "width" -> '''«image.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(Spacer spacer, ResourceSet processedInput) '''
+	def private static dispatch String getViewElement(Spacer spacer) '''
 		"type": "spacer",
 		«generateStyle(null, "width" -> '''«spacer.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(Button button, ResourceSet processedInput) '''
+	def private static dispatch String getViewElement(Button button) '''
 		"type": "button",
 		"title": "«button.text.escape»",
 		"field": "«getName(button)»",
 		«generateStyle(button.style, "width" -> '''«button.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(Label label, ResourceSet processedInput) '''
+	def private static dispatch String getViewElement(Label label) '''
 		"type": "textoutput",
 		"datatype": "string",
 		"field": "«getName(label)»",
@@ -433,7 +431,7 @@ class ManifestJson {
 		«generateStyle(label.style, "width" -> '''«label.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(Tooltip tooltip, ResourceSet processedInput) '''
+	def private static dispatch String getViewElement(Tooltip tooltip) '''
 		"type": "tooltipicon",
 		"datatype": "string",
 		"field": "«getName(tooltip)»",
@@ -446,63 +444,63 @@ class ManifestJson {
 	 * Content Elements => Input
 	 ***************************************************************/
 	
-	def private static dispatch String getViewElement(BooleanInput input, ResourceSet processedInput) '''
+	def private static dispatch String getViewElement(BooleanInput input) '''
 		"type": "checkbox",
 		"datatype": "boolean",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(TextInput input, ResourceSet processedInput) '''
+	def private static dispatch String getViewElement(TextInput input) '''
 		"type": "textbox",
 		"datatype": "string",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(IntegerInput input, ResourceSet processedInput) '''
+	def private static dispatch String getViewElement(IntegerInput input) '''
 		"type": "numberspinner",
 		"datatype": "integer",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(NumberInput input, ResourceSet processedInput) '''
+	def private static dispatch String getViewElement(NumberInput input) '''
 		"type": "numbertextbox",
 		"datatype": "float",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(DateInput input, ResourceSet processedInput) '''
+	def private static dispatch String getViewElement(DateInput input) '''
 		"type": "datetextbox",
 		"datatype": "date",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(TimeInput input, ResourceSet processedInput) '''
+	def private static dispatch String getViewElement(TimeInput input) '''
 		"type": "timetextbox",
 		"datatype": "time",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(DateTimeInput input, ResourceSet processedInput) '''
+	def private static dispatch String getViewElement(DateTimeInput input) '''
 		"type": "datetimebox",
 		"datatype": "datetime",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(OptionInput input, ResourceSet processedInput) '''
+	def private static dispatch String getViewElement(OptionInput input) '''
 		"type": "selectbox",
 		"datatype": "«input.enumReference.name.toFirstUpper»",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
-	def private static dispatch String getViewElement(EntitySelector input, ResourceSet processedInput) '''
+	def private static dispatch String getViewElement(EntitySelector input) '''
 		// TODO
 	'''
 	

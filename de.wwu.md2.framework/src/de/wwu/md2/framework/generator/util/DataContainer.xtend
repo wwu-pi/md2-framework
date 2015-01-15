@@ -21,7 +21,6 @@ import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*import de.w
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.WorkflowElement
 import java.util.Map
-import java.util.HashMap
 import de.wwu.md2.framework.mD2.EventBindingTask
 import de.wwu.md2.framework.mD2.SimpleActionRef
 import de.wwu.md2.framework.mD2.FireEventAction
@@ -40,16 +39,16 @@ class DataContainer {
 	///////////////////////////////////////
 	
 	@Property
-	private Collection<View> views
+	private View view
 	
 	@Property
-	private Collection<Controller> controllers
+	private Controller controller
 	
 	@Property
-	private Collection<Model> models
+	private Model model
 	
 	@Property
-	private Collection<Workflow> workflows
+	private Workflow workflow
 	
 	
 	///////////////////////////////////////
@@ -130,11 +129,6 @@ class DataContainer {
 	 */
 	def private intializeModelTypedLists(ResourceSet input) {
 		
-		views = newHashSet()
-		controllers = newHashSet()
-		models = newHashSet()
-		workflows = newHashSet()
-		
 		val md2models = input.resources.map[ r |
 			r.contents.filter(MD2Model)
 		].flatten
@@ -142,10 +136,10 @@ class DataContainer {
 		md2models.forEach[ md2model |
 			val modelLayer = md2model.modelLayer
 			switch modelLayer {
-				View : views.add(modelLayer)
-				Model : models.add(modelLayer)
-				Controller : controllers.add(modelLayer)
-				Workflow : workflows.add(modelLayer)
+				View : view = modelLayer
+				Model : model = modelLayer
+				Controller : controller = modelLayer
+				Workflow : workflow = modelLayer
 			}
 		]
 	}
@@ -155,9 +149,7 @@ class DataContainer {
 	 * and app version without iterating over the object tree over and over again.
 	 */
 	def private extractUniqueMain() {
-		main = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(Main)
-		].flatten.head
+	    main = controller.controllerElements.filter(Main).head
 	}
 	
 	/**
@@ -169,21 +161,12 @@ class DataContainer {
 		remoteValidators = newHashSet
 		workflowElements = newHashSet
 		
-		customActions = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(CustomAction)
-		].flatten.toSet
+		var ce = controller.controllerElements 
 		
-		contentProviders = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(ContentProvider)
-		].flatten.toSet
-		
-		remoteValidators = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(RemoteValidator)
-		].flatten.toSet
-		
-		workflowElements = controllers.map[ ctrl | 
-			ctrl.controllerElements.filter(WorkflowElement)
-		].flatten.toSet
+		customActions     = ce.filter(CustomAction).toSet
+		contentProviders  = ce.filter(ContentProvider).toSet
+		remoteValidators  = ce.filter(RemoteValidator).toSet
+		workflowElements  = ce.filter(WorkflowElement).toSet
 	}
 	
 	/**
@@ -193,13 +176,8 @@ class DataContainer {
 		entities = newHashSet
 		enums = newHashSet
 		
-		entities = models.map[ model |
-			model.modelElements.filter(Entity)
-		].flatten.toSet
-		
-		enums = models.map[ model |
-			model.modelElements.filter(Enum)
-		].flatten.toSet
+		entities = model.modelElements.filter(Entity).toSet
+		enums = model.modelElements.filter(Enum).toSet
 	}
 	
 	/**
@@ -237,15 +215,12 @@ class DataContainer {
 	 */
 	def private extractElementsFromWorkflows() {
 		apps = newHashSet
-		
-		apps = workflows.map[ workflow |
-			 workflow.apps
-		].flatten.toSet
+		apps = workflow.apps.toSet
 	}
 	
 	
-	def public getEventsFromWorkflowElement(WorkflowElement wfe)
-	{
+	def public getEventsFromWorkflowElement(WorkflowElement wfe) {
+	    
 		var customActions = wfe.actions.filter(CustomAction).map[custAction | custAction.codeFragments].flatten.toSet
 		
 		var actions = customActions.filter(EventBindingTask).map[tasks | tasks.actions].flatten.toSet
@@ -258,4 +233,11 @@ class DataContainer {
 	}
 	
 	
+	/**
+	 * Returns all workflows associated with the current app.
+	 */
+	def public workflowElementsForApp(App app) {
+	    val wfes = app.workflowElements.map[it.workflowElementReference].toSet
+	    return wfes
+	}
 }
