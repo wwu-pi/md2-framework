@@ -19,6 +19,47 @@ FlowLayoutPane complaintView (vertical) {
 		label "Additional Description"
 		type "input"
 	}
+		
+}
+
+FlowLayoutPane enterPersonView (vertical) {
+	NumberInput userID
+	TextInput personName
+	
+	TextInput userEmail {
+		label "Additional Description"
+		type "input"
+	}
 	
 }
 
+
+FlowLayoutPane enterCopyView (vertical) {
+	TextInput descriptionTxt {
+		label "Additional Description"
+		type "textarea"
+	}
+	
+	DateInput inStockSince
+	
+	NumberInput complaintID
+	
+}
+
+FlowLayoutPane borrowBookView (vertical) {
+	TextInput descriptionTxt {
+		label "Additional Description"
+		type "textarea"
+	}
+	
+	DateTimeInput borrowedDateTime
+	TimeInput borrowedTime
+	
+	StringInput orderedBy
+
+	TextInput userEmail {
+		label "Additional Description"
+		type "input"
+	}
+		
+}

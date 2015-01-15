@@ -26,6 +26,19 @@ validator DateRangeValidator validateDate
 	message "the string is too short or too long!"
 }
 
+validator DateTimeRangeValidator validateDateTime
+{
+	min 1900-01-01T03:00:00+02:00
+	message "the string is too short or too long!"
+}
+
+validator TimeRangeValidator validateTime
+{
+	min 03:00:00+02:00
+	message "the string is too short or too long!"
+}
+
+
 contentProvider Complaint complaintProvider {
 	providerType default
 	readonly false

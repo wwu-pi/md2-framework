@@ -119,9 +119,9 @@ class Complete_Model_Test {
 	// Tests, if the number of attributes in entity copy and book are correct
 	@Test
 	def NumberOfAttributesTest() {
-		4.assertEquals(copy.attributes.size)
+		6.assertEquals(copy.attributes.size)
 		4.assertEquals(book.attributes.size)
-		3.assertEquals(person.attributes.size)
+		4.assertEquals(person.attributes.size)
 		// Lets check the check
 		0.assertNotEquals(copy.attributes.size)
 	}

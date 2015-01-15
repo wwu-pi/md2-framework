@@ -14,10 +14,11 @@ contentProvider Complaint localComplaintProvider {
 WorkflowElement LocationDetection{
 	defaultProcessChain LocationProcessChain
 	onInit {
-		action CustomAction init{
-				bind action FireEvent(LocationEvent) on LocationVerifyView.Next2.onClick
-			}
-		}	
+		init
+	}	
+	action CustomAction init{
+		bind action FireEvent(LocationEvent) on LocationVerifyView.Next2.onClick
+	}	
 	action CustomAction next {
 		bind action FireEvent(LocationEvent) on LocationVerifyView.Next2.onClick
 	}
