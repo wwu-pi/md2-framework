@@ -6,7 +6,7 @@ class DotClasspath {
 		<?xml version="1.0" encoding="UTF-8"?>
 		<classpath>
 			<classpathentry kind="src" path="src"/>
-			<classpathentry kind="con" path="org.eclipse.jst.server.core.container/com.sun.enterprise.jst.server.runtimeTarget/GlassFish 3.1.2">
+			<classpathentry kind="con" path="oracle.eclipse.tools.glassfish.lib.system">
 				<attributes>
 					<attribute name="owner.project.facets" value="jst.web"/>
 				</attributes>
@@ -14,7 +14,7 @@ class DotClasspath {
 			<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 			<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 			<classpathentry kind="con" path="org.eclipse.datatools.connectivity.jdt.DRIVERLIBRARY/GlassFishSampleDB"/>
-			<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
+			<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 				<attributes>
 					<attribute name="owner.project.facets" value="java"/>
 				</attributes>
