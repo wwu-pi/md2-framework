@@ -28,6 +28,7 @@ class ModelValidator extends AbstractMD2JavaValidator {
     
     public static final String DEFAULTREFERENCEVALUE = "defaultReferenceValue"
     public static final String ENTITYENUMUPPERCASE = "entityEnumUppercase"
+    public static final String ENTITYWITHOUTUNDERSCORE = "entityWithoutUnderscore"
     public static final String ATTRIBUTELOWERCASE = "attributeLowercase"
     public static final String REPEATEDPARAMS = "repeatedParams"
     public static final String UNSUPPORTEDPARAMTYPE = "unsupportedParamType"
@@ -64,6 +65,16 @@ class ModelValidator extends AbstractMD2JavaValidator {
             warning("Entity and Enum identifiers should start with an upper case letter", MD2Package.eINSTANCE.modelElement_Name, -1, ENTITYENUMUPPERCASE);
         }
     }
+    
+    /**
+     * Prevent from using an underscore "_" in the beginning of an entity name
+     */
+     @Check
+     def checkEntityDoesntStartWithUnderscore(ModelElement modelElement){
+     	if(modelElement.name.charAt(0).equals(new Character ('_'))){
+     		error("Entity and Enum identifiers shouldn't start with an underscore.",MD2Package.eINSTANCE.modelElement_Name,ENTITYWITHOUTUNDERSCORE);
+     	}
+     }
 	
 	/**
      * Enforce conventions:
