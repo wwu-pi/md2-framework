@@ -1,17 +1,17 @@
 package de.wwu.md2.framework.validation
 
+import com.google.common.collect.Sets
 import com.google.inject.Inject
 import de.wwu.md2.framework.mD2.AttrEnumDefault
-import de.wwu.md2.framework.mD2.Entity
-import de.wwu.md2.framework.mD2.ReferencedType
-import org.eclipse.xtext.validation.Check
-import org.eclipse.xtext.validation.EValidatorRegistrar
-import de.wwu.md2.framework.mD2.ModelElement
-import de.wwu.md2.framework.mD2.MD2Package
 import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.AttributeType
 import de.wwu.md2.framework.mD2.AttributeTypeParam
-import com.google.common.collect.Sets
+import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.MD2Package
+import de.wwu.md2.framework.mD2.ModelElement
+import de.wwu.md2.framework.mD2.ReferencedType
+import org.eclipse.xtext.validation.Check
+import org.eclipse.xtext.validation.EValidatorRegistrar
 
 /**
  * Validators for all model elements of MD2.
@@ -74,6 +74,22 @@ class ModelValidator extends AbstractMD2JavaValidator {
      	if(modelElement.name.charAt(0).equals(new Character ('_'))){
      		error("Entity and Enum identifiers shouldn't start with an underscore.",MD2Package.eINSTANCE.modelElement_Name,ENTITYWITHOUTUNDERSCORE);
      	}
+     }
+     
+     /**
+     * Prevent from using the following preset identifiers as entity / enum names:
+     * - WorkflowState
+     */
+     @Check
+     def checkEntityNameDoesntEqualPresetIdentifiers(ModelElement modelElement){
+     	// Add new preset identifiers to the List, if they should also be excluded within the entity / enum names
+     	var presetIdentifiers = newArrayList("WorkflowState")
+     	// for every preset identifier, check if used as entity / enum name --> then error
+		for (identifier : presetIdentifiers ){
+			if(modelElement.name == identifier){
+     			error(identifier+" shouldn't be used as an entity / enum name, since it is a preset identifier.", MD2Package.eINSTANCE.modelElement_Name);
+     		}
+		}
      }
 	
 	/**
