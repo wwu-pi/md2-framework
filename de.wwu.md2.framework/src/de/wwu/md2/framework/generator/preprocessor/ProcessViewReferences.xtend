@@ -38,6 +38,7 @@ import static de.wwu.md2.framework.generator.preprocessor.util.Util.*
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import de.wwu.md2.framework.mD2.WorkflowElement
+import de.wwu.md2.framework.mD2.ViewElement
 
 class ProcessViewReferences extends AbstractPreprocessor {
 	
@@ -116,14 +117,15 @@ class ProcessViewReferences extends AbstractPreprocessor {
 	 * </ul>
 	 */
 	def copyAllCustomCodeFragmentsToClonedGUIElements(
-		HashMap<ViewElementType, 
-		ViewElementType> clonedElements, 
-		HashMap<CustomCodeFragment, 
-		ViewElementType> clonedCodeFragments,
-		WorkflowElement wfe
-	) {
+		HashMap<ViewElementType, ViewElementType> clonedElements, 
+		HashMap<CustomCodeFragment, ViewElementType> clonedCodeFragments,
+		WorkflowElement wfe) {
 		
 		val codeFragments = wfe.eAllContents.toIterable.filter(CustomCodeFragment).toList
+		// get a list of all ViewElements that are referenced in the WorkflowElement
+		val viewElementsReferencedInWorkflow = wfe.eAllContents.filter(AbstractViewGUIElementRef).map[it.ref as ViewElement]
+		// get all view elements that belong to views referenced by the WorkflowElement
+		val workflowSpecificViewElements = viewElementsReferencedInWorkflow.map[it.eAllContents.toList].toList.flatten.toList
 		
 		for (codeFragment : codeFragments) {
 			// TODO: multiple switch-cases eventually reduce from three to six,
@@ -197,7 +199,7 @@ class ProcessViewReferences extends AbstractPreprocessor {
 				}
 				MappingTask: {
 					clonedElements.forEach[ cloned, original |
-						if (original == codeFragment.referencedViewField.resolveViewElement) {		
+						if (original == codeFragment.referencedViewField.resolveViewElement && workflowSpecificViewElements.contains(cloned)) {		
 							val newTask = copyElement(codeFragment)
 							val newAbstractRef = factory.createAbstractViewGUIElementRef()
 							newAbstractRef.ref = cloned
@@ -209,7 +211,7 @@ class ProcessViewReferences extends AbstractPreprocessor {
 				}
 				UnmappingTask: {
 					clonedElements.forEach[ cloned, original |
-						if (original == codeFragment.referencedViewField.resolveViewElement) {		
+						if (original == codeFragment.referencedViewField.resolveViewElement && workflowSpecificViewElements.contains(cloned)) {		
 							val newTask = copyElement(codeFragment)
 							val newAbstractRef = factory.createAbstractViewGUIElementRef()
 							newAbstractRef.ref = cloned
@@ -238,10 +240,8 @@ class ProcessViewReferences extends AbstractPreprocessor {
 	 *   </li>
 	 * </ul>
 	 */
-	def removeAllCustomCodeFragmentsThatReferenceUnusedGUIElements(
-		HashMap<CustomCodeFragment, ViewElementType> clonedCodeFragments, WorkflowElement wfe
-	) {
-		val gotoViewActions = wfe.eAllContents.toIterable.filter(GotoViewAction)
+	def removeAllCustomCodeFragmentsThatReferenceUnusedGUIElements(HashMap<CustomCodeFragment, ViewElementType> clonedCodeFragments) {
+		val gotoViewActions = controller.eAllContents.toIterable.filter(GotoViewAction)
 		
 		// get all containers that are used as views
 		val rootViews = gotoViewActions.map[ action | action.view.resolveViewElement].toSet
