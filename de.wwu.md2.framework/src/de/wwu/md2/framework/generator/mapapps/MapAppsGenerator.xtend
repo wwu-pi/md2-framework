@@ -7,7 +7,6 @@ import de.wwu.md2.framework.mD2.CustomAction
 
 import static de.wwu.md2.framework.generator.mapapps.AppClass.*
 import static de.wwu.md2.framework.generator.mapapps.ContentProviderClass.*
-import static de.wwu.md2.framework.generator.mapapps.ControllerClass.*
 import static de.wwu.md2.framework.generator.mapapps.CustomActionClass.*
 import static de.wwu.md2.framework.generator.mapapps.CustomActionsInterfaceClass.*
 import static de.wwu.md2.framework.generator.mapapps.EntityClass.*
@@ -68,7 +67,7 @@ class MapAppsGenerator extends AbstractPlatformGenerator {
 		
 		fsa.generateFile(bundleFolder + "/manifest.json", generateManifestJsonForWorkflowElement(workflowElement, dataContainer, app).tabsToSpaces(4))
 		
-		fsa.generateFile(bundleFolder + "/Controller.js", generateController(dataContainer).tabsToSpaces(4))
+		fsa.generateFileFromInputStream(getSystemResource("/mapapps/wfe/Controller.js"), bundleFolder + "/Controller.js")
 		
 		fsa.generateFile(bundleFolder + "/CustomActions.js", generateCustomActionsInterface(dataContainer, workflowElement).tabsToSpaces(4))
 		
