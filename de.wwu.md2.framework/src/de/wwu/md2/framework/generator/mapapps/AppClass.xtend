@@ -48,6 +48,9 @@ class AppClass {
             "md2_models",
             "md2_content_providers",
             
+            "md2_list_of_open_issues",
+            "md2_workflow_store",
+            
             «FOR elem : dataContainer.workflowElementsForApp(app) SEPARATOR ","»
                 "«elem.bundleName»"
             «ENDFOR»
@@ -60,6 +63,12 @@ class AppClass {
     
     // bundles section used to overwrite or add any property defined by components in the manifest.json of bundles
     "bundles": {
+        "md2_workflow_store": {
+            "MD2WorkflowStore": {
+                    "uri": "«dataContainer.main.defaultConnection.uri»workflowState/",
+                    "app": "«app.name»"
+            }
+        },
         "notifier": {
             "NotifierFactory": {
                 "fadeTime": 10000
