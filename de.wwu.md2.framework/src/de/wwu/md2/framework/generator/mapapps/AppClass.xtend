@@ -113,7 +113,8 @@ class AppClass {
                         },
                         "tools": [
                             "md2_wfe_*",
-                            "md2_app_*"
+                            "md2_app_*",
+                            "md2_list_of_open_issues"
                         ]
                     }
                 ]
