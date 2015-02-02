@@ -18,9 +18,9 @@ class EventHandlerClass {
         // TODO: get the right values here...
         '''
 		define([
-				"dojo/_base/declare", "ct/Hash"
+				"dojo/_base/declare", "ct/Hash", "ct/request"
 				],
-		function(declare, Hash) {
+		function(declare, Hash, ct_request) {
 
 			return declare([], {
 				constructor: function() {
