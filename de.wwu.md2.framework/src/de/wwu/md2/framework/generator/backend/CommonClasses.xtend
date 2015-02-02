@@ -42,7 +42,7 @@ class CommonClasses {
 				
 				HashMap<String, String[]> map = new HashMap<String, String[]>();
 				«FOR app: dataContainer.apps»
-				map.put("«app»", new String[]{«FOR wfe: dataContainer.workflowElementsForApp(app) SEPARATOR ","»"«wfe.name»"«ENDFOR»});
+				map.put("«app.name»", new String[]{«FOR wfe: dataContainer.workflowElementsForApp(app) SEPARATOR ","»"«wfe.name»"«ENDFOR»});
 				«ENDFOR»
 				return map;
 			}
