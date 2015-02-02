@@ -18,7 +18,7 @@ import static extension de.wwu.md2.framework.util.IterableExtensions.*
 class EnumAndEntityClass {
 	
 	def static dispatch createModel(String basePackageName, Entity entity) '''
-		package «basePackageName».models;
+		package «basePackageName».entities.models;
 		
 		import java.io.Serializable;
 		«IF entity.attributes.exists(a | isDateOrTimeType(a.type))»import java.util.Date;«ENDIF»
@@ -94,7 +94,7 @@ class EnumAndEntityClass {
 	'''
 	
 	def static dispatch createModel(String basePackageName, Enum _enum) '''
-		package «basePackageName».models;
+		package «basePackageName».entities.models;
 		
 		import javax.xml.bind.annotation.XmlEnumValue;
 		

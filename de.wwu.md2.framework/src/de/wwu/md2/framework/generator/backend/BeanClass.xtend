@@ -23,7 +23,7 @@ class BeanClass {
 		
 		import «basePackageName».Utils;
 		import «basePackageName».datatypes.InternalIdWrapper;
-		import «basePackageName».models.«entity.name.toFirstUpper»;
+		import «basePackageName».entities.models.«entity.name.toFirstUpper»;
 		
 		@Stateless
 		public class «entity.name.toFirstUpper»Bean {
@@ -95,13 +95,13 @@ class BeanClass {
 		
 		import «basePackageName».datatypes.ValidationResult;
 		«FOR entity : affectedEntities»
-			import «basePackageName».models.«entity.name.toFirstUpper»;
+			import «basePackageName».entities.models.«entity.name.toFirstUpper»;
 		«ENDFOR»
 		
 		/**
 		 * Implement backend logic for the remote validators here.
 		 * These bean methods should be accessed from the RemoteValidation web service.
-		 */
+		 */git
 		@Stateless
 		public class RemoteValidationBean {
 			

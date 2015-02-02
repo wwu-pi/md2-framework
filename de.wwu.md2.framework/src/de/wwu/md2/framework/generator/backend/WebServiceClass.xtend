@@ -34,7 +34,7 @@ class WebServiceClass {
 		import «basePackageName».Config;
 		import «basePackageName».beans.«entity.name.toFirstUpper»Bean;
 		import «basePackageName».datatypes.InternalIdWrapper;
-		import «basePackageName».models.«entity.name.toFirstUpper»;
+		import «basePackageName».entities.models.«entity.name.toFirstUpper»;
 		
 		@Path("/«entity.name.toFirstLower»")
 		@Stateless
@@ -199,7 +199,7 @@ class WebServiceClass {
 		import «basePackageName».beans.RemoteValidationBean;
 		import «basePackageName».datatypes.ValidationResult;
 		«FOR entity : affectedEntities»
-			import «basePackageName».models.«entity.name.toFirstUpper»;
+			import «basePackageName».entities.models.«entity.name.toFirstUpper»;
 		«ENDFOR»
 		
 		@Path("/md2_validator")

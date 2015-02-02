@@ -33,7 +33,7 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		// Generate models, web services and beans
 		dataContainer.model.modelElements.filter(typeof(ModelElement)). // remove auto-generated local entities starting with "__"
 			filter[!it.name.startsWith("__")].forEach[modelElement |
-			fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/models/"
+			fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/entities/models/"
 				+ modelElement.name.toFirstUpper + ".java", createModel(rootFolder, modelElement))
 			
 			val isUsedInRemoteContentProvider = dataContainer.contentProviders.exists[ c |
