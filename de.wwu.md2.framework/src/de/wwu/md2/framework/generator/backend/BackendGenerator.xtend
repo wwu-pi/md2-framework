@@ -78,6 +78,10 @@ class BackendGenerator extends AbstractPlatformGenerator {
 				createRemoteValidationBean(rootFolder, affectedEntities, dataContainer.remoteValidators))
 		}
 		
+		// Generate workflow managing files
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/beans/WorkflowStateBean.java", createWorkflowStateBean(rootFolder))
+		
+		
 		// Generate common backend files
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/Utils.java", createUtils(basePackageName))
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/Config.java", createConfig(basePackageName, dataContainer))
