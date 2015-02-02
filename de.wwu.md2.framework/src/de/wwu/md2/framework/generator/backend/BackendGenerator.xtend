@@ -80,7 +80,7 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		
 		// Generate workflow managing files
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/beans/WorkflowStateBean.java", createWorkflowStateBean(rootFolder))
-		
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/entities/WorkflowState.java", createWorkflowState(rootFolder))
 		
 		// Generate common backend files
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/Utils.java", createUtils(basePackageName))
