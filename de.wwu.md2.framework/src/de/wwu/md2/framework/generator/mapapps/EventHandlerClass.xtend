@@ -41,11 +41,11 @@ class EventHandlerClass {
 				handleEvent: function(event, workflowelement) {
 					if
 					«FOR wfe : dataContainer.workflowElementsForApp(app) SEPARATOR StringConcatenation::DEFAULT_LINE_DELIMITER + "else if"»
-					«FOR event : getEventsFromWorkflowElement(wfe) SEPARATOR StringConcatenation::DEFAULT_LINE_DELIMITER + "else if"»
+					«FOR event : dataContainer.getEventsFromWorkflowElement(wfe) SEPARATOR StringConcatenation::DEFAULT_LINE_DELIMITER + "else if"»
 					(event === "«event.name»" && workflowelement === "«wfe.name»")
 					{
-					«IF dataContainer.workflowElementsForApp(app).contains(getNextWorkflowElement(dataContainer, wfe, event))»
-					this.changeWorkflowElement("md2.wfe.«wfe.name».Controller", "md2.wfe.«getNextWorkflowElement(dataContainer, wfe, event).name».Controller", "md2_«getNextWorkflowElement(dataContainer, wfe, event).name»");
+					«IF dataContainer.workflowElementsForApp(app).contains(dataContainer.getNextWorkflowElement(wfe, event))»
+					this.changeWorkflowElement("md2.wfe.«wfe.name».Controller", "md2.wfe.«dataContainer.getNextWorkflowElement(wfe, event).name».Controller", "md2_«dataContainer.getNextWorkflowElement(wfe, event).name»");
 					«ELSE»
 					this.fireEventToBackend(event, workflowelement, "md2.wfe.«wfe.name».Controller");
 					«ENDIF»
@@ -91,36 +91,5 @@ class EventHandlerClass {
 			});
 		});
         '''
-    }
-
-    /**
-	 * Return all events declared in a workflowElement.
-	 */
-    def private static Iterable<WorkflowEvent> getEventsFromWorkflowElement(WorkflowElement wfe) {
-        var customActions = wfe.actions.filter(CustomAction).map[custAction|custAction.codeFragments].flatten.toSet
-
-        var actions = customActions.filter(EventBindingTask).map[tasks|tasks.actions].flatten.toSet
-
-        var fireEventActions = actions.filter(SimpleActionRef).map[ref|ref.action].filter(typeof(FireEventAction))
-
-        var events = fireEventActions.map[fea|fea.workflowEvent]
-
-        return events
-    }
-
-    /**
-	 * Return the workflowElement that is started by an event.
-	 */
-    def private static WorkflowElement getNextWorkflowElement(DataContainer dataContainer, WorkflowElement wfe,
-        WorkflowEvent e) {
-        var wfes = dataContainer.workflow.workflowElementEntries
-
-        for (WorkflowElementEntry entry : wfes) {
-            if (entry.workflowElement.equals(wfe)) {
-                var searchedEvent = entry.firedEvents.filter[fe|fe.event.name.equals(e.name)].head
-                return searchedEvent.startedWorkflowElement
-            }
-        }
-        return null;
     }
 }
