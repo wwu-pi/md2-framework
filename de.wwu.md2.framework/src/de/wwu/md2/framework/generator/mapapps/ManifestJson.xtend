@@ -148,6 +148,9 @@ class ManifestJson {
 			            "provides": ["md2.workflow.EventHandler"],
 			            "instanceFactory": true,
 			            "immediate": true,
+			            "properties":{
+							"uri": "«dataContainer.main.defaultConnection.uri»eventHandler/"
+						},
 			            "references": [
 			                {
 			                    "name": "controller",
