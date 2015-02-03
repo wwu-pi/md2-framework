@@ -402,7 +402,5 @@ class WebServiceClass {
 			}
 			
 		}
-	
-	
 	'''
 }

@@ -42,7 +42,7 @@ class CommonClasses {
 				
 				HashMap<String, String[]> map = new HashMap<String, String[]>();
 				«FOR app: dataContainer.apps»
-				map.put("«app.name»", new String[]{«FOR wfe: dataContainer.workflowElementsForApp(app) SEPARATOR ","»"«wfe.name»"«ENDFOR»});
+				    map.put("«app.name»", new String[]{«FOR wfe: dataContainer.workflowElementsForApp(app) SEPARATOR ","»"«wfe.name»"«ENDFOR»});
 				«ENDFOR»
 				return map;
 			}
@@ -61,7 +61,7 @@ class CommonClasses {
 				// Coming from «wfe.name»
 				innerMap = new HashMap<String, String>();
 				«FOR event : dataContainer.getEventsFromWorkflowElement(wfe)»
-				innerMap.put("«event.name»", "«dataContainer.getNextWorkflowElement(wfe, event).name»");
+				    innerMap.put("«event.name»", "«dataContainer.getNextWorkflowElement(wfe, event).name»");
 				«ENDFOR»
 				map.put("«wfe.name»", innerMap);
 				
