@@ -377,30 +377,6 @@ class WebServiceClass {
 				}
 			}
 			
-			@DELETE
-			public Response delete(@QueryParam("id") List<Integer> ids) {
-				if (workflowStateBean.deleteWorkflowStates(ids)) {
-					return Response
-						.noContent()
-						.header("MD2-Model-Version", Config.MODEL_VERSION)
-						.build();
-				} else {
-					return Response
-						.status(409)
-						.header("MD2-Model-Version", Config.MODEL_VERSION)
-						.build();
-				}
-			}
-			
-			/**
-			 * Workaround for ESRI proxy that forwards DELETE requests as GET requests!
-			 */
-			@GET
-			@Path("delete")
-			public Response deleteWithGet(@QueryParam("id") List<Integer> ids) {
-				return delete(ids);
-			}
-			
 		}
 	'''
 }
