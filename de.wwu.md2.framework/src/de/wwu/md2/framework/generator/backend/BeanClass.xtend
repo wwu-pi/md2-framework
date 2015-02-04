@@ -156,8 +156,6 @@ class BeanClass {
 			
 			@PersistenceContext(unitName = "«basePackageName»")
 		    EntityManager em;
-			@EJB
-			ComplaintBean complaintBean;
 			
 			/*
 			 * Default logic to get and set Complaint entities
