@@ -3,6 +3,7 @@ package de.wwu.md2.framework.generator.mapapps
 import de.wwu.md2.framework.generator.util.DataContainer
 
 import static extension de.wwu.md2.framework.generator.mapapps.util.MD2MapappsUtil.*
+import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import de.wwu.md2.framework.mD2.App
 
 class AppClass {
@@ -65,7 +66,7 @@ class AppClass {
     "bundles": {
         "md2_workflow_store": {
             "MD2WorkflowStore": {
-                    "uri": "«dataContainer.main.defaultConnection.uri»workflowState/",
+                    "uri": "«dataContainer.workflowStateWSUri»",
                     "app": "«app.name»"
             }
         },

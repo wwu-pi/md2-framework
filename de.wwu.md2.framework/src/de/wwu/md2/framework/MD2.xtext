@@ -1078,6 +1078,7 @@ Main:
 		(
 			('appVersion' appVersion = STRING) &
 			('modelVersion' modelVersion = STRING) &
+			('workflowManager' workflowManager = [RemoteConnection]) &
 			('defaultConnection' defaultConnection = [RemoteConnection])?
 		)
 	'}'

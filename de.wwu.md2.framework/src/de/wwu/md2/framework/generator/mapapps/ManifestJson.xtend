@@ -149,7 +149,7 @@ class ManifestJson {
 			            "instanceFactory": true,
 			            "immediate": true,
 			            "properties":{
-							"uri": "«dataContainer.main.defaultConnection.uri»eventHandler/"
+							"uri": "«dataContainer.eventHandlerWSUri»"
 						},
 			            "references": [
 			                {
