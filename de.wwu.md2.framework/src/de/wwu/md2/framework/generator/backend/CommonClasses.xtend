@@ -7,6 +7,7 @@ class CommonClasses {
 	def static createConfig(String basePackageName, DataContainer dataContainer) '''
 		package «basePackageName»;
 		
+		import java.util.HashMap;
 		import java.util.List;
 		
 		import com.google.common.collect.Lists;
@@ -28,6 +29,45 @@ class CommonClasses {
 			 */
 			public final static List<String> SUPPORTED_MODEL_VERSIONS = Lists.newArrayList("«dataContainer.main.modelVersion»");
 			
+			public final static HashMap<String, String[]> APP_WORKFLOWELEMENT_RELATIONSHIP = setAppWorkflowElementRelationship();
+
+			public final static HashMap<String, HashMap<String, String>> WORKFLOWELEMENT_EVENT_SUCCESSION = setAppWorkflowElementSuccession();
+			
+			/**
+			 * provides a hashmap for filtering workflowelements by apps
+			 * setAppWorkflowElementRelationship : (App) --> (Wfe)*
+			 * @return
+			 */
+			private static HashMap<String,String[]> setAppWorkflowElementRelationship(){
+				
+				HashMap<String, String[]> map = new HashMap<String, String[]>();
+				«FOR app: dataContainer.apps»
+				    map.put("«app.name»", new String[]{«FOR wfe: dataContainer.workflowElementsForApp(app) SEPARATOR ","»"«wfe.name»"«ENDFOR»});
+				«ENDFOR»
+				return map;
+			}
+		
+			
+			/**
+			 * Given an event-throwing app and a thrown event, this map knows what workflow element has to follow
+			 * setAppWorkflowElementSuccession : (Wfe x Event) --> Wfe
+			 * @return
+			 */
+			private static HashMap<String, HashMap<String, String>> setAppWorkflowElementSuccession() {
+				HashMap<String, HashMap<String, String>> map = new HashMap<String, HashMap<String, String>>();
+				HashMap<String, String> innerMap;
+				
+				«FOR wfe : dataContainer.workflowElements»
+				// Coming from «wfe.name»
+				innerMap = new HashMap<String, String>();
+				«FOR event : dataContainer.getEventsFromWorkflowElement(wfe)»
+				    innerMap.put("«event.name»", "«dataContainer.getNextWorkflowElement(wfe, event).name»");
+				«ENDFOR»
+				map.put("«wfe.name»", innerMap);
+				
+				«ENDFOR»
+				return map;
+			}
 		}
 	'''
 	

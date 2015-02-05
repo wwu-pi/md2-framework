@@ -38,6 +38,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameProvider
+import de.wwu.md2.framework.mD2.Main
 
 class MD2GeneratorUtil {
 	
@@ -288,4 +289,27 @@ class MD2GeneratorUtil {
 		if (param != null) (param as TabTitleParam).tabTitle else container.name.toFirstUpper
 	}
 
+	/**
+	 * Build and return the uri for the workflowStateWS
+	 */
+	def static getWorkflowStateWSUri(DataContainer container){
+		var uri = container.main.workflowManager.uri
+		if (!uri.endsWith("/")){
+			uri = uri + "/"	
+			}
+		uri = uri + "workflowState/"	
+		return uri
+	}
+	
+		/**
+	 * Build and return the uri for the workflowStateWS
+	 */
+	def static getEventHandlerWSUri(DataContainer container){
+		var uri = container.main.workflowManager.uri
+		if (!uri.endsWith("/")){
+			uri = uri + "/"	
+			}
+		uri = uri + "eventHandler/"	
+		return uri
+	}
 }

@@ -24,6 +24,10 @@ import java.util.Map
 import de.wwu.md2.framework.mD2.EventBindingTask
 import de.wwu.md2.framework.mD2.SimpleActionRef
 import de.wwu.md2.framework.mD2.FireEventAction
+import de.wwu.md2.framework.mD2.WorkflowEvent
+import de.wwu.md2.framework.mD2.WorkflowElementEntry
+import de.wwu.md2.framework.mD2.ActionReference
+import de.wwu.md2.framework.mD2.CallTask
 
 /**
  * DataContainer to store data that are used throughout the generation process.
@@ -218,21 +222,6 @@ class DataContainer {
 		apps = workflow.apps.toSet
 	}
 	
-	
-	def public getEventsFromWorkflowElement(WorkflowElement wfe) {
-	    
-		var customActions = wfe.actions.filter(CustomAction).map[custAction | custAction.codeFragments].flatten.toSet
-		
-		var actions = customActions.filter(EventBindingTask).map[tasks | tasks.actions].flatten.toSet
-
-		var fireEventActions = actions.filter(SimpleActionRef).map[ref|ref.action].filter(typeof(FireEventAction))
-	
-		var events = fireEventActions.map[fea | fea.workflowEvent]
-		
-		return events
-	}
-	
-	
 	/**
 	 * Returns all workflows associated with the current app.
 	 */
@@ -240,4 +229,30 @@ class DataContainer {
 	    val wfes = app.workflowElements.map[it.workflowElementReference].toSet
 	    return wfes
 	}
+	
+	/**
+	 * Return all events declared in a workflowElement.
+	 */
+    def public Iterable<WorkflowEvent> getEventsFromWorkflowElement(WorkflowElement wfe) {
+       
+       var wfeEntry = workflow.workflowElementEntries.filter[it.workflowElement.equals(wfe)].head
+       
+       return wfeEntry.firedEvents.map[it.event]
+    }
+
+    
+    /**
+	 * Return the workflowElement that is started by an event.
+	 */
+    def public WorkflowElement getNextWorkflowElement(WorkflowElement wfe, WorkflowEvent e) {
+        var wfes = workflow.workflowElementEntries
+
+        for (WorkflowElementEntry entry : wfes) {
+            if (entry.workflowElement.equals(wfe)) {
+                var searchedEvent = entry.firedEvents.filter[fe|fe.event.name.equals(e.name)].head
+                return searchedEvent.startedWorkflowElement
+            }
+        }
+        return null;
+    }
 }

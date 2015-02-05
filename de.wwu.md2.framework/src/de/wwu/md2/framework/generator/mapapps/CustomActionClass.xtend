@@ -326,7 +326,7 @@ class CustomActionClass {
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	def private static dispatch generateContentProviderCodeFragment(ContentProvider contentProvider, String varName) '''
-		var «varName» = this.$.contentProviderRegistry.getContentProvider("«contentProvider.name»");
+		var «varName» = this.$.contentProviderRegistry.getContentProvider("«contentProvider.name.toFirstLower»");
 	'''
 	
 	def private static dispatch generateContentProviderCodeFragment(AbstractProviderReference contentProvider, String varName) '''

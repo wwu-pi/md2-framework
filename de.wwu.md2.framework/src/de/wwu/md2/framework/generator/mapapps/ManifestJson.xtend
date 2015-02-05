@@ -148,6 +148,9 @@ class ManifestJson {
 			            "provides": ["md2.workflow.EventHandler"],
 			            "instanceFactory": true,
 			            "immediate": true,
+			            "properties":{
+							"uri": "«dataContainer.eventHandlerWSUri»"
+						},
 			            "references": [
 			                {
 			                    "name": "controller",
@@ -328,7 +331,7 @@ class ManifestJson {
 					"toolRole": "toolset",
 					"iconClass": "icon-view-grid",
 					"togglable": true,
-					"activateHandler": "openWindow",
+					"activateHandler": "startWorkflow",
 					"deactivateHandler": "closeWindow"
 				},
 				"references": [

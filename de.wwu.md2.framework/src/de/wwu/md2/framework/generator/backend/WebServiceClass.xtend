@@ -34,7 +34,7 @@ class WebServiceClass {
 		import «basePackageName».Config;
 		import «basePackageName».beans.«entity.name.toFirstUpper»Bean;
 		import «basePackageName».datatypes.InternalIdWrapper;
-		import «basePackageName».models.«entity.name.toFirstUpper»;
+		import «basePackageName».entities.models.«entity.name.toFirstUpper»;
 		
 		@Path("/«entity.name.toFirstLower»")
 		@Stateless
@@ -199,7 +199,7 @@ class WebServiceClass {
 		import «basePackageName».beans.RemoteValidationBean;
 		import «basePackageName».datatypes.ValidationResult;
 		«FOR entity : affectedEntities»
-			import «basePackageName».models.«entity.name.toFirstUpper»;
+			import «basePackageName».entities.models.«entity.name.toFirstUpper»;
 		«ENDFOR»
 		
 		@Path("/md2_validator")
@@ -246,6 +246,136 @@ class WebServiceClass {
 					
 				«ENDIF»
 			«ENDFOR»
+		}
+	'''
+	
+	def public static createEventHandlerWS(String basePackage) '''
+		package «basePackage».ws;
+		
+		import javax.ejb.EJB;
+		import javax.ejb.Stateless;
+		import javax.ws.rs.FormParam;
+		import javax.ws.rs.POST;
+		import javax.ws.rs.Path;
+		import javax.ws.rs.Produces;
+		import javax.ws.rs.core.MediaType;
+		import javax.ws.rs.core.Response;
+		
+		import «basePackage».Config;
+		import «basePackage».beans.WorkflowStateBean;
+		
+		@Path("/eventHandler")
+		@Stateless
+		public class EventHandlerWS {
+			
+			@EJB
+			WorkflowStateBean workflowStateBean;
+			
+		
+			
+			/**
+			 * Receives workflowInstanceId, lastEventFired and the current workflowElement and starts their persistence.
+			 */
+			
+			@POST
+			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+			public Response createOrUpdate(@FormParam("instanceId") String id, @FormParam("lastEventFired") String event,
+					@FormParam("currentWfe") String wfe) {
+		
+				workflowStateBean.createOrUpdateWorkflowState(event, id, wfe);
+						
+				return Response
+						.ok()
+						.header("MD2-Model-Version", Config.MODEL_VERSION)
+						.build();
+			}
+		}
+	'''
+	
+	def public static createWorkflowStateWS(String basePackage) '''
+		package «basePackage».ws;
+		
+		import java.util.ArrayList;
+		import java.util.List;
+		
+		import javax.ejb.EJB;
+		import javax.ejb.Stateless;
+		import javax.ws.rs.GET;
+		import javax.ws.rs.Path;
+		import javax.ws.rs.PathParam;
+		import javax.ws.rs.Produces;
+		import javax.ws.rs.QueryParam;
+		import javax.ws.rs.core.GenericEntity;
+		import javax.ws.rs.core.MediaType;
+		import javax.ws.rs.core.Response;
+		
+		import «basePackage».Config;
+		import «basePackage».beans.WorkflowStateBean;
+		import «basePackage».entities.WorkflowState;
+		
+		@Path("/workflowState")
+		@Stateless
+		public class WorkflowStateWS {
+			
+			@EJB
+			WorkflowStateBean workflowStateBean;
+			
+			/**
+			 * 
+			 * @return all open issues
+			 */
+			@GET
+			@Path("all")
+			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+			public Response getAllOpenIssues() {
+				
+				final List<WorkflowState> workflowStates =
+						new ArrayList<WorkflowState>(workflowStateBean.getAllWorkflowStates(""));
+					
+						
+				return Response
+						.ok()
+						.entity(workflowStates)
+						.header("MD2-Model-Version", Config.MODEL_VERSION)
+						.build();
+			}
+			
+			@GET
+			@Path("filteredOpenIssues")
+			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+			public Response getFilteredOpenIssues(@QueryParam("app") String app) {
+				
+				final List<WorkflowState> workflowStates =
+						new ArrayList<WorkflowState>(workflowStateBean.getAllWorkflowStates(app));
+					
+						
+				return Response
+						.ok()
+						.entity(workflowStates)
+						.header("MD2-Model-Version", Config.MODEL_VERSION)
+						.build();
+			}
+			
+			@GET
+			@Path("{id}")
+			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+			public Response get(@PathParam("id") String id) {
+				final WorkflowState workflowState = workflowStateBean.getWorkflowState(id);
+				
+				if (workflowState != null) {
+					return Response
+						.ok()
+						.entity(new GenericEntity<WorkflowState>(workflowState) {})
+						.header("MD2-Model-Version", Config.MODEL_VERSION)
+						.build();
+				} else {
+					return Response
+						.status(404)
+						.header("MD2-Model-Version", Config.MODEL_VERSION)
+						.build();
+				}
+			}
+			
 		}
 	'''
 }

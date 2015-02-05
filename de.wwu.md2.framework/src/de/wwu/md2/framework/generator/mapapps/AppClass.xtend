@@ -3,6 +3,7 @@ package de.wwu.md2.framework.generator.mapapps
 import de.wwu.md2.framework.generator.util.DataContainer
 
 import static extension de.wwu.md2.framework.generator.mapapps.util.MD2MapappsUtil.*
+import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import de.wwu.md2.framework.mD2.App
 
 class AppClass {
@@ -48,6 +49,9 @@ class AppClass {
             "md2_models",
             "md2_content_providers",
             
+            "md2_list_of_open_issues",
+            "md2_workflow_store",
+            
             «FOR elem : dataContainer.workflowElementsForApp(app) SEPARATOR ","»
                 "«elem.bundleName»"
             «ENDFOR»
@@ -60,6 +64,12 @@ class AppClass {
     
     // bundles section used to overwrite or add any property defined by components in the manifest.json of bundles
     "bundles": {
+        "md2_workflow_store": {
+            "MD2WorkflowStore": {
+                    "uri": "«dataContainer.workflowStateWSUri»",
+                    "app": "«app.name»"
+            }
+        },
         "notifier": {
             "NotifierFactory": {
                 "fadeTime": 10000
@@ -104,7 +114,8 @@ class AppClass {
                         },
                         "tools": [
                             "md2_wfe_*",
-                            "md2_app_*"
+                            "md2_app_*",
+                            "md2_list_of_open_issues"
                         ]
                     }
                 ]

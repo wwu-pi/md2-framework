@@ -33,7 +33,7 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		// Generate models, web services and beans
 		dataContainer.model.modelElements.filter(typeof(ModelElement)). // remove auto-generated local entities starting with "__"
 			filter[!it.name.startsWith("__")].forEach[modelElement |
-			fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/models/"
+			fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/entities/models/"
 				+ modelElement.name.toFirstUpper + ".java", createModel(rootFolder, modelElement))
 			
 			val isUsedInRemoteContentProvider = dataContainer.contentProviders.exists[ c |
@@ -77,6 +77,12 @@ class BackendGenerator extends AbstractPlatformGenerator {
 			fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/beans/RemoteValidationBean.java",
 				createRemoteValidationBean(rootFolder, affectedEntities, dataContainer.remoteValidators))
 		}
+		
+		// Generate workflow managing files
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/beans/WorkflowStateBean.java", createWorkflowStateBean(rootFolder))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/entities/WorkflowState.java", createWorkflowState(rootFolder))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/WorkflowStateWS.java", createWorkflowStateWS(rootFolder))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/EventHandlerWS.java", createEventHandlerWS(rootFolder))
 		
 		// Generate common backend files
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/Utils.java", createUtils(basePackageName))
