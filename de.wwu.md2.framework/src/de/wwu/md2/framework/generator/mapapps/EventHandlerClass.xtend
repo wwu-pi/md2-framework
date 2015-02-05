@@ -34,6 +34,7 @@ class EventHandlerClass {
 							removeController: this.removeController,
 							changeWorkflowElement: this.changeWorkflowElement,
 							fireEventToBackend: this.fireEventToBackend,
+							url: this._properties.uri,
 							instance: this
 						};
 					},
@@ -41,6 +42,9 @@ class EventHandlerClass {
 				handleEvent: function(event, workflowelement) {
 					if
 					«FOR wfe : dataContainer.workflowElementsForApp(app) SEPARATOR StringConcatenation::DEFAULT_LINE_DELIMITER + "else if"»
+					«IF dataContainer.getEventsFromWorkflowElement(wfe).size==0»
+					(false){}
+					«ENDIF»
 					«FOR event : dataContainer.getEventsFromWorkflowElement(wfe) SEPARATOR StringConcatenation::DEFAULT_LINE_DELIMITER + "else if"»
 					(event === "«event.name»" && workflowelement === "«wfe.name»")
 					{
