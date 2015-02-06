@@ -16,28 +16,11 @@ public class GetFiredEventsHelper {
 	def getFiredEvents(WorkflowElement wfe) {
 		
 		// get all code fragments of actions
-		val allFragments = wfe.actions.
-			filter(CustomAction).
-			map[ action |
-				action.codeFragments
-			].flatten
+		val actions = wfe.actions.
+			filter(CustomAction)
 		
-		
-		// get all actions
-		val bindingActions = allFragments.filter(EventBindingTask).map[ task | 
-			task.actions].flatten
-		val unbindingActions = allFragments.filter(EventUnbindTask).map[ task | 
-			task.actions].flatten
-		val callActions = allFragments.filter(CallTask).map[ task | 
-			task.action]
-			
-		// combine the three lists
-		val allActions = bindingActions + unbindingActions + callActions
-		
-		
-		// filter for fireEventActions
-		val fireEventActions = allActions.filter(SimpleActionRef).map[simpleAction |
-				simpleAction.action ].filter(FireEventAction)
+		// filter eAllContents for fireEventActions
+		val fireEventActions = actions.map[a|a.eAllContents.toIterable].flatten.filter(typeof(FireEventAction))
 			
 		// compute actually fired events
 		return fireEventActions.map[ event | event.workflowEvent ].toSet
