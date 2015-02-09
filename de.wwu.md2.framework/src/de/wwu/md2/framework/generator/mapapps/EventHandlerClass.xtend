@@ -51,7 +51,8 @@ class EventHandlerClass {
 					«IF dataContainer.workflowElementsForApp(app).contains(dataContainer.getNextWorkflowElement(wfe, event))»
 					this.changeWorkflowElement("md2.wfe.«wfe.name».Controller", "md2.wfe.«dataContainer.getNextWorkflowElement(wfe, event).name».Controller", "md2_«dataContainer.getNextWorkflowElement(wfe, event).name»");
 					«ELSE»
-					this.fireEventToBackend(event, workflowelement, "md2.wfe.«wfe.name».Controller");
+					var currentController = this.instance.controllers.get("md2.wfe.«wfe.name».Controller");
+					this.fireEventToBackend(event, workflowelement, currentController);
 					«ENDIF»
 					}
                     «ENDFOR»
