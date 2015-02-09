@@ -70,6 +70,11 @@ class AppClass {
                     "app": "«app.name»"
             }
         },
+        "md2_runtime": {
+            "WorkflowStateHandlerFactory": {
+                    "appId": "md2_«app.name»"
+            }
+        },
         "notifier": {
             "NotifierFactory": {
                 "fadeTime": 10000

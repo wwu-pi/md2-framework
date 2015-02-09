@@ -16,7 +16,6 @@ function(declare) {
 			app._dataFormBean = this._configBean;
 			app._customActions = this._customActions;
 			app._models = this._models;
-			app._contentProviders = this._contentProviders;
 			app._workflowEventHandler = this._workflowEventHandler;
 			app._workflowStateHandler = this._workflowStateHandler;
 			
