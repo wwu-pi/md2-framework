@@ -21,13 +21,15 @@ class Validator_Model_Test {
 	
 	@Inject extension ParseHelper<MD2Model>
 	@Inject extension ValidationTestHelper
-	MD2Model defaultReferenceValue;
-	MD2Model entityEnumUppercase;
-	MD2Model attributeLowercase;
-	MD2Model repeatedParameter;
-	MD2Model unsupportedFeatures;
+	MD2Model defaultReferenceValue
+	MD2Model entityEnumUppercase
+	MD2Model attributeLowercase
+	MD2Model repeatedParameter
+	MD2Model unsupportedFeatures
+	MD2Model underscoreWithinEntityName
+	MD2Model reservedNameWithinEntity
 	
-	ResourceSet rs;
+	ResourceSet rs
 	
 	@Before
 	def void setUp() {
@@ -37,6 +39,8 @@ class Validator_Model_Test {
 		attributeLowercase = MODEL_VALIDATOR_LOWERCASE_ATTRIBUTE.load.parse
 		repeatedParameter = MODEL_VALIDATOR_REPEATED_PARAMETERS.load.parse
 		unsupportedFeatures = MODEL_VALIDATOR_UNSUPPORTED_FEATURES.load.parse
+		underscoreWithinEntityName = MODEL_VALIDATOR_UNDERSCORE_ENTITY.load.parse
+		reservedNameWithinEntity = MODEL_VALIDATOR_RESERVEDNAME_ENTITY.load.parse
 	}
 	
 	/**
@@ -79,4 +83,20 @@ class Validator_Model_Test {
 	def checkAttributeTypeParam() {
 	    unsupportedFeatures.assertWarning(MD2Package::eINSTANCE.attributeTypeParam, ModelValidator::UNSUPPORTEDPARAMTYPE)
 	}
+	
+	/**
+	 * Checks whether the error for underscores at the beginning of entities is thrown.
+	 */
+	 @Test
+	 def checkUnderscoreEntityNameValidator(){
+	 	underscoreWithinEntityName.assertError(MD2Package::eINSTANCE.modelElement, ModelValidator::ENTITYWITHOUTUNDERSCORE)
+	 }
+	 
+	 /**
+	 * Checks whether the error for preset Names as entities is thrown.
+	 */
+	 @Test
+	 def checkPresetIdentifiersAsEntityNameValidator(){
+	 	reservedNameWithinEntity.assertError(MD2Package::eINSTANCE.modelElement, ModelValidator::ENTITYWITHRESERVEDNAME)
+	 }
 }

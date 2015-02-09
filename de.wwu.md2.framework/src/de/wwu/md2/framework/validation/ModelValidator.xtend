@@ -29,6 +29,7 @@ class ModelValidator extends AbstractMD2JavaValidator {
     public static final String DEFAULTREFERENCEVALUE = "defaultReferenceValue"
     public static final String ENTITYENUMUPPERCASE = "entityEnumUppercase"
     public static final String ENTITYWITHOUTUNDERSCORE = "entityWithoutUnderscore"
+    public static final String ENTITYWITHRESERVEDNAME = "entityWithReservedName"
     public static final String ATTRIBUTELOWERCASE = "attributeLowercase"
     public static final String REPEATEDPARAMS = "repeatedParams"
     public static final String UNSUPPORTEDPARAMTYPE = "unsupportedParamType"
@@ -87,7 +88,7 @@ class ModelValidator extends AbstractMD2JavaValidator {
      	// for every preset identifier, check if used as entity / enum name --> then error
 		for (identifier : presetIdentifiers ){
 			if(modelElement.name == identifier){
-     			error(identifier+" shouldn't be used as an entity / enum name, since it is a preset identifier.", MD2Package.eINSTANCE.modelElement_Name);
+     			error(identifier+" shouldn't be used as an entity / enum name, since it is a preset identifier.", MD2Package.eINSTANCE.modelElement_Name, ENTITYWITHRESERVEDNAME);
      		}
 		}
      }

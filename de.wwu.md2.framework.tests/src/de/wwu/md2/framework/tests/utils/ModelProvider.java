@@ -75,6 +75,9 @@ public class ModelProvider {
 	public static final String MODEL_VALIDATOR_REPEATED_PARAMETERS = "dsl/model/validator/RepeatedParameters.md2";
 	public static final String MODEL_VALIDATOR_UNSUPPORTED_FEATURES = "dsl/model/validator/UnsupportedFeatures.md2";
 	public static final String MODEL_VALIDATOR_UPPERCASE_ENTITY = "dsl/model/validator/UppercaseEntity.md2";
+	
+	public static final String MODEL_VALIDATOR_UNDERSCORE_ENTITY = "dsl/model/validator/ENameUnderscoreValidatorModel.md2";
+	public static final String MODEL_VALIDATOR_RESERVEDNAME_ENTITY = "dsl/model/validator/ENameReservedNameValidatorModel.md2";
 
 	/** views **/
 	public static final String CONTENT_CONTAINER_FLOW_LAYOUT_V = "dsl/view/viewGuiElement/containerElement/contentContainer/flowLayoutPane.md2";
