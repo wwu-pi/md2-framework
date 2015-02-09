@@ -3,6 +3,7 @@
 	<name>de.wwu.md2.framework.ios</name>
 	<comment></comment>
 	<projects>
+		<project>de.wwu.md2.framework</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
