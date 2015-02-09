@@ -5,7 +5,7 @@ Bundle-Vendor: WWU
 Bundle-Version: 0.2.0
 Bundle-SymbolicName: de.wwu.md2.framework; singleton:=true
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.eclipse.xtext;bundle-version="2.4.3";visibility:=reexport,
+Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0";visibility:=reexport,
  org.apache.log4j;bundle-version="1.2.15";visibility:=reexport,
  org.apache.commons.logging;bundle-version="1.0.4";resolution:=optional;visibility:=reexport,
  org.eclipse.xtext.generator;resolution:=optional,

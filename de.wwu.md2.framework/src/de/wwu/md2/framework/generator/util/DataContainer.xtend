@@ -16,6 +16,7 @@ import java.util.Collection
 import java.util.Set
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
+import org.eclipse.xtend.lib.annotations.Accessors
 
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*import de.wwu.md2.framework.mD2.Workflow
 import de.wwu.md2.framework.mD2.App
@@ -42,37 +43,37 @@ class DataContainer {
 	// Data Container
 	///////////////////////////////////////
 	
-	@Property
-	private View view
+	@Accessors
+	public View view
 	
-	@Property
-	private Controller controller
+	@Accessors
+	public Controller controller
 	
-	@Property
-	private Model model
+	@Accessors
+	public Model model
 	
-	@Property
-	private Workflow workflow
+	@Accessors
+	public Workflow workflow
 	
 	
 	///////////////////////////////////////
 	// Controller Elements
 	///////////////////////////////////////
 	
-	@Property
-	private Main main
+	@Accessors
+	public Main main
 	
-	@Property
-	private Collection<ContentProvider> contentProviders
+	@Accessors
+	public Collection<ContentProvider> contentProviders
 	
-	@Property
-	private Collection<CustomAction> customActions
+	@Accessors
+	public Collection<CustomAction> customActions
 	
-	@Property
-	private Collection<RemoteValidator> remoteValidators
+	@Accessors
+	public Collection<RemoteValidator> remoteValidators
 	
-	@Property
-	private Collection<WorkflowElement> workflowElements
+	@Accessors
+	public Collection<WorkflowElement> workflowElements
 	
 	
 	///////////////////////////////////////
@@ -86,27 +87,27 @@ class DataContainer {
 	 * have any TabbedAlternativesPane or AlternativesPane as a child element that contain
 	 * any view containers that are accessed by a GotoViewAction.
 	 */
-	@Property
-	private Map<WorkflowElement, Set<ContainerElement>> rootViewContainers
+	@Accessors
+	public Map<WorkflowElement, Set<ContainerElement>> rootViewContainers
 	
 	
 	///////////////////////////////////////
 	// Model Elements
 	///////////////////////////////////////
 	
-	@Property
-	private Collection<Entity> entities
+	@Accessors
+	public Collection<Entity> entities
 	
-	@Property
-	private Collection<Enum> enums
+	@Accessors
+	public Collection<Enum> enums
 	
 	
 	///////////////////////////////////////
 	// Workflow Elements
 	///////////////////////////////////////
 	
-	@Property
-	private Collection<App> apps
+	@Accessors
+	public Collection<App> apps
 	
 	
 	/**
