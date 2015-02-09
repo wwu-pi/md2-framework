@@ -18,9 +18,9 @@ class EventHandlerClass {
         // TODO: get the right values here...
         '''
 		define([
-				"dojo/_base/declare", "ct/Hash", "ct/request"
+				"dojo/_base/declare", "ct/Hash"
 				],
-		function(declare, Hash, ct_request) {
+		function(declare, Hash) {
 
 			return declare([], {
 				constructor: function() {
@@ -29,15 +29,14 @@ class EventHandlerClass {
 				createInstance: function() {  
 					return {
 						handleEvent: this.handleEvent,
-							$: null, // injected by MD2MainWidget
-							addController: this.addController,
-							removeController: this.removeController,
-							changeWorkflowElement: this.changeWorkflowElement,
-							fireEventToBackend: this.fireEventToBackend,
-							url: this._properties.uri,
-							instance: this
-						};
-					},
+		           		workflowStateHandler: null,
+						addController: this.addController,
+						removeController: this.removeController,
+						changeWorkflowElement: this.changeWorkflowElement,
+						fireEventToBackend: this.fireEventToBackend,
+						instance: this
+					};
+				},
 
 				handleEvent: function(event, workflowelement) {
 					if
@@ -52,7 +51,7 @@ class EventHandlerClass {
 					this.changeWorkflowElement("md2.wfe.«wfe.name».Controller", "md2.wfe.«dataContainer.getNextWorkflowElement(wfe, event).name».Controller", "md2_«dataContainer.getNextWorkflowElement(wfe, event).name»");
 					«ELSE»
 					var currentController = this.instance.controllers.get("md2.wfe.«wfe.name».Controller");
-					this.fireEventToBackend(event, workflowelement, currentController);
+					this.workflowStateHandler.fireEventToBackend(event, workflowelement, currentController, currentController.getTransactionId());
 					«ENDIF»
 					}
                     «ENDFOR»
