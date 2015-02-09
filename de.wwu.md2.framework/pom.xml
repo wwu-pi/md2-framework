@@ -4,15 +4,6 @@
 	<artifactId>de.wwu.md2.framework</artifactId>
 	<packaging>eclipse-plugin</packaging>
 	<build>
-		<resources>
-			<resource>
-				<directory>src</directory>
-				<excludes>
-					<exclude>./de/wwu/md2/framework/generator/android</exclude>
-					<exclude>./de/wwu/md2/framework/generator/ios</exclude>
-				</excludes>
-			</resource>
-		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -87,16 +78,4 @@
 		<!-- <dependency> <groupId>${project.groupId}</groupId> <artifactId>org.xtext.builddsl.lib</artifactId> 
 			<version>${project.version}</version> </dependency> -->
 	</dependencies>
-	<repositories>
-		<repository>
-			<id>eclipse-xtext</id>
-			<layout>p2</layout>
-			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</url>
-		</repository>
-		<repository>
-			<id>eclipse-kepler</id>
-			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/kepler</url>
-		</repository>
-	</repositories>
 </project>
