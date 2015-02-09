@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>de.wwu.md2.framework.tests</artifactId>
+	<packaging>eclipse-test-plugin</packaging>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.xtend</groupId>
+				<artifactId>xtend-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-surefire-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<useUIHarness>true</useUIHarness>
+					<argLine>${memory-settings} ${os-jvm-flags}</argLine>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<properties>
+		<os-jvm-flags />
+		<memory-settings>-Xmx1G -XX:MaxPermSize=256m</memory-settings>
+	</properties>
+	<profiles>
+		<profile>
+			<id>macosx-jvm-flags</id>
+			<activation>
+				<os>
+					<family>mac</family>
+				</os>
+			</activation>
+			<properties>
+				<os-jvm-flags>-XstartOnFirstThread</os-jvm-flags>
+			</properties>
+		</profile>
+	</profiles>
+	<parent>
+		<groupId>de.wwu.md2.framework</groupId>
+		<artifactId>de.wwu.md2.framework.parent</artifactId>
+		<version>0.2.0</version>
+		<relativePath>../de.wwu.md2.framework.parent</relativePath>
+	</parent>
+</project>

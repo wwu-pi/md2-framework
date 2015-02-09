@@ -4,9 +4,10 @@ import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
 
-var grammarURI = "classpath:/de/wwu/md2/framework/MD2.xtext"
-var file.extensions = "md2"
 var projectName = "de.wwu.md2.framework"
+//var grammarURI = "classpath:/de/wwu/md2/framework/MD2.xtext"
+var grammarURI = "platform:/resource/${projectName}/src/de/wwu/md2/framework/MD2.xtext"
+var file.extensions = "md2"
 var runtimeProject = "../${projectName}"
 
 Workflow {
