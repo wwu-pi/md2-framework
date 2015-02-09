@@ -39,7 +39,7 @@ class ContentProviderClass {
 		 */
 		return declare([], {
 			
-			create: function(typeFactory, $) {
+			create: function(typeFactory, transactionId) {
 				
 				«IF contentProvider.local»
 					«generateLocalBody(contentProvider)»
@@ -72,7 +72,7 @@ class ContentProviderClass {
 					};
 				«ENDIF»
 				
-				return new ContentProvider("«contentProvider.name.toFirstLower»", appId, store, «IF contentProvider.type.many»true«ELSE»false«ENDIF»«IF contentProvider.filter», filter«ENDIF»);
+				return new ContentProvider("«contentProvider.name.toFirstLower»", appId, store, «IF contentProvider.type.many»true«ELSE»false«ENDIF»«IF contentProvider.filter», filter«ELSE», null«ENDIF», «!contentProvider.local», transactionId);
 			}
 			
 		});
