@@ -18,7 +18,7 @@ class AppClass {
     
     "load": {
         // the bundle locations, from where the bundles should be resolved
-        "bundleLocations" : [{"name":"localbundles","noprefetch" : true},"bundles"],
+        "bundleLocations" : ["${app}/bundles",{"name":"localbundles","noprefetch" : true},"bundles"],
         
         // the bundles to load (if empty: all are loaded)
         "allowedBundles": [
