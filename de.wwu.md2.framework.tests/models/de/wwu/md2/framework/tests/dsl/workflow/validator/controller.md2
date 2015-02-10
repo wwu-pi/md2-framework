@@ -3,6 +3,7 @@ package CurrentStateProject.controllers
 main {
 	appVersion "1.0"
 	modelVersion "1.0"
+	workflowManager CitizenAppRemoteConnection
 }
 remoteConnection CitizenAppRemoteConnection {
 	uri "http://localhost:8081/Backend/"
