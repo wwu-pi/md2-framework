@@ -165,6 +165,9 @@ class EnumAndEntityClass {
 			@XmlElement(nillable=true)
 			protected String lastEventFired; 
 			
+			@XmlElement(nillable=true)
+			protected String contentProviderIds; 
+			
 			///////////////////////////////////////
 			/// constructor
 			///////////////////////////////////////
@@ -173,10 +176,11 @@ class EnumAndEntityClass {
 				
 			}
 			
-			public WorkflowState (String lastEventFired, String instanceId, String wfe) {
+			public WorkflowState (String lastEventFired, String instanceId, String wfe, String contentProviderIds) {
 				this.instanceId = instanceId;
 				this.lastEventFired = lastEventFired;
 				this.currentWorkflowElement = wfe;
+				this.contentProviderIds = contentProviderIds;
 			}
 			
 			///////////////////////////////////////
@@ -205,6 +209,14 @@ class EnumAndEntityClass {
 			
 			public void setLastEventFired(String lastEventFired) {
 				this.lastEventFired = lastEventFired;
+			}
+			
+			public String getContentProviderIds() {
+				return contentProviderIds;
+			}
+			
+			public void setContentProviderIds(String contentProviderIds) {
+				this.contentProviderIds = contentProviderIds;
 			}
 		}
 	'''

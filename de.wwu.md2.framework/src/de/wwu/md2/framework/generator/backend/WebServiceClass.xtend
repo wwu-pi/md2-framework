@@ -280,9 +280,9 @@ class WebServiceClass {
 			@POST
 			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 			public Response createOrUpdate(@FormParam("instanceId") String id, @FormParam("lastEventFired") String event,
-					@FormParam("currentWfe") String wfe) {
+					@FormParam("currentWfe") String wfe, @FormParam("contentProviderIds") String contentProviderIds) {
 		
-				workflowStateBean.createOrUpdateWorkflowState(event, id, wfe);
+				workflowStateBean.createOrUpdateWorkflowState(event, id, wfe, contentProviderIds);
 						
 				return Response
 						.ok()

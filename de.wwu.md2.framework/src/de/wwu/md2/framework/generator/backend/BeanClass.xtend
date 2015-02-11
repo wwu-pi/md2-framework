@@ -199,7 +199,7 @@ class BeanClass {
 			 * @param wfe the current workflowElement
 			 * @return current workflowState
 			 */
-			public WorkflowState createOrUpdateWorkflowState(String lastEventFired, String instanceId, String wfe){
+			public WorkflowState createOrUpdateWorkflowState(String lastEventFired, String instanceId, String wfe, String contentProviderIds){
 				
 				HashMap<String, String> eventSuccessorMap = Config.WORKFLOWELEMENT_EVENT_SUCCESSION.get(wfe);
 				if (eventSuccessorMap == null) {
@@ -213,13 +213,14 @@ class BeanClass {
 				
 				WorkflowState ws = getWorkflowState(instanceId);
 				if(ws == null){
-					WorkflowState workflowState = new WorkflowState(lastEventFired, instanceId, succeedingWfe);
+					WorkflowState workflowState = new WorkflowState(lastEventFired, instanceId, succeedingWfe, contentProviderIds);
 					em.persist(workflowState);
 				}
 				else {
 					// set to succeeding workflow element -- i.e. describe, what status the instance is in now.
 					ws.setCurrentWorkflowElement(succeedingWfe);
 					ws.setLastEventFired(lastEventFired); // in fact, this information is useless, but probably nice for display :)
+					ws.setContentProviderIds(contentProviderIds);
 					
 					em.merge(ws);
 				}
