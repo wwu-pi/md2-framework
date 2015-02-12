@@ -30,7 +30,8 @@ import de.wwu.md2.framework.mD2.EventBindingTask
 import de.wwu.md2.framework.mD2.EventUnbindTask
 import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.SimpleActionRef
-import de.wwu.md2.framework.mD2.FireEventAction
+import de.wwu.md2.framework.mD2.FireEventActionimport de.wwu.md2.framework.mD2.Label
+import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 
 /**
  * Valaidators for all controller elements of MD2.
@@ -126,18 +127,39 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	/// Type Validators
 	/////////////////////////////////////////////////////////
 	
+	def static AbstractViewGUIElementRef getViewElement(AbstractViewGUIElementRef ref)
+	{
+		
+		if (ref.tail != null)
+		{
+			return ref.tail.getViewElement;
+		}
+		else {
+			return ref;
+		}
+	}
+	
 	/**
 	 * Ensures that attributes can only be mapped to a view element if both are of the same data type.
 	 */
 	@Check
 	def checkDataTypesOfMappingTask(MappingTask task) {
+		
+		val viewField = task.referencedViewField.getViewElement.ref
+		
 		val viewFieldType = task.referencedViewField.expressionType
 		val attributeType = task.pathDefinition.expressionType
+		
+		if(viewField instanceof Label) {
+			// Mapping to a Label is always ok.
+			return;
+		}
 		
 		if (!viewFieldType.equals(attributeType)) {
 			val error = '''Cannot map an attribute with value of type '«attributeType»' to a view element that handles values of type '«viewFieldType»'.'''
 			acceptError(error, task, MD2Package.eINSTANCE.mappingTask_PathDefinition, -1, null);
 		}
+	
 	}
 	
 	/**
