@@ -1,5 +1,5 @@
 package de.wwu.md2.framework.validation
-
+import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import com.google.inject.Inject
 import de.wwu.md2.framework.mD2.AllowedOperation
 import de.wwu.md2.framework.mD2.AttributeSetTask
@@ -31,7 +31,6 @@ import de.wwu.md2.framework.mD2.EventUnbindTask
 import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.SimpleActionRef
 import de.wwu.md2.framework.mD2.FireEventActionimport de.wwu.md2.framework.mD2.Label
-import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 
 /**
  * Valaidators for all controller elements of MD2.
