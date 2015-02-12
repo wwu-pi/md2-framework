@@ -790,6 +790,15 @@ SimpleAction:
 	{ContentProviderOperationAction} ('ContentProviderOperation' '(' operation = AllowedOperation contentProvider = AbstractProviderReference ')') |
 	{ContentProviderResetAction} ('ContentProviderReset' '('contentProvider = ContentProviderReference ')') |
 	{FireEventAction} ('FireEvent' '('workflowEvent = WorkflowEvent')') |
+	{LocationAction} ('Location' '(' 
+			'inputs' '(' 'cityInput' cityInput=AbstractViewGUIElementRef
+						 &'streetInput' streetInput=AbstractViewGUIElementRef
+						 &('streetNumberInput' streetNumberInput=AbstractViewGUIElementRef)?
+						 &'postalInput' postalInput=AbstractViewGUIElementRef
+						 &'countryInput' countryInput=AbstractViewGUIElementRef
+					 ')'
+			&'latitudeOutput' latitude=AbstractViewGUIElementRef 
+			&'longitudeOutput' longitude=AbstractViewGUIElementRef ')' ) |
 	
 	// TODO -- multi-valued content provider, not supported yet
 	{ContentProviderAddAction} ('ContentProviderAdd' '('contentProvider = ContentProviderReference ')') |
