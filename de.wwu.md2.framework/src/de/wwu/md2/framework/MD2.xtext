@@ -791,14 +791,15 @@ SimpleAction:
 	{ContentProviderResetAction} ('ContentProviderReset' '('contentProvider = ContentProviderReference ')') |
 	{FireEventAction} ('FireEvent' '('workflowEvent = WorkflowEvent')') |
 	{LocationAction} ('Location' '(' 
-			'inputs' '(' 'cityInput' cityInput=AbstractViewGUIElementRef
-						 &'streetInput' streetInput=AbstractViewGUIElementRef
-						 &('streetNumberInput' streetNumberInput=AbstractViewGUIElementRef)?
-						 &'postalInput' postalInput=AbstractViewGUIElementRef
-						 &'countryInput' countryInput=AbstractViewGUIElementRef
+			'inputs' '(' 'cityInput' cityInput=AbstractContentProviderPath
+						 &'streetInput' streetInput=AbstractContentProviderPath
+						 &('streetNumberInput' streetNumberInput=AbstractContentProviderPath)?
+						 &'postalInput' postalInput=AbstractContentProviderPath
+						 &'countryInput' countryInput=AbstractContentProviderPath
 					 ')'
-			&'latitudeOutput' latitude=AbstractViewGUIElementRef 
-			&'longitudeOutput' longitude=AbstractViewGUIElementRef ')' ) |
+			'outputs' '('
+			'latitudeOutput' latitude=AbstractContentProviderPath 
+			&'longitudeOutput' longitude=AbstractContentProviderPath ')' ')' ) |
 	
 	// TODO -- multi-valued content provider, not supported yet
 	{ContentProviderAddAction} ('ContentProviderAdd' '('contentProvider = ContentProviderReference ')') |
@@ -1780,7 +1781,7 @@ WorkflowEvent:
  */
 App:
 	'App' name=EID '{'
-		('WorkflowElements {'
+		('WorkflowElements' '{'
 			  workflowElements += WorkflowElementReference (',' workflowElements += WorkflowElementReference)*
 		'}') &
 		('appName' appName = STRING) &

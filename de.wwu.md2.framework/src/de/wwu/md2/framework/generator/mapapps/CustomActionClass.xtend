@@ -68,6 +68,7 @@ import de.wwu.md2.framework.mD2.WorkflowEvent
 import de.wwu.md2.framework.mD2.WorkflowElement
 import de.wwu.md2.framework.mD2.Action
 import org.eclipse.emf.ecore.EObject
+import de.wwu.md2.framework.mD2.LocationAction
 
 class CustomActionClass {
 	
@@ -264,6 +265,13 @@ class CustomActionClass {
 	
 	def private static dispatch String generateActionCodeFragment(ContentProviderResetAction action, String varName, Map<String, String> imports) '''
 		var «varName» = this.$.actionFactory.getContentProviderResetAction("«action.contentProvider.contentProvider.name»");
+	'''
+	
+	def private static dispatch String generateActionCodeFragment(LocationAction action, String varName, Map<String, String> imports) '''
+		var «varName» = this.$.actionFactory.getLocationAction("«action.cityInput.resolveContentProviderPathAttribute»","«action.cityInput.resolveContentProviderName»","«action.streetInput.resolveContentProviderPathAttribute»",
+		"«action.streetInput.resolveContentProviderName»","«action.streetNumberInput.resolveContentProviderPathAttribute»","«action.streetNumberInput.resolveContentProviderName»","«action.postalInput.resolveContentProviderPathAttribute»",
+		"«action.postalInput.resolveContentProviderName»","«action.countryInput.resolveContentProviderPathAttribute»","«action.countryInput.resolveContentProviderName»",
+		"«action.getLatitude.resolveContentProviderPathAttribute»","«action.getLongitude.resolveContentProviderPathAttribute»","«action.getLatitude.resolveContentProviderName»","«action.getLongitude.resolveContentProviderName»"); 
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(FireEventAction action, String varName, Map<String, String> imports) 
