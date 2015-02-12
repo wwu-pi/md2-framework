@@ -323,7 +323,7 @@ class ManifestJson {
 					"toolRole": "toolset",
 					"iconClass": "icon-view-grid",
 					"togglable": true,
-					"activateHandler": "startWorkflow",
+					"activateHandler": "startWorkflowFromTool",
 					"deactivateHandler": "closeWindow"
 				},
 				"references": [
