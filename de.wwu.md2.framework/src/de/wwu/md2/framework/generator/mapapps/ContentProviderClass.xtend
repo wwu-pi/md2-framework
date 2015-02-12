@@ -39,7 +39,7 @@ class ContentProviderClass {
 		 */
 		return declare([], {
 			
-			create: function(typeFactory) {
+			create: function(typeFactory, $) {
 				
 				«IF contentProvider.local»
 					«generateLocalBody(contentProvider)»
