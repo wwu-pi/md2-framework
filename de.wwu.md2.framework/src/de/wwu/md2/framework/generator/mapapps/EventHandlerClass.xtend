@@ -32,8 +32,6 @@ class EventHandlerClass {
 		           		workflowStateHandler: null,
 						addController: this.addController,
 						removeController: this.removeController,
-						changeWorkflowElement: this.changeWorkflowElement,
-						fireEventToBackend: this.fireEventToBackend,
 						instance: this
 					};
 				},
@@ -48,7 +46,9 @@ class EventHandlerClass {
 					(event === "«event.name»" && workflowelement === "«wfe.name»")
 					{
 					«IF dataContainer.workflowElementsForApp(app).contains(dataContainer.getNextWorkflowElement(wfe, event))»
-					this.changeWorkflowElement("md2.wfe.«wfe.name».Controller", "md2.wfe.«dataContainer.getNextWorkflowElement(wfe, event).name».Controller", "md2_«dataContainer.getNextWorkflowElement(wfe, event).name»");
+					var currentController = this.instance.controllers.get("md2.wfe.«wfe.name».Controller");
+					var nextController = this.instance.controllers.get("md2.wfe.«dataContainer.getNextWorkflowElement(wfe, event).name».Controller");
+					this.workflowStateHandler.changeWorkflowElement(currentController, nextController, "md2_«dataContainer.getNextWorkflowElement(wfe, event).name»");
 					«ELSE»
 					var currentController = this.instance.controllers.get("md2.wfe.«wfe.name».Controller");
 					this.workflowStateHandler.fireEventToBackend(event, workflowelement, currentController, currentController.getTransactionId());
@@ -63,33 +63,6 @@ class EventHandlerClass {
 				},
 
 				removeController: function (controller, properties) {
-				},
-
-				changeWorkflowElement: function(previousControllerId, nextControllerId, nextWorflowElement) {
-					var previousController = this.instance.controllers.get(previousControllerId);
-					var nextController = this.instance.controllers.get(nextControllerId);  
-					nextController._startedWorkflowInstanceId = previousController._startedWorkflowInstanceId;
-					previousController.closeWindow();
-					previousController._isFirstExecution = true;
-					this.instance.workflowStateHandler.setResumeWorkflowElement(nextController._startedWorkflowInstanceId, nextWorflowElement);
-					nextController.openWindow();
-				},
-			        
-				fireEventToBackend: function(event, workflowElement, currentControllerId){
-					var currentController = this.instance.controllers.get(currentControllerId);
-					currentController.closeWindow();
-					currentController._isFirstExecution = true;
-					var parameters = {
-						instanceId: currentController._startedWorkflowInstanceId,
-						lastEventFired: event,
-						currentWfe: workflowElement
-					};
-					var requestArgs = {
-						url: this.url,
-						content: parameters,
-						handleAs: "json"
-					};
-					return ct_request(requestArgs,{usePost:true});
 				}
 
 			});
