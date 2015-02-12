@@ -25,6 +25,7 @@ class WebServiceClass {
 		import javax.ws.rs.POST;
 		import javax.ws.rs.Path;
 		import javax.ws.rs.PathParam;
+		import javax.ws.rs.FormParam;
 		import javax.ws.rs.Produces;
 		import javax.ws.rs.QueryParam;
 		import javax.ws.rs.core.GenericEntity;
@@ -76,10 +77,13 @@ class WebServiceClass {
 		
 			}
 			
-			@GET
+			/**
+			* Possibly needs to be extended by a filter parameter
+			*/
+			@POST
 			@Path("ids")
 			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-			public Response get(@QueryParam("id") List<Integer> ids) {
+			public Response get(@FormParam("ids") List<Integer> ids) {
 				final List<«entity.name.toFirstUpper»> «entity.name.toFirstLower»s = «entity.name.toFirstLower»Bean.get«entity.name.toFirstUpper»s(ids);
 				
 				return Response
