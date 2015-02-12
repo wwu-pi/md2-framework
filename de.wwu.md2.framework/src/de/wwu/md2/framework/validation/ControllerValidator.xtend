@@ -30,7 +30,8 @@ import de.wwu.md2.framework.mD2.EventBindingTask
 import de.wwu.md2.framework.mD2.EventUnbindTask
 import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.SimpleActionRef
-import de.wwu.md2.framework.mD2.FireEventActionimport de.wwu.md2.framework.mD2.Label
+import de.wwu.md2.framework.mD2.FireEventAction
+import de.wwu.md2.framework.mD2.Label
 
 /**
  * Valaidators for all controller elements of MD2.
