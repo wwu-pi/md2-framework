@@ -16,6 +16,9 @@
 				<configuration>
 					<useUIHarness>true</useUIHarness>
 					<argLine>${memory-settings} ${os-jvm-flags}</argLine>
+					<includes>
+						<include>**/tests/**/*.class</include>
+					</includes>
 				</configuration>
 			</plugin>
 		</plugins>
