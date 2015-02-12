@@ -57,6 +57,19 @@ class BeanClass {
 				return «entity.name.toFirstLower»;
 			}
 			
+			public List<«entity.name.toFirstUpper»> get«entity.name.toFirstUpper»s(List<Integer> ids) {
+				List<«entity.name.toFirstUpper»> result;
+				if (ids.size()==1){
+					result = new ArrayList<«entity.name.toFirstUpper»>();
+					result.add(em.find(«entity.name.toFirstUpper».class, ids.get(0)));
+				}else{
+					result = em.createQuery("SELECT t FROM «entity.name.toFirstUpper» t WHERE t.__internalId IN :ids", «entity.name.toFirstUpper».class)
+					.setParameter("ids", ids).getResultList();
+				}
+				
+				return result;
+			}
+			
 			public List<InternalIdWrapper> createOrUpdate«entity.name.toFirstUpper»s(List<«entity.name.toFirstUpper»> «entity.name.toFirstLower»s) {
 				ArrayList<InternalIdWrapper> ids = new ArrayList<InternalIdWrapper>();
 				

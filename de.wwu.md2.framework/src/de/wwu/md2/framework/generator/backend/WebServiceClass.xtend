@@ -76,6 +76,19 @@ class WebServiceClass {
 		
 			}
 			
+			@GET
+			@Path("ids")
+			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+			public Response get(@QueryParam("id") List<Integer> ids) {
+				final List<«entity.name.toFirstUpper»> «entity.name.toFirstLower»s = «entity.name.toFirstLower»Bean.get«entity.name.toFirstUpper»s(ids);
+				
+				return Response
+						.ok()
+						.entity(«entity.name.toFirstLower»s)
+						.header("MD2-Model-Version", Config.MODEL_VERSION)
+						.build();
+			}
+			
 			/**
 			 * Exemplary input format:
 			 * [
