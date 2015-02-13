@@ -3,7 +3,6 @@ package de.wwu.md2.framework.validation
 import com.google.inject.Inject
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
-import java.util.Arrays
 import de.wwu.md2.framework.mD2.Model
 import de.wwu.md2.framework.mD2.View
 import de.wwu.md2.framework.mD2.Controller
