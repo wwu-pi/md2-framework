@@ -25,6 +25,7 @@ class WebServiceClass {
 		import javax.ws.rs.POST;
 		import javax.ws.rs.Path;
 		import javax.ws.rs.PathParam;
+		import javax.ws.rs.FormParam;
 		import javax.ws.rs.Produces;
 		import javax.ws.rs.QueryParam;
 		import javax.ws.rs.core.GenericEntity;
@@ -74,6 +75,22 @@ class WebServiceClass {
 						.build();
 				}
 		
+			}
+			
+			/**
+			* Possibly needs to be extended by a filter parameter
+			*/
+			@POST
+			@Path("ids")
+			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+			public Response get(@FormParam("ids") List<Integer> ids) {
+				final List<«entity.name.toFirstUpper»> «entity.name.toFirstLower»s = «entity.name.toFirstLower»Bean.get«entity.name.toFirstUpper»s(ids);
+				
+				return Response
+						.ok()
+						.entity(«entity.name.toFirstLower»s)
+						.header("MD2-Model-Version", Config.MODEL_VERSION)
+						.build();
 			}
 			
 			/**
@@ -280,9 +297,9 @@ class WebServiceClass {
 			@POST
 			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 			public Response createOrUpdate(@FormParam("instanceId") String id, @FormParam("lastEventFired") String event,
-					@FormParam("currentWfe") String wfe) {
+					@FormParam("currentWfe") String wfe, @FormParam("contentProviderIds") String contentProviderIds) {
 		
-				workflowStateBean.createOrUpdateWorkflowState(event, id, wfe);
+				workflowStateBean.createOrUpdateWorkflowState(event, id, wfe, contentProviderIds);
 						
 				return Response
 						.ok()

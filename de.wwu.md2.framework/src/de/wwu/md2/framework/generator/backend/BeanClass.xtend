@@ -57,6 +57,19 @@ class BeanClass {
 				return «entity.name.toFirstLower»;
 			}
 			
+			public List<«entity.name.toFirstUpper»> get«entity.name.toFirstUpper»s(List<Integer> ids) {
+				List<«entity.name.toFirstUpper»> result;
+				if (ids.size()==1){
+					result = new ArrayList<«entity.name.toFirstUpper»>();
+					result.add(em.find(«entity.name.toFirstUpper».class, ids.get(0)));
+				}else{
+					result = em.createQuery("SELECT t FROM «entity.name.toFirstUpper» t WHERE t.__internalId IN :ids", «entity.name.toFirstUpper».class)
+					.setParameter("ids", ids).getResultList();
+				}
+				
+				return result;
+			}
+			
 			public List<InternalIdWrapper> createOrUpdate«entity.name.toFirstUpper»s(List<«entity.name.toFirstUpper»> «entity.name.toFirstLower»s) {
 				ArrayList<InternalIdWrapper> ids = new ArrayList<InternalIdWrapper>();
 				
@@ -199,7 +212,7 @@ class BeanClass {
 			 * @param wfe the current workflowElement
 			 * @return current workflowState
 			 */
-			public WorkflowState createOrUpdateWorkflowState(String lastEventFired, String instanceId, String wfe){
+			public WorkflowState createOrUpdateWorkflowState(String lastEventFired, String instanceId, String wfe, String contentProviderIds){
 				
 				HashMap<String, String> eventSuccessorMap = Config.WORKFLOWELEMENT_EVENT_SUCCESSION.get(wfe);
 				if (eventSuccessorMap == null) {
@@ -213,13 +226,14 @@ class BeanClass {
 				
 				WorkflowState ws = getWorkflowState(instanceId);
 				if(ws == null){
-					WorkflowState workflowState = new WorkflowState(lastEventFired, instanceId, succeedingWfe);
+					WorkflowState workflowState = new WorkflowState(lastEventFired, instanceId, succeedingWfe, contentProviderIds);
 					em.persist(workflowState);
 				}
 				else {
 					// set to succeeding workflow element -- i.e. describe, what status the instance is in now.
 					ws.setCurrentWorkflowElement(succeedingWfe);
 					ws.setLastEventFired(lastEventFired); // in fact, this information is useless, but probably nice for display :)
+					ws.setContentProviderIds(contentProviderIds);
 					
 					em.merge(ws);
 				}

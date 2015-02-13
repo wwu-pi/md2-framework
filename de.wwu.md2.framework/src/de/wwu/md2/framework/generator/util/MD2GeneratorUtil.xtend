@@ -290,26 +290,14 @@ class MD2GeneratorUtil {
 	}
 
 	/**
-	 * Build and return the uri for the workflowStateWS
+	 * Build and return the uri for the workflowWS
 	 */
-	def static getWorkflowStateWSUri(DataContainer container){
+	def static getWorkflowWSUri(DataContainer container){
 		var uri = container.main.workflowManager.uri
 		if (!uri.endsWith("/")){
 			uri = uri + "/"	
 			}
-		uri = uri + "workflowState/"	
 		return uri
 	}
-	
-		/**
-	 * Build and return the uri for the workflowStateWS
-	 */
-	def static getEventHandlerWSUri(DataContainer container){
-		var uri = container.main.workflowManager.uri
-		if (!uri.endsWith("/")){
-			uri = uri + "/"	
-			}
-		uri = uri + "eventHandler/"	
-		return uri
-	}
+
 }

@@ -148,9 +148,6 @@ class ManifestJson {
 			            "provides": ["md2.workflow.EventHandler"],
 			            "instanceFactory": true,
 			            "immediate": true,
-			            "properties":{
-							"uri": "«dataContainer.eventHandlerWSUri»"
-						},
 			            "references": [
 			                {
 			                    "name": "controller",
@@ -226,7 +223,7 @@ class ManifestJson {
 	def static generateModelsSnippet(DataContainer dataContainer, App app) '''
 		{
 			"name": "Models",
-			"provides": ["md2.app.«app.appName».Models"],
+			"provides": ["md2.app.«app.appName».Models", "md2.Models"],
 			"instanceFactory": true
 		}
 	'''
@@ -238,7 +235,7 @@ class ManifestJson {
 				{
 					"name": "«contentProvider.name.toFirstUpper»Provider",
 					"impl": "./contentproviders/«contentProvider.name.toFirstUpper»",
-					"provides": ["md2.app.«app.appName».ContentProvider"],
+					"provides": ["md2.app.«app.appName».ContentProvider", "md2.ContentProvider"],
 					«IF !contentProvider.local»
 						"propertiesConstructor": true,
 						"properties": {
@@ -284,11 +281,6 @@ class ManifestJson {
 					"providing": "md2.app.«appName».Models"
 				},
 				{
-					"name": "_contentProviders",
-					"providing": "md2.app.«appName».ContentProvider",
-					"cardinality": "0..n"
-				},
-				{
 					"name": "_configBean",
 					"providing": "md2.wfe.«workflowElement.name».AppDefinition"
 				},
@@ -331,7 +323,7 @@ class ManifestJson {
 					"toolRole": "toolset",
 					"iconClass": "icon-view-grid",
 					"togglable": true,
-					"activateHandler": "startWorkflow",
+					"activateHandler": "startWorkflowFromTool",
 					"deactivateHandler": "closeWindow"
 				},
 				"references": [

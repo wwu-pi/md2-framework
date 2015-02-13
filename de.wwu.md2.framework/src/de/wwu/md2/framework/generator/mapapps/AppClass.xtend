@@ -66,8 +66,13 @@ class AppClass {
     "bundles": {
         "md2_workflow_store": {
             "MD2WorkflowStore": {
-                    "uri": "«dataContainer.workflowStateWSUri»",
+                    "url": "«dataContainer.workflowWSUri»",
                     "app": "«app.name»"
+            }
+        },
+        "md2_runtime": {
+            "WorkflowStateHandlerFactory": {
+                    "appId": "md2_«app.name»"
             }
         },
         "notifier": {
