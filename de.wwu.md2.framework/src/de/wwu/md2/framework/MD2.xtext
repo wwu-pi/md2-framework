@@ -758,7 +758,8 @@ WorkflowElement:
 		'}')
 		
 		((actions += Action*) &
-		(processChain += ProcessChain+))
+		(processChain += ProcessChain+) &
+		(invoke += InvokeDefinition*))
 		
 	'}'	
 ;
@@ -1385,6 +1386,27 @@ ProcessChainGoToSpec:
 	) '}'
 ;
 
+/////////////////////////////////////////
+// Controller layer => InvokeDefinitions
+/////////////////////////////////////////
+
+InvokeDefinition:
+	{InvokeDefinition} 'invokable' ('at' path?=STRING)? ('using' method?=RESTMethod)? ('{'
+		(params += InvokationParam+)
+	'}')?
+;
+
+
+InvokationParam:
+		{WSParam} field=AbstractContentProviderPath ('as' alias=EID)? |
+		{DefaultValue} 'set' field=AbstractContentProviderPath 'to' (stringValue=STRING | intValue=INT | booleanValue=Boolean | dateValue=DATE | timeValue=TIME)
+;
+
+
+enum RESTMethod:
+		POST='POST' | GET='GET' | PUT='PUT'
+;
+
 
 /////////////////////////////////////////////
 // Controller layer => OnConditionEvent
@@ -1866,7 +1888,7 @@ App:
  * The alias determines the corresponding button label.
  */
 WorkflowElementReference:
-	workflowElementReference = [WorkflowElement] ( '(' startable ?= 'startable:' alias=STRING ')' )?
+	workflowElementReference = [WorkflowElement] ( '(' (startable ?= 'startable:' alias=STRING)? & (invokeable ?= 'invokeable' eventDesc=STRING')')? )?
 ;
 
 
