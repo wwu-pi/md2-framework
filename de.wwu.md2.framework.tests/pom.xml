@@ -40,6 +40,13 @@
 			</properties>
 		</profile>
 	</profiles>
+	<dependencies>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+	</dependencies>
 	<parent>
 		<groupId>de.wwu.md2.framework</groupId>
 		<artifactId>de.wwu.md2.framework.parent</artifactId>
