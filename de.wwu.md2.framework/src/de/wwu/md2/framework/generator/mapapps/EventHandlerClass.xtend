@@ -1,13 +1,6 @@
 package de.wwu.md2.framework.generator.mapapps
 
 import de.wwu.md2.framework.generator.util.DataContainer
-import de.wwu.md2.framework.mD2.CustomAction
-import de.wwu.md2.framework.mD2.EventBindingTask
-import de.wwu.md2.framework.mD2.WorkflowElement
-import de.wwu.md2.framework.mD2.SimpleActionRef
-import de.wwu.md2.framework.mD2.FireEventAction
-import de.wwu.md2.framework.mD2.WorkflowElementEntry
-import de.wwu.md2.framework.mD2.WorkflowEvent
 import org.eclipse.xtend2.lib.StringConcatenation
 import de.wwu.md2.framework.mD2.App
 
@@ -29,10 +22,11 @@ class EventHandlerClass {
 				createInstance: function() {  
 					return {
 						handleEvent: this.handleEvent,
-		           		workflowStateHandler: null,
+						workflowStateHandler: null,
 						addController: this.addController,
 						removeController: this.removeController,
-						instance: this
+						instance: this,
+						resetAll: this.resetAll
 					};
 				},
 
@@ -52,6 +46,7 @@ class EventHandlerClass {
 					«ELSE»
 					var currentController = this.instance.controllers.get("md2.wfe.«wfe.name».Controller");
 					this.workflowStateHandler.fireEventToBackend(event, workflowelement, currentController, currentController.getTransactionId());
+					this.resetAll();
 					«ENDIF»
 					}
                     «ENDFOR»
@@ -63,7 +58,13 @@ class EventHandlerClass {
 				},
 
 				removeController: function (controller, properties) {
-				}
+				},
+
+		        resetAll: function(){
+		            this.instance.controllers.forEach(function(controller){
+		                controller.finish();
+		            });
+		        }
 
 			});
 		});
