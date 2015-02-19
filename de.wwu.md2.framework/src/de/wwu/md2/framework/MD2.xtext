@@ -1399,7 +1399,7 @@ InvokeDefinition:
 
 InvokationParam:
 		{WSParam} field=AbstractContentProviderPath ('as' alias=EID)? |
-		{DefaultValue} 'set' field=AbstractContentProviderPath 'to' (stringValue=STRING | intValue=INT | booleanValue=Boolean | dateValue=DATE | timeValue=TIME)
+		{DefaultValue} 'set' field=AbstractContentProviderPath 'to' (stringValue=STRING | intValue=INT | booleanValue=Boolean | dateValue=DATE | timeValue=TIME | contentProvider= ContentProviderReference)
 ;
 
 
