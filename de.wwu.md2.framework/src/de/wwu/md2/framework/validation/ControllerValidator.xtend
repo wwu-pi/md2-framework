@@ -21,7 +21,7 @@ import de.wwu.md2.framework.mD2.ProcessChainStep
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
 
-import static extension de.wwu.md2.framework.validation.TypeResolver.*
+import static extension de.wwu.md2.framework.util.TypeResolver.*
 import de.wwu.md2.framework.mD2.WorkflowElementEntry
 import de.wwu.md2.framework.util.GetFiredEventsHelper
 import de.wwu.md2.framework.mD2.WorkflowElement

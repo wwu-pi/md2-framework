@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.validation
+package de.wwu.md2.framework.util
 
 import de.wwu.md2.framework.mD2.AbstractContentProviderPath
 import de.wwu.md2.framework.mD2.AbstractProviderReference
@@ -193,6 +193,52 @@ class TypeResolver {
 			Tooltip: "string"
 			Label: "string"
 			default: "undefined"
+		}
+		
+	}
+	
+		/**
+	 * Resolves the data type of a simple expression and returns a string representation
+	 * of the type.
+	 */
+	def static getJavaExpressionType(SimpleExpression expr) {
+		
+		switch expr {
+			StringVal: "String"
+			BooleanVal: "Boolean"
+			DateVal: "Date"
+			TimeVal: "Date"
+			DateTimeVal: "Date"
+			IntVal: "Integer"
+			FloatVal: "Double"
+			
+			AbstractContentProviderPath: expr.abstractJavaContentProviderPathType
+		}
+		
+	}
+	
+		def private static getAbstractJavaContentProviderPathType(AbstractContentProviderPath path) {
+		
+		switch path {
+			LocationProviderPath: "String"
+			ContentProviderPath: path.tail.resolveAttribute.javaAttributeTypeName
+		}
+		
+	}
+	
+		def static getJavaAttributeTypeName(AttributeType type) {
+		
+		switch type {
+			IntegerType: "Integer"
+			FloatType: "Double"
+			StringType: "String"
+			BooleanType: "Boolean"
+			DateType: "Date"
+			TimeType: "Date"
+			DateTimeType: "Date"
+			ReferencedType: System::err.println("ReferencedType can not be translated to Java")
+			EnumType: System::err.println("EnumType can not be translated to Java")
+			default: System::err.println("Unexpected AttributeType found: " + type.eClass.name)
 		}
 		
 	}
