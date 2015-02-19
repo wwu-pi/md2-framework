@@ -33,7 +33,10 @@ class ExternalWebServiceClass {
 			«ENDIF»
 			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 			public Response invoke(«FOR param: invoke.params.filter(WSParam) SEPARATOR ", "»@FormParam("«param.paramAlias»") «param.field.javaExpressionType» «param.paramAlias»«ENDFOR») {
-
+			
+			«FOR entity : invoke.params.map[it.allEntities].toSet»
+				«entity»
+			«ENDFOR»
 					return Response
 						.status(404)
 						.header("MD2-Model-Version", Config.MODEL_VERSION)
