@@ -1,6 +1,7 @@
 package de.wwu.md2.framework.generator.backend
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
+import static extension de.wwu.md2.framework.generator.backend.util.MD2BackendUtil.*
 import static extension de.wwu.md2.framework.util.TypeResolver.*import de.wwu.md2.framework.mD2.WorkflowElement
 import de.wwu.md2.framework.mD2.WSParam
 
@@ -31,7 +32,7 @@ class ExternalWebServiceClass {
 			@Path("«invoke.path»")
 			«ENDIF»
 			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-			public Response invoke(«FOR param: invoke.params.filter(WSParam) SEPARATOR ","»@FormParam("«param.alias»") «param.field.javaExpressionType» «param.alias»«ENDFOR») {
+			public Response invoke(«FOR param: invoke.params.filter(WSParam) SEPARATOR ", "»@FormParam("«param.paramAlias»") «param.field.javaExpressionType» «param.paramAlias»«ENDFOR») {
 
 					return Response
 						.status(404)
