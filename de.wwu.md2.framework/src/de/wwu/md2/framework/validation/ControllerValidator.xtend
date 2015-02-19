@@ -58,7 +58,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	/**
 	 * Throws errors if a WorkflowEvent is fired in the init Block of a WorkflowElement.
 	 */
-	//@Check
+	@Check
 	def checkNoFireEventActionInInitBlock(WorkflowElement wfe){
 		val initActions = wfe.initActions.filter(CustomAction).map[it.codeFragments].flatten
 		

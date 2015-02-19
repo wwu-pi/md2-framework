@@ -3,6 +3,7 @@ package controllers
 main {
 appVersion "1.1"
 modelVersion "1.1"
+workflowManager myDefaultConnection
 defaultConnection myDefaultConnection
 }
 

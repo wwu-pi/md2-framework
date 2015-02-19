@@ -10,9 +10,9 @@ import com.google.inject.name.Names;
 import de.wwu.md2.framework.conversion.MD2ValueConverterService;
 import de.wwu.md2.framework.generator.IPlatformGenerator;
 import de.wwu.md2.framework.generator.TestGenerator;
-import de.wwu.md2.framework.generator.android.AndroidGenerator;
+//import de.wwu.md2.framework.generator.android.AndroidGenerator;
 import de.wwu.md2.framework.generator.backend.BackendGenerator;
-import de.wwu.md2.framework.generator.ios.IOSGenerator;
+//import de.wwu.md2.framework.generator.ios.IOSGenerator;
 import de.wwu.md2.framework.generator.mapapps.MapAppsGenerator;
 import de.wwu.md2.framework.scoping.MD2ImportedNamespaceAwareLocalScopeProvider;
 

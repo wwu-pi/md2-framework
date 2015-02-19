@@ -16,8 +16,9 @@ Require-Bundle: de.wwu.md2.framework,
  org.eclipse.xtend2.lib,
  com.google.inject,
  com.google.guava,
- org.eclipse.xtext.xbase.lib
-Import-Package: org.apache.commons.io;version="2.0.1",
+ org.eclipse.xtext.xbase.lib,
+ org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional
+Import-Package: org.apache.commons.io;version="2.0.1";resolution:=optional,
  org.apache.commons.logging,
  org.apache.log4j,
  org.hamcrest.core,

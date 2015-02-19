@@ -1,1 +1,4 @@
 /.antlr-generator-3.2.0.jar
+/xtend-gen
+/src-gen
+/target

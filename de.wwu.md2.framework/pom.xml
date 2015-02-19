@@ -1,0 +1,81 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>de.wwu.md2.framework</artifactId>
+	<packaging>eclipse-plugin</packaging>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<id>mwe2Launcher</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher</mainClass>
+					<arguments>
+						<argument>/${project.basedir}/src/de/wwu/md2/framework/GenerateMD2.mwe2</argument>
+						<!-- if you use a hierarchical layout (plugins inside the parent folder 
+							<argument>-p</argument> <argument>runtimeProject=/${project.basedir}</argument> -->
+					</arguments>
+					<includePluginDependencies>true</includePluginDependencies>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.eclipse.xtext</groupId>
+						<artifactId>org.eclipse.xtext.xtext</artifactId>
+						<version>${xtext-version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.eclipse.xtext</groupId>
+						<artifactId>org.eclipse.xtext.xbase</artifactId>
+						<version>${xtext-version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.xtend</groupId>
+				<artifactId>xtend-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<filesets combine.children="append">
+						<fileset>
+							<directory>${basedir}/src-gen/</directory>
+						</fileset>
+						<fileset>
+							<directory>${basedir}/model/generated/</directory>
+						</fileset>
+						<fileset>
+							<directory>${basedir}/../${project.artifactId}.ui/src-gen/</directory>
+						</fileset>
+						<fileset>
+							<directory>${basedir}/../${project.artifactId}.tests/src-gen/</directory>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<parent>
+		<groupId>de.wwu.md2.framework</groupId>
+		<artifactId>de.wwu.md2.framework.parent</artifactId>
+		<version>0.2.0</version>
+		<relativePath>../de.wwu.md2.framework.parent/pom.xml</relativePath>
+	</parent>
+
+	<dependencies>
+		<!-- <dependency> <groupId>${project.groupId}</groupId> <artifactId>org.xtext.builddsl.lib</artifactId> 
+			<version>${project.version}</version> </dependency> -->
+	</dependencies>
+</project>

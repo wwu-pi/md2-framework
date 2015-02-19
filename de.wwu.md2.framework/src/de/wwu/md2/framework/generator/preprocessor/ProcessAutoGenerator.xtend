@@ -36,11 +36,12 @@ import java.util.Collection
 import static de.wwu.md2.framework.generator.preprocessor.util.Util.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*import de.wwu.md2.framework.mD2.WorkflowElement
+import org.eclipse.xtend.lib.annotations.Accessors
 
 class ProcessAutoGenerator extends AbstractPreprocessor {
 	
-	@Property
-	String autoGenerationActionName = "__autoGenerationAction"
+	@Accessors
+	public String autoGenerationActionName = "__autoGenerationAction"
 	
 	int autoGenerationCounter = 0
 	

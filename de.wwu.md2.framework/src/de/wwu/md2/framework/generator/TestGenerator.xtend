@@ -26,7 +26,7 @@ class TestGenerator extends AbstractPlatformGenerator {
 	
 	override doGenerate(IExtendedFileSystemAccess fsa) {
 		
-		for(view: dataContainer.views) {
+		for(view: dataContainer.view.viewElements) {
 			fsa.generateFile(rootFolder + "/view.test", traverse(view))
 		}
 		val modelsCopy = processedInput.copyModel

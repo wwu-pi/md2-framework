@@ -5,7 +5,7 @@ Bundle-Vendor: WWU
 Bundle-Version: 0.2.0
 Bundle-SymbolicName: de.wwu.md2.framework.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
-Require-Bundle: de.wwu.md2.framework;visibility:=reexport,
+Require-Bundle: de.wwu.md2.framework;bundle-version="0.2.0";visibility:=reexport,
  org.eclipse.xtext.ui,
  org.eclipse.ui.editors;bundle-version="3.5.0",
  org.eclipse.ui.ide;bundle-version="3.5.0",
