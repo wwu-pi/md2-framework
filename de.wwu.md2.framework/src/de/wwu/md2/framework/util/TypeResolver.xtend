@@ -205,12 +205,12 @@ class TypeResolver {
 		
 		switch expr {
 			StringVal: "String"
-			BooleanVal: "Boolean"
+			BooleanVal: "boolean"
 			DateVal: "Date"
 			TimeVal: "Date"
 			DateTimeVal: "Date"
-			IntVal: "Integer"
-			FloatVal: "Double"
+			IntVal: "int"
+			FloatVal: "double"
 			
 			AbstractContentProviderPath: expr.abstractJavaContentProviderPathType
 		}
@@ -229,10 +229,10 @@ class TypeResolver {
 		def static getJavaAttributeTypeName(AttributeType type) {
 		
 		switch type {
-			IntegerType: "Integer"
-			FloatType: "Double"
+			IntegerType: "int"
+			FloatType: "double"
 			StringType: "String"
-			BooleanType: "Boolean"
+			BooleanType: "boolean"
 			DateType: "Date"
 			TimeType: "Date"
 			DateTimeType: "Date"
