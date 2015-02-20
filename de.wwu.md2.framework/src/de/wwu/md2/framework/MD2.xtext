@@ -1392,14 +1392,15 @@ ProcessChainGoToSpec:
 
 InvokeDefinition:
 	{InvokeDefinition} 'invokable' ('at' path=STRING)? ('using' method=RESTMethod)? ('{'
-		(params += InvokationParam+)
+		(params += InvokeParam+)
 	'}')?
 ;
 
 
-InvokationParam:
-		{WSParam} field=AbstractContentProviderPath ('as' alias=EID)? |
-		{DefaultValue} 'set' field=AbstractContentProviderPath 'to' (stringValue=STRING | intValue=INT | booleanValue=Boolean | dateValue=DATE | timeValue=TIME | contentProvider= ContentProviderReference)
+InvokeParam:
+		{InvokeWSParam} field=AbstractContentProviderPath ('as' alias=EID)? |
+		{InvokeDefaultValue} 'default of' field=AbstractContentProviderPath 'is' (stringValue=STRING | intValue=INT | booleanValue=Boolean | dateValue=DATE | timeValue=TIME | datetimeValue=DATE_TIME | floatValue = FLOAT)|
+		{InvokeSetContentProvider} 'set' field=AbstractContentProviderPath 'to' (contentProvider= ContentProviderReference)
 ;
 
 
