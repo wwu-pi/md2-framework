@@ -18,7 +18,7 @@ WorkflowElement LocationDetection{
 		init
 	}	
 	action CustomAction init{
-		bind action FireEvent(LocationEvent) on LocationVerifyView.Next2.onClick
+		call FireEvent(LocationEvent)
 	}	
 	action CustomAction next {
 		bind action FireEvent(LocationEvent) on LocationVerifyView.Next2.onClick
