@@ -23,9 +23,9 @@ class ModelElementPackageCongruenceTest {
     @Inject extension ParseHelper<MD2Model>
     @Inject extension ValidationTestHelper
     
-    MD2Model controllerModel;
-    MD2Model modelModel;
-    MD2Model viewModel;
+    MD2Model controllerModel
+    MD2Model modelModel
+    MD2Model viewModel
     MD2Model workflowModel
     MD2Model testModel
 

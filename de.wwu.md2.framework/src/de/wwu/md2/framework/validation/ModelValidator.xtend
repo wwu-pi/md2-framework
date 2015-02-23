@@ -1,17 +1,17 @@
 package de.wwu.md2.framework.validation
 
+import com.google.common.collect.Sets
 import com.google.inject.Inject
 import de.wwu.md2.framework.mD2.AttrEnumDefault
-import de.wwu.md2.framework.mD2.Entity
-import de.wwu.md2.framework.mD2.ReferencedType
-import org.eclipse.xtext.validation.Check
-import org.eclipse.xtext.validation.EValidatorRegistrar
-import de.wwu.md2.framework.mD2.ModelElement
-import de.wwu.md2.framework.mD2.MD2Package
 import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.AttributeType
 import de.wwu.md2.framework.mD2.AttributeTypeParam
-import com.google.common.collect.Sets
+import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.MD2Package
+import de.wwu.md2.framework.mD2.ModelElement
+import de.wwu.md2.framework.mD2.ReferencedType
+import org.eclipse.xtext.validation.Check
+import org.eclipse.xtext.validation.EValidatorRegistrar
 
 /**
  * Validators for all model elements of MD2.
@@ -28,6 +28,8 @@ class ModelValidator extends AbstractMD2JavaValidator {
     
     public static final String DEFAULTREFERENCEVALUE = "defaultReferenceValue"
     public static final String ENTITYENUMUPPERCASE = "entityEnumUppercase"
+    public static final String ENTITYWITHOUTUNDERSCORE = "entityWithoutUnderscore"
+    public static final String ENTITYWITHRESERVEDNAME = "entityWithReservedName"
     public static final String ATTRIBUTELOWERCASE = "attributeLowercase"
     public static final String REPEATEDPARAMS = "repeatedParams"
     public static final String UNSUPPORTEDPARAMTYPE = "unsupportedParamType"
@@ -64,6 +66,34 @@ class ModelValidator extends AbstractMD2JavaValidator {
             warning("Entity and Enum identifiers should start with an upper case letter", MD2Package.eINSTANCE.modelElement_Name, -1, ENTITYENUMUPPERCASE);
         }
     }
+    
+    /**
+     * Prevent from using an underscore "_" in the beginning of an entity name
+     */
+     @Check
+     def checkEntityDoesntStartWithUnderscore(ModelElement modelElement){
+     	if(modelElement.name.charAt(0).equals(new Character ('_'))){
+     		error("Entity and Enum identifiers shouldn't start with an underscore.",MD2Package.eINSTANCE.modelElement_Name,ENTITYWITHOUTUNDERSCORE);
+     	}
+     }
+     
+     /**
+     * Prevent from using the following preset identifiers as entity / enum names:
+     * - WorkflowState
+     * - EventHandler
+     * - VersionNegotiation,
+     * since these names will conflict during generation of entities and webservices, e.g. on the backend.
+     */
+     @Check
+     def checkEntityNameDoesntEqualPresetIdentifiers(ModelElement modelElement){
+     	// Add new preset identifiers to the List, if they should also be excluded within the entity / enum names
+     	var presetIdentifiers = newHashSet("WorkflowState", "EventHandler", "VersionNegotiation")
+     	// for every preset identifier, check if used as entity / enum name --> then error
+     	
+		if(presetIdentifiers.contains(modelElement.name)){
+ 			error(presetIdentifiers+" shouldn't be used as an entity / enum name, since it is a preset identifier.", MD2Package.eINSTANCE.modelElement_Name, ENTITYWITHRESERVEDNAME);
+ 		}
+     }
 	
 	/**
      * Enforce conventions:

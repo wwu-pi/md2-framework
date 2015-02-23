@@ -1,0 +1,6 @@
+package TestProject.models
+
+entity WorkflowState {
+    att1: string
+    att2: string
+}
