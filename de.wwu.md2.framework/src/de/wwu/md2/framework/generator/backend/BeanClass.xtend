@@ -81,6 +81,12 @@ class BeanClass {
 				return ids;
 			}
 			
+			public «entity.name.toFirstUpper» createOrUpdate«entity.name.toFirstUpper»(«entity.name.toFirstUpper» «entity.name.toFirstLower») {
+				«entity.name.toFirstLower» = em.merge(«entity.name.toFirstLower»);
+
+				return «entity.name.toFirstLower»;
+			}
+			
 			public boolean delete«entity.name.toFirstUpper»s(List<Integer> ids) {
 				
 				Long count = em.createQuery("SELECT COUNT(t) FROM «entity.name.toFirstUpper» t WHERE t.__internalId IN :ids", Long.class)
