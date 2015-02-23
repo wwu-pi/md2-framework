@@ -29,6 +29,7 @@ import de.wwu.md2.framework.mD2.WorkflowEvent
 import de.wwu.md2.framework.mD2.WorkflowElementEntry
 import de.wwu.md2.framework.mD2.ActionReference
 import de.wwu.md2.framework.mD2.CallTask
+import de.wwu.md2.framework.mD2.FireEventEntry
 
 /**
  * DataContainer to store data that are used throughout the generation process.
@@ -230,7 +231,7 @@ class DataContainer {
 	    val wfes = app.workflowElements.map[it.workflowElementReference].toSet
 	    return wfes
 	}
-	
+
 	/**
 	 * Return all events declared in a workflowElement.
 	 */
@@ -239,6 +240,16 @@ class DataContainer {
        var wfeEntry = workflow.workflowElementEntries.filter[it.workflowElement.equals(wfe)].head
        
        return wfeEntry.firedEvents.map[it.event]
+    }
+    
+    /**
+	 * Return fireEventEntry for event.
+	 */
+    def public FireEventEntry getFireEventEntryForWorkflowEvent(WorkflowEvent we, WorkflowElement wfe) {
+       
+       var wfeEntry = workflow.workflowElementEntries.filter[it.workflowElement.equals(wfe)].head
+       
+       return wfeEntry.firedEvents.filter[it.event.equals(we)].head
     }
 
     

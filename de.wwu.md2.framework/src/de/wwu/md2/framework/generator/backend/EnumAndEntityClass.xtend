@@ -168,6 +168,9 @@ class EnumAndEntityClass {
 			@XmlElement(nillable=true)
 			protected String contentProviderIds; 
 			
+			@XmlElement(nillable=true)
+			protected boolean finished;
+			
 			///////////////////////////////////////
 			/// constructor
 			///////////////////////////////////////
@@ -181,6 +184,7 @@ class EnumAndEntityClass {
 				this.lastEventFired = lastEventFired;
 				this.currentWorkflowElement = wfe;
 				this.contentProviderIds = contentProviderIds;
+				this.finished = false;
 			}
 			
 			///////////////////////////////////////
@@ -218,6 +222,16 @@ class EnumAndEntityClass {
 			public void setContentProviderIds(String contentProviderIds) {
 				this.contentProviderIds = contentProviderIds;
 			}
+			
+			public void setFinished(){
+				this.finished = true;
+			}
+
+			public boolean getFinished()
+			{
+				return this.finished;
+			}
+			
 		}
 	'''
 	

@@ -1,6 +1,9 @@
 package de.wwu.md2.framework.generator.backend
 
 import de.wwu.md2.framework.generator.util.DataContainer
+import de.wwu.md2.framework.mD2.WorkflowEvent
+import de.wwu.md2.framework.mD2.FireEventEntry
+import de.wwu.md2.framework.mD2.WorkflowElement
 
 class CommonClasses {
 	
@@ -61,7 +64,11 @@ class CommonClasses {
 				// Coming from «wfe.name»
 				innerMap = new HashMap<String, String>();
 				«FOR event : dataContainer.getEventsFromWorkflowElement(wfe)»
+				«IF (eventIsEndEvent(event, wfe, dataContainer))»
+				    innerMap.put("«event.name»", "_terminate");
+				«ELSE»
 				    innerMap.put("«event.name»", "«dataContainer.getNextWorkflowElement(wfe, event).name»");
+				«ENDIF»
 				«ENDFOR»
 				map.put("«wfe.name»", innerMap);
 				
@@ -70,6 +77,14 @@ class CommonClasses {
 			}
 		}
 	'''
+	
+	def static boolean eventIsEndEvent(WorkflowEvent event, WorkflowElement wfe, DataContainer dataContainer)
+	{
+		var fee = dataContainer.getFireEventEntryForWorkflowEvent(event, wfe)
+		if (fee.endWorkflow) {return true;}
+		else {return false;}
+		
+	}
 	
 	def static createUtils(String basePackageName) '''
 		package «basePackageName»;
