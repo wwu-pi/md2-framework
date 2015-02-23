@@ -96,7 +96,7 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		
 		// Gemerate external webService files
 		dataContainer.workflowElements.filter[it.invoke.size>0].forEach[wfe|
-			fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/external/" + wfe.name.toFirstUpper + "ExternalWS.java", createExternalWorkflowElementWS(basePackageName, wfe))
+			fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/external/" + wfe.name.toFirstUpper + "ExternalWS.java", createExternalWorkflowElementWS(basePackageName, wfe, dataContainer.main.workflowManager))
 		]
 		// Generate common backend files
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/Utils.java", createUtils(basePackageName))

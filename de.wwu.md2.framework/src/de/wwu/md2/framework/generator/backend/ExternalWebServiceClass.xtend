@@ -7,12 +7,17 @@ import de.wwu.md2.framework.mD2.InvokeWSParam
 import de.wwu.md2.framework.mD2.InvokeDefaultValue
 import de.wwu.md2.framework.mD2.AbstractContentProviderPath
 import de.wwu.md2.framework.mD2.InvokeSetContentProvider
+import de.wwu.md2.framework.mD2.ContentProvider
+import de.wwu.md2.framework.mD2.RemoteConnection
 
 class ExternalWebServiceClass {
 	
-	def static createExternalWorkflowElementWS(String basePackageName, WorkflowElement wfe) '''
+	def static createExternalWorkflowElementWS(String basePackageName, WorkflowElement wfe, RemoteConnection workflowManager) '''
 		package «basePackageName».ws.external;
 				
+		«IF wfe.getInternalContentProviders(workflowManager).size>0»
+		import javax.ejb.EJB;
+		«ENDIF»
 		import javax.ejb.Stateless;
 		«FOR method: wfe.invoke.map[it.method].toSet»
 		import javax.ws.rs.«method»;
@@ -25,6 +30,9 @@ class ExternalWebServiceClass {
 		«IF wfe.eAllContents.filter(AbstractContentProviderPath).map[it.javaExpressionType].toSet.contains("Date")»
 		import java.util.Date;
 		«ENDIF»
+		«FOR cp: wfe.getInternalContentProviders(workflowManager)»
+		import «basePackageName».beans.«cp.contentProviderEntity.name.toFirstUpper»Bean;
+		«ENDFOR»
 		
 		«FOR entity : wfe.allEntitiesWithinInvoke»
 		import «basePackageName».entities.models.«entity.name.toFirstUpper»;
@@ -35,6 +43,13 @@ class ExternalWebServiceClass {
 		@Path("/«wfe.name.toFirstLower»")
 		@Stateless
 		public class «wfe.name.toFirstUpper»ExternalWS {
+			
+			«FOR cp: wfe.getInternalContentProviders(workflowManager)»
+				«IF cp.contentProviderEntity!=null»
+				@EJB
+				«cp.contentProviderEntity.name.toFirstUpper»Bean «cp.contentProviderEntity.name.toFirstLower»Bean;
+			«ENDIF»
+			«ENDFOR»
 			
 			«FOR invoke : wfe.invoke»
 			@«invoke.method»
@@ -56,8 +71,10 @@ class ExternalWebServiceClass {
 			«ENDFOR»
 			
 			«FOR param: invoke.params.filter(InvokeSetContentProvider)»
-				«param.rootEntity.name.toFirstLower».set«param.field.resolveContentProviderPathAttribute.toFirstUpper»(«param.contentProviderEntity.name.toFirstLower»);
+				«createSaveContentProvider(param.contentProvider.contentProvider, workflowManager)»
+				«param.rootEntity.name.toFirstLower».set«param.field.resolveContentProviderPathAttribute.toFirstUpper»(«param.contentProvider.contentProvider.contentProviderEntity.name.toFirstLower»);
 			«ENDFOR»
+			
 			
 			return Response
 				.status(404)
@@ -66,5 +83,12 @@ class ExternalWebServiceClass {
 			}
 			«ENDFOR»			
 		}
+	'''
+	
+	def static createSaveContentProvider(ContentProvider contentProvider, RemoteConnection backendConnection)'''
+		«var entity =contentProvider.contentProviderEntity»
+		«IF contentProvider.connection.equals(backendConnection) && entity != null »
+		«entity.name.toFirstLower» = «entity.name.toFirstLower»Bean.createOrUpdate«entity.name.toFirstUpper»(«entity.name.toFirstLower»);
+		«ENDIF»
 	'''
 }

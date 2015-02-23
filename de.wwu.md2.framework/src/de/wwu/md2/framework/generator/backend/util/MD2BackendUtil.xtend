@@ -23,6 +23,8 @@ import de.wwu.md2.framework.mD2.DateTimeType
 import java.util.Set
 import java.util.HashSet
 import de.wwu.md2.framework.mD2.InvokeSetContentProvider
+import de.wwu.md2.framework.mD2.ContentProvider
+import de.wwu.md2.framework.mD2.RemoteConnection
 
 class MD2BackendUtil {
 
@@ -109,13 +111,33 @@ class MD2BackendUtil {
 		}
 	}
 	
-	def static Entity getContentProviderEntity(InvokeSetContentProvider param){
-		 var refModelType = param.contentProvider.contentProvider.type as ReferencedModelType
+	def static Entity getContentProviderEntity(ContentProvider contentProvider){
+		 var refModelType = contentProvider.type as ReferencedModelType
 		 if (refModelType != null){
 		 	return refModelType.entity as Entity
 		 } else {
 		 	return null
 		 }
+	}
+	
+	def static Set<ContentProvider> getAllContentProviders(InvokeDefinition definition){
+		return definition.params.map[it.field.contentProvider].toSet
+	}
+	
+	def static Set<ContentProvider> getInternalContentProviders(WorkflowElement wfe, RemoteConnection workflowManager){
+		wfe.invoke.map[it.allContentProviders].flatten.filter[it.connection.equals(workflowManager)].toSet
+	}
+	
+	def static Set<ContentProvider> getExternalContentProviders(WorkflowElement wfe, RemoteConnection workflowManager){
+		wfe.invoke.map[it.allContentProviders].flatten.filter[!it.connection.equals(workflowManager)].toSet
+	}
+	
+	
+	def static ContentProvider getContentProvider(AbstractContentProviderPath path){
+		switch (path) {
+			LocationProviderPath: throw new RuntimeException("LocationProviderPath is not allowed within this webservice since it provides a readonly attribute")
+			ContentProviderPath: return path.contentProviderRef
+			}
 	}
 	
 	def static String getValue(InvokeDefaultValue value){
