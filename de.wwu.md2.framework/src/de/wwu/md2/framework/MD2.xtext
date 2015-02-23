@@ -1854,7 +1854,7 @@ Workflow:
  * 0 to n Workflowelements can be started
  */
 WorkflowElementEntry:
-	'WorkflowElement' workflowElement=[WorkflowElement]
+	'WorkflowElement' workflowElement=[WorkflowElement] ('('invokeable ?= 'invokeable' eventDesc=STRING')')?
 	firedEvents += FireEventEntry+
 ;
 
@@ -1889,7 +1889,7 @@ App:
  * The alias determines the corresponding button label.
  */
 WorkflowElementReference:
-	workflowElementReference = [WorkflowElement] ( '(' (startable ?= 'startable:' alias=STRING)? & (invokeable ?= 'invokeable' eventDesc=STRING')')? )?
+	workflowElementReference = [WorkflowElement] ( '(' startable ?= 'startable:' alias=STRING ')' )?
 ;
 
 

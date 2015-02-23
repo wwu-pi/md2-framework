@@ -9,12 +9,14 @@ import de.wwu.md2.framework.mD2.AbstractContentProviderPath
 import de.wwu.md2.framework.mD2.InvokeSetContentProvider
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.RemoteConnection
+import de.wwu.md2.framework.mD2.WorkflowElementEntry
 
 class ExternalWebServiceClass {
 	
-	def static createExternalWorkflowElementWS(String basePackageName, WorkflowElement wfe, RemoteConnection workflowManager) '''
+	def static createExternalWorkflowElementWS(String basePackageName, WorkflowElementEntry wfeEntry, RemoteConnection workflowManager) '''
+		«var wfe = wfeEntry.workflowElement»
 		package «basePackageName».ws.external;
-				
+		
 		«IF wfe.getInternalContentProviders(workflowManager).size>0»
 		import javax.ejb.EJB;
 		«ENDIF»
@@ -88,7 +90,7 @@ class ExternalWebServiceClass {
 				String contentProviderIds = "{}";
 				«ENDIF»
 				
-				workflowStateBean.createOrUpdateWorkflowState("Test",id,"«wfe.name.toFirstUpper»",contentProviderIds);
+				workflowStateBean.createOrUpdateWorkflowState("«wfeEntry.eventDescription»",id,"«wfeEntry.eventDescription»",contentProviderIds);
 				
 				return Response
 					.status(404)

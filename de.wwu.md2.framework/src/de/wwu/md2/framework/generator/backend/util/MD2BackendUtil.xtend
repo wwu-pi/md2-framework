@@ -25,6 +25,8 @@ import java.util.HashSet
 import de.wwu.md2.framework.mD2.InvokeSetContentProvider
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.RemoteConnection
+import de.wwu.md2.framework.mD2.WorkflowElementReference
+import de.wwu.md2.framework.mD2.WorkflowElementEntry
 
 class MD2BackendUtil {
 
@@ -164,6 +166,16 @@ class MD2BackendUtil {
 					DateTimeType: '''new Date(«value.datetimeValue.time»L)'''
 				}
 			}
+		}
+	}
+	
+	private static final String DEFAULT_INVOKE_EVENT_DESCRIPTION = "__invokedByWS"
+	
+	def static String getEventDescription(WorkflowElementEntry wfeEntry){
+		if (wfeEntry.eventDesc != null){
+			wfeEntry.eventDesc.toString()
+		} else {
+			DEFAULT_INVOKE_EVENT_DESCRIPTION	
 		}
 	}
 }
