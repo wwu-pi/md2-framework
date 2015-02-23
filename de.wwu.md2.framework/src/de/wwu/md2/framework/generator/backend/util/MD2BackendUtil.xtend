@@ -140,6 +140,14 @@ class MD2BackendUtil {
 			}
 	}
 	
+	def static Set<ContentProvider> getRootContentProviders(InvokeDefinition definition){
+		var allContentProviders = definition.allContentProviders.toSet
+		var superiorCPs = definition.params.filter(InvokeSetContentProvider).map[it.field.contentProvider].toSet
+		var inferiorCPs = definition.params.filter(InvokeSetContentProvider).map[it.contentProvider.contentProvider].toSet
+		allContentProviders.removeAll(inferiorCPs)
+		return (allContentProviders + superiorCPs).toSet
+	}
+	
 	def static String getValue(InvokeDefaultValue value){
 		var path = value.field
 		switch (path) {

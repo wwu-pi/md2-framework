@@ -33,6 +33,7 @@ class ExternalWebServiceClass {
 		«FOR cp: wfe.getInternalContentProviders(workflowManager)»
 		import «basePackageName».beans.«cp.contentProviderEntity.name.toFirstUpper»Bean;
 		«ENDFOR»
+		import CurrentStateProject.backend.beans.WorkflowStateBean;
 		
 		«FOR entity : wfe.allEntitiesWithinInvoke»
 		import «basePackageName».entities.models.«entity.name.toFirstUpper»;
@@ -51,6 +52,9 @@ class ExternalWebServiceClass {
 			«ENDIF»
 			«ENDFOR»
 			
+			@EJB
+			WorkflowStateBean workflowStateBean;
+			
 			«FOR invoke : wfe.invoke»
 			@«invoke.method»
 			«IF invoke.path != null»
@@ -58,28 +62,38 @@ class ExternalWebServiceClass {
 			«ENDIF»
 			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 			public Response invoke(«FOR param: invoke.params.filter(InvokeWSParam) SEPARATOR ", "»@FormParam("«param.paramAlias»") «param.field.javaExpressionType» «param.paramAlias»«ENDFOR») {
-			
-			«FOR entity : invoke.allEntities»
-				«entity.name.toFirstUpper» «entity.name.toFirstLower» = new «entity.name.toFirstUpper»();
-			«ENDFOR»
-			«FOR param: invoke.params.filter(InvokeWSParam)»
-				«param.rootEntity.name.toFirstLower».set«param.field.resolveContentProviderPathAttribute.toFirstUpper»(«param.paramAlias»);
-			«ENDFOR»
-			
-			«FOR param: invoke.params.filter(InvokeDefaultValue)»
-				«param.rootEntity.name.toFirstLower».set«param.field.resolveContentProviderPathAttribute.toFirstUpper»(«param.value»);
-			«ENDFOR»
-			
-			«FOR param: invoke.params.filter(InvokeSetContentProvider)»
-				«createSaveContentProvider(param.contentProvider.contentProvider, workflowManager)»
-				«param.rootEntity.name.toFirstLower».set«param.field.resolveContentProviderPathAttribute.toFirstUpper»(«param.contentProvider.contentProvider.contentProviderEntity.name.toFirstLower»);
-			«ENDFOR»
-			
-			
-			return Response
-				.status(404)
-				.header("MD2-Model-Version", Config.MODEL_VERSION)
-				.build();
+				«FOR entity : invoke.allEntities»
+					«entity.name.toFirstUpper» «entity.name.toFirstLower» = new «entity.name.toFirstUpper»();
+				«ENDFOR»
+				«FOR param: invoke.params.filter(InvokeWSParam)»
+					«param.rootEntity.name.toFirstLower».set«param.field.resolveContentProviderPathAttribute.toFirstUpper»(«param.paramAlias»);
+				«ENDFOR»
+				«FOR param: invoke.params.filter(InvokeDefaultValue)»
+					«param.rootEntity.name.toFirstLower».set«param.field.resolveContentProviderPathAttribute.toFirstUpper»(«param.value»);
+				«ENDFOR»
+				«FOR param: invoke.params.filter(InvokeSetContentProvider)»
+					«createSaveContentProvider(param.contentProvider.contentProvider, workflowManager)»
+					«param.rootEntity.name.toFirstLower».set«param.field.resolveContentProviderPathAttribute.toFirstUpper»(«param.contentProvider.contentProvider.contentProviderEntity.name.toFirstLower»);
+				«ENDFOR»
+				«FOR cp: invoke.rootContentProviders»
+					«createSaveContentProvider(cp, workflowManager)»
+				«ENDFOR»
+				
+				String id = java.util.UUID.randomUUID().toString();
+				
+				«IF invoke.allContentProviders.size>0»
+				String contentProviderIds = "{"+
+				«FOR cp:invoke.allContentProviders SEPARATOR",\"+"»"\"«cp.name.toFirstLower»\":"+«cp.contentProviderEntity.name.toFirstLower».getInternal__id()+"«ENDFOR»}";
+				«ELSE»
+				String contentProviderIds = "{}";
+				«ENDIF»
+				
+				workflowStateBean.createOrUpdateWorkflowState("Test",id,"«wfe.name.toFirstUpper»",contentProviderIds);
+				
+				return Response
+					.status(404)
+					.header("MD2-Model-Version", Config.MODEL_VERSION)
+					.build();
 			}
 			«ENDFOR»			
 		}
