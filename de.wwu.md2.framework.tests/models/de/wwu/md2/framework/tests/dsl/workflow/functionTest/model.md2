@@ -1,11 +1,11 @@
 package functionTest.models
 
 entity Complaint {
-	loc: Location  // use current MD2 location instead!--> No, current MD2 location is a content provider, not an entity!
+	loc: Address  // use current MD2 location instead!--> No, current MD2 location is a content provider, not an entity!
 	naming : string
 }
 
-entity Location {
+entity Address {
 	myStreet: string
 	myCity: string
 }

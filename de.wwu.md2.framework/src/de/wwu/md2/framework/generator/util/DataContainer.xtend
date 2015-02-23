@@ -243,7 +243,7 @@ class DataContainer {
     }
     
     /**
-	 * Return fireEventEntry for event.
+	 * Return fireEventEntry for workflow event.
 	 */
     def public FireEventEntry getFireEventEntryForWorkflowEvent(WorkflowEvent we, WorkflowElement wfe) {
        

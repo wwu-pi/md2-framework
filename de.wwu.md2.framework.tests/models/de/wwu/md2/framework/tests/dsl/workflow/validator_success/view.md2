@@ -1,0 +1,73 @@
+package CurrentStateProject.views
+
+GridLayoutPane LocationDetectionView (columns 2, rows 9) {
+	Label TitleLbl ("Enter your location") // better: As Title of Activity
+	Spacer
+	TextInput streetLbl {tooltip "street"}
+	TextInput streetNoLbl {tooltip "no"}
+	IntegerInput zipLbl {tooltip "zip" }
+	TextInput cityLbl {tooltip "city"}
+	TextInput countryLbl {tooltip "country" width 100%}
+	Spacer {width 1%}
+	Label latitudeLbl ("Latitude:")
+	Label latitudeValueLbl ("")
+	Label longitudeLbl ("Longitude:")
+	Label longitudeValueLbl ("")
+	Spacer {width 1%}
+	Button DetectLocationBtn {text "My Location"}
+	Button Cancel {text "Cancel"}
+	Button Next {text "Next"}
+	//NavigationBar(Cancel, next)
+	Spacer {width 1%}
+}
+
+FlowLayoutPane LocationVerifyView (vertical) {
+	Label TitleLbl ("Verify Location") // better: As Title of Activity
+	
+	FlowLayoutPane StreetView (horizontal) {
+		LocationDetectionView.streetLbl -> streetLbl2
+		LocationDetectionView.streetNoLbl -> streetNoLbl2
+	}
+	FlowLayoutPane CityView (horizontal) {
+		LocationDetectionView.zipLbl -> zipLbl2
+		LocationDetectionView.cityLbl -> cityLbl2
+	}
+	
+	LocationDetectionView.countryLbl -> countryLbl2
+	Spacer {width 1%}
+	LocationDetectionView.latitudeLbl -> latitudeLbl2
+	LocationDetectionView.longitudeLbl -> longitudeLbl2
+	
+	//NavigationBar(Cancel, previous, next)
+	LocationDetectionView.Cancel -> Cancel2
+	LocationDetectionView.Next -> Next2
+	Button Previous {text "Previous"}
+}
+
+FlowLayoutPane SubmitComplaintView (vertical) {
+	Label TitleLbl ("Submit Complaint") // better: As Title of Activity
+	Image UploadImg {
+		src "uploadedImage.png"
+	}
+	FlowLayoutPane StreetView (horizontal) {
+		LocationDetectionView.streetLbl -> streetLbl3
+		LocationDetectionView.streetNoLbl -> streetNoLbl3
+	}
+	FlowLayoutPane CityView (horizontal) {
+		LocationDetectionView.zipLbl -> zipLbl3
+		LocationDetectionView.cityLbl -> cityLbl3
+	}
+	
+	LocationDetectionView.countryLbl -> countryLbl3
+	Spacer {width 1%}
+	LocationDetectionView.latitudeLbl -> latitudeLbl3
+	LocationDetectionView.longitudeLbl -> longitudeLbl3
+	
+	TextInput DescriptionTxt {
+		label "Additional Description"
+		type textarea
+	}
+	//NavigationBar(Cancel, next "Submit complaint")
+	LocationDetectionView.Cancel -> Cancel3
+	Button submitComplaint {text "Submit complaint"}	
+}
