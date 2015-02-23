@@ -6,6 +6,7 @@ import static extension de.wwu.md2.framework.util.TypeResolver.*import de.wwu.m
 import de.wwu.md2.framework.mD2.InvokeWSParam
 import de.wwu.md2.framework.mD2.InvokeDefaultValue
 import de.wwu.md2.framework.mD2.AbstractContentProviderPath
+import de.wwu.md2.framework.mD2.InvokeSetContentProvider
 
 class ExternalWebServiceClass {
 	
@@ -53,10 +54,15 @@ class ExternalWebServiceClass {
 			«FOR param: invoke.params.filter(InvokeDefaultValue)»
 				«param.rootEntity.name.toFirstLower».set«param.field.resolveContentProviderPathAttribute.toFirstUpper»(«param.value»);
 			«ENDFOR»
-					return Response
-						.status(404)
-						.header("MD2-Model-Version", Config.MODEL_VERSION)
-						.build();
+			
+			«FOR param: invoke.params.filter(InvokeSetContentProvider)»
+				«param.rootEntity.name.toFirstLower».set«param.field.resolveContentProviderPathAttribute.toFirstUpper»(«param.contentProviderEntity.name.toFirstLower»);
+			«ENDFOR»
+			
+			return Response
+				.status(404)
+				.header("MD2-Model-Version", Config.MODEL_VERSION)
+				.build();
 			}
 			«ENDFOR»			
 		}

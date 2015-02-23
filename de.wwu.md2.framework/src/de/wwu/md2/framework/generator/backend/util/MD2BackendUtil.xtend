@@ -9,10 +9,8 @@ import de.wwu.md2.framework.mD2.LocationProviderPath
 import de.wwu.md2.framework.mD2.InvokeDefaultValue
 import de.wwu.md2.framework.mD2.AbstractContentProviderPath
 import de.wwu.md2.framework.mD2.DataType
-import java.util.List
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.ReferencedModelType
-import java.util.ArrayList
 import de.wwu.md2.framework.mD2.InvokeDefinition
 import static extension de.wwu.md2.framework.util.TypeResolver.*
 import de.wwu.md2.framework.mD2.IntegerType
@@ -22,6 +20,9 @@ import de.wwu.md2.framework.mD2.DateType
 import de.wwu.md2.framework.mD2.BooleanType
 import de.wwu.md2.framework.mD2.TimeType
 import de.wwu.md2.framework.mD2.DateTimeType
+import java.util.Set
+import java.util.HashSet
+import de.wwu.md2.framework.mD2.InvokeSetContentProvider
 
 class MD2BackendUtil {
 
@@ -38,15 +39,15 @@ class MD2BackendUtil {
 		}
 	}
 	
-	def static List<Entity> getAllEntitiesWithinInvoke(WorkflowElement wfe){
-		return wfe.invoke.map[it.allEntities].flatten.toSet.toList
+	def static Set<Entity> getAllEntitiesWithinInvoke(WorkflowElement wfe){
+		return wfe.invoke.map[it.allEntities].flatten.toSet
 	}
 	
-	def static dispatch List<Entity> getAllEntities(InvokeDefinition definition){
-		return definition.params.map[it.allEntities].flatten.toSet.toList
+	def static dispatch Set<Entity> getAllEntities(InvokeDefinition definition){
+ 		return definition.params.map[it.allEntities].flatten.toSet
 	}
 	
-	def static dispatch List<Entity> getAllEntities(InvokeParam param){
+	def static dispatch Set<Entity> getAllEntities(InvokeParam param){
 		switch param {
 				InvokeWSParam: {
 					var field = param.field
@@ -56,10 +57,12 @@ class MD2BackendUtil {
 					}
 				}
 				InvokeDefaultValue: return param.field.getAllEntities
+				InvokeSetContentProvider: return param.field.getAllEntities
+				default: return new HashSet<Entity>()
 		}
 	}
 	
-	def static dispatch List<Entity> getAllEntities(AbstractContentProviderPath path){
+	def static dispatch Set<Entity> getAllEntities(AbstractContentProviderPath path){
 		var DataType rootType = null
 		switch (path) {
 			LocationProviderPath: throw new RuntimeException("LocationProviderPath is not allowed within this webservice since it provides a readonly attribute")
@@ -68,9 +71,9 @@ class MD2BackendUtil {
 		if (rootType != null) {
 			var modelElement = (rootType as ReferencedModelType).entity
 			if (modelElement == null) {
-				return new ArrayList<Entity>()
+				return new HashSet<Entity>()
 			} else {
-				var list = rootType.eAllContents.filter(Entity).toSet.toList
+				var list = rootType.eAllContents.filter(Entity).toSet
 				if (modelElement as Entity != null) {
 					list.add(modelElement as Entity)
 				}
@@ -89,6 +92,13 @@ class MD2BackendUtil {
 					}
 				}
 				InvokeDefaultValue: return param.field.rootEntity
+				InvokeSetContentProvider: {
+					var field = param.field
+					switch field {
+						LocationProviderPath: throw new RuntimeException("LocationProviderPath is not allowed within this webservice since it provides a readonly attribute")
+						ContentProviderPath: return field.rootEntity
+					}
+				}
 		}
 	}
 	
@@ -97,6 +107,15 @@ class MD2BackendUtil {
 			LocationProviderPath: throw new RuntimeException("LocationProviderPath is not allowed within this webservice since it provides a readonly attribute")
 			ContentProviderPath: return (( path.contentProviderRef.type as ReferencedModelType).entity) as Entity
 		}
+	}
+	
+	def static Entity getContentProviderEntity(InvokeSetContentProvider param){
+		 var refModelType = param.contentProvider.contentProvider.type as ReferencedModelType
+		 if (refModelType != null){
+		 	return refModelType.entity as Entity
+		 } else {
+		 	return null
+		 }
 	}
 	
 	def static String getValue(InvokeDefaultValue value){
