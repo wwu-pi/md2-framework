@@ -81,13 +81,17 @@ class ModelValidator extends AbstractMD2JavaValidator {
      * Prevent from using the following preset identifiers as entity / enum names:
      * - WorkflowState
      * - EventHandler
-     * - VersionNegotiation,
+     * - VersionNegotiation
+     * - FileUpload,
      * since these names will conflict during generation of entities and webservices, e.g. on the backend.
      */
      @Check
      def checkEntityNameDoesntEqualPresetIdentifiers(ModelElement modelElement){
      	// Add new preset identifiers to the List, if they should also be excluded within the entity / enum names
-     	var presetIdentifiers = newHashSet("WorkflowState", "EventHandler", "VersionNegotiation")
+     	var presetIdentifiers = newHashSet("WorkflowState",
+     										"EventHandler",
+     										"VersionNegotiation",
+     										"FileUpload")
      	// for every preset identifier, check if used as entity / enum name --> then error
      	
 		if(presetIdentifiers.contains(modelElement.name)){
