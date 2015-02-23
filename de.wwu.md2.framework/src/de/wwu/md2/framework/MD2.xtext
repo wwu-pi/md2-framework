@@ -1859,6 +1859,9 @@ EID:
 	'aqua' | 'black' | 'blue' | 'gray' | 'green' | 'lime' | 'maroon' | 'navy' | 'olive' | 'purple' |
 	'red' | 'silver' | 'white' | 'yellow' |
 	
+	// other keywords
+	'Location' | 
+	
 	// arbitrary ID
 	ID
 	
