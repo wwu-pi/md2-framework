@@ -818,9 +818,8 @@ WebServiceCall:
 ;
 
 RESTParam:
-	key = STRING ':'value = SimpleDataType
+	key = STRING ':' (stringValue=STRING | intValue=INT | booleanValue=Boolean | floatValue = FLOAT)
 ;
-
 
 enum HttpMethod:
 	GET = 'get' | POST = 'post' | PUT = 'put' | DELETE = 'delete'
