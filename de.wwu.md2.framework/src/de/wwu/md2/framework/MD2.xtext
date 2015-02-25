@@ -1452,11 +1452,13 @@ WebServiceCall:
 ;
 
 RESTParam:
-	key = STRING ':' (	stringValue=STRING 'is' isString?='string'| intValue=INT 'is' isInteger?='integer'| 
-						booleanValue=Boolean 'is' isBoolean?='boolean'| floatValue = FLOAT 'is' isFloat?='float'|
-						cpValue = AbstractContentProviderPath 'is' (isString?='string' | isInteger?='integer' | isBoolean?='boolean' | isFloat?='float'
-					 )
-	)
+	key = STRING ':' (	stringValue=STRING 'is' isString?='string' | integerValue=INT 'is' isInteger?='integer' | 
+						booleanValue=Boolean 'is' isBoolean?='boolean' | floatValue = FLOAT 'is' isFloat?='float' |
+						cpValue = CpValueWrapper)
+;
+
+CpValueWrapper:
+    value = AbstractContentProviderPath 'is' (isString?='string' | isInteger?='integer' | isBoolean?='boolean' | isFloat?='float')
 ;
 
 enum RESTMethod:
