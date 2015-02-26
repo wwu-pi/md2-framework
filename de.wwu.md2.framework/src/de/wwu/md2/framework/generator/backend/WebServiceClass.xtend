@@ -396,7 +396,7 @@ class WebServiceClass {
 		}
 	'''
 	
-		def public static createCallExternalWSProxy(String basePackage) '''
+	def public static createCallExternalWSProxy(String basePackage) '''
 		package «basePackage».ws;
 		
 		import org.json.simple.JSONValue;
