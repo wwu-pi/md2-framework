@@ -2,8 +2,7 @@ package de.wwu.md2.framework.generator.backend
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.generator.backend.util.MD2BackendUtil.*
-import static extension de.wwu.md2.framework.util.TypeResolver.*import de.wwu.md2.framework.mD2.WorkflowElement
-import de.wwu.md2.framework.mD2.InvokeWSParam
+import static extension de.wwu.md2.framework.util.TypeResolver.*import de.wwu.md2.framework.mD2.InvokeWSParam
 import de.wwu.md2.framework.mD2.InvokeDefaultValue
 import de.wwu.md2.framework.mD2.AbstractContentProviderPath
 import de.wwu.md2.framework.mD2.InvokeSetContentProvider
@@ -71,7 +70,7 @@ class ExternalWebServiceClass {
 					«param.rootEntity.name.toFirstLower».set«param.field.resolveContentProviderPathAttribute.toFirstUpper»(«param.paramAlias»);
 				«ENDFOR»
 				«FOR param: invoke.params.filter(InvokeDefaultValue)»
-					«param.rootEntity.name.toFirstLower».set«param.field.resolveContentProviderPathAttribute.toFirstUpper»(«param.value»);
+					«param.rootEntity.name.toFirstLower».set«param.field.resolveContentProviderPathAttribute.toFirstUpper»(«param.invokeValue.stringValue»);
 				«ENDFOR»
 				«FOR param: invoke.params.filter(InvokeSetContentProvider)»
 					«createSaveContentProvider(param.contentProvider.contentProvider, workflowManager)»

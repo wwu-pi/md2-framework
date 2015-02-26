@@ -5,28 +5,24 @@ import de.wwu.md2.framework.mD2.InvokeWSParam
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import de.wwu.md2.framework.mD2.ContentProviderPath
-import de.wwu.md2.framework.mD2.LocationProviderPath
 import de.wwu.md2.framework.mD2.InvokeDefaultValue
-import de.wwu.md2.framework.mD2.AbstractContentProviderPath
-import de.wwu.md2.framework.mD2.DataType
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.InvokeDefinition
-import static extension de.wwu.md2.framework.util.TypeResolver.*
-import de.wwu.md2.framework.mD2.IntegerType
-import de.wwu.md2.framework.mD2.FloatType
-import de.wwu.md2.framework.mD2.StringType
-import de.wwu.md2.framework.mD2.DateType
-import de.wwu.md2.framework.mD2.BooleanType
-import de.wwu.md2.framework.mD2.TimeType
-import de.wwu.md2.framework.mD2.DateTimeType
 import java.util.Set
 import java.util.HashSet
 import de.wwu.md2.framework.mD2.InvokeSetContentProvider
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.RemoteConnection
-import de.wwu.md2.framework.mD2.WorkflowElementReference
 import de.wwu.md2.framework.mD2.WorkflowElementEntry
+import de.wwu.md2.framework.mD2.InvokeIntValue
+import de.wwu.md2.framework.mD2.InvokeFloatValue
+import de.wwu.md2.framework.mD2.InvokeStringValue
+import de.wwu.md2.framework.mD2.InvokeBooleanValue
+import de.wwu.md2.framework.mD2.InvokeDateValue
+import de.wwu.md2.framework.mD2.InvokeDateTimeValue
+import de.wwu.md2.framework.mD2.InvokeTimeValue
+import de.wwu.md2.framework.mD2.InvokeValue
 
 class MD2BackendUtil {
 
@@ -35,11 +31,7 @@ class MD2BackendUtil {
 			return wsParam.alias
 		}
 		else{
-		val attributePath = wsParam.field
-			switch attributePath {
-				LocationProviderPath: return attributePath.locationField.toString
-				ContentProviderPath: return attributePath.lastPathTail.getPathTailAsString
-				}
+			return wsParam.field.lastPathTail.getPathTailAsString
 		}
 	}
 	
@@ -53,25 +45,15 @@ class MD2BackendUtil {
 	
 	def static dispatch Set<Entity> getAllEntities(InvokeParam param){
 		switch param {
-				InvokeWSParam: {
-					var field = param.field
-					switch field {
-						LocationProviderPath: throw new RuntimeException("LocationProviderPath is not allowed within this webservice since it provides a readonly attribute")
-						ContentProviderPath: return field.getAllEntities
-					}
-				}
+				InvokeWSParam:  return param.field.getAllEntities
 				InvokeDefaultValue: return param.field.getAllEntities
 				InvokeSetContentProvider: return param.field.getAllEntities
 				default: return new HashSet<Entity>()
 		}
 	}
 	
-	def static dispatch Set<Entity> getAllEntities(AbstractContentProviderPath path){
-		var DataType rootType = null
-		switch (path) {
-			LocationProviderPath: throw new RuntimeException("LocationProviderPath is not allowed within this webservice since it provides a readonly attribute")
-			ContentProviderPath: rootType = path.contentProviderRef.type
-		}
+	def static dispatch Set<Entity> getAllEntities(ContentProviderPath path){
+		var rootType = path.contentProviderRef.type
 		if (rootType != null) {
 			var modelElement = (rootType as ReferencedModelType).entity
 			if (modelElement == null) {
@@ -88,29 +70,14 @@ class MD2BackendUtil {
 	
 	def static dispatch Entity getRootEntity(InvokeParam param){
 		switch param {
-				InvokeWSParam: {
-					var field = param.field
-					switch field {
-						LocationProviderPath: throw new RuntimeException("LocationProviderPath is not allowed within this webservice since it provides a readonly attribute")
-						ContentProviderPath: return field.rootEntity
-					}
-				}
+				InvokeWSParam:  return param.field.rootEntity
 				InvokeDefaultValue: return param.field.rootEntity
-				InvokeSetContentProvider: {
-					var field = param.field
-					switch field {
-						LocationProviderPath: throw new RuntimeException("LocationProviderPath is not allowed within this webservice since it provides a readonly attribute")
-						ContentProviderPath: return field.rootEntity
-					}
-				}
+				InvokeSetContentProvider: return param.field.rootEntity
 		}
 	}
 	
-	def static dispatch Entity getRootEntity(AbstractContentProviderPath path){
-		switch (path) {
-			LocationProviderPath: throw new RuntimeException("LocationProviderPath is not allowed within this webservice since it provides a readonly attribute")
-			ContentProviderPath: return (( path.contentProviderRef.type as ReferencedModelType).entity) as Entity
-		}
+	def static dispatch Entity getRootEntity(ContentProviderPath path){
+		return (( path.contentProviderRef.type as ReferencedModelType).entity) as Entity
 	}
 	
 	def static Entity getContentProviderEntity(ContentProvider contentProvider){
@@ -135,11 +102,8 @@ class MD2BackendUtil {
 	}
 	
 	
-	def static ContentProvider getContentProvider(AbstractContentProviderPath path){
-		switch (path) {
-			LocationProviderPath: throw new RuntimeException("LocationProviderPath is not allowed within this webservice since it provides a readonly attribute")
-			ContentProviderPath: return path.contentProviderRef
-			}
+	def static ContentProvider getContentProvider(ContentProviderPath path){
+		 return path.contentProviderRef
 	}
 	
 	def static Set<ContentProvider> getRootContentProviders(InvokeDefinition definition){
@@ -150,22 +114,15 @@ class MD2BackendUtil {
 		return (allContentProviders + superiorCPs).toSet
 	}
 	
-	def static String getValue(InvokeDefaultValue value){
-		var path = value.field
-		switch (path) {
-			LocationProviderPath: throw new RuntimeException("LocationProviderPath is not allowed within this webservice since it provides a readonly attribute")
-			ContentProviderPath: {
-				var type = path.tail.resolveAttribute
-				switch (type){
-					IntegerType: value.intValue+""
-					FloatType: value.floatValue+""
-					StringType: '''"«value.stringValue»"'''
-					BooleanType: value.booleanValue.literal
-					DateType: '''new Date(«value.dateValue.time»L)'''
-					TimeType: '''new Date(«value.timeValue.time»L)'''
-					DateTimeType: '''new Date(«value.datetimeValue.time»L)'''
-				}
-			}
+	def static String getStringValue(InvokeValue invokeValue){
+		switch (invokeValue){
+			InvokeIntValue: invokeValue.value+""
+			InvokeFloatValue: invokeValue.value+""
+			InvokeStringValue: '''"«invokeValue.value»"'''
+			InvokeBooleanValue: invokeValue.value.literal
+			InvokeDateValue: '''new Date(«invokeValue.value.time»L)'''
+			InvokeTimeValue: '''new Date(«invokeValue.value.time»L)'''
+			InvokeDateTimeValue: '''new Date(«invokeValue.value.time»L)'''
 		}
 	}
 	

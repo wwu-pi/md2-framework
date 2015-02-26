@@ -1396,16 +1396,21 @@ InvokeDefinition:
 	'}')?
 ;
 
-
+//Only contentProviderPaths are allowed since LocationProviders are readonly
 InvokeParam:
-		{InvokeWSParam} field=AbstractContentProviderPath ('as' alias=EID)? |
-		{InvokeDefaultValue} 'default of' field=AbstractContentProviderPath 'is' (stringValue=STRING | intValue=INT | booleanValue=Boolean | dateValue=DATE | timeValue=TIME | datetimeValue=DATE_TIME | floatValue = FLOAT)|
-		{InvokeSetContentProvider} 'set' field=AbstractContentProviderPath 'to' (contentProvider= ContentProviderReference)
+		{InvokeWSParam} field=ContentProviderPath ('as' alias=EID)? |
+		{InvokeDefaultValue} 'default of' field=ContentProviderPath 'is' invokeValue=InvokeValue |
+		{InvokeSetContentProvider} 'set' field=ContentProviderPath 'to' (contentProvider= ContentProviderReference)
 ;
 
-
-enum RESTMethod:
-		POST='POST' | GET='GET' | PUT='PUT'
+InvokeValue:
+	{InvokeStringValue} value=STRING |
+	{InvokeIntValue} value=INT | 
+	{InvokeBooleanValue} value=Boolean | 
+	{InvokeDateValue} value=DATE | 
+	{InvokeTimeValue} value=TIME | 
+	{InvokeDateTimeValue} value=DATE_TIME | 
+	{InvokeFloatValue} value = FLOAT
 ;
 
 
