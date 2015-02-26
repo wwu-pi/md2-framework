@@ -1399,7 +1399,7 @@ InvokeDefinition:
 //Only contentProviderPaths are allowed since LocationProviders are readonly
 InvokeParam:
 		{InvokeWSParam} field=ContentProviderPath ('as' alias=EID)? |
-		{InvokeDefaultValue} 'default of' field=ContentProviderPath 'is' invokeValue=InvokeValue |
+		{InvokeDefaultValue} 'default' field=ContentProviderPath '=' invokeValue=InvokeValue |
 		{InvokeSetContentProvider} 'set' field=ContentProviderPath 'to' (contentProvider= ContentProviderReference)
 ;
 

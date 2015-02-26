@@ -23,7 +23,7 @@ WorkflowElement myWorkflowElement {
 		:UserPovider.ename
 		:UserPovider.email
 		:UserPovider.bday
-		default of :UserPovider.address is "myAddress"
+		default :UserPovider.address = "myAddress"
 	}
 	
 	invokable
