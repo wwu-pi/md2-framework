@@ -93,6 +93,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
     
     public static final String INVOKEDEFAULTVALUETYPEMISSMATCH = "invokeDefaultValueTypeMissmatch";
     public static final String INVOKEDEFAULTVALUETYPENOTSUPPORTED = "invokeDefaultValueTypeNotSupported";
+    public static final String INVOKEMISSINGREQUIREDATTRIBUTE = "invokeMissingRequiredAttribute";
     
     @Inject
     GetFiredEventsHelper helper;
@@ -698,7 +699,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		processedRequiredAttributes.removeAll(allCoveredAttributes)
 		processedRequiredAttributes.forEach[
 			var error = '''The required attribute «it.name» of the entity «(it.eContainer as Entity).name» is not set. Either set «it.name» to an default value, offer it to be set via the rest service, set «it.name» to be optional, or remove any other related attribute from the invoke definition.'''
-			error(error , invokeDefinition, null, -1, INVOKEDEFAULTVALUETYPENOTSUPPORTED)
+			error(error , invokeDefinition, null, -1, INVOKEMISSINGREQUIREDATTRIBUTE)
 		]
     }
 	
