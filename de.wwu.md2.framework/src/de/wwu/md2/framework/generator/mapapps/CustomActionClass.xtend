@@ -291,7 +291,7 @@ class CustomActionClass {
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(WebServiceCallAction action, String varName, Map<String,String> imports)'''
-
+        var that = this;
         var «varName» = this.$.actionFactory.getWebServiceCallAction("«action.webServiceCall.url»", "«action.webServiceCall.method»", «action.webServiceCall.queryparams.transformToJson», «action.webServiceCall.bodyparams.transformToJson»);
 	'''
 	
@@ -315,7 +315,7 @@ class CustomActionClass {
 			IntegerRestParam:    (param.value as IntegerRestParam).value + ""
 			ContentProviderRestParam: {
 			    val cpPath = (param.value as ContentProviderRestParam).value as ContentProviderPath
-                "this.$.contentProviderRegistry.getContentProvider(\"" + cpPath.contentProviderRef.name + "\").getValue(\"" + cpPath.attributeFromContentProviderPath.name + "\")"
+                "function(){return that.$.contentProviderRegistry.getContentProvider(\"" + cpPath.contentProviderRef.name.toFirstLower + "\").getValue(\"" + cpPath.attributeFromContentProviderPath.name + "\");}"
             }
 		}
 	}
