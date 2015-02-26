@@ -20,15 +20,34 @@ package «projectName + ".controllers"»
  */
 
 main {
-	appName "«projectName»"
 	appVersion "1.0"
 	modelVersion "1.0"
-	startView firstView
-	onInitialized startAction
+	workflowManager WorkflowBackendConnection
 }
 
-action CustomAction startAction {
+remoteConnection WorkflowBackendConnection{
+	uri "http://localhost:8080/«projectName».backend/service/"
+}
+
+WorkflowElement firstWFE{
+	defaultProcessChain firstProcessChain
 	
+	onInit {
+		init
+	}
+	
+	action CustomAction init{
+		
+	}
+	
+	action CustomAction firstAction{
+		call FireEvent (BasicEvent)
+	}
+	
+	processChain  firstProcessChain {
+		step firstStep:
+			view firstView
+	}
 }
 «ENDFILE»
 «FILE "src/" + projectName.replaceAll("\\.", "/") + "/views/defaultView.md2"-»
@@ -49,14 +68,14 @@ package «projectName + ".workflows"»
  * Implement the workflow here
  */
  
- WorkflowElement firstController
+ WorkflowElement firstWFE
 	fires BasicEvent {
-		start firstController
+		start firstWFE
 	}
 
 App «projectName»App {
 	WorkflowElements {
-		firstController (startable: "Start Controller 1")
+		firstWFE (startable: "Start WFE 1")
 	}
 	appName "«projectName»"
 }
