@@ -31,6 +31,7 @@ import de.wwu.md2.framework.mD2.SimpleActionRef
 import de.wwu.md2.framework.mD2.FireEventAction
 import de.wwu.md2.framework.mD2.Label
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
+import de.wwu.md2.framework.mD2.FileUpload
 
 /**
  * Valaidators for all controller elements of MD2.
