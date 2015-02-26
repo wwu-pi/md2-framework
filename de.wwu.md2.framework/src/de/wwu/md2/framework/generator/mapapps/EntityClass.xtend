@@ -24,6 +24,7 @@ import java.util.Map
 
 import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
+import de.wwu.md2.framework.mD2.FileType
 
 class EntityClass {
 	
@@ -104,6 +105,9 @@ class EntityClass {
 				val defaultValue = type.params.filter(AttrStringDefault).head
 				'''this._typeFactory.create("string", «defaultValue?.value.quotify ?: '''null'''»)'''
 			}
+			FileType: {
+				'''this._typeFactory.create("string", null)'''
+			}
 			BooleanType: {
 				val defaultValue = type.params.filter(AttrBooleanDefault).head
 				'''this._typeFactory.create("boolean", «defaultValue?.value ?: '''false'''»)'''
@@ -147,6 +151,7 @@ class EntityClass {
 			DateType: '''date'''
 			TimeType: '''time'''
 			DateTimeType: '''datetime'''
+			FileType: '''string'''
 			default: throw new Error("Data type not supported!")
 		}
 	}
