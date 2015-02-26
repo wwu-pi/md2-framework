@@ -54,6 +54,28 @@ import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
 
 import static extension de.wwu.md2.framework.util.TypeResolver.*
+import de.wwu.md2.framework.mD2.InvokeDefinition
+import org.eclipse.emf.ecore.EStructuralFeature
+import java.util.HashSet
+import de.wwu.md2.framework.mD2.InvokeParam
+import de.wwu.md2.framework.mD2.AttrIsOptional
+import de.wwu.md2.framework.mD2.IntegerType
+import de.wwu.md2.framework.mD2.FloatType
+import de.wwu.md2.framework.mD2.StringType
+import de.wwu.md2.framework.mD2.BooleanType
+import de.wwu.md2.framework.mD2.DateType
+import de.wwu.md2.framework.mD2.TimeType
+import de.wwu.md2.framework.mD2.DateTimeType
+import de.wwu.md2.framework.mD2.EnumType
+import de.wwu.md2.framework.mD2.Attribute
+import de.wwu.md2.framework.mD2.AttributeType
+import de.wwu.md2.framework.mD2.impl.IntegerTypeImpl
+import de.wwu.md2.framework.mD2.impl.FloatTypeImpl
+import de.wwu.md2.framework.mD2.impl.StringTypeImpl
+import de.wwu.md2.framework.mD2.impl.BooleanTypeImpl
+import de.wwu.md2.framework.mD2.impl.DateTypeImpl
+import de.wwu.md2.framework.mD2.impl.TimeTypeImpl
+import de.wwu.md2.framework.mD2.impl.DateTimeTypeImpl
 
 /**
  * Validators for all controller elements of MD2.
@@ -356,7 +378,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	 */
 	@Check
 	def checkBothExpressionsInWhereClauseComparisonOfSameType(WhereClauseCompareExpression expr) {
-		val attrType = expr.eqLeft.tail.resolveAttribute.attributeTypeName
+		val attrType = expr.eqLeft.tail.resolveAttributeType.attributeTypeName
 		val valueType = expr.eqRight.expressionType
 		
 		if (!attrType.equals(valueType)) {
@@ -370,7 +392,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	 */
 	@Check
 	def checkCorrectUsageOfOperatorsInWhereClauseComparison(WhereClauseCompareExpression expr) {
-		val left = expr.eqLeft.tail.resolveAttribute.attributeTypeName
+		val left = expr.eqLeft.tail.resolveAttributeType.attributeTypeName
 		val isNumericOperator = switch expr.op {
 			case Operator::GREATER: true
 			case Operator::GREATER_OR_EQUAL: true
@@ -545,26 +567,27 @@ class ControllerValidator extends AbstractMD2JavaValidator {
         }
     }
     
+    /**
+     * Ensures that, when the REST method 'GET' is chosen, no body params are set.  
+     */
+     
+    public static final String NOBODYPARAMSWHENGET = "noBodyParamsWhenGET";
+     
+    @Check
+    def checkNoBodyParamsWhenGETMethod(WebServiceCall wscall){
+        if(wscall.method.equals(RESTMethod.GET) && wscall.bodyparams.size > 0) 
+        {
+            acceptError("When REST method 'GET' is chosen, no body params are allowed. Use the queryparams construct instead.", wscall, null, -1, NOBODYPARAMSWHENGET);
+        }
+    }
+    
 	/////////////////////////////////////////////////////////
 	/// Invoke Validators
 	/////////////////////////////////////////////////////////
 	
 	static final Map<Class<? extends InvokeValue>, String> invokeValueTypeMap= getInvokeValueTypeHashMap()
-		
-	/**
-	 * Ensures that, when the REST method 'GET' is chosen, no body params are set.  
-	 */
-	 
-	public static final String NOBODYPARAMSWHENGET = "noBodyParamsWhenGET";
-	 
-	@Check
-	def checkNoBodyParamsWhenGETMethod(WebServiceCall wscall){
-		if(wscall.method.equals(RESTMethod.GET) && wscall.bodyparams.size > 0) 
-		{
-			acceptError("When REST method 'GET' is chosen, no body params are allowed. Use the queryparams construct instead.", wscall, null, -1, NOBODYPARAMSWHENGET);
-		}
-	
- 	}
+
+	static final Map<Class<? extends AttributeType>, String> supportedAttributeTypeMap= getSupportedAttributeTypeHashMap()
 
 	private static def getInvokeValueTypeHashMap(){
 		val map = new HashMap<Class<? extends InvokeValue>,String>()
@@ -578,6 +601,18 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		return map
 	}
 	
+	private static def getSupportedAttributeTypeHashMap(){
+		val map = new HashMap<Class<? extends AttributeType>,String>()
+		map.put(IntegerTypeImpl, "integer")
+		map.put(FloatTypeImpl, "float")
+		map.put(StringTypeImpl, "string")
+		map.put(BooleanTypeImpl, "boolean")
+		map.put(DateTypeImpl, "date")
+		map.put(TimeTypeImpl, "time")
+		map.put(DateTimeTypeImpl, "datetime")
+		return map
+	}
+
 	/**
      * Ensure, that InvokeDefaultValue has same type
      * @param invokeDefaultValue
@@ -585,15 +620,96 @@ class ControllerValidator extends AbstractMD2JavaValidator {
     @Check
     def checkForTypeOfInvokeDefaultValue(InvokeDefaultValue defaultValue) {
 		var valueType = invokeValueTypeMap.get(defaultValue.invokeValue.class)
-		var cpType = invokeValueTypeMap.get(defaultValue.field.tail.resolveAttribute)
+		var cpType = supportedAttributeTypeMap.get(defaultValue.field.tail.resolveAttributeType.class)
 		if (valueType != null && cpType!= null && !valueType.equals(cpType)){
 			val error = '''The types of the content provider and its default value have to match each other! Expected default value to be of type «cpType» but was «valueType»!'''
 			acceptError(error, defaultValue, MD2Package.eINSTANCE.invokeDefaultValue_InvokeValue, -1, INVOKEDEFAULTVALUETYPEMISSMATCH)
 		}
 		if (cpType == null){
-			val error = '''The type «defaultValue.field.tail.resolveAttribute.attributeTypeName» of the content provider reference is not supported to be set to a default value!'''
+			val error = '''The type «defaultValue.field.tail.resolveAttributeType.attributeTypeName» of the content provider reference is not supported to be set to a default value!'''
 			acceptError(error, defaultValue, MD2Package.eINSTANCE.invokeParam_Field, -1, INVOKEDEFAULTVALUETYPENOTSUPPORTED)
 		}	
     }
-
+    
+    /**
+     * Ensure, that invoke paths are unique
+     * @param workflowElement
+     */
+    @Check
+    def checkForInvokePathsBeingUnique(WorkflowElement wfe) {
+    	if (wfe.invoke.size>1){
+			val paths = wfe.invoke.map[it.path?:""]
+			val allpaths = new HashSet<String>()
+			val conflictedPaths = new HashSet<String>()
+			paths.forEach[
+				if (allpaths.contains(it)){
+					conflictedPaths.add(it)
+				}else{
+					allpaths.add(it)
+				}
+			]
+			for (InvokeDefinition invoke: wfe.invoke){
+				if (conflictedPaths.contains(invoke.path?:"")){
+					var error = '''The paths of invoke definitions need to be unique!'''
+					var EStructuralFeature structuralFeature = null
+					if (invoke.path != null){
+						structuralFeature =  MD2Package.eINSTANCE.invokeDefinition_Path
+					} else {
+						error += ''' When the path is not set the default is "".'''
+					}
+					error(error, invoke, structuralFeature, -1, INVOKEDEFAULTVALUETYPENOTSUPPORTED)
+				}
+		}
+		}
+    }
+    
+    /**
+     * Ensure, that all required attributes are set
+     * @param workflowElement
+     */
+    @Check
+    def checkForRequiredAttributesInInvoke(InvokeDefinition invokeDefinition) {
+    	val allEntities = new HashSet<Entity>()
+		for (InvokeParam param:invokeDefinition.params){
+			var entity=(( param.field.contentProviderRef.type as ReferencedModelType).entity) as Entity
+			allEntities.add(entity)
+		}
+		val allAttributes = allEntities.map[it.attributes].flatten
+		var processedRequiredAttributes = new HashSet<Attribute>()
+		
+		var requiredAttributes = allAttributes.getRequiredAttributes
+		processedRequiredAttributes.addAll(requiredAttributes)
+		var requiredReferenceTypes = requiredAttributes.filter[it.type instanceof ReferencedType]
+		while (requiredReferenceTypes.size>0){
+			requiredAttributes = requiredReferenceTypes.map[(it.type as ReferencedType).element].filter(Entity).map[it.attributes].flatten.getRequiredAttributes
+			processedRequiredAttributes.addAll(requiredAttributes)
+			requiredReferenceTypes = requiredAttributes.filter[it.type instanceof ReferencedType]
+			processedRequiredAttributes.addAll(requiredAttributes)
+		}
+		
+		var allCoveredAttributes = invokeDefinition.params.map[it.field.tail.resolveAttribute]
+		processedRequiredAttributes.removeAll(allCoveredAttributes)
+		processedRequiredAttributes.forEach[
+			var error = '''The required attribute «it.name» of the entity «(it.eContainer as Entity).name» is not set. Either set «it.name» to an default value, offer it to be set via the rest service, set «it.name» to be optional, or remove any other related attribute from the invoke definition.'''
+			error(error , invokeDefinition, null, -1, INVOKEDEFAULTVALUETYPENOTSUPPORTED)
+		]
+    }
+	
+    private def Iterable<Attribute> getRequiredAttributes(Iterable<Attribute> attributes){
+    	attributes.filter[
+			var type = it.type
+			var params = switch (type){
+				ReferencedType: type.params
+				IntegerType: type.params
+				FloatType: type.params
+				StringType: type.params
+				BooleanType: type.params
+				DateType: type.params
+				TimeType: type.params
+				DateTimeType: type.params
+				EnumType: type.params
+			}
+			params.filter(AttrIsOptional).size==0		
+		]
+    }
 }
