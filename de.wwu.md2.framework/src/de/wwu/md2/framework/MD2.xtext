@@ -708,7 +708,7 @@ Controller:
  * The ControllerElement is the super type of all possible ControllerElements.
  */
 ControllerElement:
-	ContentProvider | Validator | Main | RemoteConnection | WorkflowElement
+	ContentProvider | Validator | Main | RemoteConnection | WorkflowElement | WebServiceCall
 ;
 
 
@@ -790,7 +790,7 @@ SimpleAction:
 	{ContentProviderOperationAction} ('ContentProviderOperation' '(' operation = AllowedOperation contentProvider = AbstractProviderReference ')') |
 	{ContentProviderResetAction} ('ContentProviderReset' '('contentProvider = ContentProviderReference ')') |
 	{FireEventAction} ('FireEvent' '('workflowEvent = WorkflowEvent')') |
-	{WebServiceCallAction} ('WebServiceCall' '('webServiceCall = WebServiceCall ')') |
+	{WebServiceCallAction} ('WebServiceCall' webServiceCall = [WebServiceCall]) |
 	{LocationAction} ('Location' '(' 
 			'inputs' '(' 'cityInput' cityInput=AbstractContentProviderPath
 						 &'streetInput' streetInput=AbstractContentProviderPath
@@ -1445,10 +1445,12 @@ SimpleExpression:
 /////////////////////////////////////////////
 
 WebServiceCall:
-	'url' url = STRING
-	'method' method = RESTMethod
-	('queryparams' '('  queryparams += RESTParam* ')')?
-	('bodyparams' '(' bodyparams += RESTParam* ')')?
+    'externalWebService' name=EID '{'
+	   ('url' url = STRING &
+	   'method' method = RESTMethod &
+	   ('queryparams' '('  queryparams += RESTParam* ')')? &
+	   ('bodyparams' '(' bodyparams += RESTParam* ')')?)
+    '}'
 ;
 
 RESTParam:
