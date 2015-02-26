@@ -71,6 +71,8 @@ import org.eclipse.emf.ecore.EObject
 import de.wwu.md2.framework.mD2.LocationAction
 import de.wwu.md2.framework.mD2.WebServiceCallAction
 import de.wwu.md2.framework.mD2.RESTParam
+import de.wwu.md2.framework.mD2.Attribute
+import de.wwu.md2.framework.mD2.ContentProviderPath
 
 class CustomActionClass {
 	
@@ -284,37 +286,41 @@ class CustomActionClass {
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(WebServiceCallAction action, String varName, Map<String,String> imports)'''
-	
-		var «varName» = this.$.actionFactory.getWebServiceCallAction("«action.webServiceCall.url»","«action.webServiceCall.method»","«action.webServiceCall.queryparams.transformToJson»");
+
+        var «varName» = this.$.actionFactory.getWebServiceCallAction("«action.webServiceCall.url»", "«action.webServiceCall.method»", «action.webServiceCall.queryparams.transformToJson», «action.webServiceCall.bodyparams.transformToJson»);
 	'''
 	
-	def public static void transformToJson(List<RESTParam> params){
-		var json = '''{
+	def public static String transformToJson(List<RESTParam> params){
+		var json = '''
+		{
 			«FOR RESTParam p : params SEPARATOR ","»
 				"«p.key»": «p.getType» 
 			«ENDFOR»
-					}'''
+		}'''
+		return json
 	}
 	
 	def public static String getType(RESTParam param)
 	{
-		
 		switch (param){
 			//for values written manually in model
-			case param.isString: "\"" + param.stringValue + "\""
-			case param.isBoolean: param.booleanValue +""
-			case param.isFloat:  param.floatValue +""
-			case param.isInteger:  param.integerValue +""
-			//for content provider values
-			case param.cpValue.isString: "\"" + param.cpValue.value + "\""
-			case param.cpValue.isBoolean: param.cpValue.value +""
-			case param.cpValue.isFloat:  param.cpValue.value +""
-			case param.cpValue.isInteger:  param.cpValue.value +""
-		
-		
-		
+			case param.isString:     "\"" + param.stringValue + "\""
+			case param.isBoolean:    param.booleanValue + ""
+			case param.isFloat:      param.floatValue + ""
+			case param.isInteger:    param.integerValue + ""
+			case param.cpValue != null: {
+			    val cpPath = param.cpValue.value
+                "this.$.contentProviderRegistry.getContentProvider(\"" + cpPath.contentProviderRef.name + "\").getValue(\"" + cpPath.attributeFromContentProviderPath.name + "\")"
+            }
 		}
-
+	}
+	
+	def private static Attribute getAttributeFromContentProviderPath(ContentProviderPath path){
+	    var tail = path.tail
+	    while(tail.tail != null){
+	        tail = path.tail
+	    }
+	    return tail.attributeRef
 	}
 	
 	def public static WorkflowElement getContainingWorkflowElement(FireEventAction context)

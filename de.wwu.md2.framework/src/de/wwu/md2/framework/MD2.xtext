@@ -790,7 +790,7 @@ SimpleAction:
 	{ContentProviderOperationAction} ('ContentProviderOperation' '(' operation = AllowedOperation contentProvider = AbstractProviderReference ')') |
 	{ContentProviderResetAction} ('ContentProviderReset' '('contentProvider = ContentProviderReference ')') |
 	{FireEventAction} ('FireEvent' '('workflowEvent = WorkflowEvent')') |
-	{WebServiceCallAction} ('WebServiceCall'  '(' webServiceCall = WebServiceCall ')')|
+	{WebServiceCallAction} ('WebServiceCall' '('webServiceCall = WebServiceCall ')') |
 	{LocationAction} ('Location' '(' 
 			'inputs' '(' 'cityInput' cityInput=AbstractContentProviderPath
 						 &'streetInput' streetInput=AbstractContentProviderPath
@@ -1447,7 +1447,7 @@ SimpleExpression:
 WebServiceCall:
 	'url' url = STRING
 	'method' method = RESTMethod
-	'queryparams' '('  queryparams += RESTParam* ')'
+	('queryparams' '('  queryparams += RESTParam* ')')?
 	('bodyparams' '(' bodyparams += RESTParam* ')')?
 ;
 
@@ -1458,7 +1458,7 @@ RESTParam:
 ;
 
 CpValueWrapper:
-    value = AbstractContentProviderPath 'is' (isString?='string' | isInteger?='integer' | isBoolean?='boolean' | isFloat?='float')
+    value = ContentProviderPath 'is' (isString?='string' | isInteger?='integer' | isBoolean?='boolean' | isFloat?='float')
 ;
 
 enum RESTMethod:
