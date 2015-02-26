@@ -31,6 +31,8 @@ import de.wwu.md2.framework.mD2.SimpleActionRef
 import de.wwu.md2.framework.mD2.FireEventAction
 import de.wwu.md2.framework.mD2.Label
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
+import de.wwu.md2.framework.mD2.WebServiceCall
+import de.wwu.md2.framework.mD2.RESTMethod
 
 /**
  * Valaidators for all controller elements of MD2.
@@ -345,4 +347,20 @@ class ControllerValidator extends AbstractMD2JavaValidator {
         }
     }
 	
+		
+	/**
+	 * Ensures that, when the REST method 'GET' is chosen, no body params are set.  
+	 */
+	 
+	public static final String NOBODYPARAMSWHENGET = "noBodyParamsWhenGET";
+	 
+	@Check
+	def checkNoBodyParamsWhenGETMethod(WebServiceCall wscall){
+		if(wscall.method.equals(RESTMethod.GET) && wscall.bodyparams.size > 0) 
+		{
+			acceptError("When REST method 'GET' is chosen, no body params are allowed. Use the queryparams construct instead.", wscall, null, -1, NOBODYPARAMSWHENGET);
+		}
+	
+ 	}
+
 }
