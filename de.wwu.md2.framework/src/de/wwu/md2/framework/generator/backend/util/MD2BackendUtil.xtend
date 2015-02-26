@@ -23,9 +23,14 @@ import de.wwu.md2.framework.mD2.InvokeDateValue
 import de.wwu.md2.framework.mD2.InvokeDateTimeValue
 import de.wwu.md2.framework.mD2.InvokeTimeValue
 import de.wwu.md2.framework.mD2.InvokeValue
-
+/**
+ * This util class offers helper methods for the MD2 backend development.
+ */
 class MD2BackendUtil {
 
+	/**
+	 * If set retrieve the alias; otherwise the name of the referenced attribute
+	 */
 	def static String getParamAlias(InvokeWSParam wsParam){
 		if (wsParam.alias != null){
 			return wsParam.alias
@@ -35,14 +40,23 @@ class MD2BackendUtil {
 		}
 	}
 	
+	/**
+	 * Get all entities within invoke definitions of a workflow element
+	 */
 	def static Set<Entity> getAllEntitiesWithinInvoke(WorkflowElement wfe){
 		return wfe.invoke.map[it.allEntities].flatten.toSet
 	}
 	
+	/**
+	 * Get all entities within the invoke definition
+	 */
 	def static dispatch Set<Entity> getAllEntities(InvokeDefinition definition){
  		return definition.params.map[it.allEntities].flatten.toSet
 	}
 	
+	/**
+	 * Get all entities within the invoke param
+	 */
 	def static dispatch Set<Entity> getAllEntities(InvokeParam param){
 		switch param {
 				InvokeWSParam:  return param.field.getAllEntities
@@ -52,6 +66,9 @@ class MD2BackendUtil {
 		}
 	}
 	
+	/**
+	 * Get the rootEntity and all nested entities within a contentProviderPath
+	 */
 	def static dispatch Set<Entity> getAllEntities(ContentProviderPath path){
 		var rootType = path.contentProviderRef.type
 		if (rootType != null) {
@@ -68,6 +85,9 @@ class MD2BackendUtil {
 		}
 	}
 	
+	/**
+	 * Get the rootEntity within a invoke param
+	 */
 	def static dispatch Entity getRootEntity(InvokeParam param){
 		switch param {
 				InvokeWSParam:  return param.field.rootEntity
@@ -76,10 +96,16 @@ class MD2BackendUtil {
 		}
 	}
 	
+	/**
+	 * Get the rootEntity within a contentProviderPath
+	 */
 	def static dispatch Entity getRootEntity(ContentProviderPath path){
 		return (( path.contentProviderRef.type as ReferencedModelType).entity) as Entity
 	}
 	
+	/**
+	 * Get the entity referenced by a contentProviderPath
+	 */
 	def static Entity getContentProviderEntity(ContentProvider contentProvider){
 		 var refModelType = contentProvider.type as ReferencedModelType
 		 if (refModelType != null){
@@ -89,23 +115,31 @@ class MD2BackendUtil {
 		 }
 	}
 	
+	/**
+	 * Get all content providers used within a invoke definition
+	 */
 	def static Set<ContentProvider> getAllContentProviders(InvokeDefinition definition){
 		return definition.params.map[it.field.contentProvider].toSet
 	}
 	
+	/**
+	 * Get all contentProviders where a internal bean has to be used, therefore the remoteConnections of the workflowManager
+	 * and the contentProvider are compared
+	 */
 	def static Set<ContentProvider> getInternalContentProviders(WorkflowElement wfe, RemoteConnection workflowManager){
 		wfe.invoke.map[it.allContentProviders].flatten.filter[it.connection.equals(workflowManager)].toSet
-	}
+	}	
 	
-	def static Set<ContentProvider> getExternalContentProviders(WorkflowElement wfe, RemoteConnection workflowManager){
-		wfe.invoke.map[it.allContentProviders].flatten.filter[!it.connection.equals(workflowManager)].toSet
-	}
-	
-	
+	/**
+	 * Get the contentProvider od a contentProviderPath
+	 */
 	def static ContentProvider getContentProvider(ContentProviderPath path){
 		 return path.contentProviderRef
 	}
 	
+	/**
+	 * Get all content providers on the highest order of a invoke definition
+	 */
 	def static Set<ContentProvider> getRootContentProviders(InvokeDefinition definition){
 		var allContentProviders = definition.allContentProviders.toSet
 		var superiorCPs = definition.params.filter(InvokeSetContentProvider).map[it.field.contentProvider].toSet
@@ -114,6 +148,9 @@ class MD2BackendUtil {
 		return (allContentProviders + superiorCPs).toSet
 	}
 	
+	/**
+	 * Get the java string to create the value of an invoke value
+	 */
 	def static String getStringValue(InvokeValue invokeValue){
 		switch (invokeValue){
 			InvokeIntValue: invokeValue.value+""
@@ -128,6 +165,9 @@ class MD2BackendUtil {
 	
 	private static final String DEFAULT_INVOKE_EVENT_DESCRIPTION = "__invokedByWS"
 	
+	/**
+	 * Retrieve the event description if set, otherwise default
+	 */
 	def static String getEventDescription(WorkflowElementEntry wfeEntry){
 		if (wfeEntry.eventDesc != null){
 			wfeEntry.eventDesc.toString()

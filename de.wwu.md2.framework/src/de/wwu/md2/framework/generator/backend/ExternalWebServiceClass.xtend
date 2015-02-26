@@ -99,7 +99,10 @@ class ExternalWebServiceClass {
 			«ENDFOR»			
 		}
 	'''
-	
+	/**
+	 * Creates the save statement for the contentProviders
+	 * TODO: so far only internal content providers are supported
+	 */
 	def static createSaveContentProvider(ContentProvider contentProvider, RemoteConnection backendConnection)'''
 		«var entity =contentProvider.contentProviderEntity»
 		«IF contentProvider.connection.equals(backendConnection) && entity != null »
