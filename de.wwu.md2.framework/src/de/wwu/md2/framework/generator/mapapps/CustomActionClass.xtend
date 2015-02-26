@@ -73,6 +73,11 @@ import de.wwu.md2.framework.mD2.WebServiceCallAction
 import de.wwu.md2.framework.mD2.RESTParam
 import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.ContentProviderPath
+import de.wwu.md2.framework.mD2.StringRestParam
+import de.wwu.md2.framework.mD2.BooleanRestParam
+import de.wwu.md2.framework.mD2.FloatRestParam
+import de.wwu.md2.framework.mD2.IntegerRestParam
+import de.wwu.md2.framework.mD2.ContentProviderRestParam
 
 class CustomActionClass {
 	
@@ -302,14 +307,14 @@ class CustomActionClass {
 	
 	def public static String getType(RESTParam param)
 	{
-		switch (param){
+		switch (param.value){
 			//for values written manually in model
-			case param.isString:     "\"" + param.stringValue + "\""
-			case param.isBoolean:    param.booleanValue + ""
-			case param.isFloat:      param.floatValue + ""
-			case param.isInteger:    param.integerValue + ""
-			case param.cpValue != null: {
-			    val cpPath = param.cpValue.value
+			StringRestParam:     "\"" + (param.value as StringRestParam).value + "\""
+			BooleanRestParam:    (param.value as BooleanRestParam).value + ""
+			FloatRestParam:      (param.value as FloatRestParam).value + ""
+			IntegerRestParam:    (param.value as IntegerRestParam).value + ""
+			ContentProviderRestParam: {
+			    val cpPath = (param.value as ContentProviderRestParam).value as ContentProviderPath
                 "this.$.contentProviderRegistry.getContentProvider(\"" + cpPath.contentProviderRef.name + "\").getValue(\"" + cpPath.attributeFromContentProviderPath.name + "\")"
             }
 		}
