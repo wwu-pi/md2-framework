@@ -584,7 +584,9 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	/////////////////////////////////////////////////////////
 	/// Invoke Validators
 	/////////////////////////////////////////////////////////
-	
+	/**
+	 * These maps enable for a comparison between the two class types and to ensure, that no unsupported value is set.
+	 */
 	static final Map<Class<? extends InvokeValue>, String> invokeValueTypeMap= getInvokeValueTypeHashMap()
 
 	static final Map<Class<? extends AttributeType>, String> supportedAttributeTypeMap= getSupportedAttributeTypeHashMap()
@@ -641,6 +643,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 			val paths = wfe.invoke.map[it.path?:""]
 			val allpaths = new HashSet<String>()
 			val conflictedPaths = new HashSet<String>()
+			// Look for all paths, that are at least twice in the list
 			paths.forEach[
 				if (allpaths.contains(it)){
 					conflictedPaths.add(it)
@@ -669,16 +672,19 @@ class ControllerValidator extends AbstractMD2JavaValidator {
      */
     @Check
     def checkForRequiredAttributesInInvoke(InvokeDefinition invokeDefinition) {
+    	//Get all entities, which are somehow present in a invokeParam of the definition
     	val allEntities = new HashSet<Entity>()
 		for (InvokeParam param:invokeDefinition.params){
 			var entity=(( param.field.contentProviderRef.type as ReferencedModelType).entity) as Entity
 			allEntities.add(entity)
 		}
 		val allAttributes = allEntities.map[it.attributes].flatten
+		// Set that contains all required attributes including nested
 		var processedRequiredAttributes = new HashSet<Attribute>()
-		
+		// Serves as temporary set for required attributes (is needed for the extraction of nested required attributes)
 		var requiredAttributes = allAttributes.getRequiredAttributes
 		processedRequiredAttributes.addAll(requiredAttributes)
+		// For requrired attributes of type ReferenceTypes look deeper if there are nested required attributes (recursive)
 		var requiredReferenceTypes = requiredAttributes.filter[it.type instanceof ReferencedType]
 		while (requiredReferenceTypes.size>0){
 			requiredAttributes = requiredReferenceTypes.map[(it.type as ReferencedType).element].filter(Entity).map[it.attributes].flatten.getRequiredAttributes
@@ -687,6 +693,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 			processedRequiredAttributes.addAll(requiredAttributes)
 		}
 		
+		// Retrieve all real covered attributes either set by a InvokeDefaultValue, InvokeSetContentProvider, or InvokeWSParam operation
 		var allCoveredAttributes = invokeDefinition.params.map[it.field.tail.resolveAttribute]
 		processedRequiredAttributes.removeAll(allCoveredAttributes)
 		processedRequiredAttributes.forEach[
@@ -695,6 +702,9 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		]
     }
 	
+	/**
+	 * Retrieve all required attributes of a list of attributes
+	 */
     private def Iterable<Attribute> getRequiredAttributes(Iterable<Attribute> attributes){
     	attributes.filter[
 			var type = it.type
