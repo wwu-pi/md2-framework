@@ -100,7 +100,7 @@ class EnumAndEntityClass {
 		
 		public enum «_enum.name.toFirstUpper» {
 			
-			«_enum.enumBody.elements.joinWithIdx("", "," + System::getProperty("line.separator"), ";", [s, i | '''@XmlEnumValue("«i»") VALUE«i»("«s»")'''])»
+			«_enum.enumBody.elements.joinWithIdx("", "," + System::getProperty("line.separator"), ";", [s, i | '''@XmlEnumValue("VALUE«i»") VALUE«i»("«s»")'''])»
 			
 			private String value;
 			
