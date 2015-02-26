@@ -68,6 +68,10 @@ public class ModelProvider {
 	public static final String INPUT_FIELD_VALIDATOR_COMPONENT_C = "dsl/controller/validator/InputFieldValidators.md2";
 	
 	public static final String EMPTY_PROCESS_CHAIN_C = "dsl/controller/validator/EmptyProcessChain.md2";
+	
+	public static final String INVOKE_C = "dsl/controller/invoke/WorkingController.md2";
+	
+	public static final String INVOKE_W = "dsl/controller/invoke/WorkingWorkflow.md2";
 
 	public static final String WS_CALL_C = "dsl/controller/webservicecall/WSCallController.md2";
 	
