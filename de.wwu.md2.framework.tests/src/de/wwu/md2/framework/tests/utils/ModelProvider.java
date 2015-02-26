@@ -71,6 +71,9 @@ public class ModelProvider {
 	
 	public static final String INVOKE_C = "dsl/controller/invoke/WorkingController.md2";
 	public static final String INVOKE_REQUIREDATTRIBUTE_C = "dsl/controller/invoke/validator/RequiredAttributeController.md2";
+	public static final String INVOKE_PATHCOLLISION1_C = "dsl/controller/invoke/validator/PathCollisionController1.md2";
+	public static final String INVOKE_PATHCOLLISION2_C = "dsl/controller/invoke/validator/PathCollisionController2.md2";
+	public static final String INVOKE_PATHCOLLISION3_C = "dsl/controller/invoke/validator/PathCollisionController3.md2";
 	
 	public static final String INVOKE_W = "dsl/controller/invoke/WorkingWorkflow.md2";
 	

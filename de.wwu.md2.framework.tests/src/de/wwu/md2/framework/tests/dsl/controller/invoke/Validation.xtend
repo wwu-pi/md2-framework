@@ -37,8 +37,23 @@ class Validation {
 	}
 	
 	@Test
-	def testFilterMultiplizityValidator(){
+	def testRequireAttributeValidator(){
 		var controllerModel = INVOKE_REQUIREDATTRIBUTE_C.load.parse(rs);
 		controllerModel.assertError(MD2Package::eINSTANCE.invokeDefinition,ControllerValidator::INVOKEMISSINGREQUIREDATTRIBUTE);		
+	} 
+	@Test
+	def testPathCollision1Validator(){
+		var controllerModel = INVOKE_PATHCOLLISION1_C.load.parse(rs);
+		controllerModel.assertError(MD2Package::eINSTANCE.invokeDefinition,ControllerValidator::INVOKEPATHCOLLISION);
+	} 
+	@Test
+	def testPathCollision2Validator(){
+		var controllerModel = INVOKE_PATHCOLLISION2_C.load.parse(rs);
+		controllerModel.assertError(MD2Package::eINSTANCE.invokeDefinition,ControllerValidator::INVOKEPATHCOLLISION);		
+	}
+	@Test
+	def testPathCollision3Validator(){
+		var controllerModel = INVOKE_PATHCOLLISION3_C.load.parse(rs);
+		controllerModel.assertError(MD2Package::eINSTANCE.invokeDefinition,ControllerValidator::INVOKEPATHCOLLISION);		
 	} 
 }
