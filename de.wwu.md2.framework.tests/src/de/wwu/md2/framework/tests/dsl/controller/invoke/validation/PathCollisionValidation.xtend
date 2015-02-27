@@ -19,7 +19,7 @@ import de.wwu.md2.framework.mD2.MD2Package
 
 @InjectWith(typeof(MD2InjectorProvider))
 @RunWith(typeof(XtextRunner))
-class Validation {
+class PathCollisionValidation {
 
 	@Inject extension ParseHelper<MD2Model>
 	@Inject extension ValidationTestHelper
@@ -36,21 +36,25 @@ class Validation {
 		workflowModel = INVOKE_W.load.parse(rs);
 	}
 	
-	@Test
-	def testRequireAttributeValidator(){
-		var controllerModel = INVOKE_REQUIREDATTRIBUTE_C.load.parse(rs);
-		controllerModel.assertError(MD2Package::eINSTANCE.invokeDefinition,ControllerValidator::INVOKEMISSINGREQUIREDATTRIBUTE);		
-	} 
+	/**
+	 * Two invoke definition one having path at "" and on having path not specified is not allowed
+	 */
 	@Test
 	def testPathCollision1Validator(){
 		var controllerModel = INVOKE_PATHCOLLISION1_C.load.parse(rs);
 		controllerModel.assertError(MD2Package::eINSTANCE.invokeDefinition,ControllerValidator::INVOKEPATHCOLLISION);
 	} 
+	/**
+	 * Two invoke definition having the same path is not allowed
+	 */
 	@Test
 	def testPathCollision2Validator(){
 		var controllerModel = INVOKE_PATHCOLLISION2_C.load.parse(rs);
 		controllerModel.assertError(MD2Package::eINSTANCE.invokeDefinition,ControllerValidator::INVOKEPATHCOLLISION);		
 	}
+	/**
+	 * Two invoke definition one having no path specified is not allowed
+	 */
 	@Test
 	def testPathCollision3Validator(){
 		var controllerModel = INVOKE_PATHCOLLISION3_C.load.parse(rs);
