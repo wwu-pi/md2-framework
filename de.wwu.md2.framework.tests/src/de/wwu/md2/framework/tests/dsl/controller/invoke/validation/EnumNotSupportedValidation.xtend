@@ -38,7 +38,7 @@ class Validation {
 	def testEnumNotSupportedValidator(){
 		INVOKE_ENUMNOTSUPPORTED_M.load.parse(rs);
 		var controllerModel = INVOKE_ENUMNOTSUPPORTED_C.load.parse(rs);
-		controllerModel.assertError(MD2Package::eINSTANCE.invokeDefinition,ControllerValidator::INVOKEDEFAULTVALUETYPENOTSUPPORTED);		
+		controllerModel.assertError(MD2Package::eINSTANCE.invokeDefaultValue,ControllerValidator::INVOKEDEFAULTVALUETYPENOTSUPPORTED);		
 	} 
 
 }

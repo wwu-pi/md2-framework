@@ -20,7 +20,7 @@ WorkflowElement myWorkflowElement {
 	}
 	
 	invokable at "myPath"{
-		:ComplaintPovider.status
+		default :ComplaintPovider.status = "this is no enum"
 	}
 	
 	invokable
