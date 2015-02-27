@@ -32,6 +32,7 @@ class EventHandlerClass {
 		           		workflowStateHandler: null,
 						addController: this.addController,
 						removeController: this.removeController,
+						resetAll: this.resetAll,
 						instance: this
 					};
 				},
@@ -39,9 +40,9 @@ class EventHandlerClass {
 				handleEvent: function(event, workflowelement) {
 					if
 					«FOR wfe : dataContainer.workflowElementsForApp(app) SEPARATOR StringConcatenation::DEFAULT_LINE_DELIMITER + "else if"»
-					«IF dataContainer.getEventsFromWorkflowElement(wfe).size==0»
-					(false){}
-					«ENDIF»
+					   «IF dataContainer.getEventsFromWorkflowElement(wfe).size==0»
+					   (false){}
+					   «ENDIF»
 					«FOR event : dataContainer.getEventsFromWorkflowElement(wfe) SEPARATOR StringConcatenation::DEFAULT_LINE_DELIMITER + "else if"»
 					(event === "«event.name»" && workflowelement === "«wfe.name»")
 					{
@@ -52,6 +53,7 @@ class EventHandlerClass {
 					«ELSE»
 					var currentController = this.instance.controllers.get("md2.wfe.«wfe.name».Controller");
 					this.workflowStateHandler.fireEventToBackend(event, workflowelement, currentController, currentController.getTransactionId());
+					this.resetAll();
 					«ENDIF»
 					}
                     «ENDFOR»
@@ -63,6 +65,12 @@ class EventHandlerClass {
 				},
 
 				removeController: function (controller, properties) {
+				},
+
+				resetAll: function(){
+				    this.instance.controllers.forEach(function(controller){
+				        controller.finish();
+				    });
 				}
 
 			});
