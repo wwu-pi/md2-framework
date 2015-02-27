@@ -32,6 +32,15 @@ import de.wwu.md2.framework.mD2.FireEventAction
 import de.wwu.md2.framework.mD2.Label
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import de.wwu.md2.framework.mD2.FileUpload
+import de.wwu.md2.framework.mD2.Main
+import de.wwu.md2.framework.mD2.Controller
+import de.wwu.md2.framework.mD2.ProcessChainGoToSpecExtended
+import de.wwu.md2.framework.mD2.ValidatorBindingTask
+import de.wwu.md2.framework.mD2.ValidatorUnbindTask
+import de.wwu.md2.framework.mD2.ViewGUIElement
+import de.wwu.md2.framework.mD2.ContentElement
+import de.wwu.md2.framework.mD2.UploadedImageOutput
+import de.wwu.md2.framework.mD2.ViewElement
 
 /**
  * Valaidators for all controller elements of MD2.
@@ -119,6 +128,38 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		]
 	}
 	
+	public static final String IMAGEUPLOAD = "Image Upload requires Connection"
+	
+	/**
+	 * checks whether a filed upload connection exists in case file uploads or uploaded image outputs are used in the model
+	 */
+	@Check
+	def checkFileUploadConnectionExistsIfNeessary (Main main){
+
+		if (main.fileUploadConnection == null){
+			
+			val controller = (main.eContainer as Controller)
+			
+			val elems = controller.eAllContents.toSet
+			
+			// get all viewelements that are used in the controller (unused elements are not relevant)
+			val viewrefs = elems.filter(AbstractViewGUIElementRef).map[it.viewElement.ref]
+			
+			// search the view elements for uploaded image outputs and file uploads
+			val outputViews = viewrefs.filter(UploadedImageOutput)
+			val inputViews = viewrefs.filter(FileUpload)
+			
+			val allViews = outputViews + inputViews
+			
+			if (allViews.size > 0){
+				error("If FileUploads or UploadedImageOutput view elements are used, a fileUploadConnection needs to be specified in the main",
+				main, null, IMAGEUPLOAD)
+			}
+
+		}
+		else{
+		System.out.println("mit connec")}
+	}
 	
 	/////////////////////////////////////////////////////////
 	/// Type Validators
