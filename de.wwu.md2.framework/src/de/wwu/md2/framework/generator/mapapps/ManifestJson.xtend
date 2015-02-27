@@ -518,7 +518,7 @@ class ManifestJson {
 		"type": "uploader",
 		"datatype": "string",
 		"field": "«getName(input)»",
-		"url": "",
+		"url": "«input.uploadWSPath»service/upload/file",
 		«IF input.buttonValueText != null»"value": "«input.buttonValueText»",«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''

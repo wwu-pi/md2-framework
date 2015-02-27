@@ -75,6 +75,11 @@ class AppClass {
                     "appId": "md2_«app.name»"
             }
         },
+        "md2_formcontrols": {
+            "UploadImageOutputFactory": {
+                    "fileOutputServlet": "«dataContainer.fileUploadConnectionURI»DownloadFile"
+            }
+         },		         
         "notifier": {
             "NotifierFactory": {
                 "fadeTime": 10000
