@@ -19,7 +19,7 @@ import de.wwu.md2.framework.mD2.MD2Package
 
 @InjectWith(typeof(MD2InjectorProvider))
 @RunWith(typeof(XtextRunner))
-class Validation {
+class EventDescValidation {
 
 	@Inject extension ParseHelper<MD2Model>
 	@Inject extension ValidationTestHelper

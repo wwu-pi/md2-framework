@@ -19,7 +19,7 @@ import de.wwu.md2.framework.mD2.MD2Package
 
 @InjectWith(typeof(MD2InjectorProvider))
 @RunWith(typeof(XtextRunner))
-class PathCollisionValidation {
+class RequiredAttributesValidation {
 
 	@Inject extension ParseHelper<MD2Model>
 	@Inject extension ValidationTestHelper
@@ -36,9 +36,48 @@ class PathCollisionValidation {
 		workflowModel = INVOKE_W.load.parse(rs);
 	}
 	
+	/**
+	 * One required attribute is not set
+	 */
 	@Test
-	def testRequireAttributeValidator(){
-		var controllerModel = INVOKE_REQUIREDATTRIBUTE_C.load.parse(rs);
+	def testRequireAttribute1Validator(){
+		var controllerModel = INVOKE_REQUIREDATTRIBUTE1_C.load.parse(rs);
 		controllerModel.assertError(MD2Package::eINSTANCE.invokeDefinition,ControllerValidator::INVOKEMISSINGREQUIREDATTRIBUTE);		
+	} 
+	
+	/**
+	 * One referenced attribute is not set
+	 */
+	@Test
+	def testRequireAttribute2Validator(){
+		var controllerModel = INVOKE_REQUIREDATTRIBUTE2_C.load.parse(rs);
+		controllerModel.assertError(MD2Package::eINSTANCE.invokeDefinition,ControllerValidator::INVOKEMISSINGREQUIREDATTRIBUTE);		
+	} 
+	
+	/**
+	 * One required attribute of a required nested referenced attribute is not set
+	 */
+	@Test
+	def testRequireAttribute3Validator(){
+		var controllerModel = INVOKE_REQUIREDATTRIBUTE3_C.load.parse(rs);
+		controllerModel.assertError(MD2Package::eINSTANCE.invokeDefinition,ControllerValidator::INVOKEMISSINGREQUIREDATTRIBUTE);		
+	} 
+	
+	/**
+	 * One required attribute of a optional nested referenced attribute is not set
+	 */
+	@Test
+	def testRequireAttribute4Validator(){
+		var controllerModel = INVOKE_REQUIREDATTRIBUTE4_C.load.parse(rs);
+		controllerModel.assertError(MD2Package::eINSTANCE.invokeDefinition,ControllerValidator::INVOKEMISSINGREQUIREDATTRIBUTE);		
+	} 
+	
+	/**
+	 * One required attribute of a optional nested referenced attribute is not set
+	 */
+	@Test
+	def testRequireAttributeWorkingValidator(){
+		var controllerModel = INVOKE_REQUIREDATTRIBUTEWORKING_C.load.parse(rs);
+		controllerModel.assertNoError(ControllerValidator::INVOKEMISSINGREQUIREDATTRIBUTE);		
 	} 
 }

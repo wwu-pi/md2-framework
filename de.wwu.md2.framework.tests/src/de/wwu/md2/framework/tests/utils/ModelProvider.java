@@ -70,7 +70,11 @@ public class ModelProvider {
 	public static final String EMPTY_PROCESS_CHAIN_C = "dsl/controller/validator/EmptyProcessChain.md2";
 	
 	public static final String INVOKE_C = "dsl/controller/invoke/WorkingController.md2";
-	public static final String INVOKE_REQUIREDATTRIBUTE_C = "dsl/controller/invoke/validator/RequiredAttributeController.md2";
+	public static final String INVOKE_REQUIREDATTRIBUTE1_C = "dsl/controller/invoke/validator/RequiredAttributeController1.md2";
+	public static final String INVOKE_REQUIREDATTRIBUTE2_C = "dsl/controller/invoke/validator/RequiredAttributeController2.md2";
+	public static final String INVOKE_REQUIREDATTRIBUTE3_C = "dsl/controller/invoke/validator/RequiredAttributeController3.md2";
+	public static final String INVOKE_REQUIREDATTRIBUTE4_C = "dsl/controller/invoke/validator/RequiredAttributeController4.md2";
+	public static final String INVOKE_REQUIREDATTRIBUTEWORKING_C = "dsl/controller/invoke/validator/RequiredAttributeWorkingController.md2";
 	public static final String INVOKE_REQUIREDATTRIBUTE_M = "dsl/controller/invoke/validator/RequiredAttributeModel.md2";
 	public static final String INVOKE_PATHCOLLISION1_C = "dsl/controller/invoke/validator/PathCollisionController1.md2";
 	public static final String INVOKE_PATHCOLLISION2_C = "dsl/controller/invoke/validator/PathCollisionController2.md2";

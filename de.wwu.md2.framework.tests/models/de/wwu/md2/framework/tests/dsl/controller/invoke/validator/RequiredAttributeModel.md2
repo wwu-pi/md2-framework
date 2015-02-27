@@ -5,7 +5,6 @@ entity RootEntity {
 	requiredString: string
 	optionalNestedEntity: OptionalNestedEntity (optional)
 	requiredNestedEntity: RequiredNestedEntity 
-	submittedby: User
 }
 
 entity OptionalNestedEntity {

@@ -1,6 +1,14 @@
 package controllers
 
-contentProvider RequiredNestedEntity EntityPovider {
+contentProvider RootEntity EntityProvider {
+	providerType myRemoteConnection
+}
+
+contentProvider RequiredNestedEntity EntityProvider2 {
+	providerType myRemoteConnection
+}
+
+contentProvider OptionalNestedEntity EntityProvider3 {
 	providerType myRemoteConnection
 }
 
@@ -20,7 +28,9 @@ WorkflowElement myWorkflowElement {
 	}
 	
 	invokable{
-		:EntityPovider.optionalInteger
+		:EntityProvider.requiredString
+		set :EntityProvider.requiredNestedEntity to :EntityProvider2
+		:EntityProvider2.requiredString
 	}
 	
 }
