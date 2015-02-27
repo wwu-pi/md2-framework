@@ -1,0 +1,19 @@
+package models
+
+entity RootEntity {
+	optionalInteger: integer (optional)
+	requiredString: string
+	optionalNestedEntity: OptionalNestedEntity (optional)
+	requiredNestedEntity: RequiredNestedEntity 
+	submittedby: User
+}
+
+entity OptionalNestedEntity {
+	optionalInteger: integer (optional)
+	requiredString: string
+}
+
+entity RequiredNestedEntity {
+	optionalInteger: integer (optional)
+	requiredString: string
+}

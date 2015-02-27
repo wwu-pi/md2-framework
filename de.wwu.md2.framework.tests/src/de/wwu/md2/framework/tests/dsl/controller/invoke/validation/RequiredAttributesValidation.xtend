@@ -32,7 +32,7 @@ class PathCollisionValidation {
 	def void setUp() {
 		rs = new ResourceSetImpl();
 		viewModel = BASIC_CONTROLLER_V.load.parse(rs);
-		mainModel = BASIC_CONTROLLER_M.load.parse(rs);
+		mainModel = INVOKE_REQUIREDATTRIBUTE_M.load.parse(rs);
 		workflowModel = INVOKE_W.load.parse(rs);
 	}
 	

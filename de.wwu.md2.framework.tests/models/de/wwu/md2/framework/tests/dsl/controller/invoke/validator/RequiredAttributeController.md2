@@ -1,6 +1,6 @@
 package controllers
 
-contentProvider User UserPovider {
+contentProvider RequiredNestedEntity EntityPovider {
 	providerType myRemoteConnection
 }
 
@@ -19,13 +19,9 @@ WorkflowElement myWorkflowElement {
             		view complaintView 
 	}
 	
-	invokable at "myPath"{
-		:UserPovider.ename
-		:UserPovider.bday
-		default :UserPovider.address = "myAddress"
+	invokable{
+		:EntityPovider.optionalInteger
 	}
-	
-	invokable
 	
 }
 
