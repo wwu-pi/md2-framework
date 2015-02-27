@@ -117,13 +117,13 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		fsa.generateFile(rootFolder + "/WebContent/WEB-INF/web.xml", webXml(basePackageName))
 		
 		// Copy static jar libs
+		fsa.generateFileFromInputStream(getSystemResource("/backend/json-simple-1.1.1.jar"), rootFolder + "/WebContent/WEB-INF/lib/json-simple-1.1.1.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/guava-13.0.jar"), rootFolder + "/WebContent/WEB-INF/lib/guava-13.0.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-core-asl-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-core-asl-1.9.2.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-jaxrs-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-jaxrs-1.9.2.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-mapper-asl-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-mapper-asl-1.9.2.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-xc-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-xc-1.9.2.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/jersey-bundle-1.18.1.jar"), rootFolder + "/WebContent/WEB-INF/lib/jersey-bundle-1.18.1.jar")
-		
 	}
 	
 	override getPlatformPrefix() {

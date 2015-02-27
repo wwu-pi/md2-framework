@@ -291,7 +291,7 @@ class CustomActionClass {
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(WebServiceCallAction action, String varName, Map<String,String> imports)'''
-        var that = this;
+        «imports.put("lang", "dojo/_base/lang").returnVoid»
         var «varName» = this.$.actionFactory.getWebServiceCallAction("«action.webServiceCall.url»", "«action.webServiceCall.method»", «action.webServiceCall.queryparams.transformToJson», «action.webServiceCall.bodyparams.transformToJson»);
 	'''
 	
@@ -305,6 +305,10 @@ class CustomActionClass {
 		return json
 	}
 	
+	/**
+	 * Extracts the type of the value and formats it for JavaScript.
+	 * If a contentProviderField is referenced, add a function to load the data from the contentprovider
+	 */
 	def public static String getType(RESTParam param)
 	{
 		switch (param.value){
@@ -315,11 +319,14 @@ class CustomActionClass {
 			IntegerRestParam:    (param.value as IntegerRestParam).value + ""
 			ContentProviderRestParam: {
 			    val cpPath = (param.value as ContentProviderRestParam).value as ContentProviderPath
-                "function(){return that.$.contentProviderRegistry.getContentProvider(\"" + cpPath.contentProviderRef.name.toFirstLower + "\").getValue(\"" + cpPath.attributeFromContentProviderPath.name + "\");}"
+                "lang.hitch(this, function(){return this.$.contentProviderRegistry.getContentProvider(\"" + cpPath.contentProviderRef.name.toFirstLower + "\").getValue(\"" + cpPath.attributeFromContentProviderPath.name + "\");})"
             }
 		}
 	}
 	
+	/**
+	 * Traverse the contentProviderPath to get the final attribute.
+	 */
 	def private static Attribute getAttributeFromContentProviderPath(ContentProviderPath path){
 	    var tail = path.tail
 	    while(tail.tail != null){
