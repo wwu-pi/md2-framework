@@ -16,6 +16,7 @@ import org.junit.Test
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import de.wwu.md2.framework.validation.ControllerValidator
 import de.wwu.md2.framework.mD2.MD2Package
+import de.wwu.md2.framework.validation.WorkflowValidator
 
 @InjectWith(typeof(MD2InjectorProvider))
 @RunWith(typeof(XtextRunner))
@@ -27,6 +28,10 @@ class validatorTest {
 	MD2Model controllerModel;
 	MD2Model viewModel;
 	MD2Model modelModel;
+	MD2Model workflowSuccessModel;
+	MD2Model controllerSuccessModel;
+	MD2Model viewSuccessModel;
+	MD2Model modelSuccessModel;
 	ResourceSet rs;
 		
 	@Before
@@ -36,6 +41,13 @@ class validatorTest {
 		controllerModel = WORKFLOW_VALIDATOR_C.load.parse(rs);
 		viewModel = WORKFLOW_VALIDATOR_V.load.parse(rs);
 		modelModel = WORKFLOW_VALIDATOR_M.load.parse(rs);
+		workflowSuccessModel = WORKFLOW_VALIDATOR_SUCCESS_W.load.parse(rs);
+		controllerSuccessModel = WORKFLOW_VALIDATOR_SUCCESS_C.load.parse(rs);
+		viewSuccessModel = WORKFLOW_VALIDATOR_SUCCESS_V.load.parse(rs);
+		modelSuccessModel = WORKFLOW_VALIDATOR_SUCCESS_M.load.parse(rs);
+
+
+
 	}
 	
 	/**
@@ -57,4 +69,13 @@ class validatorTest {
 		controllerModel.assertError(MD2Package::eINSTANCE.fireEventAction,ControllerValidator::EVENTININIT)
 	}
 	
+	@Test
+	def checkTerminateWorkflow_ErrorTest(){
+		workflowModel.assertWarning(MD2Package::eINSTANCE.workflow, WorkflowValidator::WORKFLOWENDED)
+	}	
+	
+	@Test	
+	def checkTerminateWorkflow_SuccessTest(){
+		workflowSuccessModel.assertNoWarnings(MD2Package::eINSTANCE.workflow, WorkflowValidator::WORKFLOWENDED)
+	}	
 }

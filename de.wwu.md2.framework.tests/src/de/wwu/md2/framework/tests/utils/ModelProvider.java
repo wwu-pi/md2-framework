@@ -45,7 +45,11 @@ public class ModelProvider {
 	public static String WORKFLOW_VALIDATOR_C = "dsl/workflow/validator/controller.md2";
 	public static String WORKFLOW_VALIDATOR_V = "dsl/workflow/validator/view.md2";
 	public static String WORKFLOW_VALIDATOR_M = "dsl/workflow/validator/model.md2";
-
+	
+	public static String WORKFLOW_VALIDATOR_SUCCESS_W = "dsl/workflow/validator_success/workflow.md2";
+	public static String WORKFLOW_VALIDATOR_SUCCESS_C = "dsl/workflow/validator_success/controller.md2";
+	public static String WORKFLOW_VALIDATOR_SUCCESS_V = "dsl/workflow/validator_success/view.md2";
+	public static String WORKFLOW_VALIDATOR_SUCCESS_M = "dsl/workflow/validator_success/model.md2";
 	
 	//***Controller***//
 	

@@ -25,17 +25,17 @@ class EventHandlerClass {
 						workflowStateHandler: null,
 						addController: this.addController,
 						removeController: this.removeController,
-						instance: this,
-						resetAll: this.resetAll
+						resetAll: this.resetAll,
+						instance: this
 					};
 				},
 
 				handleEvent: function(event, workflowelement) {
 					if
 					«FOR wfe : dataContainer.workflowElementsForApp(app) SEPARATOR StringConcatenation::DEFAULT_LINE_DELIMITER + "else if"»
-					«IF dataContainer.getEventsFromWorkflowElement(wfe).size==0»
-					(false){}
-					«ENDIF»
+					   «IF dataContainer.getEventsFromWorkflowElement(wfe).size==0»
+					   (false){}
+					   «ENDIF»
 					«FOR event : dataContainer.getEventsFromWorkflowElement(wfe) SEPARATOR StringConcatenation::DEFAULT_LINE_DELIMITER + "else if"»
 					(event === "«event.name»" && workflowelement === "«wfe.name»")
 					{

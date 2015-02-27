@@ -10,7 +10,11 @@ remoteConnection CitizenAppRemoteConnection {
 	uri "http://localhost:8081/Backend/"
 }
 
-contentProvider Complaint localComplaintProvider {
+contentProvider Complaint complaintProvider {
+	providerType CitizenAppRemoteConnection
+}
+
+contentProvider Address addressProvider {
 	providerType CitizenAppRemoteConnection
 }
 
@@ -21,8 +25,8 @@ WorkflowElement LocationDetection{
 	}
 
 	action CustomAction init{
-		map LocationDetectionView.streetLbl to :localComplaintProvider.loc.myStreet
-		map LocationDetectionView.cityLbl to :localComplaintProvider.loc.myCity
+		map LocationDetectionView.streetLbl to :addressProvider.myStreet
+		map LocationDetectionView.cityLbl to :addressProvider.myCity
 	}
 	
 	action CustomAction next {
@@ -35,3 +39,22 @@ WorkflowElement LocationDetection{
     }
 }
 
+
+WorkflowElement EndWF{
+	defaultProcessChain LocationProcessChain
+	onInit {
+		init
+	}
+	
+	action CustomAction init{
+		map LocationDetectionView.streetLbl to :addressProvider.myStreet
+		map LocationDetectionView.cityLbl to :addressProvider.myCity
+	}
+	action CustomAction EndAction {
+		bind action FireEvent(EndWFEvent) on LocationDetectionView.Next.onClick
+	}
+		processChain LocationProcessChain{
+        step LocationDetection: 
+            view LocationDetectionView
+    }
+}

@@ -1766,7 +1766,8 @@ WorkflowElementEntry:
 
 FireEventEntry:
 	'fires' event = [WorkflowEvent] '{'
-			'start' startedWorkflowElement = [WorkflowElement]
+			('start' startedWorkflowElement = [WorkflowElement] |
+			'end' endWorkflow?='workflow')
 		'}'
 ;
 /*
