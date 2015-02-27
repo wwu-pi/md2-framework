@@ -22,6 +22,7 @@ class WorkflowValidator extends AbstractMD2JavaValidator {
         // nothing to do
     }
     
+
     public static final String WORKFLOWENDED = "WorkflowEnded";
     
 	@Check
@@ -41,6 +42,9 @@ class WorkflowValidator extends AbstractMD2JavaValidator {
 	}
 		
 		
+    public static final String INVOKEHASTOBEINVOKEABLE = "invokeHasToBeInvokeable"
+    public static final String INVOKEMAYNOTBEINVOKEABLE = "invokeMayNotBeInvokeable"
+    
 	/////////////////////////////////////////////////////////
 	/// Invoke Validators
 	/////////////////////////////////////////////////////////
@@ -65,11 +69,11 @@ class WorkflowValidator extends AbstractMD2JavaValidator {
 		val wfe = wfeEntry.workflowElement
 		if (wfe.invoke.size==0 && wfeEntry.invokeable){
 			val error = '''The workflow element is set invokeable, but does not specify invoke structures in the controller model part.'''
-			acceptError(error, wfeEntry, MD2Package.eINSTANCE.workflowElementEntry_Invokeable , -1, null);
+			acceptError(error, wfeEntry, MD2Package.eINSTANCE.workflowElementEntry_Invokeable , -1, INVOKEMAYNOTBEINVOKEABLE);
 		}
 		if (wfe.invoke.size>0 && !wfeEntry.invokeable){
 			val error = '''The workflow element is not set invokeable, but has invoke structures specified in the controller model part.'''
-			acceptError(error, wfeEntry, MD2Package.eINSTANCE.workflowElementEntry_WorkflowElement , -1, null);
+			acceptError(error, wfeEntry, MD2Package.eINSTANCE.workflowElementEntry_WorkflowElement , -1, INVOKEHASTOBEINVOKEABLE);
 		}
 	}
 }

@@ -29,6 +29,7 @@ WorkflowElement myWorkflowElement {
 	invokable
 	
 }
+
 WorkflowElement myWorkflowElement2 {
 	defaultProcessChain myProcessChain
 	onInit {init}
@@ -38,6 +39,7 @@ WorkflowElement myWorkflowElement2 {
 	processChain myProcessChain {
 		step MyStep: 
             		view complaintView 
-	}	
+	}
+	
+	invokable
 }
-

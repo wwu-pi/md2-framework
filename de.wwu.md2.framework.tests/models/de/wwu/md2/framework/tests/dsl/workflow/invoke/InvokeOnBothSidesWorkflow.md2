@@ -15,8 +15,8 @@ WorkflowElement myWorkflowElement2
 App CurrentStateProjectApp {
 	
 	WorkflowElements {
-		myWorkflowElement (startable: "Start Controller 1"),
-		myWorkflowElement2
+		
+		myWorkflowElement (startable: "Start Controller 1")
 	}
 	
 appName "functionTestApp"
