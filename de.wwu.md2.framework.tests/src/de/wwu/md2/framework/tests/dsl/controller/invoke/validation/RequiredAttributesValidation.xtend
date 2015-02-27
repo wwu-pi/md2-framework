@@ -73,7 +73,7 @@ class RequiredAttributesValidation {
 	} 
 	
 	/**
-	 * One required attribute of a optional nested referenced attribute is not set
+	 * All required attributes are set, but not the optional
 	 */
 	@Test
 	def testRequireAttributeWorkingValidator(){
