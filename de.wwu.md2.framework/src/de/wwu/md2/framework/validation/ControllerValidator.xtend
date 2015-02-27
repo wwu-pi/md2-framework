@@ -19,6 +19,11 @@ import de.wwu.md2.framework.mD2.InvokeFloatValue
 import de.wwu.md2.framework.mD2.InvokeIntValue
 import de.wwu.md2.framework.mD2.InvokeStringValue
 import de.wwu.md2.framework.mD2.InvokeTimeValue
+import de.wwu.md2.framework.mD2.FloatType
+import de.wwu.md2.framework.mD2.IntegerType
+import de.wwu.md2.framework.mD2.InvokeDefaultValue
+import de.wwu.md2.framework.mD2.InvokeDefinition
+import de.wwu.md2.framework.mD2.InvokeParam
 import de.wwu.md2.framework.mD2.InvokeValue
 import de.wwu.md2.framework.mD2.Label
 import de.wwu.md2.framework.mD2.LocationProviderReference
@@ -35,6 +40,21 @@ import de.wwu.md2.framework.mD2.ViewElementSetTask
 import de.wwu.md2.framework.mD2.WhereClauseCompareExpression
 import de.wwu.md2.framework.mD2.WorkflowElement
 import de.wwu.md2.framework.mD2.WorkflowElementEntry
+
+import de.wwu.md2.framework.mD2.impl.BooleanTypeImpl
+import de.wwu.md2.framework.mD2.impl.DateTimeTypeImpl
+import de.wwu.md2.framework.mD2.impl.DateTypeImpl
+import de.wwu.md2.framework.mD2.impl.FloatTypeImpl
+import de.wwu.md2.framework.mD2.impl.IntegerTypeImpl
+import de.wwu.md2.framework.mD2.impl.InvokeBooleanValueImpl
+import de.wwu.md2.framework.mD2.impl.InvokeDateTimeValueImpl
+import de.wwu.md2.framework.mD2.impl.InvokeDateValueImpl
+import de.wwu.md2.framework.mD2.impl.InvokeFloatValueImpl
+import de.wwu.md2.framework.mD2.impl.InvokeIntValueImpl
+import de.wwu.md2.framework.mD2.impl.InvokeStringValueImpl
+import de.wwu.md2.framework.mD2.impl.InvokeTimeValueImpl
+import de.wwu.md2.framework.mD2.impl.StringTypeImpl
+import de.wwu.md2.framework.mD2.impl.TimeTypeImpl
 import de.wwu.md2.framework.util.GetFiredEventsHelper
 import de.wwu.md2.framework.mD2.WebServiceCall
 import de.wwu.md2.framework.mD2.RESTMethod
@@ -54,13 +74,9 @@ import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
 
 import static extension de.wwu.md2.framework.util.TypeResolver.*
-import de.wwu.md2.framework.mD2.InvokeDefinition
 import org.eclipse.emf.ecore.EStructuralFeature
 import java.util.HashSet
-import de.wwu.md2.framework.mD2.InvokeParam
 import de.wwu.md2.framework.mD2.AttrIsOptional
-import de.wwu.md2.framework.mD2.IntegerType
-import de.wwu.md2.framework.mD2.FloatType
 import de.wwu.md2.framework.mD2.StringType
 import de.wwu.md2.framework.mD2.BooleanType
 import de.wwu.md2.framework.mD2.DateType
@@ -69,13 +85,6 @@ import de.wwu.md2.framework.mD2.DateTimeType
 import de.wwu.md2.framework.mD2.EnumType
 import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.AttributeType
-import de.wwu.md2.framework.mD2.impl.IntegerTypeImpl
-import de.wwu.md2.framework.mD2.impl.FloatTypeImpl
-import de.wwu.md2.framework.mD2.impl.StringTypeImpl
-import de.wwu.md2.framework.mD2.impl.BooleanTypeImpl
-import de.wwu.md2.framework.mD2.impl.DateTypeImpl
-import de.wwu.md2.framework.mD2.impl.TimeTypeImpl
-import de.wwu.md2.framework.mD2.impl.DateTimeTypeImpl
 
 /**
  * Validators for all controller elements of MD2.
@@ -595,13 +604,13 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 
 	private static def getInvokeValueTypeHashMap(){
 		val map = new HashMap<Class<? extends InvokeValue>,String>()
-		map.put(InvokeIntValue,"int")
-		map.put(InvokeFloatValue, "float")
-		map.put(InvokeStringValue, "string")
-		map.put(InvokeBooleanValue, "boolean")
-		map.put(InvokeDateValue, "date")
-		map.put(InvokeTimeValue, "time")
-		map.put(InvokeDateTimeValue, "datetime")
+		map.put(InvokeIntValueImpl,"integer")
+		map.put(InvokeFloatValueImpl, "float")
+		map.put(InvokeStringValueImpl, "string")
+		map.put(InvokeBooleanValueImpl, "boolean")
+		map.put(InvokeDateValueImpl, "date")
+		map.put(InvokeTimeValueImpl, "time")
+		map.put(InvokeDateTimeValueImpl, "datetime")
 		return map
 	}
 	

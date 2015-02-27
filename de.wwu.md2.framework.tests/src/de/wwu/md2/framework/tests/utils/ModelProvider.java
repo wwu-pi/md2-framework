@@ -70,6 +70,7 @@ public class ModelProvider {
 	public static final String EMPTY_PROCESS_CHAIN_C = "dsl/controller/validator/EmptyProcessChain.md2";
 	
 	public static final String INVOKE_C = "dsl/controller/invoke/WorkingController.md2";
+	public static final String INVOKE_W = "dsl/controller/invoke/WorkingWorkflow.md2";
 	public static final String INVOKE_REQUIREDATTRIBUTE1_C = "dsl/controller/invoke/validator/RequiredAttributeController1.md2";
 	public static final String INVOKE_REQUIREDATTRIBUTE2_C = "dsl/controller/invoke/validator/RequiredAttributeController2.md2";
 	public static final String INVOKE_REQUIREDATTRIBUTE3_C = "dsl/controller/invoke/validator/RequiredAttributeController3.md2";
@@ -86,7 +87,14 @@ public class ModelProvider {
 	public static final String INVOKE_ONBOTHSIDES_W = "dsl/workflow/invoke/InvokeOnBothSidesWorkflow.md2";
 	public static final String INVOKE_EVENTDESCMAYNOTBEEMPTY_W = "dsl/workflow/invoke/EventDescMayNotBeEmptyWorkflow.md2";
 	
-	public static final String INVOKE_W = "dsl/controller/invoke/WorkingWorkflow.md2";
+	public static final String INVOKE_ATTRIBUTETYPE_M = "dsl/controller/invoke/validator/AttributeTypeModel.md2";
+	public static final String INVOKE_ATTRIBUTETYPE1_C = "dsl/controller/invoke/validator/AttributeType1Controller.md2";
+	public static final String INVOKE_ATTRIBUTETYPE2_C = "dsl/controller/invoke/validator/AttributeType2Controller.md2";
+	public static final String INVOKE_ATTRIBUTETYPE3_C = "dsl/controller/invoke/validator/AttributeType3Controller.md2";
+	public static final String INVOKE_ATTRIBUTETYPE4_C = "dsl/controller/invoke/validator/AttributeType4Controller.md2";
+	public static final String INVOKE_ATTRIBUTETYPE5_C = "dsl/controller/invoke/validator/AttributeType5Controller.md2";
+	public static final String INVOKE_ATTRIBUTETYPEWORKING_C = "dsl/controller/invoke/validator/AttributeTypeWorkingController.md2";
+
 	
 
 	public static final String WS_CALL_C = "dsl/controller/webservicecall/WSCallController.md2";
