@@ -74,6 +74,8 @@ public class ModelProvider {
 	public static final String INVOKE_PATHCOLLISION1_C = "dsl/controller/invoke/validator/PathCollisionController1.md2";
 	public static final String INVOKE_PATHCOLLISION2_C = "dsl/controller/invoke/validator/PathCollisionController2.md2";
 	public static final String INVOKE_PATHCOLLISION3_C = "dsl/controller/invoke/validator/PathCollisionController3.md2";
+	public static final String INVOKE_ENUMNOTSUPPORTED_M = "dsl/controller/invoke/validator/EnumNotSupportedModel.md2";
+	public static final String INVOKE_ENUMNOTSUPPORTED_C = "dsl/controller/invoke/validator/EnumNotSupportedController.md2";
 	
 	public static final String INVOKE_W = "dsl/controller/invoke/WorkingWorkflow.md2";
 	

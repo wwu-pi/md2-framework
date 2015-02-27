@@ -1,0 +1,11 @@
+package models
+
+entity Complaint {
+	status: ComplaintStatus
+}
+
+enum ComplaintStatus {
+	"submitted",
+	"in review",
+	"processed"
+}

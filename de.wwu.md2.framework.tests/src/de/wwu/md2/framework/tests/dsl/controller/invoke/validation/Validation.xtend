@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.tests.dsl.controller.invoke
+package de.wwu.md2.framework.tests.dsl.controller.invoke.validation
 
 import org.eclipse.xtext.junit4.InjectWith
 import de.wwu.md2.framework.MD2InjectorProvider
