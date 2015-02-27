@@ -85,6 +85,7 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/EventHandlerWS.java", createEventHandlerWS(rootFolder))
 		
 		// External Werbservices
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/entities/RequestDTO.java", createRequestDTO(rootFolder))
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/CallExternalWebServiceWS.java", createCallExternalWSProxy(basePackageName))
 		
 		
