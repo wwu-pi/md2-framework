@@ -1151,7 +1151,8 @@ RemoteConnection:
 		'uri' uri = STRING &
 		('password' password = STRING)? &
 		('user' user = STRING)? &
-		('key' key = STRING)?
+		('key' key = STRING)? & 
+		('storagePath' storagePath=STRING) ?
 	) '}'
 ;
 

@@ -129,6 +129,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	}
 	
 	public static final String IMAGEUPLOAD = "Image Upload requires Connection"
+	public static final String UPLOAD_SPECIFYPATH = "Remote Connection for Upload Requires Storage Path"
 	
 	/**
 	 * checks whether a filed upload connection exists in case file uploads or uploaded image outputs are used in the model
@@ -152,13 +153,16 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 			val allViews = outputViews + inputViews
 			
 			if (allViews.size > 0){
-				error("If FileUploads or UploadedImageOutput view elements are used, a fileUploadConnection needs to be specified in the main",
+				error("If FileUploads or UploadedImageOutput view elements are used, a fileUploadConnection needs to be specified in the main.",
 				main, null, IMAGEUPLOAD)
 			}
 
 		}
 		else{
-		System.out.println("mit connec")}
+			if (main.fileUploadConnection.storagePath == null) {
+				error("The remote connection of the file upload connection needs to specify a storage path.", MD2Package.eINSTANCE.main_FileUploadConnection, -1, UPLOAD_SPECIFYPATH);
+			}
+		}
 	}
 	
 	/////////////////////////////////////////////////////////
