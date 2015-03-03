@@ -70,7 +70,7 @@ package «projectName + ".workflows"»
  
  WorkflowElement firstWFE
 	fires BasicEvent {
-		start firstWFE
+		end workflow
 	}
 
 App «projectName»App {
