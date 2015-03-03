@@ -12,6 +12,7 @@ import static de.wwu.md2.framework.generator.backend.DatatypeClasses.*
 import static de.wwu.md2.framework.generator.backend.DotClasspath.*
 import static de.wwu.md2.framework.generator.backend.DotProjectFile.*
 import static de.wwu.md2.framework.generator.backend.EnumAndEntityClass.*
+import static de.wwu.md2.framework.generator.backend.FileUpload.*
 import static de.wwu.md2.framework.generator.backend.PersistenceXml.*
 import static de.wwu.md2.framework.generator.backend.ProjectSettings.*
 import static de.wwu.md2.framework.generator.backend.ValidationResult.*
@@ -83,10 +84,10 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/entities/WorkflowState.java", createWorkflowState(rootFolder))
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/WorkflowStateWS.java", createWorkflowStateWS(rootFolder))
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/EventHandlerWS.java", createEventHandlerWS(rootFolder))
-		fsa.generateFileFromInputStream(getSystemResource("/backend/FileUploadWS.java.static"), rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/FileUploadWS.java")
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/FileUploadWS.java", createFileUploadWS(rootFolder))
 		
 		// Generate additional servlet
-		fsa.generateFileFromInputStream(getSystemResource("/backend/DownloadServlet.java.static"), rootFolder + "/src/" + rootFolder.replace('.', '/') + "/filedownload/DownloadServlet.java")
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/filedownload/DownloadServlet.java", createDownloadServlet(rootFolder))
 		
 		// Generate common backend files
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/Utils.java", createUtils(basePackageName))
