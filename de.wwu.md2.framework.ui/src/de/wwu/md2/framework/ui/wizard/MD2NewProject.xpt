@@ -25,22 +25,22 @@ main {
 	workflowManager WorkflowBackendConnection
 }
 
-remoteConnection WorkflowBackendConnection{
+remoteConnection WorkflowBackendConnection {
 	uri "http://localhost:8080/«projectName».backend/service/"
 }
 
-WorkflowElement firstWFE{
+WorkflowElement firstWFE {
 	defaultProcessChain firstProcessChain
 	
 	onInit {
 		init
 	}
 	
-	action CustomAction init{
+	action CustomAction init {
 		
 	}
 	
-	action CustomAction firstAction{
+	action CustomAction firstAction {
 		call FireEvent (BasicEvent)
 	}
 	
@@ -68,7 +68,7 @@ package «projectName + ".workflows"»
  * Implement the workflow here
  */
  
- WorkflowElement firstWFE
+WorkflowElement firstWFE
 	fires BasicEvent {
 		end workflow
 	}
