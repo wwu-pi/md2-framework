@@ -187,13 +187,14 @@ class EnumAndEntityClass {
 			///////////////////////////////////////
 			/// Getters and setters
 			///////////////////////////////////////
-		
-			public int getInternal__id() {
-				return __internalId;
-			}
 			
-			public String get_instanceId() {
-				return instanceId;
+			
+			public int get__internalId() {
+			    return __internalId;
+			}
+
+			public String getInstanceId() {
+			    return instanceId;
 			}
 		
 			public String getCurrentWorkflowElement() {
