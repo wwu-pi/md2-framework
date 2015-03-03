@@ -41,6 +41,8 @@ import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.ContentElement
 import de.wwu.md2.framework.mD2.UploadedImageOutput
 import de.wwu.md2.framework.mD2.ViewElement
+import de.wwu.md2.framework.mD2.ContentProviderPath
+import de.wwu.md2.framework.mD2.FileType
 
 /**
  * Valaidators for all controller elements of MD2.
@@ -132,10 +134,10 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	public static final String UPLOAD_SPECIFYPATH = "Remote Connection for Upload Requires Storage Path"
 	
 	/**
-	 * checks whether a filed upload connection exists in case file uploads or uploaded image outputs are used in the model
+	 * Checks whether a fileUploadConnection exists when file uploads or uploaded image outputs are used in the model
 	 */
 	@Check
-	def checkFileUploadConnectionExistsIfNeessary (Main main){
+	def checkFileUploadConnectionExistsIfNecessary (Main main){
 
 		if (main.fileUploadConnection == null){
 			
@@ -153,7 +155,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 			val allViews = outputViews + inputViews
 			
 			if (allViews.size > 0){
-				error("If FileUploads or UploadedImageOutput view elements are used, a fileUploadConnection needs to be specified in the main.",
+				error("If FileUploads or UploadedImageOutput view elements are used, a fileUploadConnection needs to be specified in the main block.",
 				main, null, IMAGEUPLOAD)
 			}
 
@@ -164,6 +166,31 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 			}
 		}
 	}
+	
+	/**
+	 * Check that mappings of FileUploads or UploadedImageOutputs only reference FileTypes.
+	 */
+	@Check
+	def checkMappingOfFileUploadAndUploadedImageOutputToFileType(MappingTask task){
+	    val viewElementType = task.referencedViewField.ref
+	    var tail = (task.pathDefinition as ContentProviderPath).tail
+	    while(tail.tail != null){
+	        tail = tail.tail
+	    }
+	    val type = tail.attributeRef.type
+	    
+	    if(viewElementType instanceof FileUpload){
+            if(!(type instanceof FileType)){
+               warning("A FileUpload must be mapped to a file type.", task, null)    
+            }
+        }
+        if(viewElementType instanceof UploadedImageOutput){
+            if(!(type instanceof FileType)){
+               warning("An UploadedImageOutput must be mapped to a file type.", task, null)    
+            }
+        }  
+	}
+	
 	
 	/////////////////////////////////////////////////////////
 	/// Type Validators
