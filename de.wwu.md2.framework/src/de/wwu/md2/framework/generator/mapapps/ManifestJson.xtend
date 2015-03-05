@@ -34,6 +34,8 @@ import static extension de.wwu.md2.framework.generator.mapapps.util.MD2MapappsUt
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
 import de.wwu.md2.framework.mD2.App
+import de.wwu.md2.framework.mD2.UploadedImageOutput
+import de.wwu.md2.framework.mD2.FileUpload
 
 class ManifestJson {
 		
@@ -413,6 +415,15 @@ class ManifestJson {
 		«IF image.imgHeight > 0»"imgH": «image.imgHeight»,«ENDIF»
 		«generateStyle(null, "width" -> '''«image.width»%''')»
 	'''
+	 
+	def private static dispatch String getViewElement(UploadedImageOutput uploadedImageOutput) '''
+		"type": "uploadimageoutput",
+		"field": "«getName(uploadedImageOutput)»",
+		"datatype": "string",
+		«IF uploadedImageOutput.imgWidth > 0»"imgW": «uploadedImageOutput.imgWidth»,«ENDIF»
+		«IF uploadedImageOutput.imgHeight > 0»"imgH": «uploadedImageOutput.imgHeight»,«ENDIF»
+		«generateStyle(null, "width" -> '''«uploadedImageOutput.width»%''')»
+	'''
 	
 	def private static dispatch String getViewElement(Spacer spacer) '''
 		"type": "spacer",
@@ -500,6 +511,15 @@ class ManifestJson {
 		"type": "selectbox",
 		"datatype": "«input.enumReference.name.toFirstUpper»",
 		"field": "«getName(input)»",
+		«generateStyle(null, "width" -> '''«input.width»%''')»
+	'''
+	
+	def private static dispatch String getViewElement(FileUpload input) '''
+		"type": "uploader",
+		"datatype": "string",
+		"field": "«getName(input)»",
+		"url": "«input.uploadWSPath»service/upload/file",
+		«IF input.buttonValueText != null»"value": "«input.buttonValueText»",«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	

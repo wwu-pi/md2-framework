@@ -290,7 +290,7 @@ class MD2GeneratorUtil {
 	}
 
 	/**
-	 * Build and return the uri for the workflowWS
+	 * Build and return the uri for the workflowWS, ensuring that a / is prepended
 	 */
 	def static getWorkflowWSUri(DataContainer container){
 		var uri = container.main.workflowManager.uri
@@ -300,4 +300,15 @@ class MD2GeneratorUtil {
 		return uri
 	}
 
+	/**
+	 * Build and return the uri for the file upload connection, ensuring that a / is prepended
+	 */
+	def static getFileUploadConnectionURI(DataContainer container) {
+		var uri = container.main.fileUploadConnection.uri
+		if (!uri.endsWith("/")){
+			uri = uri + "/"	
+			}
+		return uri
+	}
+	
 }

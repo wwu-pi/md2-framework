@@ -12,6 +12,7 @@ import static de.wwu.md2.framework.generator.backend.DatatypeClasses.*
 import static de.wwu.md2.framework.generator.backend.DotClasspath.*
 import static de.wwu.md2.framework.generator.backend.DotProjectFile.*
 import static de.wwu.md2.framework.generator.backend.EnumAndEntityClass.*
+import static de.wwu.md2.framework.generator.backend.FileUpload.*
 import static de.wwu.md2.framework.generator.backend.PersistenceXml.*
 import static de.wwu.md2.framework.generator.backend.ProjectSettings.*
 import static de.wwu.md2.framework.generator.backend.ValidationResult.*
@@ -83,6 +84,10 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/entities/WorkflowState.java", createWorkflowState(rootFolder))
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/WorkflowStateWS.java", createWorkflowStateWS(rootFolder))
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/EventHandlerWS.java", createEventHandlerWS(rootFolder))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/FileUploadWS.java", createFileUploadWS(rootFolder))
+		
+		// Generate additional servlet
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/filedownload/DownloadServlet.java", createDownloadServlet(rootFolder))
 		
 		// Generate common backend files
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/Utils.java", createUtils(basePackageName))
@@ -118,7 +123,6 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-jaxrs-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-jaxrs-1.9.2.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-mapper-asl-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-mapper-asl-1.9.2.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-xc-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-xc-1.9.2.jar")
-		fsa.generateFileFromInputStream(getSystemResource("/backend/jersey-bundle-1.18.1.jar"), rootFolder + "/WebContent/WEB-INF/lib/jersey-bundle-1.18.1.jar")
 		
 	}
 	

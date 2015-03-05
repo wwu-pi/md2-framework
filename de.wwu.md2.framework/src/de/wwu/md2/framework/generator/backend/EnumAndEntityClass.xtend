@@ -14,6 +14,7 @@ import de.wwu.md2.framework.mD2.StringType
 import de.wwu.md2.framework.mD2.TimeType
 
 import static extension de.wwu.md2.framework.util.IterableExtensions.*
+import de.wwu.md2.framework.mD2.FileType
 
 class EnumAndEntityClass {
 	
@@ -100,7 +101,7 @@ class EnumAndEntityClass {
 		
 		public enum «_enum.name.toFirstUpper» {
 			
-			«_enum.enumBody.elements.joinWithIdx("", "," + System::getProperty("line.separator"), ";", [s, i | '''@XmlEnumValue("«i»") VALUE«i»("«s»")'''])»
+			«_enum.enumBody.elements.joinWithIdx("", "," + System::getProperty("line.separator"), ";", [s, i | '''@XmlEnumValue("VALUE«i»") VALUE«i»("«s»")'''])»
 			
 			private String value;
 			
@@ -190,13 +191,14 @@ class EnumAndEntityClass {
 			///////////////////////////////////////
 			/// Getters and setters
 			///////////////////////////////////////
-		
-			public int getInternal__id() {
-				return __internalId;
-			}
 			
-			public String get_instanceId() {
-				return instanceId;
+			
+			public int get__internalId() {
+			    return __internalId;
+			}
+
+			public String getInstanceId() {
+			    return instanceId;
 			}
 		
 			public String getCurrentWorkflowElement() {
@@ -241,6 +243,7 @@ class EnumAndEntityClass {
 			IntegerType: "int"
 			FloatType: "double"
 			StringType: "String"
+			FileType: "String"
 			BooleanType: "boolean"
 			DateType: "Date"
 			TimeType: "Date"
@@ -265,6 +268,7 @@ class EnumAndEntityClass {
 			IntegerType: type.params
 			FloatType: type.params
 			StringType: type.params
+			FileType: type.params
 			BooleanType: type.params
 			DateType: type.params
 			TimeType: type.params
