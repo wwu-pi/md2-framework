@@ -69,6 +69,15 @@ public class ModelProvider {
 	
 	public static final String FILTER_MULTIPLIZITY_C = "dsl/controller/contentProvider/validator/FilterMultiplizity.md2";
 	
+	// File Upload
+	
+	public static final String FILE_UPLOAD_MODEL = "dsl/controller/fileUpload/model.md2";
+	public static final String FILE_UPLOAD_VIEW = "dsl/controller/fileUpload/view.md2";
+	public static final String FILE_UPLOAD_WORKFLOW = "dsl/controller/fileUpload/workflow.md2";
+	public static final String FILE_UPLOAD_CONTROLLER_MAPPING = "dsl/controller/fileUpload/controller-mapping.md2";
+	public static final String FILE_UPLOAD_CONTROLLER_STORAGEPATH = "dsl/controller/fileUpload/controller-storagePath.md2";
+	public static final String FILE_UPLOAD_CONTROLLER_UPLOADCONNECTION = "dsl/controller/fileUpload/controller-uploadConnection.md2";
+	
 	// Model Validators
 	
 	public static final String MODEL_VALIDATOR_LOWERCASE_ATTRIBUTE = "dsl/model/validator/LowercaseAttribute.md2";

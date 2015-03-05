@@ -1,0 +1,13 @@
+package Test123.workflows
+
+WorkflowElement firstWFE
+    fires BasicEvent {
+        start firstWFE
+    }
+
+App MyApp {
+    WorkflowElements {
+        firstWFE (startable: "Start WFE 1")
+    }
+    appName "Test"
+}

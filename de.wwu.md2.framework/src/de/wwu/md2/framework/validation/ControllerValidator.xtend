@@ -167,6 +167,9 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		}
 	}
 	
+	
+	public static final String FILEUPLOADMAPPING = "FileUpload must be mapped to a file type"
+	public static final String UPLOADEDIMAGEOUTPUTMAPPING = "UploadedImageOutput must be mapped to a file type"
 	/**
 	 * Check that mappings of FileUploads or UploadedImageOutputs only reference FileTypes.
 	 */
@@ -181,12 +184,12 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	    
 	    if(viewElementType instanceof FileUpload){
             if(!(type instanceof FileType)){
-               warning("A FileUpload must be mapped to a file type.", task, null)    
+               error("A FileUpload must be mapped to a file type.", task, null, FILEUPLOADMAPPING)    
             }
         }
         if(viewElementType instanceof UploadedImageOutput){
             if(!(type instanceof FileType)){
-               warning("An UploadedImageOutput must be mapped to a file type.", task, null)    
+               error("An UploadedImageOutput must be mapped to a file type.", task, null, UPLOADEDIMAGEOUTPUTMAPPING)    
             }
         }  
 	}
