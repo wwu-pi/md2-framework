@@ -40,7 +40,6 @@ import de.wwu.md2.framework.mD2.FileUpload
 class ManifestJson {
 		
 	def static String generateManifestJsonForModels(DataContainer dataContainer, App app) {
-		var appName = app.appName
 		'''
 			{
 			    «generateBundlePropertiesSnippet(dataContainer, app, "model")»
@@ -61,7 +60,6 @@ class ManifestJson {
 		'''
 	}
 	def static String generateManifestJsonForContentProviders(DataContainer dataContainer, App app) {
-		var appName = app.appName
 		'''
 			{
 				«generateBundlePropertiesSnippet(dataContainer, app, "content_provider")»
@@ -189,13 +187,13 @@ class ManifestJson {
 	    var appName = app.appName
 		'''
 			{
-				"name": "MD2«workflowElement.name»",//TODO: processedInput.getBasePackageName.split("\\.").last.toFirstUpper
+				"name": "MD2«workflowElement.name»",
 				"impl": "ct/Stateful",
 				"provides": ["md2.wfe.«workflowElement.name».AppDefinition"],
 				"propertiesConstructor": true,
 				"properties": {
 				    "appId": "md2_«appName»",
-					"id": "md2_«workflowElement.name.replace(".", "_")»", //TODO: processedInput.getBasePackageName.replace(".", "_")
+					"id": "md2_«workflowElement.name.replace(".", "_")»",
 					"windowTitle": "«workflowElement.name»",
 					"onInitialized": "«ProcessController::startupActionName»",
 					"views": [
@@ -217,7 +215,7 @@ class ManifestJson {
 	def static generateCustomActionsSnippet(WorkflowElement workflowElement, DataContainer dataContainer) '''
 		{
 			"name": "CustomActions",
-			"provides": ["md2.wfe.«workflowElement.name».CustomActions"], //TODO: processedInput.getBasePackageName
+			"provides": ["md2.wfe.«workflowElement.name».CustomActions"],
 			"instanceFactory": true
 		}
 	'''
@@ -267,7 +265,7 @@ class ManifestJson {
 	'''
 		{
 			"name": "Controller",
-			"provides": ["md2.wfe.«workflowElement.name».Controller","md2.app.«appName».controllers"], //TODO: processedInput.getBasePackageName
+			"provides": ["md2.wfe.«workflowElement.name».Controller","md2.app.«appName».controllers"],
 			"instanceFactory": true,
 			"references": [
 				{
@@ -313,15 +311,15 @@ class ManifestJson {
 		«IF isStartable»
             «val startableAlias = startableWFE.get(0).alias»
 			{
-				"name": "MD2«workflowElement.name.split("\\.").last.toFirstUpper»Tool", //TODO: processedInput.getBasePackageName
+				"name": "MD2«workflowElement.name.split("\\.").last.toFirstUpper»Tool",
 				"impl": "ct.tools.Tool",
 				"provides": ["ct.tools.Tool"],
 				"propertiesConstructor": true,
 				"properties": {
 					"id": "md2_wfe_«workflowElement.name.replace(".", "_")»_tool",
 					"title": "«startableAlias»",
-					"description": "Start «workflowElement.name»", //TODO: Insert good description
-					"tooltip": "«startableAlias»", //TODO: Insert good tooltip
+					"description": "Start «workflowElement.name»",
+					"tooltip": "«startableAlias»",
 					"toolRole": "toolset",
 					"iconClass": "icon-view-grid",
 					"togglable": true,
