@@ -2,7 +2,6 @@ package de.wwu.md2.framework.generator.backend
 
 import de.wwu.md2.framework.generator.util.DataContainer
 import de.wwu.md2.framework.mD2.WorkflowEvent
-import de.wwu.md2.framework.mD2.FireEventEntry
 import de.wwu.md2.framework.mD2.WorkflowElement
 
 class CommonClasses {
@@ -83,12 +82,9 @@ class CommonClasses {
 		}
 	'''
 	
-	def static boolean eventIsEndEvent(WorkflowEvent event, WorkflowElement wfe, DataContainer dataContainer)
-	{
-		var fee = dataContainer.getFireEventEntryForWorkflowEvent(event, wfe)
-		if (fee.endWorkflow) {return true;}
-		else {return false;}
-		
+	def static boolean eventIsEndEvent(WorkflowEvent event, WorkflowElement wfe, DataContainer dataContainer) {
+		val fee = dataContainer.getFireEventEntryForWorkflowEvent(event, wfe)
+		return (fee.endWorkflow)
 	}
 	
 	def static createUtils(String basePackageName) '''
