@@ -36,20 +36,14 @@ import de.wwu.md2.framework.mD2.RESTMethod
 import de.wwu.md2.framework.mD2.FileUpload
 import de.wwu.md2.framework.mD2.Main
 import de.wwu.md2.framework.mD2.Controller
-import de.wwu.md2.framework.mD2.ProcessChainGoToSpecExtended
-import de.wwu.md2.framework.mD2.ValidatorBindingTask
-import de.wwu.md2.framework.mD2.ValidatorUnbindTask
-import de.wwu.md2.framework.mD2.ViewGUIElement
-import de.wwu.md2.framework.mD2.ContentElement
 import de.wwu.md2.framework.mD2.UploadedImageOutput
-import de.wwu.md2.framework.mD2.ViewElement
 import de.wwu.md2.framework.mD2.ContentProviderPath
 import de.wwu.md2.framework.mD2.FileType
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ReferencedModelType
-import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.ReferencedType
 import java.util.HashMap
+import de.wwu.md2.framework.mD2.Entity
 
 /**
  * Validators for all controller elements of MD2.
@@ -448,40 +442,38 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 
     /**
      * Validator for nested entities -> throws a warning, if no content provider and initialization for nested entities exist.
-     * “A ContentProvider for a nested entity is missing. Please be sure that this is wanted.”
+     * “A ContentProvider for a nested entity is missing.”
      *  
      *  @param ContentProvider
      */
      @Check
-     def checkContentProvidorsOfNestedEntities (ContentProvider cprov){
+     def checkContentProvidersOfNestedEntities (ContentProvider cprov){
      	// List of ContentProviders
      	val cpList = (cprov.eContainer() as Controller).controllerElements.filter(typeof (ContentProvider))
      	
      	// Attributes of the contentProviderEntity
      	val refModelType = cprov.type as ReferencedModelType
-     	val cpEntity = refModelType.entity as de.wwu.md2.framework.mD2.Entity
+     	val cpEntity = refModelType.entity as Entity
      	val cpEntityAttributes = cpEntity.attributes
      	
-     	// Checking for referenced attributes within the entity
-     	val referencedAttributes = cpEntityAttributes.filter[it.type instanceof ReferencedType].filter[(it.type as ReferencedType).element instanceof de.wwu.md2.framework.mD2.Entity].toList
+     	// Find referenced attributes within the entity
+     	val referencedAttributes = cpEntityAttributes.filter[it.type instanceof ReferencedType].filter[(it.type as ReferencedType).element instanceof Entity].toList
      	
-     	//Checking, if ContendProviders exist for the nested Entities
-     	if (referencedAttributes.size>0){
-     		for (refAt : referencedAttributes){
-	     		var found = false
-	     		for (cp : cpList){
-	     			if ((refAt.type as ReferencedType).element.name == ((cp.type as ReferencedModelType).entity as de.wwu.md2.framework.mD2.Entity).name) {	
-	     				found = true
-	     			}
-	     		}
-	     		// Show warning, in case of no ContentProvider for a nested entity
-	     		if (!found){
-	     			warning("A ContentProvider for a nested entity is missing. Please be sure that this is wanted.", cprov, null, -1, NESTEDENTITYWITHOUTCONTENTPROVIDER);
-	     		}
-	     	}
+     	// Check if ContentProviders exist for the nested Entities
+ 		for (refAt : referencedAttributes){
+     		var found = false
+     		val referencedEntityName = (refAt.type as ReferencedType).element.name
+     		for (cp : cpList){
+     			if (referencedEntityName == ((cp.type as ReferencedModelType).entity as Entity).name) {	
+     				found = true
+     			}
+     		}
+     		// Show warning, in case of missing ContentProvider for a nested entity
+     		if (!found){
+     			warning("A ContentProvider for the nested entity "+ referencedEntityName + " is missing.", cprov, null, -1, NESTEDENTITYWITHOUTCONTENTPROVIDER);
+     		}
      	}
      }
-     
      
      
      /**
@@ -492,7 +484,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
       * @param CustomAction
       */
      @Check
-     def checkSavingOfNestedEntities (CustomAction caction){
+     def checkSavingOfNestedEntities(CustomAction caction){
      	val wfelements = caction.eContainer() as WorkflowElement 
 		val container = wfelements.eContainer() as Controller
      	val cpList = container.controllerElements.filter(typeof (ContentProvider)).toList
@@ -502,8 +494,8 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		
 		// Search for Entities with nested Entities and put them into hm
      	for (cp : cpList) {
-     		var entity = (cp.type as ReferencedModelType).entity as de.wwu.md2.framework.mD2.Entity
-     		var refEntities = entity.attributes.filter[it.type instanceof ReferencedType].filter[(it.type as ReferencedType).element instanceof de.wwu.md2.framework.mD2.Entity].toList
+     		val entity = (cp.type as ReferencedModelType).entity as Entity
+     		val refEntities = entity.attributes.filter[it.type instanceof ReferencedType].filter[(it.type as ReferencedType).element instanceof Entity].toList
      		for (rE : refEntities){
      			var temphashmap = hm.get(entity.name)
      			if (temphashmap == null){
@@ -516,45 +508,43 @@ class ControllerValidator extends AbstractMD2JavaValidator {
      	// Only do for CustomActions, that include a call to save a ContentProvider  
      	val callTasks = caction.codeFragments.filter(CallTask)
      	val savecalls = callTasks.map[it.eAllContents.filter(ContentProviderOperationAction).filter[it.operation.literal == "save"].toSet].flatten.toList
-     	// Check, if savecalls exist, otherwise ignore the rest
-     	if (savecalls.size > 0){
-     		// Check for the remaining CustomActions, if the saved entity is nested
-     		for (sc : savecalls){
-     			// Save information about savecall
-     			var savedEntity = (((sc.contentProvider as ContentProviderReference).contentProvider as ContentProvider).type as ReferencedModelType).entity as de.wwu.md2.framework.mD2.Entity
-     			var savedEntityName = savedEntity.name
-     			var indexOfSaveCall = caction.codeFragments.indexOf((sc.eContainer as SimpleActionRef).eContainer as CallTask)
-     			
-     			// Check, if saved-Entity includes nested entities:
-     			if (hm.containsKey(savedEntityName)){
-     				var nestedEntities = hm.get(savedEntityName) 
+
+ 		// Check for the remaining CustomActions, if the saved entity is nested
+ 		for (sc : savecalls){
+ 			// Save information about savecall
+ 			val savedEntity = (((sc.contentProvider as ContentProviderReference).contentProvider as ContentProvider).type as ReferencedModelType).entity as Entity
+ 			val savedEntityName = savedEntity.name
+ 			val indexOfSaveCall = caction.codeFragments.indexOf((sc.eContainer as SimpleActionRef).eContainer as CallTask)
+ 			
+ 			// Check, if saved-Entity includes nested entities
+ 			if (hm.containsKey(savedEntityName)){
+ 				var nestedEntities = hm.get(savedEntityName) 
+ 				
+ 				// Check, if attribute of the entity is set onto the corresponding nested contentProvider BEFORE the save operation
+     			for (var i=0; i<indexOfSaveCall; i++){
+     				var codeFragment = caction.codeFragments.get(i)
      				
-     				// Check, if attribute of the entity is set onto the corresponding nested contentProvider BEFORE the save operation
-	     			for ( var i=0; i<indexOfSaveCall ; i++ ){
-	     				var codeFragment = caction.codeFragments.get(i)
-	     				
-	     				// Check, if the codeFragement is a set operation
-	     				if (codeFragment instanceof AttributeSetTask){
-	     					var sourceEntity = (codeFragment.pathDefinition.contentProviderRef.type as ReferencedModelType).entity.name
-	     					var sourceAttr =  codeFragment.pathDefinition.tail.attributeRef.name
-	     					var target = ((codeFragment.source as ContentProviderReference).contentProvider.type as ReferencedModelType).entity.name
-	     					
-	     					// Check, if savedEntity is saved within the set command 
-	     					if (savedEntityName == sourceEntity){
-	     						// Check, if the target of the set statement corresponds to one of the nestedEntities
-	     						if (target == nestedEntities.get(sourceAttr)) {
-	     							//if correct, delete from list of unset nested entity attributes
-	     							nestedEntities.remove(sourceAttr)	     							
-	     						}
-	     					}	
-	     				}	
-	     			}    				
-     				if (!nestedEntities.empty){
-     					//System.out.println("WARNING! Following nested Entities are not set: " + nestedEntities.toString) //for debugging
-	     				warning("Not all Attributes of nested Entities within the Provider are set to their corresponding providers before saving. Please make sure, this is wanted.", sc, null, -1, SAVINGCHECKOFNESTEDENTITY);
-     				}
-     			}
-     		}
-     	}
-     }
+     				// Check, if the codeFragement is a set operation
+     				if (codeFragment instanceof AttributeSetTask){
+     					val sourceEntity = (codeFragment.pathDefinition.contentProviderRef.type as ReferencedModelType).entity.name
+     					val sourceAttr =  codeFragment.pathDefinition.tail.attributeRef.name
+     					val target = ((codeFragment.source as ContentProviderReference).contentProvider.type as ReferencedModelType).entity.name
+     					
+     					// Check, if savedEntity is saved within the set command 
+     					if (savedEntityName == sourceEntity){
+     						// Check, if the target of the set statement corresponds to one of the nestedEntities
+     						if (target == nestedEntities.get(sourceAttr)) {
+     							//if correct, delete from list of unset nested entity attributes
+     							nestedEntities.remove(sourceAttr)	     							
+     						}
+     					}	
+     				}	
+     			}    				
+ 				if (!nestedEntities.empty){
+ 					//System.out.println("WARNING! Following nested Entities are not set: " + nestedEntities.toString) //for debugging
+     				warning("Not all Attributes of nested Entities within the Provider are set to their corresponding providers before saving. Please make sure, this is wanted.", sc, null, -1, SAVINGCHECKOFNESTEDENTITY);
+ 				}
+ 			}
+ 		}
+    }
 }
