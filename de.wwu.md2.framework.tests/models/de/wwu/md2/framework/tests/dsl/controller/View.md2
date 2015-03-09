@@ -8,7 +8,7 @@ GridLayoutPane myView (columns 3){
 FlowLayoutPane complaintView (vertical) {
 	TextInput descriptionTxt {
 		label "Additional Description"
-		type "textarea"
+		type textarea
 	}
 	
 	DateInput submitDate
@@ -17,9 +17,10 @@ FlowLayoutPane complaintView (vertical) {
 	
 	TextInput userEmail {
 		label "Additional Description"
-		type "input"
+		type input
 	}
-		
+	
+	Button Next {text "Next" disabled false} 		
 }
 
 FlowLayoutPane enterPersonView (vertical) {
@@ -28,7 +29,7 @@ FlowLayoutPane enterPersonView (vertical) {
 	
 	TextInput userEmail {
 		label "Additional Description"
-		type "input"
+		type input
 	}
 	
 }
@@ -37,7 +38,7 @@ FlowLayoutPane enterPersonView (vertical) {
 FlowLayoutPane enterCopyView (vertical) {
 	TextInput descriptionTxt {
 		label "Additional Description"
-		type "textarea"
+		type textarea
 	}
 	
 	DateInput inStockSince
@@ -49,17 +50,17 @@ FlowLayoutPane enterCopyView (vertical) {
 FlowLayoutPane borrowBookView (vertical) {
 	TextInput descriptionTxt {
 		label "Additional Description"
-		type "textarea"
+		type textarea
 	}
 	
 	DateTimeInput borrowedDateTime
 	TimeInput borrowedTime
 	
-	StringInput orderedBy
+	TextInput orderedBy
 
 	TextInput userEmail {
 		label "Additional Description"
-		type "input"
+		type input
 	}
 		
 }

@@ -88,6 +88,11 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		// Generate additional servlet
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/filedownload/DownloadServlet.java", createDownloadServlet(rootFolder))
 		
+		// External Werbservices
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/entities/RequestDTO.java", createRequestDTO(rootFolder))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/CallExternalWebServiceWS.java", createCallExternalWSProxy(basePackageName))
+		
+		
 		// Generate common backend files
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/Utils.java", createUtils(basePackageName))
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/Config.java", createConfig(basePackageName, dataContainer))
@@ -117,12 +122,12 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		fsa.generateFile(rootFolder + "/WebContent/WEB-INF/web.xml", webXml(basePackageName))
 		
 		// Copy static jar libs
+		fsa.generateFileFromInputStream(getSystemResource("/backend/json-simple-1.1.1.jar"), rootFolder + "/WebContent/WEB-INF/lib/json-simple-1.1.1.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/guava-13.0.jar"), rootFolder + "/WebContent/WEB-INF/lib/guava-13.0.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-core-asl-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-core-asl-1.9.2.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-jaxrs-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-jaxrs-1.9.2.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-mapper-asl-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-mapper-asl-1.9.2.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-xc-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-xc-1.9.2.jar")
-		
 	}
 	
 	override getPlatformPrefix() {

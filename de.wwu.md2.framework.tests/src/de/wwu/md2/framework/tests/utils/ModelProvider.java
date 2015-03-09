@@ -69,9 +69,15 @@ public class ModelProvider {
 	
 	public static final String EMPTY_PROCESS_CHAIN_C = "dsl/controller/validator/EmptyProcessChain.md2";
 
+	public static final String WS_CALL_C = "dsl/controller/webservicecall/WSCallController.md2";
+	
+	
 	//********Validator*****//
 	
 	public static final String FILTER_MULTIPLIZITY_C = "dsl/controller/contentProvider/validator/FilterMultiplizity.md2";
+	public static final String WS_CALL_VALIDATOR_C = "dsl/controller/webservicecall/WSCallController_Validator.md2";
+
+	
 	
 	// File Upload
 	

@@ -301,6 +301,16 @@ class MD2GeneratorUtil {
 	}
 
 	/**
+	 * Build and return the uri for the default connection, ensuring that a / is prepended
+	 */
+	def static getDefaultConnectionUri(DataContainer container){
+		var uri = container.main.defaultConnection.uri
+		if (!uri.endsWith("/")){
+			uri = uri + "/"	
+			}
+		return uri
+	}
+	/**
 	 * Build and return the uri for the file upload connection, ensuring that a / is prepended
 	 */
 	def static getFileUploadConnectionURI(DataContainer container) {
@@ -313,5 +323,5 @@ class MD2GeneratorUtil {
 			}
 		return uri
 	}
-	
+
 }
