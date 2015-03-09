@@ -76,7 +76,7 @@ class EnumAndEntityClass {
 			/// Getters and setters
 			///////////////////////////////////////
 			
-			public int getInternal__id() {
+			public int get__internalId() {
 				return __internalId;
 			}
 			
