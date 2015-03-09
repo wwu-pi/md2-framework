@@ -1859,7 +1859,7 @@ Workflow:
  * 0 to n Workflowelements can be started
  */
 WorkflowElementEntry:
-	'WorkflowElement' workflowElement=[WorkflowElement] ('('invokeable ?= 'invokeable' eventDesc=STRING')')?
+	'WorkflowElement' workflowElement=[WorkflowElement] ('('invokeable ?= 'invokeable' (eventDesc=STRING)?')')?
 	firedEvents += FireEventEntry+
 ;
 
