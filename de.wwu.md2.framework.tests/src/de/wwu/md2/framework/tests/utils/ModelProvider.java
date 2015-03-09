@@ -45,7 +45,11 @@ public class ModelProvider {
 	public static String WORKFLOW_VALIDATOR_C = "dsl/workflow/validator/controller.md2";
 	public static String WORKFLOW_VALIDATOR_V = "dsl/workflow/validator/view.md2";
 	public static String WORKFLOW_VALIDATOR_M = "dsl/workflow/validator/model.md2";
-
+	
+	public static String WORKFLOW_VALIDATOR_SUCCESS_W = "dsl/workflow/validator_success/workflow.md2";
+	public static String WORKFLOW_VALIDATOR_SUCCESS_C = "dsl/workflow/validator_success/controller.md2";
+	public static String WORKFLOW_VALIDATOR_SUCCESS_V = "dsl/workflow/validator_success/view.md2";
+	public static String WORKFLOW_VALIDATOR_SUCCESS_M = "dsl/workflow/validator_success/model.md2";
 	
 	//***Controller***//
 	
@@ -74,6 +78,15 @@ public class ModelProvider {
 	public static final String WS_CALL_VALIDATOR_C = "dsl/controller/webservicecall/WSCallController_Validator.md2";
 
 	
+	
+	// File Upload
+	
+	public static final String FILE_UPLOAD_MODEL = "dsl/controller/fileUpload/model.md2";
+	public static final String FILE_UPLOAD_VIEW = "dsl/controller/fileUpload/view.md2";
+	public static final String FILE_UPLOAD_WORKFLOW = "dsl/controller/fileUpload/workflow.md2";
+	public static final String FILE_UPLOAD_CONTROLLER_MAPPING = "dsl/controller/fileUpload/controller-mapping.md2";
+	public static final String FILE_UPLOAD_CONTROLLER_STORAGEPATH = "dsl/controller/fileUpload/controller-storagePath.md2";
+	public static final String FILE_UPLOAD_CONTROLLER_UPLOADCONNECTION = "dsl/controller/fileUpload/controller-uploadConnection.md2";
 	
 	// Model Validators
 	

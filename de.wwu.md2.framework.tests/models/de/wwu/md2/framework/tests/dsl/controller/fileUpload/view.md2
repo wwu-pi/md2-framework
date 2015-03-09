@@ -1,0 +1,6 @@
+package Test123.views
+
+FlowLayoutPane firstView {
+    FileUpload fileUpload
+    UploadedImageOutput imageOutput 
+}

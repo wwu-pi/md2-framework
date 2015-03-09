@@ -34,11 +34,12 @@ import static extension de.wwu.md2.framework.generator.mapapps.util.MD2MapappsUt
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
 import de.wwu.md2.framework.mD2.App
+import de.wwu.md2.framework.mD2.UploadedImageOutput
+import de.wwu.md2.framework.mD2.FileUpload
 
 class ManifestJson {
 		
 	def static String generateManifestJsonForModels(DataContainer dataContainer, App app) {
-		var appName = app.appName
 		'''
 			{
 			    «generateBundlePropertiesSnippet(dataContainer, app, "model")»
@@ -59,7 +60,6 @@ class ManifestJson {
 		'''
 	}
 	def static String generateManifestJsonForContentProviders(DataContainer dataContainer, App app) {
-		var appName = app.appName
 		'''
 			{
 				«generateBundlePropertiesSnippet(dataContainer, app, "content_provider")»
@@ -187,13 +187,13 @@ class ManifestJson {
 	    var appName = app.appName
 		'''
 			{
-				"name": "MD2«workflowElement.name»",//TODO: processedInput.getBasePackageName.split("\\.").last.toFirstUpper
+				"name": "MD2«workflowElement.name»",
 				"impl": "ct/Stateful",
 				"provides": ["md2.wfe.«workflowElement.name».AppDefinition"],
 				"propertiesConstructor": true,
 				"properties": {
 				    "appId": "md2_«appName»",
-					"id": "md2_«workflowElement.name.replace(".", "_")»", //TODO: processedInput.getBasePackageName.replace(".", "_")
+					"id": "md2_«workflowElement.name.replace(".", "_")»",
 					"webserviceBackendUri": "«dataContainer.getDefaultConnectionUri»",
 					"windowTitle": "«workflowElement.name»",
 					"onInitialized": "«ProcessController::startupActionName»",
@@ -216,7 +216,7 @@ class ManifestJson {
 	def static generateCustomActionsSnippet(WorkflowElement workflowElement, DataContainer dataContainer) '''
 		{
 			"name": "CustomActions",
-			"provides": ["md2.wfe.«workflowElement.name».CustomActions"], //TODO: processedInput.getBasePackageName
+			"provides": ["md2.wfe.«workflowElement.name».CustomActions"],
 			"instanceFactory": true
 		}
 	'''
@@ -266,7 +266,7 @@ class ManifestJson {
 	'''
 		{
 			"name": "Controller",
-			"provides": ["md2.wfe.«workflowElement.name».Controller","md2.app.«appName».controllers"], //TODO: processedInput.getBasePackageName
+			"provides": ["md2.wfe.«workflowElement.name».Controller","md2.app.«appName».controllers"],
 			"instanceFactory": true,
 			"references": [
 				{
@@ -312,15 +312,15 @@ class ManifestJson {
 		«IF isStartable»
             «val startableAlias = startableWFE.get(0).alias»
 			{
-				"name": "MD2«workflowElement.name.split("\\.").last.toFirstUpper»Tool", //TODO: processedInput.getBasePackageName
+				"name": "MD2«workflowElement.name.split("\\.").last.toFirstUpper»Tool",
 				"impl": "ct.tools.Tool",
 				"provides": ["ct.tools.Tool"],
 				"propertiesConstructor": true,
 				"properties": {
 					"id": "md2_wfe_«workflowElement.name.replace(".", "_")»_tool",
 					"title": "«startableAlias»",
-					"description": "Start «workflowElement.name»", //TODO: Insert good description
-					"tooltip": "«startableAlias»", //TODO: Insert good tooltip
+					"description": "Start «workflowElement.name»",
+					"tooltip": "«startableAlias»",
 					"toolRole": "toolset",
 					"iconClass": "icon-view-grid",
 					"togglable": true,
@@ -414,6 +414,15 @@ class ManifestJson {
 		«IF image.imgHeight > 0»"imgH": «image.imgHeight»,«ENDIF»
 		«generateStyle(null, "width" -> '''«image.width»%''')»
 	'''
+	 
+	def private static dispatch String getViewElement(UploadedImageOutput uploadedImageOutput) '''
+		"type": "uploadimageoutput",
+		"field": "«getName(uploadedImageOutput)»",
+		"datatype": "string",
+		«IF uploadedImageOutput.imgWidth > 0»"imgW": «uploadedImageOutput.imgWidth»,«ENDIF»
+		«IF uploadedImageOutput.imgHeight > 0»"imgH": «uploadedImageOutput.imgHeight»,«ENDIF»
+		«generateStyle(null, "width" -> '''«uploadedImageOutput.width»%''')»
+	'''
 	
 	def private static dispatch String getViewElement(Spacer spacer) '''
 		"type": "spacer",
@@ -501,6 +510,15 @@ class ManifestJson {
 		"type": "selectbox",
 		"datatype": "«input.enumReference.name.toFirstUpper»",
 		"field": "«getName(input)»",
+		«generateStyle(null, "width" -> '''«input.width»%''')»
+	'''
+	
+	def private static dispatch String getViewElement(FileUpload input) '''
+		"type": "uploader",
+		"datatype": "string",
+		"field": "«getName(input)»",
+		"url": "«input.uploadWSPath»service/upload/file",
+		«IF input.buttonValueText != null»"value": "«input.buttonValueText»",«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	

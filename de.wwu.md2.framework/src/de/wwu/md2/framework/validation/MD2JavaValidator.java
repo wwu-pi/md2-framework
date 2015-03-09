@@ -18,7 +18,8 @@ import org.eclipse.xtext.validation.ComposedChecks;
 	ProjectValidator.class,
 	ControllerValidator.class,
 	ModelValidator.class,
-	ViewValidator.class
+	ViewValidator.class,
+	WorkflowValidator.class
 })
 public class MD2JavaValidator extends AbstractMD2JavaValidator {
 	

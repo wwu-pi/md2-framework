@@ -47,6 +47,9 @@ import de.wwu.md2.framework.mD2.Tooltip
 import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
+import de.wwu.md2.framework.mD2.FileType
+import de.wwu.md2.framework.mD2.FileUpload
+import de.wwu.md2.framework.mD2.UploadedImageOutput
 
 /**
  * Helper class to resolve the data type of a SimpleExpression.
@@ -120,6 +123,7 @@ class TypeResolver {
 			IntegerType: "integer"
 			FloatType: "float"
 			StringType: "string"
+			FileType: "string"
 			BooleanType: "boolean"
 			DateType: "date"
 			TimeType: "time"
@@ -183,6 +187,8 @@ class TypeResolver {
 			DateInput: "date"
 			TimeInput: "Time"
 			DateTimeInput: "datetime"
+			FileUpload: "string"
+			UploadedImageOutput: "string"
 			OptionInput: viewGUIElement.enumReference?.name ?: "string"
 			Tooltip: "string"
 			Label: "string"

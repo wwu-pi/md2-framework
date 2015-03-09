@@ -1,0 +1,36 @@
+package Test123.controllers
+
+main {
+    appVersion "1.0"
+    modelVersion "1.0"
+    workflowManager MyRemoteConnection
+}
+
+remoteConnection MyRemoteConnection {
+    uri ""
+}
+
+contentProvider Test TestProvider {
+    providerType MyRemoteConnection
+}
+
+WorkflowElement firstWFE {
+    defaultProcessChain firstProcessChain
+    
+    onInit {
+        init
+    }
+    
+    action CustomAction init {
+        map firstView.fileUpload to :TestProvider.fileAttribute
+    }
+    
+    action CustomAction firstAction {
+        call FireEvent (BasicEvent)
+    }
+    
+    processChain  firstProcessChain {
+        step firstStep:
+            view firstView
+    }
+}

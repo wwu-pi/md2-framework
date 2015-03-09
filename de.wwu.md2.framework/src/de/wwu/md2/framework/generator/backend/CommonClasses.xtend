@@ -1,12 +1,16 @@
 package de.wwu.md2.framework.generator.backend
 
 import de.wwu.md2.framework.generator.util.DataContainer
+import de.wwu.md2.framework.mD2.WorkflowEvent
+import de.wwu.md2.framework.mD2.FireEventEntry
+import de.wwu.md2.framework.mD2.WorkflowElement
 
 class CommonClasses {
 	
 	def static createConfig(String basePackageName, DataContainer dataContainer) '''
 		package «basePackageName»;
 		
+		import java.io.File;
 		import java.util.HashMap;
 		import java.util.List;
 		
@@ -32,6 +36,10 @@ class CommonClasses {
 			public final static HashMap<String, String[]> APP_WORKFLOWELEMENT_RELATIONSHIP = setAppWorkflowElementRelationship();
 
 			public final static HashMap<String, HashMap<String, String>> WORKFLOWELEMENT_EVENT_SUCCESSION = setAppWorkflowElementSuccession();
+			
+			public final static File UPLOAD_FILE_STORAGE_PATH = new File("«dataContainer.main.fileUploadConnection.storagePath»");
+
+			public static final String UPLOAD_FILE_PREFIX = "upload-";
 			
 			/**
 			 * provides a hashmap for filtering workflowelements by apps
@@ -61,7 +69,11 @@ class CommonClasses {
 				// Coming from «wfe.name»
 				innerMap = new HashMap<String, String>();
 				«FOR event : dataContainer.getEventsFromWorkflowElement(wfe)»
+				«IF (eventIsEndEvent(event, wfe, dataContainer))»
+				    innerMap.put("«event.name»", "_terminate");
+				«ELSE»
 				    innerMap.put("«event.name»", "«dataContainer.getNextWorkflowElement(wfe, event).name»");
+				«ENDIF»
 				«ENDFOR»
 				map.put("«wfe.name»", innerMap);
 				
@@ -70,6 +82,14 @@ class CommonClasses {
 			}
 		}
 	'''
+	
+	def static boolean eventIsEndEvent(WorkflowEvent event, WorkflowElement wfe, DataContainer dataContainer)
+	{
+		var fee = dataContainer.getFireEventEntryForWorkflowEvent(event, wfe)
+		if (fee.endWorkflow) {return true;}
+		else {return false;}
+		
+	}
 	
 	def static createUtils(String basePackageName) '''
 		package «basePackageName»;
