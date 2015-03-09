@@ -499,7 +499,7 @@ class WebServiceClass {
                     return Response.ok()
                             .header("MD2-Model-Version", Config.MODEL_VERSION).build();
                 } else {
-                    return Response.status(code) // TODO: Change status here
+                    return Response.status(502)
                             .header("MD2-Model-Version", Config.MODEL_VERSION).build();
                 }
             }
