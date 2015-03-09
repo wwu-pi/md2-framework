@@ -36,7 +36,7 @@ class CommonClasses {
 
 			public final static HashMap<String, HashMap<String, String>> WORKFLOWELEMENT_EVENT_SUCCESSION = setAppWorkflowElementSuccession();
 			
-			public final static File UPLOAD_FILE_STORAGE_PATH = new File("«dataContainer.main.fileUploadConnection.storagePath»");
+			public final static File UPLOAD_FILE_STORAGE_PATH = new File("«dataContainer.main.fileUploadConnection?.storagePath»");
 
 			public static final String UPLOAD_FILE_PREFIX = "upload-";
 			

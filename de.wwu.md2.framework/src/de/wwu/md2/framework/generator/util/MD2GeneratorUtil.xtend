@@ -304,6 +304,9 @@ class MD2GeneratorUtil {
 	 * Build and return the uri for the file upload connection, ensuring that a / is prepended
 	 */
 	def static getFileUploadConnectionURI(DataContainer container) {
+	    if(container.main.fileUploadConnection == null){
+	        return ""
+	    }
 		var uri = container.main.fileUploadConnection.uri
 		if (!uri.endsWith("/")){
 			uri = uri + "/"	
