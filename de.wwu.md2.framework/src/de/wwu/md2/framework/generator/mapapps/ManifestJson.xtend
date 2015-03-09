@@ -194,6 +194,7 @@ class ManifestJson {
 				"properties": {
 				    "appId": "md2_«appName»",
 					"id": "md2_«workflowElement.name.replace(".", "_")»", //TODO: processedInput.getBasePackageName.replace(".", "_")
+					"webserviceBackendUri": "«dataContainer.getDefaultConnectionUri»",
 					"windowTitle": "«workflowElement.name»",
 					"onInitialized": "«ProcessController::startupActionName»",
 					"views": [

@@ -300,4 +300,15 @@ class MD2GeneratorUtil {
 		return uri
 	}
 
+	/**
+	 * Build and return the uri for the workflowWS
+	 */
+	def static getDefaultConnectionUri(DataContainer container){
+		var uri = container.main.defaultConnection.uri
+		if (!uri.endsWith("/")){
+			uri = uri + "/"	
+			}
+		return uri
+	}
+
 }
