@@ -79,6 +79,10 @@ public class ModelProvider {
 
 	
 	
+	public static final String NESTED_ENTITY_VAL_C = "dsl/controller/validator/nestedEntity/controller.md2";
+	public static final String NESTED_ENTITY_VAL_M = "dsl/controller/validator/nestedEntity/model.md2";
+	public static final String NESTED_ENTITY_VAL_V = "dsl/controller/validator/nestedEntity/view.md2";
+	
 	// File Upload
 	
 	public static final String FILE_UPLOAD_MODEL = "dsl/controller/fileUpload/model.md2";
