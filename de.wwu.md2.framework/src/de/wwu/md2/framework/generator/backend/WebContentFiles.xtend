@@ -72,5 +72,4 @@ class WebContentFiles {
 			</body>
 		</html>
 	'''
-	
 }

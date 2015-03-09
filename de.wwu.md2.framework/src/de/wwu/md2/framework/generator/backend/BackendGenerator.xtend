@@ -9,7 +9,6 @@ import de.wwu.md2.framework.mD2.ReferencedModelType
 import static de.wwu.md2.framework.generator.backend.BeanClass.*
 import static de.wwu.md2.framework.generator.backend.CommonClasses.*
 import static de.wwu.md2.framework.generator.backend.DatatypeClasses.*
-import static de.wwu.md2.framework.generator.backend.DotClasspath.*
 import static de.wwu.md2.framework.generator.backend.DotProjectFile.*
 import static de.wwu.md2.framework.generator.backend.EnumAndEntityClass.*
 import static de.wwu.md2.framework.generator.backend.FileUpload.*
@@ -108,7 +107,7 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		fsa.generateFile(rootFolder + "/.settings/org.eclipse.wst.jsdt.ui.superType.name", orgEclipseWstJsdtUiSuperTypeName)
 		
 		// Generate .classpath and .project files
-		fsa.generateFile(rootFolder + "/.classpath", createClasspath)
+		fsa.generateFileFromInputStream(getSystemResource("/backend/classpath.txt"), rootFolder + "/.classpath")
 		fsa.generateFile(rootFolder + "/.project", createProjectFile(basePackageName))
 		
 		// Generate WebContent folder
