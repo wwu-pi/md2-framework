@@ -60,7 +60,7 @@ class ExternalWebServiceClass {
 			@Path("«invoke.path»")
 			«ENDIF»
 			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-			public Response invoke(«FOR param: invoke.params.filter(InvokeWSParam) SEPARATOR ", "»@FormParam("«param.paramAlias»") «param.field.javaExpressionType» «param.paramAlias»«ENDFOR») {
+			public Response invoke«invoke.path.toFirstUpper»(«FOR param: invoke.params.filter(InvokeWSParam) SEPARATOR ", "»@FormParam("«param.paramAlias»") «param.field.javaExpressionType» «param.paramAlias»«ENDFOR») {
 				«FOR entity : invoke.allEntities»
 					«entity.name.toFirstUpper» «entity.name.toFirstLower» = new «entity.name.toFirstUpper»();
 				«ENDFOR»
