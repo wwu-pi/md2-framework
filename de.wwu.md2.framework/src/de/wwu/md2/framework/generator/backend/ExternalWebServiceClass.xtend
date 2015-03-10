@@ -16,9 +16,7 @@ class ExternalWebServiceClass {
 		«var wfe = wfeEntry.workflowElement»
 		package «basePackageName».ws.external;
 		
-		«IF wfe.getInternalContentProviders(workflowManager).size>0»
 		import javax.ejb.EJB;
-		«ENDIF»
 		import javax.ejb.Stateless;
 		«FOR method: wfe.invoke.map[it.method].toSet»
 		import javax.ws.rs.«method»;
