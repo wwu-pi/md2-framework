@@ -1396,11 +1396,11 @@ InvokeDefinition:
 	'}')?
 ;
 
-//Only contentProviderPaths are allowed since LocationProviders are readonly
+// Only contentProviderPaths are allowed since LocationProviders are readonly
 InvokeParam:
-		{InvokeWSParam} field=ContentProviderPath ('as' alias=EID)? |
-		{InvokeDefaultValue} 'default' field=ContentProviderPath '=' invokeValue=InvokeValue |
-		{InvokeSetContentProvider} 'set' field=ContentProviderPath 'to' (contentProvider= ContentProviderReference)
+    {InvokeWSParam} field=ContentProviderPath ('as' alias=EID)? |
+	{InvokeDefaultValue} 'default' field=ContentProviderPath '=' invokeValue=InvokeValue |
+	{InvokeSetContentProvider} 'set' field=ContentProviderPath 'to' (contentProvider= ContentProviderReference)
 ;
 
 InvokeValue:
@@ -1523,8 +1523,9 @@ RESTValue:
     {ContentProviderRestParam}  value = ContentProviderPath
 ;
 
+// POST as default for InvokeDefinition
 enum RESTMethod:
-	GET = 'GET' | POST = 'POST' | PUT = 'PUT' | DELETE = 'DELETE'
+	POST = 'POST' | GET = 'GET' | PUT = 'PUT' | DELETE = 'DELETE'
 ;
 
 
