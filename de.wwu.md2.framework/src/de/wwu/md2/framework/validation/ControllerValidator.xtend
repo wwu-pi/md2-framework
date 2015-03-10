@@ -586,6 +586,21 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	/////////////////////////////////////////////////////////
 	/// Invoke Validators
 	/////////////////////////////////////////////////////////
+	
+	public static final String UNSUPPORTEDRESTMETHOD = "unsupportedRESTMethod"
+	
+	/**
+	 * Validate that the chosen REST method to invoke a workflowElement is either POST or PUT.
+	 */
+	@Check
+	def checkRestMethod(InvokeDefinition invokeDefinition){
+	    val method = invokeDefinition?.method
+	    if(method == RESTMethod.GET || method == RESTMethod.DELETE){
+	        acceptError("The method type " + method.toString + " is not supported. Please use POST or PUT.", invokeDefinition, MD2Package.eINSTANCE.invokeDefinition_Method, -1, UNSUPPORTEDRESTMETHOD);
+	    }
+	}
+	
+	
 	/**
 	 * These maps enable for a comparison between the two class types and to ensure, that no unsupported value is set.
 	 */

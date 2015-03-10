@@ -94,6 +94,7 @@ public class ModelProvider {
 	public static final String INVOKE_ATTRIBUTETYPE4_C = "dsl/controller/invoke/validator/AttributeType4Controller.md2";
 	public static final String INVOKE_ATTRIBUTETYPE5_C = "dsl/controller/invoke/validator/AttributeType5Controller.md2";
 	public static final String INVOKE_ATTRIBUTETYPEWORKING_C = "dsl/controller/invoke/validator/AttributeTypeWorkingController.md2";
+	public static final String INVOKE_RESTPARAM_C = "dsl/controller/invoke/validator/WrongRestParam.md2";
 
 	
 
