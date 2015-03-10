@@ -61,7 +61,7 @@ class ManifestJson {
 	}
 	def static String generateManifestJsonForContentProviders(DataContainer dataContainer, App app) {
 		'''
-			{
+			{ 
 				«generateBundlePropertiesSnippet(dataContainer, app, "content_provider")»
 				"Require-Bundle": [
 					«IF dataContainer.contentProviders.exists[it.local]»
@@ -482,6 +482,9 @@ class ManifestJson {
 		"type": "numbertextbox",
 		"datatype": "float",
 		"field": "«getName(input)»",
+		«IF input.placesSet»
+		"places": "«input.places»",
+		«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	

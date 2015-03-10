@@ -197,6 +197,7 @@ NumberInput:
 		('tooltip' tooltipText = STRING)? &
 		('type' type = NumberInputType)? &
 		('disabled' ((isDisabled ?= 'true') | 'false'))? &
+		( placesSet?='places' places=INT)? &
 		('default' defaultValue = FLOAT)? &
 		('width' width = PERCENT)?
 	) '}')?
