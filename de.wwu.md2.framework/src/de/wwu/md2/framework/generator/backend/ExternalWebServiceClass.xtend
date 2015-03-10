@@ -82,7 +82,7 @@ class ExternalWebServiceClass {
 				
 				«IF invoke.allContentProviders.size>0»
 				String contentProviderIds = "{"+
-				«FOR cp:invoke.allContentProviders SEPARATOR",\"+"»"\"«cp.name.toFirstLower»\":"+«cp.contentProviderEntity.name.toFirstLower».getInternal__id()+"«ENDFOR»}";
+				«FOR cp:invoke.allContentProviders SEPARATOR",\"+"»"\"«cp.name.toFirstLower»\":"+«cp.contentProviderEntity.name.toFirstLower».get__internalId()+"«ENDFOR»}";
 				«ELSE»
 				String contentProviderIds = "{}";
 				«ENDIF»
