@@ -76,7 +76,7 @@ class BeanClass {
 				for(«entity.name.toFirstUpper» «entity.name.toFirstLower» : «entity.name.toFirstLower»s) {
 					«entity.name.toFirstLower» = em.merge(«entity.name.toFirstLower»);
 										
-					ids.add(new InternalIdWrapper(«entity.name.toFirstLower».getInternal__id()));
+					ids.add(new InternalIdWrapper(«entity.name.toFirstLower».get__internalId()));
 				}
 				return ids;
 			}
