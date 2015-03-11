@@ -3,6 +3,7 @@ package de.wwu.md2.framework.generator.backend.util
 import de.wwu.md2.framework.mD2.WorkflowElementimport de.wwu.md2.framework.mD2.InvokeParam
 import de.wwu.md2.framework.mD2.InvokeWSParam
 
+import static extension de.wwu.md2.framework.util.TypeResolver.*
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import de.wwu.md2.framework.mD2.ContentProviderPath
 import de.wwu.md2.framework.mD2.InvokeDefaultValue
@@ -14,7 +15,6 @@ import java.util.HashSet
 import de.wwu.md2.framework.mD2.InvokeSetContentProvider
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.RemoteConnection
-import de.wwu.md2.framework.mD2.WorkflowElementEntry
 import de.wwu.md2.framework.mD2.InvokeIntValue
 import de.wwu.md2.framework.mD2.InvokeFloatValue
 import de.wwu.md2.framework.mD2.InvokeStringValue
@@ -22,7 +22,10 @@ import de.wwu.md2.framework.mD2.InvokeBooleanValue
 import de.wwu.md2.framework.mD2.InvokeDateValue
 import de.wwu.md2.framework.mD2.InvokeDateTimeValue
 import de.wwu.md2.framework.mD2.InvokeTimeValue
-import de.wwu.md2.framework.mD2.InvokeValue
+import de.wwu.md2.framework.mD2.Enum
+import de.wwu.md2.framework.mD2.ReferencedType
+import de.wwu.md2.framework.mD2.WorkflowElementEntry
+
 /**
  * This util class offers helper methods for the MD2 backend development.
  */
@@ -45,6 +48,13 @@ class MD2BackendUtil {
 	 */
 	def static Set<Entity> getAllEntitiesWithinInvoke(WorkflowElement wfe){
 		return wfe.invoke.map[it.allEntities].flatten.toSet
+	}
+	
+	/**
+	 * Get all enum within invoke default values within a workflowElement
+	 */
+	def static Set<Enum> getAllEnumsWithinInvoke(WorkflowElement wfe){
+		wfe.invoke.map[it.params].flatten.filter(InvokeDefaultValue).map[it.field.tail.resolveAttributeType].filter(ReferencedType).map[it.element].filter(Enum).toSet
 	}
 	
 	/**
@@ -149,17 +159,33 @@ class MD2BackendUtil {
 	}
 	
 	/**
-	 * Get the java string to create the value of an invoke value
+	 * Get the java string to create the value of an invoke default value
 	 */
-	def static String getStringValue(InvokeValue invokeValue){
-		switch (invokeValue){
-			InvokeIntValue: invokeValue.value+""
-			InvokeFloatValue: invokeValue.value+""
-			InvokeStringValue: '''"«invokeValue.value»"'''
-			InvokeBooleanValue: invokeValue.value.literal
-			InvokeDateValue: '''new Date(«invokeValue.value.time»L)'''
-			InvokeTimeValue: '''new Date(«invokeValue.value.time»L)'''
-			InvokeDateTimeValue: '''new Date(«invokeValue.value.time»L)'''
+	def static String getStringValue(InvokeDefaultValue invokeDefaultValue){
+		var attributeType = invokeDefaultValue.field.tail.resolveAttributeType
+		switch (attributeType) {
+			ReferencedType: {
+				var element = (attributeType as ReferencedType).getElement()
+				if (element instanceof Enum) {
+					var invokeValue = invokeDefaultValue.invokeValue as InvokeStringValue
+					'''«element.name.toFirstUpper».VALUE«(element as Enum).enumBody.elements.indexOf(invokeValue.value)»'''
+				}
+			}
+			default: {
+				var invokeValue = invokeDefaultValue.invokeValue
+				switch (invokeValue) {
+					InvokeIntValue:
+						invokeValue.value + ""
+					InvokeFloatValue:
+						invokeValue.value + ""
+					InvokeStringValue: '''"«invokeValue.value»"'''
+					InvokeBooleanValue:
+						invokeValue.value.literal
+					InvokeDateValue: '''new Date(«invokeValue.value.time»L)'''
+					InvokeTimeValue: '''new Date(«invokeValue.value.time»L)'''
+					InvokeDateTimeValue: '''new Date(«invokeValue.value.time»L)'''
+				}
+			}
 		}
 	}
 	

@@ -38,6 +38,10 @@ class ExternalWebServiceClass {
 		import «basePackageName».entities.models.«entity.name.toFirstUpper»;
 		«ENDFOR»
 		
+		«FOR e : wfe.allEnumsWithinInvoke»
+		import «basePackageName».entities.models.«e.name.toFirstUpper»;
+		«ENDFOR»
+		
 		import «basePackageName».Config;
 		
 		@Path("/«wfe.name.toFirstLower»")
@@ -68,7 +72,7 @@ class ExternalWebServiceClass {
 					«param.rootEntity.name.toFirstLower».set«param.field.resolveContentProviderPathAttribute.toFirstUpper»(«param.paramAlias»);
 				«ENDFOR»
 				«FOR param: invoke.params.filter(InvokeDefaultValue)»
-					«param.rootEntity.name.toFirstLower».set«param.field.resolveContentProviderPathAttribute.toFirstUpper»(«param.invokeValue.stringValue»);
+					«param.rootEntity.name.toFirstLower».set«param.field.resolveContentProviderPathAttribute.toFirstUpper»(«param.stringValue»);
 				«ENDFOR»
 				«FOR param: invoke.params.filter(InvokeSetContentProvider)»
 					«createSaveContentProvider(param.contentProvider.contentProvider, workflowManager)»

@@ -76,6 +76,10 @@ import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
 
 import static extension de.wwu.md2.framework.util.TypeResolver.*
+import de.wwu.md2.framework.mD2.impl.EnumTypeImpl
+import de.wwu.md2.framework.mD2.Enum
+import de.wwu.md2.framework.mD2.EnumBody
+import de.wwu.md2.framework.mD2.InvokeStringValue
 
 /**
  * Validators for all controller elements of MD2.
@@ -629,6 +633,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		map.put(DateTypeImpl, "date")
 		map.put(TimeTypeImpl, "time")
 		map.put(DateTimeTypeImpl, "datetime")
+		map.put(EnumTypeImpl, "string")
 		return map
 	}
 
@@ -639,7 +644,14 @@ class ControllerValidator extends AbstractMD2JavaValidator {
     @Check
     def checkForTypeOfInvokeDefaultValue(InvokeDefaultValue defaultValue) {
 		var valueType = invokeValueTypeMap.get(defaultValue.invokeValue.class)
-		var cpType = supportedAttributeTypeMap.get(defaultValue.field.tail.resolveAttributeType.class)
+		val attributeType = defaultValue.field.tail.resolveAttributeType
+		var cpType = supportedAttributeTypeMap.get(attributeType.class)
+		if (cpType ==null && attributeType instanceof ReferencedType){
+			var referencedType = (attributeType as ReferencedType).getElement()
+			if (referencedType instanceof Enum){
+				cpType = supportedAttributeTypeMap.get(EnumTypeImpl)
+			}
+		}
 		if (valueType != null && cpType!= null && !valueType.equals(cpType)){
 			val error = '''The types of the content provider and its default value have to match each other! Expected default value to be of type «cpType» but was «valueType»!'''
 			acceptError(error, defaultValue, MD2Package.eINSTANCE.invokeDefaultValue_InvokeValue, -1, INVOKEDEFAULTVALUETYPEMISSMATCH)
@@ -718,6 +730,40 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 			error(error , invokeDefinition, null, -1, INVOKEMISSINGREQUIREDATTRIBUTE)
 		]
     }
+    
+     /**
+     * Ensure, that enum string is valid
+     * @param workflowElement
+     */
+    @Check
+	def checkForValidEnumString(InvokeDefaultValue defaultValue) {
+		var attributeType = defaultValue.field.tail.resolveAttributeType
+		var EnumBody enumBody = null
+		var String enumName = null
+		switch (attributeType) {
+			ReferencedType: {
+				var element = (attributeType as ReferencedType).getElement()
+				if (element instanceof Enum) {
+					enumBody = (element as Enum).enumBody
+					enumName = (element as Enum).name
+				}
+			}
+			EnumType: {
+				var error = '''An internal enum is not supported to be set as default value. Please create a enum object for it.'''
+				error(error, defaultValue, MD2Package.eINSTANCE.invokeDefaultValue_InvokeValue, -1)
+			}
+		}
+		if (enumBody != null) {
+			if (defaultValue.invokeValue instanceof InvokeStringValue) {
+
+				var value = (defaultValue.invokeValue as InvokeStringValue).value
+				if (!enumBody.elements.contains(value)) {
+					var error = '''The enum value does not equal any entry of the enum «enumName»'''
+					error(error, defaultValue, MD2Package.eINSTANCE.invokeDefaultValue_InvokeValue, -1)
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Retrieve all required attributes of a list of attributes
