@@ -19,7 +19,7 @@ import de.wwu.md2.framework.mD2.MD2Package
 
 @InjectWith(typeof(MD2InjectorProvider))
 @RunWith(typeof(XtextRunner))
-class EnumNotSupportedValidation {
+class EntityNotFoundValidation {
 
 	@Inject extension ParseHelper<MD2Model>
 	@Inject extension ValidationTestHelper
@@ -35,9 +35,9 @@ class EnumNotSupportedValidation {
 	}
 	
 	@Test
-	def testEnumNotSupportedValidator(){
-		INVOKE_ENUMNOTSUPPORTED_M.load.parse(rs);
-		var controllerModel = INVOKE_ENUMNOTSUPPORTED_C.load.parse(rs);
+	def testEntityNotSupportedValidator(){
+		INVOKE_ENTITYNOTSUPPORTED_M.load.parse(rs);
+		var controllerModel = INVOKE_ENTITYNOTSUPPORTED_C.load.parse(rs);
 		controllerModel.assertError(MD2Package::eINSTANCE.invokeDefaultValue,ControllerValidator::INVOKEDEFAULTVALUETYPENOTSUPPORTED);		
 	} 
 
