@@ -820,15 +820,15 @@ SimpleAction:
 	{FireEventAction} ('FireEvent' '('workflowEvent = WorkflowEvent')') |
 	{WebServiceCallAction} ('WebServiceCall' webServiceCall = [WebServiceCall]) |
 	{LocationAction} ('Location' '(' 
-			'inputs' '(' 'cityInput' cityInput=AbstractContentProviderPath
+			'inputs' '(' ('cityInput' cityInput=AbstractContentProviderPath
 						 &'streetInput' streetInput=AbstractContentProviderPath
 						 &('streetNumberInput' streetNumberInput=AbstractContentProviderPath)?
 						 &'postalInput' postalInput=AbstractContentProviderPath
-						 &'countryInput' countryInput=AbstractContentProviderPath
+						 &'countryInput' countryInput=AbstractContentProviderPath)
 					 ')'
 			'outputs' '('
-			'latitudeOutput' latitude=AbstractContentProviderPath 
-			&'longitudeOutput' longitude=AbstractContentProviderPath ')' ')' ) |
+			('latitudeOutput' latitude=AbstractContentProviderPath 
+			&'longitudeOutput' longitude=AbstractContentProviderPath) ')' ')' ) |
 	
 	// TODO -- multi-valued content provider, not supported yet
 	{ContentProviderAddAction} ('ContentProviderAdd' '('contentProvider = ContentProviderReference ')') |
