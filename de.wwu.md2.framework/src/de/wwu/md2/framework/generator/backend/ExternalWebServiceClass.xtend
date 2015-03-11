@@ -90,7 +90,7 @@ class ExternalWebServiceClass {
 				workflowStateBean.createOrUpdateWorkflowState("«wfeEntry.eventDescription»",id,"«wfeEntry.eventDescription»",contentProviderIds);
 				
 				return Response
-					.status(404)
+					.status(200)
 					.header("MD2-Model-Version", Config.MODEL_VERSION)
 					.build();
 			}
