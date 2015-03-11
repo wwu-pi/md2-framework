@@ -52,7 +52,7 @@ class ValidatorTests {
 		mainModel = BASIC_CONTROLLER_M.load.parse(rs);
 		rootValidatorModel = VALIDATOR_COMPONENT_C.load.parse(rs);
 		inputFieldValidatorModel = INPUT_FIELD_VALIDATOR_COMPONENT_C.load.parse(rs);
-		emptyProcessChainModel = EMPTY_PROCESS_CHAIN_C.load.parse;
+		emptyProcessChainModel = EMPTY_PROCESS_CHAIN_C.load.parse(rs);
 		
 		elements = (rootValidatorModel.modelLayer as Controller).controllerElements;
 		validators = elements.filter(typeof(Validator)).toList;
@@ -119,6 +119,5 @@ class ValidatorTests {
 	def checkForEmptyProcessChainsTest(){
 	    emptyProcessChainModel.assertWarning(MD2Package::eINSTANCE.processChain, ControllerValidator::EMPTYPROCESSCHAIN);
 	}
-	
 	
 }
