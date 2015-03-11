@@ -3,6 +3,9 @@
 */
 package de.wwu.md2.framework.ui.labeling;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
 
@@ -20,13 +23,20 @@ public class MD2LabelProvider extends DefaultEObjectLabelProvider {
 		super(delegate);
 	}
 
-/*
+
 	//Labels and icons can be computed like this:
 	
-	String text(MyModel ele) {
-	  return "my "+ele.getName();
+	public String text(Object ele) {
+		Method getNameMethod;
+		try {
+			getNameMethod = ele.getClass().getMethod("getName");
+			return (String) getNameMethod.invoke(ele) + " <"+ele.getClass().getInterfaces()[0].getSimpleName()+">";
+		} catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+			return "<"+ele.getClass().getInterfaces()[0].getSimpleName()+">";
+		}
 	}
-	 
+/*	
+	//TODO: If you like to have pretty icons in the outline of the modeling IDE you can add them here.
     String image(MyModel ele) {
       return "MyModel.gif";
     }
