@@ -297,11 +297,11 @@ class CustomActionClass {
 	
 	def public static String transformToJson(List<RESTParam> params){
 		var json = '''
-		{
+		[
 			«FOR RESTParam p : params SEPARATOR ","»
-				"«p.key»": «p.getType» 
+				{"key": "«p.key»", "value": «p.getType»} 
 			«ENDFOR»
-		}'''
+		]'''
 		return json
 	}
 	
