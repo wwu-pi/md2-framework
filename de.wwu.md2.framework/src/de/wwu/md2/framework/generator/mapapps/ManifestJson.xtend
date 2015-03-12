@@ -36,6 +36,7 @@ import static extension de.wwu.md2.framework.util.StringExtensions.*
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.UploadedImageOutput
 import de.wwu.md2.framework.mD2.FileUpload
+import de.wwu.md2.framework.mD2.TextInputType
 
 class ManifestJson {
 		
@@ -465,11 +466,19 @@ class ManifestJson {
 	'''
 	
 	def private static dispatch String getViewElement(TextInput input) '''
-		"type": "textbox",
+		"type": "«getDataformControl(input)»",
 		"datatype": "string",
 		"field": "«getName(input)»",
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
+	
+	def static getDataformControl(TextInput input) {
+		if (input.type != null && input.type.equals(TextInputType.TEXTAREA)) {
+			'''textarea'''
+		} else {
+			'''textbox'''
+		}
+	}
 	
 	def private static dispatch String getViewElement(IntegerInput input) '''
 		"type": "numberspinner",
