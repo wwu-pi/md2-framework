@@ -98,7 +98,8 @@ class ControllerValidator extends AbstractMD2JavaValidator {
     public static final String INVOKEDEFAULTVALUETYPEMISSMATCH = "invokeDefaultValueTypeMissmatch";
     public static final String INVOKEDEFAULTVALUETYPENOTSUPPORTED = "invokeDefaultValueTypeNotSupported";
     public static final String INVOKEMISSINGREQUIREDATTRIBUTE = "invokeMissingRequiredAttribute";
-    public static final String INVOKEPATHCOLLISION = "invokePathCollision"
+    public static final String INVOKEPATHCOLLISION = "invokePathCollision";
+    public static final String ENUMENTRYNOTKNOWN = "enumEntryNotKnown";
     
     @Inject
     GetFiredEventsHelper helper;
@@ -759,7 +760,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 				var value = (defaultValue.invokeValue as InvokeStringValue).value
 				if (!enumBody.elements.contains(value)) {
 					var error = '''The enum value does not equal any entry of the enum «enumName»'''
-					error(error, defaultValue, MD2Package.eINSTANCE.invokeDefaultValue_InvokeValue, -1)
+					error(error, defaultValue, MD2Package.eINSTANCE.invokeDefaultValue_InvokeValue, -1, ENUMENTRYNOTKNOWN)
 				}
 			}
 		}

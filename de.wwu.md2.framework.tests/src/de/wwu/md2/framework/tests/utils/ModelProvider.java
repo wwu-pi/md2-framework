@@ -86,6 +86,7 @@ public class ModelProvider {
 	public static final String INVOKE_ONBOTHSIDES2_C = "dsl/workflow/invoke/InvokeOnBothSidesController2.md2";
 	public static final String INVOKE_ONBOTHSIDES_W = "dsl/workflow/invoke/InvokeOnBothSidesWorkflow.md2";
 	public static final String INVOKE_EVENTDESCMAYNOTBEEMPTY_W = "dsl/workflow/invoke/EventDescMayNotBeEmptyWorkflow.md2";
+	public static final String INVOKE_ENUMENTRYNOTKNOWN_C = "dsl/controller/invoke/validator/EnumEntryNotKnownController.md2";
 	
 	public static final String INVOKE_ATTRIBUTETYPE_M = "dsl/controller/invoke/validator/AttributeTypeModel.md2";
 	public static final String INVOKE_ATTRIBUTETYPE1_C = "dsl/controller/invoke/validator/AttributeType1Controller.md2";
