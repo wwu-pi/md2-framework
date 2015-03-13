@@ -307,48 +307,47 @@ class EnumAndEntityClass {
                 this.url = url;
             }
 
-        public void setRequestMethod(RequestMethod method){
-        	this.requestMethod = method;
-        }    
+            public void setRequestMethod(RequestMethod method){
+            	this.requestMethod = method;
+            }    
 
-        public void setQueryParams(List<CustomHashMapEntry> queryparams){
-        	this.queryParams = queryparams;
-        }    
+            public void setQueryParams(List<CustomHashMapEntry> queryparams){
+            	this.queryParams = queryparams;
+            }    
 
-        public void setBody(List<CustomHashMapEntry> body){
-        	this.body = body;
-        }
-
-        @XmlRootElement
-        public static class CustomHashMapEntry {
-        
-        	@XmlElement
-            public String key; 
-
-        	@XmlElement
-            public String value;
-        
-            public String getKey() {
-                return key;
-        	}
-
-        	public void setKey(String key) {
-                this.key = key;
+            public void setBody(List<CustomHashMapEntry> body){
+            	this.body = body;
             }
 
-            public String getValue() {
-        		return value;
-        	}
+            @XmlRootElement
+            public static class CustomHashMapEntry {
+            
+            	@XmlElement
+                public String key; 
 
-        	public void setValue(String value) {
-        		this.value = value;
+            	@XmlElement
+                public String value;
+            
+                public String getKey() {
+                    return key;
+            	}
+
+            	public void setKey(String key) {
+                    this.key = key;
+                }
+
+                public String getValue() {
+            		return value;
+            	}
+
+            	public void setValue(String value) {
+            		this.value = value;
+                }
+
+                public String toString() {
+                    return this.key + ": " + this.value;
+                }
             }
-
-            public String toString() {
-                return this.key + ": " + this.value;
-            }
-        }
-
         }
 	'''
 	
