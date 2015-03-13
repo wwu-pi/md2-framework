@@ -3,6 +3,7 @@ package de.wwu.md2.framework.generator.backend
 import de.wwu.md2.framework.generator.util.DataContainer
 import de.wwu.md2.framework.mD2.WorkflowEvent
 import de.wwu.md2.framework.mD2.WorkflowElement
+import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.getEscapedStoragePath
 
 class CommonClasses {
 	
@@ -36,7 +37,10 @@ class CommonClasses {
 
 			public final static HashMap<String, HashMap<String, String>> WORKFLOWELEMENT_EVENT_SUCCESSION = setAppWorkflowElementSuccession();
 			
-			public final static File UPLOAD_FILE_STORAGE_PATH = new File("«dataContainer.main.fileUploadConnection?.storagePath»");
+			«IF dataContainer.main.fileUploadConnection != null»
+			public final static File UPLOAD_FILE_STORAGE_PATH = new File("«dataContainer.main.fileUploadConnection.escapedStoragePath»");
+			«ENDIF»
+			
 
 			public static final String UPLOAD_FILE_PREFIX = "upload-";
 			

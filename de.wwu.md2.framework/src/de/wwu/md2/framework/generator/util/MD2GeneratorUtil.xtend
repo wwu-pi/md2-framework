@@ -39,6 +39,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import de.wwu.md2.framework.mD2.Main
+import de.wwu.md2.framework.mD2.RemoteConnection
 
 class MD2GeneratorUtil {
 	
@@ -322,6 +323,20 @@ class MD2GeneratorUtil {
 			uri = uri + "/"	
 			}
 		return uri
+	}
+	
+	/**
+	 * Formats the storage path such that single backslahes are converted into 
+	 * double backslashes. This is necessary since they are used in a string property 
+	 * in the backend, where double backslashes are required.
+	 * And since xtext interprets double backslashes as a single backslash, we don't 
+	 * want to require developers to learn that they need to type four backslashes...
+	 */
+	def static getEscapedStoragePath(RemoteConnection remoteConnection) {
+		val path = remoteConnection?.storagePath
+		if (path == null) return ''''''
+		
+		return path.replace("\\", "\\\\")
 	}
 
 }
