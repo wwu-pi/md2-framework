@@ -1,0 +1,38 @@
+package controllers
+
+contentProvider RootEntity EntityProvider {
+	providerType myRemoteConnection
+}
+
+contentProvider RequiredNestedEntity EntityProvider2 {
+	providerType myRemoteConnection
+}
+
+contentProvider OptionalNestedEntity EntityProvider2 {
+	providerType myRemoteConnection
+}
+
+remoteConnection myRemoteConnection{
+	uri "localhost:8080"
+}
+
+WorkflowElement myWorkflowElement {
+	defaultProcessChain myProcessChain
+	onInit {init}
+	action CustomAction init {
+		bind action FireEvent(NextEvent) on complaintView.Next.onClick
+	}
+	processChain myProcessChain {
+		step MyStep: 
+            		view complaintView 
+	}
+	
+	invokable{
+		:EntityProvider.requiredString
+		set :EntityProvider.requiredNestedEntity to EntityProvider2
+		set :EntityProvider.optionalNestedEntity to EntityProvider3
+		:EntityProvider2.requiredString
+	}
+	
+}
+

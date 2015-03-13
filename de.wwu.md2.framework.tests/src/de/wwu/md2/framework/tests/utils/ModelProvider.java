@@ -68,6 +68,36 @@ public class ModelProvider {
 	public static final String INPUT_FIELD_VALIDATOR_COMPONENT_C = "dsl/controller/validator/InputFieldValidators.md2";
 	
 	public static final String EMPTY_PROCESS_CHAIN_C = "dsl/controller/validator/EmptyProcessChain.md2";
+	
+	public static final String INVOKE_C = "dsl/controller/invoke/WorkingController.md2";
+	public static final String INVOKE_W = "dsl/controller/invoke/WorkingWorkflow.md2";
+	public static final String INVOKE_REQUIREDATTRIBUTE1_C = "dsl/controller/invoke/validator/RequiredAttributeController1.md2";
+	public static final String INVOKE_REQUIREDATTRIBUTE2_C = "dsl/controller/invoke/validator/RequiredAttributeController2.md2";
+	public static final String INVOKE_REQUIREDATTRIBUTE3_C = "dsl/controller/invoke/validator/RequiredAttributeController3.md2";
+	public static final String INVOKE_REQUIREDATTRIBUTE4_C = "dsl/controller/invoke/validator/RequiredAttributeController4.md2";
+	public static final String INVOKE_REQUIREDATTRIBUTEWORKING_C = "dsl/controller/invoke/validator/RequiredAttributeWorkingController.md2";
+	public static final String INVOKE_REQUIREDATTRIBUTE_M = "dsl/controller/invoke/validator/RequiredAttributeModel.md2";
+	public static final String INVOKE_PATHCOLLISION1_C = "dsl/controller/invoke/validator/PathCollisionController1.md2";
+	public static final String INVOKE_PATHCOLLISION2_C = "dsl/controller/invoke/validator/PathCollisionController2.md2";
+	public static final String INVOKE_PATHCOLLISION3_C = "dsl/controller/invoke/validator/PathCollisionController3.md2";
+	public static final String INVOKE_ENTITYNOTSUPPORTED_M = "dsl/controller/invoke/validator/EntityNotSupportedModel.md2";
+	public static final String INVOKE_ENTITYNOTSUPPORTED_C = "dsl/controller/invoke/validator/EntityNotSupportedController.md2";
+	public static final String INVOKE_ONBOTHSIDES1_C = "dsl/workflow/invoke/InvokeOnBothSidesController1.md2";
+	public static final String INVOKE_ONBOTHSIDES2_C = "dsl/workflow/invoke/InvokeOnBothSidesController2.md2";
+	public static final String INVOKE_ONBOTHSIDES_W = "dsl/workflow/invoke/InvokeOnBothSidesWorkflow.md2";
+	public static final String INVOKE_EVENTDESCMAYNOTBEEMPTY_W = "dsl/workflow/invoke/EventDescMayNotBeEmptyWorkflow.md2";
+	public static final String INVOKE_ENUMENTRYNOTKNOWN_C = "dsl/controller/invoke/validator/EnumEntryNotKnownController.md2";
+	
+	public static final String INVOKE_ATTRIBUTETYPE_M = "dsl/controller/invoke/validator/AttributeTypeModel.md2";
+	public static final String INVOKE_ATTRIBUTETYPE1_C = "dsl/controller/invoke/validator/AttributeType1Controller.md2";
+	public static final String INVOKE_ATTRIBUTETYPE2_C = "dsl/controller/invoke/validator/AttributeType2Controller.md2";
+	public static final String INVOKE_ATTRIBUTETYPE3_C = "dsl/controller/invoke/validator/AttributeType3Controller.md2";
+	public static final String INVOKE_ATTRIBUTETYPE4_C = "dsl/controller/invoke/validator/AttributeType4Controller.md2";
+	public static final String INVOKE_ATTRIBUTETYPE5_C = "dsl/controller/invoke/validator/AttributeType5Controller.md2";
+	public static final String INVOKE_ATTRIBUTETYPEWORKING_C = "dsl/controller/invoke/validator/AttributeTypeWorkingController.md2";
+	public static final String INVOKE_RESTPARAM_C = "dsl/controller/invoke/validator/WrongRestParam.md2";
+
+	
 
 	public static final String WS_CALL_C = "dsl/controller/webservicecall/WSCallController.md2";
 	

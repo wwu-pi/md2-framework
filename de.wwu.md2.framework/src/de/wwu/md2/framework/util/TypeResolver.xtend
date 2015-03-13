@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.validation
+package de.wwu.md2.framework.util
 
 import de.wwu.md2.framework.mD2.AbstractContentProviderPath
 import de.wwu.md2.framework.mD2.AbstractProviderReference
@@ -50,6 +50,8 @@ import de.wwu.md2.framework.mD2.ViewGUIElementReference
 import de.wwu.md2.framework.mD2.FileType
 import de.wwu.md2.framework.mD2.FileUpload
 import de.wwu.md2.framework.mD2.UploadedImageOutput
+import de.wwu.md2.framework.mD2.Attribute
+
 
 /**
  * Helper class to resolve the data type of a SimpleExpression.
@@ -87,10 +89,22 @@ class TypeResolver {
 	/**
 	 * Recursively resolve last attribute of a path and return its attribute type name.
 	 */
-	def static AttributeType resolveAttribute(PathTail pathTail) {
+	def static AttributeType resolveAttributeType(PathTail pathTail) {
 		
 		if (pathTail.tail == null) {
 			return pathTail.attributeRef.type
+		}
+		return pathTail.tail.resolveAttributeType
+		
+	}
+	
+	/**
+	 * Recursively resolve last attribute of a path and return its attribute.
+	 */
+	def static Attribute resolveAttribute(PathTail pathTail) {
+		
+		if (pathTail.tail == null) {
+			return pathTail.attributeRef
 		}
 		return pathTail.tail.resolveAttribute
 		
@@ -138,7 +152,7 @@ class TypeResolver {
 	def private static String getAbstractViewGUIElementType(AbstractViewGUIElementRef ref) {
 		
 		if (ref.path != null) {
-			return ref.path.tail.resolveAttribute.attributeTypeName
+			return ref.path.tail.resolveAttributeType.attributeTypeName
 		} else if (ref.simpleType != null) {
 			return ref.simpleType.type.toString
 		} else if (ref.tail == null) {
@@ -152,7 +166,7 @@ class TypeResolver {
 		
 		switch path {
 			LocationProviderPath: "string"
-			ContentProviderPath: path.tail.resolveAttribute.attributeTypeName
+			ContentProviderPath: path.tail.resolveAttributeType.attributeTypeName
 		}
 		
 	}
@@ -193,6 +207,52 @@ class TypeResolver {
 			Tooltip: "string"
 			Label: "string"
 			default: "undefined"
+		}
+		
+	}
+	
+		/**
+	 * Resolves the data type of a simple expression and returns a string representation
+	 * of the type.
+	 */
+	def static getJavaExpressionType(SimpleExpression expr) {
+		
+		switch expr {
+			StringVal: "String"
+			BooleanVal: "boolean"
+			DateVal: "Date"
+			TimeVal: "Date"
+			DateTimeVal: "Date"
+			IntVal: "int"
+			FloatVal: "double"
+			
+			AbstractContentProviderPath: expr.abstractJavaContentProviderPathType
+		}
+		
+	}
+	
+		def private static getAbstractJavaContentProviderPathType(AbstractContentProviderPath path) {
+		
+		switch path {
+			LocationProviderPath: "String"
+			ContentProviderPath: path.tail.resolveAttributeType.javaAttributeTypeName
+		}
+		
+	}
+	
+		def static getJavaAttributeTypeName(AttributeType type) {
+		
+		switch type {
+			IntegerType: "int"
+			FloatType: "double"
+			StringType: "String"
+			BooleanType: "boolean"
+			DateType: "Date"
+			TimeType: "Date"
+			DateTimeType: "Date"
+			ReferencedType: System::err.println("ReferencedType can not be translated to Java")
+			EnumType: System::err.println("EnumType can not be translated to Java")
+			default: System::err.println("Unexpected AttributeType found: " + type.eClass.name)
 		}
 		
 	}

@@ -1,0 +1,9 @@
+package models
+
+entity RootEntity {
+	myInteger: integer (optional)
+	myString: string (optional)
+	myDate: date (optional)
+	myTime: time (optional)
+	myFloat: float (optional) 
+}

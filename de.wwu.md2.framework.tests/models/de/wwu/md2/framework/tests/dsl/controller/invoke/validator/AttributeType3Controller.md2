@@ -1,0 +1,27 @@
+package controllers
+
+contentProvider RootEntity EntityProvider {
+	providerType myRemoteConnection
+}
+
+remoteConnection myRemoteConnection{
+	uri "localhost:8080"
+}
+
+WorkflowElement myWorkflowElement {
+	defaultProcessChain myProcessChain
+	onInit {init}
+	action CustomAction init {
+		bind action FireEvent(NextEvent) on complaintView.Next.onClick
+	}
+	processChain myProcessChain {
+		step MyStep: 
+            		view complaintView 
+	}
+	
+	invokable{
+		default :EntityProvider.myDate = "test"
+	}
+	
+}
+

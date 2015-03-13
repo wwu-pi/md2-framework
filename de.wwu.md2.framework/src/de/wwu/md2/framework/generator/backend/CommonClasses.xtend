@@ -4,6 +4,7 @@ import de.wwu.md2.framework.generator.util.DataContainer
 import de.wwu.md2.framework.mD2.WorkflowEvent
 import de.wwu.md2.framework.mD2.WorkflowElement
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.getEscapedStoragePath
+import static extension de.wwu.md2.framework.generator.backend.util.MD2BackendUtil.*
 
 class CommonClasses {
 	
@@ -81,6 +82,20 @@ class CommonClasses {
 				map.put("«wfe.name»", innerMap);
 				
 				«ENDFOR»
+				
+				
+				// Coming from invokables
+				innerMap = new HashMap<String, String>();
+				«FOR eventDesc : dataContainer.workflow.workflowElementEntries.map[wfe | wfe.eventDescription].toSet»
+				HashMap<String, String> map«eventDesc.toFirstUpper» = new HashMap<String, String>();
+				«ENDFOR»
+				«FOR wfeEntry : dataContainer.workflow.workflowElementEntries.filter(wfe | wfe.isInvokeable())»
+				map«wfeEntry.eventDescription.toFirstUpper».put("«wfeEntry.eventDescription»", "«wfeEntry.workflowElement.name»");
+				«ENDFOR»
+				«FOR eventDesc : dataContainer.workflow.workflowElementEntries.map[wfe | wfe.eventDescription].toSet»
+				map.put("«eventDesc»", map«eventDesc.toFirstUpper»);
+				«ENDFOR»
+				
 				return map;
 			}
 		}
@@ -167,5 +182,4 @@ class CommonClasses {
 			}
 		}
 	'''
-	
 }

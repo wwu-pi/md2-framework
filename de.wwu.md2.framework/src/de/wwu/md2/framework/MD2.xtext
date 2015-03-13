@@ -758,7 +758,8 @@ WorkflowElement:
 		'}')
 		
 		((actions += Action*) &
-		(processChain += ProcessChain+))
+		(processChain += ProcessChain+) &
+		(invoke += InvokeDefinition*))
 		
 	'}'	
 ;
@@ -1385,6 +1386,33 @@ ProcessChainGoToSpec:
 	) '}'
 ;
 
+/////////////////////////////////////////
+// Controller layer => InvokeDefinitions
+/////////////////////////////////////////
+
+InvokeDefinition:
+	{InvokeDefinition} 'invokable' ('at' path=STRING)? ('using' method=RESTMethod)? ('{'
+		(params += InvokeParam+)
+	'}')?
+;
+
+// Only contentProviderPaths are allowed since LocationProviders are readonly
+InvokeParam:
+    {InvokeWSParam} field=ContentProviderPath ('as' alias=EID)? |
+	{InvokeDefaultValue} 'default' field=ContentProviderPath '=' invokeValue=InvokeValue |
+	{InvokeSetContentProvider} 'set' field=ContentProviderPath 'to' (contentProvider= ContentProviderReference)
+;
+
+InvokeValue:
+	{InvokeStringValue} value=STRING |
+	{InvokeIntValue} value=INT | 
+	{InvokeBooleanValue} value=Boolean | 
+	{InvokeDateValue} value=DATE | 
+	{InvokeTimeValue} value=TIME | 
+	{InvokeDateTimeValue} value=DATE_TIME | 
+	{InvokeFloatValue} value = FLOAT
+;
+
 
 /////////////////////////////////////////////
 // Controller layer => OnConditionEvent
@@ -1495,8 +1523,9 @@ RESTValue:
     {ContentProviderRestParam}  value = ContentProviderPath
 ;
 
+// POST as default for InvokeDefinition
 enum RESTMethod:
-	GET = 'GET' | POST = 'POST' | PUT = 'PUT' | DELETE = 'DELETE'
+	POST = 'POST' | GET = 'GET' | PUT = 'PUT' | DELETE = 'DELETE'
 ;
 
 
@@ -1831,7 +1860,7 @@ Workflow:
  * 0 to n Workflowelements can be started
  */
 WorkflowElementEntry:
-	'WorkflowElement' workflowElement=[WorkflowElement]
+	'WorkflowElement' workflowElement=[WorkflowElement] ('('invokeable ?= 'invokeable' (eventDesc=STRING)?')')?
 	firedEvents += FireEventEntry+
 ;
 

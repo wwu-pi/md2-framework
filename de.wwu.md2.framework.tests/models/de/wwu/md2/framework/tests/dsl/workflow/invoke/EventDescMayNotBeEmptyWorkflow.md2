@@ -1,0 +1,23 @@
+package workflows
+
+
+WorkflowElement myWorkflowElement (invokeable "")
+	
+	fires NextEvent{
+		start myWorkflowElement2 
+	}
+	
+WorkflowElement myWorkflowElement2
+	
+	fires NextEvent{
+		start myWorkflowElement
+	}
+App CurrentStateProjectApp {
+	
+	WorkflowElements {
+		
+		myWorkflowElement (startable: "Start Controller 1")
+	}
+	
+appName "functionTestApp"
+}
