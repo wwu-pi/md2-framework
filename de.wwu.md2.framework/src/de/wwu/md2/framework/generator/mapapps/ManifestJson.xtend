@@ -434,6 +434,7 @@ class ManifestJson {
 		"type": "button",
 		"title": "«button.text.escape»",
 		"field": "«getName(button)»",
+		«IF button.isIsDisabled»"disabled": true,«ENDIF»
 		«generateStyle(button.style, "width" -> '''«button.width»%''')»
 	'''
 	
@@ -462,6 +463,7 @@ class ManifestJson {
 		"type": "checkbox",
 		"datatype": "boolean",
 		"field": "«getName(input)»",
+		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
@@ -469,6 +471,7 @@ class ManifestJson {
 		"type": "«getDataformControl(input)»",
 		"datatype": "string",
 		"field": "«getName(input)»",
+		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
@@ -484,6 +487,7 @@ class ManifestJson {
 		"type": "numberspinner",
 		"datatype": "integer",
 		"field": "«getName(input)»",
+		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
@@ -491,6 +495,7 @@ class ManifestJson {
 		"type": "numbertextbox",
 		"datatype": "float",
 		"field": "«getName(input)»",
+		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		«IF input.placesSet»
 		"places": "«input.places»",
 		«ENDIF»
@@ -501,6 +506,7 @@ class ManifestJson {
 		"type": "datetextbox",
 		"datatype": "date",
 		"field": "«getName(input)»",
+		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
@@ -508,6 +514,7 @@ class ManifestJson {
 		"type": "timetextbox",
 		"datatype": "time",
 		"field": "«getName(input)»",
+		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
@@ -515,6 +522,7 @@ class ManifestJson {
 		"type": "datetimebox",
 		"datatype": "datetime",
 		"field": "«getName(input)»",
+		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
@@ -522,6 +530,7 @@ class ManifestJson {
 		"type": "selectbox",
 		"datatype": "«input.enumReference.name.toFirstUpper»",
 		"field": "«getName(input)»",
+		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
@@ -529,6 +538,7 @@ class ManifestJson {
 		"type": "uploader",
 		"datatype": "string",
 		"field": "«getName(input)»",
+		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		"url": "«input.uploadWSPath»service/upload/file",
 		«IF input.buttonValueText != null»"value": "«input.buttonValueText»",«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
