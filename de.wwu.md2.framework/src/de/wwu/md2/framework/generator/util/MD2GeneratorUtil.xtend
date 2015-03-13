@@ -68,15 +68,6 @@ class MD2GeneratorUtil {
 	}
 	
 	/**
-	 * Creates a camelCase string from the app name declared in the main block of the app.
-	 */
-	def static createAppName(DataContainer dataContainer) '''MySuperDupaMD2App'''
-	
-	def static createAppClassName(DataContainer dataContainer) {
-		createAppName(dataContainer) + "Application"
-	}
-	
-	/**
 	 * Returns the name of the given ViewElementType. In case that there is a second ViewElementType with the
 	 * same name in another scope (the element has another fully qualified name), the name is extended
 	 * by a number.

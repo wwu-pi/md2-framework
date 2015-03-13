@@ -46,7 +46,7 @@ class ContentProviderClass {
 				«ELSE»
 					«generateRemoteBody(contentProvider)»
 				«ENDIF»
-				var appId = "md2_«app.appName»";
+				var appId = "md2_«app.name»";
 				
 				«IF contentProvider.filter»
 					var filter = function() {

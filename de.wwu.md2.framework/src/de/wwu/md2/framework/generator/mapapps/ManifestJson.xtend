@@ -94,13 +94,12 @@ class ManifestJson {
 	 * Generates manifest.json code for WorkflowElements.
 	 */
 	def static String generateManifestJsonForWorkflowElement(WorkflowElement workflowElement, DataContainer dataContainer, App app) {
-		var appName = app.appName
 		'''
 			{
 				"Bundle-SymbolicName": "«workflowElement.bundleName»",
 				"Bundle-Version": "«dataContainer.main.appVersion»",
 				"Bundle-Name": "Workflow element «workflowElement.name»",
-				"Bundle-Description": "Generated MD2 workflow element bundle: «workflowElement.name» of «appName»",
+				"Bundle-Description": "Generated MD2 workflow element bundle: «workflowElement.name» of «app.name»",
 				"Bundle-Localization": [],
 				"Bundle-Main": "",
 			    "Require-Bundle": [
@@ -133,7 +132,6 @@ class ManifestJson {
 	}
 	
 	def static String generateManifestJsonForWorkflowHandler(DataContainer dataContainer, App app) {
-		var appName = app.appName
 		'''
 			{
 				«generateBundlePropertiesSnippet(dataContainer, app, "workflow")»
@@ -151,7 +149,7 @@ class ManifestJson {
 			            "references": [
 			                {
 			                    "name": "controller",
-			                    "providing": "md2.app.«appName».controllers",
+			                    "providing": "md2.app.«app.name».controllers",
 			                    "policy": "dynamic",
 			                    "cardinality": "0..n"
 			                },
@@ -168,23 +166,20 @@ class ManifestJson {
 	
 	
 	def private static generateBundlePropertiesSnippet(DataContainer dataContainer, App app, String type){
-        var appName = app.appName
-				
         '''«IF (type=="workflow")»
             "Bundle-SymbolicName": "md2_workflow",
-            "Bundle-Name": "«appName» «type»",
-            "Bundle-Description": "Generated MD2 bundle: «type» of «appName»",
+            "Bundle-Name": "«app.name» «type»",
+            "Bundle-Description": "Generated MD2 bundle: «type» of «app.name»",
     	«ELSE»
             "Bundle-SymbolicName": "md2_«type»s",
-            "Bundle-Name": "«appName» «type»s",
-            "Bundle-Description": "Generated MD2 bundle: «type»s of «appName»",
+            "Bundle-Name": "«app.name» «type»s",
+            "Bundle-Description": "Generated MD2 bundle: «type»s of «app.name»",
         «ENDIF»"Bundle-Version": "2.0",
         "Bundle-Localization": [],
         "Bundle-Main": "",'''		
 	}
 	
 	def private static String generateConfigurationSnippet(WorkflowElement workflowElement, DataContainer dataContainer, App app) {
-	    var appName = app.appName
 		'''
 			{
 				"name": "MD2«workflowElement.name»",
@@ -192,7 +187,7 @@ class ManifestJson {
 				"provides": ["md2.wfe.«workflowElement.name».AppDefinition"],
 				"propertiesConstructor": true,
 				"properties": {
-				    "appId": "md2_«appName»",
+				    "appId": "md2_«app.name»",
 					"id": "md2_«workflowElement.name.replace(".", "_")»",
 					"webserviceBackendUri": "«dataContainer.getDefaultConnectionUri»",
 					"windowTitle": "«workflowElement.name»",
@@ -224,7 +219,7 @@ class ManifestJson {
 	def static generateModelsSnippet(DataContainer dataContainer, App app) '''
 		{
 			"name": "Models",
-			"provides": ["md2.app.«app.appName».Models", "md2.Models"],
+			"provides": ["md2.app.«app.name».Models", "md2.Models"],
 			"instanceFactory": true
 		}
 	'''
@@ -236,7 +231,7 @@ class ManifestJson {
 				{
 					"name": "«contentProvider.name.toFirstUpper»Provider",
 					"impl": "./contentproviders/«contentProvider.name.toFirstUpper»",
-					"provides": ["md2.app.«app.appName».ContentProvider", "md2.ContentProvider"],
+					"provides": ["md2.app.«app.name».ContentProvider", "md2.ContentProvider"],
 					«IF !contentProvider.local»
 						"propertiesConstructor": true,
 						"properties": {
@@ -262,11 +257,10 @@ class ManifestJson {
 	
 	def static generateControllerSnippet(WorkflowElement workflowElement, DataContainer dataContainer, App app) 
 	{
-	var appName = app.appName;
 	'''
 		{
 			"name": "Controller",
-			"provides": ["md2.wfe.«workflowElement.name».Controller","md2.app.«appName».controllers"],
+			"provides": ["md2.wfe.«workflowElement.name».Controller","md2.app.«app.name».controllers"],
 			"instanceFactory": true,
 			"references": [
 				{
@@ -279,7 +273,7 @@ class ManifestJson {
 				},
 				{
 					"name": "_models",
-					"providing": "md2.app.«appName».Models"
+					"providing": "md2.app.«app.name».Models"
 				},
 				{
 					"name": "_configBean",
