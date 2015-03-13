@@ -541,7 +541,7 @@ class ManifestJson {
 		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		"url": "«input.uploadWSPath»service/upload/file",
 		«IF input.buttonValueText != null»"value": "«input.buttonValueText»",«ENDIF»
-		«generateStyle(null, "width" -> '''«input.width»%''')»
+		«generateStyle(input.style, "width" -> '''«input.width»%''')»
 	'''
 	
 	def private static dispatch String getViewElement(EntitySelector input) '''
