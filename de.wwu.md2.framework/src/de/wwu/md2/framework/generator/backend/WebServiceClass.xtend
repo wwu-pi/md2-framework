@@ -410,8 +410,7 @@ class WebServiceClass {
         import java.net.MalformedURLException;
         import java.net.URL;
         import java.net.URLEncoder;
-        import java.util.HashMap;
-        import java.util.Map.Entry;
+        import java.util.List;
         import java.util.logging.Logger;
         
         import javax.ejb.Stateless;
@@ -444,7 +443,7 @@ class WebServiceClass {
             @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
             public Response getMethod(RequestDTO dto) {
                 
-                logRequest(dto);        
+                logRequest(dto);
                 Boolean responseOk = false;
                 int code = 0;
                 try {
@@ -507,14 +506,14 @@ class WebServiceClass {
             /**
              * Creates a string containing URL parameters, that can be added to a normal URL.
              * Example: {"hello": "world", "example": 42} will return '?hello=world&example=42'
-             * @param params a HashMap containing all query parameters
+             * @param map a HashMap containing all query parameters
              * @return a String containing query parameters
              */
-            private String buildUrlParameters(HashMap<String, Object> params){
+            private String buildUrlParameters(List<RequestDTO.CustomHashMapEntry> map){
                 String urlParams = "?";
                 
                 try {
-                    for (Entry<String, Object> entry : params.entrySet()) {
+                    for (RequestDTO.CustomHashMapEntry entry : map) {
                         urlParams += URLEncoder.encode(entry.getKey(), "UTF-8") + "=" + URLEncoder.encode(entry.getValue().toString(), "UTF-8") + "&";
                     }
                     // remove trailing "&"
