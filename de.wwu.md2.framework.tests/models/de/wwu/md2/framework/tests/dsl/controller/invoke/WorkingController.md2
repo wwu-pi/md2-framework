@@ -1,6 +1,10 @@
 package controllers
 
-contentProvider User UserPovider {
+contentProvider User UserProvider {
+	providerType myRemoteConnection
+}
+
+contentProvider Complaint ComplaintProvider {
 	providerType myRemoteConnection
 }
 
@@ -20,10 +24,15 @@ WorkflowElement myWorkflowElement {
 	}
 	
 	invokable at "myPath"{
-		:UserPovider.ename
-		:UserPovider.email
-		:UserPovider.bday
-		default :UserPovider.address = "myAddress"
+		:UserProvider.ename
+		:UserProvider.email
+		:UserProvider.bday
+		set :ComplaintProvider.submittedby to :UserProvider
+		default :ComplaintProvider.status = "processed"
+		default :ComplaintProvider.submitdate = 2014-03-03
+		default :ComplaintProvider.descr = "myDescription"
+		default :ComplaintProvider.id = 1
+		default :UserProvider.address = "myAddress"
 	}
 	
 	invokable
