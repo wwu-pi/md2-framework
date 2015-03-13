@@ -80,6 +80,7 @@ import de.wwu.md2.framework.mD2.impl.EnumTypeImpl
 import de.wwu.md2.framework.mD2.Enum
 import de.wwu.md2.framework.mD2.EnumBody
 import de.wwu.md2.framework.mD2.InvokeStringValue
+import java.util.Set
 
 /**
  * Validators for all controller elements of MD2.
@@ -712,7 +713,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		// Set that contains all required attributes including nested
 		var processedRequiredAttributes = new HashSet<Attribute>()
 		// Serves as temporary set for required attributes (is needed for the extraction of nested required attributes)
-		var requiredAttributes = allAttributes.getRequiredAttributes
+		var requiredAttributes = allAttributes.toSet.getRequiredAttributes
 		processedRequiredAttributes.addAll(requiredAttributes)
 		// For requrired attributes of type ReferenceTypes look deeper if there are nested required attributes (recursive)
 		var requiredReferenceTypes = requiredAttributes.filter[it.type instanceof ReferencedType]
@@ -769,7 +770,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	/**
 	 * Retrieve all required attributes of a list of attributes
 	 */
-    private def Iterable<Attribute> getRequiredAttributes(Iterable<Attribute> attributes){
+    private def Set<Attribute> getRequiredAttributes(Iterable<Attribute> attributes){
     	attributes.filter[
 			var type = it.type
 			var params = switch (type){
@@ -782,8 +783,10 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 				TimeType: type.params
 				DateTimeType: type.params
 				EnumType: type.params
+				FileType: type.params
+				default: throw new RuntimeException("The attribute type is not registered in this method.")
 			}
 			params.filter(AttrIsOptional).size==0		
-		]
+		].toSet
     }
 }
