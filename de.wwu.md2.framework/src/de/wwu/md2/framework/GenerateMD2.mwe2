@@ -90,7 +90,7 @@ Workflow {
 
             // formatter API
             fragment = formatting.FormatterFragment {
-                generateStub = false
+                generateXtendStub = true
             }
 
             // labeling API
