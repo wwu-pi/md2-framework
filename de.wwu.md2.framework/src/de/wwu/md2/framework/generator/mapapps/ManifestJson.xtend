@@ -477,7 +477,7 @@ class ManifestJson {
 		"datatype": "float",
 		"field": "«getName(input)»",
 		«IF input.placesSet»
-		"places": "«input.places»",
+		"places": "0,«input.places»",
 		«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
