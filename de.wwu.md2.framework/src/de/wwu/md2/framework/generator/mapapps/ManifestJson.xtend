@@ -36,6 +36,7 @@ import static extension de.wwu.md2.framework.util.StringExtensions.*
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.UploadedImageOutput
 import de.wwu.md2.framework.mD2.FileUpload
+import de.wwu.md2.framework.mD2.TextInputType
 
 class ManifestJson {
 		
@@ -427,6 +428,7 @@ class ManifestJson {
 		"type": "button",
 		"title": "«button.text.escape»",
 		"field": "«getName(button)»",
+		«IF button.isIsDisabled»"disabled": true,«ENDIF»
 		«generateStyle(button.style, "width" -> '''«button.width»%''')»
 	'''
 	
@@ -455,20 +457,31 @@ class ManifestJson {
 		"type": "checkbox",
 		"datatype": "boolean",
 		"field": "«getName(input)»",
+		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
 	def private static dispatch String getViewElement(TextInput input) '''
-		"type": "textbox",
+		"type": "«getDataformControl(input)»",
 		"datatype": "string",
 		"field": "«getName(input)»",
+		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
+	
+	def static getDataformControl(TextInput input) {
+		if (input.type != null && input.type.equals(TextInputType.TEXTAREA)) {
+			'''textarea'''
+		} else {
+			'''textbox'''
+		}
+	}
 	
 	def private static dispatch String getViewElement(IntegerInput input) '''
 		"type": "numberspinner",
 		"datatype": "integer",
 		"field": "«getName(input)»",
+		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
@@ -476,6 +489,7 @@ class ManifestJson {
 		"type": "numbertextbox",
 		"datatype": "float",
 		"field": "«getName(input)»",
+		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		«IF input.placesSet»
 		"places": "0,«input.places»",
 		«ENDIF»
@@ -486,6 +500,7 @@ class ManifestJson {
 		"type": "datetextbox",
 		"datatype": "date",
 		"field": "«getName(input)»",
+		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
@@ -493,6 +508,7 @@ class ManifestJson {
 		"type": "timetextbox",
 		"datatype": "time",
 		"field": "«getName(input)»",
+		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
@@ -500,6 +516,7 @@ class ManifestJson {
 		"type": "datetimebox",
 		"datatype": "datetime",
 		"field": "«getName(input)»",
+		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
@@ -507,6 +524,7 @@ class ManifestJson {
 		"type": "selectbox",
 		"datatype": "«input.enumReference.name.toFirstUpper»",
 		"field": "«getName(input)»",
+		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		«generateStyle(null, "width" -> '''«input.width»%''')»
 	'''
 	
@@ -514,9 +532,10 @@ class ManifestJson {
 		"type": "uploader",
 		"datatype": "string",
 		"field": "«getName(input)»",
+		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		"url": "«input.uploadWSPath»service/upload/file",
 		«IF input.buttonValueText != null»"value": "«input.buttonValueText»",«ENDIF»
-		«generateStyle(null, "width" -> '''«input.width»%''')»
+		«generateStyle(input.style, "width" -> '''«input.width»%''')»
 	'''
 	
 	def private static dispatch String getViewElement(EntitySelector input) '''
