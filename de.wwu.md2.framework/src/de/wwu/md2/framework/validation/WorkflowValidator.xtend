@@ -67,11 +67,11 @@ class WorkflowValidator extends AbstractMD2JavaValidator {
 	@Check
 	def checkThatInvokeIsUsedInBothModelParts(WorkflowElementEntry wfeEntry) {
 		val wfe = wfeEntry.workflowElement
-		if (wfe.invoke.size==0 && wfeEntry.invokeable){
+		if (wfe.invoke.size==0 && wfeEntry.invokable){
 			val error = '''The workflow element is set invokeable, but does not specify invoke structures in the controller model part.'''
-			acceptError(error, wfeEntry, MD2Package.eINSTANCE.workflowElementEntry_Invokeable , -1, INVOKEMAYNOTBEINVOKEABLE);
+			acceptError(error, wfeEntry, MD2Package.eINSTANCE.workflowElementEntry_Invokable , -1, INVOKEMAYNOTBEINVOKEABLE);
 		}
-		if (wfe.invoke.size>0 && !wfeEntry.invokeable){
+		if (wfe.invoke.size>0 && !wfeEntry.invokable){
 			val error = '''The workflow element is not set invokeable, but has invoke structures specified in the controller model part.'''
 			acceptError(error, wfeEntry, MD2Package.eINSTANCE.workflowElementEntry_WorkflowElement , -1, INVOKEHASTOBEINVOKEABLE);
 		}

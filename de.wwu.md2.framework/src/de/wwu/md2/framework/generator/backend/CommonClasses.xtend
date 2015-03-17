@@ -89,7 +89,7 @@ class CommonClasses {
 				«FOR eventDesc : dataContainer.workflow.workflowElementEntries.map[wfe | wfe.eventDescription].toSet»
 				HashMap<String, String> map«eventDesc.toFirstUpper» = new HashMap<String, String>();
 				«ENDFOR»
-				«FOR wfeEntry : dataContainer.workflow.workflowElementEntries.filter(wfe | wfe.isInvokeable())»
+				«FOR wfeEntry : dataContainer.workflow.workflowElementEntries.filter(wfe | wfe.isInvokable())»
 				map«wfeEntry.eventDescription.toFirstUpper».put("«wfeEntry.eventDescription»", "«wfeEntry.workflowElement.name»");
 				«ENDFOR»
 				«FOR eventDesc : dataContainer.workflow.workflowElementEntries.map[wfe | wfe.eventDescription].toSet»
