@@ -121,11 +121,15 @@ class EnumAndEntityClass {
 		
 		import java.io.Serializable;
 		
+		import java.util.Date;
+		
 		import javax.persistence.Column;
 		import javax.persistence.Entity;
 		import javax.persistence.GeneratedValue;
 		import javax.persistence.GenerationType;
 		import javax.persistence.Id;
+		import javax.persistence.Temporal;
+		import javax.persistence.TemporalType;
 		import javax.validation.constraints.NotNull;
 		import javax.xml.bind.annotation.XmlAccessType;
 		import javax.xml.bind.annotation.XmlAccessorType;
@@ -172,6 +176,10 @@ class EnumAndEntityClass {
 			@XmlElement(nillable=true)
 			protected boolean finished;
 			
+			@Temporal(TemporalType.TIMESTAMP)
+			@XmlElement(nillable=true)
+			protected Date lastUpdated;
+			
 			///////////////////////////////////////
 			/// constructor
 			///////////////////////////////////////
@@ -186,6 +194,7 @@ class EnumAndEntityClass {
 				this.currentWorkflowElement = wfe;
 				this.contentProviderIds = contentProviderIds;
 				this.finished = false;
+				this.lastUpdated = new Date();
 			}
 			
 			///////////////////////////////////////
@@ -232,6 +241,15 @@ class EnumAndEntityClass {
 			public boolean getFinished()
 			{
 				return this.finished;
+			}
+			
+			public void setLastUpdated(Date lastUpdated){
+				this.lastUpdated = lastUpdated;
+			}
+
+			public Date getLastUpdated()
+			{
+				return this.lastUpdated;
 			}
 			
 		}
