@@ -43,7 +43,7 @@ class InvokeOnBothSidesValidation {
 	def testInvokeOnBothSides1Validator(){
 		INVOKE_ONBOTHSIDES1_C.load.parse(rs);
 		var workflowModel = INVOKE_ONBOTHSIDES_W.load.parse(rs);
-		workflowModel.assertError(MD2Package::eINSTANCE.workflowElementEntry,WorkflowValidator::INVOKEHASTOBEINVOKEABLE);		
+		workflowModel.assertError(MD2Package::eINSTANCE.workflowElementEntry,WorkflowValidator::INVOKEHASTOBEINVOKABLE);		
 	} 
 	
 	/**
@@ -54,7 +54,7 @@ class InvokeOnBothSidesValidation {
 	def testInvokeOnBothSides2Validator(){
 		INVOKE_ONBOTHSIDES2_C.load.parse(rs);
 		var workflowModel = INVOKE_ONBOTHSIDES_W.load.parse(rs);
-		workflowModel.assertError(MD2Package::eINSTANCE.workflowElementEntry,WorkflowValidator::INVOKEMAYNOTBEINVOKEABLE);		
+		workflowModel.assertError(MD2Package::eINSTANCE.workflowElementEntry,WorkflowValidator::INVOKEMAYNOTBEINVOKABLE);		
 	} 
 
 }
