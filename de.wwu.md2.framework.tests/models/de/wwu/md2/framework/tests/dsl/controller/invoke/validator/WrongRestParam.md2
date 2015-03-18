@@ -1,9 +1,5 @@
 package controllers
 
-contentProvider User UserPovider {
-    providerType myRemoteConnection
-}
-
 remoteConnection myRemoteConnection{
     uri "localhost:8080"
 }
@@ -20,6 +16,5 @@ WorkflowElement myWorkflowElement {
     }
     
     invokable at "myPath" using GET {
-        :UserPovider.email
     }
 }
