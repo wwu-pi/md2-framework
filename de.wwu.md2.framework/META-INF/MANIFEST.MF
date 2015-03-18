@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: de.wwu.md2.framework
 Bundle-Vendor: WWU
-Bundle-Version: 0.2.0
+Bundle-Version: 0.3.0
 Bundle-SymbolicName: de.wwu.md2.framework; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0";visibility:=reexport,

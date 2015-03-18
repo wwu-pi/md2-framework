@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.wwu.md2.framework</groupId>
 	<artifactId>de.wwu.md2.framework.parent</artifactId>
-	<version>0.2.0</version>
+	<version>0.3.0</version>
 	<packaging>pom</packaging>
 
 	<properties>
