@@ -160,6 +160,7 @@ class BeanClass {
 		import java.util.ArrayList;
 		import java.util.HashMap;
 		import java.util.List;
+		import java.util.Date;
 		
 		import javax.ejb.Stateless;
 		import javax.persistence.EntityManager;
@@ -239,6 +240,8 @@ class BeanClass {
 					em.persist(ws);
 				}
 				else {
+					// set last updated to current date
+					ws.setLastUpdated(new Date());
 					// set to succeeding workflow element -- i.e. describe, what status the instance is in now.
 					ws.setCurrentWorkflowElement(succeedingWfe);
 					ws.setLastEventFired(lastEventFired); // in fact, this information is useless, but probably nice for display :)
