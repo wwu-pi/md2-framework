@@ -1,6 +1,0 @@
-# standard files created by Windows and Mac
-Thumbs.db
-.DS_Store
-
-# bin directories of our projects
-md2_app_*/
