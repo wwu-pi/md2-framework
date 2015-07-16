@@ -4,14 +4,18 @@ import de.wwu.md2.framework.mD2.AbstractContentProviderPath
 import de.wwu.md2.framework.mD2.AbstractProviderReference
 import de.wwu.md2.framework.mD2.ActionDef
 import de.wwu.md2.framework.mD2.ActionReference
+import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.AttributeSetTask
+import de.wwu.md2.framework.mD2.BooleanRestParam
 import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.ConditionalCodeFragment
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ContentProviderEventRef
 import de.wwu.md2.framework.mD2.ContentProviderOperationAction
+import de.wwu.md2.framework.mD2.ContentProviderPath
 import de.wwu.md2.framework.mD2.ContentProviderPathEventRef
 import de.wwu.md2.framework.mD2.ContentProviderResetAction
+import de.wwu.md2.framework.mD2.ContentProviderRestParam
 import de.wwu.md2.framework.mD2.ContentProviderSetTask
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.CustomCodeFragment
@@ -21,9 +25,14 @@ import de.wwu.md2.framework.mD2.DisplayMessageAction
 import de.wwu.md2.framework.mD2.EnableAction
 import de.wwu.md2.framework.mD2.EventBindingTask
 import de.wwu.md2.framework.mD2.EventUnbindTask
+import de.wwu.md2.framework.mD2.FireEventAction
+import de.wwu.md2.framework.mD2.FloatRestParam
 import de.wwu.md2.framework.mD2.GlobalEventRef
 import de.wwu.md2.framework.mD2.GotoViewAction
+import de.wwu.md2.framework.mD2.IntegerRestParam
+import de.wwu.md2.framework.mD2.LocationAction
 import de.wwu.md2.framework.mD2.MappingTask
+import de.wwu.md2.framework.mD2.RESTParam
 import de.wwu.md2.framework.mD2.RemoteValidator
 import de.wwu.md2.framework.mD2.SimpleActionRef
 import de.wwu.md2.framework.mD2.SimpleExpression
@@ -35,6 +44,7 @@ import de.wwu.md2.framework.mD2.StandardRegExValidator
 import de.wwu.md2.framework.mD2.StandardStringRangeValidator
 import de.wwu.md2.framework.mD2.StandardTimeRangeValidator
 import de.wwu.md2.framework.mD2.StandardValidatorType
+import de.wwu.md2.framework.mD2.StringRestParam
 import de.wwu.md2.framework.mD2.UnmappingTask
 import de.wwu.md2.framework.mD2.ValidatorBindingTask
 import de.wwu.md2.framework.mD2.ValidatorMaxDateParam
@@ -54,8 +64,11 @@ import de.wwu.md2.framework.mD2.ValidatorUnbindTask
 import de.wwu.md2.framework.mD2.ViewElementEventRef
 import de.wwu.md2.framework.mD2.ViewElementSetTask
 import de.wwu.md2.framework.mD2.ViewElementType
+import de.wwu.md2.framework.mD2.WebServiceCallAction
+import de.wwu.md2.framework.mD2.WorkflowElement
 import java.util.List
 import java.util.Map
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtend2.lib.StringConcatenation
 
 import static de.wwu.md2.framework.generator.mapapps.Expressions.*
@@ -63,21 +76,6 @@ import static de.wwu.md2.framework.generator.mapapps.Expressions.*
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
-import de.wwu.md2.framework.mD2.FireEventAction
-import de.wwu.md2.framework.mD2.WorkflowEvent
-import de.wwu.md2.framework.mD2.WorkflowElement
-import de.wwu.md2.framework.mD2.Action
-import org.eclipse.emf.ecore.EObject
-import de.wwu.md2.framework.mD2.LocationAction
-import de.wwu.md2.framework.mD2.WebServiceCallAction
-import de.wwu.md2.framework.mD2.RESTParam
-import de.wwu.md2.framework.mD2.Attribute
-import de.wwu.md2.framework.mD2.ContentProviderPath
-import de.wwu.md2.framework.mD2.StringRestParam
-import de.wwu.md2.framework.mD2.BooleanRestParam
-import de.wwu.md2.framework.mD2.FloatRestParam
-import de.wwu.md2.framework.mD2.IntegerRestParam
-import de.wwu.md2.framework.mD2.ContentProviderRestParam
 
 class CustomActionClass {
 	

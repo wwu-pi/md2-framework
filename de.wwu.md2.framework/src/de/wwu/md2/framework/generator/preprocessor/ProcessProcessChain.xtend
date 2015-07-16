@@ -11,7 +11,6 @@ import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.EventDef
 import de.wwu.md2.framework.mD2.IfCodeBlock
 import de.wwu.md2.framework.mD2.Operator
-import de.wwu.md2.framework.mD2.SetProcessChainAction
 import de.wwu.md2.framework.mD2.ProcessChain
 import de.wwu.md2.framework.mD2.ProcessChainGoTo
 import de.wwu.md2.framework.mD2.ProcessChainGoToDefinition
@@ -24,6 +23,8 @@ import de.wwu.md2.framework.mD2.ProcessChainProceedAction
 import de.wwu.md2.framework.mD2.ProcessChainReturn
 import de.wwu.md2.framework.mD2.ProcessChainReverseAction
 import de.wwu.md2.framework.mD2.ProcessChainStep
+import de.wwu.md2.framework.mD2.SetProcessChainAction
+import de.wwu.md2.framework.mD2.WorkflowElement
 import java.util.Collection
 import java.util.HashMap
 import java.util.List
@@ -31,7 +32,7 @@ import org.eclipse.emf.ecore.EObject
 
 import static extension de.wwu.md2.framework.generator.preprocessor.util.Helper.*
 import static extension org.apache.commons.codec.digest.DigestUtils.*
-import static extension org.eclipse.emf.ecore.util.EcoreUtil.*import de.wwu.md2.framework.mD2.WorkflowElement
+import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 class ProcessProcessChain extends AbstractPreprocessor {
 	

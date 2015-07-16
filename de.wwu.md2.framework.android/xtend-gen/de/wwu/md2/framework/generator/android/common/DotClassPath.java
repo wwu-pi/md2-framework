@@ -1,9 +1,11 @@
 package de.wwu.md2.framework.generator.android.common;
 
+import org.eclipse.xtend2.lib.StringConcatenation;
+
 @SuppressWarnings("all")
 public class DotClassPath {
   public static CharSequence dotClassPath() {
-    org.eclipse.xtend2.lib.StringConcatenation _builder = new org.eclipse.xtend2.lib.StringConcatenation();
+    StringConcatenation _builder = new StringConcatenation();
     _builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     _builder.newLine();
     _builder.append("<classpath>");

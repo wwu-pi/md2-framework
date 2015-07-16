@@ -19,12 +19,11 @@ import de.wwu.md2.framework.mD2.StandardValidator
 import de.wwu.md2.framework.mD2.StandardValidatorType
 import de.wwu.md2.framework.mD2.StringRangeValidator
 import de.wwu.md2.framework.mD2.TimeRangeValidator
+import de.wwu.md2.framework.mD2.WorkflowElement
 import org.eclipse.emf.ecore.util.EcoreUtil
 
 import static extension de.wwu.md2.framework.generator.preprocessor.util.Util.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
-import de.wwu.md2.framework.mD2.WorkflowElement
-import de.wwu.md2.framework.mD2.SetProcessChainAction
 
 class ProcessController extends AbstractPreprocessor {
 	

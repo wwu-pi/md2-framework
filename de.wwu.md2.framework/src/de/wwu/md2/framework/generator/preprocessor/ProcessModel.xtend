@@ -28,17 +28,17 @@ import de.wwu.md2.framework.mD2.Enum
 import de.wwu.md2.framework.mD2.EnumType
 import de.wwu.md2.framework.mD2.FloatType
 import de.wwu.md2.framework.mD2.IntegerType
-import de.wwu.md2.framework.mD2.Main
 import de.wwu.md2.framework.mD2.MappingTask
 import de.wwu.md2.framework.mD2.Model
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.ReferencedType
 import de.wwu.md2.framework.mD2.StringType
 import de.wwu.md2.framework.mD2.TimeType
+import de.wwu.md2.framework.mD2.WorkflowElement
 
 import static de.wwu.md2.framework.generator.preprocessor.util.Util.*
 
-import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*import de.wwu.md2.framework.mD2.WorkflowElement
+import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
 class ProcessModel extends AbstractPreprocessor {
 	

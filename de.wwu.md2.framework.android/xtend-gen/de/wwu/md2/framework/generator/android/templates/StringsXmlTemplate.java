@@ -4,11 +4,10 @@ import java.util.HashMap;
 
 @SuppressWarnings("all")
 public class StringsXmlTemplate /* implements AbstractTemplate  */{
-  private HashMap<String,String> stringsMap /* Skipped initializer because of errors */;
+  private HashMap<String, String> stringsMap /* Skipped initializer because of errors */;
   
   protected CharSequence executionOrder() {
-    CharSequence _template = this.template();
-    return _template;
+    return this.template();
   }
   
   protected CharSequence template() {

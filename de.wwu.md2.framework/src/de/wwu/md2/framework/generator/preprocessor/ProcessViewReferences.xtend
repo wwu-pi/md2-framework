@@ -18,14 +18,17 @@ import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.MappingTask
 import de.wwu.md2.framework.mD2.SimpleType
 import de.wwu.md2.framework.mD2.StyleReference
+import de.wwu.md2.framework.mD2.TabSpecificParam
 import de.wwu.md2.framework.mD2.UnmappingTask
 import de.wwu.md2.framework.mD2.ValidatorBindingTask
 import de.wwu.md2.framework.mD2.ValidatorUnbindTask
 import de.wwu.md2.framework.mD2.View
+import de.wwu.md2.framework.mD2.ViewElement
 import de.wwu.md2.framework.mD2.ViewElementEventRef
 import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
+import de.wwu.md2.framework.mD2.WorkflowElement
 import java.util.Collection
 import java.util.HashMap
 import org.eclipse.emf.common.util.EList
@@ -37,8 +40,6 @@ import static de.wwu.md2.framework.generator.preprocessor.util.Util.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
-import de.wwu.md2.framework.mD2.WorkflowElement
-import de.wwu.md2.framework.mD2.ViewElement
 
 class ProcessViewReferences extends AbstractPreprocessor {
 	
@@ -52,7 +53,7 @@ class ProcessViewReferences extends AbstractPreprocessor {
 			val containerElement = copyViewElementType(containerRef.value, clonedElements)
 			if (containerRef.rename) containerElement.name = containerRef.name
 			containerRef.params.forEach [ param |
-				val newParam = copyElement(param)
+				val newParam = copyElement(param as TabSpecificParam)
 				switch (containerElement) {
 					GridLayoutPane: containerElement.params.add(newParam)
 					FlowLayoutPane: containerElement.params.add(newParam)
@@ -72,7 +73,7 @@ class ProcessViewReferences extends AbstractPreprocessor {
 	) {
 		var repeat = true
 		while (repeat) {
-			val viewRefs = view.eAllContents.toIterable.filter(ViewGUIElementReference).toList.sort([obj1, obj2 |
+			val viewRefs = view.eAllContents.toIterable.filter(ViewGUIElementReference).toList.sortWith([obj1, obj2 |
 				return countContainers(obj2, 0) - countContainers(obj1, 0)
 			])
 			val size = viewRefsDone.size 

@@ -23,6 +23,7 @@ import de.wwu.md2.framework.mD2.ModelElement
 import de.wwu.md2.framework.mD2.PathDefinition
 import de.wwu.md2.framework.mD2.PathTail
 import de.wwu.md2.framework.mD2.ReferencedModelType
+import de.wwu.md2.framework.mD2.RemoteConnection
 import de.wwu.md2.framework.mD2.SimpleType
 import de.wwu.md2.framework.mD2.StandardValidator
 import de.wwu.md2.framework.mD2.TabTitleParam
@@ -38,8 +39,6 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameProvider
-import de.wwu.md2.framework.mD2.Main
-import de.wwu.md2.framework.mD2.RemoteConnection
 
 class MD2GeneratorUtil {
 	

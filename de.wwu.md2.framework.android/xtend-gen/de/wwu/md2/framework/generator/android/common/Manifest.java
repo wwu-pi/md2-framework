@@ -1,6 +1,8 @@
 package de.wwu.md2.framework.generator.android.common;
 
+import de.wwu.md2.framework.generator.util.DataContainer;
 import java.util.List;
+import org.eclipse.xtend2.lib.StringConcatenation;
 
 @SuppressWarnings("all")
 public class Manifest {
@@ -8,13 +10,12 @@ public class Manifest {
    * Creates the manifest for the app
    * @param activities List of all root views that have been created, the first entry has to be the entry point to the app
    */
-  public static CharSequence manifest(final String packageName, final int minAppVersion, final /* DataContainer */Object dataContainer, final /* List<ContainerElement> */Object activities) {
+  public static CharSequence manifest(final String packageName, final int minAppVersion, final DataContainer dataContainer, final /* List<ContainerElement> */Object activities) {
     throw new Error("Unresolved compilation problems:"
+      + "\nThe method filter is undefined for the type Manifest"
       + "\nThe method createAppName is undefined for the type Manifest"
       + "\nThe method createAppClassName is undefined for the type Manifest"
       + "\nThe method head is undefined for the type Manifest"
-      + "\ncontentProviders cannot be resolved"
-      + "\nfilter cannot be resolved"
       + "\nlocal cannot be resolved"
       + "\n! cannot be resolved"
       + "\nempty cannot be resolved"
@@ -26,7 +27,7 @@ public class Manifest {
   }
   
   public static CharSequence activity(final String className, final boolean isMain) {
-    org.eclipse.xtend2.lib.StringConcatenation _builder = new org.eclipse.xtend2.lib.StringConcatenation();
+    StringConcatenation _builder = new StringConcatenation();
     _builder.newLine();
     _builder.append("<activity name=\"");
     _builder.append(className, "");

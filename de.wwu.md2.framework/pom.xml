@@ -4,6 +4,7 @@
 	<artifactId>de.wwu.md2.framework</artifactId>
 	<packaging>eclipse-plugin</packaging>
 	<build>
+	<pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -66,6 +67,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		</pluginManagement>
 	</build>
 	<parent>
 		<groupId>de.wwu.md2.framework</groupId>

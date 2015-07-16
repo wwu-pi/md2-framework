@@ -1,6 +1,7 @@
 package de.wwu.md2.framework.generator.android.util;
 
 import de.wwu.md2.framework.generator.android.util.JavaClassDef;
+import de.wwu.md2.framework.generator.util.DataContainer;
 import java.util.Set;
 
 @SuppressWarnings("all")
@@ -16,6 +17,13 @@ public class MD2AndroidUtil {
       + "\nDateType cannot be resolved to a type."
       + "\nTimeType cannot be resolved to a type."
       + "\nDateTimeType cannot be resolved to a type."
+      + "\nUnreachable code: The case can never match. It is already handled by a previous condition."
+      + "\nUnreachable code: The case can never match. It is already handled by a previous condition."
+      + "\nUnreachable code: The case can never match. It is already handled by a previous condition."
+      + "\nUnreachable code: The case can never match. It is already handled by a previous condition."
+      + "\nUnreachable code: The case can never match. It is already handled by a previous condition."
+      + "\nUnreachable code: The case can never match. It is already handled by a previous condition."
+      + "\nUnreachable code: The case can never match. It is already handled by a previous condition."
       + "\ntype cannot be resolved"
       + "\ntype cannot be resolved"
       + "\nentity cannot be resolved"
@@ -47,9 +55,9 @@ public class MD2AndroidUtil {
       + "\ngenerateFile cannot be resolved");
   }
   
-  public static Object getConditionName(final /* DataContainer */Object dataContainer, final /* Condition */Object condition) {
+  public static Object getConditionName(final DataContainer dataContainer, final /* Condition */Object condition) {
     throw new Error("Unresolved compilation problems:"
-      + "\nconditions cannot be resolved"
+      + "\nThe method conditions is undefined for the type MD2AndroidUtil"
       + "\nfilter cannot be resolved"
       + "\n== cannot be resolved"
       + "\nkeySet cannot be resolved"
@@ -57,15 +65,11 @@ public class MD2AndroidUtil {
       + "\ntoFirstUpper cannot be resolved");
   }
   
-  public static CharSequence getGoToViewCode(final /* ViewGUIElement */Object view, final String appObjectName, final String basePackage, final /* DataContainer */Object dataContainer, final /* Set<ContainerElement> */Object activities, final /* Set<ContainerElement> */Object fragments) {
+  public static CharSequence getGoToViewCode(final /* ViewGUIElement */Object view, final String appObjectName, final String basePackage, final DataContainer dataContainer, final /* Set<ContainerElement> */Object activities, final /* Set<ContainerElement> */Object fragments) {
     throw new Error("Unresolved compilation problems:"
-      + "\nThe method getName is undefined for the type MD2AndroidUtil"
-      + "\nThe method getName is undefined for the type MD2AndroidUtil"
-      + "\nThe method getName is undefined for the type MD2AndroidUtil"
-      + "\nThe method getName is undefined for the type MD2AndroidUtil"
-      + "\ntoFirstUpper cannot be resolved"
-      + "\ntabbedAlternativesPane cannot be resolved"
-      + "\ntoFirstUpper cannot be resolved");
+      + "\nThe method toFirstUpper is undefined for the type MD2AndroidUtil"
+      + "\nThe method toFirstUpper is undefined for the type MD2AndroidUtil"
+      + "\nThe method tabbedAlternativesPane is undefined for the type MD2AndroidUtil");
   }
   
   public static Object getEventName(final /* EventDef */Object event) {
@@ -73,11 +77,12 @@ public class MD2AndroidUtil {
       + "\nViewElementEventRef cannot be resolved to a type."
       + "\nGlobalEventRef cannot be resolved to a type."
       + "\nConditionalEventRef cannot be resolved to a type."
-      + "\nThe method getName is undefined for the type MD2AndroidUtil"
       + "\nThe method resolveViewGUIElement is undefined for the type MD2AndroidUtil"
+      + "\n+ cannot be resolved."
+      + "\nUnreachable code: The case can never match. It is already handled by a previous condition."
+      + "\nUnreachable code: The case can never match. It is already handled by a previous condition."
       + "\nreferencedField cannot be resolved"
       + "\nevent cannot be resolved"
-      + "\n+ cannot be resolved"
       + "\n+ cannot be resolved"
       + "\neventReference cannot be resolved"
       + "\nname cannot be resolved"

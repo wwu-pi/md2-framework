@@ -1,13 +1,11 @@
 package de.wwu.md2.framework.validation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.validation.Check;
@@ -41,7 +39,6 @@ import de.wwu.md2.framework.mD2.MD2Model;
 import de.wwu.md2.framework.mD2.MD2ModelLayer;
 import de.wwu.md2.framework.mD2.MD2Package;
 import de.wwu.md2.framework.mD2.Main;
-import de.wwu.md2.framework.mD2.Model;
 import de.wwu.md2.framework.mD2.ReferencedModelType;
 import de.wwu.md2.framework.mD2.SimpleDataType;
 import de.wwu.md2.framework.mD2.SimpleType;
@@ -50,13 +47,10 @@ import de.wwu.md2.framework.mD2.StandardValidator;
 import de.wwu.md2.framework.mD2.TabSpecificParam;
 import de.wwu.md2.framework.mD2.TabbedAlternativesPane;
 import de.wwu.md2.framework.mD2.Validator;
-import de.wwu.md2.framework.mD2.View;
 import de.wwu.md2.framework.mD2.ViewElementType;
 import de.wwu.md2.framework.mD2.ViewGUIElement;
 import de.wwu.md2.framework.mD2.ViewGUIElementReference;
 import de.wwu.md2.framework.mD2.WidthParam;
-import de.wwu.md2.framework.mD2.ProcessChain;
-import de.wwu.md2.framework.mD2.Workflow;
 import de.wwu.md2.framework.util.MD2Util;
 
 public class LegacyValidator extends AbstractMD2JavaValidator {
