@@ -20,3 +20,9 @@ Thumbs.db
 project.xcworkspace/
 xcuserdata/
 
+#Android Lollipop generator
+/de.wwu.md2.framework.android.lollipop/bin
+/de.wwu.md2.framework.android.lollipop/target
+/de.wwu.md2.framework.android.lollipop/plugin.xml_gen
+/de.wwu.md2.framework.android.lollipop/src-gen
+/de.wwu.md2.framework.android.lollipop/xtend-gen
