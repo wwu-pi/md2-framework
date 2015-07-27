@@ -134,21 +134,21 @@ class ModelValidator extends AbstractMD2JavaValidator {
      * Inform the user about unsupported language features.
      * @param attributeTypeParam
      */
-    @Check
-    def checkAttributeTypeParam(AttributeTypeParam attributeTypeParam) {
-        var unsupportedParamTypes = Sets.newHashSet(
-            MD2Package.eINSTANCE.attrDateMax,
-            MD2Package.eINSTANCE.attrDateMin,
-            MD2Package.eINSTANCE.attrTimeMax,
-            MD2Package.eINSTANCE.attrTimeMin,
-            MD2Package.eINSTANCE.attrDateTimeMax,
-            MD2Package.eINSTANCE.attrDateTimeMin
-        );
-        
-        if (unsupportedParamTypes.contains(attributeTypeParam.eClass)) {
-            warning("Unsupported language feature: " + attributeTypeParam.eClass.name + ". Using this parameter will have no effect.",
-                MD2Package.eINSTANCE.attributeTypeParam.EIDAttribute, -1, UNSUPPORTEDPARAMTYPE
-            );
-        }
-    }
+//    @Check
+//    def checkAttributeTypeParam(AttributeTypeParam attributeTypeParam) {
+//        var unsupportedParamTypes = Sets.newHashSet(
+//            MD2Package.eINSTANCE.attrDateMax,
+//            MD2Package.eINSTANCE.attrDateMin,
+//            MD2Package.eINSTANCE.attrTimeMax,
+//            MD2Package.eINSTANCE.attrTimeMin,
+//            MD2Package.eINSTANCE.attrDateTimeMax,
+//            MD2Package.eINSTANCE.attrDateTimeMin
+//        );
+//        
+//        if (unsupportedParamTypes.contains(attributeTypeParam.eClass)) {
+//            warning("Unsupported language feature: " + attributeTypeParam.eClass.name + ". Using this parameter will have no effect.",
+//                MD2Package.eINSTANCE.attributeTypeParam.EIDAttribute, -1, UNSUPPORTEDPARAMTYPE
+//            );
+//        }
+//    }
 }
