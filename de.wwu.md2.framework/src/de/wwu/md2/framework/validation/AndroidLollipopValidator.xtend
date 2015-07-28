@@ -60,7 +60,7 @@ class AndroidLollipopValidator extends AbstractGeneratorSupportValidator{
         }
     }
     
-  /*  @Check
+    @Check
     def checkContentElements(ContentElement contentElement) {
         var supportedParamTypes = Sets.newHashSet(
             MD2Package.eINSTANCE.spacer
@@ -85,6 +85,6 @@ class AndroidLollipopValidator extends AbstractGeneratorSupportValidator{
                 MD2Package.eINSTANCE.standardValidator.EIDAttribute, -1, UNSUPPORTEDKEYWORD
             );
         }
-    } */
+    }
 	
 }
