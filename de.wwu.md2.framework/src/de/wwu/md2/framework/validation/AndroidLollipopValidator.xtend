@@ -11,6 +11,9 @@ import de.wwu.md2.framework.mD2.MD2Package
 import de.wwu.md2.framework.mD2.StandardValidator
 import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.ContentElement
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils
+import org.eclipse.xtext.Keyword
+import de.wwu.md2.framework.services.MD2GrammarAccess
 
 class AndroidLollipopValidator extends AbstractGeneratorSupportValidator{
 
@@ -19,6 +22,8 @@ class AndroidLollipopValidator extends AbstractGeneratorSupportValidator{
     override register(EValidatorRegistrar registrar) {
         // nothing to do
     }
+    
+    @Inject extension MD2GrammarAccess
     
     public static final String NOTSUPPORTEDBYANDROIDGENERATOR = "Keyword not supported by Android Lollipop Generator: "
     public static final String USAGEOFKEYWORD = ". Using this keyword will have no effect."
@@ -41,22 +46,29 @@ class AndroidLollipopValidator extends AbstractGeneratorSupportValidator{
     // View
     @Check
     def checkContainerElements(ContainerElement containerElement) {
-        var supportedParamTypes = Sets.newHashSet(
+        var supportedContainerElements = Sets.newHashSet(
             MD2Package.eINSTANCE.gridLayoutPane
 //            MD2Package.eINSTANCE.flowLayoutPane,
 //            MD2Package.eINSTANCE.alternativesPane,
 //            MD2Package.eINSTANCE.tabbedAlternativesPane
         );
         
-        var strucFeatures = MD2Package.eINSTANCE.containerElement.EAllStructuralFeatures
-        
-        if (!supportedParamTypes.contains(containerElement.eClass)) {
-        	warning(NOTSUPPORTEDBYANDROIDGENERATOR + containerElement.eClass.name + USAGEOFKEYWORD,
-                MD2Package.eINSTANCE.containerElement.EIDAttribute, -1, "something"
+        if (!supportedContainerElements.contains(containerElement.eClass)) {
         	
-//            warning(NOTSUPPORTEDBYANDROIDGENERATOR + containerElement.eClass.name + USAGEOFKEYWORD,
-//                DomainmodelPackage$Literals::TYPE__NAME, -1, UNSUPPORTEDKEYWORD
-            )
+			val node = NodeModelUtils.findActualNodeFor(containerElement)
+			for (n : node.asTreeIterable) {
+				val ge = n.grammarElement
+
+				if (ge instanceof Keyword) {
+					messageAcceptor.acceptWarning(
+						NOTSUPPORTEDBYANDROIDGENERATOR + containerElement.eClass.name + USAGEOFKEYWORD,
+						containerElement,
+						n.offset,
+						n.length,
+						UNSUPPORTEDKEYWORD
+					)
+				}
+			}            
         }
     }
     
@@ -85,6 +97,10 @@ class AndroidLollipopValidator extends AbstractGeneratorSupportValidator{
                 MD2Package.eINSTANCE.standardValidator.EIDAttribute, -1, UNSUPPORTEDKEYWORD
             );
         }
+    }
+    
+    def throwWarning(){
+    	
     }
 	
 }
