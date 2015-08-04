@@ -15,12 +15,12 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			val rootFolder = rootFolder + "/md2_app_" + app.name
 
 			// copy md2Library in the project
-			fsa.generateFileFromInputStream(getSystemResource(Settings.RESOURCE_PATH + Settings.MD2LIBRARY_DEBUG_NAME), rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.MD2LIBRARY_DEBUG_NAME)
+			fsa.generateFileFromInputStream(getSystemResource(Settings.MD2_RESOURCE_PATH + Settings.MD2LIBRARY_DEBUG_NAME), rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.MD2LIBRARY_DEBUG_NAME)
 			
 			// gradle build files
 			fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.GRADLE_BUILD, Gradle.generateMd2LibrarayBuild)
-			fsa.generateFile(rootFolder + Settings.GRADLE_BUILD, Gradle.generateProjectBuild)
-			fsa.generateFile(rootFolder + Settings.GRADLE_SETTINGS, Gradle.generateProjectSettings)
+			fsa.generateFile(rootFolder + "/" + Settings.GRADLE_BUILD, Gradle.generateProjectBuild)
+			fsa.generateFile(rootFolder + "/" + Settings.GRADLE_SETTINGS, Gradle.generateProjectSettings)
 			fsa.generateFile(rootFolder + Settings.APP_PATH + Settings.GRADLE_BUILD, Gradle.generateAppBuild(app.name))
 			
 			// proguard rules
