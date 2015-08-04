@@ -29,7 +29,7 @@ class Gradle {
 	'''
 	
 	// generates build.gradle for the app
-	def static String generateAppBuild(String appId)'''
+	def static String generateAppBuild(String appId, String version)'''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.misc.Gradle.generateAppBuild()
 		apply plugin: 'com.android.application'
 		

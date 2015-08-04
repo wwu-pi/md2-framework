@@ -1,0 +1,31 @@
+package de.wwu.md2.framework.generator.android.lollipop.misc
+
+import de.wwu.md2.framework.mD2.App
+import de.wwu.md2.framework.generator.util.DataContainer
+import de.wwu.md2.framework.mD2.ContainerElement
+
+class AndroidManifest {
+	
+	
+	// generates android manifest for the project
+	def static String generateProjectAndroidManifest(App app, Iterable<ContainerElement> rootViews, String packageName)'''
+		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.misc.AndroidManifest.generateProjectAndroidManifest() -->
+		<?xml version="1.0" encoding="utf-8"?>
+		<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+		    package="«packageName»" >
+		    <application
+		        android:name=".«app.name»"
+		        android:allowBackup="true"
+		        android:icon="@mipmap/ic_launcher"
+		        android:label="@string/app_name"
+		        android:theme="@style/AppTheme" >
+		        «FOR rv : rootViews»
+		        	<activity
+		        		android:name=".«rv.name.toFirstUpper»Activity"
+		        		android:label="@string/title_activity_«rv.name.toFirstLower»" >
+		        	</activity>
+		        «ENDFOR»
+		    </application>
+		</manifest>
+	'''
+}
