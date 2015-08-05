@@ -26,12 +26,10 @@ xcuserdata/
 /de.wwu.md2.framework.android.lollipop/plugin.xml_gen
 /de.wwu.md2.framework.android.lollipop/src-gen
 /de.wwu.md2.framework.android.lollipop/xtend-gen
+/de.wwu.md2.framework/res/resources/android/lollipop/md2Library-debug.aar
 
 /de.wwu.md2.framework.android/bin
 /de.wwu.md2.framework.android/target
 /de.wwu.md2.framework.android/plugin.xml_gen
 /de.wwu.md2.framework.android/src-gen
 /de.wwu.md2.framework.android/xtend-gen
-de.wwu.md2.framework/res/resources/android/lollipop/md2Library-debug.aar
-de.wwu.md2.framework/res/resources/android/lollipop/md2Library-debug.aar
-*.xtendbin
