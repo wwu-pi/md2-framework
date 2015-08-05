@@ -9,7 +9,7 @@ public class Settings {
 	public static String MD2LIBRARY_DEBUG_PATH = "/md2Library-debug/"
 	public static String MD2LIBRARY_DEBUG_PROJECT = ":md2Library-debug"
 	
-	public static String MD2_RESOURCE_MIPMAP_PATH = MD2_RESOURCE_PATH + "/mipmap/"
+	public static String MD2_RESOURCE_MIPMAP_PATH = MD2_RESOURCE_PATH + "mipmap/"
 	
 	public static String APP_PATH = "/app/"
 	public static String MAIN_PATH = APP_PATH + "src/main/"
@@ -18,6 +18,7 @@ public class Settings {
 	public static String LAYOUT_PATH = RES_PATH + "layout/"
 	public static String MENU_PATH = RES_PATH + "menu/"
 	public static String VALUES_PATH = RES_PATH + "values/"
+	public static String MIPMAP_PATH = RES_PATH + "mipmap/"
 		
 	public static String ANDROID_MANIFEST_NAME = "AndroidManifest.xml"
 	

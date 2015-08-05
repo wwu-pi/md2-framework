@@ -19,8 +19,9 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 	
 			val rootFolder = rootFolder + "/md2_app_" + app.name
 			
+			val rootPath = rootFolder.replace(".", "^/")			
 			// get main package for java code within the app
-			val mainPackage = MD2GeneratorUtil.getBasePackageName(processedInput).replace("/", ".").toLowerCase
+			val mainPackage = MD2GeneratorUtil.getBasePackageName(processedInput).replace("^/", ".").toLowerCase
 
 
 			/***************************************************
@@ -32,8 +33,11 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			fsa.generateFileFromInputStream(getSystemResource(Settings.MD2_RESOURCE_PATH + Settings.MD2LIBRARY_DEBUG_NAME), rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.MD2LIBRARY_DEBUG_NAME)
 			
 			// copy mipmap resources
-			fsa.generateFileFromInputStream(getSystemResource(Settings.MD2_RESOURCE_PATH + Settings.MD2LIBRARY_DEBUG_NAME), rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.MD2LIBRARY_DEBUG_NAME)
-			fsa.generateFileFromInputStream(getSystemResource(Settings.MD2_RESOURCE_MIPMAP_PATH), rootFolder + Settings.RES_PATH)		
+			// TODO: copy whole folder instead of each file separately
+			fsa.generateFileFromInputStream(getSystemResource(Settings.MD2_RESOURCE_MIPMAP_PATH + "mipmap-hdpi/ic_launcher.png"), rootFolder + Settings.MIPMAP_PATH + "mipmap-hdpi/ic_launcher.png")
+			fsa.generateFileFromInputStream(getSystemResource(Settings.MD2_RESOURCE_MIPMAP_PATH + "mipmap-mdpi/ic_launcher.png"), rootFolder + Settings.MIPMAP_PATH + "mipmap-mdpi/ic_launcher.png")
+			fsa.generateFileFromInputStream(getSystemResource(Settings.MD2_RESOURCE_MIPMAP_PATH + "mipmap-xhdpi/ic_launcher.png"), rootFolder + Settings.MIPMAP_PATH + "mipmap-xhdpi/ic_launcher.png")
+			fsa.generateFileFromInputStream(getSystemResource(Settings.MD2_RESOURCE_MIPMAP_PATH + "mipmap-xxhdpi/ic_launcher.png"), rootFolder + Settings.MIPMAP_PATH + "mipmap-xxhdpi/ic_launcher.png")		
 			/***************************************************
 			 * 
 			 * Misc 
@@ -66,20 +70,20 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			 * 
 			 ***************************************************/
 			 // Element Ids
-			 val contentElements = dataContainer.view.viewElements.filter[ve | ve instanceof ContentElement]
+			 val contentElements = dataContainer.view.viewElements.filter[ve | ve instanceof ContentElement]			 
+			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.IDS_XML_NAME, Values.generateIdsXml(contentElements))
 			 
-			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.IDS_XML_NAME, Values.generateIdsXml(contentElements))//
 			 // Strings
-			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STRINGS_XML_NAME, Values.generateStringsXml(app, contentElements))
+//			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STRINGS_XML_NAME, Values.generateStringsXml(app, contentElements))
 			 
 			 // Views resource file
-			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.VIEWS_XML_NAME, Values.generateViewsXml(rootViews, mainPackage))
+//			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.VIEWS_XML_NAME, Values.generateViewsXml(rootViews, mainPackage))
 			 
 			 // Styles
-			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STYLES_XML_NAME, Values.generateStylesXml)
+//			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STYLES_XML_NAME, Values.generateStylesXml)
 			 
 			 // Dimensions
-			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, Values.generateDimensXml)
+//			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, Values.generateDimensXml)
 			 
 			 /***************************************************
 			 * 
