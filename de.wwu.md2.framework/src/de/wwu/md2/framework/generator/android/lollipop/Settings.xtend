@@ -14,7 +14,6 @@ public class Settings {
 	public static String LAYOUT_PATH = RES_PATH + "layout/"
 	public static String MENU_PATH = RES_PATH + "menu/"
 	public static String VALUES_PATH = RES_PATH + "values/"
-	public static String MAIN_PACKAGE = ""
 	
 	public static String MD2_RESOURCE_PATH = "/android/lollipop/"
 	
@@ -24,4 +23,9 @@ public class Settings {
 	public static String GRADLE_SETTINGS = "settings.gradle"
 	
 	public static String PROGUARD_RULES_NAME = "proguard-rules.pro"
+	
+	public static String IDS_XML_NAME = "ids.xml"
+	public static String VIEWS_XML_NAME = "views.xml"
+	public static String STRINGS_XML_NAME = "strings.xml"
+	public static String STYLES_XML_NAME = "styles.xml"
 }
