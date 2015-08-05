@@ -28,4 +28,5 @@ public class Settings {
 	public static String VIEWS_XML_NAME = "views.xml"
 	public static String STRINGS_XML_NAME = "strings.xml"
 	public static String STYLES_XML_NAME = "styles.xml"
+	public static String DIMENS_XML_NAME = "dimens.xml"
 }

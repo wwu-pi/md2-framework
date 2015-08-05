@@ -58,12 +58,29 @@ class Values {
 	}
 	
 	def static String generateViewsXml(Iterable<ContainerElement> rootContainerElements, String mainPackage) '''
+		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateViewsXml() -->
 		<?xml version="1.0" encoding="utf-8"?>
 		<resources>
 		    <string name="StartActivity">«mainPackage».StartActivity</string>
 		    «FOR rce : rootContainerElements»
 		    <string name="«rce.name»Activity">«mainPackage».«rce.name»Activity</string>
 			«ENDFOR»
+		</resources>
+	'''
+	
+	def static String generateStylesXml() '''
+		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateStylesXml() -->
+		<resources>
+		    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+		    </style>		
+		</resources>
+	'''
+	
+	def static String generateDimensXml() '''
+		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateDimensXml() -->
+		<resources>
+		    <dimen name="activity_horizontal_margin">16dp</dimen>
+		    <dimen name="activity_vertical_margin">16dp</dimen>
 		</resources>
 	'''
 }

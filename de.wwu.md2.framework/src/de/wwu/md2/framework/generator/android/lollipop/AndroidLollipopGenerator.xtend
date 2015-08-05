@@ -2,14 +2,14 @@ package de.wwu.md2.framework.generator.android.lollipop
 
 import de.wwu.md2.framework.generator.AbstractPlatformGenerator
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
-import static de.wwu.md2.framework.util.MD2Util.*
+import de.wwu.md2.framework.generator.android.lollipop.misc.AndroidManifest
 import de.wwu.md2.framework.generator.android.lollipop.misc.Gradle
 import de.wwu.md2.framework.generator.android.lollipop.misc.Proguard
-import de.wwu.md2.framework.generator.android.lollipop.misc.AndroidManifest
-import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.generator.android.lollipop.view.Values
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.ContentElement
-import de.wwu.md2.framework.services.MD2GrammarAccess.ContentElementElements
+
+import static de.wwu.md2.framework.util.MD2Util.*
 
 class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
@@ -73,7 +73,10 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.VIEWS_XML_NAME, Values.generateViewsXml(rootViews, mainPackage))
 			 
 			 // Styles
-			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STYLES_XML_NAME, Values.generateIdsXml)
+			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STYLES_XML_NAME, Values.generateStylesXml)
+			 
+			 // Dimensions
+			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, Values.generateDimensXml)
 			 
 			 /***************************************************
 			 * 
