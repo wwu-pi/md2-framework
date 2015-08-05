@@ -10,6 +10,10 @@ import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.ContentElement
 
 import static de.wwu.md2.framework.util.MD2Util.*
+import org.eclipse.emf.common.util.EList
+import java.util.ArrayList
+import java.util.Set
+import java.util.HashSet
 
 class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
@@ -46,8 +50,25 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			 ***************************************************/	
 			 
 			// android manifest
-			val rootViews = dataContainer.rootViewContainers.filter[p1, p2| p1 == app].values.flatten
-			fsa.generateFile(rootFolder + Settings.MAIN_PATH + Settings.ANDROID_MANIFEST_NAME, AndroidManifest.generateProjectAndroidManifest(app, rootViews ,mainPackage))
+			val workflowElements = app.workflowElements
+			
+			if(workflowElements.isNullOrEmpty){
+				println("fuck")
+			}
+			
+			val rootViews = dataContainer.rootViewContainers.get(workflowElements.head)
+			
+			if(rootViews.isNullOrEmpty){
+				println("fuck")
+			}
+			val list = new HashSet
+			/*for(we: workflowElements){
+				if(rootViews.getOrDefault(we, null) != null){
+					list.addAll(rootViews.get(we))
+				}				
+			}*/
+						
+			fsa.generateFile(rootFolder + Settings.MAIN_PATH + Settings.ANDROID_MANIFEST_NAME, AndroidManifest.generateProjectAndroidManifest(app, list ,mainPackage))
 			
 			// gradle build files
 			fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.GRADLE_BUILD, Gradle.generateMd2LibrarayBuild)
@@ -74,16 +95,16 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.IDS_XML_NAME, Values.generateIdsXml(contentElements))
 			 
 			 // Strings
-//			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STRINGS_XML_NAME, Values.generateStringsXml(app, contentElements))
+			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STRINGS_XML_NAME, Values.generateStringsXml(app, contentElements))
 			 
 			 // Views resource file
-//			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.VIEWS_XML_NAME, Values.generateViewsXml(rootViews, mainPackage))
+			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.VIEWS_XML_NAME, Values.generateViewsXml(list, mainPackage))
 			 
 			 // Styles
-//			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STYLES_XML_NAME, Values.generateStylesXml)
+			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STYLES_XML_NAME, Values.generateStylesXml)
 			 
 			 // Dimensions
-//			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, Values.generateDimensXml)
+			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, Values.generateDimensXml)
 			 
 			 /***************************************************
 			 * 
