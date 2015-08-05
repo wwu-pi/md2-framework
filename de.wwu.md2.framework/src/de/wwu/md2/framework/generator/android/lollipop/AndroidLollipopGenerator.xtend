@@ -31,6 +31,9 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			// copy md2Library in the project
 			fsa.generateFileFromInputStream(getSystemResource(Settings.MD2_RESOURCE_PATH + Settings.MD2LIBRARY_DEBUG_NAME), rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.MD2LIBRARY_DEBUG_NAME)
 			
+			// copy mipmap resources
+			fsa.generateFileFromInputStream(getSystemResource(Settings.MD2_RESOURCE_PATH + Settings.MD2LIBRARY_DEBUG_NAME), rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.MD2LIBRARY_DEBUG_NAME)
+			fsa.generateFileFromInputStream(getSystemResource(Settings.MD2_RESOURCE_MIPMAP_PATH), rootFolder + Settings.RES_PATH)		
 			/***************************************************
 			 * 
 			 * Misc 
