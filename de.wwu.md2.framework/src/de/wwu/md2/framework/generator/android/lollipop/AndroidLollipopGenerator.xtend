@@ -19,13 +19,23 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
 	override doGenerate(IExtendedFileSystemAccess fsa) {
 
-		for (app : dataContainer.apps) {
-	
-			val rootFolder = rootFolder + "/md2_app_" + app.name
+		for (app : dataContainer.apps) {			
 			
-			val rootPath = rootFolder.replace(".", "^/")			
-			// get main package for java code within the app
+			/***************************************************
+			 * 
+			 * Data for the generators
+			 * 
+			 ***************************************************/	
+			
+			// Folders
+			val rootFolder = rootFolder + "/md2_app_" + app.name			
+			val rootPath = rootFolder.replace(".", "^/")
+				
+			// main package for java code within the app
 			val mainPackage = MD2GeneratorUtil.getBasePackageName(processedInput).replace("^/", ".").toLowerCase
+			
+			// all root views
+			val rootViews = app.workflowElements.map[wer | dataContainer.rootViewContainers.get(wer.workflowElementReference)].flatten
 
 
 			/***************************************************
@@ -42,33 +52,16 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			fsa.generateFileFromInputStream(getSystemResource(Settings.MD2_RESOURCE_MIPMAP_PATH + "mipmap-mdpi/ic_launcher.png"), rootFolder + Settings.MIPMAP_PATH + "mipmap-mdpi/ic_launcher.png")
 			fsa.generateFileFromInputStream(getSystemResource(Settings.MD2_RESOURCE_MIPMAP_PATH + "mipmap-xhdpi/ic_launcher.png"), rootFolder + Settings.MIPMAP_PATH + "mipmap-xhdpi/ic_launcher.png")
 			fsa.generateFileFromInputStream(getSystemResource(Settings.MD2_RESOURCE_MIPMAP_PATH + "mipmap-xxhdpi/ic_launcher.png"), rootFolder + Settings.MIPMAP_PATH + "mipmap-xxhdpi/ic_launcher.png")		
+			
+			
 			/***************************************************
 			 * 
 			 * Misc 
 			 * Manifest, Gradle and Proguard
 			 * 
-			 ***************************************************/	
-			 
-			// android manifest
-			val workflowElements = app.workflowElements
-			
-			if(workflowElements.isNullOrEmpty){
-				println("fuck")
-			}
-			
-			val rootViews = dataContainer.rootViewContainers.get(workflowElements.head)
-			
-			if(rootViews.isNullOrEmpty){
-				println("fuck")
-			}
-			val list = new HashSet
-			/*for(we: workflowElements){
-				if(rootViews.getOrDefault(we, null) != null){
-					list.addAll(rootViews.get(we))
-				}				
-			}*/
-						
-			fsa.generateFile(rootFolder + Settings.MAIN_PATH + Settings.ANDROID_MANIFEST_NAME, AndroidManifest.generateProjectAndroidManifest(app, list ,mainPackage))
+			 ***************************************************/				 
+			// android manifest						
+			fsa.generateFile(rootFolder + Settings.MAIN_PATH + Settings.ANDROID_MANIFEST_NAME, AndroidManifest.generateProjectAndroidManifest(app, rootViews ,mainPackage))
 			
 			// gradle build files
 			fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.GRADLE_BUILD, Gradle.generateMd2LibrarayBuild)
@@ -98,7 +91,7 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STRINGS_XML_NAME, Values.generateStringsXml(app, contentElements))
 			 
 			 // Views resource file
-			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.VIEWS_XML_NAME, Values.generateViewsXml(list, mainPackage))
+			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.VIEWS_XML_NAME, Values.generateViewsXml(rootViews, mainPackage))
 			 
 			 // Styles
 			 fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STYLES_XML_NAME, Values.generateStylesXml)
