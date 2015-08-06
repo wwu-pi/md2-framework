@@ -7,67 +7,81 @@ import de.wwu.md2.framework.mD2.Image
 import de.wwu.md2.framework.mD2.InputElement
 import de.wwu.md2.framework.mD2.Label
 import de.wwu.md2.framework.mD2.Tooltip
-import de.wwu.md2.framework.mD2.ViewElement
+import de.wwu.md2.framework.mD2.ViewGUIElement
+
+import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider;
+import org.eclipse.xtext.naming.QualifiedName;
 
 class Values {
-	
-	def static String generateIdsXml(Iterable<ViewElement> viewElements) '''
+
+	def static String generateIdsXml(Iterable<ViewGUIElement> viewGUIElements) '''
+		«val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider»
 		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateIdsXml() -->
 		<?xml version="1.0" encoding="utf-8"?>
 		<resources>
-			«FOR ve : viewElements»
-				<item name="«ve.name»" type="id"/>
+			«FOR ve : viewGUIElements»
+				<item name="«qualifiedNameProvider.getFullyQualifiedName(ve)»" type="id"/>
 			«ENDFOR»
 		</resources>
 	'''
-	
-	def static String generateStringsXml(App app, Iterable<ViewElement> viewElements) '''
+
+	def static String generateStringsXml(App app, Iterable<ContainerElement> rootContainerElements,
+		Iterable<ViewGUIElement> viewGUIElements) '''
 		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateStringsXml() -->
 		<resources>
 			<string name="app_name">«app.appName»</string>
-			«FOR ve : viewElements»
+			«FOR rce : rootContainerElements»
+				<string name="@string/title_activity_«rce.name.toFirstLower»">«rce.name»</string>
+			«ENDFOR»
+			«FOR ve : viewGUIElements»
 				«generateStringEntry(ve)»
 			«ENDFOR»
 		</resources>
 	'''
 
-	def private static String generateStringEntry(ViewElement viewElement){
-		switch viewElement{
+	def private static String generateStringEntry(ViewGUIElement viewGUIElement) {
+		val qnp = new DefaultDeclarativeQualifiedNameProvider
+		switch viewGUIElement {
 			InputElement:
 				return '''
-					<string name="«viewElement.name»_label">«viewElement.labelText»</string>
-					<string name="«viewElement.name»_tooltip">«viewElement.tooltipText»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_title">«viewGUIElement.name»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_label">«viewGUIElement.labelText»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_tooltip">«viewGUIElement.tooltipText»</string>
 				'''
 			Image:
 				return '''
-					<string name="«viewElement.name»_src">«viewElement.src»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_title">«viewGUIElement.name»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_src">«viewGUIElement.src»</string>
 				'''
 			Button:
 				return '''
-					<string name="«viewElement.name»_text">«viewElement.text»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_title">«viewGUIElement.name»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_text">«viewGUIElement.text»</string>
 				'''
 			Label:
 				return '''
-					<string name="«viewElement.name»_label">«viewElement.text»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_title">«viewGUIElement.name»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_label">«viewGUIElement.text»</string>
 				'''
 			Tooltip:
 				return '''
-					<string name="«viewElement.name»_text">«viewElement.text»</string>
-				'''			
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_title">«viewGUIElement.name»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_text">«viewGUIElement.text»</string>
+				'''
 		}
 	}
-	
+
 	def static String generateViewsXml(Iterable<ContainerElement> rootContainerElements, String mainPackage) '''
 		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateViewsXml() -->
 		<?xml version="1.0" encoding="utf-8"?>
 		<resources>
 		    <string name="StartActivity">«mainPackage».StartActivity</string>
 		    «FOR rce : rootContainerElements»
-		    <string name="«rce.name»Activity">«mainPackage».«rce.name»Activity</string>
+		    	<string name="«rce.name»Activity">«mainPackage».«rce.name»Activity</string>
 			«ENDFOR»
 		</resources>
 	'''
-	
+
 	def static String generateStylesXml() '''
 		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateStylesXml() -->
 		<resources>
@@ -75,7 +89,7 @@ class Values {
 		    </style>		
 		</resources>
 	'''
-	
+
 	def static String generateDimensXml() '''
 		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateDimensXml() -->
 		<resources>
