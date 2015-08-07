@@ -10,6 +10,7 @@ import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 
 import static de.wwu.md2.framework.util.MD2Util.*
 import de.wwu.md2.framework.mD2.ViewGUIElement
+import de.wwu.md2.framework.generator.android.lollipop.controller.Application
 
 class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
@@ -25,8 +26,9 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			// Folders
 			val rootFolder = rootFolder + "/md2_app_" + app.name
 
-			// main package for java code within the app
+			// main package and path for java code within the app
 			val mainPackage = MD2GeneratorUtil.getBasePackageName(processedInput).replace("^/", ".").toLowerCase
+			val mainPath = mainPackage.replace(".", "/") + "/"
 
 			// all root views for current app
 			val rootViews = app.workflowElements.map [ wer |
@@ -116,6 +118,8 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 		 * Controller
 		 * 
 		 ***************************************************/
+		 fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + app.name.toFirstUpper + ".java", Application.generateAppClass(mainPackage, app))
+		 
 		/***************************************************
 		 * 
 		 * Workflow

@@ -32,4 +32,9 @@ public class Settings {
 	public static String STRINGS_XML_NAME = "strings.xml"
 	public static String STYLES_XML_NAME = "styles.xml"
 	public static String DIMENS_XML_NAME = "dimens.xml"
+	
+	// packages for app generation
+	public static String MD2_APP_FILES_PACKAGE = ".md2."
+	public static String MD2_APP_FILES_CONTROLLER_PACKAGE_NAME = MD2_APP_FILES_PACKAGE + "controller.Controller"
+	public static String MD2_APP_FILES_VIEWMANAGER_PACKAGE_NAME = MD2_APP_FILES_PACKAGE + "view.ViewManager"
 }
