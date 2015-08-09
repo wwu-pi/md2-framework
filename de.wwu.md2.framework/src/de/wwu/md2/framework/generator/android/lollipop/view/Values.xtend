@@ -8,9 +8,7 @@ import de.wwu.md2.framework.mD2.InputElement
 import de.wwu.md2.framework.mD2.Label
 import de.wwu.md2.framework.mD2.Tooltip
 import de.wwu.md2.framework.mD2.ViewGUIElement
-
-import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider;
-import org.eclipse.xtext.naming.QualifiedName;
+import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 
 class Values {
 

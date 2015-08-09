@@ -11,6 +11,7 @@ import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import static de.wwu.md2.framework.util.MD2Util.*
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.generator.android.lollipop.controller.Application
+import de.wwu.md2.framework.generator.android.lollipop.controller.Activity
 
 class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
@@ -118,7 +119,10 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 		 * Controller
 		 * 
 		 ***************************************************/
+		 
+		 // Application class
 		 fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + app.name.toFirstUpper + ".java", Application.generateAppClass(mainPackage, app))
+		 Activity.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews)
 		 
 		/***************************************************
 		 * 
