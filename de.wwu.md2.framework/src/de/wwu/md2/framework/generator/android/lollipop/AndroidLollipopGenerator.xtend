@@ -2,16 +2,17 @@ package de.wwu.md2.framework.generator.android.lollipop
 
 import de.wwu.md2.framework.generator.AbstractPlatformGenerator
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
+import de.wwu.md2.framework.generator.android.lollipop.controller.Activity
+import de.wwu.md2.framework.generator.android.lollipop.controller.Application
 import de.wwu.md2.framework.generator.android.lollipop.misc.AndroidManifest
 import de.wwu.md2.framework.generator.android.lollipop.misc.Gradle
 import de.wwu.md2.framework.generator.android.lollipop.misc.Proguard
+import de.wwu.md2.framework.generator.android.lollipop.view.Layout
 import de.wwu.md2.framework.generator.android.lollipop.view.Values
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
+import de.wwu.md2.framework.mD2.ViewGUIElement
 
 import static de.wwu.md2.framework.util.MD2Util.*
-import de.wwu.md2.framework.mD2.ViewGUIElement
-import de.wwu.md2.framework.generator.android.lollipop.controller.Application
-import de.wwu.md2.framework.generator.android.lollipop.controller.Activity
 
 class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
@@ -36,8 +37,8 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 				dataContainer.rootViewContainers.get(wer.workflowElementReference)
 			].flatten
 			
-			// all content elements
-			val viewGUIElements = rootViews.map[rv | rv.eAllContents.filter(ViewGUIElement).toSet].flatten
+			// all GUI elements
+			val viewGUIElements = rootViews + rootViews.map[rv | rv.eAllContents.filter(ViewGUIElement).toSet].flatten
 
 			/***************************************************
 			 * 
@@ -113,6 +114,9 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
 			// Dimensions
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, Values.generateDimensXml)
+			
+			// Layouts
+			Layout.generateLayouts(fsa, rootFolder, mainPath, mainPackage, rootViews)
 
 		/***************************************************
 		 * 

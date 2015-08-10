@@ -8,6 +8,15 @@ public class Settings {
 	public static String MD2LIBRARY_DEBUG_NAME = "md2Library-debug.aar"
 	public static String MD2LIBRARY_DEBUG_PATH = "/md2Library-debug/"
 	public static String MD2LIBRARY_DEBUG_PROJECT = ":md2Library-debug"
+	public static String MD2LIBRARY_PACKAGE = "de.uni_muenster.wi.fabian.md2library."
+	
+	// view content elements
+	public static String MD2LIBRARY_VIEW_PACKAGE = MD2LIBRARY_PACKAGE + "view.widgets.implementation."
+	public static String MD2LIBRARY_VIEW_FLOWLAYOUTPANE = MD2LIBRARY_VIEW_PACKAGE + "Md2FlowLayoutPane"
+	public static String MD2LIBRARY_VIEW_GRIDLAYOUTPANE = MD2LIBRARY_VIEW_PACKAGE + "Md2GridLayoutPane"
+	public static String MD2LIBRARY_VIEW_BUTTON = MD2LIBRARY_VIEW_PACKAGE + "Md2Button"
+	public static String MD2LIBRARY_VIEW_TEXTINPUT = MD2LIBRARY_VIEW_PACKAGE + "Md2TextInput"
+	
 	
 	public static String MD2_RESOURCE_MIPMAP_PATH = MD2_RESOURCE_PATH + "mipmap/"
 	

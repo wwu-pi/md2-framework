@@ -14,6 +14,7 @@ class Activity {
 	}
 
 	private def static generateActivity(String mainPackage, ContainerElement rv) '''
+		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.Activity.generateActivity()
 		package «mainPackage»;
 		
 		import android.app.Activity;

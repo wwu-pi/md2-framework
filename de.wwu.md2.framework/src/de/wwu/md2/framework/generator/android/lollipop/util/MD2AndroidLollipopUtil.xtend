@@ -12,4 +12,5 @@ class MD2AndroidLollipopUtil {
 		val pathSegments = path.split("/").map([s | s.toFirstLower])
 		return joiner.join(pathSegments)
 	}
+	
 }
