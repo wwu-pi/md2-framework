@@ -13,7 +13,7 @@ import de.wwu.md2.framework.generator.TestGenerator;
 import de.wwu.md2.framework.generator.android.lollipop.AndroidLollipopGenerator;
 import de.wwu.md2.framework.generator.backend.BackendGenerator;
 //import de.wwu.md2.framework.generator.ios.IOSGenerator;
-import de.wwu.md2.framework.generator.mapapps.MapAppsGenerator;
+//import de.wwu.md2.framework.generator.mapapps.MapAppsGenerator;
 import de.wwu.md2.framework.scoping.MD2ImportedNamespaceAwareLocalScopeProvider;
 
 /**

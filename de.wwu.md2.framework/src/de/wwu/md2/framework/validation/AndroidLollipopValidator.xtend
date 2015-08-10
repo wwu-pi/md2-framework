@@ -47,8 +47,8 @@ class AndroidLollipopValidator extends AbstractGeneratorSupportValidator{
     @Check
     def checkContainerElements(ContainerElement containerElement) {
         var supportedContainerElements = Sets.newHashSet(
-            MD2Package.eINSTANCE.gridLayoutPane
-//            MD2Package.eINSTANCE.flowLayoutPane,
+            MD2Package.eINSTANCE.gridLayoutPane,
+            MD2Package.eINSTANCE.flowLayoutPane
 //            MD2Package.eINSTANCE.alternativesPane,
 //            MD2Package.eINSTANCE.tabbedAlternativesPane
         );
