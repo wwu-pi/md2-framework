@@ -18,7 +18,10 @@ class Values {
 		<?xml version="1.0" encoding="utf-8"?>
 		<resources>
 			«FOR ve : viewGUIElements»
-				<item name="«qualifiedNameProvider.getFullyQualifiedName(ve)»" type="id"/>
+				«val qualifiedName = qualifiedNameProvider.getFullyQualifiedName(ve)»
+				«IF (qualifiedName != null && !qualifiedName.empty)»
+					<item name="«qualifiedName»" type="id"/>
+				«ENDIF»
 			«ENDFOR»
 		</resources>
 	'''
