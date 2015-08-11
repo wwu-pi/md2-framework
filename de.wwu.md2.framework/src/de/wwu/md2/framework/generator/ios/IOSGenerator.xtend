@@ -11,8 +11,8 @@ import de.wwu.md2.framework.generator.ios.model.iosEntity
 import de.wwu.md2.framework.generator.ios.model.iosEnum
 import de.wwu.md2.framework.generator.ios.controller.Controller
 import org.eclipse.xtext.generator.IFileSystemAccessExtension2
-
-//import static de.wwu.md2.framework.util.MD2Util.*
+import de.wwu.md2.framework.mD2.ViewGUIElement
+import de.wwu.md2.framework.generator.ios.model.WidgetMapping
 
 class IOSGenerator extends AbstractPlatformGenerator {
 	
@@ -52,43 +52,15 @@ class IOSGenerator extends AbstractPlatformGenerator {
 //			// all content elements
 //			val viewGUIElements = rootViews.map[rv | rv.eAllContents.filter(ViewGUIElement).toSet].flatten
 //
-//			/***************************************************
-//			 * 
-//			 * MD2 Library for android
-//			 * 
-//			 ***************************************************/
-//			// copy md2Library in the project
-//			fsa.generateFileFromInputStream(
-//				getSystemResource(Settings.MD2_RESOURCE_PATH + Settings.MD2LIBRARY_DEBUG_NAME),
-//				rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.MD2LIBRARY_DEBUG_NAME)
-//
-//			// copy mipmap resources
-//			// TODO: copy whole folder instead of each file separately
-//			fsa.generateFileFromInputStream(
-//				getSystemResource(Settings.MD2_RESOURCE_MIPMAP_PATH + "mipmap-hdpi/ic_launcher.png"),
-//				rootFolder + Settings.MIPMAP_PATH + "mipmap-hdpi/ic_launcher.png")
-//			fsa.generateFileFromInputStream(
-//				getSystemResource(Settings.MD2_RESOURCE_MIPMAP_PATH + "mipmap-mdpi/ic_launcher.png"),
-//				rootFolder + Settings.MIPMAP_PATH + "mipmap-mdpi/ic_launcher.png")
-//			fsa.generateFileFromInputStream(
-//				getSystemResource(Settings.MD2_RESOURCE_MIPMAP_PATH + "mipmap-xhdpi/ic_launcher.png"),
-//				rootFolder + Settings.MIPMAP_PATH + "mipmap-xhdpi/ic_launcher.png")
-//			fsa.generateFileFromInputStream(
-//				getSystemResource(Settings.MD2_RESOURCE_MIPMAP_PATH + "mipmap-xxhdpi/ic_launcher.png"),
-//				rootFolder + Settings.MIPMAP_PATH + "mipmap-xxhdpi/ic_launcher.png")
-//
-//			/***************************************************
-//			 * 
-//			 * Misc 
-//			 * Manifest, Gradle and Proguard
-//			 * 
-//			 ***************************************************/
-//			// android manifest						
-//			fsa.generateFile(rootFolder + Settings.MAIN_PATH + Settings.ANDROID_MANIFEST_NAME,
-//				AndroidManifest.generateProjectAndroidManifest(app, rootViews, mainPackage))
-//
-//			// gradle build files
-			
+//			
+			/***************************************************
+			 * 
+			 * Misc 
+			 * Project file, ...
+			 * 
+			 ***************************************************/
+			// TODO
+
 			/***************************************************
 			 * 
 			 * Model
@@ -110,13 +82,18 @@ class IOSGenerator extends AbstractPlatformGenerator {
 				fsa.generateFile(path, iosEnum.generateClass(enum))
 			]
 			
+			// Generate WidgetMapping as enum
+			val pathWidgetMapping = rootFolder + Settings.MODEL_PATH + "enum/WidgetMapping.swift"
+			printDebug("Generate View mapping: ", rootFolder + Settings.VIEW_PATH)
+			fsa.generateFile(pathWidgetMapping, WidgetMapping.generateClass(dataContainer.view.viewElements.filter(ViewGUIElement)))
+			 
+			
 			/***************************************************
 			 * 
 			 * View
 			 * 
 			 ***************************************************/
-			 printDebug("Generate View mapper: " + rootFolder + Settings.VIEW_PATH, true)
-			 
+			// TODO
 			/*printDebug("Generate Views: " + rootFolder + Settings.MODEL_PATH, true)
 			 
 			// All model entities
@@ -139,6 +116,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 * Workflow
 			 * 
 			 ***************************************************/
+			// TODO
 		}
 
 		println("\nGENERATION COMPLETED")
