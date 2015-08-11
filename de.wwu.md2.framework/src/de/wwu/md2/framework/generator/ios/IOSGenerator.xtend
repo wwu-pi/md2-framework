@@ -1,13 +1,22 @@
 package de.wwu.md2.framework.generator.ios
 
+import java.io.File;
+
 import de.wwu.md2.framework.generator.AbstractPlatformGenerator
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
+import de.wwu.md2.framework.generator.ios.util.FileSystemUtil
 
-import de.wwu.md2.framework.generator.ios.model.Model
+import de.wwu.md2.framework.generator.ios.model.iosEntity
+import de.wwu.md2.framework.generator.ios.model.iosEnum
 import de.wwu.md2.framework.generator.ios.controller.Controller
+import org.eclipse.xtext.generator.IFileSystemAccessExtension2
+
+//import static de.wwu.md2.framework.util.MD2Util.*
 
 class IOSGenerator extends AbstractPlatformGenerator {
+	
+	var rootFolder = ""
 
 	override doGenerate(IExtendedFileSystemAccess fsa) {
 		System.out.println("START GENERATION")
@@ -21,10 +30,20 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			// Folders
 			val appRoot = rootFolder + "/md2_app_" + app.name + "/"
 			val mainPackage = MD2GeneratorUtil.getBasePackageName(processedInput).replace("^/", ".").toLowerCase
-			val rootFolder = appRoot + mainPackage.replace(".", "/") + "/"
+			rootFolder = appRoot + mainPackage.replace(".", "/") + "/"
 			printDebug("Generate App: " + rootFolder, true)
 
-
+			// Copy static part in target folder
+			val resourceFolderAbsolutePath = getClass().getResource("/resources/" + Settings.PLATTFORM_PREFIX + "/" + Settings.STATIC_CODE_PATH);
+			val targetFolderAbsolutePath = (fsa as IFileSystemAccessExtension2).getURI(rootFolder).toFileString()
+			
+			FileSystemUtil.createParentDirs(new File(targetFolderAbsolutePath)) // ensure path exists
+			
+			printDebug("Copy library files with static code:")
+			printDebug(FileSystemUtil.copyDirectory(
+				new File(resourceFolderAbsolutePath.toURI()),
+				new File(targetFolderAbsolutePath)).map[elem | elem.replace(targetFolderAbsolutePath, "").replace("\\","/") ].join("\n"))
+//			
 //			// all root views for current app
 //			val rootViews = app.workflowElements.map [ wer |
 //				dataContainer.rootViewContainers.get(wer.workflowElementReference)
@@ -77,19 +96,27 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 ***************************************************/
 			printDebug("Generate Model: " + rootFolder + Settings.MODEL_PATH, true)
 			 
-			// All model entities
+			// Generate all model entities
 			dataContainer.entities.filter[entity | !entity.name.startsWith("__")].forEach [entity | 
-				val path = rootFolder + Settings.MODEL_PATH + entity.name + ".swift"
+				val path = rootFolder + Settings.MODEL_PATH + "entity/" + entity.name + ".swift"
 				printDebug("Generate entity: " + entity.name, path)
-				fsa.generateFile(path, Model.generateEntity(entity))
+				fsa.generateFile(path, iosEntity.generateClass(entity))
 			]
 			
+			// Generate all model enums
+			dataContainer.enums.forEach [enum | 
+				val path = rootFolder + Settings.MODEL_PATH + "enum/" + enum.name + ".swift"
+				printDebug("Generate entity: " + enum.name, path)
+				fsa.generateFile(path, iosEnum.generateClass(enum))
+			]
 			
 			/***************************************************
 			 * 
 			 * View
 			 * 
 			 ***************************************************/
+			 printDebug("Generate View mapper: " + rootFolder + Settings.VIEW_PATH, true)
+			 
 			/*printDebug("Generate Views: " + rootFolder + Settings.MODEL_PATH, true)
 			 
 			// All model entities
@@ -137,6 +164,6 @@ class IOSGenerator extends AbstractPlatformGenerator {
 	}
 	
 	def printDebug(String message, String path) {
-		printDebug(message + " (" + path + ")", false)
+		printDebug(message + " (" + path.replace(rootFolder, "").replace("\\","/") + ")", false)
 	}
 }
