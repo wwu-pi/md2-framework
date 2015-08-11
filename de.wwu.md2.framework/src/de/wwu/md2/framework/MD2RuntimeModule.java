@@ -12,7 +12,7 @@ import de.wwu.md2.framework.generator.IPlatformGenerator;
 import de.wwu.md2.framework.generator.TestGenerator;
 import de.wwu.md2.framework.generator.android.lollipop.AndroidLollipopGenerator;
 import de.wwu.md2.framework.generator.backend.BackendGenerator;
-//import de.wwu.md2.framework.generator.ios.IOSGenerator;
+import de.wwu.md2.framework.generator.ios.IOSGenerator;
 import de.wwu.md2.framework.generator.mapapps.MapAppsGenerator;
 import de.wwu.md2.framework.scoping.MD2ImportedNamespaceAwareLocalScopeProvider;
 
@@ -27,11 +27,11 @@ public class MD2RuntimeModule extends de.wwu.md2.framework.AbstractMD2RuntimeMod
 		Multibinder<IPlatformGenerator> multiGenBinder = Multibinder.newSetBinder(binder, IPlatformGenerator.class);
 		
 		// Bind all generators here		
-		//multiGenBinder.addBinding().to(IOSGenerator.class);
+		multiGenBinder.addBinding().to(IOSGenerator.class);
 		multiGenBinder.addBinding().to(BackendGenerator.class);
 		//multiGenBinder.addBinding().to(TestGenerator.class);
 		//multiGenBinder.addBinding().to(MapAppsGenerator.class);
-		multiGenBinder.addBinding().to(AndroidLollipopGenerator.class);
+		//multiGenBinder.addBinding().to(AndroidLollipopGenerator.class);
 		
 		binder.bind(Boolean.class).annotatedWith(Names.named("Debug MD2GeneratorUtil")).toInstance(true);
 	}

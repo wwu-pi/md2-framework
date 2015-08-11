@@ -82,7 +82,7 @@ public class Main {
 				for (Issue issue : list) {
 					System.err.println(issue);
 				}
-				System.exit(2);
+				//System.exit(2);
 			}
 		}
 		
