@@ -4,48 +4,27 @@ import de.wwu.md2.framework.generator.AbstractPlatformGenerator
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 
-import static de.wwu.md2.framework.util.MD2Util.*
-import de.wwu.md2.framework.mD2.ViewGUIElement
-import de.wwu.md2.framework.generator.android.lollipop.controller.Application
-import org.eclipse.emf.ecore.resource.ResourceSet
+import de.wwu.md2.framework.generator.ios.model.Model
+import de.wwu.md2.framework.generator.ios.controller.Controller
 
 class IOSGenerator extends AbstractPlatformGenerator {
 
 	override doGenerate(IExtendedFileSystemAccess fsa) {
 		System.out.println("START GENERATION")
 		
+		/***************************************************
+		 * 
+		 * Generate apps individually
+		 * 
+		 ***************************************************/
 		for (app : dataContainer.apps) {
-			/***************************************************
-			 * 
-			 * Data for the generators
-			 * 
-			 ***************************************************/
 			// Folders
-			val rootFolder = rootFolder + "/md2_app_" + app.name
-	
-			// main package and path for java code within the app
+			val appRoot = rootFolder + "/md2_app_" + app.name + "/"
 			val mainPackage = MD2GeneratorUtil.getBasePackageName(processedInput).replace("^/", ".").toLowerCase
-			val mainPath = mainPackage.replace(".", "/") + "/"
+			val rootFolder = appRoot + mainPackage.replace(".", "/") + "/"
+			printDebug("Generate App: " + rootFolder, true)
 
-			fsa.generateFile(rootFolder + mainPath + "IOSIOS" + app.name.toFirstUpper + ".java", platformPrefix)	 
-			System.out.println(rootFolder + mainPath + "IOSIOS" + app.name.toFirstUpper + ".java")
-			
-		}
 
-//		for (app : dataContainer.apps) {
-//
-//			/***************************************************
-//			 * 
-//			 * Data for the generators
-//			 * 
-//			 ***************************************************/
-//			// Folders
-//			val rootFolder = rootFolder + "/md2_app_" + app.name
-//
-//			// main package and path for java code within the app
-//			val mainPackage = MD2GeneratorUtil.getBasePackageName(processedInput).replace("^/", ".").toLowerCase
-//			val mainPath = mainPackage.replace(".", "/") + "/"
-//
 //			// all root views for current app
 //			val rootViews = app.workflowElements.map [ wer |
 //				dataContainer.rootViewContainers.get(wer.workflowElementReference)
@@ -90,64 +69,74 @@ class IOSGenerator extends AbstractPlatformGenerator {
 //				AndroidManifest.generateProjectAndroidManifest(app, rootViews, mainPackage))
 //
 //			// gradle build files
-//			fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.GRADLE_BUILD,
-//				Gradle.generateMd2LibrarayBuild)
-//			fsa.generateFile(rootFolder + "/" + Settings.GRADLE_BUILD, Gradle.generateProjectBuild)
-//			fsa.generateFile(rootFolder + "/" + Settings.GRADLE_SETTINGS, Gradle.generateProjectSettings)
-//			fsa.generateFile(rootFolder + Settings.APP_PATH + Settings.GRADLE_BUILD,
-//				Gradle.generateAppBuild(mainPackage, dataContainer.main.appVersion))
-//
-//			// proguard rules
-//			fsa.generateFile(rootFolder + Settings.APP_PATH + Settings.PROGUARD_RULES_NAME,
-//				Proguard.generateProjectProguardRules)
-//
-//			/***************************************************
-//			 * 
-//			 * Model
-//			 * 
-//			 ***************************************************/
-//			/***************************************************
-//			 * 
-//			 * View
-//			 * 
-//			 ***************************************************/
-//			// Element Ids
-//			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.IDS_XML_NAME,
-//				Values.generateIdsXml(viewGUIElements))
-//
-//			// Strings
-//			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STRINGS_XML_NAME,
-//				Values.generateStringsXml(app, rootViews, viewGUIElements))
-//
-//			// Views resource file
-//			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.VIEWS_XML_NAME,
-//				Values.generateViewsXml(rootViews, mainPackage))
-//
-//			// Styles
-//			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STYLES_XML_NAME, Values.generateStylesXml)
-//
-//			// Dimensions
-//			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, Values.generateDimensXml)
-//
-//		/***************************************************
-//		 * 
-//		 * Controller
-//		 * 
-//		 ***************************************************/
-//		 fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + app.name.toFirstUpper + ".java", Application.generateAppClass(mainPackage, app))
-//		 
-//		/***************************************************
-//		 * 
-//		 * Workflow
-//		 * 
-//		 ***************************************************/
-//		}
+			
+			/***************************************************
+			 * 
+			 * Model
+			 * 
+			 ***************************************************/
+			printDebug("Generate Model: " + rootFolder + Settings.MODEL_PATH, true)
+			 
+			// All model entities
+			dataContainer.entities.filter[entity | !entity.name.startsWith("__")].forEach [entity | 
+				val path = rootFolder + Settings.MODEL_PATH + entity.name + ".swift"
+				printDebug("Generate entity: " + entity.name, path)
+				fsa.generateFile(path, Model.generateEntity(entity))
+			]
+			
+			
+			/***************************************************
+			 * 
+			 * View
+			 * 
+			 ***************************************************/
+			/*printDebug("Generate Views: " + rootFolder + Settings.MODEL_PATH, true)
+			 
+			// All model entities
+			dataContainer.view.viewElements.forEach [view | 
+				val path = rootFolder + Settings.CONTROLLER_PATH + entity.name + ".swift"
+				printDebug("Generate entity: " + entity.name, path)
+				fsa.generateFile(path, Model.generateEntity(entity))
+			]*/
 
-		System.out.println("GENERATION COMPLETED")
+			/***************************************************
+			 * 
+			 * Controller
+			 * 
+			 ***************************************************/
+			 printDebug("Generate Main Controller: " + rootFolder + Settings.CONTROLLER_PATH, true)
+			 fsa.generateFile(rootFolder + Settings.CONTROLLER_PATH + "Controller.swift", Controller.generateStartupController(dataContainer))
+			 
+			/***************************************************
+			 * 
+			 * Workflow
+			 * 
+			 ***************************************************/
+		}
+
+		println("\nGENERATION COMPLETED")
 	}
 
 	override getPlatformPrefix() {
 		Settings.PLATTFORM_PREFIX
 	}
 
+	// Output sensible information during generation process
+	def printDebug(String message, Boolean withSeparator) {
+		if(Settings.PRINT_DEBUG_INFO) {
+			if (withSeparator)  println("\n/**************************************************")
+			
+			println(message)
+			
+			if (withSeparator) println("**************************************************/")
+		}
+	}
+	
+	def printDebug(String message) {
+		printDebug(message, false)
+	}
+	
+	def printDebug(String message, String path) {
+		printDebug(message + " (" + path + ")", false)
+	}
 }

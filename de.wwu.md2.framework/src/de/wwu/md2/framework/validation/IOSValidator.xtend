@@ -46,7 +46,7 @@ class IOSValidator extends AbstractGeneratorSupportValidator{
     @Check
     def checkContainerElements(ContainerElement containerElement) {
         var supportedContainerElements = Sets.newHashSet(
-//            MD2Package.eINSTANCE.gridLayoutPane,
+            MD2Package.eINSTANCE.gridLayoutPane,
             MD2Package.eINSTANCE.flowLayoutPane
 //            MD2Package.eINSTANCE.alternativesPane,
 //            MD2Package.eINSTANCE.tabbedAlternativesPane
@@ -91,15 +91,11 @@ class IOSValidator extends AbstractGeneratorSupportValidator{
 //            MD2Package.eINSTANCE.standardRegExValidator
         );
         
-        if (supportedValidator.contains(validator.eClass)) {
+        if (!supportedValidator.contains(validator.eClass)) {
             warning("Unsupported by Android generator: " + validator.eClass.name + ". Using this parameter will have no effect.",
                 MD2Package.eINSTANCE.standardValidator.EIDAttribute, -1, UNSUPPORTEDKEYWORD
             );
         }
     }
-    
-    def throwWarning(){
-    	
-    }
-	
+
 }
