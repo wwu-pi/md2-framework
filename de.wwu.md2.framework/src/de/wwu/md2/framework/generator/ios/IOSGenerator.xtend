@@ -15,6 +15,7 @@ import java.io.File
 import org.eclipse.xtext.generator.IFileSystemAccessExtension2
 
 import static de.wwu.md2.framework.generator.ios.Settings.*
+import de.wwu.md2.framework.generator.ios.model.DataModel
 
 class IOSGenerator extends AbstractPlatformGenerator {
 	
@@ -75,7 +76,8 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			GeneratorUtil.printDebug("Generate Model: " + rootFolder + Settings.MODEL_PATH, true)
 			 
 			// Generate all model entities
-			dataContainer.entities.filter[entity | !entity.name.startsWith("__")].forEach [entity | 
+			val entities = dataContainer.entities.filter[entity | !entity.name.startsWith("__")]
+			entities.forEach [entity | 
 				val path = rootFolder + Settings.MODEL_PATH + "entity/" 
 					+ Settings.PREFIX_ENTITY + entity.name + ".swift"
 				GeneratorUtil.printDebug("Generate entity: " + entity.name, path)
@@ -109,6 +111,11 @@ class IOSGenerator extends AbstractPlatformGenerator {
 				}
 			]
 			
+			// Generate data model for local storage
+			val pathDataModel = rootFolder + Settings.MODEL_PATH 
+				+ "datastore/LocalData.xcdatamodeld/LocalData.xcdatamodel/contents"
+			fsa.generateFile(pathDataModel, DataModel.generateClass(entities))
+			
 			/***************************************************
 			 * 
 			 * View
@@ -140,7 +147,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			// TODO
 		}
 
-		println("\nIOS GENERATION COMPLETED\n\n")
+		println("\nIOS GENERATION COMPLETED\n")
 	}
 
 	override getPlatformPrefix() {

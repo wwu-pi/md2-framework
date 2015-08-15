@@ -4,6 +4,8 @@ import de.wwu.md2.framework.generator.ios.Settings
 import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.Enum
+import de.wwu.md2.framework.mD2.impl.EntityImpl
 import de.wwu.md2.framework.mD2.impl.BooleanTypeImpl
 import de.wwu.md2.framework.mD2.impl.DateTimeTypeImpl
 import de.wwu.md2.framework.mD2.impl.DateTypeImpl
@@ -12,6 +14,8 @@ import de.wwu.md2.framework.mD2.impl.IntegerTypeImpl
 import de.wwu.md2.framework.mD2.impl.StringTypeImpl
 import de.wwu.md2.framework.mD2.impl.TimeTypeImpl
 import java.lang.invoke.MethodHandles
+import de.wwu.md2.framework.mD2.impl.ReferencedTypeImpl
+import de.wwu.md2.framework.mD2.ReferencedType
 
 class IOSEntity {
 	
@@ -104,6 +108,13 @@ class «className»: NSObject, MD2EntityType {
 			case DateTypeImpl: return Settings.PREFIX_GLOBAL + "Date()"
 			case TimeTypeImpl: return Settings.PREFIX_GLOBAL + "Time()"
 			case DateTimeTypeImpl: return Settings.PREFIX_GLOBAL + "DateTime()"
+			case ReferencedTypeImpl: {
+				if(attribute.type instanceof ReferencedType && ((attribute.type as ReferencedType).element instanceof Entity)) {
+					return Settings.PREFIX_ENTITY + ((attribute.type as ReferencedType).element as Entity).name + "()"
+				} else {
+					return Settings.PREFIX_ENUM + ((attribute.type as ReferencedType).element as Enum).name + "()"
+				}
+			}
 			default: {
 				GeneratorUtil.printWarning("Encountered unsupported data type " + attribute.type + "! Will use 'String' to continue generation.")
 				return Settings.PREFIX_GLOBAL + "String()" 
