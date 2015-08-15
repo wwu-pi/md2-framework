@@ -1,15 +1,29 @@
 package de.wwu.md2.framework.generator.ios
 
 class Settings {
-	public static Boolean PRINT_DEBUG_INFO = true
+	public static final Boolean PRINT_DEBUG_INFO = true
 	
 	// Used to identify platform content, e.g. for folder structure src-gen/appname.PREFIX
-	public static String PLATTFORM_PREFIX = "ios"
-	public static String STATIC_CODE_PATH = "lib/" // relative to ios resource root 
+	public static final String PLATFORM_PREFIX = "ios"
+	public static final String STATIC_CODE_PATH = "lib/" // relative to ios resource root 
+	public static String ROOT_FOLDER = "" // is set at the beginning of the generation process
+	
+	// Generator and generation process related constants
+	public static final String GENERATOR_VERSION = "0.1"
+	public static final String GENERATOR_AUTHOR = "Christoph Rieger"
+	public static final String GENERATOR_DATE = "15.08.2015"
+	public static final String GENERATION_DATE_FORMAT = "dd.MM.yyyy"
 	
 	// Paths to platform-specific subfolders
-	public static String MODEL_PATH = "model/"
-	public static String CONTROLLER_PATH = "controller/"
-	public static String VIEW_PATH = "view/"
+	public static final String MODEL_PATH = "model/"
+	public static final String CONTROLLER_PATH = "controller/"
+	public static final String VIEW_PATH = "view/"
 	
+	// Prefixes for the classes
+	public static final String PREFIX_GLOBAL = "MD2"
+	public static final String PREFIX_ENTITY = PREFIX_GLOBAL + "Entity_"
+	public static final String PREFIX_ENUM = PREFIX_GLOBAL + "Enum_"
+	public static final String PREFIX_Y = PREFIX_GLOBAL + "Y_"
+	public static final String PREFIX_X = PREFIX_GLOBAL + "X_"
+
 }

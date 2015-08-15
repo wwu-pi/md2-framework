@@ -1,59 +1,95 @@
 package de.wwu.md2.framework.generator.ios.model
 
 import de.wwu.md2.framework.mD2.Enum
+import de.wwu.md2.framework.generator.ios.Settings
+import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
+import java.lang.invoke.MethodHandles
 
 class iosEnum {
 	
-	def static generateClass(Enum enumInstance) '''
-//
-//  «enumInstance.name».swift
-//  Generated code by class 'iosEnum'
-//
+	static var className = ""
+	
+	def static generateClass(Enum enumInstance) {
+		className = Settings.PREFIX_ENUM + enumInstance.name
+		
+		generateClassContent(enumInstance)
+	} 
+	
+	def static generateClassContent(Enum enumInstance) '''
+«GeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 
-class «enumInstance.name»: MD2EnumType {
+class «className»: MD2EnumType {
     
-    typealias T = «enumInstance.name».EnumType
+    var value: Any? {
+        get {
+            return platformValue
+        }
+    }
     
-    var platformValue: «enumInstance.name».EnumType?
+    var platformValue: «className».EnumType?
+    
+    init() {
+        // Nothing to initialize
+    }
+    
+    func setValueFromString(value: MD2String) {
+        if value.isSet() && !value.equals(MD2String("")) {
+            platformValue = EnumType.fromRawValue(value.toString())
+        }
+    }
     
     func clone() -> MD2Type {
-        var newInstance = «enumInstance.name»()
+        var newInstance = «className»()
         newInstance.platformValue = self.platformValue
         return newInstance
     }
     
     func toString() -> String {
         if let _ = platformValue {
-            return platformValue!.rawValue
+            return "«className»: [" + platformValue!.rawValue + "]"
         } else {
-            return ""
+            return "«className»: []"
         }
     }
     
     func equals(value : MD2Type) -> Bool {
         return platformValue != nil
-                && value is «enumInstance.name»
-                && platformValue?.rawValue == (value as! «enumInstance.name»).platformValue?.rawValue
+                && value is «className»
+                && platformValue?.rawValue == (value as! «className»).platformValue?.rawValue
     }
     
     enum EnumType: String {
-    	«var i = 1»
-    	«FOR value : enumInstance.enumBody.elements»
-    	case Elem«i++» = "«value»"
+    	«FOR i : 1.. enumInstance.enumBody.elements.length»
+    	case Elem«i» = "«enumInstance.enumBody.elements.get(i - 1)»"
         «ENDFOR»
         
-        «var j = 1»
-        static let allValues = [«FOR value : enumInstance.enumBody.elements SEPARATOR ', '»Elem«j++»«ENDFOR»]
+        static let allValues = [«FOR i : 1.. enumInstance.enumBody.elements.length SEPARATOR ', '»Elem«i»«ENDFOR»]
+        
+        static func fromRawValue(value: String) -> EnumType? {
+            switch value {
+            	«FOR i : 1.. enumInstance.enumBody.elements.length»
+            	case "«enumInstance.enumBody.elements.get(i - 1)»": return Elem«i»
+        		«ENDFOR»
+            	default: return nil
+            }
+        }
     }
     
     func getAllValues() -> Array<String> {
         var array: Array<String> = []
-        for elem in «enumInstance.name».EnumType.allValues {
+        for elem in «className».EnumType.allValues {
             array.append(elem.rawValue)
         }
         return array
     }
+    
+    func getValue() -> String {
+        if let _ = platformValue {
+            return platformValue!.rawValue
+        } else {
+            return ""
+        }
+    }
 }
 	'''
-	
 }

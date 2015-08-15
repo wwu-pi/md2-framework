@@ -13,6 +13,8 @@ import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.ContentElement
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.Keyword
+import de.wwu.md2.framework.mD2.AttributeType
+
 //import de.wwu.md2.framework.services.MD2GrammarAccess
 
 class IOSValidator extends AbstractGeneratorSupportValidator{
@@ -97,5 +99,26 @@ class IOSValidator extends AbstractGeneratorSupportValidator{
             );
         }
     }
-
+    
+    // Model
+	@Check
+    def checkAttributeTypes(AttributeType attributeType) {
+        var supportedParamTypes = Sets.newHashSet(
+            MD2Package.eINSTANCE.integerType
+            , MD2Package.eINSTANCE.floatType
+            , MD2Package.eINSTANCE.stringType
+            , MD2Package.eINSTANCE.booleanType
+            , MD2Package.eINSTANCE.dateType
+            , MD2Package.eINSTANCE.timeType
+            , MD2Package.eINSTANCE.dateTimeType
+            , MD2Package.eINSTANCE.enumType
+//            , MD2Package.eINSTANCE.fileType
+        );
+        
+        if (!supportedParamTypes.contains(attributeType.eClass)) {
+            warning(de.wwu.md2.framework.validation.IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + attributeType.eClass.name + USAGEOFKEYWORD,
+                MD2Package.eINSTANCE.attributeTypeParam.EIDAttribute, -1, UNSUPPORTEDKEYWORD
+            );
+        }
+    }
 }
