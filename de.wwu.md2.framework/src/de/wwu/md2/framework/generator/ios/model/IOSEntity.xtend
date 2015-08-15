@@ -13,18 +13,18 @@ import de.wwu.md2.framework.mD2.impl.StringTypeImpl
 import de.wwu.md2.framework.mD2.impl.TimeTypeImpl
 import java.lang.invoke.MethodHandles
 
-class iosEntity {
+class IOSEntity {
 	
 	static var className = ""
 	
 	def static generateClass(Entity entityInstance) {
-		className = Settings.PREFIX_ENTITY + entityInstance.name
+		className = Settings.PREFIX_ENTITY + entityInstance.name.toFirstUpper
 		
 		generateClassContent(entityInstance)
 	} 
 	
 	def static generateClassContent(Entity entityInstance) '''
-«GeneratorUtil.generateClassHeaderComment(Settings.PREFIX_ENUM + entityInstance.name, MethodHandles.lookup.lookupClass)»
+«GeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 
 import Foundation
 

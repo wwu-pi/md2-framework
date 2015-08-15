@@ -5,12 +5,12 @@ import de.wwu.md2.framework.generator.ios.Settings
 import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import java.lang.invoke.MethodHandles
 
-class iosEnum {
+class IOSEnum {
 	
 	static var className = ""
 	
 	def static generateClass(Enum enumInstance) {
-		className = Settings.PREFIX_ENUM + enumInstance.name
+		className = Settings.PREFIX_ENUM + enumInstance.name.toFirstUpper
 		
 		generateClassContent(enumInstance)
 	} 
