@@ -27,6 +27,6 @@ class Settings {
 	public static final String PREFIX_ENTITY = PREFIX_GLOBAL + "Entity_"
 	public static final String PREFIX_ENUM = PREFIX_GLOBAL + "Enum_"
 	public static final String PREFIX_CONTENT_PROVIDER = PREFIX_GLOBAL + "CP_"
-	public static final String PREFIX_X = PREFIX_GLOBAL + "X_"
+	public static final String PREFIX_CUSTOM_ACTION = PREFIX_GLOBAL + "CustomAction_"
 
 }
