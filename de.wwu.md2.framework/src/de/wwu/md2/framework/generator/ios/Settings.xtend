@@ -28,5 +28,10 @@ class Settings {
 	public static final String PREFIX_ENUM = PREFIX_GLOBAL + "Enum_"
 	public static final String PREFIX_CONTENT_PROVIDER = PREFIX_GLOBAL + "CP_"
 	public static final String PREFIX_CUSTOM_ACTION = PREFIX_GLOBAL + "CustomAction_"
+	
+	// Data type related constants
+	public static final String DATA_TYPE_DATE_FORMAT = "YYYY-MM-DD"
+	public static final String DATA_TYPE_TIME_FORMAT = "hh:mm:ss"
+	public static final String DATA_TYPE_DATE_TIME_FORMAT = "YYYY-MM-DD hh:mm:ss"
 
 }
