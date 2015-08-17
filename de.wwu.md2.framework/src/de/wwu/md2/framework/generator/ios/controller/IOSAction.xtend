@@ -19,7 +19,7 @@ import de.wwu.md2.framework.mD2.SimpleActionRef
 import de.wwu.md2.framework.mD2.WebServiceCallAction
 import de.wwu.md2.framework.mD2.WorkflowElement
 import de.wwu.md2.framework.mD2.ActionReference
-import de.wwu.md2.framework.generator.ios.model.IOSWidgetMapping
+import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
 
 class IOSAction {
 	

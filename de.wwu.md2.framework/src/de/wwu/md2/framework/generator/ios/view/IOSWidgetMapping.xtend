@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.generator.ios.model
+package de.wwu.md2.framework.generator.ios.view
 
 import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef

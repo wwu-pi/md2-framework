@@ -18,7 +18,7 @@ import de.wwu.md2.framework.generator.ios.model.DataModel
 import de.wwu.md2.framework.generator.ios.controller.IOSCustomAction
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.generator.ios.controller.IOSWorkflowEvent
-import de.wwu.md2.framework.generator.ios.model.IOSWidgetMapping
+import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
 
 class IOSGenerator extends AbstractPlatformGenerator {
 	
@@ -97,12 +97,6 @@ class IOSGenerator extends AbstractPlatformGenerator {
 				fsa.generateFile(path, IOSEnum.generateClass(enum))
 			]
 			
-			// Generate WidgetMapping as (platform) enum
-			val pathWidgetMapping = rootFolder + Settings.MODEL_PATH + "enum/" 
-				+ Settings.PREFIX_GLOBAL + "WidgetMapping.swift"
-			GeneratorUtil.printDebug("Generate view mapping", pathWidgetMapping)
-			fsa.generateFile(pathWidgetMapping, IOSWidgetMapping.generateClass(dataContainer.view))
-			
 			// Generate content providers
 			dataContainer.contentProviders.filter[cp | !cp.name.startsWith("__")].forEach [ cp |
 				val path = rootFolder + Settings.MODEL_PATH + "contentProvider/"  
@@ -112,7 +106,8 @@ class IOSGenerator extends AbstractPlatformGenerator {
 				if (cp.type instanceof SimpleType) {
 					GeneratorUtil.printError("SimpleType unsupported in ContentProvider!")
 				} else {
-					GeneratorUtil.printDebug("Generate content provider: " + cp.name.toFirstUpper, path)
+					GeneratorUtil.printDebug("Generate content provider: " 
+						+ cp.name.toFirstUpper, path)
 					fsa.generateFile(path, IOSContentProvider.generateClass(cp))
 				}
 			]
@@ -127,8 +122,19 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 * View
 			 * 
 			 ***************************************************/
-			// TODO
-			//GeneratorUtil.printDebug("Generate Views: " + rootFolder + Settings.VIEW_PATH, true)
+			GeneratorUtil.printDebug("Generate Views: " + rootFolder 
+				+ Settings.VIEW_PATH, true)
+				
+			// Generate WidgetMapping
+			/* iOS specific class because widgets cannot pass any information
+			 * on event triggering except for an integer value. This iOS-enum
+			 * provides the mapping between a view element and such a value 
+			 * for identification in the event handlers.
+			 */
+			val pathWidgetMapping = rootFolder + Settings.MODEL_PATH + "enum/" 
+				+ Settings.PREFIX_GLOBAL + "WidgetMapping.swift"
+			GeneratorUtil.printDebug("Generate view mapping", pathWidgetMapping)
+			fsa.generateFile(pathWidgetMapping, IOSWidgetMapping.generateClass(dataContainer.view))
 			
 			/* 
 			// All view entities
@@ -143,33 +149,38 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 * Controller
 			 * 
 			 ***************************************************/
-			 GeneratorUtil.printDebug("Generate Controller: " + rootFolder 
+		 	GeneratorUtil.printDebug("Generate Controller: " + rootFolder 
 			 	+ Settings.CONTROLLER_PATH, true)
 			 
-			 dataContainer.workflowElements.forEach [wfe | 
+			dataContainer.workflowElements.forEach [wfe | 
 			 	(wfe.initActions + wfe.actions).filter(CustomAction)
 			 	.filter[ca | !ca.name.startsWith("__")].forEach[ ca |
 			 		
 			 		val path = rootFolder + Settings.CONTROLLER_PATH + "action/" 
-						+ Settings.PREFIX_CUSTOM_ACTION + wfe.name.toFirstUpper + "_" + ca.name.toFirstUpper + ".swift"
-					GeneratorUtil.printDebug("Generate custom action: " + wfe.name.toFirstUpper + "_" + ca.name.toFirstUpper, path)
+						+ Settings.PREFIX_CUSTOM_ACTION 
+						+ wfe.name.toFirstUpper + "_" 
+						+ ca.name.toFirstUpper + ".swift"
+					GeneratorUtil.printDebug("Generate custom action: " 
+						+ wfe.name.toFirstUpper + "_" + ca.name.toFirstUpper, path)
 					fsa.generateFile(path, IOSCustomAction.generateClass(ca))
 			 	]
-			 ]
+			]
 			 
-			 val pathMainController = rootFolder + Settings.CONTROLLER_PATH + "Controller.swift"
-			 GeneratorUtil.printDebug("Generate main controller: " + pathMainController, false)
-			 fsa.generateFile(pathMainController, Controller.generateStartupController(dataContainer))
+			val pathMainController = rootFolder + Settings.CONTROLLER_PATH + "Controller.swift"
+			GeneratorUtil.printDebug("Generate main controller: " 
+				+ pathMainController, false)
+			fsa.generateFile(pathMainController, Controller.generateStartupController(dataContainer))
 			 
 			/***************************************************
 			 * 
 			 * Workflow
 			 * 
 			 ***************************************************/
-			 GeneratorUtil.printDebug("Generate Workflows: " + rootFolder 
+			GeneratorUtil.printDebug("Generate Workflows: " + rootFolder 
 			 	+ Settings.WORKFLOW_PATH, true)
 			
-			val pathWorkflowEvents = rootFolder + Settings.WORKFLOW_PATH + Settings.PREFIX_GLOBAL + "WorkflowEvent.swift"
+			val pathWorkflowEvents = rootFolder + Settings.WORKFLOW_PATH 
+				+ Settings.PREFIX_GLOBAL + "WorkflowEvent.swift"
 			GeneratorUtil.printDebug("Generate workflow events", pathWorkflowEvents) 		
  		 	fsa.generateFile(pathWorkflowEvents, IOSWorkflowEvent.generateClass(dataContainer))
 		}

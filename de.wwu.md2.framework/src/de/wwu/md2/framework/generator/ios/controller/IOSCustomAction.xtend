@@ -23,7 +23,7 @@ import de.wwu.md2.framework.mD2.ViewElementEventRef
 import de.wwu.md2.framework.mD2.ViewElementSetTask
 import java.lang.invoke.MethodHandles
 import org.eclipse.emf.common.util.Enumerator
-import de.wwu.md2.framework.generator.ios.model.IOSWidgetMapping
+import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
 
 class IOSCustomAction {
 	

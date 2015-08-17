@@ -8,7 +8,7 @@ import de.wwu.md2.framework.mD2.DateVal
 import de.wwu.md2.framework.mD2.SimpleExpression
 import de.wwu.md2.framework.mD2.StringVal
 import de.wwu.md2.framework.mD2.TimeVal
-import de.wwu.md2.framework.generator.ios.model.IOSWidgetMapping
+import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
 
 class SimpleExpressionUtil {
 	
