@@ -2,28 +2,28 @@ package de.wwu.md2.framework.generator.ios.controller
 
 import de.wwu.md2.framework.generator.ios.Settings
 import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
+import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
+import de.wwu.md2.framework.mD2.CallTask
+import de.wwu.md2.framework.mD2.ContentProviderEventRef
 import de.wwu.md2.framework.mD2.ContentProviderEventType
+import de.wwu.md2.framework.mD2.ContentProviderPath
+import de.wwu.md2.framework.mD2.ContentProviderSetTask
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.CustomCodeFragment
 import de.wwu.md2.framework.mD2.ElementEventType
-import de.wwu.md2.framework.mD2.EventDef
-import de.wwu.md2.framework.mD2.GlobalEventType
-import de.wwu.md2.framework.mD2.WorkflowElement
-import de.wwu.md2.framework.mD2.CallTask
-import de.wwu.md2.framework.mD2.ContentProviderEventRef
-import de.wwu.md2.framework.mD2.ContentProviderSetTask
 import de.wwu.md2.framework.mD2.EventBindingTask
+import de.wwu.md2.framework.mD2.EventDef
 import de.wwu.md2.framework.mD2.EventUnbindTask
 import de.wwu.md2.framework.mD2.GlobalEventRef
+import de.wwu.md2.framework.mD2.GlobalEventType
 import de.wwu.md2.framework.mD2.MappingTask
 import de.wwu.md2.framework.mD2.UnmappingTask
 import de.wwu.md2.framework.mD2.ValidatorBindingTask
 import de.wwu.md2.framework.mD2.ValidatorUnbindTask
 import de.wwu.md2.framework.mD2.ViewElementEventRef
-import de.wwu.md2.framework.mD2.ViewElementSetTask
+import de.wwu.md2.framework.mD2.WorkflowElement
 import java.lang.invoke.MethodHandles
 import org.eclipse.emf.common.util.Enumerator
-import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
 
 class IOSCustomAction {
 	
@@ -57,6 +57,7 @@ class «className»: ActionType {
 	'''
 	
 	def static generateCodeFragment(int actionCounter, CustomCodeFragment fragment){
+		// MARK incomplete list to be extended in future version
 		switch fragment {
 			CallTask: return generateCallTask(actionCounter, (fragment as CallTask))
 			ContentProviderSetTask: return generateContentProviderSetTask(actionCounter, (fragment as ContentProviderSetTask))
@@ -66,16 +67,16 @@ class «className»: ActionType {
 			UnmappingTask: return generateUnmappingTaskTask(actionCounter, (fragment as UnmappingTask))
 			ValidatorBindingTask: return generateValidatorBindingTask(actionCounter, (fragment as ValidatorBindingTask))
 			ValidatorUnbindTask: return generateValidatorUnbindTask(actionCounter, (fragment as ValidatorUnbindTask))
-			ViewElementSetTask: return generateViewElementSetTask(actionCounter, (fragment as ViewElementSetTask))
 			default: GeneratorUtil.printError("IOSCustomAction encountered unsupported CustomCodeFragment type: " + fragment)
 		}
 	}
 	
 	def static generateCallTask(int actionCounter, CallTask task) '''
 			
-			let codeFragment«actionCounter» = «IOSAction.generateAction(className + "_" + actionCounter, task.action)»
+			let codeFragment«actionCounter» = «IOSAction.generateAction(className + "_" + actionCounter, task.action)».execute()
 	'''
 	
+	// TODO
 	def static generateContentProviderSetTask(int actionCounter, ContentProviderSetTask task) '''
 		//--	let codeFragment«actionCounter» = «task» //TODO
 		
@@ -95,35 +96,57 @@ class «className»: ActionType {
 			
 		«FOR i : 1..task.events.length»
 		«FOR j : 1..task.actions.length»
-			let codeFragment«actionCounter»_«i»_«j» = «task.actions.get(j-1)»
+			let codeFragment«actionCounter»_«i»_«j» = «IOSAction.generateAction(className + "_" + actionCounter + "_" + i + "_" + j, task.actions.get(j-1))»
 			«generateEventHandler(task.events.get(i-1), "codeFragment" + actionCounter + "_" + i + "_" + j, false)»
 		«ENDFOR»
 		«ENDFOR»
 	'''
 	
 	def static generateMappingTaskTask(int actionCounter, MappingTask task) '''
-		//--	let codeFragment«actionCounter» = «task»
 		
+		«IF task.pathDefinition instanceof ContentProviderPath»
+		DataMapper.instance.map(
+			WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(task.referencedViewField)»)!,
+			contentProvider: ContentProviderRegistry.instance.getContentProvider("«(task.pathDefinition as ContentProviderPath).contentProviderRef.name»")!,
+			attribute: "«(task.pathDefinition as ContentProviderPath).tail.attributeRef.name»")
+        «ELSE»
+        «GeneratorUtil.printError("IOSCustomAction encountered unsupported pathDefinition for MappingTask:" + task.pathDefinition)»
+        «ENDIF»
 	'''
 	
 	def static generateUnmappingTaskTask(int actionCounter, UnmappingTask task) '''
-		//--	let codeFragment«actionCounter» = «task»
 		
+		«IF task.pathDefinition instanceof ContentProviderPath»
+		DataMapper.instance.unmap(
+			WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(task.referencedViewField)»)!,
+			contentProvider: ContentProviderRegistry.instance.getContentProvider("«(task.pathDefinition as ContentProviderPath).contentProviderRef.name»")!,
+			attribute: "«(task.pathDefinition as ContentProviderPath).tail.attributeRef.name»")
+        «ELSE»
+        «GeneratorUtil.printError("IOSCustomAction encountered unsupported pathDefinition for UnmappingTask:" + task.pathDefinition)»
+        «ENDIF»
 	'''
 	
 	def static generateValidatorBindingTask(int actionCounter, ValidatorBindingTask task) '''
-		//--	let codeFragment«actionCounter» = «task»
-		
+			
+		«FOR i : 1..task.referencedFields.length»
+		«FOR j : 1..task.validators.length»
+			let codeFragment«actionCounter»_«i»_«j» = «IOSValidator.generateValidator("validator" + actionCounter + "_" + i + "_" + j, task.validators.get(j-1))»
+			WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(task.referencedFields.get(i - 1))»)!
+				.addValidator(codeFragment«actionCounter»_«i»_«j»)
+		«ENDFOR»
+		«ENDFOR»
 	'''
 	
+	// TODO unbind "allTypes" keyword
 	def static generateValidatorUnbindTask(int actionCounter, ValidatorUnbindTask task) '''
-		//--	let codeFragment«actionCounter» = «task»
-		
-	'''
-	
-	def static generateViewElementSetTask(int actionCounter, ViewElementSetTask task) '''
-		//--	let codeFragment«actionCounter» = «task»
-		
+			
+		«FOR i : 1..task.referencedFields.length»
+		«FOR j : 1..task.validators.length»
+			let codeFragment«actionCounter»_«i»_«j» = «IOSValidator.generateValidator("validator" + actionCounter + "_" + i + "_" + j, task.validators.get(j-1))»
+			WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(task.referencedFields.get(i - 1))»)!
+				.removeValidator(codeFragment«actionCounter»_«i»_«j»)
+		«ENDFOR»
+		«ENDFOR»
 	'''
 	
 	def static generateEventHandler(EventDef event, String actionStringRef, boolean register) {

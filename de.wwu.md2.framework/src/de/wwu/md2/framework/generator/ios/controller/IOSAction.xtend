@@ -53,17 +53,17 @@ class IOSAction {
 	
 	def static generateGotoViewAction(String actionSignature, GotoViewAction action) '''
 		GoToViewAction(actionSignature: "«actionSignature»", 
-				webserviceCall:WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(action.view)»)!)
+			webserviceCall:WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(action.view)»)!)
 	'''
 	
 	def static generateDisableAction(String actionSignature, DisableAction action) '''
 		DisableAction(actionSignature: "«actionSignature»", 
-				viewElement: WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(action.inputField)»)!)
+			viewElement: WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(action.inputField)»)!)
 	'''
 	
 	def static generateEnableAction(String actionSignature, EnableAction action) '''
 		EnableAction(actionSignature: "«actionSignature»", 
-				viewElement: WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(action.inputField)»)!)
+			viewElement: WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(action.inputField)»)!)
 	'''
 	
 	def static generateDisplayMessageAction(String actionSignature, DisplayMessageAction action) '''
@@ -72,34 +72,34 @@ class IOSAction {
 	
 	def static generateContentProviderOperationAction(String actionSignature, ContentProviderOperationAction action) '''
 		ContentProviderOperationAction(actionSignature: "«actionSignature»", 
-				allowedOperation: ContentProviderOperationAction.AllowedOperation.«action.operation.toString.toUpperCase»,
-				contentProvider: ContentProviderRegistry.instance.getContentProvider(contentProviderName: 
-				«IF action.contentProvider instanceof ContentProviderReference»
-					"«(action.contentProvider as ContentProviderReference).contentProvider.name»"
-				«ELSEIF action.contentProvider instanceof LocationProviderReference»
-					"location"
-				«ELSE»
-					«GeneratorUtil.printError("IOSAction encountered unknown AbstractProviderReference: " + action.contentProvider)»
-				«ENDIF»
-				)!)
+			allowedOperation: ContentProviderOperationAction.AllowedOperation.«action.operation.toString.toUpperCase»,
+			contentProvider: ContentProviderRegistry.instance.getContentProvider(contentProviderName: 
+			«IF action.contentProvider instanceof ContentProviderReference»
+				"«(action.contentProvider as ContentProviderReference).contentProvider.name»"
+			«ELSEIF action.contentProvider instanceof LocationProviderReference»
+				"location"
+			«ELSE»
+				«GeneratorUtil.printError("IOSAction encountered unknown AbstractProviderReference: " + action.contentProvider)»
+			«ENDIF»
+			)!)
 	'''
 	
 	def static generateContentProviderResetAction(String actionSignature, ContentProviderResetAction action) '''
 		ContentProviderResetAction(actionSignature: "«actionSignature»", 
-				contentProvider: ContentProviderRegistry.instance.getContentProvider(contentProviderName: 
-				«IF action.contentProvider instanceof ContentProviderReference»
-					"«(action.contentProvider as ContentProviderReference).contentProvider.name»"
-				«ELSEIF action.contentProvider instanceof LocationProviderReference»
-					"location"
-				«ELSE»
-					«GeneratorUtil.printError("IOSAction encountered unknown AbstractProviderReference: " + action.contentProvider)»
-				«ENDIF»
-				)!)
+			contentProvider: ContentProviderRegistry.instance.getContentProvider(contentProviderName: 
+			«IF action.contentProvider instanceof ContentProviderReference»
+				"«(action.contentProvider as ContentProviderReference).contentProvider.name»"
+			«ELSEIF action.contentProvider instanceof LocationProviderReference»
+				"location"
+			«ELSE»
+				«GeneratorUtil.printError("IOSAction encountered unknown AbstractProviderReference: " + action.contentProvider)»
+			«ENDIF»
+			)!)
 	'''
 	
 	def static generateFireEventAction(String actionSignature, FireEventAction action) '''
 		FireEventAction(actionSignature: "«actionSignature»", 
-				event: WorkflowEvent.«action.workflowEvent.name»)
+			event: WorkflowEvent.«action.workflowEvent.name»)
 	'''
 		
 	// TODO WebServiceCall

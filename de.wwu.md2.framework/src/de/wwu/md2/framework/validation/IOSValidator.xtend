@@ -185,6 +185,7 @@ class IOSValidator extends AbstractGeneratorSupportValidator{
 			, MD2Package.eINSTANCE.validatorUnbindTask
 //			, MD2Package.eINSTANCE.attributeSetTask
 //			, MD2Package.eINSTANCE.conditionalCodeFragments
+//			, MD2Package.eINSTANCE.viewElementSetTask
         );
         
         if (!supportedKeywords.contains(fragment.eClass)) {
