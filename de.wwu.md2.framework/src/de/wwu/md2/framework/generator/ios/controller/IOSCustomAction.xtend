@@ -67,20 +67,22 @@ class «className»: ActionType {
 			ValidatorBindingTask: return generateValidatorBindingTask(actionCounter, (fragment as ValidatorBindingTask))
 			ValidatorUnbindTask: return generateValidatorUnbindTask(actionCounter, (fragment as ValidatorUnbindTask))
 			ViewElementSetTask: return generateViewElementSetTask(actionCounter, (fragment as ViewElementSetTask))
-			// TODO: AttributeSetTask, ConditionalCodeFragments
 			default: GeneratorUtil.printError("IOSCustomAction encountered unsupported CustomCodeFragment type: " + fragment)
 		}
 	}
 	
 	def static generateCallTask(int actionCounter, CallTask task) '''
+			
 			let codeFragment«actionCounter» = «IOSAction.generateAction(className + "_" + actionCounter, task.action)»
 	'''
 	
 	def static generateContentProviderSetTask(int actionCounter, ContentProviderSetTask task) '''
 		//--	let codeFragment«actionCounter» = «task» //TODO
+		
 	'''
 	
 	def static generateEventBindingTask(int actionCounter, EventBindingTask task) '''
+			
 		«FOR i : 1..task.events.length»
 		«FOR j : 1..task.actions.length»
 			let codeFragment«actionCounter»_«i»_«j» = «IOSAction.generateAction(className + "_" + actionCounter + "_" + i + "_" + j, task.actions.get(j-1))»
@@ -90,6 +92,7 @@ class «className»: ActionType {
 	'''
 	
 	def static generateEventUnbindTask(int actionCounter, EventUnbindTask task) '''
+			
 		«FOR i : 1..task.events.length»
 		«FOR j : 1..task.actions.length»
 			let codeFragment«actionCounter»_«i»_«j» = «task.actions.get(j-1)»
@@ -100,34 +103,41 @@ class «className»: ActionType {
 	
 	def static generateMappingTaskTask(int actionCounter, MappingTask task) '''
 		//--	let codeFragment«actionCounter» = «task»
+		
 	'''
 	
 	def static generateUnmappingTaskTask(int actionCounter, UnmappingTask task) '''
 		//--	let codeFragment«actionCounter» = «task»
+		
 	'''
 	
 	def static generateValidatorBindingTask(int actionCounter, ValidatorBindingTask task) '''
 		//--	let codeFragment«actionCounter» = «task»
+		
 	'''
 	
 	def static generateValidatorUnbindTask(int actionCounter, ValidatorUnbindTask task) '''
 		//--	let codeFragment«actionCounter» = «task»
+		
 	'''
 	
 	def static generateViewElementSetTask(int actionCounter, ViewElementSetTask task) '''
 		//--	let codeFragment«actionCounter» = «task»
+		
 	'''
 	
 	def static generateEventHandler(EventDef event, String actionStringRef, boolean register) {
 		val UnRegister = if (!register) { "un" } else { "" }
 		var Enumerator eventType = null;
 		
-		// TODO: Support ConditionalEventRef, ContentProviderPathEventRef
 		switch event {
 			ViewElementEventRef: eventType = (event as ViewElementEventRef).event
 			ContentProviderEventRef: eventType = (event as ContentProviderEventRef).event
 			GlobalEventRef: eventType = (event as GlobalEventRef).event
-			default: GeneratorUtil.printError("IOSCustomAction encountered unsupported EventBindingTask: " + event) // TODO
+			default: {
+				GeneratorUtil.printError("IOSCustomAction encountered unsupported EventDef: " + event)
+				return ""
+			}
 		}
 		
 		switch eventType {
@@ -177,16 +187,4 @@ class «className»: ActionType {
 			default: GeneratorUtil.printError("IOSCustomAction encountered unsupported ElementEventType: " + event) // TODO
 		}
 	}
-	
-	def lalala () '''
-	 let action1 = AssignObjectAction(actionSignature: actionSignature + "__1",
-            assignContentProvider: ContentProviderRegistry.instance.getContentProvider("AddressProvider")!,
-            toContentProvider: ContentProviderRegistry.instance.getContentProvider("ComplaintProvider")!,
-            attribute: "loc")
-        action1.execute()
-        
-        let action2 = ContentProviderOperationAction(actionSignature: actionSignature + "__2", allowedOperation: ContentProviderOperationAction.AllowedOperation.Save, contentProvider: ContentProviderRegistry.instance.getContentProvider("ComplaintProvider")!)
-        action2.execute()
-
-        '''
 }
