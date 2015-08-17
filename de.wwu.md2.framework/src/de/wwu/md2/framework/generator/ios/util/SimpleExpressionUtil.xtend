@@ -1,6 +1,5 @@
 package de.wwu.md2.framework.generator.ios.util
 
-import de.wwu.md2.framework.generator.ios.model.WidgetMapping
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import de.wwu.md2.framework.mD2.BooleanVal
 import de.wwu.md2.framework.mD2.ConcatenatedString
@@ -9,6 +8,7 @@ import de.wwu.md2.framework.mD2.DateVal
 import de.wwu.md2.framework.mD2.SimpleExpression
 import de.wwu.md2.framework.mD2.StringVal
 import de.wwu.md2.framework.mD2.TimeVal
+import de.wwu.md2.framework.generator.ios.model.IOSWidgetMapping
 
 class SimpleExpressionUtil {
 	
@@ -30,7 +30,7 @@ class SimpleExpressionUtil {
 				}
 			AbstractViewGUIElementRef: {
 				return  '" + WidgetRegistry.instance.getWidget(WidgetMapping.' 
-					+ WidgetMapping.lookup(expression as AbstractViewGUIElementRef)
+					+ IOSWidgetMapping.lookup(expression as AbstractViewGUIElementRef)
 					+ ')!.value.toString() + "'
 			}  
 			default: {

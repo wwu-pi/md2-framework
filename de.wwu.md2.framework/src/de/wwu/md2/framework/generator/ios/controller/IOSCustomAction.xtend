@@ -1,7 +1,6 @@
 package de.wwu.md2.framework.generator.ios.controller
 
 import de.wwu.md2.framework.generator.ios.Settings
-import de.wwu.md2.framework.generator.ios.model.WidgetMapping
 import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.mD2.ContentProviderEventType
 import de.wwu.md2.framework.mD2.CustomAction
@@ -24,6 +23,7 @@ import de.wwu.md2.framework.mD2.ViewElementEventRef
 import de.wwu.md2.framework.mD2.ViewElementSetTask
 import java.lang.invoke.MethodHandles
 import org.eclipse.emf.common.util.Enumerator
+import de.wwu.md2.framework.generator.ios.model.IOSWidgetMapping
 
 class IOSCustomAction {
 	
@@ -144,27 +144,27 @@ class «className»: ActionType {
 			case ElementEventType.ON_CLICK: {
 				return "OnClickHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
 					+ ", widget: WidgetRegistry.instance.getWidget(WidgetMapping." 
-					+ WidgetMapping.lookup((event as ViewElementEventRef).referencedField) + ")!)"
+					+ IOSWidgetMapping.lookup((event as ViewElementEventRef).referencedField) + ")!)"
 			}
 			case ElementEventType.ON_CHANGE: {
 				return "OnWidgetChangeHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
 					+ ", widget: WidgetRegistry.instance.getWidget(WidgetMapping." 
-					+ WidgetMapping.lookup((event as ViewElementEventRef).referencedField) + ")!)"
+					+ IOSWidgetMapping.lookup((event as ViewElementEventRef).referencedField) + ")!)"
 			}
 			case ElementEventType.ON_LEFT_SWIPE: {
 				return "OnLeftSwipeHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
 					+ ", widget: WidgetRegistry.instance.getWidget(WidgetMapping." 
-					+ WidgetMapping.lookup((event as ViewElementEventRef).referencedField) + ")!)"
+					+ IOSWidgetMapping.lookup((event as ViewElementEventRef).referencedField) + ")!)"
 			}
 			case ElementEventType.ON_RIGHT_SWIPE: {
 				return "OnRightSwipeHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
 					+ ", widget: WidgetRegistry.instance.getWidget(WidgetMapping." 
-					+ WidgetMapping.lookup((event as ViewElementEventRef).referencedField) + ")!)"
+					+ IOSWidgetMapping.lookup((event as ViewElementEventRef).referencedField) + ")!)"
 			}
 			case ElementEventType.ON_WRONG_VALIDATION: {
 				return "OnWrongValidationHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
 					+ ", widget: WidgetRegistry.instance.getWidget(WidgetMapping." 
-					+ WidgetMapping.lookup((event as ViewElementEventRef).referencedField) + ")!)"
+					+ IOSWidgetMapping.lookup((event as ViewElementEventRef).referencedField) + ")!)"
 			}
 			case ContentProviderEventType.ON_CHANGE: {
 				return "OnContentChangeHandler.instance." + UnRegister + "registerAction(" + actionStringRef 

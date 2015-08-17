@@ -1,7 +1,6 @@
 package de.wwu.md2.framework.generator.ios.controller
 
 import de.wwu.md2.framework.generator.ios.Settings
-import de.wwu.md2.framework.generator.ios.model.WidgetMapping
 import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.generator.ios.util.SimpleExpressionUtil
 import de.wwu.md2.framework.mD2.ActionDef
@@ -20,6 +19,7 @@ import de.wwu.md2.framework.mD2.SimpleActionRef
 import de.wwu.md2.framework.mD2.WebServiceCallAction
 import de.wwu.md2.framework.mD2.WorkflowElement
 import de.wwu.md2.framework.mD2.ActionReference
+import de.wwu.md2.framework.generator.ios.model.IOSWidgetMapping
 
 class IOSAction {
 	
@@ -53,17 +53,17 @@ class IOSAction {
 	
 	def static generateGotoViewAction(String actionSignature, GotoViewAction action) '''
 		GoToViewAction(actionSignature: "«actionSignature»", 
-				webserviceCall:WidgetRegistry.instance.getWidget(WidgetMapping.«WidgetMapping.lookup(action.view)»)!)
+				webserviceCall:WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(action.view)»)!)
 	'''
 	
 	def static generateDisableAction(String actionSignature, DisableAction action) '''
 		DisableAction(actionSignature: "«actionSignature»", 
-				viewElement: WidgetRegistry.instance.getWidget(WidgetMapping.«WidgetMapping.lookup(action.inputField)»)!)
+				viewElement: WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(action.inputField)»)!)
 	'''
 	
 	def static generateEnableAction(String actionSignature, EnableAction action) '''
 		EnableAction(actionSignature: "«actionSignature»", 
-				viewElement: WidgetRegistry.instance.getWidget(WidgetMapping.«WidgetMapping.lookup(action.inputField)»)!)
+				viewElement: WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(action.inputField)»)!)
 	'''
 	
 	def static generateDisplayMessageAction(String actionSignature, DisplayMessageAction action) '''

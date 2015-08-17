@@ -6,7 +6,6 @@ import de.wwu.md2.framework.generator.ios.controller.Controller
 import de.wwu.md2.framework.generator.ios.model.IOSContentProvider
 import de.wwu.md2.framework.generator.ios.model.IOSEntity
 import de.wwu.md2.framework.generator.ios.model.IOSEnum
-import de.wwu.md2.framework.generator.ios.model.WidgetMapping
 import de.wwu.md2.framework.generator.ios.util.FileSystemUtil
 import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
@@ -19,6 +18,7 @@ import de.wwu.md2.framework.generator.ios.model.DataModel
 import de.wwu.md2.framework.generator.ios.controller.IOSCustomAction
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.generator.ios.controller.IOSWorkflowEvent
+import de.wwu.md2.framework.generator.ios.model.IOSWidgetMapping
 
 class IOSGenerator extends AbstractPlatformGenerator {
 	
@@ -98,9 +98,10 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			]
 			
 			// Generate WidgetMapping as (platform) enum
-			val pathWidgetMapping = rootFolder + Settings.MODEL_PATH + "enum/WidgetMapping.swift"
-			GeneratorUtil.printDebug("Generate view mapping", rootFolder + Settings.VIEW_PATH)
-			fsa.generateFile(pathWidgetMapping, WidgetMapping.generateClass(dataContainer.view))
+			val pathWidgetMapping = rootFolder + Settings.MODEL_PATH + "enum/" 
+				+ Settings.PREFIX_GLOBAL + "WidgetMapping.swift"
+			GeneratorUtil.printDebug("Generate view mapping", pathWidgetMapping)
+			fsa.generateFile(pathWidgetMapping, IOSWidgetMapping.generateClass(dataContainer.view))
 			
 			// Generate content providers
 			dataContainer.contentProviders.filter[cp | !cp.name.startsWith("__")].forEach [ cp |
@@ -168,7 +169,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 GeneratorUtil.printDebug("Generate Workflows: " + rootFolder 
 			 	+ Settings.WORKFLOW_PATH, true)
 			
-			val pathWorkflowEvents = rootFolder + Settings.WORKFLOW_PATH + "/WorkflowEvent.swift"
+			val pathWorkflowEvents = rootFolder + Settings.WORKFLOW_PATH + Settings.PREFIX_GLOBAL + "WorkflowEvent.swift"
 			GeneratorUtil.printDebug("Generate workflow events", pathWorkflowEvents) 		
  		 	fsa.generateFile(pathWorkflowEvents, IOSWorkflowEvent.generateClass(dataContainer))
 		}
