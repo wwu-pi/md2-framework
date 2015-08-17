@@ -20,6 +20,7 @@ class Settings {
 	public static final String MODEL_PATH = "model/"
 	public static final String CONTROLLER_PATH = "controller/"
 	public static final String VIEW_PATH = "view/"
+	public static final String WORKFLOW_PATH = "controller/workflow/"
 	
 	// Prefixes for the classes to distinguish generated from non-generated classes 
 	// and ensure unique naming

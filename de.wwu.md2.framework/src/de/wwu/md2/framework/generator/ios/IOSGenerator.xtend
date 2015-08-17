@@ -18,6 +18,7 @@ import static de.wwu.md2.framework.generator.ios.Settings.*
 import de.wwu.md2.framework.generator.ios.model.DataModel
 import de.wwu.md2.framework.generator.ios.controller.IOSCustomAction
 import de.wwu.md2.framework.mD2.CustomAction
+import de.wwu.md2.framework.generator.ios.controller.IOSWorkflowEvent
 
 class IOSGenerator extends AbstractPlatformGenerator {
 	
@@ -98,7 +99,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			
 			// Generate WidgetMapping as (platform) enum
 			val pathWidgetMapping = rootFolder + Settings.MODEL_PATH + "enum/WidgetMapping.swift"
-			GeneratorUtil.printDebug("Generate view mapping: ", rootFolder + Settings.VIEW_PATH)
+			GeneratorUtil.printDebug("Generate view mapping", rootFolder + Settings.VIEW_PATH)
 			fsa.generateFile(pathWidgetMapping, WidgetMapping.generateClass(dataContainer.view))
 			
 			// Generate content providers
@@ -164,7 +165,12 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 * Workflow
 			 * 
 			 ***************************************************/
-			// TODO
+			 GeneratorUtil.printDebug("Generate Workflows: " + rootFolder 
+			 	+ Settings.WORKFLOW_PATH, true)
+			
+			val pathWorkflowEvents = rootFolder + Settings.WORKFLOW_PATH + "/WorkflowEvent.swift"
+			GeneratorUtil.printDebug("Generate workflow events", pathWorkflowEvents) 		
+ 		 	fsa.generateFile(pathWorkflowEvents, IOSWorkflowEvent.generateClass(dataContainer))
 		}
 
 		println("\nIOS GENERATION COMPLETED\n")

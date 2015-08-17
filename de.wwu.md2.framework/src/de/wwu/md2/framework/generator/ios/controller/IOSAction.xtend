@@ -99,7 +99,7 @@ class IOSAction {
 	
 	def static generateFireEventAction(String actionSignature, FireEventAction action) '''
 		FireEventAction(actionSignature: "«actionSignature»", 
-				event: WorkflowEvent.«WorkflowEventMapping.lookup(action.workflowEvent)»)
+				event: WorkflowEvent.«action.workflowEvent.name»)
 	'''
 		
 	// TODO WebServiceCall
