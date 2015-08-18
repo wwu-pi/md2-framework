@@ -54,24 +54,13 @@ class IOSGenerator extends AbstractPlatformGenerator {
 					elem.replace(targetFolderAbsolutePath, "").replace("\\","/")
 				].join("\n"))
 			
-						
-
-//			// all root views for current app
-//			val rootViews = app.workflowElements.map [ wer |
-//				dataContainer.rootViewContainers.get(wer.workflowElementReference)
-//			].flatten
-//			
-//			// all content elements
-//			val viewGUIElements = rootViews.map[rv | rv.eAllContents.filter(ViewGUIElement).toSet].flatten
-//
-//			
 			/***************************************************
 			 * 
 			 * Misc 
 			 * Project file, ...
 			 * 
 			 ***************************************************/
-			// TODO
+			// TODO Project file?
 
 			/***************************************************
 			 * 
@@ -81,7 +70,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			GeneratorUtil.printDebug("Generate Model: " + rootFolder + Settings.MODEL_PATH, true)
 			 
 			// Generate all model entities
-			val entities = dataContainer.entities.filter[entity | !entity.name.startsWith("__")]
+			val entities = dataContainer.entities//.filter[entity | !entity.name.startsWith("__")]
 			entities.forEach [entity | 
 				val path = rootFolder + Settings.MODEL_PATH + "entity/" 
 					+ Settings.PREFIX_ENTITY + entity.name.toFirstUpper + ".swift"
@@ -135,14 +124,6 @@ class IOSGenerator extends AbstractPlatformGenerator {
 				+ Settings.PREFIX_GLOBAL + "WidgetMapping.swift"
 			GeneratorUtil.printDebug("Generate view mapping", pathWidgetMapping)
 			fsa.generateFile(pathWidgetMapping, IOSWidgetMapping.generateClass(dataContainer.view))
-			
-			/* 
-			// All view entities
-			dataContainer.view.viewElements.forEach [view | 
-				val path = rootFolder + Settings.CONTROLLER_PATH + entity.name + ".swift"
-				printDebug("Generate entity: " + entity.name, path)
-				fsa.generateFile(path, Model.generateEntity(entity))
-			]*/
 
 			/***************************************************
 			 * 
@@ -154,7 +135,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 
 			dataContainer.workflowElements.forEach [wfe | 
 			 	(wfe.initActions + wfe.actions).filter(CustomAction)
-			 	.filter[ca | !ca.name.startsWith("__")].forEach[ ca |
+			 	/*.filter[ca | !ca.name.startsWith("__")]*/.forEach[ ca |
 			 		
 			 		val path = rootFolder + Settings.CONTROLLER_PATH + "action/" 
 						+ Settings.PREFIX_CUSTOM_ACTION 

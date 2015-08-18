@@ -45,9 +45,9 @@ class IOSValidator {
 	def static generateStandardNotNullValidator(String identifier, StandardNotNullValidator validator) '''
 		NotNullValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
-			, message: { return "«SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)»" }
+			, message: { return «SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)» }
 		«ELSE»
-			, message: { return "" }
+			, message: { return defaultMessage }
 		«ENDIF»
 		)
 	'''
@@ -55,9 +55,9 @@ class IOSValidator {
 	def static generateStandardRegExValidator(String identifier, StandardRegExValidator validator) '''
 		RegExValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
-			, message: { return "«SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)»" }
+			, message: { return «SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)» }
 		«ELSE»
-			, message: { return "" }
+			, message: { return defaultMessage }
 		«ENDIF»
 		«IF validator.params.filter(ValidatorRegExParam).length > 0»
 			, regEx: "«validator.params.filter(ValidatorRegExParam).get(0).regEx»"
@@ -70,9 +70,9 @@ class IOSValidator {
 	def static generateStandardNumberRangeValidator(String identifier, StandardNumberRangeValidator validator) '''
 		NumberRangeValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
-			, message: { return "«SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)»" }
+			, message: { return «SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)» }
 		«ELSE»
-			, message: { return "" }
+			, message: { return defaultMessage }
 		«ENDIF»
 		«IF validator.params.filter(ValidatorMinParam).length > 0»
 			, min: MD2Float(«validator.params.filter(ValidatorMinParam).get(0).min»)
@@ -90,9 +90,9 @@ class IOSValidator {
 	def static generateStandardStringRangeValidator(String identifier, StandardStringRangeValidator validator) '''
 		StringRangeValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
-			, message: { return "«SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)»" }
+			, message: { return «SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)» }
 		«ELSE»
-			, message: { return "" }
+			, message: { return defaultMessage }
 		«ENDIF»
 		«IF validator.params.filter(ValidatorMinLengthParam).length > 0»
 			, min: MD2Integer(«validator.params.filter(ValidatorMinLengthParam).get(0).minLength»)
@@ -111,9 +111,9 @@ class IOSValidator {
 	def static generateStandardDateRangeValidator(String identifier, StandardDateRangeValidator validator) '''
 		DateRangeValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
-			, message: { return "«SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)»" }
+			, message: { return «SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)» }
 		«ELSE»
-			, message: { return "" }
+			, message: { return defaultMessage }
 		«ENDIF»
 		«IF validator.params.filter(ValidatorMinDateParam).length > 0»
 			, min: MD2Date(«validator.params.filter(ValidatorMinDateParam).get(0).min»)
@@ -132,9 +132,9 @@ class IOSValidator {
 	def static generateStandardTimeRangeValidator(String identifier, StandardTimeRangeValidator validator) '''
 		TimeRangeValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
-			, message: { return "«SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)»" }
+			, message: { return «SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)» }
 		«ELSE»
-			, message: { return "" }
+			, message: { return defaultMessage }
 		«ENDIF»
 		«IF validator.params.filter(ValidatorMinTimeParam).length > 0»
 			, min: MD2Time(«validator.params.filter(ValidatorMinTimeParam).get(0).min»)
@@ -153,9 +153,9 @@ class IOSValidator {
 	def static generateStandardDateTimeRangeValidator(String identifier, StandardDateTimeRangeValidator validator) '''
 		DateTimeRangeValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
-			, message: { return "«SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)»" }
+			, message: { return «SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)» }
 		«ELSE»
-			, message: { return "" }
+			, message: { return defaultMessage }
 		«ENDIF»
 		«IF validator.params.filter(ValidatorMinDateTimeParam).length > 0»
 			, min: MD2DateTime(«validator.params.filter(ValidatorMinDateTimeParam).get(0).min»)

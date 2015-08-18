@@ -14,7 +14,7 @@ import de.wwu.md2.framework.mD2.ContentElement
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.Keyword
 import de.wwu.md2.framework.mD2.AttributeType
-import de.wwu.md2.framework.mD2.SimpleActionRef
+import de.wwu.md2.framework.mD2.SimpleAction
 import de.wwu.md2.framework.mD2.Action
 import de.wwu.md2.framework.mD2.EventDef
 import de.wwu.md2.framework.mD2.InputElement
@@ -144,7 +144,7 @@ class IOSValidator extends AbstractGeneratorSupportValidator{
     }
     
     @Check
-    def checkSimpleActionRef(SimpleActionRef simpleAction) {
+    def checkSimpleAction(SimpleAction simpleAction) {
         var supportedActionTypes = Sets.newHashSet(
             MD2Package.eINSTANCE.gotoViewAction
 			, MD2Package.eINSTANCE.disableAction
@@ -167,6 +167,8 @@ class IOSValidator extends AbstractGeneratorSupportValidator{
     def checkEventDef(EventDef eventDef) {
         var supportedKeywords = Sets.newHashSet(
           	MD2Package.eINSTANCE.contentProviderEventRef
+          	, MD2Package.eINSTANCE.contentProviderReference
+          	, MD2Package.eINSTANCE.contentProviderPath
 //			, MD2Package.eINSTANCE.contentProviderPathEventRef
 			, MD2Package.eINSTANCE.viewElementEventRef
 			, MD2Package.eINSTANCE.globalEventRef
@@ -184,6 +186,7 @@ class IOSValidator extends AbstractGeneratorSupportValidator{
     def checkCustomCodeFragment(CustomCodeFragment fragment) {
         var supportedKeywords = Sets.newHashSet(
           	MD2Package.eINSTANCE.callTask
+          	, MD2Package.eINSTANCE.contentProviderPath
 			, MD2Package.eINSTANCE.contentProviderSetTask
 			, MD2Package.eINSTANCE.eventBindingTask
 			, MD2Package.eINSTANCE.eventUnbindTask
@@ -192,8 +195,10 @@ class IOSValidator extends AbstractGeneratorSupportValidator{
 			, MD2Package.eINSTANCE.validatorBindingTask
 			, MD2Package.eINSTANCE.validatorUnbindTask
 //			, MD2Package.eINSTANCE.attributeSetTask
-//			, MD2Package.eINSTANCE.conditionalCodeFragments
+			, MD2Package.eINSTANCE.conditionalCodeFragment
 //			, MD2Package.eINSTANCE.viewElementSetTask
+			, MD2Package.eINSTANCE.abstractViewGUIElementRef
+			, MD2Package.eINSTANCE.contentProviderReference
         );
         
         if (!supportedKeywords.contains(fragment.eClass)) {

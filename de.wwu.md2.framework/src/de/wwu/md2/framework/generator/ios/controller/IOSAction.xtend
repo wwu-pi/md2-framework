@@ -20,6 +20,7 @@ import de.wwu.md2.framework.mD2.WebServiceCallAction
 import de.wwu.md2.framework.mD2.WorkflowElement
 import de.wwu.md2.framework.mD2.ActionReference
 import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
+import de.wwu.md2.framework.mD2.Controller
 
 class IOSAction {
 	
@@ -67,7 +68,7 @@ class IOSAction {
 	'''
 	
 	def static generateDisplayMessageAction(String actionSignature, DisplayMessageAction action) '''
-		DisplayMessageAction(actionSignature: "«actionSignature»", message: "«SimpleExpressionUtil.getStringValue(action.message)»")
+		DisplayMessageAction(actionSignature: "«actionSignature»", message: «SimpleExpressionUtil.getStringValue(action.message)»)
 	'''
 	
 	def static generateContentProviderOperationAction(String actionSignature, ContentProviderOperationAction action) '''
@@ -114,6 +115,14 @@ class IOSAction {
 	}
 	
 	def static generateCustomAction(String actionSignature, CustomAction action) '''
+		«IF action.eContainer instanceof WorkflowElement»
 		«Settings.PREFIX_CUSTOM_ACTION + (action.eContainer as WorkflowElement).name.toFirstUpper + "_" + action.name.toFirstUpper»()
+		«ELSEIF action.eContainer instanceof Controller»
+		«Settings.PREFIX_CUSTOM_ACTION + "Controller_" + action.name.toFirstUpper»()
+		«ELSEIF action.eContainer == null»
+		«Settings.PREFIX_CUSTOM_ACTION + action.name.toFirstUpper»()
+		«ELSE»
+		«GeneratorUtil.printError("IOSAction encountered unknown custom action:" + action)»
+		«ENDIF»
 	'''
 }

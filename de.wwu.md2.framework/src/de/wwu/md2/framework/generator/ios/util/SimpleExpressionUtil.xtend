@@ -9,30 +9,36 @@ import de.wwu.md2.framework.mD2.SimpleExpression
 import de.wwu.md2.framework.mD2.StringVal
 import de.wwu.md2.framework.mD2.TimeVal
 import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
+import de.wwu.md2.framework.mD2.ContentProviderPath
 
 class SimpleExpressionUtil {
 	
-	// TODO only for subset of expressions yet
+	// MARK only a subset of available expressions are implemented yet
 	def static getStringValue(SimpleExpression expression){
 		return recursiveExpressionBuilder(expression)
 	}
 	
 	def static String recursiveExpressionBuilder(SimpleExpression expression) {
 		switch expression {
-			StringVal: return (expression as StringVal).value
-			BooleanVal: return (expression as BooleanVal).value.toString  
-			DateVal: return (expression as DateVal).value.toString
-			TimeVal: return (expression as TimeVal).value.toString
-			DateTimeVal: return (expression as DateTimeVal).value.toString
+			StringVal: return '"' + expression.value + '"'
+			BooleanVal: return '"' + expression.value.toString + '"'  
+			DateVal: return '"' + expression.value.toString + '"'
+			TimeVal: return '"' + expression.value.toString + '"'
+			DateTimeVal: return '"' + expression.value.toString + '"'
 			ConcatenatedString: {
-				return (expression as ConcatenatedString).leftString 
-					+ recursiveExpressionBuilder((expression as ConcatenatedString).rightString)
+				return '"' + expression.leftString + '" + "' 
+					+ recursiveExpressionBuilder(expression.rightString) + '"'
 				}
 			AbstractViewGUIElementRef: {
-				return  '" + WidgetRegistry.instance.getWidget(WidgetMapping.' 
-					+ IOSWidgetMapping.lookup(expression as AbstractViewGUIElementRef)
-					+ ')!.value.toString() + "'
-			}  
+				return  'WidgetRegistry.instance.getWidget(WidgetMapping.' 
+					+ IOSWidgetMapping.lookup(expression)
+					+ ')!.value.toString()'
+			}
+			ContentProviderPath: {
+				return 'ContentProviderRegistry.instance.getContentProvider("'
+					+ expression.contentProviderRef.name
+					+ '")!'
+			}
 			default: {
 				GeneratorUtil.printError("SimpleExpressionUtil encountered unsupported expression: " + expression)
 				return ""

@@ -25,6 +25,8 @@ import de.wwu.md2.framework.mD2.WorkflowElement
 import java.lang.invoke.MethodHandles
 import org.eclipse.emf.common.util.Enumerator
 import de.wwu.md2.framework.mD2.ContentProviderReference
+import de.wwu.md2.framework.mD2.ConditionalCodeFragment
+import de.wwu.md2.framework.generator.ios.util.ConditionalExpressionUtil
 
 class IOSCustomAction {
 	
@@ -46,7 +48,7 @@ class «className»: ActionType {
     func execute() {
         // Bindings/ Mappings / Call action / Set content provider / Conditions
 	«FOR i : 1..action.codeFragments.length»
-		«generateCodeFragment(i, action.codeFragments.get(i - 1))»
+		«generateCodeFragment(i.toString, action.codeFragments.get(i - 1))»
     «ENDFOR»
        
     }
@@ -57,27 +59,28 @@ class «className»: ActionType {
 }
 	'''
 	
-	def static generateCodeFragment(int actionCounter, CustomCodeFragment fragment){
+	def static generateCodeFragment(String actionCounter, CustomCodeFragment fragment){
 		// MARK incomplete list to be extended in future version
 		switch fragment {
 			CallTask: return generateCallTask(actionCounter, (fragment as CallTask))
-			AttributeSetTask: return generateAttributeSetTask(actionCounter, (fragment as AttributeSetTask))
-			EventBindingTask: return generateEventBindingTask(actionCounter, (fragment as EventBindingTask))
-			EventUnbindTask: return generateEventUnbindTask(actionCounter, (fragment as EventUnbindTask))
-			MappingTask: return generateMappingTaskTask(actionCounter, (fragment as MappingTask))
-			UnmappingTask: return generateUnmappingTaskTask(actionCounter, (fragment as UnmappingTask))
-			ValidatorBindingTask: return generateValidatorBindingTask(actionCounter, (fragment as ValidatorBindingTask))
-			ValidatorUnbindTask: return generateValidatorUnbindTask(actionCounter, (fragment as ValidatorUnbindTask))
+			AttributeSetTask: return generateAttributeSetTask(actionCounter, fragment)
+			EventBindingTask: return generateEventBindingTask(actionCounter, fragment)
+			EventUnbindTask: return generateEventUnbindTask(actionCounter, fragment)
+			MappingTask: return generateMappingTaskTask(actionCounter, fragment)
+			UnmappingTask: return generateUnmappingTaskTask(actionCounter, fragment)
+			ValidatorBindingTask: return generateValidatorBindingTask(actionCounter, fragment)
+			ValidatorUnbindTask: return generateValidatorUnbindTask(actionCounter, fragment)
+			ConditionalCodeFragment: return generateConditionalCodeFragment(actionCounter, fragment)
 			default: GeneratorUtil.printError("IOSCustomAction encountered unsupported CustomCodeFragment type: " + fragment)
 		}
 	}
 	
-	def static generateCallTask(int actionCounter, CallTask task) '''
+	def static generateCallTask(String actionCounter, CallTask task) '''
 			
 			let codeFragment«actionCounter» = «IOSAction.generateAction(className + "_" + actionCounter, task.action)».execute()
 	'''
 	
-	def static generateAttributeSetTask(int actionCounter, AttributeSetTask task) '''
+	def static generateAttributeSetTask(String actionCounter, AttributeSetTask task) '''
 		«IF task.source instanceof ContentProviderReference»
 			
 			let codeFragment«actionCounter» = AssignObjectAction(actionSignature: actionSignature + "__«actionCounter»",
@@ -90,7 +93,7 @@ class «className»: ActionType {
 		«ENDIF»
 	'''
 	
-	def static generateEventBindingTask(int actionCounter, EventBindingTask task) '''
+	def static generateEventBindingTask(String actionCounter, EventBindingTask task) '''
 			
 		«FOR i : 1..task.events.length»
 		«FOR j : 1..task.actions.length»
@@ -100,7 +103,7 @@ class «className»: ActionType {
 		«ENDFOR»
 	'''
 	
-	def static generateEventUnbindTask(int actionCounter, EventUnbindTask task) '''
+	def static generateEventUnbindTask(String actionCounter, EventUnbindTask task) '''
 			
 		«FOR i : 1..task.events.length»
 		«FOR j : 1..task.actions.length»
@@ -110,7 +113,7 @@ class «className»: ActionType {
 		«ENDFOR»
 	'''
 	
-	def static generateMappingTaskTask(int actionCounter, MappingTask task) '''
+	def static generateMappingTaskTask(String actionCounter, MappingTask task) '''
 		
 		«IF task.pathDefinition instanceof ContentProviderPath»
 		DataMapper.instance.map(
@@ -122,7 +125,7 @@ class «className»: ActionType {
         «ENDIF»
 	'''
 	
-	def static generateUnmappingTaskTask(int actionCounter, UnmappingTask task) '''
+	def static generateUnmappingTaskTask(String actionCounter, UnmappingTask task) '''
 		
 		«IF task.pathDefinition instanceof ContentProviderPath»
 		DataMapper.instance.unmap(
@@ -134,7 +137,7 @@ class «className»: ActionType {
         «ENDIF»
 	'''
 	
-	def static generateValidatorBindingTask(int actionCounter, ValidatorBindingTask task) '''
+	def static generateValidatorBindingTask(String actionCounter, ValidatorBindingTask task) '''
 			
 		«FOR i : 1..task.referencedFields.length»
 		«FOR j : 1..task.validators.length»
@@ -146,7 +149,7 @@ class «className»: ActionType {
 	'''
 	
 	// TODO unbind "allTypes" keyword
-	def static generateValidatorUnbindTask(int actionCounter, ValidatorUnbindTask task) '''
+	def static generateValidatorUnbindTask(String actionCounter, ValidatorUnbindTask task) '''
 			
 		«FOR i : 1..task.referencedFields.length»
 		«FOR j : 1..task.validators.length»
@@ -155,6 +158,29 @@ class «className»: ActionType {
 				.removeValidator(codeFragment«actionCounter»_«i»_«j»)
 		«ENDFOR»
 		«ENDFOR»
+	'''
+	
+	def static generateConditionalCodeFragment(String actionCounter, ConditionalCodeFragment fragment) '''
+			
+			if «ConditionalExpressionUtil.getStringRepresentation(fragment.^if.condition)» {
+				«FOR i : 0..<fragment.^if.codeFragments.length»
+				«generateCodeFragment(actionCounter + "_if_" + i, fragment.^if.codeFragments.get(i))»
+				«ENDFOR»
+			}
+			«FOR j : 0..<fragment.elseifs.length »
+			else if «ConditionalExpressionUtil.getStringRepresentation(fragment.elseifs.get(j).condition)» {
+				«FOR i : 0..<fragment.elseifs.get(j).codeFragments.length»
+				«generateCodeFragment(actionCounter + "_elseif_" + j + "_" + i, fragment.elseifs.get(j).codeFragments.get(i))»
+				«ENDFOR»
+			}
+			«ENDFOR»
+			else {
+			«IF fragment.^else != null»
+				«FOR i : 0..<fragment.^else.codeFragments.length»
+				«generateCodeFragment(actionCounter + "_else_" + i, fragment.^else.codeFragments.get(i))»
+				«ENDFOR»
+			«ENDIF»
+			}
 	'''
 	
 	def static generateEventHandler(EventDef event, String actionStringRef, boolean register) {
