@@ -2,7 +2,7 @@ package de.wwu.md2.framework.generator.ios
 
 import de.wwu.md2.framework.generator.AbstractPlatformGenerator
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
-import de.wwu.md2.framework.generator.ios.controller.Controller
+import de.wwu.md2.framework.generator.ios.controller.IOSController
 import de.wwu.md2.framework.generator.ios.model.IOSContentProvider
 import de.wwu.md2.framework.generator.ios.model.IOSEntity
 import de.wwu.md2.framework.generator.ios.model.IOSEnum
@@ -166,10 +166,11 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 	]
 			]
 			 
-			val pathMainController = rootFolder + Settings.CONTROLLER_PATH + "Controller.swift"
+			val pathMainController = rootFolder + Settings.CONTROLLER_PATH 
+				+ Settings.PREFIX_GLOBAL + "Controller.swift"
 			GeneratorUtil.printDebug("Generate main controller: " 
 				+ pathMainController, false)
-			fsa.generateFile(pathMainController, Controller.generateStartupController(dataContainer))
+			fsa.generateFile(pathMainController, IOSController.generateStartupController(dataContainer))
 			 
 			/***************************************************
 			 * 
