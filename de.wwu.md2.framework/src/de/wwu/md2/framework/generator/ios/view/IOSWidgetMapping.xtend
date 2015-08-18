@@ -32,7 +32,7 @@ class IOSWidgetMapping {
 		// Retrieve name once to increase performance
 		for(i : 0..<viewElements.length){
 			if(viewElements.get(i).name != null){
-				viewElementNames.add(fullPathForViewElement(viewElements.get(i)))
+				viewElementNames.add(fullPathForViewElement(viewElements.get(i)).toFirstUpper)
 			}
 		}
 		

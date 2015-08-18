@@ -31,6 +31,8 @@ import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
 import de.wwu.md2.framework.mD2.WidthParam
 import java.util.Map
+import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam
+import de.wwu.md2.framework.mD2.GridLayoutPaneRowsParam
 
 class IOSView {
 	
@@ -86,7 +88,9 @@ class IOSView {
 			Label:	return generateLabel(element, container)
 			Image:	return generateImage(element, container)
 			Button:	return generateButton(element, container)
-			Tooltip: return "" // Tooltips are no separate elements in iOS // TODO
+			// Tooltips are no separate elements in iOS ->
+			// nothing to do (tooltips are dealt with in respective widget methods)
+			Tooltip: return ""
 			BooleanInput: return generateBooleanInput(element, container)
 			TextInput: return generateTextInput(element, container)
 			IntegerInput: return generateIntegerInput(element, container)
@@ -104,44 +108,54 @@ class IOSView {
 	
 	// Container elements
 	def static String generateGridLayoutPane(GridLayoutPane element, ContainerElement container) '''
-		let locationDetectionView_addressData = GridLayoutPane(widgetId: WidgetMapping.LocationDetectionView_AddressData)
-		locationDetectionView_addressData.columns = MD2Integer(2)
-		locationDetectionView.addWidget(locationDetectionView_addressData)
-		
-		// TODO	
+		«val qualifiedName = IOSWidgetMapping.fullPathForViewElement(element).toFirstLower»
+		let «qualifiedName» = GridLayoutPane(widgetId: WidgetMapping.«qualifiedName.toFirstUpper»)
+		«««Grid columns»»»
+		«IF element.params.filter(GridLayoutPaneColumnsParam).length > 0»
+		«qualifiedName».columns = MD2Integer(«element.params.filter(GridLayoutPaneColumnsParam).get(0).value»)
+		«ENDIF»
+		«««Grid rows»»»
+		«IF element.params.filter(GridLayoutPaneRowsParam).length > 0»
+		«qualifiedName».rows = MD2Integer(«element.params.filter(GridLayoutPaneRowsParam).get(0).value»)
+		«ENDIF»
+		«««Element width»»»
+		«IF element.params.filter(WidthParam).length > 0»
+		«qualifiedName».width = Float(1/100 * «element.params.filter(WidthParam).get(0).width»)
+		«ENDIF»	
+		«««Add to surrounding container»»»
 		«IF container != null»
 		«IOSWidgetMapping.fullPathForViewElement(container)».addWidget(«IOSWidgetMapping.fullPathForViewElement(element)»)
 		«ENDIF»
-		
 		«««Generate Subelements»»
 		«FOR subElem : element.elements»
 		«generateViewElement(subElem, element)»
 		«ENDFOR»
+		
 		
 	'''
 	
 	def static String generateFlowLayoutPane(FlowLayoutPane element, ContainerElement container) '''
 		«val qualifiedName = IOSWidgetMapping.fullPathForViewElement(element).toFirstLower»
-		let «qualifiedName» = FlowLayoutPane(widgetId: WidgetMapping.«qualifiedName»)
-		
+		let «qualifiedName» = FlowLayoutPane(widgetId: WidgetMapping.«qualifiedName.toFirstUpper»)
+		«««Flow orientation»»»
 		«IF element.params.filter(FlowLayoutPaneFlowDirectionParam).length > 0»
 		«qualifiedName».orientation = FlowLayoutPane.Orientation.«element.params.filter(FlowLayoutPaneFlowDirectionParam).get(0).flowDirection.literal.toLowerCase.toFirstUpper»
 		«ELSE»
 		«qualifiedName».orientation = FlowLayoutPane.Orientation.Horizontal
 		«ENDIF»	
-		
+		«««Element width»»»
 		«IF element.params.filter(WidthParam).length > 0»
-		«qualifiedName».width = Float(0.«element.params.filter(WidthParam).get(0).width»)
+		«qualifiedName».width = Float(1/100 * «element.params.filter(WidthParam).get(0).width»)
 		«ENDIF»	
-		
+		«««Add to surrounding container»»»
 		«IF container != null»
 		«IOSWidgetMapping.fullPathForViewElement(container)».addWidget(«IOSWidgetMapping.fullPathForViewElement(element)»)
 		«ENDIF»
-		
 		«««Generate Subelements»»
 		«FOR subElem : element.elements»
 		«generateViewElement(subElem, element)»
 		«ENDFOR»
+		
 		
 	'''
 	
@@ -150,9 +164,9 @@ class IOSView {
 		«««Spacers have no name»»
 		«val qualifiedName = IOSWidgetMapping.fullPathForViewElement(container).toFirstLower + "_Spacer" + GeneratorUtil.randomId()»
 		let «qualifiedName» = SpacerWidget(widgetId: WidgetMapping.Spacer)
-		
-		«IF element.width > 0»«qualifiedName».width = Float(0.«element.width»)«ENDIF»
-		
+		«««Element width»»»
+		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
+		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container)».addWidget(«qualifiedName»)
 		
 		
@@ -160,12 +174,14 @@ class IOSView {
 	
 	def static String generateLabel(Label element, ContainerElement container) '''
 		«val qualifiedName = IOSWidgetMapping.fullPathForViewElement(element).toFirstLower»
-		let «qualifiedName» = LabelWidget(widgetId: WidgetMapping.«qualifiedName»)
-		
+		let «qualifiedName» = LabelWidget(widgetId: WidgetMapping.«qualifiedName.toFirstUpper»)
+		«««Set initial value»»»
 		«qualifiedName».value = MD2String("«element.text»")
-		«IF element.width > 0»«qualifiedName».width = Float(0.«element.width»)«ENDIF»
+		«««Element width»»»
+		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
+		«««Generate styles»»»
 		«generateStyles(qualifiedName, element.style)»
-		
+		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container)».addWidget(«qualifiedName»)
 		widgetRegistry.add(WidgetWrapper(widget: «qualifiedName»))
 		
@@ -174,37 +190,38 @@ class IOSView {
 	
 	def static String generateImage(Image element, ContainerElement container) '''
 		«val qualifiedName = IOSWidgetMapping.fullPathForViewElement(element).toFirstLower»
-		let «qualifiedName» = ImageWidget(widgetId: WidgetMapping.«qualifiedName»)
-		
+		let «qualifiedName» = ImageWidget(widgetId: WidgetMapping.«qualifiedName.toFirstUpper»)
+		«««Set initial value»»»
 		«qualifiedName».value = MD2String("«element.src»")
-		
+		«««Element height»»»
 		«IF element.height > 0»
 			«qualifiedName».height = Float(«element.height»)
 		«ELSEIF element.imgHeight > 0»
 			«qualifiedName».height = Float(«element.imgHeight»)
 		«ENDIF»
-		
+		«««Element width»»»
 		«IF element.imgWidth > 0»
 			«qualifiedName».width= Float(«element.imgWidth»)
 		«ELSEIF element.width> 0»
 			«qualifiedName».width= Float(«element.width»)
 		«ENDIF»
-		
+		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container)».addWidget(«qualifiedName»)
 		widgetRegistry.add(WidgetWrapper(widget: «qualifiedName»))
 		
 		
 	'''
 	
-	// TODO
 	def static String generateButton(Button element, ContainerElement container) '''
 		«val qualifiedName = IOSWidgetMapping.fullPathForViewElement(element).toFirstLower»
-		let «qualifiedName» = LabelWidget(widgetId: WidgetMapping.«qualifiedName»)
-		
+		let «qualifiedName» = LabelWidget(widgetId: WidgetMapping.«qualifiedName.toFirstUpper»)
+		«««Set initial value»»»
 		«qualifiedName».value = MD2String("«element.text»")
-		«IF element.width > 0»«qualifiedName».width = Float(0.«element.width»)«ENDIF»
+		«««Element width»»»
+		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
+		«««Generate styles»»»
 		«generateStyles(qualifiedName, element.style)»
-		
+		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container)».addWidget(«qualifiedName»)
 		let wrapper_«qualifiedName» = WidgetWrapper(widget: «qualifiedName»)
 		wrapper_«qualifiedName».isElementDisabled = «element.isDisabled»
@@ -215,12 +232,11 @@ class IOSView {
 	
 	def static String generateBooleanInput(BooleanInput element, ContainerElement container) '''
 		«val qualifiedName = IOSWidgetMapping.fullPathForViewElement(element).toFirstLower»
-		let «qualifiedName» = SwitchWidget(widgetId: WidgetMapping.«qualifiedName»)
-		
-		«IF element.isDisabled»«qualifiedName».disable()«ENDIF»
-		«IF element.width > 0»«qualifiedName».width = Float(0.«element.width»)«ENDIF»
+		let «qualifiedName» = SwitchWidget(widgetId: WidgetMapping.«qualifiedName.toFirstUpper»)
+		«««Element width»»»
+		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
 		«qualifiedName».tooltip = MD2String("«element.tooltipText»")
-		
+		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container)».addWidget(«qualifiedName»)
 		let wrapper_«qualifiedName» = WidgetWrapper(widget: «qualifiedName»)
 		wrapper_«qualifiedName».isElementDisabled = «element.isDisabled»
@@ -232,49 +248,61 @@ class IOSView {
 	// TODO textInputType keyword 
 	def static String generateTextInput(TextInput element, ContainerElement container) '''
 		«val qualifiedName = IOSWidgetMapping.fullPathForViewElement(element).toFirstLower»
-		let «qualifiedName» = LabelWidget(widgetId: WidgetMapping.«qualifiedName»)
-		
+		let «qualifiedName» = LabelWidget(widgetId: WidgetMapping.«qualifiedName.toFirstUpper»)
+		«««Set initial value»»»
 		«qualifiedName».value = MD2String("«element.defaultValue»")
-		«IF element.width > 0»«qualifiedName».width = Float(0.«element.width»)«ENDIF»
+		«««Element width»»»
+		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
 		«qualifiedName».tooltip = MD2String("«element.tooltipText»")
-		
+		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container)».addWidget(«qualifiedName»)
 		let wrapper_«qualifiedName» = WidgetWrapper(widget: «qualifiedName»)
 		wrapper_«qualifiedName».isElementDisabled = «element.isDisabled»
 		widgetRegistry.add(wrapper_«qualifiedName»)
 		
+		
 	'''
 	
-	// TODO add validator
+	// MARK currently check for number, not exact integer type
 	def static String generateIntegerInput(IntegerInput element, ContainerElement container) '''
 		«val qualifiedName = IOSWidgetMapping.fullPathForViewElement(element).toFirstLower»
-		let «qualifiedName» = TextFieldWidget(widgetId: WidgetMapping.«qualifiedName»)
-		
+		let «qualifiedName» = TextFieldWidget(widgetId: WidgetMapping.«qualifiedName.toFirstUpper»)
+		«««Set initial value»»»
 		«qualifiedName».value = MD2Integer(«element.defaultValue»)
-		«IF element.width > 0»«qualifiedName».width = Float(0.«element.width»)«ENDIF»
+		«««Element width»»»
+		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
 		«qualifiedName».tooltip = MD2String("«element.tooltipText»")
-		
+		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container)».addWidget(«qualifiedName»)
 		let wrapper_«qualifiedName» = WidgetWrapper(widget: «qualifiedName»)
 		wrapper_«qualifiedName».isElementDisabled = «element.isDisabled»
+		wrapper_«qualifiedName».addValidator(IsNumberValidator("«qualifiedName»_auto_number", 
+				message: { return defaultMessage.toString }))
 		widgetRegistry.add(wrapper_«qualifiedName»)
 		
 		
 	'''
 	
-	// TODO add validator
-	// TODO places keyword
 	def static String generateNumberInput(NumberInput element, ContainerElement container) '''
 		«val qualifiedName = IOSWidgetMapping.fullPathForViewElement(element).toFirstLower»
-		let «qualifiedName» = TextFieldWidget(widgetId: WidgetMapping.«qualifiedName»)
-		
+		let «qualifiedName» = TextFieldWidget(widgetId: WidgetMapping.«qualifiedName.toFirstUpper»)
+		«««Set initial value»»»
 		«qualifiedName».value = MD2Float(Float(«element.defaultValue»))
-		«IF element.width > 0»«qualifiedName».width = Float(0.«element.width»)«ENDIF»
+		«««Element width»»»
+		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
 		«qualifiedName».tooltip = MD2String("«element.tooltipText»")
-		
+		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container)».addWidget(«qualifiedName»)
 		let wrapper_«qualifiedName» = WidgetWrapper(widget: «qualifiedName»)
 		wrapper_«qualifiedName».isElementDisabled = «element.isDisabled»
+		wrapper_«qualifiedName».addValidator(IsNumberValidator("«qualifiedName»_auto_number", 
+				message: { return defaultMessage.toString }))
+		«IF element.places > 0»
+			wrapper_«qualifiedName».addValidator(StringRangeValidator("«qualifiedName»_auto_places", 
+				message: { return defaultMessage.toString }, 
+				minLength: MD2Integer(0), 
+				maxLength: MD2Integer(«element.places»)))
+		«ENDIF»
 		widgetRegistry.add(wrapper_«qualifiedName»)
 		
 		
@@ -282,13 +310,14 @@ class IOSView {
 	
 	def static String generateDateInput(DateInput element, ContainerElement container) '''
 		«val qualifiedName = IOSWidgetMapping.fullPathForViewElement(element).toFirstLower»
-		let «qualifiedName» = DateTimePickerWidget(widgetId: WidgetMapping.«qualifiedName»)
-		
+		let «qualifiedName» = DateTimePickerWidget(widgetId: WidgetMapping.«qualifiedName.toFirstUpper»)
+		«««Set initial value»»»
 		«qualifiedName».value = MD2String(«element.defaultValue»)
-		«IF element.width > 0»«qualifiedName».width = Float(0.«element.width»)«ENDIF»
+		«««Element width»»»
+		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
 		«qualifiedName».tooltip = MD2String("«element.tooltipText»")
 		«qualifiedName».pickerMode = UIDatePickerMode.Date
-		
+		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container)».addWidget(«qualifiedName»)
 		let wrapper_«qualifiedName» = WidgetWrapper(widget: «qualifiedName»)
 		wrapper_«qualifiedName».isElementDisabled = «element.isDisabled»
@@ -299,13 +328,14 @@ class IOSView {
 	
 	def static String generateTimeInput(TimeInput element, ContainerElement container) '''
 		«val qualifiedName = IOSWidgetMapping.fullPathForViewElement(element).toFirstLower»
-		let «qualifiedName» = DateTimePickerWidget(widgetId: WidgetMapping.«qualifiedName»)
-		
+		let «qualifiedName» = DateTimePickerWidget(widgetId: WidgetMapping.«qualifiedName.toFirstUpper»)
+		«««Set initial value»»»
 		«qualifiedName».value = MD2String(«element.defaultValue»)
-		«IF element.width > 0»«qualifiedName».width = Float(0.«element.width»)«ENDIF»
+		«««Element width»»»
+		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
 		«qualifiedName».tooltip = MD2String("«element.tooltipText»")
 		«qualifiedName».pickerMode = UIDatePickerMode.Time
-		
+		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container)».addWidget(«qualifiedName»)
 		let wrapper_«qualifiedName» = WidgetWrapper(widget: «qualifiedName»)
 		wrapper_«qualifiedName».isElementDisabled = «element.isDisabled»
@@ -316,13 +346,14 @@ class IOSView {
 	
 	def static String generateDateTimeInput(DateTimeInput element, ContainerElement container) '''
 		«val qualifiedName = IOSWidgetMapping.fullPathForViewElement(element).toFirstLower»
-		let «qualifiedName» = DateTimePickerWidget(widgetId: WidgetMapping.«qualifiedName»)
-		
+		let «qualifiedName» = DateTimePickerWidget(widgetId: WidgetMapping.«qualifiedName.toFirstUpper»)
+		«««Set initial value»»»
 		«qualifiedName».value = MD2String(«element.defaultValue»)
-		«IF element.width > 0»«qualifiedName».width = Float(0.«element.width»)«ENDIF»
+		«««Element width»»»
+		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
 		«qualifiedName».tooltip = MD2String("«element.tooltipText»")
 		«qualifiedName».pickerMode = UIDatePickerMode.DateAndTime
-		
+		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container)».addWidget(«qualifiedName»)
 		let wrapper_«qualifiedName» = WidgetWrapper(widget: «qualifiedName»)
 		wrapper_«qualifiedName».isElementDisabled = «element.isDisabled»
@@ -333,18 +364,19 @@ class IOSView {
 	
 	def static String generateOptionInput(OptionInput element, ContainerElement container) '''
 		«val qualifiedName = IOSWidgetMapping.fullPathForViewElement(element).toFirstLower»
-		let «qualifiedName» = OptionWidget(widgetId: WidgetMapping.«qualifiedName»)
-		
+		let «qualifiedName» = OptionWidget(widgetId: WidgetMapping.«qualifiedName.toFirstUpper»)
+		«««Set initial value»»»
 		«qualifiedName».value = MD2String(«element.defaultValue»)
-		«IF element.width > 0»«qualifiedName».width = Float(0.«element.width»)«ENDIF»
+		«««Element width»»»
+		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
 		«qualifiedName».tooltip = MD2String("«element.tooltipText»")
-		
+		«««Set available options»»»
 		«IF element.enumReference != null»
 		«qualifiedName».options = «Settings.PREFIX_ENUM + element.enumReference.name.toFirstUpper».EnumType.getAllValues()
 		«ELSE»
 		«qualifiedName».options = [«FOR option : element.enumBody.elements SEPARATOR ", "»«option»«ENDFOR»]
 		«ENDIF»
-		
+		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container)».addWidget(«qualifiedName»)
 		let wrapper_«qualifiedName» = WidgetWrapper(widget: «qualifiedName»)
 		wrapper_«qualifiedName».isElementDisabled = «element.isDisabled»

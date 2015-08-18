@@ -73,8 +73,16 @@ class IOSValidator extends AbstractGeneratorSupportValidator{
 			, MD2Package.eINSTANCE.spacer
 			, MD2Package.eINSTANCE.button 
 			, MD2Package.eINSTANCE.label
-			, MD2Package.eINSTANCE.tooltip 
+			, MD2Package.eINSTANCE.tooltip
 //			, MD2Package.eINSTANCE.uploadedImageOutput
+			, MD2Package.eINSTANCE.booleanInput 
+            , MD2Package.eINSTANCE.textInput
+            , MD2Package.eINSTANCE.integerInput
+			, MD2Package.eINSTANCE.numberInput
+			, MD2Package.eINSTANCE.dateInput 
+			, MD2Package.eINSTANCE.timeInput
+			, MD2Package.eINSTANCE.dateTimeInput 
+			, MD2Package.eINSTANCE.optionInput
         );
         
         if (!supportedKeywords.contains(contentElement.eClass)) {
@@ -88,14 +96,14 @@ class IOSValidator extends AbstractGeneratorSupportValidator{
     @Check
     def checkInputElements(InputElement inputElement) {
         var supportedKeywords = Sets.newHashSet(
-//            MD2Package.eINSTANCE.booleanInput 
-//            , MD2Package.eINSTANCE.textInput
-//            , MD2Package.eINSTANCE.integerInput
-//			, MD2Package.eINSTANCE.numberInput
-//			, MD2Package.eINSTANCE.dateInput 
-//			, MD2Package.eINSTANCE.timeInput
-//			, MD2Package.eINSTANCE.dateTimeInput 
-//			, MD2Package.eINSTANCE.optionInput
+            MD2Package.eINSTANCE.booleanInput 
+            , MD2Package.eINSTANCE.textInput
+            , MD2Package.eINSTANCE.integerInput
+			, MD2Package.eINSTANCE.numberInput
+			, MD2Package.eINSTANCE.dateInput 
+			, MD2Package.eINSTANCE.timeInput
+			, MD2Package.eINSTANCE.dateTimeInput 
+			, MD2Package.eINSTANCE.optionInput
 //			, MD2Package.eINSTANCE.entitySelector
 //			, MD2Package.eINSTANCE.fileUpload
         );

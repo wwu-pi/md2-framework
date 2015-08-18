@@ -6,6 +6,8 @@ import java.lang.invoke.MethodHandles
 import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.generator.ios.view.IOSView
 import de.wwu.md2.framework.mD2.Style
+import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
+import de.wwu.md2.framework.mD2.ReferencedModelType
 
 class IOSController {
 	
@@ -39,21 +41,11 @@ func run(window: UIWindow) {
 		 * Initialize content providers
 		 * 
 		 ***************************************************/
-        let oneComplaintContentProvider = ComplaintContentProvider(content: Complaint())
-        ContentProviderRegistry.instance.addContentProvider("ComplaintProvider", provider: oneComplaintContentProvider)
-        
-        let address = Address()
-        //address.internalId = MD2Integer(1)
-        address.set("myCity", value: MD2String("Muenster"))
-        let oneAddressContentProvider = AddressContentProvider(content: address)
-        ContentProviderRegistry.instance.addContentProvider("AddressProvider", provider: oneAddressContentProvider)
-        
-        //oneAddressContentProvider.save()
-        
-        let secondAddressContentProvider = AddressContentProvider(content: address)
-        //secondAddressContentProvider.load()
-        println(secondAddressContentProvider.content?.toString())
-        
+		«FOR contentProvider: data.contentProviders.filter[cp | !cp.name.startsWith("__")]»
+		ContentProviderRegistry.instance.addContentProvider("«contentProvider.name»", 
+			provider: «Settings.PREFIX_CONTENT_PROVIDER + contentProvider.name.toFirstUpper»(
+				content: «Settings.PREFIX_ENTITY + (contentProvider.type as ReferencedModelType).entity.name.toFirstUpper»())
+        «ENDFOR»
         
         /***************************************************
 		 * 
@@ -63,14 +55,16 @@ func run(window: UIWindow) {
         var viewManager = ViewManager.instance
         viewManager.window = window
         
-        viewManager.setupView("LocationDetectionView", view: locationDetectionView)
-        viewManager.setupView("LocationVerifyView", view: locationVerifyView)
+        «FOR rootView : data.rootViewContainers.values.flatten»
+        viewManager.setupView("«IOSWidgetMapping.fullPathForViewElement(rootView).toFirstUpper»", view: «IOSWidgetMapping.fullPathForViewElement(rootView).toFirstLower»)
+        «ENDFOR»
         
         /***************************************************
 		 * 
 		 * Initialize process chains and workflowElements
 		 * 
 		 ***************************************************/
+        /*
         let pcLocationDetection_LocationProcessChain = ProcessChain(processChainSignature: "LocationDetection_LocationProcessChain")
         let step1 = pcLocationDetection_LocationProcessChain.addProcessChainStep("LocationDetection", viewName: "LocationDetectionView")
         step1.addGoTo(ProcessChainStep.GoToType.Proceed, eventType: EventType.OnClick, widget: WidgetMapping.LocationDetectionView_Next, action: CustomAction_SaveComplaint(), goToStep: nil)
@@ -92,15 +86,15 @@ func run(window: UIWindow) {
             WorkflowEvent.LocationDetection_CancelWorkflowEvent,
             actionType: WorkflowActionType.End,
             workflowElement: wfeLocationDetection)
-        
+        */
         /***************************************************
 		 * 
 		 * Start initial workflow of the app
 		 * 
 		 ***************************************************/
-        SetWorkflowElementAction(actionSignature: "InitialAction", workflowElement: wfeLocationDetection).execute()
+        //SetWorkflowElementAction(actionSignature: "InitialAction", workflowElement: wfeLocationDetection).execute()
         
-        println("[Controller] Startup completed")
+		println("[Controller] Startup completed")
     }
 }
 	'''
