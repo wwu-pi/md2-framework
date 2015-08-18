@@ -79,16 +79,18 @@ enum WidgetMapping: Int {
     // A list of all widget elements used in the application
     // Needed for the identification of widgets and views (widgetId) which can only be of integer type due to platform restrictions on the widget tags
 	case NotFound = 0
-    «FOR i : 1..viewElementNames.length»
-    case «viewElementNames.get(i - 1)» = «i»
+	case Spacer = 1 // Dummy because spacers have no given name
+    «FOR i : 2..viewElementNames.length»
+    case «viewElementNames.get(i - 2)» = «i»
     «ENDFOR»
     
     // There is currently no introspection into enums
     // Therefore computed property to establish a link of type enum -> string representation
     var description: String {
         switch self {
-        «FOR i : 1..viewElementNames.length»
-        case .«viewElementNames.get(i - 1)»: return "«viewElementNames.get(i - 1)»"
+        case .Spacer: return "Spacer"
+        «FOR i : 2..viewElementNames.length»
+        case .«viewElementNames.get(i - 2)»: return "«viewElementNames.get(i - 2)»"
     	«ENDFOR»
     	default: return "NotFound"
         }
@@ -98,8 +100,9 @@ enum WidgetMapping: Int {
     // Therefore static method to establish a backward link of type raw int value -> enum
     static func fromRawValue(value: Int) -> WidgetMapping {
         switch(value){
-    	«FOR i : 1..viewElementNames.length»
-    	case «i»: return .«viewElementNames.get(i - 1)»
+        case 1: return .Spacer
+    	«FOR i : 2..viewElementNames.length»
+    	case «i»: return .«viewElementNames.get(i - 2)»
     	«ENDFOR»
     	default: return .NotFound
         }

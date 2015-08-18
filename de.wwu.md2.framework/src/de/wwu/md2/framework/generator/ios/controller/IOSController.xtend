@@ -24,13 +24,21 @@ func run(window: UIWindow) {
         // Initialize the widget registry
         var widgetRegistry = WidgetRegistry.instance
 
-        // Initialize all view elements
+		/***************************************************
+		 * 
+		 * Initialize all view elements
+		 * 
+		 ***************************************************/
         «FOR view : data.rootViewContainers.values.flatten»
         // View: «view.name»
         «IOSView.generateView(view, data.view.eAllContents.filter(Style).toList)»
         «ENDFOR»
         
-    	// Initialize content providers
+    	/***************************************************
+		 * 
+		 * Initialize content providers
+		 * 
+		 ***************************************************/
         let oneComplaintContentProvider = ComplaintContentProvider(content: Complaint())
         ContentProviderRegistry.instance.addContentProvider("ComplaintProvider", provider: oneComplaintContentProvider)
         
@@ -47,15 +55,22 @@ func run(window: UIWindow) {
         println(secondAddressContentProvider.content?.toString())
         
         
-        // Initialize the view manager
+        /***************************************************
+		 * 
+		 * Initialize view manager and all views
+		 * 
+		 ***************************************************/
         var viewManager = ViewManager.instance
         viewManager.window = window
         
-        // Initialize all views
         viewManager.setupView("LocationDetectionView", view: locationDetectionView)
         viewManager.setupView("LocationVerifyView", view: locationVerifyView)
         
-        // Initialize process chains and workflowElements
+        /***************************************************
+		 * 
+		 * Initialize process chains and workflowElements
+		 * 
+		 ***************************************************/
         let pcLocationDetection_LocationProcessChain = ProcessChain(processChainSignature: "LocationDetection_LocationProcessChain")
         let step1 = pcLocationDetection_LocationProcessChain.addProcessChainStep("LocationDetection", viewName: "LocationDetectionView")
         step1.addGoTo(ProcessChainStep.GoToType.Proceed, eventType: EventType.OnClick, widget: WidgetMapping.LocationDetectionView_Next, action: CustomAction_SaveComplaint(), goToStep: nil)
@@ -78,7 +93,11 @@ func run(window: UIWindow) {
             actionType: WorkflowActionType.End,
             workflowElement: wfeLocationDetection)
         
-        // Start initial workflow of the app
+        /***************************************************
+		 * 
+		 * Start initial workflow of the app
+		 * 
+		 ***************************************************/
         SetWorkflowElementAction(actionSignature: "InitialAction", workflowElement: wfeLocationDetection).execute()
         
         println("[Controller] Startup completed")

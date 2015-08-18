@@ -42,4 +42,9 @@ class GeneratorUtil {
 	def static printError(String message) {
 		System.err.println("ERROR: " + message)
 	}
+	
+	def static String randomId() {
+		return ((Math.random() * 1000000) as int).toString
+	}
+	
 }
