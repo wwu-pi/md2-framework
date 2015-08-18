@@ -1,14 +1,10 @@
 package de.wwu.md2.framework.generator.ios.util;
 
-import java.io.OutputStream;
-import java.util.Collection;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.FileInputStream;
-import java.io.File;
-import com.google.common.collect.Sets;
-import java.io.InputStream;
+import com.google.common.collect.Sets
 import com.google.common.io.Files
+import java.io.File
+import java.io.IOException
+import java.util.Collection
 
 class FileSystemUtil {
 	

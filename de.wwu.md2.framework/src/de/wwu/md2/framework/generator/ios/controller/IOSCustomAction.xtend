@@ -3,11 +3,11 @@ package de.wwu.md2.framework.generator.ios.controller
 import de.wwu.md2.framework.generator.ios.Settings
 import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
+import de.wwu.md2.framework.mD2.AttributeSetTask
 import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.ContentProviderEventRef
 import de.wwu.md2.framework.mD2.ContentProviderEventType
 import de.wwu.md2.framework.mD2.ContentProviderPath
-import de.wwu.md2.framework.mD2.ContentProviderSetTask
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.CustomCodeFragment
 import de.wwu.md2.framework.mD2.ElementEventType
@@ -24,6 +24,7 @@ import de.wwu.md2.framework.mD2.ViewElementEventRef
 import de.wwu.md2.framework.mD2.WorkflowElement
 import java.lang.invoke.MethodHandles
 import org.eclipse.emf.common.util.Enumerator
+import de.wwu.md2.framework.mD2.ContentProviderReference
 
 class IOSCustomAction {
 	
@@ -60,7 +61,7 @@ class «className»: ActionType {
 		// MARK incomplete list to be extended in future version
 		switch fragment {
 			CallTask: return generateCallTask(actionCounter, (fragment as CallTask))
-			ContentProviderSetTask: return generateContentProviderSetTask(actionCounter, (fragment as ContentProviderSetTask))
+			AttributeSetTask: return generateAttributeSetTask(actionCounter, (fragment as AttributeSetTask))
 			EventBindingTask: return generateEventBindingTask(actionCounter, (fragment as EventBindingTask))
 			EventUnbindTask: return generateEventUnbindTask(actionCounter, (fragment as EventUnbindTask))
 			MappingTask: return generateMappingTaskTask(actionCounter, (fragment as MappingTask))
@@ -76,10 +77,17 @@ class «className»: ActionType {
 			let codeFragment«actionCounter» = «IOSAction.generateAction(className + "_" + actionCounter, task.action)».execute()
 	'''
 	
-	// TODO
-	def static generateContentProviderSetTask(int actionCounter, ContentProviderSetTask task) '''
-		//--	let codeFragment«actionCounter» = «task» //TODO
-		
+	def static generateAttributeSetTask(int actionCounter, AttributeSetTask task) '''
+		«IF task.source instanceof ContentProviderReference»
+			
+			let codeFragment«actionCounter» = AssignObjectAction(actionSignature: actionSignature + "__«actionCounter»",
+				assignContentProvider: ContentProviderRegistry.instance.getContentProvider("«(task.source as ContentProviderReference).contentProvider.name»")!,
+				toProvider: ContentProviderRegistry.instance.getContentProvider("«task.pathDefinition.contentProviderRef.name»")!,
+				attribute: "«task.pathDefinition.tail.attributeRef.name»")
+			action.exeecute() 
+		«ELSE»
+		«GeneratorUtil.printError("IOSCustomAction encountered unsupported AttributeSetTask. Only ContentProviders are allowed as source!: " + task.source)»
+		«ENDIF»
 	'''
 	
 	def static generateEventBindingTask(int actionCounter, EventBindingTask task) '''
@@ -207,7 +215,7 @@ class «className»: ActionType {
 				return "OnLocationUpdateHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
 					+ ")"
 			}
-			default: GeneratorUtil.printError("IOSCustomAction encountered unsupported ElementEventType: " + event) // TODO
+			default: GeneratorUtil.printError("IOSCustomAction encountered unsupported ElementEventType: " + event)
 		}
 	}
 }
