@@ -15,6 +15,7 @@ import de.wwu.md2.framework.mD2.ViewGUIElement
 import static de.wwu.md2.framework.util.MD2Util.*
 import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
 import org.apache.log4j.Logger
+import de.wwu.md2.framework.generator.android.lollipop.model.Md2Entity
 
 class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
@@ -123,7 +124,7 @@ fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + "somefile.txt",
 			 * Model
 			 * 
 			 ***************************************************/
-			 fsa.generateFile(rootFolder + )
+			Md2Entity.generateEntities(fsa, rootFolder, mainPath , mainPackage, dataContainer.entities)
 			 
 			 
 			/***************************************************
