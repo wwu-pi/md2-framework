@@ -26,6 +26,7 @@ import org.w3c.dom.Element
 import de.wwu.md2.framework.mD2.SubViewContainer
 import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.ContainerElementReference
+import de.wwu.md2.framework.mD2.WidthParam
 
 class Layout {
 
@@ -113,6 +114,8 @@ class Layout {
 		element.appendChild(newElement)
 	}
 
+
+	// not used for now as a FlowLayoutPaneElement is replaced by a GridLayoutPane during pre-processing
 	private static def createFlowLayoutPaneElement(Document doc, FlowLayoutPane flp) {
 		val flowLayoutPaneElement = doc.createElement(Settings.MD2LIBRARY_VIEW_FLOWLAYOUTPANE)
 		val qnp = new DefaultDeclarativeQualifiedNameProvider
@@ -146,8 +149,10 @@ class Layout {
 		// id
 		gridLayoutPaneElement.setAttribute("android:id", "@id/" + qualifiedName)
 
+		// set width
+		gridLayoutPaneElement.setAttribute("android:layout_height", "wrap_content")
 		gridLayoutPaneElement.setAttribute("android:layout_width", "match_parent")
-		gridLayoutPaneElement.setAttribute("android:layout_height", "match_parent")
+		
 		// handle parameters
 		glp.params.forEach [ p |
 			switch p {
@@ -156,6 +161,10 @@ class Layout {
 					gridLayoutPaneElement.setAttribute("android:columnCount", String.valueOf(p.value))
 				GridLayoutPaneRowsParam:
 					gridLayoutPaneElement.setAttribute("android:rowCount", String.valueOf(p.value))
+				WidthParam:{
+					gridLayoutPaneElement.setAttribute("android:layout_columnWeight", String.valueOf(p.width))
+					gridLayoutPaneElement.getAttributeNode("android:layout_width").nodeValue = "0dp"
+				}
 			}
 		]
 		return gridLayoutPaneElement
@@ -170,7 +179,13 @@ class Layout {
 		buttonElement.setAttribute("android:id", "@id/" + qualifiedName)
 
 		// height and width
-		buttonElement.setAttribute("android:layout_width", "match_parent")
+		if(button.width == -1){
+			buttonElement.setAttribute("android:layout_width", "match_parent")
+		}else{
+			buttonElement.setAttribute("android:layout_width", "0dp")
+			buttonElement.setAttribute("android:layout_columnWeight", String.valueOf(button.width))
+		}
+		
 		buttonElement.setAttribute("android:layout_height", "wrap_content")
 
 		// text
@@ -194,6 +209,12 @@ class Layout {
 		// id
 		textInputElement.setAttribute("android:id", "@id/" + qualifiedName)
 
+		if(textInput.width == -1){
+			textInputElement.setAttribute("android:layout_width", "match_parent")
+		}else{
+			textInputElement.setAttribute("android:layout_width", "0dp")
+			textInputElement.setAttribute("android:layout_columnWeight", String.valueOf(textInput.width))
+		}
 		textInputElement.setAttribute("android:layout_height", "wrap_content")
 
 		textInputElement.setAttribute("android:hint", "@string/" + qualifiedName + "_tooltip")
