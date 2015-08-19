@@ -13,13 +13,37 @@ import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.ViewGUIElement
 
 import static de.wwu.md2.framework.util.MD2Util.*
+import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
+import org.apache.log4j.Logger
 
 class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
 	override doGenerate(IExtendedFileSystemAccess fsa) {
+		// just for easy breakpoints while debugging
 
-		for (app : dataContainer.apps) {
+		val dcModel = dataContainer.getModel
+		val dcView = dataContainer.getView
+		val dcController = dataContainer.getController
+		val dcWorkflow = dataContainer.getWorkflow
+		val dcContentProvider = dataContainer.getContentProviders
+		val dcApps = dataContainer.apps
+		val dcMain = dataContainer.main
+		val dcRootViews = dataContainer.rootViewContainers
+		val dcCustomActions = dataContainer.customActions
+		val dcEntities = dataContainer.entities
+		val dcEnums = dataContainer.enums
+		val dcWorkflowElements = dataContainer.getWorkflowElements		
+		
+		
+		
+		val Logger log = Logger.getLogger(this.class)
+			
+		log.info("Android Lollipop Generator started")
 
+		for (app : dataContainer.apps) {		
+		
+			log.info("Start: generate app: \"" + app.appName + "\"")
+		
 			/***************************************************
 			 * 
 			 * Data for the generators
@@ -39,6 +63,10 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			
 			// all GUI elements
 			val viewGUIElements = rootViews + rootViews.map[rv | rv.eAllContents.filter(ViewGUIElement).toSet].flatten
+			
+			
+			//all workflow elements
+			val workflowElements = dataContainer.workflowElementsForApp(app)
 
 			/***************************************************
 			 * 
@@ -71,9 +99,12 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			 * Manifest, Gradle and Proguard
 			 * 
 			 ***************************************************/
-			// android manifest						
+			// android manifest					
 			fsa.generateFile(rootFolder + Settings.MAIN_PATH + Settings.ANDROID_MANIFEST_NAME,
 				AndroidManifest.generateProjectAndroidManifest(app, rootViews, mainPackage))
+
+fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + "somefile.txt",
+				Gradle.generateMd2LibrarayBuild)
 
 			// gradle build files
 			fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.GRADLE_BUILD,
@@ -92,6 +123,9 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			 * Model
 			 * 
 			 ***************************************************/
+			 fsa.generateFile(rootFolder + )
+			 
+			 
 			/***************************************************
 			 * 
 			 * View
@@ -133,7 +167,9 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 		 * Workflow
 		 * 
 		 ***************************************************/
+		 log.info("End: generate app: \"" + app.appName + "\"")
 		}
+		log.info("Android Lollipop Generator finished")
 	}
 
 	override getPlatformPrefix() {
