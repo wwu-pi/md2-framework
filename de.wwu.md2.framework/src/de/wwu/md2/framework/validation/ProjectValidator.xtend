@@ -29,16 +29,17 @@ class ProjectValidator extends AbstractMD2JavaValidator {
      * 
      * @param model
      */
+     /*
     @Check
     def checkPackageNameCompliesWithLocation(MD2Model model) {
         val pkgName = util.getPackageNameFromPath(model.eResource().getURI());
         if(!model.getPackage().getPkgName().equals(pkgName)) {
             warning("The specified package does not match the actual location of the file", MD2Package.eINSTANCE.getMD2Model_Package());
         }
-    }
+    } */
     
     
-    public static final String MODELELEMENT_PACKAGE = "modelelement_package";
+  public static final String MODELELEMENT_PACKAGE = "modelelement_package";
     /**
      * Ensure that all elements belonging to a certain layer are stored in the appropriate
      * package. E.g., throw an error if a view is stored in the package models.

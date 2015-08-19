@@ -17,7 +17,7 @@ import de.wwu.md2.framework.services.MD2GrammarAccess
 
 class AndroidLollipopValidator extends AbstractGeneratorSupportValidator{
 
-
+/*
 	@Inject
     override register(EValidatorRegistrar registrar) {
         // nothing to do
@@ -102,5 +102,5 @@ class AndroidLollipopValidator extends AbstractGeneratorSupportValidator{
     def throwWarning(){
     	
     }
-	
+	 */
 }
