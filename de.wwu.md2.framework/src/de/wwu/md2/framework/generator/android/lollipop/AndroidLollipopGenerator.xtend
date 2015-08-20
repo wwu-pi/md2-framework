@@ -16,6 +16,8 @@ import static de.wwu.md2.framework.util.MD2Util.*
 import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
 import org.apache.log4j.Logger
 import de.wwu.md2.framework.generator.android.lollipop.model.Md2Entity
+import de.wwu.md2.framework.generator.android.lollipop.model.SQLite
+import de.wwu.md2.framework.generator.android.lollipop.controller.Md2Controller
 
 class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
@@ -34,7 +36,6 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 		val dcEntities = dataContainer.entities
 		val dcEnums = dataContainer.enums
 		val dcWorkflowElements = dataContainer.getWorkflowElements		
-		
 		
 		
 		val Logger log = Logger.getLogger(this.class)
@@ -124,8 +125,15 @@ fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + "somefile.txt",
 			 * Model
 			 * 
 			 ***************************************************/
+			 //Entities
 			Md2Entity.generateEntities(fsa, rootFolder, mainPath , mainPackage, dataContainer.entities)
-			 
+			
+			// SQLite classes
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "/md2/model/sqlite/Md2DataContract.java",
+				SQLite.generateDataContract(mainPackage, dataContainer.getEntities) )
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "/md2/model/sqlite/Md2SQLiteHelperImpl.java",
+				SQLite.generateSQLiteHelper(mainPackage, app, dataContainer.getMain, dataContainer.getEntities) )
+
 			 
 			/***************************************************
 			 * 
@@ -161,7 +169,12 @@ fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + "somefile.txt",
 		 
 		 // Application class
 		 fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + app.name.toFirstUpper + ".java", Application.generateAppClass(mainPackage, app))
+		 
+		 // Activities
 		 Activity.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews)
+		 
+		 // Controller
+		 fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "/md2/controller/Controller" + ".java", Md2Controller.generateController(mainPackage))
 		 
 		/***************************************************
 		 * 
