@@ -9,14 +9,18 @@ import de.wwu.md2.framework.mD2.Label
 import de.wwu.md2.framework.mD2.Tooltip
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
+import de.wwu.md2.framework.mD2.WorkflowElementReference
 
 class Values {
 
-	def static String generateIdsXml(Iterable<ViewGUIElement> viewGUIElements) '''
+	def static String generateIdsXml(Iterable<ViewGUIElement> viewGUIElements, Iterable<WorkflowElementReference> wers) '''
 		«val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider»
 		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateIdsXml() -->
 		<?xml version="1.0" encoding="utf-8"?>
 		<resources>
+			«FOR wer : wers»
+				<item name="startActivity_«wer.workflowElementReference.name»Button" type="id"/>				
+			«ENDFOR»
 			«FOR ve : viewGUIElements»
 				«val qualifiedName = qualifiedNameProvider.getFullyQualifiedName(ve)»
 				«IF (qualifiedName != null && !qualifiedName.empty)»

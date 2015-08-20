@@ -71,6 +71,8 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			
 			//all workflow elements
 			val workflowElements = dataContainer.workflowElementsForApp(app)
+			
+			val startableWorkflowElements = app.workflowElements.filter[we | we.startable]
 
 			/***************************************************
 			 * 
@@ -144,7 +146,7 @@ fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + "somefile.txt",
 			 ***************************************************/
 			// Element Ids
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.IDS_XML_NAME,
-				Values.generateIdsXml(viewGUIElements))
+				Values.generateIdsXml(viewGUIElements, startableWorkflowElements))
 
 			// Strings
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STRINGS_XML_NAME,
@@ -161,7 +163,7 @@ fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + "somefile.txt",
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, Values.generateDimensXml)
 			
 			// Layouts
-			Layout.generateLayouts(fsa, rootFolder, mainPath, mainPackage, rootViews)
+			Layout.generateLayouts(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
 
 		/***************************************************
 		 * 
@@ -173,7 +175,7 @@ fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + "somefile.txt",
 		 fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + app.name.toFirstUpper + ".java", Application.generateAppClass(mainPackage, app))
 		 
 		 // Activities
-		 Activity.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews)
+		 Activity.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
 		 
 		 // Controller
 		 fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "/md2/controller/Controller" + ".java", Md2Controller.generateController(mainPackage))

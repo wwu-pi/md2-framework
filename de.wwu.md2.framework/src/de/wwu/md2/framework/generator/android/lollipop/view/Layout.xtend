@@ -27,15 +27,62 @@ import de.wwu.md2.framework.mD2.SubViewContainer
 import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.ContainerElementReference
 import de.wwu.md2.framework.mD2.WidthParam
+import de.wwu.md2.framework.mD2.WorkflowElement
+import de.wwu.md2.framework.mD2.WorkflowElementReference
 
 class Layout {
 
 	def static generateLayouts(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
-		Iterable<ContainerElement> rootViews) {
+		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements) {
+			
+		fsa.generateFile(rootFolder + Settings.LAYOUT_PATH + "activity_start.xml",
+				generateStartLayout(mainPackage, startableWorkflowElements))
+				
 		rootViews.forEach [ rv |
 			fsa.generateFile(rootFolder + Settings.LAYOUT_PATH + "activity_" + rv.name.toLowerCase + ".xml",
 				generateLayout(mainPackage, rv))
 		]
+	}
+
+	private static def generateStartLayout(String mainPackage, Iterable<WorkflowElementReference> wfes) {
+		val docFactory = DocumentBuilderFactory.newInstance
+		val docBuilder = docFactory.newDocumentBuilder
+
+		// create doc and set namespace definitions
+		val doc = docBuilder.newDocument
+		val generationComment = doc.createComment("generated in de.wwu.md2.framework.generator.android.lollipop.view.Layout.generateStartLayout()")
+		doc.appendChild(generationComment)
+
+		// create root element
+		var Element rootElement = doc.createElement(Settings.MD2LIBRARY_VIEW_FLOWLAYOUTPANE)
+		// set attributes
+		rootElement.setAttribute("android:layout_height", "match_parent")
+		rootElement.setAttribute("android:layout_width", "match_parent")
+		rootElement.setAttribute("android:orientation", "vertical")		
+
+		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
+			"http://schemas.android.com/apk/res/android")
+		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
+
+		doc.appendChild(rootElement)
+		
+		// add buttons
+		for(wfe : wfes){
+			var btnElement = doc.createElement(Settings.MD2LIBRARY_VIEW_BUTTON)
+			btnElement.setAttribute("android:id", "startActivity_" + wfe.workflowElementReference.name + "Button")
+ 			btnElement.setAttribute("android:layout_width", "match_parent")
+ 			btnElement.setAttribute("android:layout_height", "wrap_content")
+ 			btnElement.setAttribute("android:layout_gravity", "fill_horizontal")
+ 			btnElement.setAttribute("android:layout_text", wfe.alias)
+		}
+
+		// return xml file as string
+		val transformerFactory = TransformerFactory.newInstance
+		val transformer = transformerFactory.newTransformer
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes")
+		val writer = new StringWriter
+		transformer.transform(new DOMSource(doc), new StreamResult(writer))
+		return writer.buffer.toString
 	}
 
 	private static def generateLayout(String mainPackage, ContainerElement rv) {
