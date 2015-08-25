@@ -3,7 +3,10 @@ package de.wwu.md2.framework.generator.ios.controller
 import de.wwu.md2.framework.generator.ios.Settings
 import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.generator.ios.util.SimpleExpressionUtil
+import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.ActionDef
+import de.wwu.md2.framework.mD2.ActionReference
 import de.wwu.md2.framework.mD2.CombinedAction
 import de.wwu.md2.framework.mD2.ContentProviderOperationAction
 import de.wwu.md2.framework.mD2.ContentProviderReference
@@ -17,11 +20,6 @@ import de.wwu.md2.framework.mD2.GotoViewAction
 import de.wwu.md2.framework.mD2.LocationProviderReference
 import de.wwu.md2.framework.mD2.SimpleActionRef
 import de.wwu.md2.framework.mD2.WebServiceCallAction
-import de.wwu.md2.framework.mD2.WorkflowElement
-import de.wwu.md2.framework.mD2.ActionReference
-import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
-import de.wwu.md2.framework.mD2.Controller
-import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 
 class IOSAction {
 	
@@ -54,8 +52,8 @@ class IOSAction {
 	}
 	
 	def static generateGotoViewAction(String actionSignature, GotoViewAction action) '''
-		MD2GoToViewAction(actionSignature: "«actionSignature»", 
-			webserviceCall: MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«IOSWidgetMapping.lookup(action.view)»)!)
+		MD2GotoViewAction(actionSignature: "«actionSignature»", 
+			targetView: MD2WidgetMapping.«IOSWidgetMapping.lookup(action.view)»)
 	'''
 	
 	def static generateDisableAction(String actionSignature, DisableAction action) '''

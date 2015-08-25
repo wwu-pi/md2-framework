@@ -1,13 +1,17 @@
 package de.wwu.md2.framework.generator.ios.controller
 
 import de.wwu.md2.framework.generator.ios.Settings
+import de.wwu.md2.framework.generator.ios.util.ConditionalExpressionUtil
 import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.AttributeSetTask
 import de.wwu.md2.framework.mD2.CallTask
+import de.wwu.md2.framework.mD2.ConditionalCodeFragment
 import de.wwu.md2.framework.mD2.ContentProviderEventRef
 import de.wwu.md2.framework.mD2.ContentProviderEventType
 import de.wwu.md2.framework.mD2.ContentProviderPath
+import de.wwu.md2.framework.mD2.ContentProviderReference
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.CustomCodeFragment
 import de.wwu.md2.framework.mD2.ElementEventType
@@ -21,19 +25,16 @@ import de.wwu.md2.framework.mD2.UnmappingTask
 import de.wwu.md2.framework.mD2.ValidatorBindingTask
 import de.wwu.md2.framework.mD2.ValidatorUnbindTask
 import de.wwu.md2.framework.mD2.ViewElementEventRef
-import de.wwu.md2.framework.mD2.WorkflowElement
 import java.lang.invoke.MethodHandles
 import org.eclipse.emf.common.util.Enumerator
-import de.wwu.md2.framework.mD2.ContentProviderReference
-import de.wwu.md2.framework.mD2.ConditionalCodeFragment
-import de.wwu.md2.framework.generator.ios.util.ConditionalExpressionUtil
+import de.wwu.md2.framework.generator.ios.util.SimpleExpressionUtil
 
 class IOSCustomAction {
 	
 	static var className = ""
 	
 	def static generateClass(CustomAction action) {
-		className = Settings.PREFIX_CUSTOM_ACTION + (action.eContainer as WorkflowElement).name.toFirstUpper + "_" + action.name.toFirstUpper
+		className = Settings.PREFIX_CUSTOM_ACTION + MD2GeneratorUtil.getName(action).toFirstUpper
 		
 		generateClassContent(action)
 	} 
@@ -77,20 +78,28 @@ class «className»: MD2ActionType {
 	
 	def static generateCallTask(String actionCounter, CallTask task) '''
 			
-			let codeFragment«actionCounter» = «IOSAction.generateAction(className + "_" + actionCounter, task.action)».execute()
+			let codeFragment«actionCounter» = «IOSAction.generateAction(className + "_" + actionCounter, task.action)»
+			codeFragment«actionCounter».execute()
 	'''
 	
 	def static generateAttributeSetTask(String actionCounter, AttributeSetTask task) '''
+		«««Apparently ContentProviderSetTasks are also regarded as AttributeSetTasks here and need a case distinction»»
 		«IF task.source instanceof ContentProviderReference»
-			
+		
 			let codeFragment«actionCounter» = MD2AssignObjectAction(actionSignature: actionSignature + "__«actionCounter»",
 				assignContentProvider: MD2ContentProviderRegistry.instance.getContentProvider("«(task.source as ContentProviderReference).contentProvider.name»")!,
 				toContentProvider: MD2ContentProviderRegistry.instance.getContentProvider("«task.pathDefinition.contentProviderRef.name»")!,
 				attribute: "«task.pathDefinition.tail.attributeRef.name»")
 			codeFragment«actionCounter».execute() 
 		«ELSE»
-		«GeneratorUtil.printError("IOSCustomAction encountered unsupported AttributeSetTask. Only ContentProviders are allowed as source!: " + task.source)»
+		«««Set a simple expression as value to a contentProvider»»»
+		
+			MD2ContentProviderRegistry.instance.getContentProvider("«task.pathDefinition.contentProviderRef.name»")!.setValue(
+				"«task.pathDefinition.tail.attributeRef.name»",
+				value: «SimpleExpressionUtil.getStringValue(task.source)»
+			)
 		«ENDIF»
+		
 	'''
 	
 	def static generateEventBindingTask(String actionCounter, EventBindingTask task) '''

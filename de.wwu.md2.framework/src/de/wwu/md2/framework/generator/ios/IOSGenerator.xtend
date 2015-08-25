@@ -139,7 +139,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 		
 			 		val path = rootFolder + Settings.CONTROLLER_PATH + "action/" 
 						+ Settings.PREFIX_CUSTOM_ACTION 
-						+ MD2GeneratorUtil.getName(ca) + ".swift"
+						+ MD2GeneratorUtil.getName(ca).toFirstUpper + ".swift"
 					GeneratorUtil.printDebug("Generate custom action: " 
 						+ MD2GeneratorUtil.getName(ca), path)
 					fsa.generateFile(path, IOSCustomAction.generateClass(ca))
