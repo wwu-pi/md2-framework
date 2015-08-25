@@ -27,12 +27,12 @@ class ConditionalExpressionUtil {
 	}
 	
 	def static evaluateAnd(And expression) {
-		return "(" + getStringRepresentation(expression.leftExpression) + "&&" 
+		return "(" + getStringRepresentation(expression.leftExpression) + " && " 
 			+ getStringRepresentation(expression.rightExpression) + ")"
 	}
 	
 	def static evaluateOr(Or expression) {
-		return "(" + getStringRepresentation(expression.leftExpression) + "||" 
+		return "(" + getStringRepresentation(expression.leftExpression) + " || " 
 			+ getStringRepresentation(expression.rightExpression) + ")"
 	}
 	
@@ -45,7 +45,7 @@ class ConditionalExpressionUtil {
 	}
 	
 	def static evaluateGuiElementStateExpression(GuiElementStateExpression expression) {
-		val element = "WidgetRegistry.instance.getWidget(WidgetMapping." + IOSWidgetMapping.lookup(expression.reference) + ")!"
+		val element = "MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping." + IOSWidgetMapping.lookup(expression.reference) + ")!"
 		
 		switch expression.isState{
 			case VALID: return element + ".validate() == true"
@@ -53,7 +53,7 @@ class ConditionalExpressionUtil {
 			case SET: return element + ".value.isSet()"
 			case DEFAULT_VALUE: {
 				GeneratorUtil.printError("ConditionalExpressionUtil: DEFAULT_VALUE unsupported")
-				//return element + ".value.equals(MD2String('" + expression.reference.ref... + "'))"
+				//TODO return element + ".value.equals(MD2String('" + expression.reference.ref... + "'))"
 				return ""
 			}
 			case DISABLED: return element + ".isElementDisabled"

@@ -59,12 +59,11 @@ class «className»: NSObject, MD2EntityType {
     }
     
     func clone() -> MD2Type {
-        return Address(md2Entity: self)
+        return «className»(md2Entity: self)
     }
     
     func toString() -> String {
-        return "(«className»: [
-	        «FOR attribute : entityInstance.attributes SEPARATOR '\n+ ", '»«attribute.name»: " + containedTypes["«attribute.name»"]!.toString()«ENDFOR» 
+        return "(«className»: [«FOR attribute : entityInstance.attributes SEPARATOR '\n+ ", '»«attribute.name»: " + containedTypes["«attribute.name»"]!.toString()«ENDFOR» 
 	        + "])"
     }
     
@@ -92,7 +91,7 @@ class «className»: NSObject, MD2EntityType {
     func set(attribute: String, value: MD2Type) {
     	// Check if attribute exists
     	if containedTypes[attribute] == nil {
-    		fatalError("Tried to set non-existing attribute in entity type «className»"")
+    		fatalError("Tried to set non-existing attribute in entity type «className»")
     	}
         containedTypes[attribute] = value
     }

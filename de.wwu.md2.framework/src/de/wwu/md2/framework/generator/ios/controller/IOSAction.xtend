@@ -21,6 +21,7 @@ import de.wwu.md2.framework.mD2.WorkflowElement
 import de.wwu.md2.framework.mD2.ActionReference
 import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
 import de.wwu.md2.framework.mD2.Controller
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 
 class IOSAction {
 	
@@ -53,28 +54,29 @@ class IOSAction {
 	}
 	
 	def static generateGotoViewAction(String actionSignature, GotoViewAction action) '''
-		GoToViewAction(actionSignature: "«actionSignature»", 
-			webserviceCall:WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(action.view)»)!)
+		MD2GoToViewAction(actionSignature: "«actionSignature»", 
+			webserviceCall: MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«IOSWidgetMapping.lookup(action.view)»)!)
 	'''
 	
 	def static generateDisableAction(String actionSignature, DisableAction action) '''
-		DisableAction(actionSignature: "«actionSignature»", 
-			viewElement: WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(action.inputField)»)!)
+		MD2DisableAction(actionSignature: "«actionSignature»", 
+			viewElement: MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«IOSWidgetMapping.lookup(action.inputField)»)!)
 	'''
 	
 	def static generateEnableAction(String actionSignature, EnableAction action) '''
-		EnableAction(actionSignature: "«actionSignature»", 
-			viewElement: WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(action.inputField)»)!)
+		MD2EnableAction(actionSignature: "«actionSignature»", 
+			viewElement: MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«IOSWidgetMapping.lookup(action.inputField)»)!)
 	'''
 	
 	def static generateDisplayMessageAction(String actionSignature, DisplayMessageAction action) '''
-		DisplayMessageAction(actionSignature: "«actionSignature»", message: «SimpleExpressionUtil.getStringValue(action.message)»)
+		MD2DisplayMessageAction(actionSignature: "«actionSignature»", 
+			message: «SimpleExpressionUtil.getStringValue(action.message)»)
 	'''
 	
 	def static generateContentProviderOperationAction(String actionSignature, ContentProviderOperationAction action) '''
-		ContentProviderOperationAction(actionSignature: "«actionSignature»", 
-			allowedOperation: ContentProviderOperationAction.AllowedOperation.«action.operation.toString.toUpperCase»,
-			contentProvider: ContentProviderRegistry.instance.getContentProvider(contentProviderName: 
+		MD2ContentProviderOperationAction(actionSignature: "«actionSignature»", 
+			allowedOperation: MD2ContentProviderOperationAction.AllowedOperation.«action.operation.toString.toLowerCase.toFirstUpper»,
+			contentProvider: MD2ContentProviderRegistry.instance.getContentProvider(
 			«IF action.contentProvider instanceof ContentProviderReference»
 				"«(action.contentProvider as ContentProviderReference).contentProvider.name»"
 			«ELSEIF action.contentProvider instanceof LocationProviderReference»
@@ -86,8 +88,8 @@ class IOSAction {
 	'''
 	
 	def static generateContentProviderResetAction(String actionSignature, ContentProviderResetAction action) '''
-		ContentProviderResetAction(actionSignature: "«actionSignature»", 
-			contentProvider: ContentProviderRegistry.instance.getContentProvider(contentProviderName: 
+		MD2ContentProviderResetAction(actionSignature: "«actionSignature»", 
+			contentProvider: MD2ContentProviderRegistry.instance.getContentProvider(
 			«IF action.contentProvider instanceof ContentProviderReference»
 				"«(action.contentProvider as ContentProviderReference).contentProvider.name»"
 			«ELSEIF action.contentProvider instanceof LocationProviderReference»
@@ -99,13 +101,13 @@ class IOSAction {
 	'''
 	
 	def static generateFireEventAction(String actionSignature, FireEventAction action) '''
-		FireEventAction(actionSignature: "«actionSignature»", 
-			event: WorkflowEvent.«action.workflowEvent.name»)
+		MD2FireEventAction(actionSignature: "«actionSignature»", 
+			event: MD2WorkflowEvent.«action.workflowEvent.name»)
 	'''
 		
 	// TODO WebServiceCall
 	def static generateWebServiceCallAction(String actionSignature, WebServiceCallAction action) '''
-		WebserviceCallAction(actionSignature: "«actionSignature»", webserviceCall: «action.webServiceCall»)
+		MD2WebserviceCallAction(actionSignature: "«actionSignature»", webserviceCall: «action.webServiceCall»)
 	'''
 	
 	// TODO CombinedAction
@@ -115,14 +117,6 @@ class IOSAction {
 	}
 	
 	def static generateCustomAction(String actionSignature, CustomAction action) '''
-		«IF action.eContainer instanceof WorkflowElement»
-		«Settings.PREFIX_CUSTOM_ACTION + (action.eContainer as WorkflowElement).name.toFirstUpper + "_" + action.name.toFirstUpper»()
-		«ELSEIF action.eContainer instanceof Controller»
-		«Settings.PREFIX_CUSTOM_ACTION + "Controller_" + action.name.toFirstUpper»()
-		«ELSEIF action.eContainer == null»
-		«Settings.PREFIX_CUSTOM_ACTION + action.name.toFirstUpper»()
-		«ELSE»
-		«GeneratorUtil.printError("IOSAction encountered unknown custom action:" + action)»
-		«ENDIF»
+		«Settings.PREFIX_CUSTOM_ACTION + MD2GeneratorUtil.getName(action)»()
 	'''
 }

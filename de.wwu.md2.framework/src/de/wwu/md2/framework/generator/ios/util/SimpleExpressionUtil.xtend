@@ -26,16 +26,17 @@ class SimpleExpressionUtil {
 			TimeVal: return '"' + expression.value.toString + '"'
 			DateTimeVal: return '"' + expression.value.toString + '"'
 			ConcatenatedString: {
-				return '"' + expression.leftString + '" + "' 
-					+ recursiveExpressionBuilder(expression.rightString) + '"'
+				return recursiveExpressionBuilder(expression.leftString) 
+					+ ' + ' 
+					+ recursiveExpressionBuilder(expression.rightString)
 				}
 			AbstractViewGUIElementRef: {
-				return  'WidgetRegistry.instance.getWidget(WidgetMapping.' 
+				return  'MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.' 
 					+ IOSWidgetMapping.lookup(expression)
 					+ ')!.value.toString()'
 			}
 			ContentProviderPath: {
-				return 'ContentProviderRegistry.instance.getContentProvider("'
+				return 'MD2ContentProviderRegistry.instance.getContentProvider("'
 					+ expression.contentProviderRef.name
 					+ '")!'
 			}

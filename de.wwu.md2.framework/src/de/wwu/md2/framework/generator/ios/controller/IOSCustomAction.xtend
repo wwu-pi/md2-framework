@@ -41,7 +41,7 @@ class IOSCustomAction {
 	def static generateClassContent(CustomAction action) '''
 «GeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 
-class «className»: ActionType {
+class «className»: MD2ActionType {
     
     let actionSignature: String = "«className»"
     
@@ -53,7 +53,7 @@ class «className»: ActionType {
        
     }
     
-    func equals(anotherAction: ActionType) -> Bool {
+    func equals(anotherAction: MD2ActionType) -> Bool {
         return actionSignature == anotherAction.actionSignature
     }
 }
@@ -83,11 +83,11 @@ class «className»: ActionType {
 	def static generateAttributeSetTask(String actionCounter, AttributeSetTask task) '''
 		«IF task.source instanceof ContentProviderReference»
 			
-			let codeFragment«actionCounter» = AssignObjectAction(actionSignature: actionSignature + "__«actionCounter»",
-				assignContentProvider: ContentProviderRegistry.instance.getContentProvider("«(task.source as ContentProviderReference).contentProvider.name»")!,
-				toProvider: ContentProviderRegistry.instance.getContentProvider("«task.pathDefinition.contentProviderRef.name»")!,
+			let codeFragment«actionCounter» = MD2AssignObjectAction(actionSignature: actionSignature + "__«actionCounter»",
+				assignContentProvider: MD2ContentProviderRegistry.instance.getContentProvider("«(task.source as ContentProviderReference).contentProvider.name»")!,
+				toContentProvider: MD2ContentProviderRegistry.instance.getContentProvider("«task.pathDefinition.contentProviderRef.name»")!,
 				attribute: "«task.pathDefinition.tail.attributeRef.name»")
-			action.exeecute() 
+			codeFragment«actionCounter».execute() 
 		«ELSE»
 		«GeneratorUtil.printError("IOSCustomAction encountered unsupported AttributeSetTask. Only ContentProviders are allowed as source!: " + task.source)»
 		«ENDIF»
@@ -116,9 +116,9 @@ class «className»: ActionType {
 	def static generateMappingTaskTask(String actionCounter, MappingTask task) '''
 		
 		«IF task.pathDefinition instanceof ContentProviderPath»
-		DataMapper.instance.map(
-			WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(task.referencedViewField)»)!,
-			contentProvider: ContentProviderRegistry.instance.getContentProvider("«(task.pathDefinition as ContentProviderPath).contentProviderRef.name»")!,
+		MD2DataMapper.instance.map(
+			MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«IOSWidgetMapping.lookup(task.referencedViewField)»)!,
+			contentProvider: MD2ContentProviderRegistry.instance.getContentProvider("«(task.pathDefinition as ContentProviderPath).contentProviderRef.name»")!,
 			attribute: "«(task.pathDefinition as ContentProviderPath).tail.attributeRef.name»")
         «ELSE»
         «GeneratorUtil.printError("IOSCustomAction encountered unsupported pathDefinition for MappingTask:" + task.pathDefinition)»
@@ -128,9 +128,9 @@ class «className»: ActionType {
 	def static generateUnmappingTaskTask(String actionCounter, UnmappingTask task) '''
 		
 		«IF task.pathDefinition instanceof ContentProviderPath»
-		DataMapper.instance.unmap(
-			WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(task.referencedViewField)»)!,
-			contentProvider: ContentProviderRegistry.instance.getContentProvider("«(task.pathDefinition as ContentProviderPath).contentProviderRef.name»")!,
+		MD2DataMapper.instance.unmap(
+			MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«IOSWidgetMapping.lookup(task.referencedViewField)»)!,
+			contentProvider: MD2ContentProviderRegistry.instance.getContentProvider("«(task.pathDefinition as ContentProviderPath).contentProviderRef.name»")!,
 			attribute: "«(task.pathDefinition as ContentProviderPath).tail.attributeRef.name»")
         «ELSE»
         «GeneratorUtil.printError("IOSCustomAction encountered unsupported pathDefinition for UnmappingTask:" + task.pathDefinition)»
@@ -142,7 +142,7 @@ class «className»: ActionType {
 		«FOR i : 1..task.referencedFields.length»
 		«FOR j : 1..task.validators.length»
 			let codeFragment«actionCounter»_«i»_«j» = «IOSValidator.generateValidator("validator" + actionCounter + "_" + i + "_" + j, task.validators.get(j-1))»
-			WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(task.referencedFields.get(i - 1))»)!
+			MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«IOSWidgetMapping.lookup(task.referencedFields.get(i - 1))»)!
 				.addValidator(codeFragment«actionCounter»_«i»_«j»)
 		«ENDFOR»
 		«ENDFOR»
@@ -154,7 +154,7 @@ class «className»: ActionType {
 		«FOR i : 1..task.referencedFields.length»
 		«FOR j : 1..task.validators.length»
 			let codeFragment«actionCounter»_«i»_«j» = «IOSValidator.generateValidator("validator" + actionCounter + "_" + i + "_" + j, task.validators.get(j-1))»
-			WidgetRegistry.instance.getWidget(WidgetMapping.«IOSWidgetMapping.lookup(task.referencedFields.get(i - 1))»)!
+			MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«IOSWidgetMapping.lookup(task.referencedFields.get(i - 1))»)!
 				.removeValidator(codeFragment«actionCounter»_«i»_«j»)
 		«ENDFOR»
 		«ENDFOR»
@@ -199,46 +199,46 @@ class «className»: ActionType {
 		
 		switch eventType {
 			case ElementEventType.ON_CLICK: {
-				return "OnClickHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
-					+ ", widget: WidgetRegistry.instance.getWidget(WidgetMapping." 
+				return "MD2OnClickHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
+					+ ", widget: MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping." 
 					+ IOSWidgetMapping.lookup((event as ViewElementEventRef).referencedField) + ")!)"
 			}
 			case ElementEventType.ON_CHANGE: {
-				return "OnWidgetChangeHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
-					+ ", widget: WidgetRegistry.instance.getWidget(WidgetMapping." 
+				return "MD2OnWidgetChangeHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
+					+ ", widget: MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping." 
 					+ IOSWidgetMapping.lookup((event as ViewElementEventRef).referencedField) + ")!)"
 			}
 			case ElementEventType.ON_LEFT_SWIPE: {
-				return "OnLeftSwipeHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
-					+ ", widget: WidgetRegistry.instance.getWidget(WidgetMapping." 
+				return "MD2OnLeftSwipeHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
+					+ ", widget: MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping." 
 					+ IOSWidgetMapping.lookup((event as ViewElementEventRef).referencedField) + ")!)"
 			}
 			case ElementEventType.ON_RIGHT_SWIPE: {
-				return "OnRightSwipeHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
-					+ ", widget: WidgetRegistry.instance.getWidget(WidgetMapping." 
+				return "MD2OnRightSwipeHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
+					+ ", widget: MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping." 
 					+ IOSWidgetMapping.lookup((event as ViewElementEventRef).referencedField) + ")!)"
 			}
 			case ElementEventType.ON_WRONG_VALIDATION: {
-				return "OnWrongValidationHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
-					+ ", widget: WidgetRegistry.instance.getWidget(WidgetMapping." 
+				return "MD2OnWrongValidationHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
+					+ ", widget: MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping." 
 					+ IOSWidgetMapping.lookup((event as ViewElementEventRef).referencedField) + ")!)"
 			}
 			case ContentProviderEventType.ON_CHANGE: {
-				return "OnContentChangeHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
-					+ ", contentProvider: ContentProviderRegistry.instance.getContentProvider('" 
+				return "MD2OnContentChangeHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
+					+ ", contentProvider: MD2ContentProviderRegistry.instance.getContentProvider('" 
 					+ (event as ContentProviderEventRef).contentProvider 
 					+ "')!, attribute: '')"
 			}
 			case GlobalEventType.ON_CONNECTION_LOST: {
-				return "OnConnectionLostHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
+				return "MD2OnConnectionLostHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
 					+ ")"
 			}
 			case GlobalEventType.ON_CONNECTION_REGAINED: {
-				return "OnConnectionRegainedHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
+				return "MD2OnConnectionRegainedHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
 					+ ")"
 			}
 			case GlobalEventType.ON_LOCATION_UPDATE: {
-				return "OnLocationUpdateHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
+				return "MD2OnLocationUpdateHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
 					+ ")"
 			}
 			default: GeneratorUtil.printError("IOSCustomAction encountered unsupported ElementEventType: " + event)

@@ -22,9 +22,12 @@ class IOSController {
 	def static generateClassContent(DataContainer data) '''
 «GeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 
-func run(window: UIWindow) {
+import UIKit
+
+class MD2Controller {
+    func run(window: UIWindow) {
         // Initialize the widget registry
-        var widgetRegistry = WidgetRegistry.instance
+        var widgetRegistry = MD2WidgetRegistry.instance
 
 		/***************************************************
 		 * 
@@ -42,9 +45,9 @@ func run(window: UIWindow) {
 		 * 
 		 ***************************************************/
 		«FOR contentProvider: data.contentProviders.filter[cp | !cp.name.startsWith("__")]»
-		ContentProviderRegistry.instance.addContentProvider("«contentProvider.name»", 
+		MD2ContentProviderRegistry.instance.addContentProvider("«contentProvider.name»", 
 			provider: «Settings.PREFIX_CONTENT_PROVIDER + contentProvider.name.toFirstUpper»(
-				content: «Settings.PREFIX_ENTITY + (contentProvider.type as ReferencedModelType).entity.name.toFirstUpper»())
+				content: «Settings.PREFIX_ENTITY + (contentProvider.type as ReferencedModelType).entity.name.toFirstUpper»()))
         «ENDFOR»
         
         /***************************************************
@@ -52,7 +55,7 @@ func run(window: UIWindow) {
 		 * Initialize view manager and all views
 		 * 
 		 ***************************************************/
-        var viewManager = ViewManager.instance
+        var viewManager = MD2ViewManager.instance
         viewManager.window = window
         
         «FOR rootView : data.rootViewContainers.values.flatten»

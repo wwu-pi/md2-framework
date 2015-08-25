@@ -20,9 +20,9 @@ class IOSWorkflowEvent {
 	static def generateClassContent(Iterable<WorkflowEvent> workflowEvents) '''
 «GeneratorUtil.generateClassHeaderComment("WorkflowEvent", MethodHandles.lookup.lookupClass)»
 
-// Make visible to Objective-C to allow use as Dictionary key (e.g. in WorkflowEventHandler)
+// Make visible to Objective-C to allow use as Dictionary key (e.g. in MD2WorkflowEventHandler)
 @objc
-enum WorkflowEvent: Int {
+enum MD2WorkflowEvent: Int {
 	«FOR i : 1..workflowEvents.length»
 	case «workflowEvents.get(i - 1).name» = «i»
     «ENDFOR»

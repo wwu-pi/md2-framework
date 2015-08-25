@@ -74,13 +74,13 @@ class IOSWidgetMapping {
 	static def generateClassContent(Iterable<String> viewElementNames) '''
 «GeneratorUtil.generateClassHeaderComment("WorkflowEvent", MethodHandles.lookup.lookupClass)»
 
-enum WidgetMapping: Int {
+enum MD2WidgetMapping: Int {
     
     // A list of all widget elements used in the application
     // Needed for the identification of widgets and views (widgetId) which can only be of integer type due to platform restrictions on the widget tags
 	case NotFound = 0
 	case Spacer = 1 // Dummy because spacers have no given name
-    «FOR i : 2..viewElementNames.length»
+    «FOR i : 2..viewElementNames.length + 1»
     case «viewElementNames.get(i - 2)» = «i»
     «ENDFOR»
     
@@ -89,7 +89,7 @@ enum WidgetMapping: Int {
     var description: String {
         switch self {
         case .Spacer: return "Spacer"
-        «FOR i : 2..viewElementNames.length»
+        «FOR i : 2..viewElementNames.length + 1»
         case .«viewElementNames.get(i - 2)»: return "«viewElementNames.get(i - 2)»"
     	«ENDFOR»
     	default: return "NotFound"
@@ -98,10 +98,10 @@ enum WidgetMapping: Int {
     
     // There is currently no introspection into enums
     // Therefore static method to establish a backward link of type raw int value -> enum
-    static func fromRawValue(value: Int) -> WidgetMapping {
+    static func fromRawValue(value: Int) -> MD2WidgetMapping {
         switch(value){
         case 1: return .Spacer
-    	«FOR i : 2..viewElementNames.length»
+    	«FOR i : 2..viewElementNames.length + 1»
     	case «i»: return .«viewElementNames.get(i - 2)»
     	«ENDFOR»
     	default: return .NotFound

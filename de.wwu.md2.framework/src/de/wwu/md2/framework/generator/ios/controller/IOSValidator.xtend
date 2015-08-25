@@ -43,7 +43,7 @@ class IOSValidator {
 	}
 	
 	def static generateStandardNotNullValidator(String identifier, StandardNotNullValidator validator) '''
-		NotNullValidator(«identifier»
+		MD2NotNullValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
 			, message: { return «SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)» }
 		«ELSE»
@@ -53,7 +53,7 @@ class IOSValidator {
 	'''
 	
 	def static generateStandardRegExValidator(String identifier, StandardRegExValidator validator) '''
-		RegExValidator(«identifier»
+		MD2RegExValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
 			, message: { return «SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)» }
 		«ELSE»
@@ -68,7 +68,7 @@ class IOSValidator {
 	'''
 	
 	def static generateStandardNumberRangeValidator(String identifier, StandardNumberRangeValidator validator) '''
-		NumberRangeValidator(«identifier»
+		MD2NumberRangeValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
 			, message: { return «SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)» }
 		«ELSE»
@@ -88,7 +88,7 @@ class IOSValidator {
 	'''
 	
 	def static generateStandardStringRangeValidator(String identifier, StandardStringRangeValidator validator) '''
-		StringRangeValidator(«identifier»
+		MD2StringRangeValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
 			, message: { return «SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)» }
 		«ELSE»
@@ -109,7 +109,7 @@ class IOSValidator {
 	
 	
 	def static generateStandardDateRangeValidator(String identifier, StandardDateRangeValidator validator) '''
-		DateRangeValidator(«identifier»
+		MD2DateRangeValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
 			, message: { return «SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)» }
 		«ELSE»
@@ -130,7 +130,7 @@ class IOSValidator {
 	
 	
 	def static generateStandardTimeRangeValidator(String identifier, StandardTimeRangeValidator validator) '''
-		TimeRangeValidator(«identifier»
+		MD2TimeRangeValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
 			, message: { return «SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)» }
 		«ELSE»
@@ -151,7 +151,7 @@ class IOSValidator {
 	
 	
 	def static generateStandardDateTimeRangeValidator(String identifier, StandardDateTimeRangeValidator validator) '''
-		DateTimeRangeValidator(«identifier»
+		MD2DateTimeRangeValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
 			, message: { return «SimpleExpressionUtil.getStringValue(validator.params.filter(ValidatorMessageParam).get(0).message)» }
 		«ELSE»

@@ -21,22 +21,22 @@ class IOSContentProvider {
 	def static generateClassContent(ContentProvider cpInstance) '''
 «GeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 
-class «className»: ContentProviderType {
+class «className»: MD2ContentProviderType {
     
     let contentType = «managedEntityClassName».self
     
     var content: MD2EntityType? // managed entity instance
     
-    var store: DataStoreType
+    var store: MD2DataStoreType
     
     var observedAttributes: Dictionary<String, MD2Type> = [:]
     
-    var attributeContentProviders: Dictionary<String, ContentProviderType> = [:]
+    var attributeContentProviders: Dictionary<String, MD2ContentProviderType> = [:]
     
-    var filter: Filter?
+    var filter: MD2Filter?
     
     init() {
-        self.store = LocalStoreFactory<«managedEntityClassName»>().createStore()
+        self.store = MD2LocalStoreFactory<«managedEntityClassName»>().createStore()
     }
     
     convenience init(content: MD2EntityType) {
@@ -105,7 +105,7 @@ class «className»: ContentProviderType {
     func checkForObserver(attribute: String, newValue: MD2Type) {
         // Check if attribute is observed
         if observedAttributes[attribute] != nil && !observedAttributes[attribute]!.equals(newValue) {
-            OnContentChangeHandler.instance.fire(self, attribute: attribute)
+            MD2OnContentChangeHandler.instance.fire(self, attribute: attribute)
         }
     }
     
@@ -125,7 +125,7 @@ class «className»: ContentProviderType {
     func load() {
         if let _ = content {
             println("LOAD entity \(content!.internalId.toString())")
-            let query = Query()
+            let query = MD2Query()
             query.addPredicate("internalId", value: content!.internalId.toString())
             content = store.query(query)
         }
@@ -145,7 +145,7 @@ class «className»: ContentProviderType {
         }
     }
     
-    func registerAttributeContentProvider(attribute: String, contentProvider: ContentProviderType) {
+    func registerAttributeContentProvider(attribute: String, contentProvider: MD2ContentProviderType) {
         attributeContentProviders[attribute] = contentProvider
     }
     
