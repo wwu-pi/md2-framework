@@ -58,7 +58,7 @@ class SQLite {
 				private static final String SQL_DELETE_«e.name.toUpperCase»_ENTRIES =
 					"DROP TABLE IF EXISTS " + «e.name.toFirstUpper»Entry.TABLE_NAME;
 								
-				private final String[] all«e.name.toFirstUpper»Columns = {«e.name.toFirstUpper»Entry._ID,
+				private final String[] all«e.name.toFirstUpper»Columns = {
 				«FOR a : e.attributes SEPARATOR ", " AFTER "};"»
 					«e.name.toFirstUpper»Entry.COLUMN_NAME_«a.name.toUpperCase»
 				«ENDFOR»
@@ -93,7 +93,7 @@ class SQLite {
 		    public String[] getAllColumns(String typeName) {
 		        switch (typeName) {
 		        	«FOR e : entities»
-		        	case "address": {
+		        	case "«e.name.toLowerCase»": {
 		        		return this.all«e.name.toFirstUpper»Columns;
 		        	}
 					«ENDFOR»

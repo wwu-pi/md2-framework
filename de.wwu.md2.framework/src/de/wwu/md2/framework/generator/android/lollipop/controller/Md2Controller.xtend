@@ -1,31 +1,49 @@
 package de.wwu.md2.framework.generator.android.lollipop.controller
 
+import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.ContentProvider
+import de.wwu.md2.framework.mD2.App
+import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
+
 class Md2Controller {
-	def static generateController(String mainPackage)'''
+	def static generateController(String mainPackage, App app, Iterable<Entity> entities, Iterable<ContentProvider> contentProviders)'''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.Md2Controller.generateController()
 		package «mainPackage».md2.controller;
 		
 		import android.app.Activity;
 		import android.util.Log;
 		
-		import «mainPackage».CitizenApp;
-		import «mainPackage».md2.model.Address;
-		import «mainPackage».md2.model.contentProvider.AddressLocalContentProvider;
+		import «mainPackage».«app.name.toFirstUpper»;
+		
+		«FOR e:entities»
+			import «mainPackage».md2.model.«e.name.toFirstUpper»;
+		«ENDFOR»
+		
+		«FOR cp:contentProviders»
+			import «mainPackage».md2.model.contentProvider.«cp.name.toFirstUpper»;
+		«ENDFOR»
+		
+		import java.util.ArrayList;
+		import java.util.HashSet;
+		
 		import de.uni_muenster.wi.fabian.md2library.annotation.Md2Controller;
 		import de.uni_muenster.wi.fabian.md2library.controller.implementation.AbstractMd2Controller;
 		import de.uni_muenster.wi.fabian.md2library.model.contentProvider.implementation.Md2ContentProviderRegistry;
 		import de.uni_muenster.wi.fabian.md2library.model.contentProvider.interfaces.Md2ContentProvider;
 		import de.uni_muenster.wi.fabian.md2library.model.dataStore.implementation.Md2LocalStoreFactory;
 		import de.uni_muenster.wi.fabian.md2library.model.dataStore.interfaces.Md2SQLiteHelper;
-		import de.uni_muenster.wi.fabian.md2library.view.management.implementation.ViewManager;
+		import de.uni_muenster.wi.fabian.md2library.view.management.implementation.MD2ViewManager;
 		
 		@Md2Controller
 		public class Controller extends AbstractMd2Controller {
+		
+			protected ArrayList<Md2CustomCodeAction> pendingActions;
 		
 		    private static Controller instance;
 		
 		    private Controller() {
 		        Log.d("FabianLog", "Controller: constructor");
+		        pendingActions = new ArrayList<Md2CustomCodeAction>();
 		    }
 		
 		    public static synchronized Controller getInstance() {
@@ -39,49 +57,44 @@ class Md2Controller {
 		    @Override
 		    public void run() {
 		        Log.d("FabianLog", "Controller run()");
-		        this.setupViews();
 		        this.registerContentProviders();
 		    }
-		
-		    protected void setupViews() {
-		        Log.d("FabianLog", "Controller: setupViews()");
-		
-		        ViewManager vm = ViewManager.getInstance();
-		
-		        if (vm != null) {
-		            Log.d("FabianLog", "Controller: setupView() startAct");
-		            //ViewManager.getInstance().setupView(new String("de.uni_muenster.wi.fabian.citizenapp.StartActivity"));
-		
-		
-		            //Log.d("FabianLog", str.getPlatformValue());
-		            //vm.setupView(new String ("de.uni_muenster.wi.fabian.citizenapp.StartActivity"));
-		            vm.setupView("startActivity");
-		            vm.setupView("EnterLocationActivity");
-		        }
-		
-		        Log.d("FabianLog", "Controller: setupView() nothing");
-		/*
-		
-		            vm.setupView(new String("de.uni_muenster.wi.fabian.citizenapp.StartActivity"));
-		            vm.setupView(new String("de.uni_muenster.wi.fabian.citizenapp.StartActivityEnterLocationActivity"));
-		*/
-		    }
-		
-		    public void setActiveView(Activity activeView) {
-		        ViewManager.getInstance().setActiveView(activeView);
-		    }
-		
+
 		    public void registerContentProviders() {
 		        Log.d("FabianLog", "Controller: registerContentProviders()");
 		        Md2ContentProviderRegistry cpr = Md2ContentProviderRegistry.getInstance();
-		        Md2LocalStoreFactory lsf = new Md2LocalStoreFactory();
-		        Md2ContentProvider addressLocalProvider = new AddressLocalContentProvider(lsf.getDataStore());
-		        cpr.add("addressLocal", addressLocalProvider);
+		        Md2LocalStoreFactory lsf = new Md2LocalStoreFactory(this.instance);
+		        
+		        «FOR cp: contentProviders»
+		        	«»
+		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»(new «MD2AndroidLollipopUtil.getTypeNameForContentProvider(cp)»(), (Md2SQLiteDataStore) lsf.getDataStore(););
+		        	cpr.add("addressLocal", addressLocalProvider);
+		        «ENDFOR»
 		    }
 		
 		    @Override
 		    public Md2SQLiteHelper getMd2SQLiteHelper() {
-		        return CitizenApp.getMd2SQLiteHelper();
+		        return «app.name.toFirstUpper».getMd2SQLiteHelper();
+		    }
+		
+		    public void addPendingAction(Md2CustomCodeAction action){
+		        this.pendingActions.add(action);
+		    }
+		
+		    public void tryExecutePendingActions(){
+		        Log.d("FabianLog", "Controller: tryExecutePendingActions()");
+		        HashSet<Md2CustomCodeAction> remove = new HashSet<>();
+		        for(Md2CustomCodeAction action : pendingActions){
+		            try{
+		                action.execute();
+		                Log.d("FabianLog", "Controller: tryExecutePendingActions(): executed --> remove");
+		                remove.add(action);
+		            } catch (WidgetNotCreatedException e) {
+		                // remains in list
+		                Log.d("FabianLog", "Controller: tryExecutePendingActions(): widgetNotCreatedException --> remains in list");
+		            }
+		        }
+		        pendingActions.removeAll(remove);
 		    }
 		}
 	'''

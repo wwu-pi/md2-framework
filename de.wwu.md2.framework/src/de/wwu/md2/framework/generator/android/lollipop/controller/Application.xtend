@@ -14,10 +14,35 @@ class Application {
 
 		public class «app.name.toFirstUpper» extends Application {
 		
+			private static Context context;
+			private static Md2SQLiteHelper sqLiteHelper;
+			
+			private static Controller co;
+			private static Md2ViewManager vm;
+			private static Md2ContentProviderRegistry cpr;
+		
 		    @Override
 		    public void onCreate() {
 		        super.onCreate();
+		        co = Controller.getInstance();
+				vm = Md2ViewManager.getInstance();
+				cpr = Md2ContentProviderRegistry.getInstance();
+				context = getApplicationContext();
 		        Controller.getInstance().run();
+		    }
+		    
+			public static Context getAppContext() {
+		        return «app.name.toFirstUpper».context;
+		    }
+		    
+			public static Md2SQLiteHelper getMd2SQLiteHelper() {
+		        Log.d("FabianLog", "Citizenapp: getMd2SQLiteHelper");
+		        if (sqLiteHelper == null)
+		            synchronized («app.name.toFirstUpper».class) {
+		                if (sqLiteHelper == null)
+		                    sqLiteHelper = new Md2SQLiteHelperImpl(«app.name.toFirstUpper».getAppContext());
+		            }
+		        return sqLiteHelper;
 		    }
 		}
 	'''

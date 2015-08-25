@@ -30,7 +30,7 @@ class Md2Entity {
 		        super("«entity.name.toLowerCase»");
 		    }
 		
-		    public Address(HashMap attributes) {
+		    public «entity.name.toFirstUpper»(HashMap attributes) {
 		        super("«entity.name.toLowerCase»", attributes);
 		    }
 		
