@@ -17,7 +17,7 @@ class Md2Entity {
 
 	private def static generateEntity(String mainPackage, Entity entity) '''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.model.Md2Entity.generateEntity()
-		package «mainPackage + ".md.model"»;
+		package «mainPackage + ".md2.model"»;
 		
 		import java.util.HashMap;
 		

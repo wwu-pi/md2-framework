@@ -60,7 +60,7 @@ class Activity {
 		        	//«wer.workflowElementReference.name»Button.getOnClickHandler().registerAction(new Md2GoToViewAction(getString(R.string.«wer.workflowElementReference»Activity)));
 		        	
 		        	if(«wer.workflowElementReference.name»Button.getOnChangedHandler() == null){
-		        		«wer.workflowElementReference.name»Button.setOnChangedHandler(new Md2OnClickHandler());
+		        		«wer.workflowElementReference.name»Button.setOnChangedHandler(new Md2OnChangedHandler());
 		        	}
 		        «ENDFOR»
 				Controller.getInstance().tryExecutePendingActions();
@@ -158,6 +158,7 @@ class Activity {
 				type = "Md2Label"
 			TextInput:
 				type = "Md2TextInput"
+			default: return ""
 		}
 		
 		result = '''

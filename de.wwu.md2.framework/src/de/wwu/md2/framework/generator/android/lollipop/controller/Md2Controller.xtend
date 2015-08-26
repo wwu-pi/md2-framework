@@ -38,7 +38,7 @@ class Md2Controller {
 		import de.uni_muenster.wi.fabian.md2library.model.dataStore.implementation.Md2LocalStoreFactory;
 		import de.uni_muenster.wi.fabian.md2library.model.dataStore.interfaces.Md2SQLiteHelper;
 		import de.uni_muenster.wi.fabian.md2library.model.dataStore.implementation.Md2SQLiteDataStore;
-		import de.uni_muenster.wi.fabian.md2library.view.management.implementation.MD2ViewManager;
+		import de.uni_muenster.wi.fabian.md2library.view.management.implementation.Md2ViewManager;
 		
 		public class Controller extends AbstractMd2Controller {
 		

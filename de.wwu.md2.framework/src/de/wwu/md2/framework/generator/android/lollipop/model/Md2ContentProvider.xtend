@@ -11,7 +11,7 @@ class Md2ContentProvider {
 	def static generateContentProviders(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<ContentProvider> entities) {
 		entities.forEach [ e |
-			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/" + e.name + ".java",
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/contentProvider/" + e.name + ".java",
 				generateContentProvider(mainPackage, e))
 		]
 	}
