@@ -62,8 +62,8 @@ class ConditionalExpressionUtil {
 	}
 	
 	def static evaluateCompareExpression(CompareExpression expression){
-		val expLeft = SimpleExpressionUtil.getStringValue(expression.eqLeft)
-		val expRight = SimpleExpressionUtil.getStringValue(expression.eqRight)
+		val expLeft = "MD2String(" + SimpleExpressionUtil.getStringValue(expression.eqLeft) + ")"
+		val expRight = "MD2String(" + SimpleExpressionUtil.getStringValue(expression.eqRight) + ")"
 		
 		switch expression.op {
 			case EQUALS: return expLeft + ".equals(" + expRight + ")"

@@ -96,7 +96,7 @@ class «className»: MD2ActionType {
 		
 			MD2ContentProviderRegistry.instance.getContentProvider("«task.pathDefinition.contentProviderRef.name»")!.setValue(
 				"«task.pathDefinition.tail.attributeRef.name»",
-				value: «SimpleExpressionUtil.getStringValue(task.source)»
+				value: MD2String(«SimpleExpressionUtil.getStringValue(task.source)»)
 			)
 		«ENDIF»
 		

@@ -107,6 +107,12 @@ class MD2GeneratorUtil {
 	 * @return A name that identifies the view element uniquely or null if the parameter was null.
 	 */
 	def static getName(Action obj) {
+		
+		return obj.name.toFirstUpper
+		
+		/* This does not yet work because actions are sometimes copied during preprocessing and are 
+		 * then treated as separate actions!!
+		 * /
 		if (obj == null) {
 			return null
 		}
@@ -129,7 +135,7 @@ class MD2GeneratorUtil {
 			qualifiedNameToNameMapping.put(qualifiedName, name + if(i != 0) i else "")
 		}
 		
-		qualifiedNameToNameMapping.get(qualifiedName)
+		qualifiedNameToNameMapping.get(qualifiedName)*/
 	}
 	
 	/**

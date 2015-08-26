@@ -15,30 +15,31 @@ class SimpleExpressionUtil {
 	
 	// MARK only a subset of available expressions are implemented yet
 	def static getStringValue(SimpleExpression expression){
-		return recursiveExpressionBuilder(expression)
+		return '"' + recursiveExpressionBuilder(expression) + '"'
 	}
 	
 	def static String recursiveExpressionBuilder(SimpleExpression expression) {
 		switch expression {
-			StringVal: return 'MD2String("' + expression.value + '")'
-			BooleanVal: return 'MD2Boolean("' + expression.value.toString + '")'  
-			DateVal: return 'MD2Date("' + expression.value.toString + '")'
-			TimeVal: return 'MD2Time("' + expression.value.toString + '")'
-			DateTimeVal: return 'MD2DateTime("' + expression.value.toString + '")'
+			StringVal: return expression.value
+			BooleanVal: return expression.value.toString
+			DateVal: return expression.value.toString
+			TimeVal: return expression.value.toString
+			DateTimeVal: return expression.value.toString
 			ConcatenatedString: {
 				return recursiveExpressionBuilder(expression.leftString) 
-					+ ' + ' 
+					+ ' ' 
 					+ recursiveExpressionBuilder(expression.rightString)
 				}
 			AbstractViewGUIElementRef: {
-				return  'MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.' 
+				return  '\\(MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.' 
 					+ IOSWidgetMapping.lookup(expression)
-					+ ')!.value.toString()'
+					+ ')!.value.toString())'
 			}
 			ContentProviderPath: {
-				return 'MD2ContentProviderRegistry.instance.getContentProvider("'
+				return '" + MD2ContentProviderRegistry.instance.getContentProvider("'
 					+ expression.contentProviderRef.name
-					+ '")!.getValue("' + expression.tail.attributeRef.name + '")!'
+					+ '")!.getValue("' 
+					+ expression.tail.attributeRef.name + '")!.toString() + "'
 			}
 			default: {
 				GeneratorUtil.printError("SimpleExpressionUtil encountered unsupported expression: " + expression)
