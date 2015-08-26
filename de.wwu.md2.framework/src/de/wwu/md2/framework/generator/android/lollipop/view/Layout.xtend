@@ -191,7 +191,7 @@ class Layout {
 	private static def createGridLayoutPaneElement(Document doc, GridLayoutPane glp) {
 		val gridLayoutPaneElement = doc.createElement(Settings.MD2LIBRARY_VIEW_GRIDLAYOUTPANE)
 		val qnp = new DefaultDeclarativeQualifiedNameProvider
-		val qualifiedName = qnp.getFullyQualifiedName(glp)
+		val qualifiedName = qnp.getFullyQualifiedName(glp).toString("_")
 
 		// id
 		gridLayoutPaneElement.setAttribute("android:id", "@id/" + qualifiedName)
