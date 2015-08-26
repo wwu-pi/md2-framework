@@ -12,6 +12,19 @@ import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.MappingTask
 import de.wwu.md2.framework.mD2.UnmappingTask
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
+import de.wwu.md2.framework.mD2.ViewElementEventRef
+import de.wwu.md2.framework.mD2.ActionReference
+import de.wwu.md2.framework.mD2.SimpleActionRef
+import de.wwu.md2.framework.mD2.SimpleAction
+import de.wwu.md2.framework.mD2.GotoViewAction
+import de.wwu.md2.framework.mD2.DisableAction
+import de.wwu.md2.framework.mD2.EnableAction
+import de.wwu.md2.framework.mD2.ContentProviderOperationAction
+import de.wwu.md2.framework.mD2.DisplayMessageAction
+import de.wwu.md2.framework.mD2.ContentProviderResetAction
+import de.wwu.md2.framework.mD2.ContentProviderReference
+import de.wwu.md2.framework.mD2.ContentProviderPath
+import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
 
 class Actions {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
@@ -22,54 +35,141 @@ class Actions {
 			wfe.actions.forEach [ a |
 				val qualifiedName = qualifiedNameProvider.getFullyQualifiedName(a).toString("_")
 				fsa.generateFile(
-					rootFolder + Settings.JAVA_PATH + mainPath + "md2/controller/action/" + qualifiedName + "_Action.java", generateAction(mainPackage, wfe, a))
+					rootFolder + Settings.JAVA_PATH + mainPath + "md2/controller/action/" + qualifiedName.toFirstUpper + "_Action.java", generateAction(mainPackage, wfe, a, qualifiedName))
 
 			]
 		]
 	}
 
-	def static generateAction(String mainPackage, WorkflowElement wfe, Action action) '''
+	def static generateAction(String mainPackage, WorkflowElement wfe, Action action, String qualifiedActionName) '''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.Actions.generateAction()
 		package «mainPackage».md2.controller.action;
 		
 		import de.uni_muenster.wi.fabian.md2library.controller.action.Interfaces.Md2Action;
 		import de.uni_muenster.wi.fabian.md2library.controller.action.Implementation.AbstractMd2Action;
 		
-		public class «wfe.name.toFirstUpper»«action.name.toFirstUpper»Action extends AbstractMd2Action {
+		public class «qualifiedActionName.toFirstUpper»_Action extends AbstractMd2Action {
 		
-		    public «wfe.name.toFirstUpper»«action.name.toFirstUpper»Action() {
-
-		    }
+		    public «qualifiedActionName.toFirstUpper»_Action() {
+				super("«qualifiedActionName.toFirstUpper»_Action");
+		    }		
 		
 		    @Override
 		    public void execute() {
 				«IF action instanceof CustomAction»
 					«val customAction = action as CustomAction»
+					«var counter = 1»
 					«FOR ccf : customAction.codeFragments»
-						«generateCodeForCodeFragment(ccf)»
+						«generateCodeForCodeFragment(ccf, counter)»
+						«counter++»
 					«ENDFOR»
 				«ENDIF»
 		    }
-		
-		    @Override
-		    public boolean equals(Md2Action otherMd2Action) {
-		        if (otherMd2Action == null || !(otherMd2Action instanceof «wfe.name.toFirstUpper»«action.name.toFirstUpper»Action))
-		            return false;
-		
-		        // // TODO: 10.08.2015 use parameter
-		        return otherMd2Action.hashCode() == this.hashCode();
-		    }
 	  '''
 
-	def static String generateCodeForCodeFragment(CustomCodeFragment ccf){
+	def static String generateCodeForCodeFragment(CustomCodeFragment ccf, int counter){
+		if(ccf == null)
+			return ""
+			 
+		val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider
+		var dataType = ""
+		var instantiation = ""
 		var result = ""
 		switch ccf{
-			EventBindingTask : result = ""
-			EventUnbindTask : result = ""
-			CallTask : result = ""
-			MappingTask : result = ""
-			UnmappingTask : result = ""
+			EventBindingTask : {
+				dataType = "Md2BindAction"
+				
+				var qualifiedNameAction = ""
+				val action = ccf.actions.head
+				switch action{
+					ActionReference: qualifiedNameAction = qualifiedNameProvider.getFullyQualifiedName(action.actionRef).toString("_")
+					SimpleActionRef: qualifiedNameAction = qualifiedNameProvider.getFullyQualifiedName(action.action).toString("_")
+				}
+				
+				val event = ccf.events.head as ViewElementEventRef
+				val viewElementType = event.referencedField.ref
+				val eventType = event.event
+				var eventString = ""
+				switch eventType{
+					case eventType == ON_CHANGE: eventString = "Md2WidgetEventType.ON_CHANGE"
+					case eventType == ON_CLICK: eventString = "Md2WidgetEventType.ON_CLICK"
+				}
+				
+				val qualifiedNameView = qualifiedNameProvider.getFullyQualifiedName(viewElementType)
+				
+				instantiation = '''
+					new «qualifiedNameAction»(), R.id.«qualifiedNameView», «eventString»);
+				'''
+				}
+			EventUnbindTask : return ""
+			CallTask : {
+				dataType = "Md2CallAction"
+				var qualifiedName = ""
+				val haction = ccf.action
+				switch haction{
+					ActionReference: qualifiedName = qualifiedNameProvider.getFullyQualifiedName(haction.actionRef).toString("_")
+					SimpleActionRef: qualifiedName = generateSimpleAction(haction.action)
+				}
+				instantiation = '''new «qualifiedName.toFirstUpper»_Action()'''
+				}
+			MappingTask : {
+				dataType = "Md2MapAction"
+				
+				var attribute = ""
+				var contentProvider = ""
+				
+				var pathDefinition = ccf.pathDefinition
+				switch pathDefinition{
+					ContentProviderPath: {
+						attribute = pathDefinition.tail.attributeRef.name
+						contentProvider = pathDefinition.contentProviderRef.name
+						}
+				}
+				
+				instantiation = '''«contentProvider», R.id.«MD2AndroidLollipopUtil.getQualifiedName(ccf.referencedViewField.ref)», «attribute»'''				}
+			UnmappingTask : return ""
 		}
+		
+		result = '''
+			«dataType» var«counter» = null;
+			try {
+				var«counter» = new «dataType»(«instantiation»);
+				var«counter».execute();
+			}catch (WidgetNotCreatedException e){
+				Controller.getInstance().addPendingAction(var«counter»);
+			}
+		'''
+		
+		return result
+	}
+	
+	protected static def String generateSimpleAction(SimpleAction sa){
+		var result = ""
+		switch sa{
+			GotoViewAction: result = '''Md2GoToViewAction("«sa.view.ref.name»Activity")''' 
+//			DisableAction: result = '''''' 
+//			EnableAction: result = '''''' 
+			DisplayMessageAction:  result = '''Md2Md2DisplayMessageAction("«sa.message»")''' 
+			ContentProviderOperationAction: {
+				val contentProvider = sa.contentProvider
+				var contentProviderName = ""
+				var operation = ""
+				switch sa.operation{
+					case CREATE_OR_UPDATE: operation = "Md2ContentProviderOperations.CREATE_OR_UPDATE"
+					case READ: operation = "Md2ContentProviderOperations.READ"
+					case DELETE: operation = "Md2ContentProviderOperations.DELETE"
+				}
+				
+				switch contentProvider{
+					ContentProviderReference: contentProviderName = contentProvider.contentProvider.name
+//					LocationProviderReference: ...
+				}				
+				
+				result = '''Md2ContentProviderOperationAction("«contentProviderName», «operation»")''' 
+			} 
+			ContentProviderResetAction: result = '''Md2ContentProviderResetAction("«sa.contentProvider.contentProvider.name»")''' 
+		}
+		
 		return result
 	}
 

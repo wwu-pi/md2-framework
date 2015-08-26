@@ -4,6 +4,8 @@ import com.google.common.base.Joiner
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.SimpleType
+import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
+import org.eclipse.emf.ecore.EObject
 
 class MD2AndroidLollipopUtil {
 	
@@ -23,6 +25,11 @@ class MD2AndroidLollipopUtil {
 			ReferencedModelType: return type.entity.name.toFirstUpper
 			SimpleType: return "Md2" + type.type.getName.toFirstUpper
 		}
+	}
+	
+	def static getQualifiedName(EObject obj){
+		val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider
+		qualifiedNameProvider.getFullyQualifiedName(obj)
 	}
 	
 	def static String generateImportAllWidgets()'''

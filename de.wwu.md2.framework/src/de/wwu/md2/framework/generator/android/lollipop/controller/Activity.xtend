@@ -55,7 +55,7 @@ class Activity {
 		        	if(«wer.workflowElementReference.name»Button.getOnClickHandler() == null){
 		        		«wer.workflowElementReference.name»Button.setOnClickHandler(new Md2OnClickHandler());
 		        	}
-		        	«wer.workflowElementReference.name»Button.getOnClickHandler().registerAction(new Md2GoToViewAction(getString(R.string.«wer.workflowElementReference.defaultProcessChain.processChainSteps.head.view.ref.name»Activity)));
+		        	//«wer.workflowElementReference.name»Button.getOnClickHandler().registerAction(new Md2GoToViewAction(getString(R.string.«wer.workflowElementReference»Activity)));
 		        	
 		        	if(«wer.workflowElementReference.name»Button.getOnChangedHandler() == null){
 		        		«wer.workflowElementReference.name»Button.setOnChangedHandler(new Md2OnClickHandler());

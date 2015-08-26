@@ -47,7 +47,7 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 		
 			log.info("Start: generate app: \"" + app.appName + "\"")
 			
-			
+	
 			/***************************************************
 			 * 
 			 * Data for the generators
@@ -73,6 +73,8 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			val workflowElements = dataContainer.workflowElementsForApp(app)
 			
 			val startableWorkflowElements = app.workflowElements.filter[we | we.startable]
+			
+			
 
 			/***************************************************
 			 * 
@@ -180,9 +182,8 @@ fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + "somefile.txt",
 		 // Controller
 		 fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "/md2/controller/Controller" + ".java", Md2Controller.generateController(mainPackage, app, dataContainer.entities, dataContainer.contentProviders))
 		 
-		 // custom actions
-		 
-		Actions.generateActions(fsa, rootFolder, mainPath, mainPackage, workflowElements)
+		 // actions
+		 Actions.generateActions(fsa, rootFolder, mainPath, mainPackage, workflowElements)
 		 
 		/***************************************************
 		 * 
