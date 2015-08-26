@@ -22,7 +22,7 @@ class Values {
 				<item name="startActivity_«wer.workflowElementReference.name»Button" type="id"/>				
 			«ENDFOR»
 			«FOR ve : viewGUIElements»
-				«val qualifiedName = qualifiedNameProvider.getFullyQualifiedName(ve)»
+				«val qualifiedName = qualifiedNameProvider.getFullyQualifiedName(ve).toString("_")»
 				«IF (qualifiedName != null && !qualifiedName.empty)»
 					<item name="«qualifiedName»" type="id"/>
 				«ENDIF»

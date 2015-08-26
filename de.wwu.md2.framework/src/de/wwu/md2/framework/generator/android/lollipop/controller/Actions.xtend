@@ -99,7 +99,7 @@ class Actions {
 					case eventType == ON_CLICK: eventString = "Md2WidgetEventType.ON_CLICK"
 				}
 
-				val qualifiedNameView = qualifiedNameProvider.getFullyQualifiedName(viewElementType)
+				val qualifiedNameView = qualifiedNameProvider.getFullyQualifiedName(viewElementType).toString("_")
 
 				instantiation = '''
 					new «qualifiedNameAction», R.id.«qualifiedNameView», «eventString»
@@ -136,7 +136,7 @@ class Actions {
 					}
 				}
 
-				instantiation = '''«contentProvider», R.id.«MD2AndroidLollipopUtil.getQualifiedName(ccf.referencedViewField.ref)», «attribute»'''
+				instantiation = '''«contentProvider», R.id.«MD2AndroidLollipopUtil.getQualifiedName(ccf.referencedViewField.ref).toString("_")», «attribute»'''
 			}
 			UnmappingTask:
 				return ""

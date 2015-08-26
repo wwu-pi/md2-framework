@@ -143,7 +143,7 @@ class Activity {
 		var String type = ""
 		
 		val qnp = new DefaultDeclarativeQualifiedNameProvider
-		var String qualifiedName = qnp.getFullyQualifiedName(vet).toString()		
+		var qualifiedName = qnp.getFullyQualifiedName(vet).toString("_")		
 		
 		switch vet{
 			ViewGUIElementReference: return generateInitViewElement(vet.value)
