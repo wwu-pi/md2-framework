@@ -111,9 +111,6 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			fsa.generateFile(rootFolder + Settings.MAIN_PATH + Settings.ANDROID_MANIFEST_NAME,
 				AndroidManifest.generateProjectAndroidManifest(app, rootViews, mainPackage))
 
-fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + "somefile.txt",
-				Gradle.generateMd2LibrarayBuild)
-
 			// gradle build files
 			fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.GRADLE_BUILD,
 				Gradle.generateMd2LibrarayBuild)

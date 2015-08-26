@@ -25,17 +25,20 @@ import de.wwu.md2.framework.mD2.ContentProviderResetAction
 import de.wwu.md2.framework.mD2.ContentProviderReference
 import de.wwu.md2.framework.mD2.ContentProviderPath
 import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
+import de.wwu.md2.framework.mD2.SimpleExpression
+import de.wwu.md2.framework.mD2.StringVal
 
 class Actions {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<WorkflowElement> workflowElements) {
 		val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider
-		
+
 		workflowElements.forEach [ wfe |
 			wfe.actions.forEach [ a |
 				val qualifiedName = qualifiedNameProvider.getFullyQualifiedName(a).toString("_")
 				fsa.generateFile(
-					rootFolder + Settings.JAVA_PATH + mainPath + "md2/controller/action/" + qualifiedName.toFirstUpper + "_Action.java", generateAction(mainPackage, wfe, a, qualifiedName))
+					rootFolder + Settings.JAVA_PATH + mainPath + "md2/controller/action/" + qualifiedName.toFirstUpper +
+						"_Action.java", generateAction(mainPackage, wfe, a, qualifiedName))
 
 			]
 		]
@@ -52,7 +55,7 @@ class Actions {
 		
 		    public «qualifiedActionName.toFirstUpper»_Action() {
 				super("«qualifiedActionName.toFirstUpper»_Action");
-		    }		
+			}
 		
 		    @Override
 		    public void execute() {
@@ -60,76 +63,85 @@ class Actions {
 					«val customAction = action as CustomAction»
 					«var counter = 1»
 					«FOR ccf : customAction.codeFragments»
-						«generateCodeForCodeFragment(ccf, counter)»
-						«counter++»
+						«generateCodeForCodeFragment(ccf, counter++)»
 					«ENDFOR»
 				«ENDIF»
-		    }
-	  '''
+			}
+		}
+	 '''
 
-	def static String generateCodeForCodeFragment(CustomCodeFragment ccf, int counter){
-		if(ccf == null)
+	def static String generateCodeForCodeFragment(CustomCodeFragment ccf, int counter) {
+		if (ccf == null)
 			return ""
-			 
+
 		val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider
 		var dataType = ""
 		var instantiation = ""
 		var result = ""
-		switch ccf{
-			EventBindingTask : {
+		switch ccf {
+			EventBindingTask: {
 				dataType = "Md2BindAction"
-				
+
 				var qualifiedNameAction = ""
 				val action = ccf.actions.head
-				switch action{
-					ActionReference: qualifiedNameAction = qualifiedNameProvider.getFullyQualifiedName(action.actionRef).toString("_")
-					SimpleActionRef: qualifiedNameAction = qualifiedNameProvider.getFullyQualifiedName(action.action).toString("_")
+				switch action {
+					ActionReference: qualifiedNameAction = qualifiedNameProvider.
+						getFullyQualifiedName(action.actionRef).toString("_") + "_Action()"
+					SimpleActionRef: qualifiedNameAction = generateSimpleAction(action.action)
 				}
-				
+
 				val event = ccf.events.head as ViewElementEventRef
 				val viewElementType = event.referencedField.ref
 				val eventType = event.event
 				var eventString = ""
-				switch eventType{
+				switch eventType {
 					case eventType == ON_CHANGE: eventString = "Md2WidgetEventType.ON_CHANGE"
 					case eventType == ON_CLICK: eventString = "Md2WidgetEventType.ON_CLICK"
 				}
-				
+
 				val qualifiedNameView = qualifiedNameProvider.getFullyQualifiedName(viewElementType)
-				
+
 				instantiation = '''
-					new «qualifiedNameAction»(), R.id.«qualifiedNameView», «eventString»);
+					new «qualifiedNameAction», R.id.«qualifiedNameView», «eventString»
 				'''
-				}
-			EventUnbindTask : return ""
-			CallTask : {
+				
+				// hack to get working code if sth went wrong
+				if(qualifiedNameAction.empty || qualifiedNameView.empty || eventString.empty)
+					instantiation = ""
+			}
+			EventUnbindTask:
+				return ""
+			CallTask: {
 				dataType = "Md2CallAction"
 				var qualifiedName = ""
 				val haction = ccf.action
-				switch haction{
-					ActionReference: qualifiedName = qualifiedNameProvider.getFullyQualifiedName(haction.actionRef).toString("_")
+				switch haction {
+					ActionReference: qualifiedName = qualifiedNameProvider.getFullyQualifiedName(haction.actionRef).
+						toString("_") + "_Action()"
 					SimpleActionRef: qualifiedName = generateSimpleAction(haction.action)
 				}
-				instantiation = '''new «qualifiedName.toFirstUpper»_Action()'''
-				}
-			MappingTask : {
+				instantiation = '''new «qualifiedName.toFirstUpper»'''
+			}
+			MappingTask: {
 				dataType = "Md2MapAction"
-				
+
 				var attribute = ""
 				var contentProvider = ""
-				
+
 				var pathDefinition = ccf.pathDefinition
-				switch pathDefinition{
+				switch pathDefinition {
 					ContentProviderPath: {
 						attribute = pathDefinition.tail.attributeRef.name
 						contentProvider = pathDefinition.contentProviderRef.name
-						}
+					}
 				}
-				
-				instantiation = '''«contentProvider», R.id.«MD2AndroidLollipopUtil.getQualifiedName(ccf.referencedViewField.ref)», «attribute»'''				}
-			UnmappingTask : return ""
+
+				instantiation = '''«contentProvider», R.id.«MD2AndroidLollipopUtil.getQualifiedName(ccf.referencedViewField.ref)», «attribute»'''
+			}
+			UnmappingTask:
+				return ""
 		}
-		
+
 		result = '''
 			«dataType» var«counter» = null;
 			try {
@@ -140,36 +152,43 @@ class Actions {
 			}
 		'''
 		
+		// hack to get working code if sth went wrong
+		if(instantiation.empty || dataType.empty)
+			return ""
+
 		return result
 	}
-	
-	protected static def String generateSimpleAction(SimpleAction sa){
+
+	protected static def String generateSimpleAction(SimpleAction sa) {
 		var result = ""
-		switch sa{
-			GotoViewAction: result = '''Md2GoToViewAction("«sa.view.ref.name»Activity")''' 
+		switch sa {
+			GotoViewAction:
+				result = '''Md2GoToViewAction("«sa.view.ref.name»Activity")'''
 //			DisableAction: result = '''''' 
 //			EnableAction: result = '''''' 
-			DisplayMessageAction:  result = '''Md2Md2DisplayMessageAction("«sa.message»")''' 
+			DisplayMessageAction:
+				result = '''Md2DisplayMessageAction("«(sa.message as StringVal).value»")'''
 			ContentProviderOperationAction: {
 				val contentProvider = sa.contentProvider
 				var contentProviderName = ""
 				var operation = ""
-				switch sa.operation{
+				switch sa.operation {
 					case CREATE_OR_UPDATE: operation = "Md2ContentProviderOperations.CREATE_OR_UPDATE"
 					case READ: operation = "Md2ContentProviderOperations.READ"
 					case DELETE: operation = "Md2ContentProviderOperations.DELETE"
 				}
-				
-				switch contentProvider{
+
+				switch contentProvider {
 					ContentProviderReference: contentProviderName = contentProvider.contentProvider.name
 //					LocationProviderReference: ...
-				}				
-				
-				result = '''Md2ContentProviderOperationAction("«contentProviderName», «operation»")''' 
-			} 
-			ContentProviderResetAction: result = '''Md2ContentProviderResetAction("«sa.contentProvider.contentProvider.name»")''' 
+				}
+
+				result = '''Md2ContentProviderOperationAction("«contentProviderName», «operation»")'''
+			}
+			ContentProviderResetAction:
+				result = '''Md2ContentProviderResetAction("«sa.contentProvider.contentProvider.name»")'''
 		}
-		
+
 		return result
 	}
 
