@@ -278,12 +278,12 @@ class Layout {
 		// type
 		switch textInput {
 			case textInput.type == TextInputType.PASSWORD:
-				textInputElement.setAttribute("android:inputType", "TYPE_CLASS_TEXT | TYPE_TEXT_VARIATION_PASSWORD")
+				textInputElement.setAttribute("android:inputType", "textPassword")
 			case textInput.type == TextInputType.TEXTAREA:
 				textInputElement.setAttribute("android:inputType",
-					"TYPE_CLASS_TEXT | TYPE_TEXT_VARIATION_NORMAL | TYPE_TEXT_FLAG_MULTI_LINE")
+					"text | textMultiLine")
 			default:
-				textInputElement.setAttribute("android:inputType", "TYPE_CLASS_TEXT | TYPE_TEXT_VARIATION_NORMAL")
+				textInputElement.setAttribute("android:inputType", "text")
 		}
 
 		return textInputElement

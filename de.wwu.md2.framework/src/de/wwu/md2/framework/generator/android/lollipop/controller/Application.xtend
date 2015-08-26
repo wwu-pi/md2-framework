@@ -9,8 +9,14 @@ class Application {
 		package «packageName»;
 		
 		import android.app.Application;
+		import android.content.Context;
+		import android.util.Log;
 		
 		import «packageName»«Settings.MD2_APP_FILES_CONTROLLER_PACKAGE_NAME»;
+		import androidgeneratortestproject.md2.model.sqlite.Md2SQLiteHelperImpl;
+		import de.uni_muenster.wi.fabian.md2library.model.contentProvider.implementation.Md2ContentProviderRegistry;
+		import de.uni_muenster.wi.fabian.md2library.model.dataStore.interfaces.Md2SQLiteHelper;
+		import de.uni_muenster.wi.fabian.md2library.view.management.implementation.Md2ViewManager;
 
 		public class «app.name.toFirstUpper» extends Application {
 		

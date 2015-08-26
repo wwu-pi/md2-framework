@@ -12,6 +12,7 @@ import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.Label
 import de.wwu.md2.framework.mD2.TextInput
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
+import de.wwu.md2.framework.mD2.GridLayoutPane
 
 class Activity {
 	
@@ -41,6 +42,7 @@ class Activity {
 		import de.uni_muenster.wi.fabian.md2library.view.management.implementation.Md2ViewManager;
 		«MD2AndroidLollipopUtil.generateImportAllWidgets»
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
+		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
 		
 		
 		public class StartActivity extends Activity {
@@ -99,6 +101,7 @@ class Activity {
 		import de.uni_muenster.wi.fabian.md2library.view.management.implementation.Md2ViewManager;
 		«MD2AndroidLollipopUtil.generateImportAllWidgets»
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
+		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
 		
 		
 		public class «rv.name»Activity extends Activity {
@@ -106,7 +109,7 @@ class Activity {
 		    @Override
 		    protected void onCreate(Bundle savedInstanceState) {
 		        super.onCreate(savedInstanceState);
-		        setContentView(R.layout.activity_«rv.name»);
+		        setContentView(R.layout.activity_«rv.name.toLowerCase»);
 		        Md2ViewManager.getInstance().registerActivity(this);
 		        
 		        «FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
@@ -147,6 +150,8 @@ class Activity {
 		
 		switch vet{
 			ViewGUIElementReference: return generateInitViewElement(vet.value)
+			GridLayoutPane:
+				type = "Md2GridLayoutPane"
 			Button:
 				type = "Md2Button"
 			Label:

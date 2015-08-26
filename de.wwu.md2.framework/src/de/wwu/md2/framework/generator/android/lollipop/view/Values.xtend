@@ -49,29 +49,29 @@ class Values {
 		switch viewGUIElement {
 			InputElement:
 				return '''
-					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_title">«viewGUIElement.name»</string>
-					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_label">«viewGUIElement.labelText»</string>
-					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_tooltip">«viewGUIElement.tooltipText»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_title">«viewGUIElement.name»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_label">«viewGUIElement.labelText»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_tooltip">«viewGUIElement.tooltipText»</string>
 				'''
 			Image:
 				return '''
-					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_title">«viewGUIElement.name»</string>
-					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_src">«viewGUIElement.src»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_title">«viewGUIElement.name»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_src">«viewGUIElement.src»</string>
 				'''
 			Button:
 				return '''
-					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_title">«viewGUIElement.name»</string>
-					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_text">«viewGUIElement.text»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_title">«viewGUIElement.name»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_text">«viewGUIElement.text»</string>
 				'''
 			Label:
 				return '''
-					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_title">«viewGUIElement.name»</string>
-					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_label">«viewGUIElement.text»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_title">«viewGUIElement.name»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_label">«viewGUIElement.text»</string>
 				'''
 			Tooltip:
 				return '''
-					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_title">«viewGUIElement.name»</string>
-					<string name="«qnp.getFullyQualifiedName(viewGUIElement)»_text">«viewGUIElement.text»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_title">«viewGUIElement.name»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_text">«viewGUIElement.text»</string>
 				'''
 		}
 	}

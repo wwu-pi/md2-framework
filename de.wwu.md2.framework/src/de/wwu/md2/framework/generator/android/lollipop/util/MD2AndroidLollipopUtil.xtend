@@ -32,10 +32,9 @@ class MD2AndroidLollipopUtil {
 		qualifiedNameProvider.getFullyQualifiedName(obj)
 	}
 	
-
 	def static String generateImportAllWidgets()'''
-		import de.uni_muenster.wi.fabian.md2library.view.widgets.implementation.Md2GridLayout;
-		import de.uni_muenster.wi.fabian.md2library.view.widgets.implementation.Md2FlowLayout;
+		import de.uni_muenster.wi.fabian.md2library.view.widgets.implementation.Md2GridLayoutPane;
+		import de.uni_muenster.wi.fabian.md2library.view.widgets.implementation.Md2FlowLayoutPane;
 		import de.uni_muenster.wi.fabian.md2library.view.widgets.implementation.Md2Label;
 		import de.uni_muenster.wi.fabian.md2library.view.widgets.implementation.Md2Button;
 		import de.uni_muenster.wi.fabian.md2library.view.widgets.implementation.Md2TextInput;
@@ -51,4 +50,41 @@ class MD2AndroidLollipopUtil {
 		import de.uni_muenster.wi.fabian.md2library.model.type.implementation.Md2Time;
 	'''
 	
+	def static String generateImportAllEventHandler()'''
+		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.AbstractMd2Action;
+		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.Md2ContentProivderOperationAction;
+		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.Md2ContentProviderOperations;
+		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.Md2ContentProviderResetAction;
+		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.Md2DisplayMessageAction;
+		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.Md2FireEventAction;
+		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.Md2GoToViewAction;
+		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.Md2SynchronizeContentProviderDataMapping;
+		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.Md2SynchronizeWidgetDataMappingAction;
+		import de.uni_muenster.wi.fabian.md2library.controller.action.interfaces.Md2Action;
+		
+	'''
+	
+	def static String generateImportAllActions()'''
+		import de.uni_muenster.wi.fabian.md2library.controller.eventhandler.implementation.Md2ContentProviderEventTypes;
+		import de.uni_muenster.wi.fabian.md2library.controller.eventhandler.implementation.Md2OnAttributeChangedHandlerHandler;
+		import de.uni_muenster.wi.fabian.md2library.controller.eventhandler.implementation.Md2OnChangedHandler;
+		import de.uni_muenster.wi.fabian.md2library.controller.eventhandler.implementation.Md2OnClickHandler;
+		import de.uni_muenster.wi.fabian.md2library.controller.eventhandler.implementation.Md2OnLeftSwipeHandler;
+		import de.uni_muenster.wi.fabian.md2library.controller.eventhandler.implementation.Md2OnRightSwipeHandler;
+		import de.uni_muenster.wi.fabian.md2library.controller.eventhandler.implementation.Md2WidgetEventType;
+	'''
+	
+	def static String generateImportAllExceptions()'''
+		import de.uni_muenster.wi.fabian.md2library.exception.WidgetNotCreatedException;
+	'''
+	
+	def static String generateImportAllCustomActions()'''
+		de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.interfaces.Md2CustomCodeAction;
+		de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2AttributeSetAction;
+		de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2BindAction;
+		de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2CallAction;
+		de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2MapAction;
+		de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2UnbindAction;
+		de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2UnmapAction;
+	'''
 }

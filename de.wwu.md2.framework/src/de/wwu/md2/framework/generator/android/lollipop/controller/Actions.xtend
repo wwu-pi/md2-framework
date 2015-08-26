@@ -72,8 +72,14 @@ class Actions {
 		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.Actions.generateAction()
 		package «mainPackage».md2.controller.action;
 		
-		import de.uni_muenster.wi.fabian.md2library.controller.action.Interfaces.Md2Action;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.Implementation.AbstractMd2Action;
+		import «mainPackage».R;
+		
+		import «mainPackage».md2.controller.Controller;
+		«MD2AndroidLollipopUtil.generateImportAllActions»
+		«MD2AndroidLollipopUtil.generateImportAllTypes»
+		«MD2AndroidLollipopUtil.generateImportAllExceptions»
+		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
+		«MD2AndroidLollipopUtil.generateImportAllCustomActions»
 		
 		public class «qualifiedActionName.toFirstUpper»_Action extends AbstractMd2Action {
 		

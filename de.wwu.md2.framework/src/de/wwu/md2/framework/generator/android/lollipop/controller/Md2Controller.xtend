@@ -26,15 +26,20 @@ class Md2Controller {
 		import java.util.ArrayList;
 		import java.util.HashSet;
 		
-		import de.uni_muenster.wi.fabian.md2library.annotation.Md2Controller;
+		«MD2AndroidLollipopUtil.generateImportAllActions»
+		«MD2AndroidLollipopUtil.generateImportAllTypes»
+		«MD2AndroidLollipopUtil.generateImportAllExceptions»
+		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
+		«MD2AndroidLollipopUtil.generateImportAllCustomActions»
+		
 		import de.uni_muenster.wi.fabian.md2library.controller.implementation.AbstractMd2Controller;
 		import de.uni_muenster.wi.fabian.md2library.model.contentProvider.implementation.Md2ContentProviderRegistry;
 		import de.uni_muenster.wi.fabian.md2library.model.contentProvider.interfaces.Md2ContentProvider;
 		import de.uni_muenster.wi.fabian.md2library.model.dataStore.implementation.Md2LocalStoreFactory;
 		import de.uni_muenster.wi.fabian.md2library.model.dataStore.interfaces.Md2SQLiteHelper;
+		import de.uni_muenster.wi.fabian.md2library.model.dataStore.implementation.Md2SQLiteDataStore;
 		import de.uni_muenster.wi.fabian.md2library.view.management.implementation.MD2ViewManager;
 		
-		@Md2Controller
 		public class Controller extends AbstractMd2Controller {
 		
 			protected ArrayList<Md2CustomCodeAction> pendingActions;
