@@ -19,6 +19,7 @@ import de.wwu.md2.framework.generator.android.lollipop.model.Md2Entity
 import de.wwu.md2.framework.generator.android.lollipop.model.SQLite
 import de.wwu.md2.framework.generator.android.lollipop.controller.Md2Controller
 import de.wwu.md2.framework.generator.android.lollipop.controller.Actions
+import de.wwu.md2.framework.generator.android.lollipop.model.Md2ContentProvider
 
 class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
@@ -130,6 +131,9 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			 ***************************************************/
 			 //Entities
 			Md2Entity.generateEntities(fsa, rootFolder, mainPath , mainPackage, dataContainer.entities)
+			
+			// Content Provider
+			Md2ContentProvider.generateContentProviders(fsa, rootFolder, mainPath, mainPackage, dataContainer.contentProviders)
 			
 			// SQLite classes
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "/md2/model/sqlite/Md2DataContract.java",

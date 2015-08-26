@@ -9,10 +9,10 @@ import de.wwu.md2.framework.mD2.ReferencedModelType
 class Md2ContentProvider {
 	
 	def static generateContentProviders(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
-		Iterable<ContentProvider> entities) {
-		entities.forEach [ e |
-			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/contentProvider/" + e.name + ".java",
-				generateContentProvider(mainPackage, e))
+		Iterable<ContentProvider> contentProviders) {
+		contentProviders.forEach [ cp |
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/contentProvider/" + cp.name + ".java",
+				generateContentProvider(mainPackage, cp))
 		]
 	}
 
@@ -30,10 +30,6 @@ class Md2ContentProvider {
 		public class «contentProvider.name.toFirstUpper» extends AbstractMd2ContentProvider {
 		    public «contentProvider.name.toFirstUpper»(«content.entity.name.toFirstUpper» content, Md2LocalStore md2DataStore) {
 		        super(content, md2DataStore);
-		    }
-		
-		    public «contentProvider.name.toFirstUpper»(Md2LocalStore md2DataStore) {
-		        super(md2DataStore);
 		    }
 		}
 	'''
