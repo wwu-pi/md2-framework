@@ -14,9 +14,9 @@ import de.wwu.md2.framework.mD2.WorkflowElementReference
 class Values {
 
 	def static String generateIdsXml(Iterable<ViewGUIElement> viewGUIElements, Iterable<WorkflowElementReference> wers) '''
-		«val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider»
-		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateIdsXml() -->
+		«val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider»		
 		<?xml version="1.0" encoding="utf-8"?>
+		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateIdsXml() -->
 		<resources>
 			«FOR wer : wers»
 				<item name="startActivity_«wer.workflowElementReference.name»Button" type="id"/>				
@@ -36,7 +36,7 @@ class Values {
 		<resources>
 			<string name="app_name">«app.appName»</string>
 			«FOR rce : rootContainerElements»
-				<string name="@string/title_activity_«rce.name.toFirstLower»">«rce.name»</string>
+				<string name="title_activity_«rce.name.toFirstLower»">«rce.name»</string>
 			«ENDFOR»
 			«FOR ve : viewGUIElements»
 				«generateStringEntry(ve)»
@@ -76,9 +76,9 @@ class Values {
 		}
 	}
 
-	def static String generateViewsXml(Iterable<ContainerElement> rootContainerElements, String mainPackage) '''
-		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateViewsXml() -->
+	def static String generateViewsXml(Iterable<ContainerElement> rootContainerElements, String mainPackage) '''		
 		<?xml version="1.0" encoding="utf-8"?>
+		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateViewsXml() -->
 		<resources>
 		    <string name="StartActivity">«mainPackage».StartActivity</string>
 		    «FOR rce : rootContainerElements»
