@@ -166,7 +166,7 @@ class Layout {
 	private static def createFlowLayoutPaneElement(Document doc, FlowLayoutPane flp) {
 		val flowLayoutPaneElement = doc.createElement(Settings.MD2LIBRARY_VIEW_FLOWLAYOUTPANE)
 		val qnp = new DefaultDeclarativeQualifiedNameProvider
-		val qualifiedName = qnp.getFullyQualifiedName(flp)
+		val qualifiedName = qnp.getFullyQualifiedName(flp).toString("_")
 
 		// id
 		flowLayoutPaneElement.setAttribute("android:id", "@id/" + qualifiedName)
@@ -220,7 +220,7 @@ class Layout {
 	private static def createButtonElement(Document doc, Button button) {
 		val buttonElement = doc.createElement(Settings.MD2LIBRARY_VIEW_BUTTON)
 		val qnp = new DefaultDeclarativeQualifiedNameProvider
-		val qualifiedName = qnp.getFullyQualifiedName(button)
+		val qualifiedName = qnp.getFullyQualifiedName(button).toString("_")
 
 		// id
 		buttonElement.setAttribute("android:id", "@id/" + qualifiedName)
@@ -251,7 +251,7 @@ class Layout {
 	private static def createTextInputElement(Document doc, TextInput textInput) {
 		val textInputElement = doc.createElement(Settings.MD2LIBRARY_VIEW_TEXTINPUT)
 		val qnp = new DefaultDeclarativeQualifiedNameProvider
-		val qualifiedName = qnp.getFullyQualifiedName(textInput)
+		val qualifiedName = qnp.getFullyQualifiedName(textInput).toString("_")
 
 		// id
 		textInputElement.setAttribute("android:id", "@id/" + qualifiedName)
