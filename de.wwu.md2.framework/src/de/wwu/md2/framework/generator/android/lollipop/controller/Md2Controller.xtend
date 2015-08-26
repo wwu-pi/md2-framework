@@ -72,8 +72,8 @@ class Md2Controller {
 		        
 		        «FOR cp: contentProviders»
 		        	«»
-		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»(new «MD2AndroidLollipopUtil.getTypeNameForContentProvider(cp)»(), (Md2SQLiteDataStore) lsf.getDataStore(););
-		        	cpr.add("addressLocal", addressLocalProvider);
+		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»(new «MD2AndroidLollipopUtil.getTypeNameForContentProvider(cp)»(), (Md2SQLiteDataStore) lsf.getDataStore());
+		        	cpr.add("«cp.name»", «cp.name.toFirstLower»);
 		        «ENDFOR»
 		    }
 		

@@ -80,6 +80,7 @@ class Actions {
 		«MD2AndroidLollipopUtil.generateImportAllExceptions»
 		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
 		«MD2AndroidLollipopUtil.generateImportAllCustomActions»
+		import de.uni_muenster.wi.fabian.md2library.model.contentProvider.implementation.Md2ContentProviderRegistry;
 		
 		public class «qualifiedActionName.toFirstUpper»_Action extends AbstractMd2Action {
 		
@@ -93,16 +94,18 @@ class Actions {
 					«val customAction = action as CustomAction»
 					«var counter = 1»
 					«FOR ccf : customAction.codeFragments»
-						«generateCodeForCodeFragment(ccf, counter++)»
+						«generateCodeForCodeFragment(ccf, wfe, counter++)»
 					«ENDFOR»
 				«ENDIF»
 			}
 		}
 	'''
 
-	def static String generateCodeForCodeFragment(CustomCodeFragment ccf, int counter) {
+	def static String generateCodeForCodeFragment(CustomCodeFragment ccf, WorkflowElement wfe, int counter) {
 		if (ccf == null)
 			return ""
+
+		var intCounter = counter
 
 		val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider
 		var dataType = ""
@@ -148,192 +151,199 @@ class Actions {
 				var qualifiedName = ""
 				val haction = ccf.action
 				switch haction {
-					ActionReference:
-						qualifiedName = qualifiedNameProvider.getFullyQualifiedName(haction.actionRef).toString("_") +
-							"_Action()"
-					SimpleActionRef:
-						qualifiedName = generateSimpleAction(haction.action)
-				}
-				instantiation = '''new «qualifiedName.toFirstUpper»'''
-			}
-			MappingTask: {
-				dataType = "Md2MapAction"
-
-				var attribute = ""
-				var contentProvider = ""
-
-				var pathDefinition = ccf.pathDefinition
-				switch pathDefinition {
-					ContentProviderPath: {
-						attribute = pathDefinition.tail.attributeRef.name
-						contentProvider = pathDefinition.contentProviderRef.name
+					ActionReference: {
+						if (haction.actionRef.eContainer == null) {
+							qualifiedName = wfe.name + "_" +
+								qualifiedNameProvider.getFullyQualifiedName(haction.actionRef).toString("_") +
+								"_Action()"	
+							} else {
+									qualifiedName = qualifiedNameProvider.getFullyQualifiedName(haction.actionRef).
+										toString("_") + "_Action()"
+								}
+							}
+							SimpleActionRef:
+								qualifiedName = generateSimpleAction(haction.action)
+						}
+						instantiation = '''new «qualifiedName.toFirstUpper»'''
 					}
-				}
+					MappingTask: {
+						dataType = "Md2MapAction"
 
-				instantiation = '''«contentProvider», R.id.«MD2AndroidLollipopUtil.getQualifiedName(ccf.referencedViewField.ref).toString("_")», «attribute»'''
-			}
+						var attribute = ""
+						var contentProvider = ""
+
+						var pathDefinition = ccf.pathDefinition
+						switch pathDefinition {
+							ContentProviderPath: {
+								attribute = pathDefinition.tail.attributeRef.name
+								contentProvider = pathDefinition.contentProviderRef.name
+							}
+						}
+
+						instantiation = '''"«contentProvider»", R.id.«MD2AndroidLollipopUtil.getQualifiedName(ccf.referencedViewField.ref).toString("_")», "«attribute»"'''
+					}
 //			UnmappingTask:
 //				return "Some unmapping task"
-			AttributeSetTask: {
-				dataType = "Md2AttributeSetAction"
-				instantiation = '''«ccf.pathDefinition.contentProviderRef.name», «ccf.pathDefinition.tail.attributeRef.name», '''
+					AttributeSetTask: {
+						dataType = "Md2AttributeSetAction"
+						instantiation = '''"«ccf.pathDefinition.contentProviderRef.name»", "«ccf.pathDefinition.tail.attributeRef.name»", «generateSimpleExpression(ccf.source)»'''
 
-			}
+					}
 //			ContentProviderSetTask:
 //				return "Some contentprovider set task"	
 //			ViewElementSetTask:
 //				return "Some viewElementSet task"
-			ConditionalCodeFragment: {
-				result = '''
-					if(«generateCondition(ccf.^if.condition)»){
-						«FOR containedCcf : ccf.^if.codeFragments»
-							«containedCcf.generateCodeForCodeFragment(counter)»
-						«ENDFOR»
+					ConditionalCodeFragment: {
+						result = '''
+							if(«generateCondition(ccf.^if.condition)»){
+								«FOR containedCcf : ccf.^if.codeFragments»
+									«containedCcf.generateCodeForCodeFragment(wfe, intCounter++)»
+								«ENDFOR»
+							}
+							«FOR ei : ccf.elseifs»
+								else if («generateCondition(ei.condition)»){
+									«FOR containedCcf : ei.codeFragments»
+										«containedCcf.generateCodeForCodeFragment(wfe, intCounter++)»
+									«ENDFOR»
+								}				
+							«ENDFOR»
+							«IF ccf.^else != null»				
+								else{
+									«FOR containedCcf : ccf.^else.codeFragments»
+										«containedCcf.generateCodeForCodeFragment(wfe, intCounter++)»
+									«ENDFOR»
+								}
+							«ENDIF»
+						'''
+						return result;
 					}
-					«FOR ei : ccf.elseifs»
-						else if («generateCondition(ei.condition)»){
-							«FOR containedCcf : ei.codeFragments»
-								«containedCcf.generateCodeForCodeFragment(counter)»
-							«ENDFOR»
-						}				
-					«ENDFOR»
-					«IF ccf.^else != null»				
-						else{
-							«FOR containedCcf : ccf.^else.codeFragments»
-								«containedCcf.generateCodeForCodeFragment(counter)»
-							«ENDFOR»
-						}
-					«ENDIF»
+					default:
+						throw new UnsupportedOperationException("generateCustomCodeFragment()")
+				}
+
+				result = '''
+					«dataType» var«intCounter» = null;
+					try {
+						var«intCounter» = new «dataType»(«instantiation»);
+						var«intCounter».execute();
+					}catch (WidgetNotCreatedException e){
+						Controller.getInstance().addPendingAction(var«intCounter»);
+					}
 				'''
-				return result;
+
+				// hack to get working code if sth went wrong
+				if (instantiation.empty || dataType.empty)
+					return ""
+
+				return result
 			}
-			default:
-				throw new UnsupportedOperationException("generateCustomCodeFragment()")
-		}
 
-		result = '''
-			«dataType» var«counter» = null;
-			try {
-				var«counter» = new «dataType»(«instantiation»);
-				var«counter».execute();
-			}catch (WidgetNotCreatedException e){
-				Controller.getInstance().addPendingAction(var«counter»);
-			}
-		'''
+			protected static def String generateSimpleAction(SimpleAction sa) {
+				var result = ""
+				switch sa {
+					GotoViewAction:
+						result = '''Md2GoToViewAction("«sa.view.ref.name»Activity")'''
+					DisableAction:
+						result = '''some disable action'''
+					EnableAction:
+						result = '''some enable action'''
+					DisplayMessageAction:
+						result = '''Md2DisplayMessageAction(«generateSimpleExpression(sa.message)».toString())'''
+					FireEventAction:
+						result = ""
+					ContentProviderOperationAction: {
+						val contentProvider = sa.contentProvider
+						var contentProviderName = ""
+						var operation = ""
+						switch sa.operation {
+							case CREATE_OR_UPDATE: operation = "Md2ContentProviderOperations.CREATE_OR_UPDATE"
+							case READ: operation = "Md2ContentProviderOperations.READ"
+							case DELETE: operation = "Md2ContentProviderOperations.DELETE"
+						}
 
-		// hack to get working code if sth went wrong
-		if (instantiation.empty || dataType.empty)
-			return ""
-
-		return result
-	}
-
-	protected static def String generateSimpleAction(SimpleAction sa) {
-		var result = ""
-		switch sa {
-			GotoViewAction:
-				result = '''Md2GoToViewAction("«sa.view.ref.name»Activity")'''
-			DisableAction:
-				result = '''some disable action'''
-			EnableAction:
-				result = '''some enable action'''
-			DisplayMessageAction:
-				result = '''Md2DisplayMessageAction(«generateSimpleExpression(sa.message)».toString())'''
-			FireEventAction:
-				result = ""
-			ContentProviderOperationAction: {
-				val contentProvider = sa.contentProvider
-				var contentProviderName = ""
-				var operation = ""
-				switch sa.operation {
-					case CREATE_OR_UPDATE: operation = "Md2ContentProviderOperations.CREATE_OR_UPDATE"
-					case READ: operation = "Md2ContentProviderOperations.READ"
-					case DELETE: operation = "Md2ContentProviderOperations.DELETE"
-				}
-
-				switch contentProvider {
-					ContentProviderReference: contentProviderName = contentProvider.contentProvider.name
+						switch contentProvider {
+							ContentProviderReference: contentProviderName = contentProvider.contentProvider.name
 //					LocationProviderReference: ...
+						}
+
+						result = '''Md2ContentProviderOperationAction("«contentProviderName», «operation»")'''
+					}
+					ContentProviderResetAction:
+						result = '''Md2ContentProviderResetAction("«sa.contentProvider.contentProvider.name»")'''
+					/*ContentProviderAddAction: 
+					 * 	result = '''some ContentProviderAddAction action''' 
+					 * ContentProviderRemoveAction:
+					 * 	result = '''some ContentProviderRemoveAction action'''
+					 * ContentProviderGetAction:
+					 result = '''some ContentProviderGetAction action'''*/
+					default:
+						throw new UnsupportedOperationException("generateSimpleAction()")
 				}
 
-				result = '''Md2ContentProviderOperationAction("«contentProviderName», «operation»")'''
+				return result
 			}
-			ContentProviderResetAction:
-				result = '''Md2ContentProviderResetAction("«sa.contentProvider.contentProvider.name»")'''
-			/*ContentProviderAddAction: 
-			 * 	result = '''some ContentProviderAddAction action''' 
-			 * ContentProviderRemoveAction:
-			 * 	result = '''some ContentProviderRemoveAction action'''
-			 * ContentProviderGetAction:
-			 result = '''some ContentProviderGetAction action'''*/
-			default:
-				throw new UnsupportedOperationException("generateSimpleAction()")
-		}
 
-		return result
-	}
+			protected static def String generateCondition(ConditionalExpression condition) {
+				var result = '''true'''
 
-	protected static def String generateCondition(ConditionalExpression condition) {
-		var result = '''true'''
+				switch condition {
+					CompareExpression: {
+						result = '''(«generateSimpleExpression(condition.eqLeft)».«generateOperator(condition.op)»(«generateSimpleExpression(condition.eqRight)»))'''
+					}
+					Or: {
+						result = '''(«generateCondition(condition.leftExpression)» || «generateCondition(condition.rightExpression)»)'''
+					}
+					And: {
+						result = '''(«generateCondition(condition.leftExpression)» && «generateCondition(condition.rightExpression)»)'''
+					}
+					Not: {
+						result = '''(!(«condition.expression»))'''
+					}
+					default:
+						throw new UnsupportedOperationException("generateCondition()")
+				}
 
-		switch condition {
-			CompareExpression: {
-				result = '''(«generateSimpleExpression(condition.eqLeft)».«generateOperator(condition.op)»(«generateSimpleExpression(condition.eqRight)»))'''
+				return result
 			}
-			Or: {
-				result = '''(«generateCondition(condition.leftExpression)» || «generateCondition(condition.rightExpression)»)'''
-			}
-			And: {
-				result = '''(«generateCondition(condition.leftExpression)» && «generateCondition(condition.rightExpression)»)'''
-			}
-			Not: {
-				result = '''(!(«condition.expression»))'''
-			}
-			default:
-				throw new UnsupportedOperationException("generateCondition()")
-		}
 
-		return result
-	}
+			protected static def String generateOperator(Operator op) {
+				switch op {
+					// EQUALS = 'equals' | GREATER = '>' | SMALLER = '<' | GREATER_OR_EQUAL = '>=' | SMALLER_OR_EQUAL = '<='
+					case EQUALS: return "equals"
+					case GREATER: return "gt"
+					case GREATER_OR_EQUAL: return "gte"
+					case SMALLER: return "lt"
+					case SMALLER_OR_EQUAL: return "lte"
+					default: throw new UnsupportedOperationException("generateOperator()")
+				}
+			}
 
-	protected static def String generateOperator(Operator op) {
-		switch op {
-			// EQUALS = 'equals' | GREATER = '>' | SMALLER = '<' | GREATER_OR_EQUAL = '>=' | SMALLER_OR_EQUAL = '<='
-			case EQUALS: return "equals"
-			case GREATER: return "gt"
-			case GREATER_OR_EQUAL: return "gte"
-			case SMALLER: return "lt"
-			case SMALLER_OR_EQUAL: return "lte"
-			default: throw new UnsupportedOperationException("generateOperator()")
-		}
-	}
-
-	protected static def String generateSimpleExpression(SimpleExpression expression) {
-		switch expression {
-			StringVal:
-				return '''new Md2String("«expression.value»")'''
-			BooleanVal:
-				return '''new Md2Boolean(«expression.value»)'''
-			DateVal:
-				return '''new Md2Date(«expression.value»)'''
-			TimeVal:
-				return '''new Md2Time(«expression.value»)'''
-			DateTimeVal:
-				return '''new Md2DateTime(«expression.value»)'''
-			IntVal:
-				return '''new Md2Integer(«expression.value»)'''
-			FloatVal:
-				return '''new Md2Float(«expression.value»)'''
-			AbstractContentProviderPath: {
+			protected static def String generateSimpleExpression(SimpleExpression expression) {
 				switch expression {
-					ContentProviderPath: return '''Md2ContentProviderRegistry.getInstance().getContentProvider("«expression.contentProviderRef.name»").getValue("«expression.tail.attributeRef.name»")'''
-				// LocationProvider: ...
+					StringVal:
+						return '''new Md2String("«expression.value»")'''
+					BooleanVal:
+						return '''new Md2Boolean(«expression.value»)'''
+					DateVal:
+						return '''new Md2Date(«expression.value»)'''
+					TimeVal:
+						return '''new Md2Time(«expression.value»)'''
+					DateTimeVal:
+						return '''new Md2DateTime(«expression.value»)'''
+					IntVal:
+						return '''new Md2Integer(«expression.value»)'''
+					FloatVal:
+						return '''new Md2Float(«expression.value»)'''
+					AbstractContentProviderPath: {
+						switch expression {
+							ContentProviderPath: return '''Md2ContentProviderRegistry.getInstance().getContentProvider("«expression.contentProviderRef.name»").getValue("«expression.tail.attributeRef.name»")'''
+						// LocationProvider: ...
+						}
+					}
+					// AbstractProviderReference: return ""
+					// AbstractViewGUIElementRef: return ""
+					default:
+						throw new UnsupportedOperationException("generateSimpleExpression()")
 				}
 			}
-			// AbstractProviderReference: return ""
-			// AbstractViewGUIElementRef: return ""
-			default:
-				throw new UnsupportedOperationException("generateSimpleExpression()")
 		}
-	}
-}
