@@ -32,6 +32,7 @@ class MD2AndroidLollipopUtil {
 		qualifiedNameProvider.getFullyQualifiedName(obj)
 	}
 	
+
 	def static String generateImportAllWidgets()'''
 		import de.uni_muenster.wi.fabian.md2library.view.widgets.implementation.Md2GridLayout;
 		import de.uni_muenster.wi.fabian.md2library.view.widgets.implementation.Md2FlowLayout;
