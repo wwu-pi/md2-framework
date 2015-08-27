@@ -33,6 +33,7 @@ import de.wwu.md2.framework.mD2.WidthParam
 import java.util.Map
 import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam
 import de.wwu.md2.framework.mD2.GridLayoutPaneRowsParam
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 
 class IOSView {
 	
@@ -162,7 +163,7 @@ class IOSView {
 	// Content elements
 	def static String generateSpacer(Spacer element, ContainerElement container) '''
 		«««Spacers have no name»»
-		«val qualifiedName = IOSWidgetMapping.fullPathForViewElement(container).toFirstLower + "_Spacer" + GeneratorUtil.randomId()»
+		«val qualifiedName = IOSWidgetMapping.fullPathForViewElement(container).toFirstLower + "_Spacer" + MD2GeneratorUtil.getName(element)»
 		let «qualifiedName» = MD2SpacerWidget(widgetId: MD2WidgetMapping.Spacer)
 		«««Element width»»»
 		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
@@ -214,7 +215,7 @@ class IOSView {
 	
 	def static String generateButton(Button element, ContainerElement container) '''
 		«val qualifiedName = IOSWidgetMapping.fullPathForViewElement(element).toFirstLower»
-		let «qualifiedName» = MD2LabelWidget(widgetId: MD2WidgetMapping.«qualifiedName.toFirstUpper»)
+		let «qualifiedName» = MD2ButtonWidget(widgetId: MD2WidgetMapping.«qualifiedName.toFirstUpper»)
 		«««Set initial value»»»
 		«qualifiedName».value = MD2String("«element.text»")
 		«««Element width»»»

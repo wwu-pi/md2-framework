@@ -52,6 +52,18 @@ class «className»: MD2EnumType {
         }
     }
     
+    func toInt() -> Int {
+        if let _ = platformValue {
+            return platformValue!.toInt
+        } else {
+            return 0
+        }
+    }
+    
+    func setValueFromInt(value: Int) {
+        platformValue = EnumType.fromInt(value)
+    }
+    
     func equals(value : MD2Type) -> Bool {
         return platformValue != nil
                 && value is «className»
@@ -70,6 +82,23 @@ class «className»: MD2EnumType {
             	«FOR i : 1.. enumInstance.enumBody.elements.length»
             	case "«enumInstance.enumBody.elements.get(i - 1)»": return Elem«i»
         		«ENDFOR»
+            	default: return nil
+            }
+        }
+        
+        var toInt: Int {
+            switch self {
+	            «FOR i : 1.. enumInstance.enumBody.elements.length»
+	            case Elem«i»: return «i»
+	        	«ENDFOR»
+            }
+        }
+        
+        static func fromInt(value: Int) -> EnumType? {
+            switch value {
+            	«FOR i : 1.. enumInstance.enumBody.elements.length»
+            	case «i»: return Elem«i»
+	        	«ENDFOR»
             	default: return nil
             }
         }
