@@ -56,9 +56,14 @@ class Layout {
 		// create root element
 		var Element rootElement = doc.createElement(Settings.MD2LIBRARY_VIEW_FLOWLAYOUTPANE)
 		// set attributes
+		rootElement.setAttribute("android:paddingBottom", "@dimen/activity_vertical_margin")
+		rootElement.setAttribute("android:paddingLeft", "@dimen/activity_horizontal_margin")
+		rootElement.setAttribute("android:paddingRight", "@dimen/activity_horizontal_margin")
+		rootElement.setAttribute("android:paddingTop", "@dimen/activity_vertical_margin")
 		rootElement.setAttribute("android:layout_height", "match_parent")
 		rootElement.setAttribute("android:layout_width", "match_parent")
 		rootElement.setAttribute("android:orientation", "vertical")		
+		rootElement.setAttribute("tools:context", mainPackage + ".StartActivity")
 
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
 			"http://schemas.android.com/apk/res/android")
@@ -69,11 +74,12 @@ class Layout {
 		// add buttons
 		for(wfe : wfes){
 			var btnElement = doc.createElement(Settings.MD2LIBRARY_VIEW_BUTTON)
-			btnElement.setAttribute("android:id", "startActivity_" + wfe.workflowElementReference.name + "Button")
+			btnElement.setAttribute("android:id", "@id/startActivity_" + wfe.workflowElementReference.name + "Button")
  			btnElement.setAttribute("android:layout_width", "match_parent")
  			btnElement.setAttribute("android:layout_height", "wrap_content")
  			btnElement.setAttribute("android:layout_gravity", "fill_horizontal")
- 			btnElement.setAttribute("android:layout_text", wfe.alias)
+ 			btnElement.setAttribute("android:text", wfe.alias)
+ 			rootElement.appendChild(btnElement);
 		}
 
 		// return xml file as string
@@ -101,6 +107,13 @@ class Layout {
 			GridLayoutPane: rootElement = createGridLayoutPaneElement(doc, rv)
 			default: return ""
 		}
+		// special settings for root attributes
+		rootElement.setAttribute("android:layout_width", "match_parent")
+		rootElement.setAttribute("android:paddingBottom", "@dimen/activity_vertical_margin")
+		rootElement.setAttribute("android:paddingLeft", "@dimen/activity_horizontal_margin")
+		rootElement.setAttribute("android:paddingRight", "@dimen/activity_horizontal_margin")
+		rootElement.setAttribute("android:paddingTop", "@dimen/activity_vertical_margin")
+		rootElement.setAttribute("tools:context", mainPackage + "." + rv.name + "Activity")
 
 		doc.appendChild(rootElement)
 
@@ -162,7 +175,6 @@ class Layout {
 	}
 
 
-	// not used for now as a FlowLayoutPaneElement is replaced by a GridLayoutPane during pre-processing
 	private static def createFlowLayoutPaneElement(Document doc, FlowLayoutPane flp) {
 		val flowLayoutPaneElement = doc.createElement(Settings.MD2LIBRARY_VIEW_FLOWLAYOUTPANE)
 		val qnp = new DefaultDeclarativeQualifiedNameProvider
@@ -173,7 +185,8 @@ class Layout {
 
 		// height and width
 		flowLayoutPaneElement.setAttribute("android:layout_width", "match_parent")
-		flowLayoutPaneElement.setAttribute("android:layout_height", "match_parent")
+		flowLayoutPaneElement.setAttribute("android:layout_height", "wrap_content")
+		flowLayoutPaneElement.setAttribute("android:layout_gravity", "fill_horizontal")
 
 		// handle parameters
 		flp.params.forEach [
@@ -199,6 +212,7 @@ class Layout {
 		// set width
 		gridLayoutPaneElement.setAttribute("android:layout_height", "wrap_content")
 		gridLayoutPaneElement.setAttribute("android:layout_width", "match_parent")
+		gridLayoutPaneElement.setAttribute("android:layout_gravity", "fill_horizontal")
 		
 		// handle parameters
 		glp.params.forEach [ p |
@@ -234,6 +248,7 @@ class Layout {
 		}
 		
 		buttonElement.setAttribute("android:layout_height", "wrap_content")
+		buttonElement.setAttribute("android:layout_gravity", "fill_horizontal")
 
 		// text
 		buttonElement.setAttribute("android:text", "@string/" + qualifiedName + "_text")
@@ -263,11 +278,12 @@ class Layout {
 			textInputElement.setAttribute("android:layout_columnWeight", String.valueOf(textInput.width))
 		}
 		textInputElement.setAttribute("android:layout_height", "wrap_content")
+		textInputElement.setAttribute("android:layout_gravity", "fill_horizontal")
 
 		textInputElement.setAttribute("android:hint", "@string/" + qualifiedName + "_tooltip")
 
 		textInputElement.setAttribute("android:text", textInput.defaultValue)
-
+		
 		// disabled
 		var isEnabled = true
 		if (textInput.isDisabled)

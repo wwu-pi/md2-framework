@@ -74,8 +74,6 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			val workflowElements = dataContainer.workflowElementsForApp(app)
 			
 			val startableWorkflowElements = app.workflowElements.filter[we | we.startable]
-			
-			
 
 			/***************************************************
 			 * 
