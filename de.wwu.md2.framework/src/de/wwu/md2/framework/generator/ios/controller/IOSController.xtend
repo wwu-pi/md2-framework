@@ -8,18 +8,21 @@ import de.wwu.md2.framework.generator.ios.view.IOSView
 import de.wwu.md2.framework.mD2.Style
 import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
 import de.wwu.md2.framework.mD2.ReferencedModelType
+import org.eclipse.emf.ecore.resource.impl.BinaryResourceImpl.DataConverter.Factory
+import de.wwu.md2.framework.mD2.App
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 
 class IOSController {
 	
 	static var className = ""
 	
-	def static generateStartupController(DataContainer data) {
+	def static generateStartupController(DataContainer data, App app) {
 		className = Settings.PREFIX_GLOBAL + "Controller"
 		
-		generateClassContent(data)
+		generateClassContent(data, app)
 	} 
 	
-	def static generateClassContent(DataContainer data) '''
+	def static generateClassContent(DataContainer data, App app) '''
 «GeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 
 import UIKit
@@ -44,7 +47,7 @@ class MD2Controller {
 		 * Initialize content providers
 		 * 
 		 ***************************************************/
-		«FOR contentProvider: data.contentProviders.filter[cp | !cp.name.startsWith("__")]»
+		«FOR contentProvider: data.contentProviders»
 		MD2ContentProviderRegistry.instance.addContentProvider("«contentProvider.name»", 
 			provider: «Settings.PREFIX_CONTENT_PROVIDER + contentProvider.name.toFirstUpper»(
 				content: «Settings.PREFIX_ENTITY + (contentProvider.type as ReferencedModelType).entity.name.toFirstUpper»()))
@@ -95,6 +98,13 @@ class MD2Controller {
 		 * Start initial workflow of the app
 		 * 
 		 ***************************************************/
+		 
+		// Execute startup action for first WFE = there is only one
+		// TODO For next version: construct workflow element selection screen
+		«FOR initAction : app.workflowElements.filter[wfe | wfe.startable].head.workflowElementReference.initActions»
+		«Settings.PREFIX_CUSTOM_ACTION + MD2GeneratorUtil.getName(initAction)»().execute()
+		«ENDFOR»
+		
         //SetWorkflowElementAction(actionSignature: "InitialAction", workflowElement: wfeLocationDetection).execute()
         
 		println("[Controller] Startup completed")

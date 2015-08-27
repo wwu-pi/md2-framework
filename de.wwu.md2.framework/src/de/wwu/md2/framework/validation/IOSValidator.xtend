@@ -194,7 +194,7 @@ class IOSValidator extends AbstractGeneratorSupportValidator{
 			, MD2Package.eINSTANCE.unmappingTask
 			, MD2Package.eINSTANCE.validatorBindingTask
 			, MD2Package.eINSTANCE.validatorUnbindTask
-//			, MD2Package.eINSTANCE.attributeSetTask
+			, MD2Package.eINSTANCE.attributeSetTask
 			, MD2Package.eINSTANCE.conditionalCodeFragment
 //			, MD2Package.eINSTANCE.viewElementSetTask
 			, MD2Package.eINSTANCE.abstractViewGUIElementRef
@@ -220,6 +220,7 @@ class IOSValidator extends AbstractGeneratorSupportValidator{
             , MD2Package.eINSTANCE.timeType
             , MD2Package.eINSTANCE.dateTimeType
             , MD2Package.eINSTANCE.enumType
+            , MD2Package.eINSTANCE.referencedType
 //            , MD2Package.eINSTANCE.fileType
         );
         

@@ -70,7 +70,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			GeneratorUtil.printDebug("Generate Model: " + rootFolder + Settings.MODEL_PATH, true)
 			 
 			// Generate all model entities
-			val entities = dataContainer.entities//.filter[entity | !entity.name.startsWith("__")]
+			val entities = dataContainer.entities
 			entities.forEach [entity | 
 				val path = rootFolder + Settings.MODEL_PATH + "entity/" 
 					+ Settings.PREFIX_ENTITY + entity.name.toFirstUpper + ".swift"
@@ -87,7 +87,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			]
 			
 			// Generate content providers
-			dataContainer.contentProviders.filter[cp | !cp.name.startsWith("__")].forEach [ cp |
+			dataContainer.contentProviders.forEach [ cp |
 				val path = rootFolder + Settings.MODEL_PATH + "contentProvider/"  
 					+ Settings.PREFIX_CONTENT_PROVIDER + cp.name.toFirstUpper + ".swift"
 				
@@ -134,9 +134,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 	+ Settings.CONTROLLER_PATH, true)
 			 
 			dataContainer.workflowElements.forEach [wfe | 
-			 	(wfe.initActions + wfe.actions).filter(CustomAction)
-			 	/*.filter[ca | !ca.name.startsWith("__")]*/.forEach[ ca |
-			 		
+			 	(wfe.initActions + wfe.actions).filter(CustomAction).forEach[ ca |
 			 		val path = rootFolder + Settings.CONTROLLER_PATH + "action/" 
 						+ Settings.PREFIX_CUSTOM_ACTION 
 						+ MD2GeneratorUtil.getName(ca).toFirstUpper + ".swift"
@@ -150,7 +148,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 				+ Settings.PREFIX_GLOBAL + "Controller.swift"
 			GeneratorUtil.printDebug("Generate main controller: " 
 				+ pathMainController, false)
-			fsa.generateFile(pathMainController, IOSController.generateStartupController(dataContainer))
+			fsa.generateFile(pathMainController, IOSController.generateStartupController(dataContainer, app))
 			 
 			/***************************************************
 			 * 

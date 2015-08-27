@@ -63,7 +63,7 @@ class «className»: NSObject, MD2EntityType {
     }
     
     func toString() -> String {
-        return "(«className»: [«FOR attribute : entityInstance.attributes SEPARATOR '\n+ ", '»«attribute.name»: " + containedTypes["«attribute.name»"]!.toString()«ENDFOR» 
+        return "(«className»: [«FOR attribute : entityInstance.attributes SEPARATOR '\n+ ", '»«attribute.name»: " + containedTypes["«attribute.name»"]?.toString()«ENDFOR» 
 	        + "])"
     }
     
@@ -107,13 +107,15 @@ class «className»: NSObject, MD2EntityType {
 			case DateTypeImpl: return Settings.PREFIX_GLOBAL + "Date()"
 			case TimeTypeImpl: return Settings.PREFIX_GLOBAL + "Time()"
 			case DateTimeTypeImpl: return Settings.PREFIX_GLOBAL + "DateTime()"
-			case ReferencedTypeImpl: {
+			case ReferencedTypeImpl: return "nil"
+				/* Problem with recursive usage
+				{
 				if(attribute.type instanceof ReferencedType && ((attribute.type as ReferencedType).element instanceof Entity)) {
 					return Settings.PREFIX_ENTITY + ((attribute.type as ReferencedType).element as Entity).name + "()"
 				} else {
 					return Settings.PREFIX_ENUM + ((attribute.type as ReferencedType).element as Enum).name + "()"
 				}
-			}
+			}*/
 			default: {
 				GeneratorUtil.printWarning("Encountered unsupported data type " + attribute.type + "! Will use 'String' to continue generation.")
 				return Settings.PREFIX_GLOBAL + "String()" 
