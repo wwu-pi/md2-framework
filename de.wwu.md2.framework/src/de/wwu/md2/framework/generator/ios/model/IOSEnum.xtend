@@ -2,8 +2,8 @@ package de.wwu.md2.framework.generator.ios.model
 
 import de.wwu.md2.framework.mD2.Enum
 import de.wwu.md2.framework.generator.ios.Settings
-import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import java.lang.invoke.MethodHandles
+import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
 class IOSEnum {
 	
@@ -16,7 +16,7 @@ class IOSEnum {
 	} 
 	
 	def static generateClassContent(Enum enumInstance) '''
-«GeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
+«IOSGeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 
 class «className»: MD2EnumType {
     

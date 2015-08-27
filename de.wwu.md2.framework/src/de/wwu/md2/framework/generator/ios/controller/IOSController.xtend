@@ -3,7 +3,6 @@ package de.wwu.md2.framework.generator.ios.controller
 import de.wwu.md2.framework.generator.util.DataContainer
 import de.wwu.md2.framework.generator.ios.Settings
 import java.lang.invoke.MethodHandles
-import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.generator.ios.view.IOSView
 import de.wwu.md2.framework.mD2.Style
 import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
@@ -11,6 +10,7 @@ import de.wwu.md2.framework.mD2.ReferencedModelType
 import org.eclipse.emf.ecore.resource.impl.BinaryResourceImpl.DataConverter.Factory
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
+import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
 class IOSController {
 	
@@ -23,7 +23,7 @@ class IOSController {
 	} 
 	
 	def static generateClassContent(DataContainer data, App app) '''
-«GeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
+«IOSGeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 
 import UIKit
 

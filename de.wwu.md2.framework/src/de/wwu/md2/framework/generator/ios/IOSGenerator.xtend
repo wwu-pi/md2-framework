@@ -7,7 +7,6 @@ import de.wwu.md2.framework.generator.ios.model.IOSContentProvider
 import de.wwu.md2.framework.generator.ios.model.IOSEntity
 import de.wwu.md2.framework.generator.ios.model.IOSEnum
 import de.wwu.md2.framework.generator.ios.util.FileSystemUtil
-import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.SimpleType
 import java.io.File
@@ -19,6 +18,7 @@ import de.wwu.md2.framework.generator.ios.controller.IOSCustomAction
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.generator.ios.controller.IOSWorkflowEvent
 import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
+import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
 class IOSGenerator extends AbstractPlatformGenerator {
 	
@@ -38,7 +38,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			val mainPackage = MD2GeneratorUtil.getBasePackageName(processedInput).replace("^/", ".").toLowerCase
 			rootFolder = appRoot + mainPackage.replace(".", "/") + "/"
 			Settings.ROOT_FOLDER = rootFolder
-			GeneratorUtil.printDebug("Generate App: " + rootFolder, true)
+			IOSGeneratorUtil.printDebug("Generate App: " + rootFolder, true)
 
 			// Copy static part in target folder
 			val resourceFolderAbsolutePath = getClass().getResource("/resources/" 
@@ -47,8 +47,8 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			
 			FileSystemUtil.createParentDirs(new File(targetFolderAbsolutePath)) // ensure path exists
 			
-			GeneratorUtil.printDebug("Copy library files with static code:")
-			GeneratorUtil.printDebug(FileSystemUtil.copyDirectory(
+			IOSGeneratorUtil.printDebug("Copy library files with static code:")
+			IOSGeneratorUtil.printDebug(FileSystemUtil.copyDirectory(
 				new File(resourceFolderAbsolutePath.toURI()),
 				new File(targetFolderAbsolutePath)).map[elem | 
 					elem.replace(targetFolderAbsolutePath, "").replace("\\","/")
@@ -67,14 +67,14 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 * Model
 			 * 
 			 ***************************************************/
-			GeneratorUtil.printDebug("Generate Model: " + rootFolder + Settings.MODEL_PATH, true)
+			IOSGeneratorUtil.printDebug("Generate Model: " + rootFolder + Settings.MODEL_PATH, true)
 			 
 			// Generate all model entities
 			val entities = dataContainer.entities
 			entities.forEach [entity | 
 				val path = rootFolder + Settings.MODEL_PATH + "entity/" 
 					+ Settings.PREFIX_ENTITY + entity.name.toFirstUpper + ".swift"
-				GeneratorUtil.printDebug("Generate entity: " + entity.name.toFirstUpper, path)
+				IOSGeneratorUtil.printDebug("Generate entity: " + entity.name.toFirstUpper, path)
 				fsa.generateFile(path, IOSEntity.generateClass(entity))
 			]
 			
@@ -82,7 +82,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			dataContainer.enums.forEach [enum | 
 				val path = rootFolder + Settings.MODEL_PATH + "enum/" 
 					+ Settings.PREFIX_ENUM + enum.name.toFirstUpper + ".swift"
-				GeneratorUtil.printDebug("Generate entity: " + enum.name.toFirstUpper, path)
+				IOSGeneratorUtil.printDebug("Generate entity: " + enum.name.toFirstUpper, path)
 				fsa.generateFile(path, IOSEnum.generateClass(enum))
 			]
 			
@@ -93,9 +93,9 @@ class IOSGenerator extends AbstractPlatformGenerator {
 				
 				// TODO ContentProvider for simple data type -> what is this for?
 				if (cp.type instanceof SimpleType) {
-					GeneratorUtil.printError("SimpleType unsupported in ContentProvider!")
+					IOSGeneratorUtil.printError("SimpleType unsupported in ContentProvider!")
 				} else {
-					GeneratorUtil.printDebug("Generate content provider: " 
+					IOSGeneratorUtil.printDebug("Generate content provider: " 
 						+ cp.name.toFirstUpper, path)
 					fsa.generateFile(path, IOSContentProvider.generateClass(cp))
 				}
@@ -111,7 +111,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 * View
 			 * 
 			 ***************************************************/
-			GeneratorUtil.printDebug("Generate Views: " + rootFolder 
+			IOSGeneratorUtil.printDebug("Generate Views: " + rootFolder 
 				+ Settings.VIEW_PATH, true)
 				
 			// Generate WidgetMapping
@@ -122,7 +122,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 */
 			val pathWidgetMapping = rootFolder + Settings.MODEL_PATH + "enum/" 
 				+ Settings.PREFIX_GLOBAL + "WidgetMapping.swift"
-			GeneratorUtil.printDebug("Generate view mapping", pathWidgetMapping)
+			IOSGeneratorUtil.printDebug("Generate view mapping", pathWidgetMapping)
 			fsa.generateFile(pathWidgetMapping, IOSWidgetMapping.generateClass(dataContainer.view))
 
 			/***************************************************
@@ -130,7 +130,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 * Controller
 			 * 
 			 ***************************************************/
-		 	GeneratorUtil.printDebug("Generate Controller: " + rootFolder 
+		 	IOSGeneratorUtil.printDebug("Generate Controller: " + rootFolder 
 			 	+ Settings.CONTROLLER_PATH, true)
 			 
 			dataContainer.workflowElements.forEach [wfe | 
@@ -138,7 +138,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 		val path = rootFolder + Settings.CONTROLLER_PATH + "action/" 
 						+ Settings.PREFIX_CUSTOM_ACTION 
 						+ MD2GeneratorUtil.getName(ca).toFirstUpper + ".swift"
-					GeneratorUtil.printDebug("Generate custom action: " 
+					IOSGeneratorUtil.printDebug("Generate custom action: " 
 						+ MD2GeneratorUtil.getName(ca), path)
 					fsa.generateFile(path, IOSCustomAction.generateClass(ca))
 			 	]
@@ -146,7 +146,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 
 			val pathMainController = rootFolder + Settings.CONTROLLER_PATH 
 				+ Settings.PREFIX_GLOBAL + "Controller.swift"
-			GeneratorUtil.printDebug("Generate main controller: " 
+			IOSGeneratorUtil.printDebug("Generate main controller: " 
 				+ pathMainController, false)
 			fsa.generateFile(pathMainController, IOSController.generateStartupController(dataContainer, app))
 			 
@@ -155,12 +155,12 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 * Workflow
 			 * 
 			 ***************************************************/
-			GeneratorUtil.printDebug("Generate Workflows: " + rootFolder 
+			IOSGeneratorUtil.printDebug("Generate Workflows: " + rootFolder 
 			 	+ Settings.WORKFLOW_PATH, true)
 			
 			val pathWorkflowEvents = rootFolder + Settings.WORKFLOW_PATH 
 				+ Settings.PREFIX_GLOBAL + "WorkflowEvent.swift"
-			GeneratorUtil.printDebug("Generate workflow events", pathWorkflowEvents) 		
+			IOSGeneratorUtil.printDebug("Generate workflow events", pathWorkflowEvents) 		
  		 	fsa.generateFile(pathWorkflowEvents, IOSWorkflowEvent.generateClass(dataContainer))
 		}
 

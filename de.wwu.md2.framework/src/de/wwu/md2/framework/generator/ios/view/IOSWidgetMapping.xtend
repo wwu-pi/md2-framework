@@ -1,6 +1,5 @@
 package de.wwu.md2.framework.generator.ios.view
 
-import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import de.wwu.md2.framework.mD2.AlternativesPane
 import de.wwu.md2.framework.mD2.ContainerElement
@@ -19,6 +18,7 @@ import de.wwu.md2.framework.mD2.impl.ViewImpl
 import java.lang.invoke.MethodHandles
 import java.util.Collection
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
+import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
 class IOSWidgetMapping {
 	
@@ -73,7 +73,7 @@ class IOSWidgetMapping {
 	}
 	
 	static def generateClassContent(Iterable<String> viewElementNames) '''
-«GeneratorUtil.generateClassHeaderComment("WorkflowEvent", MethodHandles.lookup.lookupClass)»
+«IOSGeneratorUtil.generateClassHeaderComment("WorkflowEvent", MethodHandles.lookup.lookupClass)»
 
 enum MD2WidgetMapping: Int {
     

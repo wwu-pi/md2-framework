@@ -20,7 +20,7 @@ class ConditionalExpressionUtil {
 			GuiElementStateExpression: return evaluateGuiElementStateExpression(expression)
 			CompareExpression: return evaluateCompareExpression(expression)
 			default: {
-				GeneratorUtil.printError("ConditionalExpressionUtil encountered unsupported expression: " + expression)
+				IOSGeneratorUtil.printError("ConditionalExpressionUtil encountered unsupported expression: " + expression)
 				return ""
 			}
 		}
@@ -52,7 +52,7 @@ class ConditionalExpressionUtil {
 			case EMPTY: return "(!(" + element + ".value.isSet()) || " + element + ".value.toString() == '')"
 			case SET: return element + ".value.isSet()"
 			case DEFAULT_VALUE: {
-				GeneratorUtil.printError("ConditionalExpressionUtil: DEFAULT_VALUE unsupported")
+				IOSGeneratorUtil.printError("ConditionalExpressionUtil: DEFAULT_VALUE unsupported")
 				//TODO return element + ".value.equals(MD2String('" + expression.reference.ref... + "'))"
 				return ""
 			}

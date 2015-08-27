@@ -1,7 +1,6 @@
 package de.wwu.md2.framework.generator.ios.model
 
 import de.wwu.md2.framework.generator.ios.Settings
-import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.Enum
@@ -16,6 +15,7 @@ import de.wwu.md2.framework.mD2.impl.TimeTypeImpl
 import java.lang.invoke.MethodHandles
 import de.wwu.md2.framework.mD2.impl.ReferencedTypeImpl
 import de.wwu.md2.framework.mD2.ReferencedType
+import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
 class IOSEntity {
 	
@@ -28,7 +28,7 @@ class IOSEntity {
 	} 
 	
 	def static generateClassContent(Entity entityInstance) '''
-«GeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
+«IOSGeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 
 import Foundation
 
@@ -117,7 +117,7 @@ class «className»: NSObject, MD2EntityType {
 				}
 			}*/
 			default: {
-				GeneratorUtil.printWarning("Encountered unsupported data type " + attribute.type + "! Will use 'String' to continue generation.")
+				IOSGeneratorUtil.printWarning("Encountered unsupported data type " + attribute.type + "! Will use 'String' to continue generation.")
 				return Settings.PREFIX_GLOBAL + "String()" 
 				}
 		}

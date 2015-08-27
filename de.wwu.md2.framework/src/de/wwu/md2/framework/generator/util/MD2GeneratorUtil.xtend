@@ -1,5 +1,6 @@
 package de.wwu.md2.framework.generator.util
 
+import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 import de.wwu.md2.framework.mD2.AbstractContentProviderPath
 import de.wwu.md2.framework.mD2.AbstractProviderReference
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
@@ -85,6 +86,10 @@ class MD2GeneratorUtil {
 			qualifiedNameToNameMapping = newHashMap
 		}
 		
+		// Fix problems for Spacers which have no name
+		if(obj.name == null) {
+			obj.name = IOSGeneratorUtil.randomId()
+		}
 		var name = obj.name
 		val qualifiedName = qualifiedNameProvider.getFullyQualifiedName(obj).toString
 		

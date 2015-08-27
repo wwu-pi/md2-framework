@@ -1,9 +1,9 @@
 package de.wwu.md2.framework.generator.ios.controller
 
-import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.generator.util.DataContainer
 import java.lang.invoke.MethodHandles
 import de.wwu.md2.framework.mD2.WorkflowEvent
+import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
 class IOSWorkflowEvent {
 	
@@ -18,7 +18,7 @@ class IOSWorkflowEvent {
 	}
 	
 	static def generateClassContent(Iterable<WorkflowEvent> workflowEvents) '''
-«GeneratorUtil.generateClassHeaderComment("WorkflowEvent", MethodHandles.lookup.lookupClass)»
+«IOSGeneratorUtil.generateClassHeaderComment("WorkflowEvent", MethodHandles.lookup.lookupClass)»
 
 // Make visible to Objective-C to allow use as Dictionary key (e.g. in MD2WorkflowEventHandler)
 @objc

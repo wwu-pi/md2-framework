@@ -1,7 +1,6 @@
 package de.wwu.md2.framework.generator.ios.controller
 
 import de.wwu.md2.framework.mD2.ValidatorType
-import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.mD2.StandardDateTimeRangeValidator
 import de.wwu.md2.framework.mD2.StandardTimeRangeValidator
 import de.wwu.md2.framework.mD2.StandardDateRangeValidator
@@ -22,6 +21,7 @@ import de.wwu.md2.framework.mD2.ValidatorMinDateTimeParam
 import de.wwu.md2.framework.mD2.ValidatorMaxDateTimeParam
 import de.wwu.md2.framework.mD2.ValidatorMaxTimeParam
 import de.wwu.md2.framework.mD2.ValidatorMinTimeParam
+import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
 class IOSValidator {
 	// MARK Currently only one parameter of a given type is used
@@ -36,7 +36,7 @@ class IOSValidator {
 			StandardTimeRangeValidator: return generateStandardTimeRangeValidator(identifier, validator as StandardTimeRangeValidator)
 			StandardDateTimeRangeValidator: return generateStandardDateTimeRangeValidator(identifier, validator as StandardDateTimeRangeValidator)
 			default: {
-				GeneratorUtil.printError("IOSValidator encountered unsupported validator type: " + validator)	
+				IOSGeneratorUtil.printError("IOSValidator encountered unsupported validator type: " + validator)	
 				return ""
 			}
 		}

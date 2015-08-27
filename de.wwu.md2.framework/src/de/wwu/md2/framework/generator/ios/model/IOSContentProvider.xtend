@@ -1,25 +1,27 @@
 package de.wwu.md2.framework.generator.ios.model
 
-import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.generator.ios.Settings
 import java.lang.invoke.MethodHandles
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ReferencedModelType
+import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
 class IOSContentProvider {
 	
 	static var className = ""
 	static var managedEntityClassName = ""
+	static var remoteEntityClassName = ""
 	
 	def static generateClass(ContentProvider cpInstance) {
-		className = Settings.PREFIX_CONTENT_PROVIDER + cpInstance.name
+		className = Settings.PREFIX_CONTENT_PROVIDER + cpInstance.name.toFirstUpper
 		managedEntityClassName = Settings.PREFIX_ENTITY + (cpInstance.type as ReferencedModelType).entity.name.toFirstUpper
-		
+		remoteEntityClassName = (cpInstance.type as ReferencedModelType).entity.name.toFirstUpper
+			
 		generateClassContent(cpInstance)
 	} 
 	
 	def static generateClassContent(ContentProvider cpInstance) '''
-«GeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
+«IOSGeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 
 class «className»: MD2ContentProviderType {
     
@@ -36,7 +38,12 @@ class «className»: MD2ContentProviderType {
     var filter: MD2Filter?
     
     init() {
+    «IF cpInstance.local || cpInstance.^default»
         self.store = MD2LocalStoreFactory<«managedEntityClassName»>().createStore()
+    «ELSE»
+    	self.store = MD2RemoteStoreFactory<«managedEntityClassName»>().createStore()
+    	self.store.entityPath = "«cpInstance.connection.uri + remoteEntityClassName»/"
+    «ENDIF»
     }
     
     convenience init(content: MD2EntityType) {

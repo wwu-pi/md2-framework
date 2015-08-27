@@ -2,7 +2,6 @@ package de.wwu.md2.framework.generator.ios.controller
 
 import de.wwu.md2.framework.generator.ios.Settings
 import de.wwu.md2.framework.generator.ios.util.ConditionalExpressionUtil
-import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.AttributeSetTask
@@ -28,6 +27,7 @@ import de.wwu.md2.framework.mD2.ViewElementEventRef
 import java.lang.invoke.MethodHandles
 import org.eclipse.emf.common.util.Enumerator
 import de.wwu.md2.framework.generator.ios.util.SimpleExpressionUtil
+import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
 class IOSCustomAction {
 	
@@ -40,7 +40,7 @@ class IOSCustomAction {
 	} 
 	
 	def static generateClassContent(CustomAction action) '''
-«GeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
+«IOSGeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 
 class «className»: MD2ActionType {
     
@@ -72,7 +72,7 @@ class «className»: MD2ActionType {
 			ValidatorBindingTask: return generateValidatorBindingTask(actionCounter, fragment)
 			ValidatorUnbindTask: return generateValidatorUnbindTask(actionCounter, fragment)
 			ConditionalCodeFragment: return generateConditionalCodeFragment(actionCounter, fragment)
-			default: GeneratorUtil.printError("IOSCustomAction encountered unsupported CustomCodeFragment type: " + fragment)
+			default: IOSGeneratorUtil.printError("IOSCustomAction encountered unsupported CustomCodeFragment type: " + fragment)
 		}
 	}
 	
@@ -130,7 +130,7 @@ class «className»: MD2ActionType {
 			contentProvider: MD2ContentProviderRegistry.instance.getContentProvider("«(task.pathDefinition as ContentProviderPath).contentProviderRef.name»")!,
 			attribute: "«(task.pathDefinition as ContentProviderPath).tail.attributeRef.name»")
         «ELSE»
-        «GeneratorUtil.printError("IOSCustomAction encountered unsupported pathDefinition for MappingTask:" + task.pathDefinition)»
+        «IOSGeneratorUtil.printError("IOSCustomAction encountered unsupported pathDefinition for MappingTask:" + task.pathDefinition)»
         «ENDIF»
 	'''
 	
@@ -142,7 +142,7 @@ class «className»: MD2ActionType {
 			contentProvider: MD2ContentProviderRegistry.instance.getContentProvider("«(task.pathDefinition as ContentProviderPath).contentProviderRef.name»")!,
 			attribute: "«(task.pathDefinition as ContentProviderPath).tail.attributeRef.name»")
         «ELSE»
-        «GeneratorUtil.printError("IOSCustomAction encountered unsupported pathDefinition for UnmappingTask:" + task.pathDefinition)»
+        «IOSGeneratorUtil.printError("IOSCustomAction encountered unsupported pathDefinition for UnmappingTask:" + task.pathDefinition)»
         «ENDIF»
 	'''
 	
@@ -201,7 +201,7 @@ class «className»: MD2ActionType {
 			ContentProviderEventRef: eventType = (event as ContentProviderEventRef).event
 			GlobalEventRef: eventType = (event as GlobalEventRef).event
 			default: {
-				GeneratorUtil.printError("IOSCustomAction encountered unsupported EventDef: " + event)
+				IOSGeneratorUtil.printError("IOSCustomAction encountered unsupported EventDef: " + event)
 				return ""
 			}
 		}
@@ -250,7 +250,7 @@ class «className»: MD2ActionType {
 				return "MD2OnLocationUpdateHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
 					+ ")"
 			}
-			default: GeneratorUtil.printError("IOSCustomAction encountered unsupported ElementEventType: " + event)
+			default: IOSGeneratorUtil.printError("IOSCustomAction encountered unsupported ElementEventType: " + event)
 		}
 	}
 }

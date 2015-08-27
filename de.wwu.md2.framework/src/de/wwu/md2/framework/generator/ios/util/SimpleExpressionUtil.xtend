@@ -42,7 +42,7 @@ class SimpleExpressionUtil {
 					+ expression.tail.attributeRef.name + '")!.toString() + "'
 			}
 			default: {
-				GeneratorUtil.printError("SimpleExpressionUtil encountered unsupported expression: " + expression)
+				IOSGeneratorUtil.printError("SimpleExpressionUtil encountered unsupported expression: " + expression)
 				return ""
 			}
 		}

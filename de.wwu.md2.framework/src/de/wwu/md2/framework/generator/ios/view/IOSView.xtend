@@ -1,7 +1,6 @@
 package de.wwu.md2.framework.generator.ios.view
 
 import de.wwu.md2.framework.generator.ios.Settings
-import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.mD2.BooleanInput
 import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.ContainerElement
@@ -34,6 +33,7 @@ import java.util.Map
 import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam
 import de.wwu.md2.framework.mD2.GridLayoutPaneRowsParam
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
+import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
 class IOSView {
 	
@@ -53,7 +53,7 @@ class IOSView {
 			ViewGUIElement:	return generateViewGUIElement(element, container)
 			ViewGUIElementReference: return generateViewGUIElement((element as ViewGUIElementReference).value, container)
 			default: {
-				GeneratorUtil.printError("IOSView encountered unknown ViewElement: " + element)
+				IOSGeneratorUtil.printError("IOSView encountered unknown ViewElement: " + element)
 				return ""
 			}
 		}
@@ -64,7 +64,7 @@ class IOSView {
 			ContainerElement: return generateContainerElement(element, container)
 			ContentElement:	return generateContentElement(element, container)
 			default: {
-				GeneratorUtil.printError("IOSView encountered unknown ViewGUIElement: " + element)
+				IOSGeneratorUtil.printError("IOSView encountered unknown ViewGUIElement: " + element)
 				return ""
 			}
 		}
@@ -77,7 +77,7 @@ class IOSView {
 			//AlternativesPane: return generateAlternative(element, container)
 			//TabbedAlternativesPane: return generateTabbedALternativesPane(element, container)
 			default: {
-				GeneratorUtil.printError("IOSView encountered unsupported ContainerElement: " + element)
+				IOSGeneratorUtil.printError("IOSView encountered unsupported ContainerElement: " + element)
 				return ""
 			}
 		}
@@ -101,7 +101,7 @@ class IOSView {
 			DateTimeInput: return generateDateTimeInput(element, container)
 			OptionInput: return generateOptionInput(element, container)
 			default: {
-				GeneratorUtil.printError("IOSView encountered unsupported ContentElement: " + element)
+				IOSGeneratorUtil.printError("IOSView encountered unsupported ContentElement: " + element)
 				return ""
 			}
 		}
@@ -405,7 +405,7 @@ class IOSView {
 			if(styleBody.color instanceof HexColorDef){
 				result += elementName + '.color = MD2String("' + (styleBody.color as HexColorDef).color + '")\n'
 			} else {
-				GeneratorUtil.printError("IOSView encountered unsupported style: " + styleBody.color)
+				IOSGeneratorUtil.printError("IOSView encountered unsupported style: " + styleBody.color)
 			}
 		}
 		

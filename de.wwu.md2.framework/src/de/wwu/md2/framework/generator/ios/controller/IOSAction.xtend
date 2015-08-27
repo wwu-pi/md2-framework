@@ -1,7 +1,6 @@
 package de.wwu.md2.framework.generator.ios.controller
 
 import de.wwu.md2.framework.generator.ios.Settings
-import de.wwu.md2.framework.generator.ios.util.GeneratorUtil
 import de.wwu.md2.framework.generator.ios.util.SimpleExpressionUtil
 import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
@@ -20,6 +19,7 @@ import de.wwu.md2.framework.mD2.GotoViewAction
 import de.wwu.md2.framework.mD2.LocationProviderReference
 import de.wwu.md2.framework.mD2.SimpleActionRef
 import de.wwu.md2.framework.mD2.WebServiceCallAction
+import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
 class IOSAction {
 	
@@ -30,10 +30,10 @@ class IOSAction {
 				switch ((action as ActionReference).actionRef) {
 					CombinedAction: return generateCombinedAction(actionSignature, action.actionRef as CombinedAction)
 					CustomAction: return generateCustomAction(actionSignature, action.actionRef as CustomAction)
-					default: GeneratorUtil.printError("IOSAction encountered unknown action reference: " + action.actionRef)
+					default: IOSGeneratorUtil.printError("IOSAction encountered unknown action reference: " + action.actionRef)
 				}
 			}
-			default: GeneratorUtil.printError("IOSAction encountered unknown action: " + action)
+			default: IOSGeneratorUtil.printError("IOSAction encountered unknown action: " + action)
 		}
 	}
 	
@@ -47,7 +47,7 @@ class IOSAction {
 			ContentProviderResetAction: return generateContentProviderResetAction(actionSignature, action.action as ContentProviderResetAction)
 			FireEventAction: return generateFireEventAction(actionSignature, action.action as FireEventAction)
 			WebServiceCallAction: return generateWebServiceCallAction(actionSignature, action.action as WebServiceCallAction)
-			default: GeneratorUtil.printError("IOSAction encountered an unknown simple action: " + action.action)
+			default: IOSGeneratorUtil.printError("IOSAction encountered an unknown simple action: " + action.action)
 		}
 	}
 	
@@ -80,7 +80,7 @@ class IOSAction {
 			«ELSEIF action.contentProvider instanceof LocationProviderReference»
 				"location"
 			«ELSE»
-				«GeneratorUtil.printError("IOSAction encountered unknown AbstractProviderReference: " + action.contentProvider)»
+				«IOSGeneratorUtil.printError("IOSAction encountered unknown AbstractProviderReference: " + action.contentProvider)»
 			«ENDIF»
 			)!)
 	'''
@@ -93,7 +93,7 @@ class IOSAction {
 			«ELSEIF action.contentProvider instanceof LocationProviderReference»
 				"location"
 			«ELSE»
-				«GeneratorUtil.printError("IOSAction encountered unknown AbstractProviderReference: " + action.contentProvider)»
+				«IOSGeneratorUtil.printError("IOSAction encountered unknown AbstractProviderReference: " + action.contentProvider)»
 			«ENDIF»
 			)!)
 	'''
@@ -110,7 +110,7 @@ class IOSAction {
 	
 	// TODO CombinedAction
 	def static generateCombinedAction(String actionSignature, CombinedAction action) {
-		GeneratorUtil.printError("IOSAction: CombinedAction unsupported")
+		IOSGeneratorUtil.printError("IOSAction: CombinedAction unsupported")
 		return ""
 	}
 	

@@ -4,7 +4,7 @@ import de.wwu.md2.framework.generator.ios.Settings
 import java.util.Date
 import java.text.SimpleDateFormat
 
-class GeneratorUtil {
+class IOSGeneratorUtil {
 	
 	def static generateClassHeaderComment(String generatedClassName, Class generatorClass) '''
 //
