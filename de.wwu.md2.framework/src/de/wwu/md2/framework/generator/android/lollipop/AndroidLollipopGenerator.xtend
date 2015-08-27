@@ -58,7 +58,7 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			val rootFolder = rootFolder + "/md2_app_" + app.name
 
 			// main package and path for java code within the app
-			val mainPackage = MD2GeneratorUtil.getBasePackageName(processedInput).replace("^/", ".").toLowerCase
+			val mainPackage = "md2." + MD2GeneratorUtil.getBasePackageName(processedInput).replace("^/", ".").toLowerCase
 			val mainPath = mainPackage.replace(".", "/") + "/"
 
 			// all root views for current app
