@@ -51,9 +51,10 @@ import de.wwu.md2.framework.mD2.Or
 import de.wwu.md2.framework.mD2.And
 import de.wwu.md2.framework.mD2.Not
 import de.wwu.md2.framework.mD2.FireEventAction
+import de.wwu.md2.framework.mD2.App
 
 class Actions {
-	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
+	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage, App app, 
 		Iterable<WorkflowElement> workflowElements) {
 		val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider
 
@@ -62,16 +63,17 @@ class Actions {
 				val qualifiedName = qualifiedNameProvider.getFullyQualifiedName(a).toString("_")
 				fsa.generateFile(
 					rootFolder + Settings.JAVA_PATH + mainPath + "md2/controller/action/" + qualifiedName.toFirstUpper +
-						"_Action.java", generateAction(mainPackage, wfe, a, qualifiedName))
+						"_Action.java", generateAction(mainPackage, app, wfe, a, qualifiedName))
 
 			]
 		]
 	}
 
-	def static generateAction(String mainPackage, WorkflowElement wfe, Action action, String qualifiedActionName) '''
+	def static generateAction(String mainPackage, App app, WorkflowElement wfe, Action action, String qualifiedActionName) '''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.Actions.generateAction()
 		package «mainPackage».md2.controller.action;
 		
+		import «mainPackage».«app.name.toFirstUpper»;
 		import «mainPackage».R;
 		
 		import «mainPackage».md2.controller.Controller;
@@ -94,14 +96,14 @@ class Actions {
 					«val customAction = action as CustomAction»
 					«var counter = 1»
 					«FOR ccf : customAction.codeFragments»
-						«generateCodeForCodeFragment(ccf, wfe, counter++)»
+						«generateCodeForCodeFragment(ccf, app, wfe, counter++)»
 					«ENDFOR»
 				«ENDIF»
 			}
 		}
 	'''
 
-	def static String generateCodeForCodeFragment(CustomCodeFragment ccf, WorkflowElement wfe, int counter) {
+	def static String generateCodeForCodeFragment(CustomCodeFragment ccf, App app, WorkflowElement wfe, int counter) {
 		if (ccf == null)
 			return ""
 
@@ -122,7 +124,7 @@ class Actions {
 						qualifiedNameAction = qualifiedNameProvider.getFullyQualifiedName(action.actionRef).
 							toString("_") + "_Action()"
 					SimpleActionRef:
-						qualifiedNameAction = generateSimpleAction(action.action)
+						qualifiedNameAction = generateSimpleAction(app, action.action)
 				}
 
 				val event = ccf.events.head as ViewElementEventRef
@@ -162,7 +164,7 @@ class Actions {
 								}
 							}
 							SimpleActionRef:
-								qualifiedName = generateSimpleAction(haction.action)
+								qualifiedName = generateSimpleAction(app, haction.action)
 						}
 						instantiation = '''new «qualifiedName.toFirstUpper»'''
 					}
@@ -197,20 +199,20 @@ class Actions {
 						result = '''
 							if(«generateCondition(ccf.^if.condition)»){
 								«FOR containedCcf : ccf.^if.codeFragments»
-									«containedCcf.generateCodeForCodeFragment(wfe, intCounter++)»
+									«containedCcf.generateCodeForCodeFragment(app, wfe, intCounter++)»
 								«ENDFOR»
 							}
 							«FOR ei : ccf.elseifs»
 								else if («generateCondition(ei.condition)»){
 									«FOR containedCcf : ei.codeFragments»
-										«containedCcf.generateCodeForCodeFragment(wfe, intCounter++)»
+										«containedCcf.generateCodeForCodeFragment(app, wfe, intCounter++)»
 									«ENDFOR»
 								}				
 							«ENDFOR»
 							«IF ccf.^else != null»				
 								else{
 									«FOR containedCcf : ccf.^else.codeFragments»
-										«containedCcf.generateCodeForCodeFragment(wfe, intCounter++)»
+										«containedCcf.generateCodeForCodeFragment(app, wfe, intCounter++)»
 									«ENDFOR»
 								}
 							«ENDIF»
@@ -238,11 +240,11 @@ class Actions {
 				return result
 			}
 
-			protected static def String generateSimpleAction(SimpleAction sa) {
+			protected static def String generateSimpleAction(App app, SimpleAction sa) {
 				var result = ""
 				switch sa {
 					GotoViewAction:
-						result = '''Md2GoToViewAction("«sa.view.ref.name»Activity")'''
+						result = '''Md2GoToViewAction(«app.name.toFirstUpper».getAppContext().getString(R.string.«sa.view.ref.name»Activity))'''
 					DisableAction:
 						result = '''some disable action'''
 					EnableAction:

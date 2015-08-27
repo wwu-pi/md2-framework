@@ -69,9 +69,10 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			// all GUI elements
 			val viewGUIElements = rootViews + rootViews.map[rv | rv.eAllContents.filter(ViewGUIElement).toSet].flatten
 			
-			
 			//all workflow elements
 			val workflowElements = dataContainer.workflowElementsForApp(app)
+			
+			val rootViewContainersForApp = dataContainer.rootViewContainers.filter[wfe, rvs| workflowElements.contains(wfe)]
 			
 			val startableWorkflowElements = app.workflowElements.filter[we | we.startable]
 
@@ -176,13 +177,13 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 		 fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + app.name.toFirstUpper + ".java", Application.generateAppClass(mainPackage, app))
 		 
 		 // Activities
-		 Activity.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
+		 Activity.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements, rootViewContainersForApp)
 		 
 		 // Controller
 		 fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "/md2/controller/Controller" + ".java", Md2Controller.generateController(mainPackage, app, dataContainer.entities, dataContainer.contentProviders))
 		 
 		 // actions
-		 Actions.generateActions(fsa, rootFolder, mainPath, mainPackage, workflowElements)
+		 Actions.generateActions(fsa, rootFolder, mainPath, mainPackage, app, workflowElements)
 		 
 		/***************************************************
 		 * 

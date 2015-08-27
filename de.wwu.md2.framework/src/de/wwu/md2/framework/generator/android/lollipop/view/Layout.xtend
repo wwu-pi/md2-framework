@@ -29,6 +29,7 @@ import de.wwu.md2.framework.mD2.ContainerElementReference
 import de.wwu.md2.framework.mD2.WidthParam
 import de.wwu.md2.framework.mD2.WorkflowElement
 import de.wwu.md2.framework.mD2.WorkflowElementReference
+import de.wwu.md2.framework.mD2.Label
 
 class Layout {
 
@@ -168,6 +169,9 @@ class Layout {
 			TextInput: {
 				newElement = createTextInputElement(doc, viewElement)
 			}
+			Label: {
+				newElement = createLabelElement(doc, viewElement)
+			}
 			default:
 				return
 		}
@@ -303,5 +307,27 @@ class Layout {
 		}
 
 		return textInputElement
+	}
+	
+	private static def createLabelElement(Document doc, Label label) {
+		val labelElement = doc.createElement(Settings.MD2LIBRARY_VIEW_LABEL)
+		val qnp = new DefaultDeclarativeQualifiedNameProvider
+		val qualifiedName = qnp.getFullyQualifiedName(label).toString("_")
+
+		// id
+		labelElement.setAttribute("android:id", "@id/" + qualifiedName)
+
+		if(label.width == -1){
+			labelElement.setAttribute("android:layout_width", "match_parent")
+		}else{
+			labelElement.setAttribute("android:layout_width", "0dp")
+			labelElement.setAttribute("android:layout_columnWeight", String.valueOf(label.width))
+		}
+		labelElement.setAttribute("android:layout_height", "wrap_content")
+		labelElement.setAttribute("android:layout_gravity", "fill_horizontal")
+
+		labelElement.setAttribute("android:text", label.text)
+
+		return labelElement
 	}
 }
