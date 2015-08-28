@@ -1,24 +1,30 @@
 package de.wwu.md2.framework.generator.ios.controller
 
-import de.wwu.md2.framework.generator.util.DataContainer
 import de.wwu.md2.framework.generator.ios.Settings
-import java.lang.invoke.MethodHandles
-import de.wwu.md2.framework.generator.ios.view.IOSView
-import de.wwu.md2.framework.mD2.Style
-import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
-import de.wwu.md2.framework.mD2.ReferencedModelType
-import org.eclipse.emf.ecore.resource.impl.BinaryResourceImpl.DataConverter.Factory
-import de.wwu.md2.framework.mD2.App
-import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
+import de.wwu.md2.framework.generator.ios.view.IOSView
+import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
+import de.wwu.md2.framework.generator.util.DataContainer
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
+import de.wwu.md2.framework.mD2.App
+import de.wwu.md2.framework.mD2.ReferencedModelType
+import de.wwu.md2.framework.mD2.Style
+import java.lang.invoke.MethodHandles
+import de.wwu.md2.framework.mD2.RemoteConnection
 
 class IOSController {
 	
 	static var className = ""
+	static var hasRemoteContentProviders = false
 	
 	def static generateStartupController(DataContainer data, App app) {
 		className = Settings.PREFIX_GLOBAL + "Controller"
 		
+		hasRemoteContentProviders = data.contentProviders.exists[ c |
+			c.type instanceof ReferencedModelType
+			&& !c.local
+		]
+			
 		generateClassContent(data, app)
 	} 
 	
@@ -52,6 +58,13 @@ class MD2Controller {
 			provider: «Settings.PREFIX_CONTENT_PROVIDER + contentProvider.name.toFirstUpper»(
 				content: «Settings.PREFIX_ENTITY + (contentProvider.type as ReferencedModelType).entity.name.toFirstUpper»()))
         «ENDFOR»
+        
+        «IF hasRemoteContentProviders»
+	    // There are remote content providers -> Check for model version
+		    «FOR connection : data.controller.controllerElements.filter(RemoteConnection)»
+			    MD2RestClient.instance.testModelVersion("«data.main.modelVersion»", basePath: "«connection.uri»")
+		    «ENDFOR»
+        «ENDIF»
         
         /***************************************************
 		 * 
