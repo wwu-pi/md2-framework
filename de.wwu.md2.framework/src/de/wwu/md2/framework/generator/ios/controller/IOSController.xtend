@@ -56,15 +56,17 @@ class MD2Controller {
 		«FOR contentProvider: data.contentProviders»
 		MD2ContentProviderRegistry.instance.addContentProvider("«contentProvider.name»", 
 			provider: «Settings.PREFIX_CONTENT_PROVIDER + contentProvider.name.toFirstUpper»(
-				content: «Settings.PREFIX_ENTITY + (contentProvider.type as ReferencedModelType).entity.name.toFirstUpper»()))
+			content: «Settings.PREFIX_ENTITY + (contentProvider.type as ReferencedModelType).entity.name.toFirstUpper»()))
         «ENDFOR»
         
-        «IF hasRemoteContentProviders»
-	    // There are remote content providers -> Check for model version
-		    «FOR connection : data.controller.controllerElements.filter(RemoteConnection)»
-			    MD2RestClient.instance.testModelVersion("«data.main.modelVersion»", basePath: "«connection.uri»")
-		    «ENDFOR»
-        «ENDIF»
+		«IF hasRemoteContentProviders»
+		// There are remote content providers -> Check for model version
+		«FOR connection : data.controller.controllerElements.filter(RemoteConnection)»
+		    if !MD2RestClient.instance.testModelVersion("«data.main.modelVersion»", basePath: "«connection.uri»") {
+		       	fatalError("The data model version is not supported by the backend (or the server could not be reached): «connection.uri»")
+		    }
+		«ENDFOR»
+		«ENDIF»
         
         /***************************************************
 		 * 
