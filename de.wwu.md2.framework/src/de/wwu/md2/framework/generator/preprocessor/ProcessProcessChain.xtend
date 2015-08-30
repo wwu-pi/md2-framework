@@ -204,7 +204,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 		
 		// create custom action to register all events
 		val customAction = factory.createCustomAction
-		customAction.setName("__registerProcessChainActionEventTrigger")
+		customAction.setName("__" + wfe.name + "_registerProcessChainActionEventTrigger")
 		wfe.actions.add(customAction)
 		
 		// for each event create event binding task
@@ -280,7 +280,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 			].flatten
 		
 		val customAction = factory.createCustomAction
-		customAction.setName("__processChainExecuteStepAction")
+		customAction.setName("__" + wfe.name + "_processChainExecuteStepAction")
 		//TODO: create on customAction for each workflowelement and add each to the workflowElement. Next line is only a dirty bug fix.
 		wfe.actions.add(customAction)
 		
@@ -560,7 +560,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 				
 		// createAction
 		val customAction = factory.createCustomAction
-		customAction.setName("__processChainProcessingAction")
+		customAction.setName("__" + wfe.name + "_processChainProcessingAction")
 		wfe.actions.add(customAction)
 		
 		// add conditional code fragment to the custom action

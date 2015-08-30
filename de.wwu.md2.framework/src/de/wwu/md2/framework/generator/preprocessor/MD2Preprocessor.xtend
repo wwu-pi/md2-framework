@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
+import de.wwu.md2.framework.mD2.CustomAction
 
 /**
  * Do a Model-to-Model transformation before the actual code generation process
@@ -95,6 +96,14 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		val workflowElements = workingInput.resources.map[ r |
 			r.allContents.toIterable.filter(WorkflowElement)
 		].flatten.toList
+		
+		// Rename custom actions to ensure unique naming
+		// QualifiedNames fail here because init actions are copied and loose their eContainer workflow reference
+		workflowElements.forEach[wfe |
+			wfe.actions.filter(CustomAction).forEach [ ca | 
+				ca.name = wfe.name + "_" + ca.name
+			]
+		]
 		
 		/////////////////////////////////////////////////////////////////////////////
 		//                                                                         //

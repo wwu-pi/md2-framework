@@ -191,7 +191,7 @@ class ManifestJson {
 					"id": "md2_«workflowElement.name.replace(".", "_")»",
 					"webserviceBackendUri": "«dataContainer.getDefaultConnectionUri»",
 					"windowTitle": "«workflowElement.name»",
-					"onInitialized": "«ProcessController::startupActionName»",
+					"onInitialized": "__«workflowElement.name»_startupAction",
 					"views": [
 						«FOR view : dataContainer.rootViewContainers.get(workflowElement) SEPARATOR ","»
 							{

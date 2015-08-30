@@ -40,6 +40,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameProvider
+import de.wwu.md2.framework.mD2.WorkflowElement
 
 class MD2GeneratorUtil {
 	
@@ -102,6 +103,21 @@ class MD2GeneratorUtil {
 		}
 		
 		qualifiedNameToNameMapping.get(qualifiedName)
+	}
+	
+	/**
+	 * Returns the name of the given Action.
+	 * Implementation change: Actions are now made unique in preprocessing and therefore 
+	 * don't need to be stored in separate data structure anymore.
+	 * 
+	 * @return A name that identifies the action uniquely or null if the parameter was null.
+	 */
+	def static getName(Action obj) {
+		if (obj == null) {
+			return null
+		}
+		
+		return obj.name
 	}
 	
 	/**
