@@ -42,7 +42,7 @@ class «className»: MD2ContentProviderType {
         self.store = MD2LocalStoreFactory<«managedEntityClassName»>().createStore()
     «ELSE»
     	self.store = MD2RemoteStoreFactory<«managedEntityClassName»>().createStore()
-    	(self.store as! MD2RemoteStore<«managedEntityClassName»>).entityPath = "«cpInstance.connection.uri + remoteEntityClassName»/"
+    	(self.store as! MD2RemoteStore<«managedEntityClassName»>).entityPath = "«cpInstance.connection.uri + remoteEntityClassName.toFirstLower»/"
     «ENDIF»
     }
     
