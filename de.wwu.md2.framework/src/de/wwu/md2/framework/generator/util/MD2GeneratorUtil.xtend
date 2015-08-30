@@ -105,45 +105,6 @@ class MD2GeneratorUtil {
 	}
 	
 	/**
-	 * Returns the name of the given Action. In case that there is a second Action with the
-	 * same name in another scope (the element has another fully qualified name), the name is extended
-	 * by a number.
-	 * 
-	 * @return A name that identifies the view element uniquely or null if the parameter was null.
-	 */
-	def static getName(Action obj) {
-		
-		return obj.name.toFirstUpper
-		
-		/* This does not yet work because actions are sometimes copied during preprocessing and are 
-		 * then treated as separate actions!!
-		 * /
-		if (obj == null) {
-			return null
-		}
-		
-		if(qualifiedNameProvider == null) {
-			qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider
-		}
-		if(qualifiedNameToNameMapping == null) {
-			qualifiedNameToNameMapping = newHashMap
-		}
-		
-		var name = obj.name
-		val qualifiedName = qualifiedNameProvider.getFullyQualifiedName(obj).toString
-		
-		if(!qualifiedNameToNameMapping.containsKey(qualifiedName)) {
-			var int i = 0
-			while(qualifiedNameToNameMapping.containsValue(name + if(i != 0) i else "")) {
-				i = i + 1
-			}
-			qualifiedNameToNameMapping.put(qualifiedName, name + if(i != 0) i else "")
-		}
-		
-		qualifiedNameToNameMapping.get(qualifiedName)*/
-	}
-	
-	/**
 	 * Creates an anonymous ID that can be used for elements that expect an ID in the target
 	 * source code, but do not have any name in the MD2 language
 	 */

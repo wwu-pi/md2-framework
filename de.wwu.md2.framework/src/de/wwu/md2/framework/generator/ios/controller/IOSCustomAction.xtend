@@ -3,7 +3,7 @@ package de.wwu.md2.framework.generator.ios.controller
 import de.wwu.md2.framework.generator.ios.Settings
 import de.wwu.md2.framework.generator.ios.util.ConditionalExpressionUtil
 import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
-import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
+import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 import de.wwu.md2.framework.mD2.AttributeSetTask
 import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.ConditionalCodeFragment
@@ -27,14 +27,13 @@ import de.wwu.md2.framework.mD2.ViewElementEventRef
 import java.lang.invoke.MethodHandles
 import org.eclipse.emf.common.util.Enumerator
 import de.wwu.md2.framework.generator.ios.util.SimpleExpressionUtil
-import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
 class IOSCustomAction {
 	
 	static var className = ""
 	
 	def static generateClass(CustomAction action) {
-		className = Settings.PREFIX_CUSTOM_ACTION + MD2GeneratorUtil.getName(action).toFirstUpper
+		className = Settings.PREFIX_CUSTOM_ACTION + IOSGeneratorUtil.getName(action).toFirstUpper
 		
 		generateClassContent(action)
 	} 
