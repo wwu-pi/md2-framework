@@ -134,12 +134,12 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 	+ Settings.CONTROLLER_PATH, true)
 			 
 			dataContainer.workflowElements.forEach [wfe | 
-			 	(wfe.initActions + wfe.actions).filter(CustomAction).forEach[ ca |
+			 	wfe.actions.filter(CustomAction).forEach[ ca |
 			 		val path = rootFolder + Settings.CONTROLLER_PATH + "action/" 
 						+ Settings.PREFIX_CUSTOM_ACTION 
-						+ IOSGeneratorUtil.getName(ca).toFirstUpper + ".swift"
+						+ MD2GeneratorUtil.getName(ca).toFirstUpper + ".swift"
 					IOSGeneratorUtil.printDebug("Generate custom action: " 
-						+ IOSGeneratorUtil.getName(ca), path)
+						+ MD2GeneratorUtil.getName(ca), path)
 					fsa.generateFile(path, IOSCustomAction.generateClass(ca))
 			 	]
 			]

@@ -10,6 +10,7 @@ import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.RemoteConnection
 import de.wwu.md2.framework.mD2.Style
 import java.lang.invoke.MethodHandles
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 
 class IOSController {
 	
@@ -116,7 +117,7 @@ class MD2Controller {
 		// Execute startup action for first WFE = there is only one
 		// TODO For next version: construct workflow element selection screen
 		«FOR initAction : app.workflowElements.filter[wfe | wfe.startable].head.workflowElementReference.initActions»
-		«Settings.PREFIX_CUSTOM_ACTION + IOSGeneratorUtil.getName(initAction)»().execute()
+		«Settings.PREFIX_CUSTOM_ACTION + MD2GeneratorUtil.getName(initAction)»().execute()
 		«ENDFOR»
 		
         //SetWorkflowElementAction(actionSignature: "InitialAction", workflowElement: wfeLocationDetection).execute()

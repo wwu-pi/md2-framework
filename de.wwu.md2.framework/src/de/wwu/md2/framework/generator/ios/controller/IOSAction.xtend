@@ -19,6 +19,7 @@ import de.wwu.md2.framework.mD2.GotoViewAction
 import de.wwu.md2.framework.mD2.LocationProviderReference
 import de.wwu.md2.framework.mD2.SimpleActionRef
 import de.wwu.md2.framework.mD2.WebServiceCallAction
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 
 class IOSAction {
 	
@@ -114,6 +115,6 @@ class IOSAction {
 	}
 	
 	def static generateCustomAction(String actionSignature, CustomAction action) '''
-		«Settings.PREFIX_CUSTOM_ACTION + IOSGeneratorUtil.getName(action)»()
+		«Settings.PREFIX_CUSTOM_ACTION + MD2GeneratorUtil.getName(action)»()
 	'''
 }
