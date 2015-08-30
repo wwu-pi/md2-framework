@@ -71,16 +71,16 @@ class «className»: MD2EnumType {
     }
     
     enum EnumType: String {
-    	«FOR i : 1.. enumInstance.enumBody.elements.length»
-    	case Elem«i» = "«enumInstance.enumBody.elements.get(i - 1)»"
+    	«FOR i : 0..<enumInstance.enumBody.elements.length»
+    	case Elem«(i+1)» = "«enumInstance.enumBody.elements.get(i)»"
         «ENDFOR»
         
-        static let allValues = [«FOR i : 1.. enumInstance.enumBody.elements.length SEPARATOR ', '»Elem«i»«ENDFOR»]
+        static let allValues = [«FOR i : 0..<enumInstance.enumBody.elements.length SEPARATOR ', '»Elem«(i+1)»«ENDFOR»]
         
         static func fromRawValue(value: String) -> EnumType? {
             switch value {
-            	«FOR i : 1.. enumInstance.enumBody.elements.length»
-            	case "«enumInstance.enumBody.elements.get(i - 1)»": return Elem«i»
+            	«FOR i : 0..<enumInstance.enumBody.elements.length»
+            	case "«enumInstance.enumBody.elements.get(i)»": return Elem«(i+1)»
         		«ENDFOR»
             	default: return nil
             }
@@ -88,16 +88,16 @@ class «className»: MD2EnumType {
         
         var toInt: Int {
             switch self {
-	            «FOR i : 1.. enumInstance.enumBody.elements.length»
-	            case Elem«i»: return «i»
+	            «FOR i : 0..<enumInstance.enumBody.elements.length»
+	            case Elem«(i+1)»: return «(i+1)»
 	        	«ENDFOR»
             }
         }
         
         static func fromInt(value: Int) -> EnumType? {
             switch value {
-            	«FOR i : 1.. enumInstance.enumBody.elements.length»
-            	case «i»: return Elem«i»
+            	«FOR i : 0..<enumInstance.enumBody.elements.length»
+            	case «(i+1)»: return Elem«(i+1)»
 	        	«ENDFOR»
             	default: return nil
             }

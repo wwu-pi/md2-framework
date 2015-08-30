@@ -48,8 +48,8 @@ class «className»: MD2ActionType {
     
     func execute() {
         // Bindings/ Mappings / Call action / Set content provider / Conditions
-	«FOR i : 1..action.codeFragments.length»
-		«generateCodeFragment(i.toString, action.codeFragments.get(i - 1))»
+	«FOR i : 0..<action.codeFragments.length»
+		«generateCodeFragment((i+1).toString, action.codeFragments.get(i))»
     «ENDFOR»
        
     }
@@ -60,7 +60,7 @@ class «className»: MD2ActionType {
 }
 	'''
 	
-	def static generateCodeFragment(String actionCounter, CustomCodeFragment fragment){
+	def static CharSequence generateCodeFragment(String actionCounter, CustomCodeFragment fragment){
 		// MARK incomplete list to be extended in future version
 		switch fragment {
 			CallTask: return generateCallTask(actionCounter, (fragment as CallTask))
@@ -72,7 +72,10 @@ class «className»: MD2ActionType {
 			ValidatorBindingTask: return generateValidatorBindingTask(actionCounter, fragment)
 			ValidatorUnbindTask: return generateValidatorUnbindTask(actionCounter, fragment)
 			ConditionalCodeFragment: return generateConditionalCodeFragment(actionCounter, fragment)
-			default: IOSGeneratorUtil.printError("IOSCustomAction encountered unsupported CustomCodeFragment type: " + fragment)
+			default: {
+				IOSGeneratorUtil.printError("IOSCustomAction encountered unsupported CustomCodeFragment type: " + fragment)
+				return ""
+			}
 		}
 	}
 	
@@ -104,20 +107,20 @@ class «className»: MD2ActionType {
 	
 	def static generateEventBindingTask(String actionCounter, EventBindingTask task) '''
 			
-		«FOR i : 1..task.events.length»
-		«FOR j : 1..task.actions.length»
-			let codeFragment«actionCounter»_«i»_«j» = «IOSAction.generateAction(className + "_" + actionCounter + "_" + i + "_" + j, task.actions.get(j-1))»
-			«generateEventHandler(task.events.get(i-1), "codeFragment" + actionCounter + "_" + i + "_" + j, true)»
+		«FOR i : 0..<task.events.length»
+		«FOR j : 0..<task.actions.length»
+			let codeFragment«actionCounter»_«(i+1)»_«(j+1)» = «IOSAction.generateAction(className + "_" + actionCounter + "_" + (i+1) + "_" + (j+1), task.actions.get(j))»
+			«generateEventHandler(task.events.get(i), "codeFragment" + actionCounter + "_" + (i+1) + "_" + (j+1), true)»
 		«ENDFOR»
 		«ENDFOR»
 	'''
 	
 	def static generateEventUnbindTask(String actionCounter, EventUnbindTask task) '''
 			
-		«FOR i : 1..task.events.length»
-		«FOR j : 1..task.actions.length»
-			let codeFragment«actionCounter»_«i»_«j» = «IOSAction.generateAction(className + "_" + actionCounter + "_" + i + "_" + j, task.actions.get(j-1))»
-			«generateEventHandler(task.events.get(i-1), "codeFragment" + actionCounter + "_" + i + "_" + j, false)»
+		«FOR i : 0..<task.events.length»
+		«FOR j : 0..<task.actions.length»
+			let codeFragment«actionCounter»_«(i+1)»_«(j+1)» = «IOSAction.generateAction(className + "_" + actionCounter + "_" + (i+1) + "_" + (j+1), task.actions.get(j))»
+			«generateEventHandler(task.events.get(i), "codeFragment" + actionCounter + "_" + (i+1) + "_" + (j+1), false)»
 		«ENDFOR»
 		«ENDFOR»
 	'''
@@ -148,11 +151,11 @@ class «className»: MD2ActionType {
 	
 	def static generateValidatorBindingTask(String actionCounter, ValidatorBindingTask task) '''
 			
-		«FOR i : 1..task.referencedFields.length»
-		«FOR j : 1..task.validators.length»
-			let codeFragment«actionCounter»_«i»_«j» = «IOSValidator.generateValidator("validator" + actionCounter + "_" + i + "_" + j, task.validators.get(j-1))»
-			MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«IOSWidgetMapping.lookup(task.referencedFields.get(i - 1))»)!
-				.addValidator(codeFragment«actionCounter»_«i»_«j»)
+		«FOR i : 0..<task.referencedFields.length»
+		«FOR j : 0..<task.validators.length»
+			let codeFragment«actionCounter»_«(i+1)»_«(j+1)» = «IOSValidator.generateValidator("validator" + actionCounter + "_" + (i+1) + "_" + (j+1), task.validators.get(j))»
+			MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«IOSWidgetMapping.lookup(task.referencedFields.get(i))»)!
+				.addValidator(codeFragment«actionCounter»_«(i+1)»_«(j+1)»)
 		«ENDFOR»
 		«ENDFOR»
 	'''
@@ -160,11 +163,11 @@ class «className»: MD2ActionType {
 	// TODO unbind "allTypes" keyword
 	def static generateValidatorUnbindTask(String actionCounter, ValidatorUnbindTask task) '''
 			
-		«FOR i : 1..task.referencedFields.length»
-		«FOR j : 1..task.validators.length»
-			let codeFragment«actionCounter»_«i»_«j» = «IOSValidator.generateValidator("validator" + actionCounter + "_" + i + "_" + j, task.validators.get(j-1))»
-			MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«IOSWidgetMapping.lookup(task.referencedFields.get(i - 1))»)!
-				.removeValidator(codeFragment«actionCounter»_«i»_«j»)
+		«FOR i : 0..<task.referencedFields.length»
+		«FOR j : 0..<task.validators.length»
+			let codeFragment«actionCounter»_«(i+1)»_«(j+1)» = «IOSValidator.generateValidator("validator" + actionCounter + "_" + (i+1) + "_" + (j+1), task.validators.get(j))»
+			MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«IOSWidgetMapping.lookup(task.referencedFields.get(i))»)!
+				.removeValidator(codeFragment«actionCounter»_«(i+1)»_«(j+1)»)
 		«ENDFOR»
 		«ENDFOR»
 	'''

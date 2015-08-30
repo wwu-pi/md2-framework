@@ -23,14 +23,14 @@ class IOSWorkflowEvent {
 // Make visible to Objective-C to allow use as Dictionary key (e.g. in MD2WorkflowEventHandler)
 @objc
 enum MD2WorkflowEvent: Int {
-	«FOR i : 1..workflowEvents.length»
-	case «workflowEvents.get(i - 1).name» = «i»
+	«FOR i : 0..<workflowEvents.length»
+	case «workflowEvents.get(i).name» = «(i+1)»
     «ENDFOR»
     
     var description: String {
         switch self {
-        «FOR i : 1..workflowEvents.length»
-        case .«workflowEvents.get(i - 1).name»: return "«workflowEvents.get(i - 1).name»"
+        «FOR i : 0..<workflowEvents.length»
+        case .«workflowEvents.get(i).name»: return "«workflowEvents.get(i).name»"
     	«ENDFOR»
     	default: return "NotFound"
         }
