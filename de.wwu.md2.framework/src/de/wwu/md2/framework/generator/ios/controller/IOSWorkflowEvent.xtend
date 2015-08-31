@@ -24,13 +24,13 @@ class IOSWorkflowEvent {
 @objc
 enum MD2WorkflowEvent: Int {
 	«FOR i : 0..<workflowEvents.length»
-	case «workflowEvents.get(i).name» = «(i+1)»
+	case «workflowEvents.get(i).name.toFirstUpper» = «(i+1)»
     «ENDFOR»
     
     var description: String {
         switch self {
         «FOR i : 0..<workflowEvents.length»
-        case .«workflowEvents.get(i).name»: return "«workflowEvents.get(i).name»"
+        case .«workflowEvents.get(i).name.toFirstUpper»: return "«workflowEvents.get(i).name.toFirstUpper»"
     	«ENDFOR»
     	default: return "NotFound"
         }

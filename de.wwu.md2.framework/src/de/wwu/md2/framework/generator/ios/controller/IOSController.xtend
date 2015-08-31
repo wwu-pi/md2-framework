@@ -82,46 +82,27 @@ class MD2Controller {
         
         /***************************************************
 		 * 
-		 * Initialize process chains and workflowElements
+		 * Initialize workflow elements
 		 * 
 		 ***************************************************/
-        /*
-        let pcLocationDetection_LocationProcessChain = ProcessChain(processChainSignature: "LocationDetection_LocationProcessChain")
-        let step1 = pcLocationDetection_LocationProcessChain.addProcessChainStep("LocationDetection", viewName: "LocationDetectionView")
-        step1.addGoTo(ProcessChainStep.GoToType.Proceed, eventType: EventType.OnClick, widget: WidgetMapping.LocationDetectionView_Next, action: CustomAction_SaveComplaint(), goToStep: nil)
         
-        let step2 = pcLocationDetection_LocationProcessChain.addProcessChainStep("LocationVerify", viewName: "LocationVerifyView")
-        step2.addGoTo(ProcessChainStep.GoToType.Reverse, eventType: EventType.OnClick, widget: WidgetMapping.LocationVerifyView_Previous, action: nil, goToStep: nil)
+        «IOSWorkflow.generateWorkflowElements(data.workflowElements)»
         
-        ProcessChainRegistry.instance.addProcessChain(pcLocationDetection_LocationProcessChain)
+        // Register workflow events
+        «IOSWorkflow.generateWorkflowEventRegistration(data.workflow.workflowElementEntries)»
         
-        let wfeLocationDetection = WorkflowElement(name: "LocationDetection", onInit: CustomAction_Init(), defaultProcessChain: pcLocationDetection_LocationProcessChain)
-        wfeLocationDetection.addInitialAction(CustomAction_ButtonInit())
-        
-        // Register workflowEvents
-        WorkflowEventHandler.instance.registerWorkflowElement(
-            WorkflowEvent.LocationDetection_DoneEvent,
-            actionType: WorkflowActionType.End,
-            workflowElement: wfeLocationDetection)
-        WorkflowEventHandler.instance.registerWorkflowElement(
-            WorkflowEvent.LocationDetection_CancelWorkflowEvent,
-            actionType: WorkflowActionType.End,
-            workflowElement: wfeLocationDetection)
-        */
         /***************************************************
 		 * 
 		 * Start initial workflow of the app
 		 * 
 		 ***************************************************/
 		 
-		// Execute startup action for first WFE = there is only one
-		// TODO For next version: construct workflow element selection screen
-		«FOR initAction : app.workflowElements.filter[wfe | wfe.startable].head.workflowElementReference.initActions»
-		«Settings.PREFIX_CUSTOM_ACTION + MD2GeneratorUtil.getName(initAction)»().execute()
-		«ENDFOR»
+		// Execute startup action for first WFE
+		// TODO Construct workflow element selection screen
 		
-        //SetWorkflowElementAction(actionSignature: "InitialAction", workflowElement: wfeLocationDetection).execute()
-        
+		«val initialWfe = app.workflowElements.filter[wfe | wfe.startable].head.workflowElementReference»
+		MD2SetWorkflowElementAction(actionSignature: "SetWorkflow«initialWfe.name.toFirstUpper»Action", workflowElement: wfe«initialWfe.name.toFirstUpper»).execute()
+		
 		println("[Controller] Startup completed")
     }
 }
