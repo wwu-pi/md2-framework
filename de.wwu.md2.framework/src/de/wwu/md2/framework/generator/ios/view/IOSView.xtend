@@ -239,7 +239,7 @@ class IOSView {
 		let «qualifiedName» = MD2SwitchWidget(widgetId: MD2WidgetMapping.«qualifiedName.toFirstUpper»)
 		«««Element width»»»
 		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
-		«qualifiedName».tooltip = MD2String("«element.tooltipText»")
+		«IF element.tooltipText != null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
 		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container).toFirstLower».addWidget(«qualifiedName»)
 		let wrapper_«qualifiedName» = MD2WidgetWrapper(widget: «qualifiedName»)
@@ -257,7 +257,7 @@ class IOSView {
 		«qualifiedName».value = MD2String("«element.defaultValue»")
 		«««Element width»»»
 		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
-		«qualifiedName».tooltip = MD2String("«element.tooltipText»")
+		«IF element.tooltipText != null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
 		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container).toFirstLower».addWidget(«qualifiedName»)
 		let wrapper_«qualifiedName» = MD2WidgetWrapper(widget: «qualifiedName»)
@@ -275,7 +275,7 @@ class IOSView {
 		«qualifiedName».value = MD2Integer(«element.defaultValue»)
 		«««Element width»»»
 		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
-		«qualifiedName».tooltip = MD2String("«element.tooltipText»")
+		«IF element.tooltipText != null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
 		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container).toFirstLower».addWidget(«qualifiedName»)
 		let wrapper_«qualifiedName» = MD2WidgetWrapper(widget: «qualifiedName»)
@@ -294,7 +294,7 @@ class IOSView {
 		«qualifiedName».value = MD2Float(Float(«element.defaultValue»))
 		«««Element width»»»
 		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
-		«qualifiedName».tooltip = MD2String("«element.tooltipText»")
+		«IF element.tooltipText != null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
 		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container).toFirstLower».addWidget(«qualifiedName»)
 		let wrapper_«qualifiedName» = MD2WidgetWrapper(widget: «qualifiedName»)
@@ -319,7 +319,7 @@ class IOSView {
 		«qualifiedName».value = MD2String(«element.defaultValue»)
 		«««Element width»»»
 		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
-		«qualifiedName».tooltip = MD2String("«element.tooltipText»")
+		«IF element.tooltipText != null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
 		«qualifiedName».pickerMode = UIDatePickerMode.Date
 		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container).toFirstLower».addWidget(«qualifiedName»)
@@ -337,7 +337,7 @@ class IOSView {
 		«qualifiedName».value = MD2String(«element.defaultValue»)
 		«««Element width»»»
 		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
-		«qualifiedName».tooltip = MD2String("«element.tooltipText»")
+		«IF element.tooltipText != null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
 		«qualifiedName».pickerMode = UIDatePickerMode.Time
 		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container).toFirstLower».addWidget(«qualifiedName»)
@@ -355,7 +355,7 @@ class IOSView {
 		«qualifiedName».value = MD2String(«element.defaultValue»)
 		«««Element width»»»
 		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
-		«qualifiedName».tooltip = MD2String("«element.tooltipText»")
+		«IF element.tooltipText != null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
 		«qualifiedName».pickerMode = UIDatePickerMode.DateAndTime
 		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container).toFirstLower».addWidget(«qualifiedName»)
@@ -373,7 +373,7 @@ class IOSView {
 		«qualifiedName».value = MD2String(«element.defaultValue»)
 		«««Element width»»»
 		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
-		«qualifiedName».tooltip = MD2String("«element.tooltipText»")
+		«IF element.tooltipText != null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
 		«««Set available options»»»
 		«IF element.enumReference != null»
 		«qualifiedName».options = «Settings.PREFIX_ENUM + element.enumReference.name.toFirstUpper».EnumType.getAllValues()
