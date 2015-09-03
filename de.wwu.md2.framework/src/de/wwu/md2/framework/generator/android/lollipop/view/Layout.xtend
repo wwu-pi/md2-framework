@@ -4,16 +4,22 @@ import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.android.lollipop.Settings
 import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.ContainerElement
+import de.wwu.md2.framework.mD2.ContainerElementReference
+import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.FlowDirection
 import de.wwu.md2.framework.mD2.FlowLayoutPane
 import de.wwu.md2.framework.mD2.FlowLayoutPaneFlowDirectionParam
 import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam
 import de.wwu.md2.framework.mD2.GridLayoutPaneRowsParam
+import de.wwu.md2.framework.mD2.Label
+import de.wwu.md2.framework.mD2.SubViewContainer
 import de.wwu.md2.framework.mD2.TextInput
 import de.wwu.md2.framework.mD2.TextInputType
 import de.wwu.md2.framework.mD2.ViewElement
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
+import de.wwu.md2.framework.mD2.WidthParam
+import de.wwu.md2.framework.mD2.WorkflowElementReference
 import java.io.StringWriter
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.OutputKeys
@@ -23,13 +29,7 @@ import javax.xml.transform.stream.StreamResult
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.w3c.dom.Document
 import org.w3c.dom.Element
-import de.wwu.md2.framework.mD2.SubViewContainer
-import de.wwu.md2.framework.mD2.ContentContainer
-import de.wwu.md2.framework.mD2.ContainerElementReference
-import de.wwu.md2.framework.mD2.WidthParam
-import de.wwu.md2.framework.mD2.WorkflowElement
-import de.wwu.md2.framework.mD2.WorkflowElementReference
-import de.wwu.md2.framework.mD2.Label
+import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
 
 class Layout {
 
@@ -45,7 +45,8 @@ class Layout {
 		]
 	}
 
-	private static def generateStartLayout(String mainPackage, Iterable<WorkflowElementReference> wfes) {
+	
+	protected static def generateStartLayout(String mainPackage, Iterable<WorkflowElementReference> wfes) {
 		val docFactory = DocumentBuilderFactory.newInstance
 		val docBuilder = docFactory.newDocumentBuilder
 
@@ -92,7 +93,7 @@ class Layout {
 		return writer.buffer.toString
 	}
 
-	private static def generateLayout(String mainPackage, ContainerElement rv) {
+	protected static def generateLayout(String mainPackage, ContainerElement rv) {
 		val docFactory = DocumentBuilderFactory.newInstance
 		val docBuilder = docFactory.newDocumentBuilder
 
@@ -146,7 +147,7 @@ class Layout {
 		return writer.buffer.toString
 	}
 
-	private static def void createChildrenElements(Document doc, Element element, ViewElement viewElement) {
+	protected static def void createChildrenElements(Document doc, Element element, ViewElement viewElement) {
 		var Element newElement = null
 		switch viewElement {
 			ViewGUIElementReference:
@@ -179,7 +180,7 @@ class Layout {
 	}
 
 
-	private static def createFlowLayoutPaneElement(Document doc, FlowLayoutPane flp) {
+	protected static def createFlowLayoutPaneElement(Document doc, FlowLayoutPane flp) {
 		val flowLayoutPaneElement = doc.createElement(Settings.MD2LIBRARY_VIEW_FLOWLAYOUTPANE)
 		val qnp = new DefaultDeclarativeQualifiedNameProvider
 		val qualifiedName = qnp.getFullyQualifiedName(flp).toString("_")
@@ -205,37 +206,38 @@ class Layout {
 		return flowLayoutPaneElement
 	}
 
-	private static def createGridLayoutPaneElement(Document doc, GridLayoutPane glp) {
-		val gridLayoutPaneElement = doc.createElement(Settings.MD2LIBRARY_VIEW_GRIDLAYOUTPANE)
-		val qnp = new DefaultDeclarativeQualifiedNameProvider
-		val qualifiedName = qnp.getFullyQualifiedName(glp).toString("_")
+	protected static def createGridLayoutPaneElement(Document doc, GridLayoutPane glp) {
+		// create element
+		val glpElement = doc.createElement(Settings.MD2LIBRARY_VIEW_GRIDLAYOUTPANE)		
 
-		// id
-		gridLayoutPaneElement.setAttribute("android:id", "@id/" + qualifiedName)
+		// assign id
+		val qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(glp, "_")
+		glpElement.setAttribute("android:id", "@id/" + qualifiedName)
 
-		// set width
-		gridLayoutPaneElement.setAttribute("android:layout_height", "wrap_content")
-		gridLayoutPaneElement.setAttribute("android:layout_width", "match_parent")
-		gridLayoutPaneElement.setAttribute("android:layout_gravity", "fill_horizontal")
+		// set default width and height
+		glpElement.setAttribute("android:layout_height", "wrap_content")
+		glpElement.setAttribute("android:layout_width", "match_parent")
+		glpElement.setAttribute("android:layout_gravity", "fill_horizontal")
 		
 		// handle parameters
 		glp.params.forEach [ p |
 			switch p {
 				// orientation
 				GridLayoutPaneColumnsParam:
-					gridLayoutPaneElement.setAttribute("android:columnCount", String.valueOf(p.value))
+					glpElement.setAttribute("android:columnCount", String.valueOf(p.value))
 				GridLayoutPaneRowsParam:
-					gridLayoutPaneElement.setAttribute("android:rowCount", String.valueOf(p.value))
+					glpElement.setAttribute("android:rowCount", String.valueOf(p.value))
+				// width
 				WidthParam:{
-					gridLayoutPaneElement.setAttribute("android:layout_columnWeight", String.valueOf(p.width))
-					gridLayoutPaneElement.getAttributeNode("android:layout_width").nodeValue = "0dp"
+					glpElement.setAttribute("android:layout_columnWeight", String.valueOf(p.width))
+					glpElement.getAttributeNode("android:layout_width").nodeValue = "0dp"
 				}
 			}
 		]
-		return gridLayoutPaneElement
+		return glpElement
 	}
 
-	private static def createButtonElement(Document doc, Button button) {
+	protected static def createButtonElement(Document doc, Button button) {
 		val buttonElement = doc.createElement(Settings.MD2LIBRARY_VIEW_BUTTON)
 		val qnp = new DefaultDeclarativeQualifiedNameProvider
 		val qualifiedName = qnp.getFullyQualifiedName(button).toString("_")
@@ -267,7 +269,7 @@ class Layout {
 		return buttonElement
 	}
 
-	private static def createTextInputElement(Document doc, TextInput textInput) {
+	protected static def createTextInputElement(Document doc, TextInput textInput) {
 		val textInputElement = doc.createElement(Settings.MD2LIBRARY_VIEW_TEXTINPUT)
 		val qnp = new DefaultDeclarativeQualifiedNameProvider
 		val qualifiedName = qnp.getFullyQualifiedName(textInput).toString("_")
@@ -309,7 +311,7 @@ class Layout {
 		return textInputElement
 	}
 	
-	private static def createLabelElement(Document doc, Label label) {
+	protected static def createLabelElement(Document doc, Label label) {
 		val labelElement = doc.createElement(Settings.MD2LIBRARY_VIEW_LABEL)
 		val qnp = new DefaultDeclarativeQualifiedNameProvider
 		val qualifiedName = qnp.getFullyQualifiedName(label).toString("_")
@@ -326,7 +328,7 @@ class Layout {
 		labelElement.setAttribute("android:layout_height", "wrap_content")
 		labelElement.setAttribute("android:layout_gravity", "fill_horizontal")
 
-		labelElement.setAttribute("android:text", label.text)
+		labelElement.setAttribute("android:text", "@string/" + qualifiedName + "_text")
 
 		return labelElement
 	}

@@ -10,11 +10,11 @@ import de.wwu.md2.framework.mD2.Tooltip
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import de.wwu.md2.framework.mD2.WorkflowElementReference
+import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
 
 class Values {
 
 	def static String generateIdsXml(Iterable<ViewGUIElement> viewGUIElements, Iterable<WorkflowElementReference> wers) '''
-		«val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider»		
 		<?xml version="1.0" encoding="utf-8"?>
 		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateIdsXml() -->
 		<resources>
@@ -22,7 +22,7 @@ class Values {
 				<item name="startActivity_«wer.workflowElementReference.name»Button" type="id"/>				
 			«ENDFOR»
 			«FOR ve : viewGUIElements»
-				«val qualifiedName = qualifiedNameProvider.getFullyQualifiedName(ve).toString("_")»
+				«val qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(ve, "_")»
 				«IF (qualifiedName != null && !qualifiedName.empty)»
 					<item name="«qualifiedName»" type="id"/>
 				«ENDIF»
@@ -44,7 +44,7 @@ class Values {
 		</resources>
 	'''
 
-	def private static String generateStringEntry(ViewGUIElement viewGUIElement) {
+	protected def static String generateStringEntry(ViewGUIElement viewGUIElement) {
 		val qnp = new DefaultDeclarativeQualifiedNameProvider
 		switch viewGUIElement {
 			InputElement:
@@ -66,7 +66,7 @@ class Values {
 			Label:
 				return '''
 					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_title">«viewGUIElement.name»</string>
-					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_label">«viewGUIElement.text»</string>
+					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_text">«viewGUIElement.text»</string>
 				'''
 			Tooltip:
 				return '''

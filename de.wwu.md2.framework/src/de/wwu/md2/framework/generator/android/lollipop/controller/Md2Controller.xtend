@@ -30,7 +30,7 @@ class Md2Controller {
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
 		«MD2AndroidLollipopUtil.generateImportAllExceptions»
 		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
-		«MD2AndroidLollipopUtil.generateImportAllCustomActions»
+		«MD2AndroidLollipopUtil.generateImportAllCustomCodeTasks»
 		
 		import de.uni_muenster.wi.fabian.md2library.controller.implementation.AbstractMd2Controller;
 		import de.uni_muenster.wi.fabian.md2library.model.contentProvider.implementation.Md2ContentProviderRegistry;
@@ -42,13 +42,13 @@ class Md2Controller {
 		
 		public class Controller extends AbstractMd2Controller {
 		
-			protected ArrayList<Md2CustomCodeAction> pendingActions;
+			protected ArrayList<Md2CustomCodeTask> pendingTasks;
 		
 		    private static Controller instance;
 		
 		    private Controller() {
 		        Log.d("FabianLog", "Controller: constructor");
-		        pendingActions = new ArrayList<Md2CustomCodeAction>();
+		        pendingTasks = new ArrayList<Md2CustomCodeTask>();
 		    }
 		
 		    public static synchronized Controller getInstance() {
@@ -82,24 +82,24 @@ class Md2Controller {
 		        return «app.name.toFirstUpper».getMd2SQLiteHelper();
 		    }
 		
-		    public void addPendingAction(Md2CustomCodeAction action){
-		        this.pendingActions.add(action);
+		    public void addPendingTask(Md2CustomCodeTask task){
+		        this.pendingTasks.add(task);
 		    }
 		
-		    public void tryExecutePendingActions(){
-		        Log.d("FabianLog", "Controller: tryExecutePendingActions()");
-		        HashSet<Md2CustomCodeAction> remove = new HashSet<>();
-		        for(Md2CustomCodeAction action : pendingActions){
+		    public void tryExecutePendingTasks(){
+		        Log.d("FabianLog", "Controller: tryExecutePendingTasks()");
+		        HashSet<Md2CustomCodeTask> remove = new HashSet<>();
+		        for(Md2CustomCodeTask task : pendingTasks){
 		            try{
-		                action.execute();
-		                Log.d("FabianLog", "Controller: tryExecutePendingActions(): executed --> remove");
-		                remove.add(action);
+		                task.execute();
+		                Log.d("FabianLog", "Controller: tryExecutePendingTasks(): executed --> remove");
+		                remove.add(task);
 		            } catch (WidgetNotCreatedException e) {
 		                // remains in list
-		                Log.d("FabianLog", "Controller: tryExecutePendingActions(): widgetNotCreatedException --> remains in list");
+		                Log.d("FabianLog", "Controller: tryExecutePendingTasks(): widgetNotCreatedException --> remains in list");
 		            }
 		        }
-		        pendingActions.removeAll(remove);
+		        pendingTasks.removeAll(remove);
 		    }
 		}
 	'''

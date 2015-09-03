@@ -10,28 +10,23 @@ import de.wwu.md2.framework.mD2.Label
 import de.wwu.md2.framework.mD2.TextInput
 import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
-import de.wwu.md2.framework.mD2.WorkflowElement
 import de.wwu.md2.framework.mD2.WorkflowElementReference
-import java.util.Map
-import java.util.Set
-import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 
 class Activity {
 	
-	
 	def static generateActivities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
-		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> wers, Map<WorkflowElement, Set<ContainerElement>> rootViewContainers) {
+		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements) {
 		
 		fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "StartActivity.java",
-				generateStartActivity(mainPackage, wers))	
+				generateStartActivity(mainPackage, startableWorkflowElements))	
 		
 		rootViews.forEach [ rv |
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + rv.name + "Activity.java",
-				generateActivity(mainPackage, rv, rootViewContainers))
+				generateActivity(mainPackage, rv))
 		]
 	}
 	
-	def static generateStartActivity(String mainPackage, Iterable<WorkflowElementReference> wers)'''
+	def static generateStartActivity(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements)'''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.Activity.generateStartActivity()
 		package «mainPackage»;
 		
@@ -47,7 +42,7 @@ class Activity {
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
 		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
 		
-		«FOR wer : wers»		        	
+		«FOR wer : startableWorkflowElements»		        	
 			import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___startupAction_Action;
 		«ENDFOR»
 		
@@ -59,10 +54,10 @@ class Activity {
 		    protected void onCreate(Bundle savedInstanceState) {
 		        super.onCreate(savedInstanceState);
 		        setContentView(R.layout.activity_start);
-		        «FOR wer : wers»
+		        «FOR wer : startableWorkflowElements»
 		        	Md2Button «wer.workflowElementReference.name»Button = (Md2Button) findViewById(R.id.startActivity_«wer.workflowElementReference.name»Button);
 		        	«wer.workflowElementReference.name»Button.setWidgetId(R.id.startActivity_«wer.workflowElementReference.name»Button);
-		        	Md2WidgetRegistry.getInstance().add(«wer.workflowElementReference.name»Button);
+		        	Md2WidgetRegistry.getInstance().addWidget(«wer.workflowElementReference.name»Button);
 		        «ENDFOR»
 		    }
 		
@@ -72,39 +67,31 @@ class Activity {
 				Md2ViewManager.getInstance().setActiveView(this);
 		        Md2ViewManager.getInstance().registerActivity(this);
 		        
-				«FOR wer : wers»
-				Md2Button «wer.workflowElementReference.name»Button = (Md2Button) findViewById(R.id.startActivity_«wer.workflowElementReference.name»Button);
-				«wer.workflowElementReference.name»Button.getOnClickHandler().registerAction(new «wer.workflowElementReference.name.toFirstUpper»___startupAction_Action());
+				«FOR wer : startableWorkflowElements»
+					Md2Button «wer.workflowElementReference.name»Button = (Md2Button) findViewById(R.id.startActivity_«wer.workflowElementReference.name»Button);
+					«wer.workflowElementReference.name»Button.getOnClickHandler().registerAction(new «wer.workflowElementReference.name.toFirstUpper»___startupAction_Action());
 		        «ENDFOR»
-		        
-		        /*«FOR wer : wers»
-		        	Md2Button «wer.workflowElementReference.name»Button = (Md2Button) findViewById(R.id.startActivity_«wer.workflowElementReference.name»Button);
-		        	if(«wer.workflowElementReference.name»Button.getOnClickHandler() == null){
-		        		«wer.workflowElementReference.name»Button.setOnClickHandler(new Md2OnClickHandler());
-		        	}
-		        	
-		        	«wer.workflowElementReference.name»Button.getOnClickHandler().registerAction(new «wer.workflowElementReference.name.toFirstUpper»___startupAction_Action());
-		        	
-		        	if(«wer.workflowElementReference.name»Button.getOnChangedHandler() == null){
-		        		«wer.workflowElementReference.name»Button.setOnChangedHandler(new Md2OnChangedHandler());
-		        	}
-				«ENDFOR»*/
-				Controller.getInstance().tryExecutePendingActions();
+				Controller.getInstance().tryExecutePendingTasks();
 		    }
 		    
 			@Override
 		    protected void onPause(){
 		        super.onPause();
-			«FOR wer : wers»
+			«FOR wer : startableWorkflowElements»
 				Md2Button «wer.workflowElementReference.name»Button = (Md2Button) findViewById(R.id.startActivity_«wer.workflowElementReference.name»Button);
 				Md2WidgetRegistry.getInstance().saveWidget(«wer.workflowElementReference.name»Button);
 			«ENDFOR»
 		        Md2ViewManager.getInstance().unregisterActivity(this);
 		    }
+		    
+		    @Override
+			public void onBackPressed() {
+				// remain on start screen
+			}
 		}
 	'''
 
-	private def static generateActivity(String mainPackage, ContainerElement rv, Map<WorkflowElement, Set<ContainerElement>> rootViewContainers) '''
+	private def static generateActivity(String mainPackage, ContainerElement rv) '''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.Activity.generateActivity()
 		package «mainPackage»;
 		
@@ -141,7 +128,7 @@ class Activity {
 		        	«generateLoadViewElement(viewElement)»
 		        «ENDFOR»
 		        
-		        Controller.getInstance().tryExecutePendingActions();
+		        Controller.getInstance().tryExecutePendingTasks();
 		    }
 		    
 			@Override
@@ -152,6 +139,11 @@ class Activity {
 		        «ENDFOR»
 		        Md2ViewManager.getInstance().unregisterActivity(this);
 		    }
+		    
+		    @Override
+			public void onBackPressed() {
+				Md2ViewManager.getInstance().goTo(getString(R.string.StartActivity));
+			}
 		}
 	'''
 	
@@ -159,26 +151,22 @@ class Activity {
 		var String result = ""
 		var String type = ""
 		
-		val qnp = new DefaultDeclarativeQualifiedNameProvider
-		var qualifiedName = qnp.getFullyQualifiedName(vet).toString("_")		
+		var qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(vet, "_")
+		if(qualifiedName == null || qualifiedName.empty)
+			return ""
 		
 		switch vet{
-			ViewGUIElementReference: return generateAddViewElement(vet.value)
-			GridLayoutPane:
-				type = "Md2GridLayoutPane"
-			Button:
-				type = "Md2Button"
-			Label:
-				type = "Md2Label"
-			TextInput:
-				type = "Md2TextInput"
-			default: return ""
+			ViewGUIElementReference: return generateSaveViewElement(vet.value)			
+			default: type = getCustomViewTypeNameForViewElementType(vet)			
 		}
+		
+		if(type == null || type.empty)
+			return ""
 		
 		result = '''
 			«type» «qualifiedName.toFirstLower» = («type») findViewById(R.id.«qualifiedName»);
 			«qualifiedName.toFirstLower».setWidgetId(R.id.«qualifiedName»);
-			Md2WidgetRegistry.getInstance().add(«qualifiedName.toFirstLower»);
+			Md2WidgetRegistry.getInstance().addWidget(«qualifiedName.toFirstLower»);
         '''
         
 		return result
@@ -188,21 +176,17 @@ class Activity {
 		var String result = ""
 		var String type = ""
 		
-		val qnp = new DefaultDeclarativeQualifiedNameProvider
-		var qualifiedName = qnp.getFullyQualifiedName(vet).toString("_")		
+		var qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(vet, "_")
+		if(qualifiedName == null || qualifiedName.empty)
+			return ""		
 		
 		switch vet{
-			ViewGUIElementReference: return generateLoadViewElement(vet.value)
-			GridLayoutPane:
-				type = "Md2GridLayoutPane"
-			Button:
-				type = "Md2Button"
-			Label:
-				type = "Md2Label"
-			TextInput:
-				type = "Md2TextInput"
-			default: return ""
+			ViewGUIElementReference: return generateSaveViewElement(vet.value)			
+			default: type = getCustomViewTypeNameForViewElementType(vet)			
 		}
+		
+		if(type == null || type.empty)
+			return ""
 		
 		result = '''
 			«type» «qualifiedName.toFirstLower» = («type») findViewById(R.id.«qualifiedName»);
@@ -216,21 +200,17 @@ class Activity {
 		var String result = ""
 		var String type = ""
 		
-		val qnp = new DefaultDeclarativeQualifiedNameProvider
-		var qualifiedName = qnp.getFullyQualifiedName(vet).toString("_")		
+		var qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(vet, "_")
+		if(qualifiedName == null || qualifiedName.empty)
+			return ""		
 		
 		switch vet{
-			ViewGUIElementReference: return generateSaveViewElement(vet.value)
-			GridLayoutPane:
-				type = "Md2GridLayoutPane"
-			Button:
-				type = "Md2Button"
-			Label:
-				type = "Md2Label"
-			TextInput:
-				type = "Md2TextInput"
-			default: return ""
+			ViewGUIElementReference: return generateSaveViewElement(vet.value)			
+			default: type = getCustomViewTypeNameForViewElementType(vet)			
 		}
+		
+		if(type == null || type.empty)
+			return ""
 		
 		result = '''
 			«type» «qualifiedName.toFirstLower» = («type») findViewById(R.id.«qualifiedName»);
@@ -239,34 +219,19 @@ class Activity {
         
 		return result
 	}
-	private static def String generateInitViewElement(ViewElementType vet){
-		var String result = ""
-		var String type = ""
-		
-		val qnp = new DefaultDeclarativeQualifiedNameProvider
-		var qualifiedName = qnp.getFullyQualifiedName(vet).toString("_")		
-		
+	
+	private static def String getCustomViewTypeNameForViewElementType(ViewElementType vet){
 		switch vet{
-			ViewGUIElementReference: return generateInitViewElement(vet.value)
+			ViewGUIElementReference: return generateSaveViewElement(vet.value)
 			GridLayoutPane:
-				type = "Md2GridLayoutPane"
+				return "Md2GridLayoutPane"
 			Button:
-				type = "Md2Button"
+				return "Md2Button"
 			Label:
-				type = "Md2Label"
+				return "Md2Label"
 			TextInput:
-				type = "Md2TextInput"
+				return "Md2TextInput"
 			default: return ""
 		}
-		
-		result = '''
-		«type» «qualifiedName» = («type») findViewById(R.id.«qualifiedName»);
-		if(«qualifiedName».getOnClickHandler() == null)
-			«qualifiedName».setOnClickHandler(new Md2OnClickHandler());
-		if(«qualifiedName».getOnChangedHandler() == null)
-			«qualifiedName».setOnChangedHandler(new Md2OnChangedHandler());
-        '''
-        
-		return result
 	}
 }

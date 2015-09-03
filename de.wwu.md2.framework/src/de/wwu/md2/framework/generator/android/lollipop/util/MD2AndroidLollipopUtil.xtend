@@ -32,6 +32,14 @@ class MD2AndroidLollipopUtil {
 		qualifiedNameProvider.getFullyQualifiedName(obj)
 	}
 	
+	def static getQualifiedNameAsString(EObject obj, String delimiter){
+		val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider
+		var qualifiedName = qualifiedNameProvider.getFullyQualifiedName(obj)
+		if(qualifiedName != null)
+			return qualifiedName.toString(delimiter)
+		return ""
+	}
+	
 	def static String generateImportAllWidgets()'''
 		import de.uni_muenster.wi.fabian.md2library.view.widgets.implementation.Md2GridLayoutPane;
 		import de.uni_muenster.wi.fabian.md2library.view.widgets.implementation.Md2FlowLayoutPane;
@@ -78,13 +86,13 @@ class MD2AndroidLollipopUtil {
 		import de.uni_muenster.wi.fabian.md2library.exception.WidgetNotCreatedException;
 	'''
 	
-	def static String generateImportAllCustomActions()'''
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.interfaces.Md2CustomCodeAction;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2AttributeSetAction;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2BindAction;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2CallAction;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2MapAction;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2UnbindAction;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2UnmapAction;
+	def static String generateImportAllCustomCodeTasks()'''
+		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.interfaces.Md2CustomCodeTask;
+		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2AttributeSetTask;
+		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2BindTask;
+		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2CallTask;
+		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2MapTask;
+		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2UnbindTask;
+		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2UnmapTask;
 	'''
 }

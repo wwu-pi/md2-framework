@@ -1,9 +1,8 @@
 package de.wwu.md2.framework.generator.android.lollipop.model
 
-import de.wwu.md2.framework.generator.android.lollipop.Settings
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
+import de.wwu.md2.framework.generator.android.lollipop.Settings
 import de.wwu.md2.framework.mD2.ContentProvider
-import javax.xml.stream.events.EntityReference
 import de.wwu.md2.framework.mD2.ReferencedModelType
 
 class Md2ContentProvider {
