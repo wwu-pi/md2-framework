@@ -32,7 +32,15 @@ class IOSController {
 
 import UIKit
 
+/// Main controller class to set up and start the app
 class MD2Controller {
+
+    /**
+    Main function that sets up the app. This includes creating and registering all view elements, content providers and workflows elements. 
+    Finally the initial workflow element selection screen is created to trigger the app flow.
+    
+    :param window The device screen object to render the views.
+    */
     func run(window: UIWindow) {
         // Initialize the widget registry
         var widgetRegistry = MD2WidgetRegistry.instance
