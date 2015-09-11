@@ -20,7 +20,7 @@ class SQLite {
 			public static abstract class «e.name.toFirstUpper»Entry implements BaseColumns {
 				public static final String TABLE_NAME = "«e.name.toLowerCase»";
 				«FOR a : e.attributes»
-				public static final String COLUMN_NAME_«a.name.toUpperCase» = "«a.name.toLowerCase»";
+				public static final String COLUMN_NAME_«a.name.toUpperCase» = "«a.name»";
 				«ENDFOR»
 			}
 		«ENDFOR»
@@ -93,7 +93,7 @@ class SQLite {
 		    public String[] getAllColumns(String typeName) {
 		        switch (typeName) {
 		        	«FOR e : entities»
-		        	case "«e.name.toLowerCase»": {
+		        	case "«e.name.toFirstUpper»": {
 		        		return this.all«e.name.toFirstUpper»Columns;
 		        	}
 					«ENDFOR»

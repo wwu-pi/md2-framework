@@ -142,6 +142,7 @@ class Activity {
 		    
 		    @Override
 			public void onBackPressed() {
+				// go back to start screen
 				Md2ViewManager.getInstance().goTo(getString(R.string.StartActivity));
 			}
 		}

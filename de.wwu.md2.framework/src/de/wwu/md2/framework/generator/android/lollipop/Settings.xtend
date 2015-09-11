@@ -17,6 +17,14 @@ public class Settings {
 	public static String MD2LIBRARY_DEBUG_PROJECT = ":md2Library-debug"
 	public static String MD2LIBRARY_PACKAGE = "de.uni_muenster.wi.fabian.md2library."
 	
+	// packages (for imports etc.)
+	public static String MD2LIBRARY_DATAMAPPER_PACKAGE_NAME = MD2LIBRARY_PACKAGE + "controller.datamapper.Md2DataMapper"
+	public static String MD2LIBRARY_ABSTRACTMD2ACTION_PACKAGE_NAME = MD2LIBRARY_PACKAGE + "controller.action.implementation.AbstractMd2Action"
+	public static String MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME = MD2LIBRARY_PACKAGE + "view.management.implementation.Md2ViewManager"
+	public static String MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAME = MD2LIBRARY_PACKAGE + "view.management.implementation.Md2WidgetRegistry"
+	public static String MD2LIBRARY_CONTENTPROVIDERREGISTRY_PACKAGE_NAME = MD2LIBRARY_PACKAGE + "model.contentProvider.implementation.Md2ContentProviderRegistry"
+	
+	
 	// view content elements
 	public static String MD2LIBRARY_VIEW_PACKAGE = MD2LIBRARY_PACKAGE + "view.widgets.implementation."
 	public static String MD2LIBRARY_VIEW_FLOWLAYOUTPANE = MD2LIBRARY_VIEW_PACKAGE + "Md2FlowLayoutPane"

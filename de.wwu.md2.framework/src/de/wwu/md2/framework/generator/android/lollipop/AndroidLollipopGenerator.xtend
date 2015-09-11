@@ -96,7 +96,7 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
 			// gradle build files
 			fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.GRADLE_BUILD_NAME,
-				Gradle.generateMd2LibrarayBuild)
+				Gradle.generateMd2LibraryBuild)
 			fsa.generateFile(rootFolder + "/" + Settings.GRADLE_BUILD_NAME, Gradle.generateProjectBuild)
 			fsa.generateFile(rootFolder + "/" + Settings.GRADLE_SETTINGS_NAME, Gradle.generateProjectSettings)
 			fsa.generateFile(rootFolder + Settings.APP_PATH + Settings.GRADLE_BUILD_NAME,
@@ -135,7 +135,7 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
 			// String Values
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STRINGS_XML_NAME,
-				Values.generateStringsXml(app, rootViews, viewGUIElements))
+				Values.generateStringsXml(app, rootViews, viewGUIElements, startableWorkflowElements))
 
 			// Views String Values
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.VIEWS_XML_NAME,

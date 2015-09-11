@@ -31,13 +31,18 @@ class Values {
 	'''
 
 	def static String generateStringsXml(App app, Iterable<ContainerElement> rootContainerElements,
-		Iterable<ViewGUIElement> viewGUIElements) '''
+		Iterable<ViewGUIElement> viewGUIElements, Iterable<WorkflowElementReference> wers) '''
 		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateStringsXml() -->
 		<resources>
 			<string name="app_name">«app.appName»</string>
 			«FOR rce : rootContainerElements»
 				<string name="title_activity_«rce.name.toFirstLower»">«rce.name»</string>
 			«ENDFOR»
+			
+			«FOR wer : wers»
+				<string name="«MD2AndroidLollipopUtil.getQualifiedNameAsString(wer, "_")»_alias">«wer.alias»</string>
+			«ENDFOR»
+			
 			«FOR ve : viewGUIElements»
 				«generateStringEntry(ve)»
 			«ENDFOR»

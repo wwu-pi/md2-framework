@@ -3,6 +3,16 @@ package de.wwu.md2.framework.generator.android.lollipop.model
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.android.lollipop.Settings
 import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.AttributeType
+import de.wwu.md2.framework.mD2.ReferencedType
+import de.wwu.md2.framework.mD2.IntegerType
+import de.wwu.md2.framework.mD2.FloatType
+import de.wwu.md2.framework.mD2.StringType
+import de.wwu.md2.framework.mD2.BooleanType
+import de.wwu.md2.framework.mD2.DateType
+import de.wwu.md2.framework.mD2.TimeType
+import de.wwu.md2.framework.mD2.DateTimeType
+import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
 
 class Md2Entity {
 	
@@ -22,15 +32,34 @@ class Md2Entity {
 		
 		import de.uni_muenster.wi.fabian.md2library.model.type.implementation.AbstractMd2Entity;
 		import de.uni_muenster.wi.fabian.md2library.model.type.interfaces.Md2Type;
+		«MD2AndroidLollipopUtil.generateImportAllTypes»
 
 		public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		
 		    public «entity.name.toFirstUpper»() {
-		        super("«entity.name.toLowerCase»");
+		        super("«entity.name.toFirstUpper»");
 		    }
 		
 		    public «entity.name.toFirstUpper»(HashMap attributes) {
-		        super("«entity.name.toLowerCase»", attributes);
+		        super("«entity.name.toFirstUpper»", attributes);
+		    }
+		    
+			@Override
+		    public void set(String attribute, Md2Type value){
+		        if(checkAttribute(attribute, value))
+		            super.set(attribute, value);
+		    }
+		
+		    private boolean checkAttribute(String attribute, Md2Type value){
+		    	if(value == null)
+		    		return true;
+		    		
+		        switch (attribute){
+		        	«FOR attribute : entity.attributes»
+		        		case "«attribute.name»": return (value instanceof «getMd2TypeStringForAttributeType(attribute.type)»);
+		            «ENDFOR»
+		            default: return false;
+		        }
 		    }
 		
 		    @Override
@@ -38,7 +67,19 @@ class Md2Entity {
 		        «entity.name.toFirstUpper» newEntity = new «entity.name.toFirstUpper»(this.getAttributes());
 		        return newEntity;
 		    }
-		
 		}
 	'''
+	
+	private def static String getMd2TypeStringForAttributeType(AttributeType attributeType){
+		switch attributeType{
+			ReferencedType: attributeType.element.name.toFirstUpper
+			IntegerType: "Md2Integer"
+			FloatType: "Md2Float"
+			StringType: "Md2String"
+			BooleanType: "Md2Boolean"
+			DateType: "Md2Date"
+			TimeType: "Md2Time"
+			DateTimeType: "Md2DateTime"			
+		}		
+	}
 }

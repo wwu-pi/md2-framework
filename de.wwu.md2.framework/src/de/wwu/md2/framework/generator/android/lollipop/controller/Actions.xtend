@@ -49,16 +49,17 @@ import de.wwu.md2.framework.mD2.ContentProviderAddAction
 import de.wwu.md2.framework.mD2.ContentProviderRemoveAction
 import de.wwu.md2.framework.mD2.ContentProviderGetAction
 import de.wwu.md2.framework.mD2.UnmappingTask
+import de.wwu.md2.framework.mD2.AbstractProviderReference
+
 
 class Actions {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		App app, Iterable<WorkflowElement> workflowElements) {
-		val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider
 
 		// generate actions that belong to each workflow element
 		workflowElements.forEach [ wfe |
 			wfe.actions.forEach [ a |
-				val qualifiedName = qualifiedNameProvider.getFullyQualifiedName(a).toString("_")
+				val qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(a, "_")
 				fsa.generateFile(
 					rootFolder + Settings.JAVA_PATH + mainPath + "md2/controller/action/" + qualifiedName.toFirstUpper +
 						"_Action.java", generateAction(mainPackage, app, wfe, a, qualifiedName))
@@ -92,6 +93,7 @@ class Actions {
 		
 		    @Override
 		    public void execute() {
+		    	«/*actions should actually always be a custom action */»
 				«IF action instanceof CustomAction»
 					«val customAction = action as CustomAction»
 					«var counter = 1»
@@ -173,7 +175,8 @@ class Actions {
 						actionString = generateSimpleAction(app, haction.action)
 					}
 				}
-				instantiation = '''new «actionString.toFirstUpper»'''
+				if(!actionString.empty)
+					instantiation = '''new «actionString.toFirstUpper»'''
 			}
 			MappingTask: {
 				dataType = "Md2MapTask"
@@ -359,7 +362,12 @@ class Actions {
 //					LocationProvider: ...
 				}
 			}
-			// AbstractProviderReference: return ""
+			AbstractProviderReference: {
+				switch expression {
+					ContentProviderReference: return '''Md2ContentProviderRegistry.getInstance().getContentProvider("«expression.contentProvider.name»").getContent()'''
+//					LocationProvider: ...
+				}
+			}
 			AbstractViewGUIElementRef:
 				return '''Md2ViewManager.getInstance().getWidgetValue(R.id.«MD2AndroidLollipopUtil.getQualifiedNameAsString(expression.ref, "_")»)'''
 			default:

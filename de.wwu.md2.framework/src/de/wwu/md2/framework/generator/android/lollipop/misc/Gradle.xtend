@@ -67,7 +67,7 @@ class Gradle {
 	'''
 	
 	// generates build.gradle for the app
-	def static String generateMd2LibrarayBuild()'''
+	def static String generateMd2LibraryBuild()'''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.misc.Gradle.generateMd2LibrarayBuild()
 		configurations.create("default")
 		artifacts.add("default", file('«Settings.MD2LIBRARY_DEBUG_NAME»'))
