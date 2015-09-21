@@ -35,6 +35,8 @@ import Foundation
 // Make class visible for Objective-C to work with Core Data persistence framework
 @objc(«className»)
 class «className»: NSObject, MD2EntityType {
+	
+	var md2ClassName: String = "«entityInstance.name.toFirstUpper»"
 
 	var internalId: MD2Integer = MD2Integer()
     
