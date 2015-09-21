@@ -51,7 +51,9 @@ class MD2Controller {
 		 * Initialize all view elements
 		 * 
 		 ***************************************************/
-        «FOR view : data.rootViewContainers.values.flatten»
+		«««Only root view containers for views within the app»»
+		«val relevantRootViews = data.extractRootViews(app.workflowElements.map[wfe | wfe.workflowElementReference ]).values.flatten»
+        «FOR view : relevantRootViews»
         // View: «view.name»
         «IOSView.generateView(view, data.view.eAllContents.filter(Style).toList)»
         «ENDFOR»
@@ -84,7 +86,7 @@ class MD2Controller {
         var viewManager = MD2ViewManager.instance
         viewManager.window = window
         
-        «FOR rootView : data.rootViewContainers.values.flatten»
+        «FOR rootView : relevantRootViews»
         viewManager.setupView("«IOSWidgetMapping.fullPathForViewElement(rootView).toFirstUpper»", view: «IOSWidgetMapping.fullPathForViewElement(rootView).toFirstLower»)
         «ENDFOR»
         

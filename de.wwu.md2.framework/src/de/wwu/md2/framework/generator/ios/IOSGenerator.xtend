@@ -19,6 +19,8 @@ import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.generator.ios.workflow.IOSWorkflowEvent
 import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
 import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
+import de.wwu.md2.framework.mD2.WorkflowElement
+import java.util.Collection
 
 class IOSGenerator extends AbstractPlatformGenerator {
 	
@@ -150,7 +152,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			IOSGeneratorUtil.printDebug("Generate main controller: " 
 				+ pathMainController, false)
 			fsa.generateFile(pathMainController, IOSController.generateStartupController(dataContainer, app))
-			 
+			
 			/***************************************************
 			 * 
 			 * Workflow

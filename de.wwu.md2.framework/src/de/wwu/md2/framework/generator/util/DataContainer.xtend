@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtend.lib.annotations.Accessors
 
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
+import org.eclipse.emf.common.util.EList
 
 /**
  * DataContainer to store data that are used throughout the generation process.
@@ -189,9 +190,12 @@ class DataContainer {
 	 * have any TabbedAlternativesPane or AlternativesPane as a child element that contain
 	 * any view containers that are accessed by a GotoViewAction.
 	 */
-	def private extractRootViews() {
-		
-		rootViewContainers = newHashMap
+	def protected extractRootViews() {
+		rootViewContainers = extractRootViews(workflowElements)
+	}
+	
+	def public extractRootViews(Iterable<WorkflowElement> workflowElements) {
+		var rootViews = newHashMap
 			
 		for (WorkflowElement workflowElement : workflowElements){
 			// Get all views that are accessed by GotoViewActions at some time
@@ -202,7 +206,7 @@ class DataContainer {
 				]
 			
 			// Calculate root view for each view that is accessed via a GotoViewAction
-			rootViewContainers.put(workflowElement, containers.map[ container |
+			rootViews.put(workflowElement, containers.map[ container |
 				var EObject elem = container
 				while (!(elem.eContainer instanceof View)) {
 					elem = elem.eContainer
@@ -210,6 +214,8 @@ class DataContainer {
 				elem as ContainerElement
 			].toSet)
 		}
+		
+		return rootViews
 	}
 	
 	/**
