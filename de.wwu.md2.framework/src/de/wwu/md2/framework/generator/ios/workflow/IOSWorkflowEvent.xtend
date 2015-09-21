@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.generator.ios.controller
+package de.wwu.md2.framework.generator.ios.workflow
 
 import de.wwu.md2.framework.generator.util.DataContainer
 import java.lang.invoke.MethodHandles

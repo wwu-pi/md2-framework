@@ -16,7 +16,7 @@ import static de.wwu.md2.framework.generator.ios.Settings.*
 import de.wwu.md2.framework.generator.ios.model.DataModel
 import de.wwu.md2.framework.generator.ios.controller.IOSCustomAction
 import de.wwu.md2.framework.mD2.CustomAction
-import de.wwu.md2.framework.generator.ios.controller.IOSWorkflowEvent
+import de.wwu.md2.framework.generator.ios.workflow.IOSWorkflowEvent
 import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
 import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 

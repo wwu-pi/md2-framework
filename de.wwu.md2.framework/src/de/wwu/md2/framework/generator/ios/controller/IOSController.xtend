@@ -10,6 +10,7 @@ import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.RemoteConnection
 import de.wwu.md2.framework.mD2.Style
 import java.lang.invoke.MethodHandles
+import de.wwu.md2.framework.generator.ios.workflow.IOSWorkflow
 
 class IOSController {
 	

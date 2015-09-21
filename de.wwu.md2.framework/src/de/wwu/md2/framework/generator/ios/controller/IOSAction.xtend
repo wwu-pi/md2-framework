@@ -1,6 +1,5 @@
 package de.wwu.md2.framework.generator.ios.controller
 
-import de.wwu.md2.framework.generator.ios.Settings
 import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 import de.wwu.md2.framework.generator.ios.util.SimpleExpressionUtil
 import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
@@ -20,24 +19,30 @@ import de.wwu.md2.framework.mD2.LocationProviderReference
 import de.wwu.md2.framework.mD2.SimpleActionRef
 import de.wwu.md2.framework.mD2.WebServiceCallAction
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
+import de.wwu.md2.framework.mD2.Action
+import de.wwu.md2.framework.generator.ios.Settings
 
 class IOSAction {
 	
-	def static generateAction(String actionSignature, ActionDef action) {
+	def static CharSequence generateAction(String actionSignature, ActionDef action) {
 		switch action {
 			SimpleActionRef: return generateSimpleAction(actionSignature, action as SimpleActionRef)
-			ActionReference: {
-				switch ((action as ActionReference).actionRef) {
-					CombinedAction: return generateCombinedAction(actionSignature, action.actionRef as CombinedAction)
-					CustomAction: return generateCustomAction(actionSignature, action.actionRef as CustomAction)
-					default: IOSGeneratorUtil.printError("IOSAction encountered unknown action reference: " + action.actionRef)
-				}
+			ActionReference: return generateAction(actionSignature, (action as ActionReference).actionRef)
+			default: {
+				IOSGeneratorUtil.printError("IOSAction encountered unknown action: " + action)
+				return ""
 			}
-			default: IOSGeneratorUtil.printError("IOSAction encountered unknown action: " + action)
 		}
 	}
 	
-	def static generateSimpleAction(String actionSignature, SimpleActionRef action) {
+	def static CharSequence generateAction(String actionSignature, Action action) {
+		switch action {
+			CombinedAction: return generateCombinedAction(actionSignature, action as CombinedAction)
+			CustomAction: return generateCustomAction(actionSignature, action as CustomAction)
+		}
+	}
+	
+	def static CharSequence generateSimpleAction(String actionSignature, SimpleActionRef action) {
 		switch action.action {
 			GotoViewAction: return generateGotoViewAction(actionSignature, action.action as GotoViewAction)
 			DisableAction: return generateDisableAction(actionSignature, action.action as DisableAction)
@@ -47,7 +52,10 @@ class IOSAction {
 			ContentProviderResetAction: return generateContentProviderResetAction(actionSignature, action.action as ContentProviderResetAction)
 			FireEventAction: return generateFireEventAction(actionSignature, action.action as FireEventAction)
 			WebServiceCallAction: return generateWebServiceCallAction(actionSignature, action.action as WebServiceCallAction)
-			default: IOSGeneratorUtil.printError("IOSAction encountered an unknown simple action: " + action.action)
+			default: { 
+				IOSGeneratorUtil.printError("IOSAction encountered an unknown simple action: " + action.action)
+				return ""
+			}
 		}
 	}
 	
@@ -104,15 +112,14 @@ class IOSAction {
 	'''
 		
 	// TODO WebServiceCall
-	def static generateWebServiceCallAction(String actionSignature, WebServiceCallAction action) '''
-		MD2WebserviceCallAction(actionSignature: "«actionSignature»", webserviceCall: «action.webServiceCall»)
-	'''
-	
-	// TODO CombinedAction
-	def static generateCombinedAction(String actionSignature, CombinedAction action) {
-		IOSGeneratorUtil.printError("IOSAction: CombinedAction unsupported")
-		return ""
+	def static generateWebServiceCallAction(String actionSignature, WebServiceCallAction action) {
+		IOSGeneratorUtil.printError("IOSAction: WebServiceCallAction unsupported")
+		return '''MD2WebserviceCallAction(actionSignature: "«actionSignature»", webserviceCall: «action.webServiceCall»)'''
 	}
+	
+	def static generateCombinedAction(String actionSignature, CombinedAction action) '''
+		MD2CombinedAction(actionSignature: "«actionSignature»", actionList: [«FOR actionItem : action.actions SEPARATOR ', '»«IOSAction.generateAction(actionSignature + actionItem.name, actionItem)»«ENDFOR»])
+	'''
 	
 	def static generateCustomAction(String actionSignature, CustomAction action) '''
 		«Settings.PREFIX_CUSTOM_ACTION + MD2GeneratorUtil.getName(action)»()
