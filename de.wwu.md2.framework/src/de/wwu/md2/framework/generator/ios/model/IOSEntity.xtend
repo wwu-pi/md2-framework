@@ -108,7 +108,7 @@ class «className»: NSObject, MD2EntityType {
 			case TimeTypeImpl: return Settings.PREFIX_GLOBAL + "Time()"
 			case DateTimeTypeImpl: return Settings.PREFIX_GLOBAL + "DateTime()"
 			case ReferencedTypeImpl: return "MD2String()"
-				/* Problem with recursive usage
+				/* TODO Problem with recursive usage causing infinite loops on deep initialization
 				{
 				if(attribute.type instanceof ReferencedType && ((attribute.type as ReferencedType).element instanceof Entity)) {
 					return Settings.PREFIX_ENTITY + ((attribute.type as ReferencedType).element as Entity).name + "()"
