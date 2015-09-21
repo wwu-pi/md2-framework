@@ -25,7 +25,7 @@ class IOSContentProvider {
 
 class «className»: MD2ContentProviderType {
     
-    let contentType = «managedEntityClassName».self
+    typealias contentType = «managedEntityClassName»
     
     var content: MD2EntityType? // managed entity instance
     
@@ -37,13 +37,14 @@ class «className»: MD2ContentProviderType {
     
     var filter: MD2Filter?
     
+«IF cpInstance.local || cpInstance.^default»
+    var entityPath: String = ""
+«ELSE»
+	var entityPath: String = "«cpInstance.connection.uri + remoteEntityClassName.toFirstLower»/"
+«ENDIF»
+    
     init() {
-    «IF cpInstance.local || cpInstance.^default»
-        self.store = MD2LocalStoreFactory<«managedEntityClassName»>().createStore()
-    «ELSE»
-    	self.store = MD2RemoteStoreFactory<«managedEntityClassName»>().createStore()
-    	(self.store as! MD2RemoteStore<«managedEntityClassName»>).entityPath = "«cpInstance.connection.uri + remoteEntityClassName.toFirstLower»/"
-    «ENDIF»
+    	self.store = MD2DataSToreFactory<contentType>().createSTore(entityPath)
     }
     
     convenience init(content: MD2EntityType) {
@@ -95,11 +96,15 @@ class «className»: MD2ContentProviderType {
     }
     
     func setValue(attribute: String, value: MD2Type) {
+    	// Check for value change
+    	if content == nil || content?.get(attribute) == nil || value.equals(content?.get(attribute)) {
+    		return
+    	}
+    	
         // Update content
         let newValue = value.clone()
-        if content != nil {
-            println("[«className»] Update id=\(content!.internalId.toString()) set \(attribute) to '\(newValue.toString())'")
-        }
+        println("[«className»] Update id=\(content!.internalId.toString()) set \(attribute) to '\(newValue.toString())'")
+        
         content?.set(attribute, value: newValue)
         
         // Check if attribute is observed and fire event accordingly
@@ -112,7 +117,7 @@ class «className»: MD2ContentProviderType {
     func checkForObserver(attribute: String, newValue: MD2Type) {
         // Check if attribute is observed
         if observedAttributes[attribute] != nil && !observedAttributes[attribute]!.equals(newValue) {
-            MD2OnContentChangeHandler.instance.fire(self, attribute: attribute)
+            MD2OnContentChangeHandler.instance.fire(MD2ContentProviderAttributeIdentity(self, attribute))
         }
     }
     
