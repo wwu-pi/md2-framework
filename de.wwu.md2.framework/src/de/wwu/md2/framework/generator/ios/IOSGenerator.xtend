@@ -13,7 +13,7 @@ import java.io.File
 import org.eclipse.xtext.generator.IFileSystemAccessExtension2
 
 import static de.wwu.md2.framework.generator.ios.Settings.*
-import de.wwu.md2.framework.generator.ios.model.DataModel
+import de.wwu.md2.framework.generator.ios.misc.DataModel
 import de.wwu.md2.framework.generator.ios.controller.IOSCustomAction
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.generator.ios.workflow.IOSWorkflowEvent
@@ -57,11 +57,18 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			/***************************************************
 			 * 
 			 * Misc 
-			 * Project file, ...
+			 * Data model and project file
 			 * 
 			 ***************************************************/
-			// TODO Project file?
-
+			// Generate data model for local storage
+			val entities = dataContainer.entities
+			val pathDataModel = rootFolder + Settings.MODEL_PATH 
+				+ "datastore/LocalData.xcdatamodeld/LocalData.xcdatamodel/contents"
+			fsa.generateFile(pathDataModel, DataModel.generateClass(entities))
+			
+			// Project file
+			// TODO Project file
+			
 			/***************************************************
 			 * 
 			 * Model
@@ -70,7 +77,6 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			IOSGeneratorUtil.printDebug("Generate Model: " + rootFolder + Settings.MODEL_PATH, true)
 			 
 			// Generate all model entities
-			val entities = dataContainer.entities
 			entities.forEach [entity | 
 				val path = rootFolder + Settings.MODEL_PATH + "entity/" 
 					+ Settings.PREFIX_ENTITY + entity.name.toFirstUpper + ".swift"
@@ -101,11 +107,6 @@ class IOSGenerator extends AbstractPlatformGenerator {
 				}
 			]
 			
-			// Generate data model for local storage
-			val pathDataModel = rootFolder + Settings.MODEL_PATH 
-				+ "datastore/LocalData.xcdatamodeld/LocalData.xcdatamodel/contents"
-			fsa.generateFile(pathDataModel, DataModel.generateClass(entities))
-			
 			/***************************************************
 			 * 
 			 * View
@@ -120,7 +121,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 * provides the mapping between a view element and such a value 
 			 * for identification in the event handlers.
 			 */
-			val pathWidgetMapping = rootFolder + Settings.MODEL_PATH + "enum/" 
+			val pathWidgetMapping = rootFolder + Settings.VIEW_PATH 
 				+ Settings.PREFIX_GLOBAL + "WidgetMapping.swift"
 			IOSGeneratorUtil.printDebug("Generate view mapping", pathWidgetMapping)
 			fsa.generateFile(pathWidgetMapping, IOSWidgetMapping.generateClass(dataContainer.view))
