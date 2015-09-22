@@ -18,7 +18,7 @@ class IOSEnum {
 	def static generateClassContent(Enum enumInstance) '''
 «IOSGeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 
-class «className»: MD2EnumType {
+class «className»: MD2Enum {
     
     var value: Any? {
         get {

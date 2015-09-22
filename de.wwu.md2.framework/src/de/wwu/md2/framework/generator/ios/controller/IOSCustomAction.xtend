@@ -42,7 +42,7 @@ class IOSCustomAction {
 	def static generateClassContent(CustomAction action) '''
 «IOSGeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 
-class «className»: MD2ActionType {
+class «className»: MD2Action {
     
     let actionSignature: String = "«className»"
     
@@ -54,7 +54,7 @@ class «className»: MD2ActionType {
        
     }
     
-    func equals(anotherAction: MD2ActionType) -> Bool {
+    func equals(anotherAction: MD2Action) -> Bool {
         return actionSignature == anotherAction.actionSignature
     }
 }

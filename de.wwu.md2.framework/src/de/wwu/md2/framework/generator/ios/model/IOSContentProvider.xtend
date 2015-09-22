@@ -23,17 +23,17 @@ class IOSContentProvider {
 	def static generateClassContent(ContentProvider cpInstance) '''
 «IOSGeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 
-class «className»: MD2ContentProviderType {
+class «className»: MD2ContentProvider {
     
     typealias contentType = «managedEntityClassName»
     
-    var content: MD2EntityType? // managed entity instance
+    var content: MD2Entity? // managed entity instance
     
-    var store: MD2DataStoreType
+    var store: MD2DataStore
     
     var observedAttributes: Dictionary<String, MD2Type> = [:]
     
-    var attributeContentProviders: Dictionary<String, MD2ContentProviderType> = [:]
+    var attributeContentProviders: Dictionary<String, MD2ContentProvider> = [:]
     
     var filter: MD2Filter?
     
@@ -47,12 +47,12 @@ class «className»: MD2ContentProviderType {
     	self.store = MD2DataSToreFactory<contentType>().createSTore(entityPath)
     }
     
-    convenience init(content: MD2EntityType) {
+    convenience init(content: MD2Entity) {
         self.init()
         self.content = content
     }
     
-    func getContent() -> MD2EntityType? {
+    func getContent() -> MD2Entity? {
         return content
     }
     
@@ -69,9 +69,9 @@ class «className»: MD2ContentProviderType {
         }
     }
     
-    func setContent(content: MD2EntityType) {
+    func setContent(content: MD2Entity) {
         // Update full entity by cloning
-        self.content = (content.clone() as! MD2EntityType)
+        self.content = (content.clone() as! MD2Entity)
         
         // Check all observed properties
         checkAllAttributesForObserver()
@@ -157,7 +157,7 @@ class «className»: MD2ContentProviderType {
         }
     }
     
-    func registerAttributeContentProvider(attribute: String, contentProvider: MD2ContentProviderType) {
+    func registerAttributeContentProvider(attribute: String, contentProvider: MD2ContentProvider) {
         attributeContentProviders[attribute] = contentProvider
     }
     
