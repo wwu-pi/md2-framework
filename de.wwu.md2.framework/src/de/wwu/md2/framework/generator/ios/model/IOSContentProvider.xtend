@@ -37,14 +37,14 @@ class «className»: MD2ContentProvider {
     
     var filter: MD2Filter?
     
-«IF cpInstance.local || cpInstance.^default»
-    var entityPath: String = ""
-«ELSE»
-	var entityPath: String = "«cpInstance.connection.uri + remoteEntityClassName.toFirstLower»/"
-«ENDIF»
+	«IF cpInstance.local || cpInstance.^default»
+	    var entityPath: String = ""
+	«ELSE»
+		var entityPath: String = "«cpInstance.connection.uri + remoteEntityClassName.toFirstLower»/"
+	«ENDIF»
     
     init() {
-    	self.store = MD2DataSToreFactory<contentType>().createSTore(entityPath)
+    	self.store = MD2DataStoreFactory<contentType>().createStore(entityPath)
     }
     
     convenience init(content: MD2Entity) {
@@ -97,7 +97,7 @@ class «className»: MD2ContentProvider {
     
     func setValue(attribute: String, value: MD2Type) {
     	// Check for value change
-    	if content == nil || content?.get(attribute) == nil || value.equals(content?.get(attribute)) {
+    	if content == nil || content?.get(attribute) == nil || value.equals(content!.get(attribute)!) {
     		return
     	}
     	
@@ -130,7 +130,7 @@ class «className»: MD2ContentProvider {
     }
     
     func reset() {
-        // Check all observed properties
+        load()
         checkAllAttributesForObserver()
     }
     

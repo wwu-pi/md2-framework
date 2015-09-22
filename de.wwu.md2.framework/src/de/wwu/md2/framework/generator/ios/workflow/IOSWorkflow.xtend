@@ -19,10 +19,10 @@ class IOSWorkflow {
     MD2WorkflowEventHandler.instance.registerWorkflowElement(
         MD2WorkflowEvent.«fireEventEntry.event.name.toFirstUpper»,
         «IF fireEventEntry.endWorkflow»
-        actionType: MD2WorkflowActionType.End,
+        action: MD2WorkflowAction.End,
         workflowElement: wfe«(fireEventEntry.eContainer as WorkflowElementEntry).workflowElement.name.toFirstUpper»)
         «ELSE»
-        actionType: MD2WorkflowActionType.Start,
+        action: MD2WorkflowAction.Start,
         workflowElement: wfe«fireEventEntry.startedWorkflowElement.name.toFirstUpper»)
         «ENDIF»
 «ENDFOR»

@@ -205,9 +205,9 @@ class IOSView {
 		«ENDIF»
 		«««Element width»»»
 		«IF element.imgWidth > 0»
-			«qualifiedName».width= Float(«element.imgWidth»)
+			«qualifiedName».width = Float(«element.imgWidth»)
 		«ELSEIF element.width> 0»
-			«qualifiedName».width= Float(«element.width»)
+			«qualifiedName».width = Float(«element.width»)
 		«ENDIF»
 		«««Add to surrounding container»»»
 		«IOSWidgetMapping.fullPathForViewElement(container).toFirstLower».addWidget(«qualifiedName»)
@@ -403,7 +403,10 @@ class IOSView {
 		}
 		
 		var result = ""
-		result += elementName + ".fontSize = MD2Float(" + styleBody.fontSize + ")\n"
+		if(styleBody.fontSize > 0) {
+			result += elementName + ".fontSize = MD2Float(" + styleBody.fontSize + ")\n"
+		}
+		
 		if(styleBody.color != null) {
 			if(styleBody.color instanceof HexColorDef){
 				result += elementName + '.color = MD2String("' + (styleBody.color as HexColorDef).color + '")\n'
