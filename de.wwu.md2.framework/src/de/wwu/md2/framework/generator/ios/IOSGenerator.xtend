@@ -58,7 +58,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			/***************************************************
 			 * 
 			 * Misc 
-			 * Data model and project file
+			 * Data model, project file, tests
 			 * 
 			 ***************************************************/
 			// Generate data model for local storage
@@ -71,6 +71,10 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			// Use app root to generate project file outside of the implementation classes!
 			val pathProjectBundle = appRoot + Settings.APP_NAME + ".xcodeproj/"
 			
+			// Settings used within the project
+			Settings.XCODE_TARGET_APP = Settings.APP_NAME
+			Settings.XCODE_TARGET_TEST = Settings.APP_NAME + "Tests"
+			
 			// Project file
 			fsa.generateFile(pathProjectBundle + "project.pbxproj", ProjectBundle.generateProjectFile(dataContainer))  
 			
@@ -80,6 +84,9 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			
 			// Xcode workspace
 			fsa.generateFile(pathProjectBundle + "project.xcworkspace/contents.xcworkspacedata", ProjectBundle.generateWorkspaceContent(dataContainer))  
+			
+			// Generate (dummy) Test Target Files
+			// TODO
 			
 			/***************************************************
 			 * 

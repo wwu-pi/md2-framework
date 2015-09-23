@@ -7,8 +7,6 @@ import java.util.HashMap
 
 class IOSGeneratorUtil {
 	
-	private static HashMap<String, String> qualifiedNameToNameMapping
-	
 	private static HashMap<String, String> uuidMapping
 	
 	def static generateClassHeaderComment(String generatedClassName, Class generatorClass) '''
@@ -55,7 +53,7 @@ class IOSGeneratorUtil {
 	/**
 	 * Get an Apple hex identifier for the element that is unique across the project
 	 */
-	def static getIdForElement(String elementName) {
+	def static getUuid(String elementName) {
 		if (elementName == null) return null
 		
 		if(uuidMapping == null) {
@@ -68,7 +66,7 @@ class IOSGeneratorUtil {
 		}
 
 		// Generate unique Id
-		var String newId = randomId()
+		var String newId = randomUuid()
 		while(newId.startsWith('59') || uuidMapping.containsValue(newId)) { // Check prefix to avoid collisions with library IDs
 			newId = randomUuid()
 		}
@@ -83,12 +81,11 @@ class IOSGeneratorUtil {
 	def static randomUuid() {
 		val length = 24
 		
-		var result = ''
+		var result = ""
 		val char[] digits = #['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'A', 'B', 'C', 'D', 'E', 'F']
-		for(var index = 0; index < length; index++) {
-			result += (Math.round(Math.random() * digits.length) as int).toString
+		while(result.length < length) {
+			result += digits.get(Math.round(Math.random() * digits.length) as int)
 		}
-		println(result)
 		return result
 	}
 }

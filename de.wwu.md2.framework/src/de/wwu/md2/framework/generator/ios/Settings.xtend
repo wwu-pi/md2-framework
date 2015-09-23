@@ -8,13 +8,16 @@ class Settings {
 	// Path to the static files, relative to platform-specific resources (res/resources/ios/) 
 	public static final String STATIC_CODE_PATH = "lib/"
 	
-	// Root folder (Not final because set at the beginning of the generation process!)
-	public static String ROOT_FOLDER = ""
-	// App name (Not final because set at the beginning of the generation process!)
-	public static String APP_NAME = "" 
+	// Root folder
+	public static String ROOT_FOLDER = "SET_DURING_GENERATION_PROCESS"
+	// App name
+	public static String APP_NAME = "SET_DURING_GENERATION_PROCESS" 
 	
-	// Adapt to Xcode user that runs the build process (needed for project bundle related preference files) 
+	// Adapt to Xcode user that runs the build process 
 	public static final String XCODE_USER_NAME = "christoph"
+	// XCode targets
+	public static String XCODE_TARGET_TEST = "SET_DURING_GENERATION_PROCESS"
+	public static String XCODE_TARGET_APP = "SET_DURING_GENERATION_PROCESS"
 	
 	// Generator and generation process related constants
 	public static final String GENERATOR_VERSION = "1.0"
