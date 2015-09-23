@@ -76,14 +76,14 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			Settings.XCODE_TARGET_TEST = Settings.APP_NAME + "Tests"
 			
 			// Project file
-			fsa.generateFile(pathProjectBundle + "project.pbxproj", ProjectBundle.generateProjectFile(dataContainer))  
+			fsa.generateFile(pathProjectBundle + "project.pbxproj", ProjectBundle.generateProjectFile(dataContainer, app))  
 			
 			// Xcode user data 
-			fsa.generateFile(pathProjectBundle + "xcuserdata/" + Settings.XCODE_USER_NAME + ".xcuserdatad/xcschemes/xcschememanagement.plist", ProjectBundle.generateXcschememanagement(dataContainer))
-			fsa.generateFile(pathProjectBundle + "xcuserdata/" + Settings.XCODE_USER_NAME + ".xcuserdatad/xcschemes/" + Settings.APP_NAME + ".xcscheme", ProjectBundle.generateXcscheme(dataContainer))
+			fsa.generateFile(pathProjectBundle + "xcuserdata/" + Settings.XCODE_USER_NAME + ".xcuserdatad/xcschemes/xcschememanagement.plist", ProjectBundle.generateXcschememanagement)
+			fsa.generateFile(pathProjectBundle + "xcuserdata/" + Settings.XCODE_USER_NAME + ".xcuserdatad/xcschemes/" + Settings.APP_NAME + ".xcscheme", ProjectBundle.generateXcscheme)
 			
 			// Xcode workspace
-			fsa.generateFile(pathProjectBundle + "project.xcworkspace/contents.xcworkspacedata", ProjectBundle.generateWorkspaceContent(dataContainer))  
+			fsa.generateFile(pathProjectBundle + "project.xcworkspace/contents.xcworkspacedata", ProjectBundle.generateWorkspaceContent)  
 			
 			// Generate (dummy) Test Target Files
 			// TODO
@@ -153,8 +153,8 @@ class IOSGenerator extends AbstractPlatformGenerator {
 		 	IOSGeneratorUtil.printDebug("Generate Controller: " + rootFolder 
 			 	+ Settings.CONTROLLER_PATH, true)
 			 
-			dataContainer.workflowElements.forEach [wfe | 
-			 	wfe.actions.filter(CustomAction).forEach[ ca |
+			app.workflowElements.forEach [wfe | 
+			 	wfe.workflowElementReference.actions.filter(CustomAction).forEach[ ca |
 			 		val path = rootFolder + Settings.CONTROLLER_PATH + "action/" 
 						+ Settings.PREFIX_CUSTOM_ACTION 
 						+ MD2GeneratorUtil.getName(ca).toFirstUpper + ".swift"
