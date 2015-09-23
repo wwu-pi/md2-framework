@@ -7,7 +7,7 @@ import de.wwu.md2.framework.mD2.Not
 import de.wwu.md2.framework.mD2.BooleanExpression
 import de.wwu.md2.framework.mD2.CompareExpression
 import de.wwu.md2.framework.mD2.GuiElementStateExpression
-import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
+import de.wwu.md2.framework.generator.ios.view.WidgetMapping
 
 class ConditionalExpressionUtil {
 	
@@ -45,7 +45,7 @@ class ConditionalExpressionUtil {
 	}
 	
 	def static evaluateGuiElementStateExpression(GuiElementStateExpression expression) {
-		val element = "MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping." + IOSWidgetMapping.lookup(expression.reference) + ")!"
+		val element = "MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping." + WidgetMapping.lookup(expression.reference) + ")!"
 		
 		switch expression.isState{
 			case VALID: return element + ".validate() == true"

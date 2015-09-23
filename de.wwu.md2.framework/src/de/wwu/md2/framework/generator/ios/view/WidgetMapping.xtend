@@ -19,7 +19,7 @@ import de.wwu.md2.framework.mD2.ViewGUIElementReference
 import java.lang.invoke.MethodHandles
 import java.util.Collection
 
-class IOSWidgetMapping {
+class WidgetMapping {
 	
 	static def generateClass(View view) {
 		var viewElements = newArrayList

@@ -17,10 +17,10 @@ import de.wwu.md2.framework.generator.ios.misc.DataModel
 import de.wwu.md2.framework.generator.ios.controller.IOSCustomAction
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.generator.ios.workflow.IOSWorkflowEvent
-import de.wwu.md2.framework.generator.ios.view.IOSWidgetMapping
 import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 import de.wwu.md2.framework.mD2.WorkflowElement
 import java.util.Collection
+import de.wwu.md2.framework.generator.ios.view.WidgetMapping
 
 class IOSGenerator extends AbstractPlatformGenerator {
 	
@@ -126,7 +126,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			val pathWidgetMapping = rootFolder + Settings.VIEW_PATH 
 				+ Settings.PREFIX_GLOBAL + "WidgetMapping.swift"
 			IOSGeneratorUtil.printDebug("Generate view mapping", pathWidgetMapping)
-			fsa.generateFile(pathWidgetMapping, IOSWidgetMapping.generateClass(dataContainer.view))
+			fsa.generateFile(pathWidgetMapping, WidgetMapping.generateClass(dataContainer.view))
 
 			/***************************************************
 			 * 
