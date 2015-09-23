@@ -20,6 +20,7 @@ import java.io.File
 import org.eclipse.xtext.generator.IFileSystemAccessExtension2
 
 import static de.wwu.md2.framework.generator.ios.Settings.*
+import de.wwu.md2.framework.generator.ios.misc.TestTarget
 
 class IOSGenerator extends AbstractPlatformGenerator {
 	
@@ -61,6 +62,8 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			 * Data model, project file, tests
 			 * 
 			 ***************************************************/
+			IOSGeneratorUtil.printDebug("Generate project-related files", true)
+			
 			// Generate data model for local storage
 			val entities = dataContainer.entities
 			val pathDataModel = rootFolder + Settings.MODEL_PATH 
@@ -76,17 +79,22 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			Settings.XCODE_TARGET_TEST = Settings.APP_NAME + "Tests"
 			
 			// Project file
+			IOSGeneratorUtil.printDebug("Generate project resource file", pathProjectBundle + "project.pbxproj")
 			fsa.generateFile(pathProjectBundle + "project.pbxproj", ProjectBundle.generateProjectFile(dataContainer, app))  
 			
-			// Xcode user data 
+			// Xcode user data
+			IOSGeneratorUtil.printDebug("Generate project user data", pathProjectBundle + "xcuserdata/" + Settings.XCODE_USER_NAME + ".xcuserdatad/") 
 			fsa.generateFile(pathProjectBundle + "xcuserdata/" + Settings.XCODE_USER_NAME + ".xcuserdatad/xcschemes/xcschememanagement.plist", ProjectBundle.generateXcschememanagement)
 			fsa.generateFile(pathProjectBundle + "xcuserdata/" + Settings.XCODE_USER_NAME + ".xcuserdatad/xcschemes/" + Settings.APP_NAME + ".xcscheme", ProjectBundle.generateXcscheme)
 			
 			// Xcode workspace
+			IOSGeneratorUtil.printDebug("Generate project workspace", pathProjectBundle + "project.xcworkspace/contents.xcworkspacedata") 
 			fsa.generateFile(pathProjectBundle + "project.xcworkspace/contents.xcworkspacedata", ProjectBundle.generateWorkspaceContent)  
 			
 			// Generate (dummy) Test Target Files
-			// TODO
+			val pathTestTarget = appRoot + Settings.XCODE_TARGET_TEST + "/"
+			IOSGeneratorUtil.printDebug("Generate test target", pathTestTarget + Settings.XCODE_TARGET_TEST + ".swift")
+			fsa.generateFile(pathTestTarget + Settings.XCODE_TARGET_TEST + ".swift", TestTarget.generateClass())  
 			
 			/***************************************************
 			 * 
