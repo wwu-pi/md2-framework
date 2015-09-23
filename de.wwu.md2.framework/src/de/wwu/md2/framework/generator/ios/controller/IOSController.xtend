@@ -103,15 +103,12 @@ class MD2Controller {
         
         /***************************************************
 		 * 
-		 * Start initial workflow of the app
+		 * Initial workflow selection
 		 * 
 		 ***************************************************/
-		 
-		// Execute startup action for first WFE
-		// TODO Construct workflow element selection screen
 		
-		«val initialWfe = app.workflowElements.filter[wfe | wfe.startable].head.workflowElementReference»
-		MD2SetWorkflowElementAction(actionSignature: "SetWorkflow«initialWfe.name.toFirstUpper»Action", workflowElement: wfe«initialWfe.name.toFirstUpper»).execute()
+		// Show start screen
+		MD2WorkflowManager.instance.generateStartScreen() 
 		
 		println("[Controller] Startup completed")
     }

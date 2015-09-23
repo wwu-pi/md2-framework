@@ -80,8 +80,11 @@ enum MD2WidgetMapping: Int {
     // Needed for the identification of widgets and views (widgetId) which can only be of integer type due to platform restrictions on the widget tags
 	case NotFound = 0
 	case Spacer = 1 // Dummy because spacers have no given name
-    «FOR i : 2..viewElementNames.length + 1»
-    case «viewElementNames.get(i - 2)» = «i»
+    case __startScreen = 2
+    case __startScreen_Button = 3
+    case __startScreen_Label = 4
+    «FOR i : 5..viewElementNames.length + 4»
+    case «viewElementNames.get(i - 5)» = «i»
     «ENDFOR»
     
     // There is currently no introspection into enums
@@ -89,8 +92,11 @@ enum MD2WidgetMapping: Int {
     var description: String {
         switch self {
         case .Spacer: return "Spacer"
-        «FOR i : 2..viewElementNames.length + 1»
-        case .«viewElementNames.get(i - 2)»: return "«viewElementNames.get(i - 2)»"
+        case __startScreen = "__startScreen"
+        case __startScreen_Button = "__startScreen_Button"
+        case __startScreen_Label = "__startScreen_Label"
+        «FOR i : 5..viewElementNames.length + 4»
+        case .«viewElementNames.get(i - 5)»: return "«viewElementNames.get(i - 5)»"
     	«ENDFOR»
     	default: return "NotFound"
         }
@@ -101,8 +107,11 @@ enum MD2WidgetMapping: Int {
     static func fromRawValue(value: Int) -> MD2WidgetMapping {
         switch(value){
         case 1: return .Spacer
-    	«FOR i : 2..viewElementNames.length + 1»
-    	case «i»: return .«viewElementNames.get(i - 2)»
+        case 2: return .__startScreen
+        case 3: return .__startScreen_Button
+        case 4: return .__startScreen_Label
+    	«FOR i : 5..viewElementNames.length + 4»
+    	case «i»: return .«viewElementNames.get(i - 5)»
     	«ENDFOR»
     	default: return .NotFound
         }

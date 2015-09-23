@@ -10,6 +10,7 @@ class IOSWorkflow {
 «FOR wfe : elements»
     
     let wfe«wfe.name.toFirstUpper» = MD2WorkflowElement(name: "«wfe.name.toFirstUpper»", onInit: MD2CustomAction___«wfe.name.toFirstUpper»_startupAction())
+    MD2WorkflowManager.instance.addStartableWorkflowElement(wfe«wfe.name.toFirstUpper»)
 «ENDFOR»
 	'''
 	
