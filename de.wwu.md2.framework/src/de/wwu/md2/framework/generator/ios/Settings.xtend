@@ -7,6 +7,8 @@ class Settings {
 	public static final String PLATFORM_PREFIX = "ios"
 	// Path to the static files, relative to platform-specific resources (res/resources/ios/) 
 	public static final String STATIC_CODE_PATH = "lib/"
+	// Path to the test target files, relative to platform-specific resources (res/resources/ios/)
+	public static final String TEST_CODE_PATH = "test/"
 	
 	// Root folder
 	public static String ROOT_FOLDER = "SET_DURING_GENERATION_PROCESS"

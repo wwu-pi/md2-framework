@@ -39,9 +39,13 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			Settings.APP_NAME = app.name.replace(".", "-").toLowerCase
 			val appRoot = rootFolder + "/" + Settings.APP_NAME + "." + Settings.PLATFORM_PREFIX + "/"
 			rootFolder = appRoot + Settings.APP_NAME + "/"
-			Settings.ROOT_FOLDER = rootFolder
 			IOSGeneratorUtil.printDebug("Generate App: " + rootFolder, true)
-
+			
+			// Settings used within the project
+			Settings.XCODE_TARGET_APP = Settings.APP_NAME
+			Settings.XCODE_TARGET_TEST = Settings.APP_NAME + "Tests"
+			Settings.ROOT_FOLDER = rootFolder
+			
 			// Copy static part in target folder
 			val resourceFolderAbsolutePath = getClass().getResource("/resources/" 
 				+ Settings.PLATFORM_PREFIX + "/" + Settings.STATIC_CODE_PATH);
@@ -56,6 +60,19 @@ class IOSGenerator extends AbstractPlatformGenerator {
 					elem.replace(targetFolderAbsolutePath, "").replace("\\","/")
 				].join("\n"))
 			
+			val resourceFolderTestsAbsolutePath = getClass().getResource("/resources/" 
+				+ Settings.PLATFORM_PREFIX + "/" + Settings.TEST_CODE_PATH);
+			val targetFolderTestsAbsolutePath = (fsa as IFileSystemAccessExtension2).getURI(appRoot + Settings.XCODE_TARGET_TEST + "/").toFileString()
+			
+			FileSystemUtil.createParentDirs(new File(targetFolderTestsAbsolutePath)) // ensure path exists
+			
+			IOSGeneratorUtil.printDebug("Copy test target files:")
+			IOSGeneratorUtil.printDebug(FileSystemUtil.copyDirectory(
+				new File(resourceFolderTestsAbsolutePath.toURI()),
+				new File(targetFolderTestsAbsolutePath)).map[elem | 
+					elem.replace(targetFolderTestsAbsolutePath, "").replace("\\","/")
+				].join("\n"))
+				
 			/***************************************************
 			 * 
 			 * Misc 
@@ -73,10 +90,6 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			// Generate files for Xcode 6.3 project bundle
 			// Use app root to generate project file outside of the implementation classes!
 			val pathProjectBundle = appRoot + Settings.APP_NAME + ".xcodeproj/"
-			
-			// Settings used within the project
-			Settings.XCODE_TARGET_APP = Settings.APP_NAME
-			Settings.XCODE_TARGET_TEST = Settings.APP_NAME + "Tests"
 			
 			// Project file
 			IOSGeneratorUtil.printDebug("Generate project resource file", pathProjectBundle + "project.pbxproj")
