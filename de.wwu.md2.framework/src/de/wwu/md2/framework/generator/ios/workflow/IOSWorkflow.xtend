@@ -1,16 +1,18 @@
 package de.wwu.md2.framework.generator.ios.workflow
 
-import de.wwu.md2.framework.mD2.WorkflowElement
 import de.wwu.md2.framework.mD2.WorkflowElementEntry
+import de.wwu.md2.framework.mD2.WorkflowElementReference
 import org.eclipse.emf.common.util.EList
 
 class IOSWorkflow {
 	
-	def static String generateWorkflowElements(Iterable<WorkflowElement> elements) '''
+	def static String generateWorkflowElements(Iterable<WorkflowElementReference> elements) '''
 «FOR wfe : elements»
     
-    let wfe«wfe.name.toFirstUpper» = MD2WorkflowElement(name: "«wfe.name.toFirstUpper»", onInit: MD2CustomAction___«wfe.name.toFirstUpper»_startupAction())
-    MD2WorkflowManager.instance.addStartableWorkflowElement(wfe«wfe.name.toFirstUpper»)
+    let wfe«wfe.workflowElementReference.name.toFirstUpper» = MD2WorkflowElement(name: "«wfe.workflowElementReference.name.toFirstUpper»", onInit: MD2CustomAction___«wfe.workflowElementReference.name.toFirstUpper»_startupAction())
+    «IF wfe.startable == true»
+    MD2WorkflowManager.instance.addStartableWorkflowElement(wfe«wfe.workflowElementReference.name.toFirstUpper», withCaption: "«IF wfe.alias != null»«wfe.alias»«ELSE»«wfe.workflowElementReference.name»«ENDIF»", forWidget: MD2WidgetMapping.__startScreen_Button_«wfe.workflowElementReference.name»)
+    «ENDIF»
 «ENDFOR»
 	'''
 	

@@ -96,7 +96,7 @@ class MD2Controller {
 		 * 
 		 ***************************************************/
         
-        «IOSWorkflow.generateWorkflowElements(data.workflowElements)»
+        «IOSWorkflow.generateWorkflowElements(app.workflowElements)»
         
         // Register workflow events
         «IOSWorkflow.generateWorkflowEventRegistration(data.workflow.workflowElementEntries)»

@@ -18,10 +18,11 @@ import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
 import java.lang.invoke.MethodHandles
 import java.util.Collection
+import de.wwu.md2.framework.mD2.WorkflowElementReference
 
 class WidgetMapping {
 	
-	static def generateClass(View view) {
+	static def generateClass(View view, Iterable<WorkflowElementReference> startableWorkflowElements) {
 		var viewElements = newArrayList
 		var viewElementNames = newArrayList
 		
@@ -34,6 +35,11 @@ class WidgetMapping {
 			if(viewElements.get(i).name != null){
 				viewElementNames.add(fullPathForViewElement(viewElements.get(i)).toFirstUpper)
 			}
+		}
+		
+		// Add buttons for every startable workflow element
+		for(wfe : startableWorkflowElements){
+			viewElementNames.add("__startScreen_Button_" + wfe.workflowElementReference.name)
 		}
 		
 		return generateClassContent(viewElementNames)
@@ -81,10 +87,9 @@ enum MD2WidgetMapping: Int {
 	case NotFound = 0
 	case Spacer = 1 // Dummy because spacers have no given name
     case __startScreen = 2
-    case __startScreen_Button = 3
-    case __startScreen_Label = 4
-    «FOR i : 5..viewElementNames.length + 4»
-    case «viewElementNames.get(i - 5)» = «i»
+    case __startScreen_Label = 3
+    «FOR i : 4..viewElementNames.length + 3»
+    case «viewElementNames.get(i - 4)» = «i»
     «ENDFOR»
     
     // There is currently no introspection into enums
@@ -93,10 +98,9 @@ enum MD2WidgetMapping: Int {
         switch self {
         case .Spacer: return "Spacer"
         case __startScreen = "__startScreen"
-        case __startScreen_Button = "__startScreen_Button"
         case __startScreen_Label = "__startScreen_Label"
-        «FOR i : 5..viewElementNames.length + 4»
-        case .«viewElementNames.get(i - 5)»: return "«viewElementNames.get(i - 5)»"
+        «FOR i : 4..viewElementNames.length + 3»
+        case .«viewElementNames.get(i - 4)»: return "«viewElementNames.get(i - 4)»"
     	«ENDFOR»
     	default: return "NotFound"
         }
@@ -108,10 +112,9 @@ enum MD2WidgetMapping: Int {
         switch(value){
         case 1: return .Spacer
         case 2: return .__startScreen
-        case 3: return .__startScreen_Button
         case 4: return .__startScreen_Label
-    	«FOR i : 5..viewElementNames.length + 4»
-    	case «i»: return .«viewElementNames.get(i - 5)»
+    	«FOR i : 4..viewElementNames.length + 3»
+    	case «i»: return .«viewElementNames.get(i - 4)»
     	«ENDFOR»
     	default: return .NotFound
         }

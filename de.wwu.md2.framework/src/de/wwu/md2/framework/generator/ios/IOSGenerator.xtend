@@ -164,7 +164,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			val pathWidgetMapping = rootFolder + Settings.VIEW_PATH 
 				+ Settings.PREFIX_GLOBAL + "WidgetMapping.swift"
 			IOSGeneratorUtil.printDebug("Generate view mapping", pathWidgetMapping)
-			fsa.generateFile(pathWidgetMapping, WidgetMapping.generateClass(dataContainer.view))
+			fsa.generateFile(pathWidgetMapping, WidgetMapping.generateClass(dataContainer.view, app.workflowElements.filter[wfe | wfe.startable == true]))
 
 			/***************************************************
 			 * 
