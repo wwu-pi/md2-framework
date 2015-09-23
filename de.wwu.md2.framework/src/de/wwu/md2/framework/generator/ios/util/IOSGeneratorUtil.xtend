@@ -9,6 +9,8 @@ class IOSGeneratorUtil {
 	
 	private static HashMap<String, String> qualifiedNameToNameMapping
 	
+	private static HashMap<String, String> uuidMapping
+	
 	def static generateClassHeaderComment(String generatedClassName, Class generatorClass) '''
 //
 //  «generatedClassName».swift
@@ -48,5 +50,45 @@ class IOSGeneratorUtil {
 	
 	def static String randomId() {
 		return ((Math.random() * 1000000) as int).toString
-	}	
+	}
+	
+	/**
+	 * Get an Apple hex identifier for the element that is unique across the project
+	 */
+	def static getIdForElement(String elementName) {
+		if (elementName == null) return null
+		
+		if(uuidMapping == null) {
+			uuidMapping = newHashMap
+		}
+		
+		// Element is already known
+		if(uuidMapping.containsKey(elementName)) {
+			return uuidMapping.get(elementName)
+		}
+
+		// Generate unique Id
+		var String newId = randomId()
+		while(newId.startsWith('59') || uuidMapping.containsValue(newId)) { // Check prefix to avoid collisions with library IDs
+			newId = randomUuid()
+		}
+		uuidMapping.put(elementName, newId)
+		return newId
+	}
+	
+	/**
+	 * Generate a 96-bit UUID in 24-character hex representation. 
+	 * This is Apple's default identifier style in project files.
+	 */
+	def static randomUuid() {
+		val length = 24
+		
+		var result = ''
+		val char[] digits = #['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'A', 'B', 'C', 'D', 'E', 'F']
+		for(var index = 0; index < length; index++) {
+			result += (Math.round(Math.random() * digits.length) as int).toString
+		}
+		println(result)
+		return result
+	}
 }

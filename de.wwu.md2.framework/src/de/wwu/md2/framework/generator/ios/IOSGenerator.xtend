@@ -3,24 +3,23 @@ package de.wwu.md2.framework.generator.ios
 import de.wwu.md2.framework.generator.AbstractPlatformGenerator
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.ios.controller.IOSController
+import de.wwu.md2.framework.generator.ios.controller.IOSCustomAction
+import de.wwu.md2.framework.generator.ios.misc.DataModel
+import de.wwu.md2.framework.generator.ios.misc.ProjectBundle
 import de.wwu.md2.framework.generator.ios.model.IOSContentProvider
 import de.wwu.md2.framework.generator.ios.model.IOSEntity
 import de.wwu.md2.framework.generator.ios.model.IOSEnum
 import de.wwu.md2.framework.generator.ios.util.FileSystemUtil
+import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
+import de.wwu.md2.framework.generator.ios.view.WidgetMapping
+import de.wwu.md2.framework.generator.ios.workflow.IOSWorkflowEvent
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
+import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.SimpleType
 import java.io.File
 import org.eclipse.xtext.generator.IFileSystemAccessExtension2
 
 import static de.wwu.md2.framework.generator.ios.Settings.*
-import de.wwu.md2.framework.generator.ios.misc.DataModel
-import de.wwu.md2.framework.generator.ios.controller.IOSCustomAction
-import de.wwu.md2.framework.mD2.CustomAction
-import de.wwu.md2.framework.generator.ios.workflow.IOSWorkflowEvent
-import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
-import de.wwu.md2.framework.mD2.WorkflowElement
-import java.util.Collection
-import de.wwu.md2.framework.generator.ios.view.WidgetMapping
 
 class IOSGenerator extends AbstractPlatformGenerator {
 	
@@ -36,9 +35,9 @@ class IOSGenerator extends AbstractPlatformGenerator {
 		 ***************************************************/
 		for (app : dataContainer.apps) {
 			// Folders
-			val appRoot = rootFolder + "/" + app.name + "." + Settings.PLATFORM_PREFIX + "/"
-			val mainPackage = MD2GeneratorUtil.getBasePackageName(processedInput).replace("^/", ".").toLowerCase
-			rootFolder = appRoot + mainPackage.replace(".", "/") + "/"
+			Settings.APP_NAME = app.name.replace(".", "-").toLowerCase
+			val appRoot = rootFolder + "/" + Settings.APP_NAME + "." + Settings.PLATFORM_PREFIX + "/"
+			rootFolder = appRoot + Settings.APP_NAME + "/"
 			Settings.ROOT_FOLDER = rootFolder
 			IOSGeneratorUtil.printDebug("Generate App: " + rootFolder, true)
 
@@ -68,8 +67,19 @@ class IOSGenerator extends AbstractPlatformGenerator {
 				+ "datastore/LocalData.xcdatamodeld/LocalData.xcdatamodel/contents"
 			fsa.generateFile(pathDataModel, DataModel.generateClass(entities))
 			
+			// Generate files for Xcode 6.3 project bundle
+			// Use app root to generate project file outside of the implementation classes!
+			val pathProjectBundle = appRoot + Settings.APP_NAME + ".xcodeproj/"
+			
 			// Project file
-			// TODO Project file
+			fsa.generateFile(pathProjectBundle + "project.pbxproj", ProjectBundle.generateProjectFile(dataContainer))  
+			
+			// Xcode user data 
+			fsa.generateFile(pathProjectBundle + "xcuserdata/" + Settings.XCODE_USER_NAME + ".xcuserdatad/xcschemes/xcschememanagement.plist", ProjectBundle.generateXcschememanagement(dataContainer))
+			fsa.generateFile(pathProjectBundle + "xcuserdata/" + Settings.XCODE_USER_NAME + ".xcuserdatad/xcschemes/" + Settings.APP_NAME + ".xcscheme", ProjectBundle.generateXcscheme(dataContainer))
+			
+			// Xcode workspace
+			fsa.generateFile(pathProjectBundle + "project.xcworkspace/contents.xcworkspacedata", ProjectBundle.generateWorkspaceContent(dataContainer))  
 			
 			/***************************************************
 			 * 
