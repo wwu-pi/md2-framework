@@ -80,11 +80,14 @@ class WidgetMapping {
 	static def generateClassContent(Iterable<String> viewElementNames) '''
 «IOSGeneratorUtil.generateClassHeaderComment("WorkflowEvent", MethodHandles.lookup.lookupClass)»
 
+/**
+    Enumeration type to identify all view elements in the app.
+    
+    **IMPORTANT** Needed for the identification of widgets and views (widgetId) which can only be passed as integer type due to platform restrictions on the widget tags.
+*/
 enum MD2WidgetMapping: Int {
     
-    // A list of all widget elements used in the application
-    // Needed for the identification of widgets and views (widgetId) which can only be of integer type due to platform restrictions on the widget tags
-	case NotFound = 0
+    case NotFound = 0
 	case Spacer = 1 // Dummy because spacers have no given name
     case __startScreen = 2
     case __startScreen_Label = 3
@@ -92,8 +95,10 @@ enum MD2WidgetMapping: Int {
     case «viewElementNames.get(i - 4)» = «i»
     «ENDFOR»
     
-    // There is currently no introspection into enums
-    // Therefore computed property to establish a link of type enum -> string representation
+    /**
+        There is currently no introspection into enums.
+        Therefore computed property to establish a link of type enum -> string representation.
+    */
     var description: String {
         switch self {
         case .Spacer: return "Spacer"
@@ -106,8 +111,10 @@ enum MD2WidgetMapping: Int {
         }
     }
     
-    // There is currently no introspection into enums
-    // Therefore static method to establish a backward link of type raw int value -> enum
+    /**
+        There is currently no introspection into enums.
+        Therefore static method to establish a backward link of type raw int value -> enum.
+    */
     static func fromRawValue(value: Int) -> MD2WidgetMapping {
         switch(value){
         case 1: return .Spacer

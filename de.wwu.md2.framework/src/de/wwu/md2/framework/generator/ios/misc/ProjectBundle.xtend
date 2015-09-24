@@ -214,7 +214,6 @@ class ProjectBundle {
 		59C6A0D41B7B9FEF0038E056 /* MD2UpdateWidgetAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C6A0D31B7B9FEF0038E056 /* MD2UpdateWidgetAction.swift */; };
 		59C6A0D61B7BA54B0038E056 /* MD2UpdateContentProviderAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C6A0D51B7BA54B0038E056 /* MD2UpdateContentProviderAction.swift */; };
 		59CB70721B5E9889001D312F /* MD2ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CB70701B5E9889001D312F /* MD2ViewController.swift */; };
-		59CB70731B5E9889001D312F /* InitialView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 59CB70711B5E9889001D312F /* InitialView.xib */; };
 		59CB707E1B5EAE2D001D312F /* MD2Type.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CB707D1B5EAE2D001D312F /* MD2Type.swift */; };
 		59CB70801B5EB15C001D312F /* MD2DataType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CB707F1B5EB15C001D312F /* MD2DataType.swift */; };
 		59CB70821B5EB281001D312F /* MD2NumericType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CB70811B5EB281001D312F /* MD2NumericType.swift */; };
@@ -345,7 +344,6 @@ class ProjectBundle {
 		59C6A0D31B7B9FEF0038E056 /* MD2UpdateWidgetAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MD2UpdateWidgetAction.swift; sourceTree = "<group>"; };
 		59C6A0D51B7BA54B0038E056 /* MD2UpdateContentProviderAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MD2UpdateContentProviderAction.swift; sourceTree = "<group>"; };
 		59CB70701B5E9889001D312F /* MD2ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MD2ViewController.swift; sourceTree = "<group>"; };
-		59CB70711B5E9889001D312F /* InitialView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InitialView.xib; sourceTree = "<group>"; };
 		59CB707D1B5EAE2D001D312F /* MD2Type.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MD2Type.swift; sourceTree = "<group>"; };
 		59CB707F1B5EB15C001D312F /* MD2DataType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MD2DataType.swift; sourceTree = "<group>"; };
 		59CB70811B5EB281001D312F /* MD2NumericType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MD2NumericType.swift; sourceTree = "<group>"; };
@@ -499,7 +497,6 @@ class ProjectBundle {
 				59D007051B6FCE5400FA922D /* MD2WidgetTextStyle.swift */,
 				59C3D5E61B6F739D00C5A613 /* MD2Dimension.swift */,
 				59CB707B1B5EADE8001D312F /* widget */,
-				59CB70711B5E9889001D312F /* InitialView.xib */,
 				59C3D5BC1B67FDFB00C5A613 /* MD2ViewManager.swift */,
 				59C3D5E81B6F840300C5A613 /* MD2ViewConfig.swift */,
 			);
@@ -808,7 +805,6 @@ class ProjectBundle {
 			buildActionMask = 2147483647;
 			files = (
 				59CD55AD1B5E8258007B9834 /* Images.xcassets in Resources */,
-				59CB70731B5E9889001D312F /* InitialView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -137,10 +137,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 				val path = rootFolder + Settings.MODEL_PATH + "contentProvider/"  
 					+ Settings.PREFIX_CONTENT_PROVIDER + cp.name.toFirstUpper + ".swift"
 				
-				// TODO ContentProvider for simple data type -> what is this for?
-				if (cp.type instanceof SimpleType) {
-					IOSGeneratorUtil.printError("SimpleType unsupported in ContentProvider!")
-				} else {
+				if (!(cp.type instanceof SimpleType)) {
 					IOSGeneratorUtil.printDebug("Generate content provider: " 
 						+ cp.name.toFirstUpper, path)
 					fsa.generateFile(path, IOSContentProvider.generateClass(cp))

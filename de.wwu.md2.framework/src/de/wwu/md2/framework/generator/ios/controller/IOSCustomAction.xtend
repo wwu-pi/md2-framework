@@ -44,8 +44,10 @@ class IOSCustomAction {
 
 class «className»: MD2Action {
     
+    /// Unique action identifier.
     let actionSignature: String = "«className»"
     
+    /// Execute action commands.
     func execute() {
         // Bindings/ Mappings / Call action / Set content provider / Conditions
 	«FOR i : 0..<action.codeFragments.length»
@@ -53,6 +55,12 @@ class «className»: MD2Action {
     «ENDFOR»
        
     }
+    
+    /**
+        Compare two action objects.
+    
+        :param: anotherAction The action to compare with.
+    */
     
     func equals(anotherAction: MD2Action) -> Bool {
         return actionSignature == anotherAction.actionSignature
