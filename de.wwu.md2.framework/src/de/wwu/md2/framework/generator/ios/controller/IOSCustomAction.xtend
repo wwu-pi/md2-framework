@@ -28,16 +28,34 @@ import de.wwu.md2.framework.mD2.ViewElementEventRef
 import java.lang.invoke.MethodHandles
 import org.eclipse.emf.common.util.Enumerator
 
+/**
+ * Generate a Swift custom action type.
+ */
 class IOSCustomAction {
 	
+	/**
+	 * The Swift class name.
+	 */
 	static var className = ""
 	
+	/**
+	 * Generates the Swift type. Prepares the class generation and calls the template.
+	 * 
+	 * @param action The custom action element.
+	 * @return The file content.
+	 */
 	def static generateClass(CustomAction action) {
 		className = Settings.PREFIX_CUSTOM_ACTION + MD2GeneratorUtil.getName(action).toFirstUpper
 		
 		generateClassContent(action)
 	} 
 	
+	/**
+	 * Template to output the MD2 custom action type.
+	 * 
+	 * @param action The custom action element to generate.
+	 * @return The file content.
+	 */
 	def static generateClassContent(CustomAction action) '''
 «IOSGeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 

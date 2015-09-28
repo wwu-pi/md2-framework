@@ -17,6 +17,9 @@ import de.wwu.md2.framework.mD2.impl.ReferencedTypeImpl
 import de.wwu.md2.framework.mD2.ReferencedType
 import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
+/**
+ * Generate entity types.
+ */
 class IOSEntity {
 	
 	/**

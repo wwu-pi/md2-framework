@@ -6,6 +6,9 @@ import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
+/**
+ * Generate content provider types.
+ */
 class IOSContentProvider {
 	
 	/**
@@ -26,7 +29,7 @@ class IOSContentProvider {
 	/**
 	 * Generates the Swift type. Prepares the class generation and calls the template.
 	 * 
-	 * @param data The content provider element to generate.
+	 * @param cpInstance The content provider element to generate.
 	 * @return The file content.
 	 */
 	def static generateClass(ContentProvider cpInstance) {
