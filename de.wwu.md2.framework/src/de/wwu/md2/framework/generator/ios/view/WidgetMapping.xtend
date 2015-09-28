@@ -102,8 +102,8 @@ enum MD2WidgetMapping: Int {
     var description: String {
         switch self {
         case .Spacer: return "Spacer"
-        case __startScreen = "__startScreen"
-        case __startScreen_Label = "__startScreen_Label"
+        case .__startScreen: return "__startScreen"
+        case .__startScreen_Label: return "__startScreen_Label"
         «FOR i : 4..viewElementNames.length + 3»
         case .«viewElementNames.get(i - 4)»: return "«viewElementNames.get(i - 4)»"
     	«ENDFOR»
