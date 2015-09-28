@@ -5,8 +5,18 @@ import java.lang.invoke.MethodHandles
 import de.wwu.md2.framework.mD2.WorkflowEvent
 import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
+/**
+ * Generates the MD2WorkflowEvent.swift enumeration type.
+ */
 class IOSWorkflowEvent {
 	
+	/**
+	 * Generates the MD2WorkflowEvent Swift type.
+	 * Prepares the class generation by filtering for all workflow events and call the template.
+	 * 
+	 * @param data The preprocessed data container.
+	 * @return The file content.
+	 */
 	static def generateClass(DataContainer data) {
 		val events = data.workflow.workflowElementEntries.map [wfe | 
 			wfe.firedEvents.map [ event | 
@@ -17,6 +27,12 @@ class IOSWorkflowEvent {
 		return generateClassContent(events)
 	}
 	
+	/**
+	 * Template to output the MD2WorkflowEvent type.
+	 * 
+	 * @param workflowEvents A list of all workflow elements in the MD2 model.
+	 * @return The file content.
+	 */
 	static def generateClassContent(Iterable<WorkflowEvent> workflowEvents) '''
 «IOSGeneratorUtil.generateClassHeaderComment("WorkflowEvent", MethodHandles.lookup.lookupClass)»
 

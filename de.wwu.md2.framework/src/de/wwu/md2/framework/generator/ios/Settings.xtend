@@ -1,5 +1,9 @@
 package de.wwu.md2.framework.generator.ios
 
+/**
+ * Various settings to configure the generation process. 
+ * According to the "convention over configuration" pattern, defaults are given for all settings. 
+ */
 class Settings {
 	public static final Boolean PRINT_DEBUG_INFO = true
 	
@@ -24,7 +28,7 @@ class Settings {
 	// Generator and generation process related constants
 	public static final String GENERATOR_VERSION = "1.0"
 	public static final String GENERATOR_AUTHOR = "Christoph Rieger"
-	public static final String GENERATOR_DATE = "15.08.2015"
+	public static final String GENERATOR_DATE = "28.09.2015"
 	public static final String GENERATION_DATE_FORMAT = "dd.MM.yyyy"
 	
 	// Paths to platform-specific subfolders

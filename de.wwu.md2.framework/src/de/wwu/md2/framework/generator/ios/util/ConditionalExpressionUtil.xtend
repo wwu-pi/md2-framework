@@ -1,13 +1,13 @@
 package de.wwu.md2.framework.generator.ios.util
 
-import de.wwu.md2.framework.mD2.ConditionalExpression
-import de.wwu.md2.framework.mD2.Or
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.And
-import de.wwu.md2.framework.mD2.Not
 import de.wwu.md2.framework.mD2.BooleanExpression
 import de.wwu.md2.framework.mD2.CompareExpression
+import de.wwu.md2.framework.mD2.ConditionalExpression
 import de.wwu.md2.framework.mD2.GuiElementStateExpression
-import de.wwu.md2.framework.generator.ios.view.WidgetMapping
+import de.wwu.md2.framework.mD2.Not
+import de.wwu.md2.framework.mD2.Or
 
 class ConditionalExpressionUtil {
 	
@@ -45,7 +45,7 @@ class ConditionalExpressionUtil {
 	}
 	
 	def static evaluateGuiElementStateExpression(GuiElementStateExpression expression) {
-		val element = "MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping." + WidgetMapping.lookup(expression.reference) + ")!"
+		val element = "MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping." + MD2GeneratorUtil.getName(expression.reference.ref).toFirstUpper + ")!"
 		
 		switch expression.isState{
 			case VALID: return element + ".validate() == true"
