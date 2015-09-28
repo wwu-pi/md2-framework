@@ -33,7 +33,7 @@ class WidgetMapping {
 		// Retrieve name once to increase performance
 		for(i : 0..<viewElements.length){
 			if(viewElements.get(i).name != null){
-				viewElementNames.add(fullPathForViewElement(viewElements.get(i)).toFirstUpper)
+				viewElementNames.add(MD2GeneratorUtil.getName(viewElements.get(i)).toFirstUpper)
 			}
 		}
 		
@@ -131,21 +131,6 @@ enum MD2WidgetMapping: Int {
 	
 	// Lookup real widget name for view element
 	def static lookup(AbstractViewGUIElementRef ref) {
-		return fullPathForViewElement(ref.ref).toFirstUpper
+		return MD2GeneratorUtil.getName(ref.ref).toFirstUpper
 	}
-	
-	def static String fullPathForViewElement(ViewElementType element) {
-		return MD2GeneratorUtil.getName(element).toFirstUpper
-		/* Use standard name provider
-		if(element.eContainer instanceof ViewImpl) {
-			// Stop
-			return element.name
-		} else if (element.name == null) {
-			// Special case for elements like spacers which have no identifier
-			return null
-		} else {
-			return fullPathForViewElement(element.eContainer as ViewElementType) + "_" + element.name 
-		}*/
-	}
-	
 }

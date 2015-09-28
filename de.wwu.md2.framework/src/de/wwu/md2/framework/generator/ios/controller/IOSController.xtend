@@ -3,14 +3,14 @@ package de.wwu.md2.framework.generator.ios.controller
 import de.wwu.md2.framework.generator.ios.Settings
 import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 import de.wwu.md2.framework.generator.ios.view.IOSView
+import de.wwu.md2.framework.generator.ios.workflow.IOSWorkflow
 import de.wwu.md2.framework.generator.util.DataContainer
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.RemoteConnection
 import de.wwu.md2.framework.mD2.Style
 import java.lang.invoke.MethodHandles
-import de.wwu.md2.framework.generator.ios.workflow.IOSWorkflow
-import de.wwu.md2.framework.generator.ios.view.WidgetMapping
 
 class IOSController {
 	
@@ -87,7 +87,7 @@ class MD2Controller {
         viewManager.window = window
         
         «FOR rootView : relevantRootViews»
-        viewManager.setupView("«WidgetMapping.fullPathForViewElement(rootView).toFirstUpper»", view: «WidgetMapping.fullPathForViewElement(rootView).toFirstLower»)
+        viewManager.setupView("«MD2GeneratorUtil.getName(rootView).toFirstUpper»", view: «MD2GeneratorUtil.getName(rootView).toFirstLower»)
         «ENDFOR»
         
         /***************************************************
