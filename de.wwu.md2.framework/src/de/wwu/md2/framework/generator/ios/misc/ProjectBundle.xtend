@@ -6,8 +6,16 @@ import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.CustomAction
 
+/**
+ * Generates all project-relevant files. 
+ */
 class ProjectBundle {
 	
+	/**
+	 * Generate the Xschememanagement file contained in the .xcodeproj bundle.
+	 * 
+	 * @return The file content.
+	 */
 	def static generateXcschememanagement() '''
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -38,6 +46,11 @@ class ProjectBundle {
 </plist>
 	'''
 	
+	/**
+	 * Generate the Xscheme file contained in the .xcodeproj bundle.
+	 * 
+	 * @return The file content.
+	 */
 	def static generateXcscheme() '''
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
@@ -153,6 +166,11 @@ class ProjectBundle {
 </Scheme>
 '''
 	
+	/**
+	 * Generate the Workspace file contained in the .xcodeproj bundle.
+	 * 
+	 * @return The file content.
+	 */
 	def static generateWorkspaceContent() '''
 <?xml version="1.0" encoding="UTF-8"?>
 <Workspace
@@ -163,6 +181,15 @@ class ProjectBundle {
 </Workspace>
 '''
 
+	/**
+	 * Generate the main project file contained in the .xcodeproj bundle.
+	 * Contains information to all static and generated files, their directory structure 
+	 * within the Xcode project and on the file system as well as various configuration 
+	 * values needed to define deployment targets, build process and the Xcode 
+	 * environment.
+	 * 
+	 * @return The file content.
+	 */
 	def static generateProjectFile(DataContainer container, App app) '''
 // !$*UTF8*$!
 {

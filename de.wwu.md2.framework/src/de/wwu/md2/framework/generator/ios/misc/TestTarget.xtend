@@ -4,10 +4,18 @@ import de.wwu.md2.framework.generator.ios.Settings
 import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 import java.lang.invoke.MethodHandles
 
+/**
+ * Generate a stubbed/dummy test target implementation.
+ */
 class TestTarget {
 	
 	static var className = ""
 	
+	/**
+	 * Generate the Swift class for unit testing.
+	 * 
+	 * @return The file content.
+	 */
 	def static generateClass() {
 		className = Settings.XCODE_TARGET_TEST
 		
@@ -15,6 +23,11 @@ class TestTarget {
 		generateClassContent()
 	} 
 	
+	/**
+	 * Template to output the test class.
+	 * 
+	 * @return The file content.
+	 */
 	def static generateClassContent() '''
 «IOSGeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 
