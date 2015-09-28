@@ -469,7 +469,7 @@ class ProjectBundle {
 		59C3D5CC1B68B27F00C5A613 /* enum */ = {
 			isa = PBXGroup;
 			children = (
-				«FOR e : container.enums»«val enumName = Settings.PREFIX_ENTITY + e.name.toFirstUpper + ".swift"»
+				«FOR e : container.enums»«val enumName = Settings.PREFIX_ENUM + e.name.toFirstUpper + ".swift"»
 				«IOSGeneratorUtil.getUuid(enumName)» /* «enumName» */,
 				«ENDFOR»
 			);
@@ -592,7 +592,7 @@ class ProjectBundle {
 		59CB707A1B5EAD5F001D312F /* contentprovider */ = {
 			isa = PBXGroup;
 			children = (
-				«FOR cp : container.enums»«val cpName = Settings.PREFIX_ENTITY + cp.name.toFirstUpper + ".swift"»
+				«FOR cp : container.contentProviders»«val cpName = Settings.PREFIX_CONTENT_PROVIDER + cp.name.toFirstUpper + ".swift"»
 				«IOSGeneratorUtil.getUuid(cpName)» /* «cpName» */,
 				«ENDFOR»
 				59CB70971B5FB25B001D312F /* MD2ContentProvider.swift */,
