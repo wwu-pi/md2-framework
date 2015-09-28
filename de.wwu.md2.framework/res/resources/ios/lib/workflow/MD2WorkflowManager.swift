@@ -75,7 +75,8 @@ class MD2WorkflowManager {
         // Add initial Label
         let label = MD2LabelWidget(widgetId: MD2WidgetMapping.__startScreen_Label)
         label.value = MD2String("Select workflow to start")
-        label.fontSize = MD2Float(2.5)
+        label.fontSize = MD2Float(2.0)
+		label.widgetElement.textAlignment = .Center
         label.color = MD2String("#000000")
         label.textStyle = MD2WidgetTextStyle.Bold
         outerLayout.addWidget(label)
