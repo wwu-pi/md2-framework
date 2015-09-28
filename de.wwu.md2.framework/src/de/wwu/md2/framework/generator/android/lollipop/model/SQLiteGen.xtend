@@ -1,10 +1,11 @@
 package de.wwu.md2.framework.generator.android.lollipop.model
 
-import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.App
+import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.Main
+import de.wwu.md2.framework.generator.android.lollipop.Settings
 
-class SQLite {
+class SQLiteGen {
 	def static generateDataContract(String mainPackage, Iterable<Entity> entities)'''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.model.SQLite.generateDataContract()
 		package «mainPackage».md2.model.sqlite;
@@ -39,7 +40,7 @@ class SQLite {
 			import «mainPackage».md2.model.sqlite.Md2DataContract.«e.name.toFirstUpper»Entry;
 		«ENDFOR»
 		
-		import de.uni_muenster.wi.fabian.md2library.model.dataStore.interfaces.Md2SQLiteHelper;
+		import «Settings.MD2LIBRARY_PACKAGE» model.dataStore.interfaces.Md2SQLiteHelper;
 		
 		public class Md2SQLiteHelperImpl extends SQLiteOpenHelper implements Md2SQLiteHelper {
 			private static final String DATABASE_NAME = "«app.name.toLowerCase».db";

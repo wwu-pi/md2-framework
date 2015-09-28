@@ -12,7 +12,7 @@ import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
 import de.wwu.md2.framework.mD2.WorkflowElementReference
 
-class Activity {
+class ActivityGen {
 	
 	def static generateActivities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements) {
@@ -36,8 +36,9 @@ class Activity {
 		import android.view.View;
 		
 		import «mainPackage».md2.controller.Controller;
-		import de.uni_muenster.wi.fabian.md2library.view.management.implementation.Md2ViewManager;
-		import de.uni_muenster.wi.fabian.md2library.view.management.implementation.Md2WidgetRegistry;
+		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
+		import «Settings.MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAME»;
+		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
 		«MD2AndroidLollipopUtil.generateImportAllWidgets»
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
 		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
@@ -46,7 +47,7 @@ class Activity {
 			import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___startupAction_Action;
 		«ENDFOR»
 		
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.Md2GoToViewAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2GoToViewAction;
 		
 		public class StartActivity extends Activity {
 		
@@ -65,13 +66,12 @@ class Activity {
 		    protected void onStart(){
 				super.onStart();
 				Md2ViewManager.getInstance().setActiveView(this);
-		        Md2ViewManager.getInstance().registerActivity(this);
 		        
 				«FOR wer : startableWorkflowElements»
 					Md2Button «wer.workflowElementReference.name»Button = (Md2Button) findViewById(R.id.startActivity_«wer.workflowElementReference.name»Button);
 					«wer.workflowElementReference.name»Button.getOnClickHandler().registerAction(new «wer.workflowElementReference.name.toFirstUpper»___startupAction_Action());
 		        «ENDFOR»
-				Controller.getInstance().tryExecutePendingTasks();
+				Md2TaskQueue.getInstance().tryExecutePendingTasks();
 		    }
 		    
 			@Override
@@ -81,7 +81,6 @@ class Activity {
 				Md2Button «wer.workflowElementReference.name»Button = (Md2Button) findViewById(R.id.startActivity_«wer.workflowElementReference.name»Button);
 				Md2WidgetRegistry.getInstance().saveWidget(«wer.workflowElementReference.name»Button);
 			«ENDFOR»
-		        Md2ViewManager.getInstance().unregisterActivity(this);
 		    }
 		    
 		    @Override
@@ -101,8 +100,9 @@ class Activity {
 		import android.view.View;
 		
 		import «mainPackage».md2.controller.Controller;
-		import de.uni_muenster.wi.fabian.md2library.view.management.implementation.Md2ViewManager;
-		import de.uni_muenster.wi.fabian.md2library.view.management.implementation.Md2WidgetRegistry;
+		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
+		import «Settings.MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAME»;
+		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
 		«MD2AndroidLollipopUtil.generateImportAllWidgets»
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
 		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
@@ -122,13 +122,12 @@ class Activity {
 		    protected void onStart(){
 				super.onStart();
 		        Md2ViewManager.getInstance().setActiveView(this);
-		        Md2ViewManager.getInstance().registerActivity(this);
 		        
 		        «FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
 		        	«generateLoadViewElement(viewElement)»
 		        «ENDFOR»
 		        
-		        Controller.getInstance().tryExecutePendingTasks();
+		        Md2TaskQueue.getInstance().tryExecutePendingTasks();
 		    }
 		    
 			@Override
@@ -137,7 +136,6 @@ class Activity {
 		        «FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
 		        	«generateSaveViewElement(viewElement)»
 		        «ENDFOR»
-		        Md2ViewManager.getInstance().unregisterActivity(this);
 		    }
 		    
 		    @Override
@@ -169,8 +167,7 @@ class Activity {
 			«qualifiedName.toFirstLower».setWidgetId(R.id.«qualifiedName»);
 			Md2WidgetRegistry.getInstance().addWidget(«qualifiedName.toFirstLower»);
         '''
-        
-		return result
+        return result
 	}
 	
 	private static def String generateLoadViewElement(ViewElementType vet){

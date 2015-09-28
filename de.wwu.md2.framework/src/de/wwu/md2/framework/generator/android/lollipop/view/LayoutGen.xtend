@@ -2,6 +2,7 @@ package de.wwu.md2.framework.generator.android.lollipop.view
 
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.android.lollipop.Settings
+import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
 import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.ContainerElementReference
@@ -29,9 +30,8 @@ import javax.xml.transform.stream.StreamResult
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.w3c.dom.Document
 import org.w3c.dom.Element
-import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
 
-class Layout {
+class LayoutGen {
 
 	def static generateLayouts(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements) {
@@ -56,7 +56,8 @@ class Layout {
 		doc.appendChild(generationComment)
 
 		// create root element
-		var Element rootElement = doc.createElement(Settings.MD2LIBRARY_VIEW_FLOWLAYOUTPANE)
+		var Element rootElement = doc.createElement("ScrollView")
+		
 		// set attributes
 		rootElement.setAttribute("android:paddingBottom", "@dimen/activity_vertical_margin")
 		rootElement.setAttribute("android:paddingLeft", "@dimen/activity_horizontal_margin")
@@ -73,6 +74,12 @@ class Layout {
 
 		doc.appendChild(rootElement)
 		
+		var Element rootContainer = doc.createElement(Settings.MD2LIBRARY_VIEW_FLOWLAYOUTPANE)
+		rootContainer.setAttribute("android:layout_height", "wrap_content")
+		rootContainer.setAttribute("android:layout_width", "match_parent")
+		rootContainer.setAttribute("android:orientation", "vertical")		
+		rootElement.appendChild(rootContainer)
+		
 		// add buttons
 		for(wfe : wfes){
 			var btnElement = doc.createElement(Settings.MD2LIBRARY_VIEW_BUTTON)
@@ -81,7 +88,7 @@ class Layout {
  			btnElement.setAttribute("android:layout_height", "wrap_content")
  			btnElement.setAttribute("android:layout_gravity", "fill_horizontal")
  			btnElement.setAttribute("android:text", "@string/" + MD2AndroidLollipopUtil.getQualifiedNameAsString(wfe, "_") + "_alias")
- 			rootElement.appendChild(btnElement);
+ 			rootContainer.appendChild(btnElement);
 		}
 
 		// return xml file as string
@@ -103,14 +110,16 @@ class Layout {
 		doc.appendChild(generationComment)
 
 		// create root element
-		var Element rootElement = null
-		switch rv {
+		var Element rootElement = doc.createElement("ScrollView")
+		/*switch rv {
 			FlowLayoutPane: rootElement = createFlowLayoutPaneElement(doc, rv)
 			GridLayoutPane: rootElement = createGridLayoutPaneElement(doc, rv)
 			default: return ""
-		}
+		}*/
+		
 		// special settings for root attributes
 		rootElement.setAttribute("android:layout_width", "match_parent")
+		rootElement.setAttribute("android:layout_height", "match_parent")
 		rootElement.setAttribute("android:paddingBottom", "@dimen/activity_vertical_margin")
 		rootElement.setAttribute("android:paddingLeft", "@dimen/activity_horizontal_margin")
 		rootElement.setAttribute("android:paddingRight", "@dimen/activity_horizontal_margin")
@@ -123,17 +132,28 @@ class Layout {
 			"http://schemas.android.com/apk/res/android")
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
 
+		var Element rootContainer = null
+		
+		switch rv {
+			FlowLayoutPane: rootContainer = createFlowLayoutPaneElement(doc, rv)
+			GridLayoutPane: rootContainer = createGridLayoutPaneElement(doc, rv)
+			default: return ""
+		}
+		
+		rootContainer.setAttribute("android:layout_width", "match_parent")
+		rootElement.appendChild(rootContainer)
+
 		// depth first search to generate elements for all children
 		switch rv {
 			ContentContainer:
 				for (elem : rv.elements) {
-					createChildrenElements(doc, rootElement, elem)
+					createChildrenElements(doc, rootContainer, elem)
 				}
 			SubViewContainer:
 				for (elem : rv.elements) {
 					switch elem {
-						ContainerElement: createChildrenElements(doc, rootElement, elem)
-						ContainerElementReference: createChildrenElements(doc, rootElement, elem.value)
+						ContainerElement: createChildrenElements(doc, rootContainer, elem)
+						ContainerElementReference: createChildrenElements(doc, rootContainer, elem.value)
 					}
 				}
 		}
@@ -303,7 +323,7 @@ class Layout {
 				textInputElement.setAttribute("android:inputType", "textPassword")
 			case textInput.type == TextInputType.TEXTAREA:
 				textInputElement.setAttribute("android:inputType",
-					"text | textMultiLine")
+					"text|textMultiLine")
 			default:
 				textInputElement.setAttribute("android:inputType", "text")
 		}

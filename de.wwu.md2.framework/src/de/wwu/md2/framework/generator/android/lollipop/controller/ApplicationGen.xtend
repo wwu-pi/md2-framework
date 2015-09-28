@@ -3,20 +3,21 @@ package de.wwu.md2.framework.generator.android.lollipop.controller
 import de.wwu.md2.framework.generator.android.lollipop.Settings
 import de.wwu.md2.framework.mD2.App
 
-class Application {
+class ApplicationGen {
 	def static generateAppClass(String packageName, App app) '''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.App.generateAppClass()
 		package «packageName»;
 		
 		import android.app.Application;
 		import android.content.Context;
-		import android.util.Log;
 		
 		import «packageName»«Settings.MD2_APP_FILES_CONTROLLER_PACKAGE_NAME»;
 		import «packageName».md2.model.sqlite.Md2SQLiteHelperImpl;
-		import de.uni_muenster.wi.fabian.md2library.model.contentProvider.implementation.Md2ContentProviderRegistry;
-		import de.uni_muenster.wi.fabian.md2library.model.dataStore.interfaces.Md2SQLiteHelper;
-		import de.uni_muenster.wi.fabian.md2library.view.management.implementation.Md2ViewManager;
+		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2SQLiteHelper;
+		import «Settings.MD2LIBRARY_CONTENTPROVIDERREGISTRY_PACKAGE_NAME»;
+		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
+		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
+		import «Settings.MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAME»;
 
 		public class «app.name.toFirstUpper» extends Application {
 		
@@ -26,6 +27,8 @@ class Application {
 			private static Controller co;
 			private static Md2ViewManager vm;
 			private static Md2ContentProviderRegistry cpr;
+			private static Md2TaskQueue tq;
+			private static Md2WidgetRegistry wr;
 		
 		    @Override
 		    public void onCreate() {
@@ -33,6 +36,8 @@ class Application {
 		        co = Controller.getInstance();
 				vm = Md2ViewManager.getInstance();
 				cpr = Md2ContentProviderRegistry.getInstance();
+				tq = Md2TaskQueue.getInstance();
+				wr = Md2WidgetRegistry.getInstance();
 				context = getApplicationContext();
 		        Controller.getInstance().run();
 		    }
@@ -42,7 +47,6 @@ class Application {
 		    }
 		    
 			public static Md2SQLiteHelper getMd2SQLiteHelper() {
-		        Log.d("FabianLog", "Citizenapp: getMd2SQLiteHelper");
 		        if (sqLiteHelper == null)
 		            synchronized («app.name.toFirstUpper».class) {
 		                if (sqLiteHelper == null)

@@ -4,8 +4,9 @@ import com.google.common.base.Joiner
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.SimpleType
-import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.emf.ecore.EObject
+import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
+import de.wwu.md2.framework.generator.android.lollipop.Settings
 
 class MD2AndroidLollipopUtil {
 	
@@ -40,59 +41,62 @@ class MD2AndroidLollipopUtil {
 		return ""
 	}
 	
+	//TODO: These methods simply add all possible imports. It is not really a problem as Android Studio
+	//		can automatically optimize imports for a whole project, but could be optimized anyway.	
+	
 	def static String generateImportAllWidgets()'''
-		import de.uni_muenster.wi.fabian.md2library.view.widgets.implementation.Md2GridLayoutPane;
-		import de.uni_muenster.wi.fabian.md2library.view.widgets.implementation.Md2FlowLayoutPane;
-		import de.uni_muenster.wi.fabian.md2library.view.widgets.implementation.Md2Label;
-		import de.uni_muenster.wi.fabian.md2library.view.widgets.implementation.Md2Button;
-		import de.uni_muenster.wi.fabian.md2library.view.widgets.implementation.Md2TextInput;
+		import «Settings.MD2LIBRARY_PACKAGE»view.widgets.implementation.Md2GridLayoutPane;
+		import «Settings.MD2LIBRARY_PACKAGE»view.widgets.implementation.Md2FlowLayoutPane;
+		import «Settings.MD2LIBRARY_PACKAGE»view.widgets.implementation.Md2Label;
+		import «Settings.MD2LIBRARY_PACKAGE»view.widgets.implementation.Md2Button;
+		import «Settings.MD2LIBRARY_PACKAGE»view.widgets.implementation.Md2TextInput;
 	'''
 	
 	def static String generateImportAllTypes()'''
-		import de.uni_muenster.wi.fabian.md2library.model.type.implementation.Md2Boolean;
-		import de.uni_muenster.wi.fabian.md2library.model.type.implementation.Md2Date;
-		import de.uni_muenster.wi.fabian.md2library.model.type.implementation.Md2DateTime;
-		import de.uni_muenster.wi.fabian.md2library.model.type.implementation.Md2Float;
-		import de.uni_muenster.wi.fabian.md2library.model.type.implementation.Md2Integer;
-		import de.uni_muenster.wi.fabian.md2library.model.type.implementation.Md2String;
-		import de.uni_muenster.wi.fabian.md2library.model.type.implementation.Md2Time;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Boolean;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Date;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2DateTime;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Float;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Integer;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2String;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Time;
 	'''
 	
 	def static String generateImportAllActions()'''
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.AbstractMd2Action;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.Md2ContentProviderOperationAction;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.Md2ContentProviderOperations;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.Md2ContentProviderResetAction;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.Md2DisplayMessageAction;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.Md2FireEventAction;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.Md2GoToViewAction;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.Md2SynchronizeContentProviderDataMappingAction;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.Md2SynchronizeWidgetDataMappingAction;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.interfaces.Md2Action;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.AbstractMd2Action;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderOperationAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderOperations;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderResetAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2DisplayMessageAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2FireEventAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2GoToViewAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2SynchronizeContentProviderDataMappingAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2SynchronizeWidgetDataMappingAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.interfaces.Md2Action;
 		
 	'''
 	
 	def static String generateImportAllEventHandler()'''
-		import de.uni_muenster.wi.fabian.md2library.controller.eventhandler.implementation.Md2ContentProviderEventTypes;
-		import de.uni_muenster.wi.fabian.md2library.controller.eventhandler.implementation.Md2OnAttributeChangedHandler;
-		import de.uni_muenster.wi.fabian.md2library.controller.eventhandler.implementation.Md2OnChangedHandler;
-		import de.uni_muenster.wi.fabian.md2library.controller.eventhandler.implementation.Md2OnClickHandler;
-		import de.uni_muenster.wi.fabian.md2library.controller.eventhandler.implementation.Md2OnLeftSwipeHandler;
-		import de.uni_muenster.wi.fabian.md2library.controller.eventhandler.implementation.Md2OnRightSwipeHandler;
-		import de.uni_muenster.wi.fabian.md2library.controller.eventhandler.implementation.Md2WidgetEventType;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2ContentProviderEventTypes;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnAttributeChangedHandler;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnChangedHandler;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnClickHandler;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnLeftSwipeHandler;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnRightSwipeHandler;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2WidgetEventType;
 	'''
 	
 	def static String generateImportAllExceptions()'''
-		import de.uni_muenster.wi.fabian.md2library.exception.WidgetNotCreatedException;
+		import «Settings.MD2LIBRARY_PACKAGE»exception.Md2WidgetNotCreatedException;
 	'''
 	
 	def static String generateImportAllCustomCodeTasks()'''
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.interfaces.Md2CustomCodeTask;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2AttributeSetTask;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2BindTask;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2CallTask;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2MapTask;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2UnbindTask;
-		import de.uni_muenster.wi.fabian.md2library.controller.action.implementation.customCode.Md2UnmapTask;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.interfaces.Md2CustomCodeTask;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.Md2AttributeSetTask;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.Md2BindTask;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.Md2CallTask;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.Md2MapTask;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.Md2UnbindTask;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.Md2UnmapTask;
 	'''
 }

@@ -3,7 +3,7 @@ package de.wwu.md2.framework.generator.android.lollipop.misc
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.ContainerElement
 
-class AndroidManifest {	
+class AndroidManifestGen {	
 	
 	// generates android manifest for the project
 	def static String generateProjectAndroidManifest(App app, Iterable<ContainerElement> rootViews, String packageName)'''

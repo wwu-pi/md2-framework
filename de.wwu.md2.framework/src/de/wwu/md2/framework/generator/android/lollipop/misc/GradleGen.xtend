@@ -2,7 +2,7 @@ package de.wwu.md2.framework.generator.android.lollipop.misc
 
 import de.wwu.md2.framework.generator.android.lollipop.Settings
 
-class Gradle {
+class GradleGen {
 	// generates settings.gradle
 	def static String generateProjectSettings()'''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.misc.Gradle.generateProjectSettings()

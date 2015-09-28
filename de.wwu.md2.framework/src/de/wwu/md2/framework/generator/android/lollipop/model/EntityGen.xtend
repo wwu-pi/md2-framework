@@ -2,19 +2,19 @@ package de.wwu.md2.framework.generator.android.lollipop.model
 
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.android.lollipop.Settings
-import de.wwu.md2.framework.mD2.Entity
-import de.wwu.md2.framework.mD2.AttributeType
-import de.wwu.md2.framework.mD2.ReferencedType
-import de.wwu.md2.framework.mD2.IntegerType
-import de.wwu.md2.framework.mD2.FloatType
-import de.wwu.md2.framework.mD2.StringType
-import de.wwu.md2.framework.mD2.BooleanType
-import de.wwu.md2.framework.mD2.DateType
-import de.wwu.md2.framework.mD2.TimeType
-import de.wwu.md2.framework.mD2.DateTimeType
 import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
+import de.wwu.md2.framework.mD2.AttributeType
+import de.wwu.md2.framework.mD2.BooleanType
+import de.wwu.md2.framework.mD2.DateTimeType
+import de.wwu.md2.framework.mD2.DateType
+import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.FloatType
+import de.wwu.md2.framework.mD2.IntegerType
+import de.wwu.md2.framework.mD2.ReferencedType
+import de.wwu.md2.framework.mD2.StringType
+import de.wwu.md2.framework.mD2.TimeType
 
-class Md2Entity {
+class EntityGen {
 	
 	def static generateEntities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<Entity> entities) {
@@ -30,8 +30,8 @@ class Md2Entity {
 		
 		import java.util.HashMap;
 		
-		import de.uni_muenster.wi.fabian.md2library.model.type.implementation.AbstractMd2Entity;
-		import de.uni_muenster.wi.fabian.md2library.model.type.interfaces.Md2Type;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Entity;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
 
 		public class «entity.name.toFirstUpper» extends AbstractMd2Entity {

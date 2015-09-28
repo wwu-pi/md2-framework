@@ -1,5 +1,6 @@
 package de.wwu.md2.framework.generator.android.lollipop.view
 
+import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.ContainerElement
@@ -8,11 +9,10 @@ import de.wwu.md2.framework.mD2.InputElement
 import de.wwu.md2.framework.mD2.Label
 import de.wwu.md2.framework.mD2.Tooltip
 import de.wwu.md2.framework.mD2.ViewGUIElement
-import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import de.wwu.md2.framework.mD2.WorkflowElementReference
-import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
+import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 
-class Values {
+class ValueGen {
 
 	def static String generateIdsXml(Iterable<ViewGUIElement> viewGUIElements, Iterable<WorkflowElementReference> wers) '''
 		<?xml version="1.0" encoding="utf-8"?>
@@ -95,7 +95,7 @@ class Values {
 	def static String generateStylesXml() '''
 		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateStylesXml() -->
 		<resources>
-		    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+		    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
 		    </style>		
 		</resources>
 	'''

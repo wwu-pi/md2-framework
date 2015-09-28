@@ -4,6 +4,8 @@ import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.android.lollipop.Settings
 import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
 import de.wwu.md2.framework.mD2.AbstractContentProviderPath
+import de.wwu.md2.framework.mD2.AbstractProviderReference
+import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import de.wwu.md2.framework.mD2.Action
 import de.wwu.md2.framework.mD2.ActionReference
 import de.wwu.md2.framework.mD2.And
@@ -14,10 +16,14 @@ import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.CompareExpression
 import de.wwu.md2.framework.mD2.ConditionalCodeFragment
 import de.wwu.md2.framework.mD2.ConditionalExpression
+import de.wwu.md2.framework.mD2.ContentProviderAddAction
+import de.wwu.md2.framework.mD2.ContentProviderGetAction
 import de.wwu.md2.framework.mD2.ContentProviderOperationAction
 import de.wwu.md2.framework.mD2.ContentProviderPath
 import de.wwu.md2.framework.mD2.ContentProviderReference
+import de.wwu.md2.framework.mD2.ContentProviderRemoveAction
 import de.wwu.md2.framework.mD2.ContentProviderResetAction
+import de.wwu.md2.framework.mD2.ContentProviderSetTask
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.CustomCodeFragment
 import de.wwu.md2.framework.mD2.DateTimeVal
@@ -39,20 +45,13 @@ import de.wwu.md2.framework.mD2.SimpleActionRef
 import de.wwu.md2.framework.mD2.SimpleExpression
 import de.wwu.md2.framework.mD2.StringVal
 import de.wwu.md2.framework.mD2.TimeVal
+import de.wwu.md2.framework.mD2.UnmappingTask
 import de.wwu.md2.framework.mD2.ViewElementEventRef
+import de.wwu.md2.framework.mD2.ViewElementSetTask
 import de.wwu.md2.framework.mD2.WorkflowElement
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
-import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
-import de.wwu.md2.framework.mD2.ViewElementSetTask
-import de.wwu.md2.framework.mD2.ContentProviderSetTask
-import de.wwu.md2.framework.mD2.ContentProviderAddAction
-import de.wwu.md2.framework.mD2.ContentProviderRemoveAction
-import de.wwu.md2.framework.mD2.ContentProviderGetAction
-import de.wwu.md2.framework.mD2.UnmappingTask
-import de.wwu.md2.framework.mD2.AbstractProviderReference
 
-
-class Actions {
+class ActionGen {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		App app, Iterable<WorkflowElement> workflowElements) {
 
@@ -76,15 +75,16 @@ class Actions {
 		import «mainPackage».«app.name.toFirstUpper»;
 		import «mainPackage».R;
 		
-		import «mainPackage».md2.controller.Controller;
+		import «mainPackage»«Settings.MD2_APP_FILES_CONTROLLER_PACKAGE_NAME»;
 		«MD2AndroidLollipopUtil.generateImportAllActions»
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
 		«MD2AndroidLollipopUtil.generateImportAllExceptions»
 		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
 		«MD2AndroidLollipopUtil.generateImportAllCustomCodeTasks»
-		import de.uni_muenster.wi.fabian.md2library.model.contentProvider.implementation.Md2ContentProviderRegistry;
-		import de.uni_muenster.wi.fabian.md2library.view.management.implementation.Md2ViewManager;
-		
+		import «Settings.MD2LIBRARY_CONTENTPROVIDERREGISTRY_PACKAGE_NAME»;
+		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
+		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
+
 		public class «qualifiedActionName.toFirstUpper»_Action extends AbstractMd2Action {
 		
 		    public «qualifiedActionName.toFirstUpper»_Action() {
@@ -246,8 +246,8 @@ class Actions {
 			try {
 				var«intCounter» = new «dataType»(«instantiation»);
 				var«intCounter».execute();
-			}catch (WidgetNotCreatedException e){
-				Controller.getInstance().addPendingTask(var«intCounter»);
+			}catch (Md2WidgetNotCreatedException e){
+				Md2TaskQueue.getInstance().addPendingTask(var«intCounter»);
 			}
 		'''
 

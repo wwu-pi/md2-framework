@@ -15,7 +15,7 @@ public class Settings {
 	public static String MD2LIBRARY_DEBUG_NAME = "md2Library-debug.aar"
 	public static String MD2LIBRARY_DEBUG_PATH = "/md2Library-debug/"
 	public static String MD2LIBRARY_DEBUG_PROJECT = ":md2Library-debug"
-	public static String MD2LIBRARY_PACKAGE = "de.uni_muenster.wi.fabian.md2library."
+	public static String MD2LIBRARY_PACKAGE = "de.uni_muenster.wi.md2library."
 	
 	// packages (for imports etc.)
 	public static String MD2LIBRARY_DATAMAPPER_PACKAGE_NAME = MD2LIBRARY_PACKAGE + "controller.datamapper.Md2DataMapper"
@@ -23,7 +23,7 @@ public class Settings {
 	public static String MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME = MD2LIBRARY_PACKAGE + "view.management.implementation.Md2ViewManager"
 	public static String MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAME = MD2LIBRARY_PACKAGE + "view.management.implementation.Md2WidgetRegistry"
 	public static String MD2LIBRARY_CONTENTPROVIDERREGISTRY_PACKAGE_NAME = MD2LIBRARY_PACKAGE + "model.contentProvider.implementation.Md2ContentProviderRegistry"
-	
+	public static String MD2LIBRARY_TASKQUEUE_PACKAGE_NAME = MD2LIBRARY_PACKAGE + "controller.action.implementation.customCode.Md2TaskQueue"
 	
 	// view content elements
 	public static String MD2LIBRARY_VIEW_PACKAGE = MD2LIBRARY_PACKAGE + "view.widgets.implementation."
@@ -63,5 +63,4 @@ public class Settings {
 	// packages for app generation
 	public static String MD2_APP_FILES_PACKAGE = ".md2."
 	public static String MD2_APP_FILES_CONTROLLER_PACKAGE_NAME = MD2_APP_FILES_PACKAGE + "controller.Controller"
-	public static String MD2_APP_FILES_VIEWMANAGER_PACKAGE_NAME = MD2_APP_FILES_PACKAGE + "view.ViewManager"
 }

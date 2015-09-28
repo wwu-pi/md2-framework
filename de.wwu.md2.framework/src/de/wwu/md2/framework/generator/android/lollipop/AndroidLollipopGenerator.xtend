@@ -2,18 +2,18 @@ package de.wwu.md2.framework.generator.android.lollipop
 
 import de.wwu.md2.framework.generator.AbstractPlatformGenerator
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
-import de.wwu.md2.framework.generator.android.lollipop.controller.Actions
-import de.wwu.md2.framework.generator.android.lollipop.controller.Activity
-import de.wwu.md2.framework.generator.android.lollipop.controller.Application
-import de.wwu.md2.framework.generator.android.lollipop.controller.Md2Controller
-import de.wwu.md2.framework.generator.android.lollipop.misc.AndroidManifest
-import de.wwu.md2.framework.generator.android.lollipop.misc.Gradle
-import de.wwu.md2.framework.generator.android.lollipop.misc.Proguard
-import de.wwu.md2.framework.generator.android.lollipop.model.Md2ContentProvider
-import de.wwu.md2.framework.generator.android.lollipop.model.Md2Entity
-import de.wwu.md2.framework.generator.android.lollipop.model.SQLite
-import de.wwu.md2.framework.generator.android.lollipop.view.Layout
-import de.wwu.md2.framework.generator.android.lollipop.view.Values
+import de.wwu.md2.framework.generator.android.lollipop.controller.ActionGen
+import de.wwu.md2.framework.generator.android.lollipop.controller.ActivityGen
+import de.wwu.md2.framework.generator.android.lollipop.controller.ApplicationGen
+import de.wwu.md2.framework.generator.android.lollipop.controller.ControllerGen
+import de.wwu.md2.framework.generator.android.lollipop.misc.AndroidManifestGen
+import de.wwu.md2.framework.generator.android.lollipop.misc.GradleGen
+import de.wwu.md2.framework.generator.android.lollipop.misc.ProguardGen
+import de.wwu.md2.framework.generator.android.lollipop.model.ContentProviderGen
+import de.wwu.md2.framework.generator.android.lollipop.model.EntityGen
+import de.wwu.md2.framework.generator.android.lollipop.model.SQLiteGen
+import de.wwu.md2.framework.generator.android.lollipop.view.LayoutGen
+import de.wwu.md2.framework.generator.android.lollipop.view.ValueGen
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import org.apache.log4j.Logger
@@ -92,19 +92,19 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			 ***************************************************/
 			// android manifest					
 			fsa.generateFile(rootFolder + Settings.MAIN_PATH + Settings.ANDROID_MANIFEST_NAME,
-				AndroidManifest.generateProjectAndroidManifest(app, rootViews, mainPackage))
+				AndroidManifestGen.generateProjectAndroidManifest(app, rootViews, mainPackage))
 
 			// gradle build files
 			fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.GRADLE_BUILD_NAME,
-				Gradle.generateMd2LibraryBuild)
-			fsa.generateFile(rootFolder + "/" + Settings.GRADLE_BUILD_NAME, Gradle.generateProjectBuild)
-			fsa.generateFile(rootFolder + "/" + Settings.GRADLE_SETTINGS_NAME, Gradle.generateProjectSettings)
+				GradleGen.generateMd2LibraryBuild)
+			fsa.generateFile(rootFolder + "/" + Settings.GRADLE_BUILD_NAME, GradleGen.generateProjectBuild)
+			fsa.generateFile(rootFolder + "/" + Settings.GRADLE_SETTINGS_NAME, GradleGen.generateProjectSettings)
 			fsa.generateFile(rootFolder + Settings.APP_PATH + Settings.GRADLE_BUILD_NAME,
-				Gradle.generateAppBuild(mainPackage, dataContainer.main.appVersion))
+				GradleGen.generateAppBuild(mainPackage, dataContainer.main.appVersion))
 
 			// proguard rules
 			fsa.generateFile(rootFolder + Settings.APP_PATH + Settings.PROGUARD_RULES_NAME,
-				Proguard.generateProjectProguardRules)
+				ProguardGen.generateProjectProguardRules)
 
 			/***************************************************
 			 * 
@@ -112,17 +112,17 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			 * 
 			 ***************************************************/
 			// Entities
-			Md2Entity.generateEntities(fsa, rootFolder, mainPath, mainPackage, dataContainer.entities)
+			EntityGen.generateEntities(fsa, rootFolder, mainPath, mainPackage, dataContainer.entities)
 
 			// Content Provider
-			Md2ContentProvider.generateContentProviders(fsa, rootFolder, mainPath, mainPackage,
+			ContentProviderGen.generateContentProviders(fsa, rootFolder, mainPath, mainPackage,
 				dataContainer.contentProviders)
 
 			// SQLite classes (DataContract and SQLiteHelper)
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "/md2/model/sqlite/Md2DataContract.java",
-				SQLite.generateDataContract(mainPackage, dataContainer.getEntities))
+				SQLiteGen.generateDataContract(mainPackage, dataContainer.getEntities))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "/md2/model/sqlite/Md2SQLiteHelperImpl.java",
-				SQLite.generateSQLiteHelper(mainPackage, app, dataContainer.getMain, dataContainer.getEntities))
+				SQLiteGen.generateSQLiteHelper(mainPackage, app, dataContainer.getMain, dataContainer.getEntities))
 
 			/***************************************************
 			 * 
@@ -131,24 +131,24 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			 ***************************************************/
 			// Element Ids
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.IDS_XML_NAME,
-				Values.generateIdsXml(viewGUIElements, startableWorkflowElements))
+				ValueGen.generateIdsXml(viewGUIElements, startableWorkflowElements))
 
 			// String Values
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STRINGS_XML_NAME,
-				Values.generateStringsXml(app, rootViews, viewGUIElements, startableWorkflowElements))
+				ValueGen.generateStringsXml(app, rootViews, viewGUIElements, startableWorkflowElements))
 
 			// Views String Values
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.VIEWS_XML_NAME,
-				Values.generateViewsXml(rootViews, mainPackage))
+				ValueGen.generateViewsXml(rootViews, mainPackage))
 
 			// Styles
-			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STYLES_XML_NAME, Values.generateStylesXml)
+			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STYLES_XML_NAME, ValueGen.generateStylesXml)
 
 			// Dimensions
-			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, Values.generateDimensXml)
+			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, ValueGen.generateDimensXml)
 
 			// Layouts
-			Layout.generateLayouts(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
+			LayoutGen.generateLayouts(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
 
 			/***************************************************
 			 * 
@@ -157,18 +157,18 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			 ***************************************************/
 			// Application class
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + app.name.toFirstUpper + ".java",
-				Application.generateAppClass(mainPackage, app))
+				ApplicationGen.generateAppClass(mainPackage, app))
 
 			// Activities
-			Activity.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
+			ActivityGen.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
 
 			// Controller
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "/md2/controller/Controller" + ".java",
-				Md2Controller.generateController(mainPackage, app, dataContainer.entities,
+				ControllerGen.generateController(mainPackage, app, dataContainer.entities,
 					dataContainer.contentProviders))
 
 			// Actions
-			Actions.generateActions(fsa, rootFolder, mainPath, mainPackage, app, workflowElements)
+			ActionGen.generateActions(fsa, rootFolder, mainPath, mainPackage, app, workflowElements)
 
 			/***************************************************
 			 * 

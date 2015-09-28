@@ -5,7 +5,7 @@ import de.wwu.md2.framework.generator.android.lollipop.Settings
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ReferencedModelType
 
-class Md2ContentProvider {
+class ContentProviderGen {
 	
 	def static generateContentProviders(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<ContentProvider> contentProviders) {
@@ -21,14 +21,14 @@ class Md2ContentProvider {
 		«var content =  contentProvider.type as ReferencedModelType»
 		
 		import «mainPackage».md2.model.«content.entity.name.toFirstUpper»;
-		import de.uni_muenster.wi.fabian.md2library.model.contentProvider.implementation.AbstractMd2ContentProvider;
-		import de.uni_muenster.wi.fabian.md2library.model.dataStore.interfaces.Md2LocalStore;
-		import de.uni_muenster.wi.fabian.md2library.model.dataStore.interfaces.Md2DataStore;
-		import de.uni_muenster.wi.fabian.md2library.model.type.interfaces.Md2Entity;
+		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.AbstractMd2ContentProvider;
+		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
+		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
 		
 		public class «contentProvider.name.toFirstUpper» extends AbstractMd2ContentProvider {
 		    public «contentProvider.name.toFirstUpper»(«content.entity.name.toFirstUpper» content, Md2LocalStore md2DataStore) {
-		        super(content, md2DataStore);
+		        super("«contentProvider.name»", content, md2DataStore);
 		    }
 		}
 	'''
