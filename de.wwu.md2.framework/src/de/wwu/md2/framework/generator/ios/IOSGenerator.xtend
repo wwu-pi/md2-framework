@@ -22,10 +22,16 @@ import org.eclipse.xtext.generator.IFileSystemAccessExtension2
 import static de.wwu.md2.framework.generator.ios.Settings.*
 import de.wwu.md2.framework.generator.ios.misc.TestTarget
 
+/**
+ * Main generator class for the Swift-iOS generation process. 
+ */
 class IOSGenerator extends AbstractPlatformGenerator {
 	
-	var rootFolder = ""
+	var rootFolder = "" // Override super type property
 	
+	/**
+	 * Central generation method for the Swift-iOS generator.
+	 */
 	override doGenerate(IExtendedFileSystemAccess fsa) {
 		System.out.println("START GENERATION")
 		
@@ -205,6 +211,9 @@ class IOSGenerator extends AbstractPlatformGenerator {
 		println("\nIOS GENERATION COMPLETED\n")
 	}
 
+	/**
+	 * We are generating for iOS.
+	 */
 	override getPlatformPrefix() {
 		Settings.PLATFORM_PREFIX
 	}

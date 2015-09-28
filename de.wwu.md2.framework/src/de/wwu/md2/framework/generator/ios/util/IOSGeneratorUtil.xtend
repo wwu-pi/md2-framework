@@ -5,10 +5,23 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.HashMap
 
+/**
+ * Utility functions for the iOS generator.
+ */
 class IOSGeneratorUtil {
 	
+	/**
+	 * A map of references (e.g. objects, files, etc.) and the generated Apple-UUID value. 
+	 */
 	private static HashMap<String, String> uuidMapping
 	
+	/**
+	 * Output a common class header for all generated files.
+	 * 
+	 * @param The Swift class name to generate a header for.
+	 * @param generatorClass The Xtend class in which the file is generated (to lookup its origin).
+	 * @return The Swift header comment content.
+	 */
 	def static generateClassHeaderComment(String generatedClassName, Class generatorClass) '''
 //
 //  «generatedClassName».swift
@@ -19,7 +32,12 @@ class IOSGeneratorUtil {
 //
 	'''
 	
-	// Output information during generation process
+	/**
+	 * Output debugging information in the Java console during the generation process.
+	 * 
+	 * @param message The message to generate.
+	 * @param withSeparator Whether the message should be visually separated from the previous messages. 
+	 */
 	def static printDebug(String message, Boolean withSeparator) {
 		if(Settings.PRINT_DEBUG_INFO) {
 			if (withSeparator)  println("\n/**************************************************")
@@ -30,28 +48,58 @@ class IOSGeneratorUtil {
 		}
 	}
 	
+	/**
+	 * Output debugging information in the Java console during the generation process.
+	 * 
+	 * @param message The message to generate. 
+	 */
 	def static printDebug(String message) {
 		printDebug(message, false)
 	}
 	
+	/**
+	 * Output debugging information in the Java console during the generation process.
+	 * 
+	 * @param message The message to generate.
+	 * @param path A path that relates to message. 
+	 */
 	def static printDebug(String message, String path) {
 		printDebug(message + " (" + path.replace(Settings.ROOT_FOLDER, "").replace("\\","/") + ")", false)
 	}
 	
+	/**
+	 * Output debugging information in the Java console during the generation process.
+	 * 
+	 * @param message The warning to generate. 
+	 */
 	def static printWarning(String message) {
 		System.err.println("WARNING: " + message)
 	}
 	
+	/**
+	 * Output debugging information in the Java console during the generation process.
+	 * 
+	 * @param message The error to generate.
+	 */
 	def static printError(String message) {
 		System.err.println("ERROR: " + message)
 	}
 	
+	/**
+	 * Generate a random 7-digit numeric identifier.
+	 * 
+	 * @return The Id.
+	 */
 	def static String randomId() {
 		return ((Math.random() * 1000000) as int).toString
 	}
 	
 	/**
-	 * Get an Apple hex identifier for the element that is unique across the project
+	 * Get an Apple hex identifier for the element (e.g. objects, files, etc.) 
+	 * that is unique across the project.
+	 * 
+	 * @param elementName The element name for which the UUID is generated.
+	 * @return The UUID.
 	 */
 	def static getUuid(String elementName) {
 		if (elementName == null) return null
@@ -75,8 +123,10 @@ class IOSGeneratorUtil {
 	}
 	
 	/**
-	 * Generate a 96-bit UUID in 24-character hex representation. 
+	 * Generate a new, not yet used 96-bit UUID in 24-character hex representation. 
 	 * This is Apple's default identifier style in project files.
+	 * 
+	 * @return The UUID.
 	 */
 	def static randomUuid() {
 		val length = 24

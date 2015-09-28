@@ -23,8 +23,18 @@ import de.wwu.md2.framework.mD2.ValidatorMaxTimeParam
 import de.wwu.md2.framework.mD2.ValidatorMinTimeParam
 import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
+/**
+ * Generate validator declarations.
+ */
 class IOSValidator {
-	// MARK Currently only one parameter of a given type is used
+	
+	/**
+	 * Generates a validator declaration.
+	 * 
+	 * @param identifier The unique identifier of the validator instance.
+	 * @param validator The validator element to create.
+	 * @return The Swift code to declare a validator instance. 
+	 */
 	def static generateValidator(String identifier, ValidatorType validator){
 		// MARK incomplete list (remoteValidator) to be extended in future version
 		switch validator {
@@ -42,6 +52,13 @@ class IOSValidator {
 		}
 	}
 	
+	/**
+	 * Template to generate a not-null validator declaration.
+	 * 
+	 * @param identifier The unique identifier of the validator instance.
+	 * @param validator The validator element to create.
+	 * @return The Swift code to declare a validator instance. 
+	 */
 	def static generateStandardNotNullValidator(String identifier, StandardNotNullValidator validator) '''
 		MD2NotNullValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
@@ -52,6 +69,13 @@ class IOSValidator {
 		)
 	'''
 	
+	/**
+	 * Template to generate a regex validator declaration.
+	 * 
+	 * @param identifier The unique identifier of the validator instance.
+	 * @param validator The validator element to create.
+	 * @return The Swift code to declare a validator instance. 
+	 */
 	def static generateStandardRegExValidator(String identifier, StandardRegExValidator validator) '''
 		MD2RegExValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
@@ -67,6 +91,13 @@ class IOSValidator {
 		)
 	'''
 	
+	/**
+	 * Template to generate a number range validator declaration.
+	 * 
+	 * @param identifier The unique identifier of the validator instance.
+	 * @param validator The validator element to create.
+	 * @return The Swift code to declare a validator instance. 
+	 */
 	def static generateStandardNumberRangeValidator(String identifier, StandardNumberRangeValidator validator) '''
 		MD2NumberRangeValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
@@ -87,6 +118,13 @@ class IOSValidator {
 		)
 	'''
 	
+	/**
+	 * Template to generate a string range validator declaration.
+	 * 
+	 * @param identifier The unique identifier of the validator instance.
+	 * @param validator The validator element to create.
+	 * @return The Swift code to declare a validator instance. 
+	 */
 	def static generateStandardStringRangeValidator(String identifier, StandardStringRangeValidator validator) '''
 		MD2StringRangeValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
@@ -107,7 +145,13 @@ class IOSValidator {
 		)
 	'''
 	
-	
+	/**
+	 * Template to generate a date range validator declaration.
+	 * 
+	 * @param identifier The unique identifier of the validator instance.
+	 * @param validator The validator element to create.
+	 * @return The Swift code to declare a validator instance. 
+	 */
 	def static generateStandardDateRangeValidator(String identifier, StandardDateRangeValidator validator) '''
 		MD2DateRangeValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
@@ -128,7 +172,13 @@ class IOSValidator {
 		)
 	'''
 	
-	
+	/**
+	 * Template to generate a time range validator declaration.
+	 * 
+	 * @param identifier The unique identifier of the validator instance.
+	 * @param validator The validator element to create.
+	 * @return The Swift code to declare a validator instance. 
+	 */
 	def static generateStandardTimeRangeValidator(String identifier, StandardTimeRangeValidator validator) '''
 		MD2TimeRangeValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»
@@ -149,7 +199,13 @@ class IOSValidator {
 		)
 	'''
 	
-	
+	/**
+	 * Template to generate a datetime range validator declaration.
+	 * 
+	 * @param identifier The unique identifier of the validator instance.
+	 * @param validator The validator element to create.
+	 * @return The Swift code to declare a validator instance. 
+	 */
 	def static generateStandardDateTimeRangeValidator(String identifier, StandardDateTimeRangeValidator validator) '''
 		MD2DateTimeRangeValidator(«identifier»
 		«IF validator.params.filter(ValidatorMessageParam).length > 0»

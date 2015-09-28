@@ -35,10 +35,23 @@ import de.wwu.md2.framework.mD2.GridLayoutPaneRowsParam
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
+/**
+ * Generate the definition of the view element hierarchy for the MD2Controller class.
+ */
 class IOSView {
 	
+	/**
+	 * A list of known styles to facilitate view element styling.
+	 */
 	static Map<String, Style> styles = newHashMap
 	
+	/**
+	 * Entry point for the view generation.
+	 * 
+	 * @param rootView The rootView to generate.
+	 * @param styles A list of all styles used within the app.
+	 * @return The view declaration block for the MD2Controller class.
+	 */
 	def static String generateView(ContainerElement rootView, Iterable<Style> styles){
 		// Prepare styles
 		styles.forEach[ style |
@@ -48,6 +61,13 @@ class IOSView {
 		return generateViewElement(rootView, null)
 	}
 	
+	/**
+	 * Generate an abstract view element declaration.
+	 * 
+	 * @param element The view element to generate.
+	 * @param container The container element to the current view element (if exists).
+	 * @return The Swift code to programmatically create the view element.
+	 */
 	def static String generateViewElement(ViewElement element, ContainerElement container) {
 		switch element {
 			ViewGUIElement:	return generateViewGUIElement(element, container)
@@ -59,6 +79,13 @@ class IOSView {
 		}
 	}
 	
+	/**
+	 * Generate a view element declaration, either a container element or a content element.
+	 * 
+	 * @param element The view element to generate.
+	 * @param container The container element to the current view element (if exists).
+	 * @return The Swift code to programmatically create the view element.
+	 */
 	def static String generateViewGUIElement(ViewGUIElement element, ContainerElement container) {
 		switch element {
 			ContainerElement: return generateContainerElement(element, container)
@@ -70,6 +97,15 @@ class IOSView {
 		}
 	}
 	
+	/**
+	 * Generate a container element declaration, including its contained elements.
+	 * 
+	 * TODO Currently, only grid layouts and flow layouts are supported.
+	 * 
+	 * @param element The container element to generate.
+	 * @param container The container element to the current element (if exists).
+	 * @return The Swift code to programmatically create the container element and its sub-elements.
+	 */
 	def static String generateContainerElement(ContainerElement element, ContainerElement container) {
 		switch element {
 			GridLayoutPane: return generateGridLayoutPane(element, container)
@@ -83,6 +119,13 @@ class IOSView {
 		}
 	}
 	
+	/**
+	 * Generate a content element declaration.
+	 * 
+	 * @param element The content element to generate.
+	 * @param container The container element to the current view element.
+	 * @return The Swift code to programmatically create the content element.
+	 */
 	def static String generateContentElement(ContentElement element, ContainerElement container) {
 		switch element {
 			Spacer: return generateSpacer(element, container)
@@ -107,7 +150,13 @@ class IOSView {
 		}
 	}
 	
-	// Container elements
+	/**
+	 * Generate a grid layout declaration including sub-elements.
+	 * 
+	 * @param element The grid layout element to generate.
+	 * @param container The container element to the current grid layout element.
+	 * @return The Swift code to programmatically create the container element and its contained elements.
+	 */
 	def static String generateGridLayoutPane(GridLayoutPane element, ContainerElement container) '''
 		«val qualifiedName = MD2GeneratorUtil.getName(element).toFirstLower»
 		let «qualifiedName» = MD2GridLayoutPane(widgetId: MD2WidgetMapping.«qualifiedName.toFirstUpper»)
@@ -138,6 +187,13 @@ class IOSView {
 		
 	'''
 	
+	/**
+	 * Generate a flow layout declaration including sub-elements.
+	 * 
+	 * @param element The flow layout element to generate.
+	 * @param container The container element to the current flow layout element.
+	 * @return The Swift code to programmatically create the container element  and its contained elements.
+	 */
 	def static String generateFlowLayoutPane(FlowLayoutPane element, ContainerElement container) '''
 		«val qualifiedName = MD2GeneratorUtil.getName(element).toFirstLower»
 		let «qualifiedName» = MD2FlowLayoutPane(widgetId: MD2WidgetMapping.«qualifiedName.toFirstUpper»)
@@ -163,7 +219,13 @@ class IOSView {
 		
 	'''
 	
-	// Content elements
+	/**
+	 * Generate a spacer element declaration.
+	 * 
+	 * @param element The content element to generate.
+	 * @param container The container element to the current view element.
+	 * @return The Swift code to programmatically create the content element.
+	 */
 	def static String generateSpacer(Spacer element, ContainerElement container) '''
 		«««Spacers have no name»»
 		«val qualifiedName = MD2GeneratorUtil.getName(container).toFirstLower + "_Spacer" + MD2GeneratorUtil.getName(element)»
@@ -176,6 +238,13 @@ class IOSView {
 		
 	'''
 	
+	/**
+	 * Generate a label element declaration.
+	 * 
+	 * @param element The content element to generate.
+	 * @param container The container element to the current view element.
+	 * @return The Swift code to programmatically create the content element.
+	 */
 	def static String generateLabel(Label element, ContainerElement container) '''
 		«val qualifiedName = MD2GeneratorUtil.getName(element).toFirstLower»
 		let «qualifiedName» = MD2LabelWidget(widgetId: MD2WidgetMapping.«qualifiedName.toFirstUpper»)
@@ -192,6 +261,13 @@ class IOSView {
 		
 	'''
 	
+	/**
+	 * Generate an image element declaration.
+	 * 
+	 * @param element The content element to generate.
+	 * @param container The container element to the current view element.
+	 * @return The Swift code to programmatically create the content element.
+	 */
 	def static String generateImage(Image element, ContainerElement container) '''
 		«val qualifiedName = MD2GeneratorUtil.getName(element).toFirstLower»
 		let «qualifiedName» = MD2ImageWidget(widgetId: MD2WidgetMapping.«qualifiedName.toFirstUpper»)
@@ -216,6 +292,13 @@ class IOSView {
 		
 	'''
 	
+	/**
+	 * Generate a button element declaration.
+	 * 
+	 * @param element The content element to generate.
+	 * @param container The container element to the current view element.
+	 * @return The Swift code to programmatically create the content element.
+	 */
 	def static String generateButton(Button element, ContainerElement container) '''
 		«val qualifiedName = MD2GeneratorUtil.getName(element).toFirstLower»
 		let «qualifiedName» = MD2ButtonWidget(widgetId: MD2WidgetMapping.«qualifiedName.toFirstUpper»)
@@ -234,6 +317,13 @@ class IOSView {
 		
 	'''
 	
+	/**
+	 * Generate a boolean input element declaration.
+	 * 
+	 * @param element The content element to generate.
+	 * @param container The container element to the current view element.
+	 * @return The Swift code to programmatically create the content element.
+	 */
 	def static String generateBooleanInput(BooleanInput element, ContainerElement container) '''
 		«val qualifiedName = MD2GeneratorUtil.getName(element).toFirstLower»
 		let «qualifiedName» = MD2SwitchWidget(widgetId: MD2WidgetMapping.«qualifiedName.toFirstUpper»)
@@ -249,7 +339,14 @@ class IOSView {
 		
 	'''
 	
-	// TODO textInputType keyword 
+	/**
+	 * Generate a spacer text input element declaration.
+	 * TODO Add support for the "textInputType" attribute.
+	 * 
+	 * @param element The content element to generate.
+	 * @param container The container element to the current view element.
+	 * @return The Swift code to programmatically create the content element.
+	 */ 
 	def static String generateTextInput(TextInput element, ContainerElement container) '''
 		«val qualifiedName = MD2GeneratorUtil.getName(element).toFirstLower»
 		let «qualifiedName» = MD2TextFieldWidget(widgetId: MD2WidgetMapping.«qualifiedName.toFirstUpper»)
@@ -267,7 +364,14 @@ class IOSView {
 		
 	'''
 	
-	// MARK currently check for number, not exact integer type
+	/**
+	 * Generate a integer input element declaration.
+	 * // TODO There is no IsIntegerValidator, therefore check is added against numeric values.
+	 * 
+	 * @param element The content element to generate.
+	 * @param container The container element to the current view element.
+	 * @return The Swift code to programmatically create the content element.
+	 */
 	def static String generateIntegerInput(IntegerInput element, ContainerElement container) '''
 		«val qualifiedName = MD2GeneratorUtil.getName(element).toFirstLower»
 		let «qualifiedName» = MD2TextFieldWidget(widgetId: MD2WidgetMapping.«qualifiedName.toFirstUpper»)
@@ -287,6 +391,13 @@ class IOSView {
 		
 	'''
 	
+	/**
+	 * Generate a number input element declaration.
+	 * 
+	 * @param element The content element to generate.
+	 * @param container The container element to the current view element.
+	 * @return The Swift code to programmatically create the content element.
+	 */
 	def static String generateNumberInput(NumberInput element, ContainerElement container) '''
 		«val qualifiedName = MD2GeneratorUtil.getName(element).toFirstLower»
 		let «qualifiedName» = MD2TextFieldWidget(widgetId: MD2WidgetMapping.«qualifiedName.toFirstUpper»)
@@ -312,6 +423,13 @@ class IOSView {
 		
 	'''
 	
+	/**
+	 * Generate a date input element declaration.
+	 * 
+	 * @param element The content element to generate.
+	 * @param container The container element to the current view element.
+	 * @return The Swift code to programmatically create the content element.
+	 */
 	def static String generateDateInput(DateInput element, ContainerElement container) '''
 		«val qualifiedName = MD2GeneratorUtil.getName(element).toFirstLower»
 		let «qualifiedName» = MD2DateTimePickerWidget(widgetId: MD2WidgetMapping.«qualifiedName.toFirstUpper»)
@@ -330,6 +448,13 @@ class IOSView {
 		
 	'''
 	
+	/**
+	 * Generate a time element declaration.
+	 * 
+	 * @param element The content element to generate.
+	 * @param container The container element to the current view element.
+	 * @return The Swift code to programmatically create the content element.
+	 */
 	def static String generateTimeInput(TimeInput element, ContainerElement container) '''
 		«val qualifiedName = MD2GeneratorUtil.getName(element).toFirstLower»
 		let «qualifiedName» = MD2DateTimePickerWidget(widgetId: MD2WidgetMapping.«qualifiedName.toFirstUpper»)
@@ -348,6 +473,13 @@ class IOSView {
 		
 	'''
 	
+	/**
+	 * Generate a datetime input element declaration.
+	 * 
+	 * @param element The content element to generate.
+	 * @param container The container element to the current view element.
+	 * @return The Swift code to programmatically create the content element.
+	 */
 	def static String generateDateTimeInput(DateTimeInput element, ContainerElement container) '''
 		«val qualifiedName = MD2GeneratorUtil.getName(element).toFirstLower»
 		let «qualifiedName» = MD2DateTimePickerWidget(widgetId: MD2WidgetMapping.«qualifiedName.toFirstUpper»)
@@ -366,6 +498,13 @@ class IOSView {
 		
 	'''
 	
+	/**
+	 * Generate an option input element declaration.
+	 * 
+	 * @param element The content element to generate.
+	 * @param container The container element to the current view element.
+	 * @return The Swift code to programmatically create the content element.
+	 */
 	def static String generateOptionInput(OptionInput element, ContainerElement container) '''
 		«val qualifiedName = MD2GeneratorUtil.getName(element).toFirstLower»
 		let «qualifiedName» = MD2OptionWidget(widgetId: MD2WidgetMapping.«qualifiedName.toFirstUpper»)
@@ -389,7 +528,13 @@ class IOSView {
 		
 	'''
 
-	// Styling
+	/**
+	 * Generate styling information to an already defined content element.
+	 * 
+	 * @param elementName The Swift variable name.
+	 * @param style The style to add.
+	 * @return The Swift code for styling the element.
+	 */
 	def static String generateStyles(String elementName, StyleAssignment style) {
 		// No style -> skip
 		if(style == null) return ""

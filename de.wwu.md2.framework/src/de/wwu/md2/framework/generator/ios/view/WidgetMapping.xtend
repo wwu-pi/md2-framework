@@ -2,7 +2,6 @@ package de.wwu.md2.framework.generator.ios.view
 
 import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
-import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import de.wwu.md2.framework.mD2.AlternativesPane
 import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.ContainerElementReference
@@ -16,12 +15,23 @@ import de.wwu.md2.framework.mD2.View
 import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
+import de.wwu.md2.framework.mD2.WorkflowElementReference
 import java.lang.invoke.MethodHandles
 import java.util.Collection
-import de.wwu.md2.framework.mD2.WorkflowElementReference
 
+/**
+ * Generates the MD2WidgetMapping.swift enumeration type.
+ */
 class WidgetMapping {
 	
+	/**
+	 * Generates the MD2WidgetMapping Swift type.
+	 * Prepares the class generation by composing all view elements and call the template.
+	 * 
+	 * @param view The main view element of the app to generate.
+	 * @param startableWorkflowElements A list of startable workflow elements.
+	 * @return The file content.
+	 */
 	static def generateClass(View view, Iterable<WorkflowElementReference> startableWorkflowElements) {
 		var viewElements = newArrayList
 		var viewElementNames = newArrayList
@@ -45,6 +55,12 @@ class WidgetMapping {
 		return generateClassContent(viewElementNames)
 	}
 	
+	/**
+	 * Adds all layout containers and content elements within a view element to a provided container.
+	 * 
+	 * @param element The view element to analyze
+	 * @param targetContainer The list of view elements to add newly found elements recursively. 
+	 */
 	static def void getSubGUIElementsRecursive(ViewElementType element, Collection<ViewElementType> targetContainer) {
 		switch element {
 			ViewGUIElement: {
@@ -77,6 +93,12 @@ class WidgetMapping {
 		}
 	}
 	
+	/**
+	 * Template to output the MD2WidgetMapping type.
+	 * 
+	 * @param workflowEvents A list of all view element names in the MD2 model.
+	 * @return The file content.
+	 */
 	static def generateClassContent(Iterable<String> viewElementNames) '''
 «IOSGeneratorUtil.generateClassHeaderComment("WorkflowEvent", MethodHandles.lookup.lookupClass)»
 
@@ -128,9 +150,4 @@ enum MD2WidgetMapping: Int {
     }
 }
 	'''
-	
-	// Lookup real widget name for view element
-	def static lookup(AbstractViewGUIElementRef ref) {
-		return MD2GeneratorUtil.getName(ref.ref).toFirstUpper
-	}
 }

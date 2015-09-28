@@ -6,12 +6,32 @@ import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
+/**
+ * Generate content provider types.
+ */
 class IOSContentProvider {
 	
+	/**
+	 * The Swift class name.
+	 */
 	static var className = ""
+	
+	/**
+	 * The Swift class name of the managed entity type.
+	 */
 	static var managedEntityClassName = ""
+	
+	/**
+	 * The MD2 type name of the managed entity (differs from the prefixed Swift name).
+	 */
 	static var remoteEntityClassName = ""
 	
+	/**
+	 * Generates the Swift type. Prepares the class generation and calls the template.
+	 * 
+	 * @param cpInstance The content provider element to generate.
+	 * @return The file content.
+	 */
 	def static generateClass(ContentProvider cpInstance) {
 		className = Settings.PREFIX_CONTENT_PROVIDER + cpInstance.name.toFirstUpper
 		managedEntityClassName = Settings.PREFIX_ENTITY + (cpInstance.type as ReferencedModelType).entity.name.toFirstUpper
@@ -20,6 +40,12 @@ class IOSContentProvider {
 		generateClassContent(cpInstance)
 	} 
 	
+	/**
+	 * Template to output the MD2 content provider type.
+	 * 
+	 * @param cpInstance The content provider element to generate.
+	 * @return The file content.
+	 */
 	def static generateClassContent(ContentProvider cpInstance) '''
 «IOSGeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 

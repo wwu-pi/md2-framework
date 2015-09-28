@@ -12,11 +12,28 @@ import de.wwu.md2.framework.mD2.RemoteConnection
 import de.wwu.md2.framework.mD2.Style
 import java.lang.invoke.MethodHandles
 
+/**
+ * Generate the main MD2Controller class.
+ */
 class IOSController {
 	
+	/**
+	 * The class name.
+	 */
 	static var className = ""
+	
+	/**
+	 * Flag whether any content provider communicates with a remote web service.
+	 */
 	static var hasRemoteContentProviders = false
 	
+	/**
+	 * Generates the Swift type. Prepares the class generation and calls the template.
+	 * 
+	 * @param data The preprocessed MD2 model.
+	 * @param app The app to generate a controller for.
+	 * @return The file content.
+	 */
 	def static generateStartupController(DataContainer data, App app) {
 		className = Settings.PREFIX_GLOBAL + "Controller"
 		
@@ -28,6 +45,13 @@ class IOSController {
 		generateClassContent(data, app)
 	} 
 	
+	/**
+	 * Template to output the main MD2 controller type.
+	 * 
+	 * @param data The preprocessed MD2 model.
+	 * @param app The app to generate a controller for.
+	 * @return The file content.
+	 */
 	def static generateClassContent(DataContainer data, App app) '''
 «IOSGeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 
