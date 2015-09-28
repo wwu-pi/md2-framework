@@ -19,14 +19,29 @@ import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
 class IOSEntity {
 	
+	/**
+	 * The Swift class name.
+	 */
 	static var className = ""
 	
+	/**
+	 * Generates the Swift type. Prepares the class generation and calls the template.
+	 * 
+	 * @param entityInstance The entity element.
+	 * @return The file content.
+	 */
 	def static generateClass(Entity entityInstance) {
 		className = Settings.PREFIX_ENTITY + entityInstance.name.toFirstUpper
 		
 		generateClassContent(entityInstance)
 	} 
 	
+	/**
+	 * Template to output the MD2 entity type.
+	 * 
+	 * @param entityInstance The entity element to generate.
+	 * @return The file content.
+	 */
 	def static generateClassContent(Entity entityInstance) '''
 «IOSGeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 

@@ -5,16 +5,34 @@ import de.wwu.md2.framework.generator.ios.Settings
 import java.lang.invoke.MethodHandles
 import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
+/**
+ * Generate MD2 enumeration types.
+ */
 class IOSEnum {
 	
+	/**
+	 * The Swift class name.
+	 */
 	static var className = ""
 	
+	/**
+	 * Generates the Swift type. Prepares the class generation and calls the template.
+	 * 
+	 * @param enumInstance The enum element to generate.
+	 * @return The file content.
+	 */
 	def static generateClass(Enum enumInstance) {
 		className = Settings.PREFIX_ENUM + enumInstance.name.toFirstUpper
 		
 		generateClassContent(enumInstance)
 	} 
 	
+	/**
+	 * Template to output the MD2 enumeration type.
+	 * 
+	 * @param enumInstance The enum element to generate.
+	 * @return The file content.
+	 */
 	def static generateClassContent(Enum enumInstance) '''
 «IOSGeneratorUtil.generateClassHeaderComment(className, MethodHandles.lookup.lookupClass)»
 
