@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import Foundation
 
 /// Local data store implementation.
 class MD2LocalStore<T: MD2Entity>: MD2DataStore {
@@ -176,7 +177,11 @@ class MD2LocalStore<T: MD2Entity>: MD2DataStore {
         let newObject = NSManagedObject(entity: entityClass!, insertIntoManagedObjectContext:managedContext)
         
         // Define unique id
-        let id = 1 // TODO define unique id
+        var id = Int(arc4random_uniform(999999999))
+		while let managedObject = getById(id) {
+            // Exists -> generate new Id
+            id = Int(arc4random_uniform(999999999))
+        }
         entity.internalId = MD2Integer(id)
         newObject.setValue(entity.internalId.toString(), forKey: "internalId")
         
