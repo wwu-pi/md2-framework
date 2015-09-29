@@ -20,6 +20,12 @@ import org.apache.log4j.Logger
 
 import static de.wwu.md2.framework.util.MD2Util.*
 
+/**
+ * This is the start point for the Android generator.
+ * It calls all the other sub-generators.
+ * 
+ * @Author Fabian Wrede
+ */
 class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
 	override doGenerate(IExtendedFileSystemAccess fsa) {
@@ -55,7 +61,7 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
 			// all GUI elements for app
 			val viewGUIElements = rootViews + rootViews.map[rv|rv.eAllContents.filter(ViewGUIElement).toSet].flatten
-			
+
 			// startable WorkflowElements
 			val startableWorkflowElements = app.workflowElements.filter[we|we.startable]
 

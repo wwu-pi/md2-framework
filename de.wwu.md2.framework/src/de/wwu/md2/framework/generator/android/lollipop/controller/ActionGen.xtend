@@ -154,7 +154,7 @@ class ActionGen {
 			
 //			TODO: implement EventUnbindTask
 //			EventUnbindTask:
-//				return "Some event unbinding task"
+//				return ""
 
 			CallTask: {
 				dataType = "Md2CallTask"
