@@ -1,35 +1,32 @@
 package de.wwu.md2.framework.generator.util
 
+import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.Enum
+import de.wwu.md2.framework.mD2.FireEventEntry
 import de.wwu.md2.framework.mD2.GotoViewAction
 import de.wwu.md2.framework.mD2.MD2Model
 import de.wwu.md2.framework.mD2.Main
 import de.wwu.md2.framework.mD2.Model
 import de.wwu.md2.framework.mD2.RemoteValidator
 import de.wwu.md2.framework.mD2.View
+import de.wwu.md2.framework.mD2.Workflow
+import de.wwu.md2.framework.mD2.WorkflowElement
+import de.wwu.md2.framework.mD2.WorkflowElementEntry
+import de.wwu.md2.framework.mD2.WorkflowEvent
 import java.util.Collection
+import java.util.Map
 import java.util.Set
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtend.lib.annotations.Accessors
 
-import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*import de.wwu.md2.framework.mD2.Workflow
-import de.wwu.md2.framework.mD2.App
-import de.wwu.md2.framework.mD2.WorkflowElement
-import java.util.Map
-import de.wwu.md2.framework.mD2.EventBindingTask
-import de.wwu.md2.framework.mD2.SimpleActionRef
-import de.wwu.md2.framework.mD2.FireEventAction
-import de.wwu.md2.framework.mD2.WorkflowEvent
-import de.wwu.md2.framework.mD2.WorkflowElementEntry
-import de.wwu.md2.framework.mD2.ActionReference
-import de.wwu.md2.framework.mD2.CallTask
-import de.wwu.md2.framework.mD2.FireEventEntry
+import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
+import org.eclipse.emf.common.util.EList
 
 /**
  * DataContainer to store data that are used throughout the generation process.
@@ -193,9 +190,12 @@ class DataContainer {
 	 * have any TabbedAlternativesPane or AlternativesPane as a child element that contain
 	 * any view containers that are accessed by a GotoViewAction.
 	 */
-	def private extractRootViews() {
-		
-		rootViewContainers = newHashMap
+	def protected extractRootViews() {
+		rootViewContainers = extractRootViews(workflowElements)
+	}
+	
+	def public extractRootViews(Iterable<WorkflowElement> workflowElements) {
+		var rootViews = newHashMap
 			
 		for (WorkflowElement workflowElement : workflowElements){
 			// Get all views that are accessed by GotoViewActions at some time
@@ -206,7 +206,7 @@ class DataContainer {
 				]
 			
 			// Calculate root view for each view that is accessed via a GotoViewAction
-			rootViewContainers.put(workflowElement, containers.map[ container |
+			rootViews.put(workflowElement, containers.map[ container |
 				var EObject elem = container
 				while (!(elem.eContainer instanceof View)) {
 					elem = elem.eContainer
@@ -214,6 +214,8 @@ class DataContainer {
 				elem as ContainerElement
 			].toSet)
 		}
+		
+		return rootViews
 	}
 	
 	/**

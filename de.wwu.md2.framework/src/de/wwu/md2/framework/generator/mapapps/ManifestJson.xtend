@@ -3,6 +3,7 @@ package de.wwu.md2.framework.generator.mapapps
 import de.wwu.md2.framework.generator.preprocessor.ProcessController
 import de.wwu.md2.framework.generator.util.DataContainer
 import de.wwu.md2.framework.mD2.AlternativesPane
+import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.BooleanInput
 import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.ContainerElement
@@ -10,6 +11,7 @@ import de.wwu.md2.framework.mD2.ContentElement
 import de.wwu.md2.framework.mD2.DateInput
 import de.wwu.md2.framework.mD2.DateTimeInput
 import de.wwu.md2.framework.mD2.EntitySelector
+import de.wwu.md2.framework.mD2.FileUpload
 import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam
 import de.wwu.md2.framework.mD2.HexColorDef
@@ -23,20 +25,17 @@ import de.wwu.md2.framework.mD2.StyleAssignment
 import de.wwu.md2.framework.mD2.StyleDefinition
 import de.wwu.md2.framework.mD2.TabbedAlternativesPane
 import de.wwu.md2.framework.mD2.TextInput
+import de.wwu.md2.framework.mD2.TextInputType
 import de.wwu.md2.framework.mD2.TimeInput
 import de.wwu.md2.framework.mD2.Tooltip
+import de.wwu.md2.framework.mD2.UploadedImageOutput
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.WidthParam
 import de.wwu.md2.framework.mD2.WorkflowElement
-import org.eclipse.xtext.xbase.lib.Pair
 
 import static extension de.wwu.md2.framework.generator.mapapps.util.MD2MapappsUtil.*
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
-import de.wwu.md2.framework.mD2.App
-import de.wwu.md2.framework.mD2.UploadedImageOutput
-import de.wwu.md2.framework.mD2.FileUpload
-import de.wwu.md2.framework.mD2.TextInputType
 
 class ManifestJson {
 		
@@ -192,7 +191,7 @@ class ManifestJson {
 					"id": "md2_«workflowElement.name.replace(".", "_")»",
 					"webserviceBackendUri": "«dataContainer.getDefaultConnectionUri»",
 					"windowTitle": "«workflowElement.name»",
-					"onInitialized": "«ProcessController::startupActionName»",
+					"onInitialized": "__«workflowElement.name»_startupAction",
 					"views": [
 						«FOR view : dataContainer.rootViewContainers.get(workflowElement) SEPARATOR ","»
 							{

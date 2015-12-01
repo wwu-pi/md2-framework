@@ -1,5 +1,6 @@
 package de.wwu.md2.framework.generator.util
 
+import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 import de.wwu.md2.framework.mD2.AbstractContentProviderPath
 import de.wwu.md2.framework.mD2.AbstractProviderReference
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
@@ -23,6 +24,7 @@ import de.wwu.md2.framework.mD2.ModelElement
 import de.wwu.md2.framework.mD2.PathDefinition
 import de.wwu.md2.framework.mD2.PathTail
 import de.wwu.md2.framework.mD2.ReferencedModelType
+import de.wwu.md2.framework.mD2.RemoteConnection
 import de.wwu.md2.framework.mD2.SimpleType
 import de.wwu.md2.framework.mD2.StandardValidator
 import de.wwu.md2.framework.mD2.TabTitleParam
@@ -38,8 +40,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameProvider
-import de.wwu.md2.framework.mD2.Main
-import de.wwu.md2.framework.mD2.RemoteConnection
+import de.wwu.md2.framework.mD2.WorkflowElement
 
 class MD2GeneratorUtil {
 	
@@ -86,6 +87,10 @@ class MD2GeneratorUtil {
 			qualifiedNameToNameMapping = newHashMap
 		}
 		
+		// Fix problems for Spacers which have no name
+		if(obj.name == null) {
+			obj.name = IOSGeneratorUtil.randomId()
+		}
 		var name = obj.name
 		val qualifiedName = qualifiedNameProvider.getFullyQualifiedName(obj).toString
 		
@@ -98,6 +103,21 @@ class MD2GeneratorUtil {
 		}
 		
 		qualifiedNameToNameMapping.get(qualifiedName)
+	}
+	
+	/**
+	 * Returns the name of the given Action.
+	 * Implementation change: Actions are now made unique in preprocessing and therefore 
+	 * don't need to be stored in separate data structure anymore.
+	 * 
+	 * @return A name that identifies the action uniquely or null if the parameter was null.
+	 */
+	def static getName(Action obj) {
+		if (obj == null) {
+			return null
+		}
+		
+		return obj.name
 	}
 	
 	/**

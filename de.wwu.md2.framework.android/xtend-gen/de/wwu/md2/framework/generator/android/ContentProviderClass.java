@@ -1,11 +1,12 @@
 package de.wwu.md2.framework.generator.android;
 
 import de.wwu.md2.framework.generator.android.util.JavaClassDef;
+import de.wwu.md2.framework.generator.util.DataContainer;
 import java.util.Set;
 
 @SuppressWarnings("all")
 public class ContentProviderClass {
-  private final /* DataContainer */Object dataContainer;
+  private final DataContainer dataContainer;
   
   private final /* ContentProvider */Object contentProvider;
   
@@ -15,13 +16,13 @@ public class ContentProviderClass {
   
   private final Set<Enum> enums;
   
-  public ContentProviderClass(final /* DataContainer */Object dataContainer, final /* ContainerElement */Object mainActivity, final /* de.wwu.md2.framework.mD2.ContentProvider */Object contentProvider) {
+  public ContentProviderClass(final DataContainer dataContainer, final /* ContainerElement */Object mainActivity, final /* de.wwu.md2.framework.mD2.ContentProvider */Object contentProvider) {
     throw new Error("Unresolved compilation problems:"
       + "\nReferencedModelType cannot be resolved to a type."
       + "\nEntity cannot be resolved to a type."
+      + "\nThe method models is undefined for the type ContentProviderClass"
       + "\ntype cannot be resolved"
       + "\nentity cannot be resolved"
-      + "\nmodels cannot be resolved"
       + "\nmap cannot be resolved"
       + "\nmodelElements cannot be resolved"
       + "\nflatten cannot be resolved"
@@ -31,9 +32,8 @@ public class ContentProviderClass {
   
   public CharSequence generateContentProvider(final JavaClassDef classDef) {
     throw new Error("Unresolved compilation problems:"
-      + "\nThe method getName is undefined for the type ContentProviderClass"
+      + "\nThe method toFirstUpper is undefined for the type ContentProviderClass"
       + "\nThe method generateRemoteFilterString is undefined for the type ContentProviderClass"
-      + "\nThe method getName is undefined for the type ContentProviderClass"
       + "\nThe field basePackage is not visible"
       + "\nThe field basePackage is not visible"
       + "\nThe field basePackage is not visible"
@@ -51,7 +51,6 @@ public class ContentProviderClass {
       + "\nconnection cannot be resolved"
       + "\n!= cannot be resolved"
       + "\nconnection cannot be resolved"
-      + "\nmain cannot be resolved"
       + "\ndefaultConnection cannot be resolved"
       + "\nname cannot be resolved"
       + "\ntype cannot be resolved"
@@ -59,7 +58,6 @@ public class ContentProviderClass {
       + "\nlocal cannot be resolved"
       + "\nname cannot be resolved"
       + "\nuri cannot be resolved"
-      + "\ntoFirstUpper cannot be resolved"
       + "\nlocal cannot be resolved"
       + "\n! cannot be resolved"
       + "\nwhereClause cannot be resolved"

@@ -1,8 +1,8 @@
 package de.wwu.md2.framework.generator.mapapps
 
 import de.wwu.md2.framework.generator.util.DataContainer
-import org.eclipse.xtend2.lib.StringConcatenation
 import de.wwu.md2.framework.mD2.App
+import org.eclipse.xtend2.lib.StringConcatenation
 
 class EventHandlerClass {
 

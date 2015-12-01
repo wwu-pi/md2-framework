@@ -1,8 +1,8 @@
 package de.wwu.md2.framework.generator.mapapps
 
 import de.wwu.md2.framework.generator.util.DataContainer
-import de.wwu.md2.framework.mD2.WorkflowElement
 import de.wwu.md2.framework.mD2.CustomAction
+import de.wwu.md2.framework.mD2.WorkflowElement
 
 class CustomActionsInterfaceClass {
 	

@@ -15,6 +15,7 @@ import de.wwu.md2.framework.mD2.DateType
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.Enum
 import de.wwu.md2.framework.mD2.EnumType
+import de.wwu.md2.framework.mD2.FileType
 import de.wwu.md2.framework.mD2.FloatType
 import de.wwu.md2.framework.mD2.IntegerType
 import de.wwu.md2.framework.mD2.ReferencedType
@@ -24,7 +25,6 @@ import java.util.Map
 
 import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
-import de.wwu.md2.framework.mD2.FileType
 
 class EntityClass {
 	

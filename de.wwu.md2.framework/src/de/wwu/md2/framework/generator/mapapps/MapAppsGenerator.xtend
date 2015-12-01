@@ -2,8 +2,9 @@ package de.wwu.md2.framework.generator.mapapps
 
 import de.wwu.md2.framework.generator.AbstractPlatformGenerator
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
-import de.wwu.md2.framework.mD2.WorkflowElement
+import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.CustomAction
+import de.wwu.md2.framework.mD2.WorkflowElement
 
 import static de.wwu.md2.framework.generator.mapapps.AppClass.*
 import static de.wwu.md2.framework.generator.mapapps.ContentProviderClass.*
@@ -15,12 +16,10 @@ import static de.wwu.md2.framework.generator.mapapps.EventHandlerClass.*
 import static de.wwu.md2.framework.generator.mapapps.ManifestJson.*
 import static de.wwu.md2.framework.generator.mapapps.ModelsInterfaceClass.*
 import static de.wwu.md2.framework.generator.mapapps.ModuleClass.*
-
-import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
-import static extension de.wwu.md2.framework.util.StringExtensions.*
-import static extension de.wwu.md2.framework.generator.mapapps.util.MD2MapappsUtil.*
 import static de.wwu.md2.framework.util.MD2Util.*
-import de.wwu.md2.framework.mD2.App
+
+import static extension de.wwu.md2.framework.generator.mapapps.util.MD2MapappsUtil.*
+import static extension de.wwu.md2.framework.util.StringExtensions.*
 
 class MapAppsGenerator extends AbstractPlatformGenerator {
 	

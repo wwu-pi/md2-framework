@@ -38,7 +38,7 @@ class ProjectValidator extends AbstractMD2JavaValidator {
     }
     
     
-    public static final String MODELELEMENT_PACKAGE = "modelelement_package";
+  public static final String MODELELEMENT_PACKAGE = "modelelement_package";
     /**
      * Ensure that all elements belonging to a certain layer are stored in the appropriate
      * package. E.g., throw an error if a view is stored in the package models.

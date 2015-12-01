@@ -71,7 +71,8 @@ public class ExtendedJavaIoFileSystemAccess extends JavaIoFileSystemAccess imple
 		try {
 			deleteDirectory(file);
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
+			//e.printStackTrace();
 		}
 	}
 	

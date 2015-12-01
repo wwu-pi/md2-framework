@@ -19,16 +19,15 @@ import de.wwu.md2.framework.mD2.StandardValidator
 import de.wwu.md2.framework.mD2.StandardValidatorType
 import de.wwu.md2.framework.mD2.StringRangeValidator
 import de.wwu.md2.framework.mD2.TimeRangeValidator
+import de.wwu.md2.framework.mD2.WorkflowElement
 import org.eclipse.emf.ecore.util.EcoreUtil
 
 import static extension de.wwu.md2.framework.generator.preprocessor.util.Util.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
-import de.wwu.md2.framework.mD2.WorkflowElement
-import de.wwu.md2.framework.mD2.SetProcessChainAction
 
 class ProcessController extends AbstractPreprocessor {
 	
-	public static String startupActionName = "__startupAction"
+	//public static String startupActionName = "__startupAction"
 	
 	/**
 	 * A <i>__startupAction</i> is created and registered in the main block for the onInitialized event. The actual startup action
@@ -40,6 +39,8 @@ class ProcessController extends AbstractPreprocessor {
 	 * </p>
 	 */
 	def createStartUpActionAndRegisterAsOnInitializedEvent(WorkflowElement wfe) {
+		val startupActionName = "__" + wfe.name + "_startupAction"
+		
 		// create __startupAction
 		val startupAction = factory.createCustomAction;
 		startupAction.setName(startupActionName)

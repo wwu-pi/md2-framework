@@ -1,16 +1,18 @@
 package de.wwu.md2.framework.generator.android.common;
 
+import org.eclipse.xtend2.lib.StringConcatenation;
+
 @SuppressWarnings("all")
 public class DotProject {
   public static CharSequence dotProject(final String projectName) {
-    org.eclipse.xtend2.lib.StringConcatenation _builder = new org.eclipse.xtend2.lib.StringConcatenation();
+    StringConcatenation _builder = new StringConcatenation();
     _builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     _builder.newLine();
     _builder.append("<projectDescription>");
     _builder.newLine();
     _builder.append("\t");
     _builder.append("<name>");
-    _builder.append(projectName, "	");
+    _builder.append(projectName, "\t");
     _builder.append("</name>");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");

@@ -18,10 +18,11 @@ import de.wwu.md2.framework.mD2.EventUnbindTask
 import de.wwu.md2.framework.mD2.OnConditionEvent
 import de.wwu.md2.framework.mD2.Operator
 import de.wwu.md2.framework.mD2.SimpleActionRef
+import de.wwu.md2.framework.mD2.WorkflowElement
 import java.util.HashMap
 
 import static extension de.wwu.md2.framework.generator.preprocessor.util.Helper.*
-import static extension org.eclipse.emf.ecore.util.EcoreUtil.*import de.wwu.md2.framework.mD2.WorkflowElement
+import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 /**
  * Transforms all OnConditionEvents to core language elements (Entities, ContentProviders, OnChangeEvents, CustomActions).

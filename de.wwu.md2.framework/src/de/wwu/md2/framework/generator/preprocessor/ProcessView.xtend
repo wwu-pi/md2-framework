@@ -24,6 +24,7 @@ import de.wwu.md2.framework.mD2.TabbedAlternativesPane
 import de.wwu.md2.framework.mD2.View
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.WidthParam
+import de.wwu.md2.framework.mD2.WorkflowElement
 import java.util.Collections
 import java.util.Map
 import java.util.Set
@@ -34,7 +35,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
-import de.wwu.md2.framework.mD2.WorkflowElement
 
 class ProcessView extends AbstractPreprocessor {
 	

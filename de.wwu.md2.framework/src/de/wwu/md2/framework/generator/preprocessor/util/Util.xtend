@@ -5,11 +5,10 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import org.eclipse.emf.ecore.util.EObjectContainmentEList
 import org.eclipse.emf.ecore.util.EcoreUtil
 
 import static extension org.apache.commons.codec.digest.DigestUtils.*
-import org.eclipse.emf.ecore.util.EObjectEList
-import org.eclipse.emf.ecore.util.EObjectContainmentEList
 
 /**
  * Provides utility methods to operate on EMF models.
@@ -69,8 +68,8 @@ class Util {
                                     className + name
                                 }
 					        }
-					        EObjectContainmentEList: {
-					            (eRef as EObjectContainmentEList).eObjectContainmentEListRecursiveStringRepresentation
+					        EObjectContainmentEList<Object>: {
+					            (eRef as EObjectContainmentEList<Object>).eObjectContainmentEListRecursiveStringRepresentation
 					        }
 					    }
 						_value
@@ -84,12 +83,12 @@ class Util {
 		return signature.toString
 	}
 	
-	def static String eObjectContainmentEListRecursiveStringRepresentation(EObjectContainmentEList eList) {
+	def static String eObjectContainmentEListRecursiveStringRepresentation(EObjectContainmentEList<Object> eList) {
 	    val signature = new StringBuilder
 	    for(Object o : eList){
 	        switch(o){
 	            EObject: signature.append(o.eObjectRecursiveStringRepresentation)
-	            EObjectContainmentEList: o.eObjectContainmentEListRecursiveStringRepresentation
+	            EObjectContainmentEList<Object>: o.eObjectContainmentEListRecursiveStringRepresentation
 	        }
 	    }
         return signature.toString

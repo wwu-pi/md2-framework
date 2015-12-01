@@ -1,8 +1,10 @@
 package de.wwu.md2.framework.generator.android;
 
 import de.wwu.md2.framework.generator.android.templates.StringsXmlTemplate;
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil;
 import java.util.Arrays;
 import java.util.Collection;
+import org.eclipse.xtend2.lib.StringConcatenation;
 
 @SuppressWarnings("all")
 public class LayoutXml {
@@ -20,12 +22,11 @@ public class LayoutXml {
   
   public Object text(final /* EObject */Object obj, final String text) {
     throw new Error("Unresolved compilation problems:"
-      + "\nThe method getName is undefined for the type LayoutXml"
-      + "\n+ cannot be resolved");
+      + "\n+ cannot be resolved.");
   }
   
   public CharSequence generateLayoutXml(final /* ContainerElement */Object baseViewElem) {
-    org.eclipse.xtend2.lib.StringConcatenation _builder = new org.eclipse.xtend2.lib.StringConcatenation();
+    StringConcatenation _builder = new StringConcatenation();
     _builder.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
     _builder.newLine();
     CharSequence _generateElem = this.generateElem(baseViewElem);
@@ -39,7 +40,7 @@ public class LayoutXml {
       + "\nThe method or field DATE is undefined for the type LayoutXml"
       + "\nThe method or field TIME is undefined for the type LayoutXml"
       + "\nThe method or field DATE_TIME is undefined for the type LayoutXml"
-      + "\nThe method getName is undefined for the type LayoutXml"
+      + "\n+ cannot be resolved."
       + "\nThe method or field DATE is undefined for the type LayoutXml"
       + "\nThe method or field TIME is undefined for the type LayoutXml"
       + "\nThe method or field DATE_TIME is undefined for the type LayoutXml"
@@ -62,7 +63,6 @@ public class LayoutXml {
       + "\nlabelText cannot be resolved"
       + "\ntooltipText cannot be resolved"
       + "\n!= cannot be resolved"
-      + "\n+ cannot be resolved"
       + "\nlabelText cannot be resolved"
       + "\n!= cannot be resolved"
       + "\n|| cannot be resolved"
@@ -81,11 +81,9 @@ public class LayoutXml {
   
   private CharSequence generateTextInput(final /* TextInput */Object elem) {
     throw new Error("Unresolved compilation problems:"
-      + "\nThe method getName is undefined for the type LayoutXml"
       + "\nThe method or field DATE is undefined for the type LayoutXml"
       + "\nThe method or field TIME is undefined for the type LayoutXml"
       + "\nThe method or field DATE_TIME is undefined for the type LayoutXml"
-      + "\nThe method getName is undefined for the type LayoutXml"
       + "\ntype cannot be resolved"
       + "\n== cannot be resolved"
       + "\n|| cannot be resolved"
@@ -98,7 +96,7 @@ public class LayoutXml {
   
   private CharSequence _generateElem(final /* OptionInput */Object elem) {
     throw new Error("Unresolved compilation problems:"
-      + "\nThe method getName is undefined for the type LayoutXml"
+      + "\n+ cannot be resolved."
       + "\nlabelText cannot be resolved"
       + "\n!= cannot be resolved"
       + "\n|| cannot be resolved"
@@ -109,7 +107,6 @@ public class LayoutXml {
       + "\nlabelText cannot be resolved"
       + "\ntooltipText cannot be resolved"
       + "\n!= cannot be resolved"
-      + "\n+ cannot be resolved"
       + "\nlabelText cannot be resolved"
       + "\n!= cannot be resolved"
       + "\n|| cannot be resolved"
@@ -118,16 +115,25 @@ public class LayoutXml {
   }
   
   private CharSequence generateOptionInput(final /* OptionInput */Object elem) {
-    throw new Error("Unresolved compilation problems:"
-      + "\nThe method getName is undefined for the type LayoutXml");
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("<Spinner");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("android:id=\"@+id/");
+    String _name = MD2GeneratorUtil.getName(elem);
+    _builder.append(_name, "\t");
+    _builder.append("\"");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("style=\"@style/ContentDefault\" />");
+    _builder.newLine();
+    return _builder;
   }
   
   private CharSequence _generateElem(final /* Label */Object elem) {
     throw new Error("Unresolved compilation problems:"
       + "\nStyleDefinition cannot be resolved to a type."
       + "\nStyleDefinition cannot be resolved to a type."
-      + "\nThe method getName is undefined for the type LayoutXml"
-      + "\nThe method getName is undefined for the type LayoutXml"
       + "\nstyle cannot be resolved"
       + "\n!= cannot be resolved"
       + "\nstyle cannot be resolved"
@@ -137,8 +143,7 @@ public class LayoutXml {
   }
   
   private CharSequence generateLabel(final String text) {
-    CharSequence _generateLabel = this.generateLabel(null, text, null);
-    return _generateLabel;
+    return this.generateLabel(null, text, null);
   }
   
   private CharSequence generateLabel(final String name, final String text, final CharSequence style) {
@@ -146,13 +151,11 @@ public class LayoutXml {
       + "\n!= cannot be resolved."
       + "\n!= cannot be resolved."
       + "\n!= cannot be resolved."
-      + "\n+ cannot be resolved."
-      + "\nThe method or field anonymousName is undefined for the type LayoutXml");
+      + "\n+ cannot be resolved.");
   }
   
   private CharSequence _generateElem(final /* Image */Object elem) {
     throw new Error("Unresolved compilation problems:"
-      + "\nThe method getName is undefined for the type LayoutXml"
       + "\nwidth cannot be resolved"
       + "\n== cannot be resolved"
       + "\nwidth cannot be resolved"
@@ -168,7 +171,7 @@ public class LayoutXml {
    * Returns an empty element as spacer
    */
   private CharSequence _generateElem(final /* Spacer */Object elem) {
-    org.eclipse.xtend2.lib.StringConcatenation _builder = new org.eclipse.xtend2.lib.StringConcatenation();
+    StringConcatenation _builder = new StringConcatenation();
     _builder.append("<TextView />");
     _builder.newLine();
     return _builder;
@@ -178,7 +181,6 @@ public class LayoutXml {
     throw new Error("Unresolved compilation problems:"
       + "\nStyleDefinition cannot be resolved to a type."
       + "\nStyleDefinition cannot be resolved to a type."
-      + "\nThe method getName is undefined for the type LayoutXml"
       + "\nstyle cannot be resolved"
       + "\n!= cannot be resolved"
       + "\nstyle cannot be resolved"
@@ -189,8 +191,7 @@ public class LayoutXml {
   
   private CharSequence _generateElem(final /* CheckBox */Object elem) {
     throw new Error("Unresolved compilation problems:"
-      + "\nThe method getName is undefined for the type LayoutXml"
-      + "\nThe method getName is undefined for the type LayoutXml"
+      + "\n+ cannot be resolved."
       + "\ntooltipText cannot be resolved"
       + "\n!= cannot be resolved"
       + "\nlabelText cannot be resolved"
@@ -200,18 +201,17 @@ public class LayoutXml {
       + "\nchecked cannot be resolved"
       + "\ntooltipText cannot be resolved"
       + "\n!= cannot be resolved"
-      + "\n+ cannot be resolved"
       + "\ntooltipText cannot be resolved"
       + "\n!= cannot be resolved");
   }
   
   private CharSequence _generateElem(final /* Tooltip */Object elem) {
-    throw new Error("Unresolved compilation problems:"
-      + "\nThe method getName is undefined for the type LayoutXml");
+    String _name = MD2GeneratorUtil.getName(elem);
+    return this.generateToolTip(_name);
   }
   
   public CharSequence generateToolTip(final String name) {
-    org.eclipse.xtend2.lib.StringConcatenation _builder = new org.eclipse.xtend2.lib.StringConcatenation();
+    StringConcatenation _builder = new StringConcatenation();
     _builder.append("<ImageButton ");
     _builder.newLine();
     _builder.append("    ");
@@ -224,18 +224,29 @@ public class LayoutXml {
     _builder.newLine();
     _builder.append("\t");
     _builder.append("android:contentDescription=\"");
-    org.eclipse.xtend2.lib.StringConcatenation _builder_1 = new org.eclipse.xtend2.lib.StringConcatenation();
+    StringConcatenation _builder_1 = new StringConcatenation();
     _builder_1.append("tooltipImage_contentDesc");
     Object _addForXml = this.strings.addForXml(_builder_1.toString(), "Tooltip");
-    _builder.append(_addForXml, "	");
+    _builder.append(_addForXml, "\t");
     _builder.append("\" />");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
   
   private CharSequence _generateElem(final /* EntitySelector */Object elem) {
-    throw new Error("Unresolved compilation problems:"
-      + "\nThe method getName is undefined for the type LayoutXml");
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("<Spinner");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("android:id=\"@+id/");
+    String _name = MD2GeneratorUtil.getName(elem);
+    _builder.append(_name, "\t");
+    _builder.append("\"");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("style=\"@style/ContentDefault\" />");
+    _builder.newLine();
+    return _builder;
   }
   
   private String getInputType(final /* TextInput */Object elem) {
@@ -267,8 +278,6 @@ public class LayoutXml {
   private CharSequence _generateElem(final /* GridLayoutPane */Object elem) {
     throw new Error("Unresolved compilation problems:"
       + "\n! cannot be resolved."
-      + "\nThe method getName is undefined for the type LayoutXml"
-      + "\nThe method getName is undefined for the type LayoutXml"
       + "\n+ cannot be resolved."
       + "\nelements cannot be resolved"
       + "\nslice cannot be resolved");
@@ -277,17 +286,16 @@ public class LayoutXml {
   private CharSequence _generateElem(final /* FlowLayoutPane */Object elem) {
     throw new Error("Unresolved compilation problems:"
       + "\n! cannot be resolved."
-      + "\nThe method getName is undefined for the type LayoutXml"
       + "\nelements cannot be resolved");
   }
   
   private CharSequence _generateElem(final /* AlternativesPane */Object elem) {
-    org.eclipse.xtend2.lib.StringConcatenation _builder = new org.eclipse.xtend2.lib.StringConcatenation();
+    StringConcatenation _builder = new StringConcatenation();
     return _builder;
   }
   
   private CharSequence _generateElem(final /* TabbedAlternativesPane */Object elem) {
-    org.eclipse.xtend2.lib.StringConcatenation _builder = new org.eclipse.xtend2.lib.StringConcatenation();
+    StringConcatenation _builder = new StringConcatenation();
     return _builder;
   }
   
@@ -295,6 +303,7 @@ public class LayoutXml {
     throw new Error("Unresolved compilation problems:"
       + "\nViewElementRef cannot be resolved to a type."
       + "\nViewElementDef cannot be resolved to a type."
+      + "\nUnreachable code: The case can never match. It is already handled by a previous condition."
       + "\nvalue cannot be resolved"
       + "\nvalue cannot be resolved");
   }
@@ -304,6 +313,7 @@ public class LayoutXml {
       + "\nGridLayoutPaneRowsParam cannot be resolved to a type."
       + "\nGridLayoutPaneColumnsParam cannot be resolved to a type."
       + "\n== cannot be resolved."
+      + "\nUnreachable code: The case can never match. It is already handled by a previous condition."
       + "\nparams cannot be resolved"
       + "\nvalue cannot be resolved"
       + "\nvalue cannot be resolved"
@@ -333,10 +343,10 @@ public class LayoutXml {
   
   private CharSequence generateElem(final TextInput elem) {
     if (elem != null) {
-      return _generateElem(elem);
-    } else {
-      throw new IllegalArgumentException("Unhandled parameter types: " +
-        Arrays.<Object>asList(elem).toString());
+      return _generateElem(elem); else {
+        throw new IllegalArgumentException("Unhandled parameter types: " +
+          Arrays.<Object>asList(elem).toString());
+      }
     }
   }
-}
+  

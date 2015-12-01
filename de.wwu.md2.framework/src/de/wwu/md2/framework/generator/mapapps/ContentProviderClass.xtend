@@ -1,5 +1,7 @@
 package de.wwu.md2.framework.generator.mapapps
 
+import de.wwu.md2.framework.generator.util.DataContainer
+import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.Operator
 import de.wwu.md2.framework.mD2.ReferencedModelType
@@ -12,10 +14,7 @@ import java.util.Map
 import java.util.Set
 
 import static de.wwu.md2.framework.generator.mapapps.Expressions.*
-
-import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
-import de.wwu.md2.framework.generator.util.DataContainer
-import de.wwu.md2.framework.mD2.App
+import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
 class ContentProviderClass {
 	

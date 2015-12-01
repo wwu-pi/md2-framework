@@ -31,12 +31,13 @@ import de.wwu.md2.framework.mD2.SimpleType
 import de.wwu.md2.framework.mD2.StringType
 import de.wwu.md2.framework.mD2.TimeType
 import de.wwu.md2.framework.mD2.ViewGUIElement
+import de.wwu.md2.framework.mD2.WorkflowElement
 import java.util.Collection
+import org.eclipse.xtend.lib.annotations.Accessors
 
 import static de.wwu.md2.framework.generator.preprocessor.util.Util.*
 
-import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*import de.wwu.md2.framework.mD2.WorkflowElement
-import org.eclipse.xtend.lib.annotations.Accessors
+import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
 class ProcessAutoGenerator extends AbstractPreprocessor {
 	

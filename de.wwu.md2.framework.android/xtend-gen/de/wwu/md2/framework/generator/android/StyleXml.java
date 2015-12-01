@@ -1,9 +1,11 @@
 package de.wwu.md2.framework.generator.android;
 
+import org.eclipse.xtend2.lib.StringConcatenation;
+
 @SuppressWarnings("all")
 public class StyleXml {
   public static CharSequence generateStyleXml() {
-    org.eclipse.xtend2.lib.StringConcatenation _builder = new org.eclipse.xtend2.lib.StringConcatenation();
+    StringConcatenation _builder = new StringConcatenation();
     _builder.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
     _builder.newLine();
     _builder.append("<resources>");

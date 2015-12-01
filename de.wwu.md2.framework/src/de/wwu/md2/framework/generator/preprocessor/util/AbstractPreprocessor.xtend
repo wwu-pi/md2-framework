@@ -4,10 +4,12 @@ import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.MD2Model
 import de.wwu.md2.framework.mD2.Model
 import de.wwu.md2.framework.mD2.View
+import de.wwu.md2.framework.mD2.Workflow
 import org.eclipse.emf.ecore.resource.ResourceSet
 
 import static de.wwu.md2.framework.generator.preprocessor.util.Util.*
-import static extension org.eclipse.emf.ecore.util.EcoreUtil.*import de.wwu.md2.framework.mD2.Workflow
+
+import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 abstract class AbstractPreprocessor {
 	
