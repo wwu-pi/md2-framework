@@ -1,0 +1,78 @@
+package de.wwu.md2.framework.generator.android;
+
+@SuppressWarnings("all")
+public class StyleXml {
+  public static CharSequence generateStyleXml() {
+    org.eclipse.xtend2.lib.StringConcatenation _builder = new org.eclipse.xtend2.lib.StringConcatenation();
+    _builder.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+    _builder.newLine();
+    _builder.append("<resources>");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("<style name=\"ContainerDefault\">");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("<item name=\"android:layout_width\">match_parent</item>");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("<item name=\"android:layout_height\">wrap_content</item>");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("<item name=\"android:layout_weight\">1</item>");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("</style>");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("<style name=\"ContentDefault\">");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("<item name=\"android:layout_width\">wrap_content</item>");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("<item name=\"android:layout_height\">wrap_content</item>");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("<item name=\"android:layout_weight\">1</item>");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("</style>");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("<style name=\"ContentDefault.EditTextDefault\">");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("<item name=\"android:layout_width\">150dp</item>");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("</style>");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("<style name=\"ContentDefault.ToolTipDefault\">");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("<item name=\"android:layout_height\">match_parent</item>");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("<item name=\"android:layout_weight\">0</item>");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("<item name=\"android:background\">@null</item>");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("<item name=\"android:src\">@drawable/information</item>");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("</style>");
+    _builder.newLine();
+    _builder.append("</resources>");
+    _builder.newLine();
+    return _builder;
+  }
+}

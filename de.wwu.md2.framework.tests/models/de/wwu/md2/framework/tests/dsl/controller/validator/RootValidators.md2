@@ -1,0 +1,62 @@
+package controllers
+
+validator NumberRangeValidator validateComplaintID 
+{
+	max 66.6
+	min 1.1
+	message "ID must between 1 and 666!"
+}
+
+validator StringRangeValidator validateDescription
+{
+	maxLength 150
+	minLength 1
+	message "the string is too short or too long!"
+}
+
+validator RegExValidator validateUserEmail
+{
+	regEx "[A-Za-Z]+@[a-z]{2,6}"
+	message "that's not a valid email address"
+}
+
+validator DateRangeValidator validateDate
+{
+	min 1900-01-01
+	message "the string is too short or too long!"
+}
+
+validator DateTimeRangeValidator validateDateTime
+{
+	min 1900-01-01T03:00:00+02:00
+	message "the string is too short or too long!"
+}
+
+validator TimeRangeValidator validateTime
+{
+	min 03:00:00+02:00
+	message "the string is too short or too long!"
+}
+
+
+contentProvider Complaint complaintProvider {
+	providerType default
+	readonly false
+}
+
+contentProvider User userProvider {
+	providerType default
+	readonly false
+}
+
+validator RemoteValidator myRemoteValidator {
+	attributes :complaintProvider.id
+	connection myConnection
+	message "Connection failed!"
+}
+
+remoteConnection myConnection {
+	uri "http://localhost:8080/bla/"
+	password "admin"
+	user "admin"
+}

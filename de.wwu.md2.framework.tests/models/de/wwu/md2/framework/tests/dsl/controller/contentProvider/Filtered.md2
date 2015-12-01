@@ -1,0 +1,11 @@
+package controllers
+
+contentProvider Complaint filteredProvider {
+	providerType filteredConnection filter first readonly true
+}
+
+remoteConnection filteredConnection{
+	uri "localhost:8080"
+	password "admin"
+	user "admin"
+}

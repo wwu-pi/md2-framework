@@ -21,7 +21,7 @@ import de.wwu.md2.framework.mD2.SimpleActionRef
 import java.util.HashMap
 
 import static extension de.wwu.md2.framework.generator.preprocessor.util.Helper.*
-import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
+import static extension org.eclipse.emf.ecore.util.EcoreUtil.*import de.wwu.md2.framework.mD2.WorkflowElement
 
 /**
  * Transforms all OnConditionEvents to core language elements (Entities, ContentProviders, OnChangeEvents, CustomActions).
@@ -110,20 +110,18 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 	 *   </li>
 	 * </ul>
 	 */
-	def transformAllCustomEventsToBasicLanguageStructures() {
+	def transformAllCustomEventsToBasicLanguageStructures(WorkflowElement wfe) {
+		
+		val hasConditionalEvents = wfe.eAllContents.exists(e| e instanceof OnConditionEvent)
 		
 		// only run this task if there are conditional events present
-		val hasConditionalEvents = controllers.map[ ctrl |
-			ctrl.controllerElements.exists( e | e instanceof OnConditionEvent)
-		].exists(b | b)
-		
 		if (!hasConditionalEvents) {
 			return
 		}
 		
 		// get all event binding and event unbinding tasks that refer to custom events
-		val customEventBindings = customEventBindings
-		val customEventUnbindings = customEventUnbindings
+		val customEventBindings = wfe.customEventBindings
+		val customEventUnbindings = wfe.customEventUnbindings
 		
 		
 		//////////////////////////////////////
@@ -133,10 +131,12 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 		val allEventActionTuples = createAllEventActionTuples(customEventBindings, customEventUnbindings)
 		val mappingEntity        = createEntity(allEventActionTuples)
 		val contentProvider      = createContentProviderForEntity(mappingEntity)
-		createCustomActionForEachConditionalEvent(allEventActionTuples, contentProvider, mappingEntity)
-		createCustomActionToRegisterConditionalEvents(allEventActionTuples)
+
+		createCustomActionForEachConditionalEvent(allEventActionTuples, contentProvider, mappingEntity, wfe)
+		createCustomActionToRegisterConditionalEvents(allEventActionTuples, wfe)
 		replaceCustomEventBindingsWithSettersForMappingEntity(customEventBindings, customEventUnbindings, contentProvider, mappingEntity)
 		removeOnConditionalEvents(allEventActionTuples)
+
 	}
 	
 	/**
@@ -211,7 +211,6 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 	 * </p>
 	 */
 	private def createEntity(HashMap<OnConditionEvent, HashMap<String, ActionDef>> allEventActionTuples) {
-		val model = models.head
 		
 		// create entity and populate it with attributes for each unique action->event mapping
 		val mappingEntity = factory.createEntity
@@ -239,7 +238,6 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 	 * </p>
 	 */
 	private def createContentProviderForEntity(Entity mappingEntity) {
-		val controller = controllers.head
 		
 		val referencedModelType = factory.createReferencedModelType
 		referencedModelType.setEntity(mappingEntity)
@@ -265,10 +263,8 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 	 */
 	private def createCustomActionForEachConditionalEvent(
 		HashMap<OnConditionEvent, HashMap<String, ActionDef>> allEventActionTuples, ContentProvider contentProvider,
-		Entity mappingEntity
+		Entity mappingEntity, WorkflowElement wfe
 	) {
-		
-		val controller = controllers.head
 		
 		allEventActionTuples.forEach[ event, map |
 			val customAction = factory.createCustomAction
@@ -320,7 +316,7 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 				mappingIfBlock.codeFragments.add(callTask)
 			]
 			
-			controller.controllerElements.add(customAction)
+			wfe.actions.add(customAction)
 		]
 	}
 	
@@ -340,10 +336,10 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 	 * </ul>
 	 */
 	private def createCustomActionToRegisterConditionalEvents(
-		HashMap<OnConditionEvent, HashMap<String, ActionDef>> allEventActionTuples
+		HashMap<OnConditionEvent, HashMap<String, ActionDef>> allEventActionTuples, WorkflowElement wfe
 	) {
 		
-		val controller = controllers.head
+		//val controller = controllers.head
 		
 		allEventActionTuples.forEach[ event, map |
 			val customAction = factory.createCustomAction
@@ -358,7 +354,7 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 				val eventBindingTask = factory.createEventBindingTask
 				
 				val actionDef = factory.createActionReference
-				val action = controller.controllerElements.filter(CustomAction).filter(a | a.name.equals("__conditionalEvent_" + event.name)).head
+				val action = wfe.eAllContents.filter(CustomAction).filter(a | a.name.equals("__conditionalEvent_" + event.name)).head
 				actionDef.setActionRef(action)
 				eventBindingTask.actions.add(actionDef)
 				
@@ -380,7 +376,7 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 				val eventBindingTask = factory.createEventBindingTask
 				
 				val actionDef = factory.createActionReference
-				val action = controller.controllerElements.filter(CustomAction).filter(a | a.name.equals("__conditionalEvent_" + event.name)).head
+				val action = wfe.eAllContents.filter(CustomAction).filter(a | a.name.equals("__conditionalEvent_" + event.name)).head
 				actionDef.setActionRef(action)
 				eventBindingTask.actions.add(actionDef)
 				
@@ -397,19 +393,21 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 			}
 			
 			// add action to controller
-			controller.controllerElements.add(customAction)
+			wfe.actions.add(customAction)
 			
 			// add action as call task to startUpAction
-			val startupAction = controllers.map[ ctrl |
-				ctrl.controllerElements.filter(CustomAction)
-					.filter( action | action.name.equals(ProcessController::startupActionName))
-			].flatten.head
+			val initAction = wfe.initActions.filter(CustomAction).head
+			
+			//TODO: code fragment in comment can be totally removed when DSL is changed 
+			//-> we probably only need one initAction per workflow element
+			//val startupAction = wfe.eAllContents.filter(CustomAction)
+			//		.filter( action | action.name.equals(ProcessController::startupActionName))
 			
 			val callTask = factory.createCallTask
 			val actionDef = factory.createActionReference
 			actionDef.setActionRef(customAction)
 			callTask.setAction(actionDef)
-			startupAction.codeFragments.add(0, callTask);
+			initAction.codeFragments.add(0, callTask);
 		]
 		
 	}
@@ -517,23 +515,19 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 	 * Helper method that returns an iterable with all EventBindingTasks whose eventType refers to an
 	 * OnConditionEvent.
 	 */
-	private def getCustomEventBindings() {
-		controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable
+	private def getCustomEventBindings(WorkflowElement wfe) {
+		wfe.eAllContents.toIterable
 				.filter(EventBindingTask)
 				.filter(bindingTask | bindingTask.events.exists(eventType | eventType instanceof ConditionalEventRef))
-		].flatten
 	}
 	
 	/**
 	 * Helper method that returns an iterable with all EventUnbindingTasks whose eventType refers to an
 	 * OnConditionEvent.
 	 */
-	private def getCustomEventUnbindings() {
-		controllers.map[ ctrl |
-			ctrl.eAllContents.toIterable
+	private def getCustomEventUnbindings(WorkflowElement wfe){
+		wfe.eAllContents.toIterable
 				.filter(EventUnbindTask)
 				.filter(unbindingTask | unbindingTask.events.exists(eventType | eventType instanceof ConditionalEventRef))
-		].flatten
 	}
 }

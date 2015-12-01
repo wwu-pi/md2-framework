@@ -9,9 +9,10 @@ import de.wwu.md2.framework.mD2.ReferencedModelType
 import static de.wwu.md2.framework.generator.backend.BeanClass.*
 import static de.wwu.md2.framework.generator.backend.CommonClasses.*
 import static de.wwu.md2.framework.generator.backend.DatatypeClasses.*
-import static de.wwu.md2.framework.generator.backend.DotClasspath.*
 import static de.wwu.md2.framework.generator.backend.DotProjectFile.*
 import static de.wwu.md2.framework.generator.backend.EnumAndEntityClass.*
+import static de.wwu.md2.framework.generator.backend.FileUpload.*
+import static de.wwu.md2.framework.generator.backend.ExternalWebServiceClass.*
 import static de.wwu.md2.framework.generator.backend.PersistenceXml.*
 import static de.wwu.md2.framework.generator.backend.ProjectSettings.*
 import static de.wwu.md2.framework.generator.backend.ValidationResult.*
@@ -31,25 +32,24 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		/////////////////////////////////////////
 		
 		// Generate models, web services and beans
-		dataContainer.models.forEach [model |
-			model.modelElements.filter(typeof(ModelElement)).forEach[modelElement |
-				fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/models/"
-					+ modelElement.name.toFirstUpper + ".java", createModel(rootFolder, modelElement))
-				
-				val isUsedInRemoteContentProvider = dataContainer.contentProviders.exists[ c |
-					c.type instanceof ReferencedModelType
-					&& !c.local
-					&& (c.type as ReferencedModelType).entity.identityEquals(modelElement)
-				]
-				
-				// web services and beans for an entity are only generated if they are used in any remote content provider
-				if(modelElement instanceof Entity && isUsedInRemoteContentProvider) {
-					fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/"
-						+ modelElement.name.toFirstUpper + "WS.java", createEntityWS(rootFolder, modelElement as Entity))
-					fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/beans/"
-						+ modelElement.name.toFirstUpper + "Bean.java", createEntityBean(rootFolder, modelElement as Entity))
-				}
+		dataContainer.model.modelElements.filter(typeof(ModelElement)). // remove auto-generated local entities starting with "__"
+			filter[!it.name.startsWith("__")].forEach[modelElement |
+			fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/entities/models/"
+				+ modelElement.name.toFirstUpper + ".java", createModel(rootFolder, modelElement))
+			
+			val isUsedInRemoteContentProvider = dataContainer.contentProviders.exists[ c |
+				c.type instanceof ReferencedModelType
+				&& !c.local
+				&& (c.type as ReferencedModelType).entity.identityEquals(modelElement)
 			]
+			
+			// web services and beans for an entity are only generated if they are used in any remote content provider
+			if(modelElement instanceof Entity && isUsedInRemoteContentProvider) {
+				fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/"
+					+ modelElement.name.toFirstUpper + "WS.java", createEntityWS(rootFolder, modelElement as Entity))
+				fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/beans/"
+					+ modelElement.name.toFirstUpper + "Bean.java", createEntityBean(rootFolder, modelElement as Entity))
+			}
 		]
 		
 		// Generate datatype wrapper
@@ -79,6 +79,25 @@ class BackendGenerator extends AbstractPlatformGenerator {
 				createRemoteValidationBean(rootFolder, affectedEntities, dataContainer.remoteValidators))
 		}
 		
+		// Generate workflow managing files
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/beans/WorkflowStateBean.java", createWorkflowStateBean(rootFolder))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/entities/WorkflowState.java", createWorkflowState(rootFolder))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/WorkflowStateWS.java", createWorkflowStateWS(rootFolder))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/EventHandlerWS.java", createEventHandlerWS(rootFolder))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/FileUploadWS.java", createFileUploadWS(rootFolder))
+		
+		// Generate additional servlet
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/filedownload/DownloadServlet.java", createDownloadServlet(rootFolder))
+		
+		// External Werbservices
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/entities/RequestDTO.java", createRequestDTO(rootFolder))
+		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/CallExternalWebServiceWS.java", createCallExternalWSProxy(basePackageName))
+		
+		
+		// Gemerate external webService files
+		dataContainer.workflow.workflowElementEntries.filter[it.workflowElement.invoke.size>0].forEach[wfeEntry|
+			fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/external/" + wfeEntry.workflowElement.name.toFirstUpper + "ExternalWS.java", createExternalWorkflowElementWS(basePackageName, wfeEntry, dataContainer.main.workflowManager))
+		]
 		// Generate common backend files
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/Utils.java", createUtils(basePackageName))
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/Config.java", createConfig(basePackageName, dataContainer))
@@ -98,7 +117,7 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		fsa.generateFile(rootFolder + "/.settings/org.eclipse.wst.jsdt.ui.superType.name", orgEclipseWstJsdtUiSuperTypeName)
 		
 		// Generate .classpath and .project files
-		fsa.generateFile(rootFolder + "/.classpath", createClasspath)
+		fsa.generateFileFromInputStream(getSystemResource("/backend/classpath.txt"), rootFolder + "/.classpath")
 		fsa.generateFile(rootFolder + "/.project", createProjectFile(basePackageName))
 		
 		// Generate WebContent folder
@@ -108,13 +127,12 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		fsa.generateFile(rootFolder + "/WebContent/WEB-INF/web.xml", webXml(basePackageName))
 		
 		// Copy static jar libs
+		fsa.generateFileFromInputStream(getSystemResource("/backend/json-simple-1.1.1.jar"), rootFolder + "/WebContent/WEB-INF/lib/json-simple-1.1.1.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/guava-13.0.jar"), rootFolder + "/WebContent/WEB-INF/lib/guava-13.0.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-core-asl-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-core-asl-1.9.2.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-jaxrs-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-jaxrs-1.9.2.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-mapper-asl-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-mapper-asl-1.9.2.jar")
 		fsa.generateFileFromInputStream(getSystemResource("/backend/jackson-xc-1.9.2.jar"), rootFolder + "/WebContent/WEB-INF/lib/jackson-xc-1.9.2.jar")
-		fsa.generateFileFromInputStream(getSystemResource("/backend/jersey-bundle-1.18.1.jar"), rootFolder + "/WebContent/WEB-INF/lib/jersey-bundle-1.18.1.jar")
-		
 	}
 	
 	override getPlatformPrefix() {

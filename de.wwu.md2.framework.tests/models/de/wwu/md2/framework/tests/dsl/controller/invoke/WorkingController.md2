@@ -1,0 +1,52 @@
+package controllers
+
+contentProvider User UserProvider {
+	providerType myRemoteConnection
+}
+
+contentProvider Complaint ComplaintProvider {
+	providerType myRemoteConnection
+}
+
+remoteConnection myRemoteConnection{
+	uri "localhost:8080"
+}
+
+WorkflowElement myWorkflowElement {
+	defaultProcessChain myProcessChain
+	onInit {init}
+	action CustomAction init {
+		bind action FireEvent(NextEvent) on complaintView.Next.onClick
+	}
+	processChain myProcessChain {
+		step MyStep: 
+            		view complaintView 
+	}
+	
+	invokable at "myPath"{
+		:UserProvider.ename
+		:UserProvider.email
+		:UserProvider.bday
+		set :ComplaintProvider.submittedby to :UserProvider
+		default :ComplaintProvider.status = "processed"
+		default :ComplaintProvider.submitdate = 2014-03-03
+		default :ComplaintProvider.descr = "myDescription"
+		default :ComplaintProvider.id = 1
+		default :UserProvider.address = "myAddress"
+	}
+	
+	invokable
+	
+}
+WorkflowElement myWorkflowElement2 {
+	defaultProcessChain myProcessChain
+	onInit {init}
+	action CustomAction init {
+		bind action FireEvent(NextEvent) on complaintView.Next.onClick
+	}
+	processChain myProcessChain {
+		step MyStep: 
+            		view complaintView 
+	}	
+}
+

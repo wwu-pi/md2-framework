@@ -14,11 +14,12 @@ import de.wwu.md2.framework.mD2.StringType
 import de.wwu.md2.framework.mD2.TimeType
 
 import static extension de.wwu.md2.framework.util.IterableExtensions.*
+import de.wwu.md2.framework.mD2.FileType
 
 class EnumAndEntityClass {
 	
 	def static dispatch createModel(String basePackageName, Entity entity) '''
-		package «basePackageName».models;
+		package «basePackageName».entities.models;
 		
 		import java.io.Serializable;
 		«IF entity.attributes.exists(a | isDateOrTimeType(a.type))»import java.util.Date;«ENDIF»
@@ -76,7 +77,7 @@ class EnumAndEntityClass {
 			/// Getters and setters
 			///////////////////////////////////////
 			
-			public int getInternal__id() {
+			public int get__internalId() {
 				return __internalId;
 			}
 			
@@ -94,13 +95,13 @@ class EnumAndEntityClass {
 	'''
 	
 	def static dispatch createModel(String basePackageName, Enum _enum) '''
-		package «basePackageName».models;
+		package «basePackageName».entities.models;
 		
 		import javax.xml.bind.annotation.XmlEnumValue;
 		
 		public enum «_enum.name.toFirstUpper» {
 			
-			«_enum.enumBody.elements.joinWithIdx("", "," + System::getProperty("line.separator"), ";", [s, i | '''@XmlEnumValue("«i»") VALUE«i»("«s»")'''])»
+			«_enum.enumBody.elements.joinWithIdx("", "," + System::getProperty("line.separator"), ";", [s, i | '''@XmlEnumValue("VALUE«i»") VALUE«i»("«s»")'''])»
 			
 			private String value;
 			
@@ -115,12 +116,266 @@ class EnumAndEntityClass {
 		}
 	'''
 	
+	def static createWorkflowState(String basePackageName) '''
+		package «basePackageName».entities;
+		
+		import java.io.Serializable;
+		
+		import java.util.Date;
+		
+		import javax.persistence.Column;
+		import javax.persistence.Entity;
+		import javax.persistence.GeneratedValue;
+		import javax.persistence.GenerationType;
+		import javax.persistence.Id;
+		import javax.persistence.Temporal;
+		import javax.persistence.TemporalType;
+		import javax.validation.constraints.NotNull;
+		import javax.xml.bind.annotation.XmlAccessType;
+		import javax.xml.bind.annotation.XmlAccessorType;
+		import javax.xml.bind.annotation.XmlElement;
+		import javax.xml.bind.annotation.XmlRootElement;
+		
+		
+		/**
+		 * 
+		 * Each workflowState corresponds to a workflowInstance and keeps track of its state,
+		 * which is represented by the current workflowElement and the last event fired.
+		 *
+		 */
+		@Entity
+		@XmlRootElement
+		@XmlAccessorType(XmlAccessType.NONE)
+		public class WorkflowState implements Serializable {
+			
+			private static final long serialVersionUID = 1L;
+			
+			@Id
+			@GeneratedValue(strategy=GenerationType.AUTO)
+			@NotNull
+			@Column(name="INTERNAL_ID__")
+			@XmlElement
+			protected int __internalId;
+			
+			@Column(unique=true)
+			@NotNull
+			@XmlElement(nillable=true)
+			protected String instanceId;
+			
+			@NotNull
+			@XmlElement(nillable=true)
+			protected String currentWorkflowElement;
+			
+			@NotNull
+			@XmlElement(nillable=true)
+			protected String lastEventFired; 
+			
+			@XmlElement(nillable=true)
+			protected String contentProviderIds; 
+			
+			@XmlElement(nillable=true)
+			protected boolean finished;
+			
+			@Temporal(TemporalType.TIMESTAMP)
+			@XmlElement(nillable=true)
+			protected Date lastUpdated;
+			
+			///////////////////////////////////////
+			/// constructor
+			///////////////////////////////////////
+			
+			public WorkflowState(){
+				
+			}
+			
+			public WorkflowState (String lastEventFired, String instanceId, String wfe, String contentProviderIds) {
+				this.instanceId = instanceId;
+				this.lastEventFired = lastEventFired;
+				this.currentWorkflowElement = wfe;
+				this.contentProviderIds = contentProviderIds;
+				this.finished = false;
+				this.lastUpdated = new Date();
+			}
+			
+			///////////////////////////////////////
+			/// Getters and setters
+			///////////////////////////////////////
+			
+			
+			public int get__internalId() {
+			    return __internalId;
+			}
+
+			public String getInstanceId() {
+			    return instanceId;
+			}
+		
+			public String getCurrentWorkflowElement() {
+				return currentWorkflowElement;
+			}
+			
+			public void setCurrentWorkflowElement(String currentWorkflowElement) {
+				this.currentWorkflowElement = currentWorkflowElement;
+			}
+			
+			public String getLastEventFired() {
+				return lastEventFired;
+			}
+			
+			public void setLastEventFired(String lastEventFired) {
+				this.lastEventFired = lastEventFired;
+			}
+			
+			public String getContentProviderIds() {
+				return contentProviderIds;
+			}
+			
+			public void setContentProviderIds(String contentProviderIds) {
+				this.contentProviderIds = contentProviderIds;
+			}
+			
+			public void setFinished(){
+				this.finished = true;
+			}
+
+			public boolean getFinished()
+			{
+				return this.finished;
+			}
+			
+			public void setLastUpdated(Date lastUpdated){
+				this.lastUpdated = lastUpdated;
+			}
+
+			public Date getLastUpdated()
+			{
+				return this.lastUpdated;
+			}
+			
+		}
+	'''
+	
+	def static createRequestDTO(String basePackageName)'''
+        package «basePackageName».entities;
+        
+        import java.io.Serializable;
+        import java.util.ArrayList;
+        import java.util.List;
+        
+        import javax.xml.bind.annotation.XmlAccessType;
+        import javax.xml.bind.annotation.XmlAccessorType;
+        import javax.xml.bind.annotation.XmlElement;
+        import javax.xml.bind.annotation.XmlRootElement;
+        
+        /**
+         * The RequestDTO encapsulates all request data that is sent by the client.
+         * It can be used to create a corresponding REST request.
+         * 
+         */
+        
+        @XmlRootElement
+        @XmlAccessorType(XmlAccessType.FIELD)
+        public class RequestDTO implements Serializable {
+            
+            private static final long serialVersionUID = 1L;
+            
+            /**
+             * Provides all possible HTTP methods.
+             * Can later be extended to support more types.
+             */
+            public enum RequestMethod {
+                GET, POST, PUT, DELETE
+            }
+            
+            @XmlElement
+            protected String url;
+            
+            @XmlElement
+            protected RequestMethod requestMethod;
+            
+            @XmlElement
+            protected List<CustomHashMapEntry> queryParams = new ArrayList<CustomHashMapEntry>();
+            
+            @XmlElement
+            protected List<CustomHashMapEntry> body = new ArrayList<CustomHashMapEntry>();
+            
+            public RequestDTO (){}   
+            
+            
+            /* Getter and Setter */
+            
+            public String getUrl() {
+                return url;
+            }
+        
+            public RequestMethod getRequestMethod() {
+                return requestMethod;
+            }
+        
+            public List<CustomHashMapEntry> getQueryParams() {
+                return queryParams;
+            }
+        
+            public List<CustomHashMapEntry> getBody() {
+                return body;
+            }
+            
+                
+            public void setUrl(String url){
+                this.url = url;
+            }
+
+            public void setRequestMethod(RequestMethod method){
+            	this.requestMethod = method;
+            }    
+
+            public void setQueryParams(List<CustomHashMapEntry> queryparams){
+            	this.queryParams = queryparams;
+            }    
+
+            public void setBody(List<CustomHashMapEntry> body){
+            	this.body = body;
+            }
+
+            @XmlRootElement
+            public static class CustomHashMapEntry {
+            
+            	@XmlElement
+                public String key; 
+
+            	@XmlElement
+                public String value;
+            
+                public String getKey() {
+                    return key;
+            	}
+
+            	public void setKey(String key) {
+                    this.key = key;
+                }
+
+                public String getValue() {
+            		return value;
+            	}
+
+            	public void setValue(String value) {
+            		this.value = value;
+                }
+
+                public String toString() {
+                    return this.key + ": " + this.value;
+                }
+            }
+        }
+	'''
+	
 	def private static getDataType(AttributeType type) {
 		val dataType = switch type {
 			ReferencedType: type.element.name.toFirstUpper
 			IntegerType: "int"
 			FloatType: "double"
 			StringType: "String"
+			FileType: "String"
 			BooleanType: "boolean"
 			DateType: "Date"
 			TimeType: "Date"
@@ -145,6 +400,7 @@ class EnumAndEntityClass {
 			IntegerType: type.params
 			FloatType: type.params
 			StringType: type.params
+			FileType: type.params
 			BooleanType: type.params
 			DateType: type.params
 			TimeType: type.params

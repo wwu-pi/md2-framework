@@ -1,0 +1,79 @@
+package views.tabbed
+
+TabbedPane tabbedPane () {
+	AlternativesPane innerPane(width 40%) {
+		GridLayoutPane innerInnerPane(columns 5, rows 3) {
+				BooleanInput boolInput {
+					label "b"
+					tooltip "bool"
+					type default
+					disabled false
+					default true
+					width 30%
+				}
+				
+				TextInput textInput {
+					label "textInput"
+					tooltip "textInput"
+					type textarea
+					disabled false
+					default "text"
+					width 20%
+				}
+				
+				IntegerInput integerInput {
+					label "integerInput"
+					tooltip "integerInput"
+					type input
+					disabled false
+					default 3000
+					width 20%
+				}
+				
+				NumberInput numberInput {
+					label "numberInput"
+					tooltip "numberInput"
+					type input
+					disabled false
+					default 42.1
+					width 20%
+				}
+				
+				DateInput dateInput {
+					label "dateInput"
+					tooltip "dateInput"
+					type default
+					disabled false
+					default 2000-01-01
+					width 20%
+				}
+				
+				TimeInput timeInput {
+					label "timeInput"
+					tooltip "timeInput"
+					type default
+					disabled false
+					default 12:30:30+12:30
+					width 20%
+				}
+				
+				TimeInput timeInput2 {
+					label "timeInput2"
+					tooltip "timeInput2"
+					type default
+					disabled false
+					default 12:30:30Z
+					width 20%
+				}
+				
+				TimeInput timeInput3 {
+					label "timeInput3"
+					tooltip "timeInput3"
+					type default
+					disabled false
+					default 12:30:30-12:30
+					width 20%
+				}
+		}
+	}
+}

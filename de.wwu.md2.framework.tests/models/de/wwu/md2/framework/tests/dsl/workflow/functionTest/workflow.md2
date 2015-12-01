@@ -1,0 +1,23 @@
+package functionTest.workflows
+
+/*
+ * This is a comment for testing and should not be parsed
+ */
+
+WorkflowElement LocationDetection
+	fires LocationDetectionEvent {
+		start LocationDetection
+	}
+	
+ WorkflowElement EndWF
+	fires EndWFEvent {
+		end workflow
+	}
+	
+App CurrentStateProjectApp {
+	WorkflowElements {
+		LocationDetection (startable: "Start Controller 1"),
+		EndWF
+	}
+	appName "functionTestApp"
+}

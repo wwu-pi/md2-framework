@@ -40,5 +40,4 @@ class DotProjectFile {
 			</natures>
 		</projectDescription>
 	'''
-	
 }

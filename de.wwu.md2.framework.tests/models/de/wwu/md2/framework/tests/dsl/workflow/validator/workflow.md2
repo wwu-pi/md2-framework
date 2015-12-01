@@ -1,0 +1,18 @@
+package CurrentStateProject.workflows
+
+/*
+ * Implement the workflow here
+ */
+ 
+ WorkflowElement LocationDetection
+	fires SubmitEvent {
+		start LocationDetection
+	}
+
+
+App Citizenapp {
+	WorkflowElements {
+		LocationDetection (startable: "Start Controller 1")
+	}
+	appName "currentStateApp"
+}

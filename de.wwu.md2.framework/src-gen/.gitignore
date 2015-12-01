@@ -1,6 +1,0 @@
-# enforce empty directory to reside on the git server
-
-# Ignore everything in this directory
-*
-# Except this file
-!.gitignore

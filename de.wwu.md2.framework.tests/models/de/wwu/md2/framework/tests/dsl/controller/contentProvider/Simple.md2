@@ -1,0 +1,11 @@
+package controllers
+
+contentProvider Complaint simpleProvider {
+	providerType simpleConnection
+}
+
+remoteConnection simpleConnection{
+	uri "localhost:8080"
+	password "admin"
+	user "admin"
+}

@@ -1,0 +1,11 @@
+package functionTest.models
+
+entity Complaint {
+	loc: Address  // use current MD2 location instead!--> No, current MD2 location is a content provider, not an entity!
+	naming : string
+}
+
+entity Address {
+	myStreet: string
+	myCity: string
+}

@@ -1,0 +1,29 @@
+package controllers
+
+WorkflowElement Test {
+    defaultProcessChain MyProcessChain
+    onInit {
+        init
+    }
+   
+    processChain MyProcessChain {
+    step MediaCapturing:
+        view myView
+    }
+    
+    action CustomAction assignValidators {
+       bind validators NotNullValidator (message "ID must not be null!")  NumberRangeValidator (message "ID must between 1 and 666!") on enterPersonView.userID
+       bind validator StringRangeValidator (maxLength 150, minLength 1, message "the string is too short or too long!") on enterPersonView.personName
+       bind validator RegExValidator (regEx "[A-Za-Z]+@[a-z]{2,6}", message "that's not a valid email address") on enterPersonView.userEmail
+       bind validator DateRangeValidator (min 1900-01-01,   message "the string is too short or too long!") on enterCopyView.inStockSince
+       bind validator TimeRangeValidator (min 03:00:00+02:00,   message "the string is too short or too long!") on borrowBookView.borrowedTime
+       bind validator DateTimeRangeValidator (min 1900-01-01T03:00:00+02:00,   message "the string is too short or too long!") on borrowBookView.borrowedDateTime    
+    }   
+    
+     
+    action CustomAction init{
+    }
+    
+}
+
+

@@ -1,0 +1,6 @@
+package Test123.models
+
+entity Test {
+    stringAttribute : string(optional)
+    fileAttribute: file(optional)
+}

@@ -1,0 +1,34 @@
+package models
+
+entity Book {
+	title: string
+	isbn: string
+	author: string
+	copies: Copy[]
+}
+
+entity Copy {
+	id: integer
+	status: Status
+	inPortfolioSince: date
+	borrowedDateTime: datetime
+	borrowedTime: time
+	borrowedBy: Person
+}
+
+entity Person {
+	ename: string
+	email: string
+	loans: Copy[]
+	address: string
+	{
+		name "PrivateAddress"
+		description "Address only as String!"
+	}
+}
+
+enum Status {
+	"borrowed",
+	"reserved",
+	"in shelf"
+}

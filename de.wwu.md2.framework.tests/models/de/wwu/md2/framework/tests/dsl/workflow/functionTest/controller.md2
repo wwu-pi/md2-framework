@@ -1,0 +1,60 @@
+package functionTest.controllers
+
+main {
+	appVersion "1.0"
+	modelVersion "1.0"
+	workflowManager CitizenAppRemoteConnection
+}
+
+remoteConnection CitizenAppRemoteConnection {
+	uri "http://localhost:8081/Backend/"
+}
+
+contentProvider Complaint complaintProvider {
+	providerType CitizenAppRemoteConnection
+}
+
+contentProvider Address addressProvider {
+	providerType CitizenAppRemoteConnection
+}
+
+WorkflowElement LocationDetection{
+	defaultProcessChain LocationProcessChain
+	onInit {
+		init
+	}
+
+	action CustomAction init{
+		map LocationDetectionView.streetLbl to :addressProvider.myStreet
+		map LocationDetectionView.cityLbl to :addressProvider.myCity
+	}
+	
+	action CustomAction next {
+		bind action FireEvent(LocationDetectionEvent) on LocationDetectionView.Next.onClick
+	}
+	
+	processChain LocationProcessChain{
+        step LocationDetection: 
+            view LocationDetectionView
+    }
+}
+
+
+WorkflowElement EndWF{
+	defaultProcessChain LocationProcessChain
+	onInit {
+		init
+	}
+	
+	action CustomAction init{
+		map LocationDetectionView.streetLbl to :addressProvider.myStreet
+		map LocationDetectionView.cityLbl to :addressProvider.myCity
+	}
+	action CustomAction EndAction {
+		bind action FireEvent(EndWFEvent) on LocationDetectionView.Next.onClick
+	}
+		processChain LocationProcessChain{
+        step LocationDetection: 
+            view LocationDetectionView
+    }
+}

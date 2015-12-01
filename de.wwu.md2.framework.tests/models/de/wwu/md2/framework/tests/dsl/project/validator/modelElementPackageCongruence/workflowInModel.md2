@@ -1,0 +1,13 @@
+package TestProject.models
+
+WorkflowElement LocationDetection
+    fires LocationDetectionEvent {
+        start LocationDetection
+    }
+    
+App CurrentStateProjectApp {
+    WorkflowElements {
+        LocationDetection (startable: "Start Controller 1")
+    }
+    appName "functionTestApp"
+}

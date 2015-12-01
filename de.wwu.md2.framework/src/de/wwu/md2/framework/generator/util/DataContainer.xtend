@@ -16,8 +16,20 @@ import java.util.Collection
 import java.util.Set
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
+import org.eclipse.xtend.lib.annotations.Accessors
 
-import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
+import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*import de.wwu.md2.framework.mD2.Workflow
+import de.wwu.md2.framework.mD2.App
+import de.wwu.md2.framework.mD2.WorkflowElement
+import java.util.Map
+import de.wwu.md2.framework.mD2.EventBindingTask
+import de.wwu.md2.framework.mD2.SimpleActionRef
+import de.wwu.md2.framework.mD2.FireEventAction
+import de.wwu.md2.framework.mD2.WorkflowEvent
+import de.wwu.md2.framework.mD2.WorkflowElementEntry
+import de.wwu.md2.framework.mD2.ActionReference
+import de.wwu.md2.framework.mD2.CallTask
+import de.wwu.md2.framework.mD2.FireEventEntry
 
 /**
  * DataContainer to store data that are used throughout the generation process.
@@ -32,31 +44,37 @@ class DataContainer {
 	// Data Container
 	///////////////////////////////////////
 	
-	@Property
-	private Collection<View> views
+	@Accessors
+	public View view
 	
-	@Property
-	private Collection<Controller> controllers
+	@Accessors
+	public Controller controller
 	
-	@Property
-	private Collection<Model> models
+	@Accessors
+	public Model model
+	
+	@Accessors
+	public Workflow workflow
 	
 	
 	///////////////////////////////////////
 	// Controller Elements
 	///////////////////////////////////////
 	
-	@Property
-	private Main main
+	@Accessors
+	public Main main
 	
-	@Property
-	private Collection<ContentProvider> contentProviders
+	@Accessors
+	public Collection<ContentProvider> contentProviders
 	
-	@Property
-	private Collection<CustomAction> customActions
+	@Accessors
+	public Collection<CustomAction> customActions
 	
-	@Property
-	private Collection<RemoteValidator> remoteValidators
+	@Accessors
+	public Collection<RemoteValidator> remoteValidators
+	
+	@Accessors
+	public Collection<WorkflowElement> workflowElements
 	
 	
 	///////////////////////////////////////
@@ -70,19 +88,27 @@ class DataContainer {
 	 * have any TabbedAlternativesPane or AlternativesPane as a child element that contain
 	 * any view containers that are accessed by a GotoViewAction.
 	 */
-	@Property
-	private Set<ContainerElement> rootViewContainers
+	@Accessors
+	public Map<WorkflowElement, Set<ContainerElement>> rootViewContainers
 	
 	
 	///////////////////////////////////////
 	// Model Elements
 	///////////////////////////////////////
 	
-	@Property
-	private Collection<Entity> entities
+	@Accessors
+	public Collection<Entity> entities
 	
-	@Property
-	private Collection<Enum> enums
+	@Accessors
+	public Collection<Enum> enums
+	
+	
+	///////////////////////////////////////
+	// Workflow Elements
+	///////////////////////////////////////
+	
+	@Accessors
+	public Collection<App> apps
 	
 	
 	/**
@@ -99,6 +125,8 @@ class DataContainer {
 		extractElementsFromModels
 		
 		extractRootViews
+		
+		extractElementsFromWorkflows
 	
 	}
 	
@@ -107,10 +135,6 @@ class DataContainer {
 	 */
 	def private intializeModelTypedLists(ResourceSet input) {
 		
-		views = newHashSet()
-		controllers = newHashSet()
-		models = newHashSet()
-		
 		val md2models = input.resources.map[ r |
 			r.contents.filter(MD2Model)
 		].flatten
@@ -118,9 +142,10 @@ class DataContainer {
 		md2models.forEach[ md2model |
 			val modelLayer = md2model.modelLayer
 			switch modelLayer {
-				View : views.add(modelLayer)
-				Model : models.add(modelLayer)
-				Controller : controllers.add(modelLayer)
+				View : view = modelLayer
+				Model : model = modelLayer
+				Controller : controller = modelLayer
+				Workflow : workflow = modelLayer
 			}
 		]
 	}
@@ -130,9 +155,7 @@ class DataContainer {
 	 * and app version without iterating over the object tree over and over again.
 	 */
 	def private extractUniqueMain() {
-		main = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(Main)
-		].flatten.head
+	    main = controller.controllerElements.filter(Main).head
 	}
 	
 	/**
@@ -142,18 +165,14 @@ class DataContainer {
 		customActions = newHashSet
 		contentProviders = newHashSet
 		remoteValidators = newHashSet
+		workflowElements = newHashSet
 		
-		customActions = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(CustomAction)
-		].flatten.toSet
+		var ce = controller.controllerElements 
 		
-		contentProviders = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(ContentProvider)
-		].flatten.toSet
-		
-		remoteValidators = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(RemoteValidator)
-		].flatten.toSet
+		customActions     = ce.filter(CustomAction).toSet
+		contentProviders  = ce.filter(ContentProvider).toSet
+		remoteValidators  = ce.filter(RemoteValidator).toSet
+		workflowElements  = ce.filter(WorkflowElement).toSet
 	}
 	
 	/**
@@ -163,13 +182,8 @@ class DataContainer {
 		entities = newHashSet
 		enums = newHashSet
 		
-		entities = models.map[ model |
-			model.modelElements.filter(Entity)
-		].flatten.toSet
-		
-		enums = models.map[ model |
-			model.modelElements.filter(Enum)
-		].flatten.toSet
+		entities = model.modelElements.filter(Entity).toSet
+		enums = model.modelElements.filter(Enum).toSet
 	}
 	
 	/**
@@ -181,25 +195,76 @@ class DataContainer {
 	 */
 	def private extractRootViews() {
 		
-		rootViewContainers = newHashSet
-		
-		// Get all views that are accessed by GotoViewActions at some time
-		val containers = controllers.map[ ctrl |
-			ctrl.controllerElements.filter(CustomAction).map[ customAction |
-				customAction.eAllContents.toIterable
-			].flatten.filter(GotoViewAction).map[ gotoView |
-				resolveContainerElement(gotoView.view)
-			]
-		].flatten
-		
-		// Calculate root view for each view that is accessed via a GotoViewAction
-		rootViewContainers = containers.map[ container |
-			var EObject elem = container
-			while (!(elem.eContainer instanceof View)) {
-				elem = elem.eContainer
-			}
-			elem as ContainerElement
-		].toSet
+		rootViewContainers = newHashMap
+			
+		for (WorkflowElement workflowElement : workflowElements){
+			// Get all views that are accessed by GotoViewActions at some time
+			val containers = (workflowElement.actions + workflowElement.initActions).filter(CustomAction).map[ customAction |
+					customAction.eAllContents.toIterable
+				].flatten.filter(GotoViewAction).map[ gotoView |
+					resolveContainerElement(gotoView.view)
+				]
+			
+			// Calculate root view for each view that is accessed via a GotoViewAction
+			rootViewContainers.put(workflowElement, containers.map[ container |
+				var EObject elem = container
+				while (!(elem.eContainer instanceof View)) {
+					elem = elem.eContainer
+				}
+				elem as ContainerElement
+			].toSet)
+		}
 	}
 	
+	/**
+	 * Extract all apps.
+	 */
+	def private extractElementsFromWorkflows() {
+		apps = newHashSet
+		apps = workflow.apps.toSet
+	}
+	
+	/**
+	 * Returns all workflows associated with the current app.
+	 */
+	def public workflowElementsForApp(App app) {
+	    val wfes = app.workflowElements.map[it.workflowElementReference].toSet
+	    return wfes
+	}
+
+	/**
+	 * Return all events declared in a workflowElement.
+	 */
+    def public Iterable<WorkflowEvent> getEventsFromWorkflowElement(WorkflowElement wfe) {
+       
+       var wfeEntry = workflow.workflowElementEntries.filter[it.workflowElement.equals(wfe)].head
+       
+       return wfeEntry.firedEvents.map[it.event]
+    }
+    
+    /**
+	 * Return fireEventEntry for workflow event.
+	 */
+    def public FireEventEntry getFireEventEntryForWorkflowEvent(WorkflowEvent we, WorkflowElement wfe) {
+       
+       var wfeEntry = workflow.workflowElementEntries.filter[it.workflowElement.equals(wfe)].head
+       
+       return wfeEntry.firedEvents.filter[it.event.equals(we)].head
+    }
+
+    
+    /**
+	 * Return the workflowElement that is started by an event.
+	 */
+    def public WorkflowElement getNextWorkflowElement(WorkflowElement wfe, WorkflowEvent e) {
+        var wfes = workflow.workflowElementEntries
+
+        for (WorkflowElementEntry entry : wfes) {
+            if (entry.workflowElement.equals(wfe)) {
+                var searchedEvent = entry.firedEvents.filter[fe|fe.event.name.equals(e.name)].head
+                return searchedEvent.startedWorkflowElement
+            }
+        }
+        return null;
+    }
 }

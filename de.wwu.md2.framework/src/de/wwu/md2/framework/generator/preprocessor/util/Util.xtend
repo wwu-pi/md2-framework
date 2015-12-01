@@ -8,6 +8,8 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.emf.ecore.util.EcoreUtil
 
 import static extension org.apache.commons.codec.digest.DigestUtils.*
+import org.eclipse.emf.ecore.util.EObjectEList
+import org.eclipse.emf.ecore.util.EObjectContainmentEList
 
 /**
  * Provides utility methods to operate on EMF models.
@@ -45,7 +47,7 @@ class Util {
 	 * Create a string representation for a given EObject. All features (attributes and cross-references) of the EObject itself
 	 * and all contained EObjects is calculated.
 	 */
-	def static String eObjectRecusriveStringRepresentation(EObject eObject) {
+	def static String eObjectRecursiveStringRepresentation(EObject eObject) {
 		
 		val signature = new StringBuilder
 		eObject.eAllContents.forEach[ o |
@@ -55,14 +57,23 @@ class Util {
 				val value = switch (a) {
 					EAttribute: o.eGet(a)
 					EReference: {
-						val eobj = (o.eGet(a) as EObject)
-						if (eobj != null) {
-							val className = eobj.eClass.name
-							val name = if (eobj.eClass.EAllAttributes.exists[ x | x.name.equals("name") ])
-								         "[" + eobj.eGet(eobj.eClass.EAllAttributes.filter[ x | x.name.equals("name") ].last) + "]"
-								       else "[]"
-							className + name
-						}
+					    val eRef = o.eGet(a)
+					    val _value = switch(eRef) {
+					        EObject: {
+                                val eobj = (eRef as EObject)
+                                if (eobj != null) {
+                                    val className = eobj.eClass.name
+                                    val name = if (eobj.eClass.EAllAttributes.exists[ x | x.name.equals("name") ])
+                                                 "[" + eobj.eGet(eobj.eClass.EAllAttributes.filter[ x | x.name.equals("name") ].last) + "]"
+                                               else "[]"
+                                    className + name
+                                }
+					        }
+					        EObjectContainmentEList: {
+					            (eRef as EObjectContainmentEList).eObjectContainmentEListRecursiveStringRepresentation
+					        }
+					    }
+						_value
 					}
 				}
 				features.add(a.name + "=" + value)
@@ -73,6 +84,17 @@ class Util {
 		return signature.toString
 	}
 	
+	def static String eObjectContainmentEListRecursiveStringRepresentation(EObjectContainmentEList eList) {
+	    val signature = new StringBuilder
+	    for(Object o : eList){
+	        switch(o){
+	            EObject: signature.append(o.eObjectRecursiveStringRepresentation)
+	            EObjectContainmentEList: o.eObjectContainmentEListRecursiveStringRepresentation
+	        }
+	    }
+        return signature.toString
+    }
+	
 	/**
 	 * Calculate a SHA1 hash of the string representation (@see eObjectRecusriveStringRepresentation) of an EObject.
 	 * This is for example useful to generate unique names for different SimpleActions or Validators. If an EObject (e.g.
@@ -80,7 +102,7 @@ class Util {
 	 * has to be generated only once.
 	 */
 	def static String calculateParameterSignatureHash(EObject eObject) {
-		eObjectRecusriveStringRepresentation(eObject).sha1Hex
+		eObjectRecursiveStringRepresentation(eObject).sha1Hex
 	}
 	
 }

@@ -2,7 +2,7 @@
 <feature
       id="de.wwu.md2.framework.feature"
       label="MD2 Framework"
-      version="0.2.0.rc3"
+      version="0.3.0"
       provider-name="University of Muenster">
 
    <description>
@@ -67,14 +67,14 @@ limitations under the License.
          id="de.wwu.md2.framework"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.3.0"
          unpack="false"/>
 
    <plugin
          id="de.wwu.md2.framework.ui"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.3.0"
          unpack="false"/>
 
 </feature>

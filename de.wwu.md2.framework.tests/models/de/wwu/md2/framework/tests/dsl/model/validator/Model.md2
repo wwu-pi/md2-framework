@@ -1,0 +1,18 @@
+package models
+
+entity Drug {
+	pzn : string
+	drugName: string
+	status: DrugStatus (default "hello")
+}
+
+enum DrugStatus {
+	"needsReplenishment",
+	"ordered",
+	"inDelivery",
+	"inStock"
+}
+
+entity Pharmacy {
+	drug: Drug (default "hallo")
+}

@@ -17,5 +17,4 @@ class PersistenceXml {
 			</persistence-unit>
 		</persistence>
 	'''
-	
 }

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: de.wwu.md2.framework.tests
 Bundle-Vendor: WWU
-Bundle-Version: 0.2.0
+Bundle-Version: 0.3.0
 Bundle-SymbolicName: de.wwu.md2.framework.tests; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.wwu.md2.framework,
@@ -16,14 +16,11 @@ Require-Bundle: de.wwu.md2.framework,
  org.eclipse.xtend2.lib,
  com.google.inject,
  com.google.guava,
- org.eclipse.xtext.xbase.lib
-Import-Package: org.apache.log4j,
+ org.eclipse.xtext.xbase.lib,
+ org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional
+Import-Package: org.apache.commons.io;version="2.0.1";resolution:=optional,
  org.apache.commons.logging,
- org.junit.runner;version="4.5.0",
- org.junit.runner.manipulation;version="4.5.0",
- org.junit.runner.notification;version="4.5.0",
- org.junit.runners;version="4.5.0",
- org.junit.runners.model;version="4.5.0",
+ org.apache.log4j,
  org.hamcrest.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.wwu.md2.framework

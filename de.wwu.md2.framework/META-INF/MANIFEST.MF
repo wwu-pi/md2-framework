@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: de.wwu.md2.framework
 Bundle-Vendor: WWU
-Bundle-Version: 0.2.0
+Bundle-Version: 0.3.0
 Bundle-SymbolicName: de.wwu.md2.framework; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0";visibility:=reexport,
@@ -16,12 +16,15 @@ Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0";visibility:=reexport,
  org.eclipse.emf.ecore,
  org.eclipse.emf.common,
  org.antlr.runtime,
- org.eclipse.xtext.common.types
-Import-Package: org.apache.commons.logging,
+ org.eclipse.xtext.common.types,
+ org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional,
+ org.eclipse.xtext.xbase.lib
+Import-Package: org.apache.commons.logging;resolution:=optional,
  org.apache.log4j,
  org.eclipse.xtend2.lib;resolution:=optional,
  org.eclipse.xtext.xbase.lib,
- org.eclipse.xtend.lib
+ org.eclipse.xtend.lib,
+ org.eclipse.xtend.lib.annotations
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.wwu.md2.framework,
  de.wwu.md2.framework.services,
@@ -36,11 +39,7 @@ Export-Package: de.wwu.md2.framework,
  de.wwu.md2.framework.generator,
  de.wwu.md2.framework.formatting,
  de.wwu.md2.framework.util,
+ org.apache.commons.io,
+ com.google.inject,
  org.zeroturnaround.zip
-Bundle-ClassPath: libs/guice-multibindings-3.0.jar,
- libs/guice-3.0.jar,
- libs/zt-zip-1.6.jar,
- libs/slf4j-api-1.7.7.jar,
- libs/commons-io-2.4.jar,
- libs/commons-codec-1.9.jar,
- .
+Bundle-ClassPath: libs/guice-multibindings-3.0.jar,libs/guice-3.0.jar,libs/zt-zip-1.6.jar,libs/slf4j-api-1.7.7.jar,libs/commons-io-2.4.jar,libs/commons-codec-1.9.jar,.

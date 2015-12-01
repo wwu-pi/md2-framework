@@ -28,12 +28,16 @@ class WebContentFiles {
 		  <display-name>«basePackageName»</display-name>
 		  <servlet>
 		    <servlet-name>Jersey REST Service</servlet-name>
-		    <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+		    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
 		    <init-param>
-		      <param-name>com.sun.jersey.config.property.packages</param-name>
+		      <param-name>jersey.config.server.provider.packages</param-name>
 		      <param-value>«basePackageName».ws;org.codehaus.jackson.jaxrs</param-value>
 		    </init-param>
-		    <load-on-startup>1</load-on-startup>
+		    <init-param>
+		  		<param-name>jersey.config.server.provider.classnames</param-name>
+		   		<param-value>org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
+			</init-param>
+			    <load-on-startup>1</load-on-startup>
 		  </servlet>
 		  <servlet-mapping>
 		    <servlet-name>Jersey REST Service</servlet-name>
@@ -68,5 +72,4 @@ class WebContentFiles {
 			</body>
 		</html>
 	'''
-	
 }

@@ -63,6 +63,21 @@ import static de.wwu.md2.framework.generator.mapapps.Expressions.*
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
+import de.wwu.md2.framework.mD2.FireEventAction
+import de.wwu.md2.framework.mD2.WorkflowEvent
+import de.wwu.md2.framework.mD2.WorkflowElement
+import de.wwu.md2.framework.mD2.Action
+import org.eclipse.emf.ecore.EObject
+import de.wwu.md2.framework.mD2.LocationAction
+import de.wwu.md2.framework.mD2.WebServiceCallAction
+import de.wwu.md2.framework.mD2.RESTParam
+import de.wwu.md2.framework.mD2.Attribute
+import de.wwu.md2.framework.mD2.ContentProviderPath
+import de.wwu.md2.framework.mD2.StringRestParam
+import de.wwu.md2.framework.mD2.BooleanRestParam
+import de.wwu.md2.framework.mD2.FloatRestParam
+import de.wwu.md2.framework.mD2.IntegerRestParam
+import de.wwu.md2.framework.mD2.ContentProviderRestParam
 
 class CustomActionClass {
 	
@@ -261,6 +276,76 @@ class CustomActionClass {
 		var «varName» = this.$.actionFactory.getContentProviderResetAction("«action.contentProvider.contentProvider.name»");
 	'''
 	
+	def private static dispatch String generateActionCodeFragment(LocationAction action, String varName, Map<String, String> imports) '''
+		var «varName» = this.$.actionFactory.getLocationAction("«action.cityInput.resolveContentProviderPathAttribute»","«action.cityInput.resolveContentProviderName»","«action.streetInput.resolveContentProviderPathAttribute»",
+		"«action.streetInput.resolveContentProviderName»","«action.streetNumberInput.resolveContentProviderPathAttribute»","«action.streetNumberInput.resolveContentProviderName»","«action.postalInput.resolveContentProviderPathAttribute»",
+		"«action.postalInput.resolveContentProviderName»","«action.countryInput.resolveContentProviderPathAttribute»","«action.countryInput.resolveContentProviderName»",
+		"«action.getLatitude.resolveContentProviderPathAttribute»","«action.getLongitude.resolveContentProviderPathAttribute»","«action.getLatitude.resolveContentProviderName»","«action.getLongitude.resolveContentProviderName»"); 
+	'''
+	
+	def private static dispatch String generateActionCodeFragment(FireEventAction action, String varName, Map<String, String> imports) 
+	//TODO: Preprocessing porbably needs to be changed; 
+	//also: getFiredEventAction does not exists in code -> RefImpl.
+	'''
+		var «varName» = this.$.actionFactory.getFireEventAction("«(action.containingWorkflowElement).name»","«action.workflowEvent.name»");
+	'''
+	
+	def private static dispatch String generateActionCodeFragment(WebServiceCallAction action, String varName, Map<String,String> imports)'''
+        «imports.put("lang", "dojo/_base/lang").returnVoid»
+        var «varName» = this.$.actionFactory.getWebServiceCallAction("«action.webServiceCall.url»", "«action.webServiceCall.method»", «action.webServiceCall.queryparams.transformToJson», «action.webServiceCall.bodyparams.transformToJson»);
+	'''
+	
+	def public static String transformToJson(List<RESTParam> params){
+		var json = '''
+		[
+			«FOR RESTParam p : params SEPARATOR ","»
+				{"key": "«p.key»", "value": «p.getType»} 
+			«ENDFOR»
+		]'''
+		return json
+	}
+	
+	/**
+	 * Extracts the type of the value and formats it for JavaScript.
+	 * If a contentProviderField is referenced, add a function to load the data from the contentprovider
+	 */
+	def public static String getType(RESTParam param)
+	{
+		switch (param.value){
+			//for values written manually in model
+			StringRestParam:     "\"" + (param.value as StringRestParam).value + "\""
+			BooleanRestParam:    (param.value as BooleanRestParam).value + ""
+			FloatRestParam:      (param.value as FloatRestParam).value + ""
+			IntegerRestParam:    (param.value as IntegerRestParam).value + ""
+			ContentProviderRestParam: {
+			    val cpPath = (param.value as ContentProviderRestParam).value as ContentProviderPath
+                "lang.hitch(this, function(){return this.$.contentProviderRegistry.getContentProvider(\"" + cpPath.contentProviderRef.name.toFirstLower + "\").getValue(\"" + cpPath.attributeFromContentProviderPath.name + "\");})"
+            }
+		}
+	}
+	
+	/**
+	 * Traverse the contentProviderPath to get the final attribute.
+	 */
+	def private static Attribute getAttributeFromContentProviderPath(ContentProviderPath path){
+	    var tail = path.tail
+	    while(tail.tail != null){
+	        tail = path.tail
+	    }
+	    return tail.attributeRef
+	}
+	
+	def public static WorkflowElement getContainingWorkflowElement(FireEventAction context)
+	{
+		var EObject current = context;
+		while(!(current.eContainer() instanceof WorkflowElement))
+		{
+			current = current.eContainer();
+		}
+		
+		return (current.eContainer() as WorkflowElement);
+	}
+	
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// Event
@@ -297,12 +382,13 @@ class CustomActionClass {
 	'''
 	
 	
+	
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	// Content Provider
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	def private static dispatch generateContentProviderCodeFragment(ContentProvider contentProvider, String varName) '''
-		var «varName» = this.$.contentProviderRegistry.getContentProvider("«contentProvider.name»");
+		var «varName» = this.$.contentProviderRegistry.getContentProvider("«contentProvider.name.toFirstLower»");
 	'''
 	
 	def private static dispatch generateContentProviderCodeFragment(AbstractProviderReference contentProvider, String varName) '''

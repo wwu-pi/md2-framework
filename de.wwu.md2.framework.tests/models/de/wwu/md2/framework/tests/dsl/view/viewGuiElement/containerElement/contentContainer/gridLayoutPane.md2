@@ -1,0 +1,128 @@
+package views.gridLayoutPane
+
+GridLayoutPane gridLayoutPane (columns 2, rows 9) {
+	Label TitleLbl ("The Location") 
+	Spacer
+	
+	// -----------
+	// INPUTS
+	// -----------
+	
+	BooleanInput boolInput {
+		label "b"
+		tooltip "bool"
+		type default
+		disabled false
+		default true
+		width 30%
+	}
+	
+	TextInput textInput {
+		label "textInput"
+		tooltip "textInput"
+		type textarea
+		disabled false
+		default "text"
+		width 20%
+	}
+	
+	IntegerInput integerInput {
+		label "integerInput"
+		tooltip "integerInput"
+		type input
+		disabled false
+		default 3000
+		width 20%
+	}
+	
+	NumberInput numberInput {
+		label "numberInput"
+		tooltip "numberInput"
+		type input
+		disabled false
+		default 42.1
+		width 20%
+	}
+	
+	DateInput dateInput {
+		label "dateInput"
+		tooltip "dateInput"
+		type default
+		disabled false
+		default 2000-01-01
+		width 20%
+	}
+	
+	TimeInput timeInput {
+		label "timeInput"
+		tooltip "timeInput"
+		type default
+		disabled false
+		default 12:30:30+12:30
+		width 20%
+	}
+	
+	TimeInput timeInput2 {
+		label "timeInput2"
+		tooltip "timeInput2"
+		type default
+		disabled false
+		default 12:30:30Z
+		width 20%
+	}
+	
+	TimeInput timeInput3 {
+		label "timeInput3"
+		tooltip "timeInput3"
+		type default
+		disabled false
+		default 12:30:30-12:30
+		width 20%
+	}
+	
+	TimeInput timeInput4 {
+		label "timeInput4"
+		tooltip "timeIntimeInput4put3"
+		type default
+		disabled false
+		default 12:30:30
+		width 20%
+	}
+	
+	DateTimeInput dateTimeInput {
+		label "dateInput"
+		tooltip "dateInput"
+		type default
+		disabled false
+		default 2014-01-01T00:30:00Z
+		width 20%
+	}
+	
+	DateTimeInput dateTimeInput2 {
+		label "dateTimeInput2"
+		tooltip "dateTimeInput2"
+		type default
+		disabled false
+		default 2014-01-01T00:30:00-03:00
+		width 20%
+	}
+	
+	OptionInput optionInput {
+		label "optionInput"
+		tooltip "optionInput"
+		type default
+		disabled false
+		default "your choice!"
+		width 20%
+		options { "your choice" }
+	}
+	
+	OptionInput optionInput2 {
+		label "optionInput"
+		tooltip "optionInput"
+		type default
+		disabled false
+		default "your choice!"
+		width 20%
+	}
+}

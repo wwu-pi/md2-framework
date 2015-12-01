@@ -10,17 +10,18 @@ import de.wwu.md2.framework.mD2.WhereClauseNot
 import de.wwu.md2.framework.mD2.WhereClauseOr
 import java.util.Map
 import java.util.Set
-import org.eclipse.emf.ecore.resource.ResourceSet
 
 import static de.wwu.md2.framework.generator.mapapps.Expressions.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
+import de.wwu.md2.framework.generator.util.DataContainer
+import de.wwu.md2.framework.mD2.App
 
 class ContentProviderClass {
 	
-	def static String generateContentProvider(ContentProvider contentProvider, ResourceSet processedInput) '''
+	def static String generateContentProvider(ContentProvider contentProvider, DataContainer dataContainer, App app) '''
 		«val imports = newLinkedHashMap("declare" -> "dojo/_base/declare", "ContentProvider" -> "md2_runtime/contentprovider/ContentProvider")»
-		«val body = generateContentProviderBody(contentProvider, processedInput, imports)»
+		«val body = generateContentProviderBody(contentProvider, dataContainer, app, imports)»
 		define([
 			«FOR key : imports.keySet SEPARATOR ","»
 				"«imports.get(key)»"
@@ -32,7 +33,7 @@ class ContentProviderClass {
 		});
 	'''
 	
-	def static String generateContentProviderBody(ContentProvider contentProvider, ResourceSet processedInput, Map<String, String> imports) '''
+	def static String generateContentProviderBody(ContentProvider contentProvider, DataContainer dataContainer, App app, Map<String, String> imports) '''
 		/**
 		 * ContentProvider Factory
 		 */
@@ -45,7 +46,7 @@ class ContentProviderClass {
 				«ELSE»
 					«generateRemoteBody(contentProvider)»
 				«ENDIF»
-				var appId = "md2_«processedInput.getBasePackageName.replace(".", "_")»";
+				var appId = "md2_«app.name»";
 				
 				«IF contentProvider.filter»
 					var filter = function() {
@@ -71,7 +72,7 @@ class ContentProviderClass {
 					};
 				«ENDIF»
 				
-				return new ContentProvider("«contentProvider.name.toFirstLower»", appId, store, «IF contentProvider.type.many»true«ELSE»false«ENDIF»«IF contentProvider.filter», filter«ENDIF»);
+				return new ContentProvider("«contentProvider.name.toFirstLower»", appId, store, «IF contentProvider.type.many»true«ELSE»false«ENDIF»«IF contentProvider.filter», filter«ELSE», null«ENDIF», «!contentProvider.local»);
 			}
 			
 		});

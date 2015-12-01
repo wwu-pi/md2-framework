@@ -20,15 +20,34 @@ package «projectName + ".controllers"»
  */
 
 main {
-	appName "«projectName»"
 	appVersion "1.0"
 	modelVersion "1.0"
-	startView firstView
-	onInitialized startAction
+	workflowManager WorkflowBackendConnection
 }
 
-action CustomAction startAction {
+remoteConnection WorkflowBackendConnection {
+	uri "http://localhost:8080/«projectName».backend/service/"
+}
+
+WorkflowElement firstWFE {
+	defaultProcessChain firstProcessChain
 	
+	onInit {
+		init
+	}
+	
+	action CustomAction init {
+		
+	}
+	
+	action CustomAction firstAction {
+		call FireEvent (BasicEvent)
+	}
+	
+	processChain  firstProcessChain {
+		step firstStep:
+			view firstView
+	}
 }
 «ENDFILE»
 «FILE "src/" + projectName.replaceAll("\\.", "/") + "/views/defaultView.md2"-»
@@ -41,6 +60,26 @@ package «projectName + ".views"»
 FlowLayoutPane firstView {
 	
 }
+«ENDFILE»
+«FILE "src/" + projectName.replaceAll("\\.", "/") + "/workflows/defaultWorkflow.md2"-»
+package «projectName + ".workflows"»
+
+/*
+ * Implement the workflow here
+ */
+ 
+WorkflowElement firstWFE
+	fires BasicEvent {
+		end workflow
+	}
+
+App «projectName»App {
+	WorkflowElements {
+		firstWFE (startable: "Start WFE 1")
+	}
+	appName "«projectName»"
+}
+
 «ENDFILE»
 «FILE ".settings/org.eclipse.core.resources.prefs"-»
 eclipse.preferences.version=1

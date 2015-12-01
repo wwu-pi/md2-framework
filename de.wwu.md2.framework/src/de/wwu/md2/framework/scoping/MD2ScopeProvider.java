@@ -30,6 +30,7 @@ import de.wwu.md2.framework.mD2.ContentProviderReference;
 import de.wwu.md2.framework.mD2.DataType;
 import de.wwu.md2.framework.mD2.Entity;
 import de.wwu.md2.framework.mD2.EntityPath;
+import de.wwu.md2.framework.mD2.FireEventEntry;
 import de.wwu.md2.framework.mD2.MD2Package;
 import de.wwu.md2.framework.mD2.ModelElement;
 import de.wwu.md2.framework.mD2.PathTail;
@@ -37,6 +38,10 @@ import de.wwu.md2.framework.mD2.ReferencedModelType;
 import de.wwu.md2.framework.mD2.ReferencedType;
 import de.wwu.md2.framework.mD2.ViewElementType;
 import de.wwu.md2.framework.mD2.ViewGUIElementReference;
+import de.wwu.md2.framework.mD2.WorkflowElementEntry;
+import de.wwu.md2.framework.mD2.WorkflowEvent;
+import de.wwu.md2.framework.mD2.impl.FireEventEntryImpl;
+import de.wwu.md2.framework.util.GetFiredEventsHelper;
 
 /**
  * This class contains custom scoping description.
@@ -50,8 +55,37 @@ public class MD2ScopeProvider extends AbstractDeclarativeScopeProvider {
 	@Inject
 	private QualifiedNameProvider qualifiedNameProvider;
 	
-	public static Collection<EClass> validContainerForAbstractViews = Sets.newHashSet(MD2Package.eINSTANCE.getMain(), MD2Package.eINSTANCE.getWorkflowStep(), MD2Package.eINSTANCE.getSimpleAction());
+	@Inject
+	private GetFiredEventsHelper helper;
 	
+	public static Collection<EClass> validContainerForAbstractViews = Sets.newHashSet(MD2Package.eINSTANCE.getMain(), MD2Package.eINSTANCE.getProcessChainStep(), MD2Package.eINSTANCE.getSimpleAction());
+	
+
+	IScope scope_FireEventEntry_event(FireEventEntry fireEventEntry, EReference eventRef) {
+		WorkflowElementEntry wfe = (WorkflowElementEntry)(fireEventEntry.eContainer());
+		
+		// Get set of all Workflow Events fired within the Workflow Element
+		Set<WorkflowEvent> firedEvents = helper.getFiredEvents(wfe.getWorkflowElement());
+		
+		// Remove those that are already handled in other FireEventEntries
+		for (FireEventEntry otherFireEventEntry : wfe.getFiredEvents()) {
+			// Really only consider others
+			if (otherFireEventEntry == fireEventEntry) {
+				continue;
+			}
+			
+			// remove Entry:
+			// requires access to implementation, because getEvent() causes
+			// exceptions with cyclic references when trying to resolve the Workflow Event
+			firedEvents.remove(
+					((FireEventEntryImpl)otherFireEventEntry).basicGetEvent()
+					);
+		}
+		
+		return Scopes.scopeFor(firedEvents);
+	}
+	
+
 	// Scoping for nested attributes
 	IScope scope_PathTail_attributeRef(PathTail pathTail, EReference attributeRef) {
 		Set<EObject> resultSet = Sets.newHashSet();

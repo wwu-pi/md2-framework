@@ -38,6 +38,8 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameProvider
+import de.wwu.md2.framework.mD2.Main
+import de.wwu.md2.framework.mD2.RemoteConnection
 
 class MD2GeneratorUtil {
 	
@@ -63,15 +65,6 @@ class MD2GeneratorUtil {
 		pkgNameSegments.addAll(model.package.pkgName.split("\\."))
 		pkgNameSegments.remove(pkgNameSegments.size - 1)
 		pkgNameSegments.join(".")
-	}
-	
-	/**
-	 * Creates a camelCase string from the app name declared in the main block of the app.
-	 */
-	def static createAppName(DataContainer dataContainer) '''«FOR part : dataContainer.main.appName.split(" ")»«part.toFirstUpper»«ENDFOR»'''
-	
-	def static createAppClassName(DataContainer dataContainer) {
-		createAppName(dataContainer) + "Application"
 	}
 	
 	/**
@@ -152,7 +145,7 @@ class MD2GeneratorUtil {
 	 */
 	def static resolveContentProviderName(AbstractContentProviderPath abstractPath) {
 		switch (abstractPath) {
-			ContentProviderPath: abstractPath.contentProviderRef.name
+			ContentProviderPath: abstractPath.contentProviderRef.name.toFirstLower
 			LocationProviderPath: "location"
 		}
 	}
@@ -163,7 +156,7 @@ class MD2GeneratorUtil {
 	 */
 	def static resolveContentProviderName(AbstractProviderReference abstractProviderReference) {
 		switch (abstractProviderReference) {
-			ContentProviderReference: abstractProviderReference.contentProvider.name
+			ContentProviderReference: abstractProviderReference.contentProvider.name.toFirstLower
 			LocationProviderReference: "location"
 		}
 	}
@@ -286,6 +279,55 @@ class MD2GeneratorUtil {
 			FlowLayoutPane: container.params
 		}.filter([it instanceof TabTitleParam]).head
 		if (param != null) (param as TabTitleParam).tabTitle else container.name.toFirstUpper
+	}
+
+	/**
+	 * Build and return the uri for the workflowWS, ensuring that a / is prepended
+	 */
+	def static getWorkflowWSUri(DataContainer container){
+		var uri = container.main.workflowManager.uri
+		if (!uri.endsWith("/")){
+			uri = uri + "/"	
+			}
+		return uri
+	}
+
+	/**
+	 * Build and return the uri for the default connection, ensuring that a / is prepended
+	 */
+	def static getDefaultConnectionUri(DataContainer container){
+		var uri = container.main.defaultConnection.uri
+		if (!uri.endsWith("/")){
+			uri = uri + "/"	
+			}
+		return uri
+	}
+	/**
+	 * Build and return the uri for the file upload connection, ensuring that a / is prepended
+	 */
+	def static getFileUploadConnectionURI(DataContainer container) {
+	    if(container.main.fileUploadConnection == null){
+	        return ""
+	    }
+		var uri = container.main.fileUploadConnection.uri
+		if (!uri.endsWith("/")){
+			uri = uri + "/"	
+			}
+		return uri
+	}
+	
+	/**
+	 * Formats the storage path such that single backslahes are converted into 
+	 * double backslashes. This is necessary since they are used in a string property 
+	 * in the backend, where double backslashes are required.
+	 * And since xtext interprets double backslashes as a single backslash, we don't 
+	 * want to require developers to learn that they need to type four backslashes...
+	 */
+	def static getEscapedStoragePath(RemoteConnection remoteConnection) {
+		val path = remoteConnection?.storagePath
+		if (path == null) return ''''''
+		
+		return path.replace("\\", "\\\\")
 	}
 
 }
