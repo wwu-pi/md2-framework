@@ -22,7 +22,7 @@ import de.wwu.md2.framework.mD2.CustomCodeFragment
 
 //import de.wwu.md2.framework.services.MD2GrammarAccess
 
-class IOSValidator extends AbstractGeneratorSupportValidator{
+class IOSValidator extends AbstractMD2JavaValidator{
 
 	@Inject
     override register(EValidatorRegistrar registrar) {
