@@ -3,15 +3,15 @@ Thumbs.db
 .DS_Store
 
 # bin directories of our projects
-/de.wwu.md2.framework/bin
-/de.wwu.md2.framework.tests/bin
-/de.wwu.md2.framework.ui/bin
+/de.wwu.md2.framework/bin/
+/de.wwu.md2.framework.tests/bin/
+/de.wwu.md2.framework.ui/bin/
 
 # gen directories of our projects
-#/de.wwu.md2.framework/src-gen => for this dir there is an own gitignore directly in the dir
-/de.wwu.md2.framework/xtend-gen
-/de.wwu.md2.framework.tests/src-gen
-/de.wwu.md2.framework.tests/xtend-gen
+#/de.wwu.md2.framework/src-gen/ => for this dir there is an own gitignore directly in the dir
+/de.wwu.md2.framework/xtend-gen/
+/de.wwu.md2.framework.tests/src-gen/
+/de.wwu.md2.framework.tests/xtend-gen/
 /de.wwu.md2.framework.ui/src-gen
 /de.wwu.md2.framework/plugin.xml_gen
 /de.wwu.md2.framework.ui/plugin.xml_gen
@@ -21,15 +21,15 @@ project.xcworkspace/
 xcuserdata/
 
 #Android Lollipop generator
-/de.wwu.md2.framework.android.lollipop/bin
-/de.wwu.md2.framework.android.lollipop/target
+/de.wwu.md2.framework.android.lollipop/bin/
+/de.wwu.md2.framework.android.lollipop/target/
 /de.wwu.md2.framework.android.lollipop/plugin.xml_gen
-/de.wwu.md2.framework.android.lollipop/src-gen
-/de.wwu.md2.framework.android.lollipop/xtend-gen
+/de.wwu.md2.framework.android.lollipop/src-gen/
+/de.wwu.md2.framework.android.lollipop/xtend-gen/
 /de.wwu.md2.framework/res/resources/android/lollipop/*.aar
 
-/de.wwu.md2.framework.android/bin
-/de.wwu.md2.framework.android/target
+/de.wwu.md2.framework.android/bin/
+/de.wwu.md2.framework.android/target/
 /de.wwu.md2.framework.android/plugin.xml_gen
-/de.wwu.md2.framework.android/src-gen
-/de.wwu.md2.framework.android/xtend-gen
+/de.wwu.md2.framework.android/src-gen/
+/de.wwu.md2.framework.android/xtend-gen/
