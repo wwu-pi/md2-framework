@@ -50,6 +50,8 @@ import de.wwu.md2.framework.mD2.ViewElementEventRef
 import de.wwu.md2.framework.mD2.ViewElementSetTask
 import de.wwu.md2.framework.mD2.WorkflowElement
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
+import de.wwu.md2.framework.mD2.WebServiceCallAction
+import de.wwu.md2.framework.mD2.LocationAction
 
 class ActionGen {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
@@ -298,6 +300,12 @@ class ActionGen {
 //			TODO: implement ContentProviderGetAction
 			ContentProviderGetAction:
 			 result = ''''''
+//			TODO: implement WebServiceCallAction
+			WebServiceCallAction:
+				result = ''''''
+//			TODO: implement LocationAction
+			LocationAction:
+				result = ''''''
 			default:
 				throw new UnsupportedOperationException("generateSimpleAction()")
 		}
