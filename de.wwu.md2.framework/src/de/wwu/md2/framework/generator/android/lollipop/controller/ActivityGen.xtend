@@ -44,7 +44,7 @@ class ActivityGen {
 		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
 		
 		«FOR wer : startableWorkflowElements»		        	
-			import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___startupAction_Action;
+			import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action;
 		«ENDFOR»
 		
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2GoToViewAction;
@@ -69,7 +69,7 @@ class ActivityGen {
 		        
 				«FOR wer : startableWorkflowElements»
 					Md2Button «wer.workflowElementReference.name»Button = (Md2Button) findViewById(R.id.startActivity_«wer.workflowElementReference.name»Button);
-					«wer.workflowElementReference.name»Button.getOnClickHandler().registerAction(new «wer.workflowElementReference.name.toFirstUpper»___startupAction_Action());
+					«wer.workflowElementReference.name»Button.getOnClickHandler().registerAction(new «wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action());
 		        «ENDFOR»
 				Md2TaskQueue.getInstance().tryExecutePendingTasks();
 		    }

@@ -13,11 +13,14 @@ class GradleGen {
 	def static String generateProjectBuild()'''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.misc.Gradle.generateProjectBuild()
 		buildscript {
+			// Gradle thinks 2.2 > 2.14 ... workaround to allow build in Android Studio
+			System.properties['com.android.build.gradle.overrideVersionCheck'] = 'true'
+			
 			repositories {
 				jcenter()
 			}
 			dependencies {
-				classpath 'com.android.tools.build:gradle:1.2.3'
+				classpath 'com.android.tools.build:gradle:2.1.3'
 			}
 		}
 
