@@ -47,6 +47,9 @@ class ControllerGen {
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2SQLiteHelper;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.implementation.Md2SQLiteDataStore;
 		import «Settings.MD2LIBRARY_PACKAGE»view.management.implementation.Md2ViewManager;
+		import «Settings.MD2LIBRARY_PACKAGE»workflow.Md2WorkflowEventRegistry;
+		import «Settings.MD2LIBRARY_PACKAGE»workflow.Md2WorkflowElement;
+		import «Settings.MD2LIBRARY_PACKAGE»workflow.Md2WorkflowAction;
 		
 		public class Controller extends AbstractMd2Controller {
 		
@@ -86,16 +89,16 @@ class ControllerGen {
 		    public void registerWorkflowEvents() {
 		    	«FOR fireEventEntry : workflowElements.map[wfeEntry | wfeEntry.firedEvents.toList ].flatten»
 		    	        
-		    	    Md2WorkflowEventRegistry.getInstance().addWorkflowElement(
-		    	        Md2FireEventAction«fireEventEntry.event.name.toFirstUpper»,
+		    	    Md2WorkflowEventRegistry.getInstance().addWorkflowEvent(
+		    	        "Md2FireEventAction«fireEventEntry.event.name.toFirstUpper»",
 		    	        «IF fireEventEntry.endWorkflow»
 		    	        new Md2WorkflowElement("«(fireEventEntry.eContainer as WorkflowElementEntry).workflowElement.name.toFirstUpper»", 
-		    	        	new «(fireEventEntry.eContainer as WorkflowElementEntry).workflowElement.name.toFirstUpper»___«(fireEventEntry.eContainer as WorkflowElementEntry).workflowElement.name.toFirstUpper»_startupAction_Action()),
-		    	        MD2WorkflowAction.END);
+		    	        	new md2.mamlproject.md2.controller.action.«(fireEventEntry.eContainer as WorkflowElementEntry).workflowElement.name.toFirstUpper»___«(fireEventEntry.eContainer as WorkflowElementEntry).workflowElement.name.toFirstUpper»_startupAction_Action()),
+		    	        Md2WorkflowAction.END);
 		    	        «ELSE»
 		    	        new Md2WorkflowElement("«fireEventEntry.startedWorkflowElement.name.toFirstUpper»", 
-		    	        	new «fireEventEntry.startedWorkflowElement.name.toFirstUpper»___«fireEventEntry.startedWorkflowElement.name.toFirstUpper»_startupAction_Action()),
-		    	        MD2WorkflowAction.START);
+		    	        	new md2.mamlproject.md2.controller.action.«fireEventEntry.startedWorkflowElement.name.toFirstUpper»___«fireEventEntry.startedWorkflowElement.name.toFirstUpper»_startupAction_Action()),
+		    	        Md2WorkflowAction.START);
 		    	        «ENDIF»
 		    	«ENDFOR»
 		    }
