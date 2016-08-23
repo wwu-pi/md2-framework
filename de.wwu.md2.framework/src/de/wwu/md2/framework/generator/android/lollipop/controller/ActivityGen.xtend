@@ -67,6 +67,7 @@ class ActivityGen {
 				super.onStart();
 				Md2ViewManager.getInstance().setActiveView(this);
 		        
+		        // TODO move startableWorkflowElements to Md2WorkflowManager
 				«FOR wer : startableWorkflowElements»
 					Md2Button «wer.workflowElementReference.name»Button = (Md2Button) findViewById(R.id.startActivity_«wer.workflowElementReference.name»Button);
 					«wer.workflowElementReference.name»Button.getOnClickHandler().registerAction(new «wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action());

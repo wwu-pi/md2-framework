@@ -270,8 +270,9 @@ class ActionGen {
 				result = ''''''
 			DisplayMessageAction:
 				result = '''Md2DisplayMessageAction(«generateSimpleExpression(sa.message)».toString())'''
-			FireEventAction:
-				result = ''''''
+			FireEventAction:{
+					result = '''Md2FireEventAction("«sa.workflowEvent.name»")'''
+				}
 			ContentProviderOperationAction: {
 				val contentProvider = sa.contentProvider
 				var contentProviderName = ""

@@ -7,9 +7,15 @@ import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.SimpleType
+import de.wwu.md2.framework.generator.util.DataContainer
+import de.wwu.md2.framework.mD2.WorkflowElementEntry
 
 class ControllerGen {
-	def static generateController(String mainPackage, App app, Iterable<Entity> entities, Iterable<ContentProvider> contentProviders)'''
+	def static generateController(String mainPackage, App app, DataContainer data)'''
+		«var entities = data.entities»
+		«var contentProviders = data.contentProviders»
+		«var workflowElements = data.workflow.workflowElementEntries»
+		
 		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.Md2Controller.generateController()
 		package «mainPackage».md2.controller;
 		
@@ -62,6 +68,7 @@ class ControllerGen {
 		    @Override
 		    public void run() {
 		        this.registerContentProviders();
+		        this.registerWorkflowEvents();
 		    }
 
 		    public void registerContentProviders() {
@@ -74,6 +81,23 @@ class ControllerGen {
 		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»(new «MD2AndroidLollipopUtil.getTypeNameForContentProvider(cp)»(), (Md2SQLiteDataStore) lsf.getDataStore("«typeName»"));
 		        	cpr.add("«cp.name»", «cp.name.toFirstLower»);
 		        «ENDFOR»
+		    }
+		    
+		    public void registerWorkflowEvents() {
+		    	«FOR fireEventEntry : workflowElements.map[wfeEntry | wfeEntry.firedEvents.toList ].flatten»
+		    	        
+		    	    Md2WorkflowEventRegistry.getInstance().addWorkflowElement(
+		    	        Md2FireEventAction«fireEventEntry.event.name.toFirstUpper»,
+		    	        «IF fireEventEntry.endWorkflow»
+		    	        new Md2WorkflowElement("«(fireEventEntry.eContainer as WorkflowElementEntry).workflowElement.name.toFirstUpper»", 
+		    	        	new «(fireEventEntry.eContainer as WorkflowElementEntry).workflowElement.name.toFirstUpper»___«(fireEventEntry.eContainer as WorkflowElementEntry).workflowElement.name.toFirstUpper»_startupAction_Action()),
+		    	        MD2WorkflowAction.END);
+		    	        «ELSE»
+		    	        new Md2WorkflowElement("«fireEventEntry.startedWorkflowElement.name.toFirstUpper»", 
+		    	        	new «fireEventEntry.startedWorkflowElement.name.toFirstUpper»___«fireEventEntry.startedWorkflowElement.name.toFirstUpper»_startupAction_Action()),
+		    	        MD2WorkflowAction.START);
+		    	        «ENDIF»
+		    	«ENDFOR»
 		    }
 		
 		    @Override
