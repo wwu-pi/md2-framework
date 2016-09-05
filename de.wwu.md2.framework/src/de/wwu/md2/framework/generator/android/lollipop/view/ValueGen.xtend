@@ -11,6 +11,7 @@ import de.wwu.md2.framework.mD2.Tooltip
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.WorkflowElementReference
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
+import de.wwu.md2.framework.mD2.ContentContainer
 
 class ValueGen {
 
@@ -36,7 +37,7 @@ class ValueGen {
 		<resources>
 			<string name="app_name">«app.appName»</string>
 			«FOR rce : rootContainerElements»
-				<string name="title_activity_«rce.name.toFirstLower»">«rce.name»</string>
+				<string name="title_activity_«rce.name.toFirstLower»">«getActivityTitle(rce)»</string>
 			«ENDFOR»
 			
 			«FOR wer : wers»
@@ -48,6 +49,13 @@ class ValueGen {
 			«ENDFOR»
 		</resources>
 	'''
+	
+	def static getActivityTitle(ContainerElement element) {
+		switch element {
+			ContentContainer: return element.elements.filter(Label).findFirst[label | label.name.startsWith("_title")].text
+		}
+		return element.name
+	}
 
 	protected def static String generateStringEntry(ViewGUIElement viewGUIElement) {
 		val qnp = new DefaultDeclarativeQualifiedNameProvider

@@ -11,6 +11,7 @@ import de.wwu.md2.framework.mD2.TextInput
 import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
 import de.wwu.md2.framework.mD2.WorkflowElementReference
+import de.wwu.md2.framework.mD2.ContentContainer
 
 class ActivityGen {
 	
@@ -148,6 +149,10 @@ class ActivityGen {
 	'''
 	
 	private static def String generateAddViewElement(ViewElementType vet){
+		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] != null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
+			return "" // Skip title label
+		}
+		
 		var String result = ""
 		var String type = ""
 		
@@ -172,6 +177,10 @@ class ActivityGen {
 	}
 	
 	private static def String generateLoadViewElement(ViewElementType vet){
+		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] != null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
+			return "" // Skip title label
+		}
+		
 		var String result = ""
 		var String type = ""
 		
@@ -196,6 +205,10 @@ class ActivityGen {
 	}
 	
 	private static def String generateSaveViewElement(ViewElementType vet){
+		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] != null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
+			return "" // Skip title label
+		}
+		
 		var String result = ""
 		var String type = ""
 		
