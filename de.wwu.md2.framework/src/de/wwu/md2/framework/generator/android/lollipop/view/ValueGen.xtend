@@ -52,7 +52,13 @@ class ValueGen {
 	
 	def static getActivityTitle(ContainerElement element) {
 		switch element {
-			ContentContainer: return element.elements.filter(Label).findFirst[label | label.name.startsWith("_title")].text
+			ContentContainer: {
+				if(element.elements.filter(Label).findFirst[label | label.name.startsWith("_title")] != null){
+					return element.elements.filter(Label).findFirst[label | label.name.startsWith("_title")].text
+				} else {
+					return ""
+				}
+			}
 		}
 		return element.name
 	}
