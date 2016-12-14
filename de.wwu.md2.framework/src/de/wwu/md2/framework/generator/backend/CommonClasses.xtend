@@ -40,6 +40,8 @@ class CommonClasses {
 			
 			«IF dataContainer.main.fileUploadConnection != null»
 			public final static File UPLOAD_FILE_STORAGE_PATH = new File("«dataContainer.main.fileUploadConnection.escapedStoragePath»");
+			«ELSE»
+			public final static File UPLOAD_FILE_STORAGE_PATH = null;
 			«ENDIF»
 			
 

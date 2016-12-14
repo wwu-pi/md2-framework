@@ -50,7 +50,8 @@ class SQLiteGen {
 			«FOR e : entities»
 			private static final String SQL_CREATE_«e.name.toUpperCase»_ENTRIES =
 				"CREATE TABLE " + «e.name.toFirstUpper»Entry.TABLE_NAME + " (" +
-				«e.name.toFirstUpper»Entry._ID + " INTEGER PRIMARY KEY," +
+				«e.name.toFirstUpper»Entry._ID + " INTEGER PRIMARY KEY" +
+				«IF e.attributes.size > 0»COMMA_SEP +«ENDIF»
 				«FOR a : e.attributes SEPARATOR " + TEXT_TYPE + COMMA_SEP +" AFTER " + TEXT_TYPE +"»
 					«e.name.toFirstUpper»Entry.COLUMN_NAME_«a.name.toUpperCase»
 				«ENDFOR»
@@ -60,9 +61,10 @@ class SQLiteGen {
 					"DROP TABLE IF EXISTS " + «e.name.toFirstUpper»Entry.TABLE_NAME;
 								
 				private final String[] all«e.name.toFirstUpper»Columns = {
-				«FOR a : e.attributes SEPARATOR ", " AFTER "};"»
+				«FOR a : e.attributes SEPARATOR ", "»
 					«e.name.toFirstUpper»Entry.COLUMN_NAME_«a.name.toUpperCase»
 				«ENDFOR»
+				};
 			«ENDFOR»
 
 		    public Md2SQLiteHelperImpl(Context context) {

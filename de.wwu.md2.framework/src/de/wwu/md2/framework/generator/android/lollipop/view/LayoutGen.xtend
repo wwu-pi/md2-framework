@@ -191,6 +191,7 @@ class LayoutGen {
 				newElement = createTextInputElement(doc, viewElement)
 			}
 			Label: {
+				if(viewElement.name.startsWith("_title")) { return } // Skip title label
 				newElement = createLabelElement(doc, viewElement)
 			}
 			default:

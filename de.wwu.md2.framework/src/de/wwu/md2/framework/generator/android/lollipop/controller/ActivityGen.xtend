@@ -11,6 +11,7 @@ import de.wwu.md2.framework.mD2.TextInput
 import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
 import de.wwu.md2.framework.mD2.WorkflowElementReference
+import de.wwu.md2.framework.mD2.ContentContainer
 
 class ActivityGen {
 	
@@ -44,7 +45,7 @@ class ActivityGen {
 		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
 		
 		«FOR wer : startableWorkflowElements»		        	
-			import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___startupAction_Action;
+			import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action;
 		«ENDFOR»
 		
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2GoToViewAction;
@@ -67,9 +68,10 @@ class ActivityGen {
 				super.onStart();
 				Md2ViewManager.getInstance().setActiveView(this);
 		        
+		        // TODO move startableWorkflowElements to Md2WorkflowManager
 				«FOR wer : startableWorkflowElements»
 					Md2Button «wer.workflowElementReference.name»Button = (Md2Button) findViewById(R.id.startActivity_«wer.workflowElementReference.name»Button);
-					«wer.workflowElementReference.name»Button.getOnClickHandler().registerAction(new «wer.workflowElementReference.name.toFirstUpper»___startupAction_Action());
+					«wer.workflowElementReference.name»Button.getOnClickHandler().registerAction(new «wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action());
 		        «ENDFOR»
 				Md2TaskQueue.getInstance().tryExecutePendingTasks();
 		    }
@@ -147,6 +149,10 @@ class ActivityGen {
 	'''
 	
 	private static def String generateAddViewElement(ViewElementType vet){
+		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] != null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
+			return "" // Skip title label
+		}
+		
 		var String result = ""
 		var String type = ""
 		
@@ -171,6 +177,10 @@ class ActivityGen {
 	}
 	
 	private static def String generateLoadViewElement(ViewElementType vet){
+		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] != null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
+			return "" // Skip title label
+		}
+		
 		var String result = ""
 		var String type = ""
 		
@@ -195,6 +205,10 @@ class ActivityGen {
 	}
 	
 	private static def String generateSaveViewElement(ViewElementType vet){
+		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] != null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
+			return "" // Skip title label
+		}
+		
 		var String result = ""
 		var String type = ""
 		
