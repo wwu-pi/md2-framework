@@ -1,7 +1,1 @@
-bin/
-*.smap
-*._trace
-build
-dist
-/gen
-.idea/
+/build
