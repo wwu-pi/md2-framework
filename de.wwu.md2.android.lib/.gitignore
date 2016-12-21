@@ -26,3 +26,5 @@
 /gradle
 .idea/gradle.xml
 .idea/libraries
+gradlew
+gradlew.bat
