@@ -328,7 +328,7 @@ class ActionGen {
 				result = '''(«generateCondition(condition.leftExpression)» && «generateCondition(condition.rightExpression)»)'''
 			}
 			Not: {
-				result = '''(!(«condition.expression»))'''
+				result = '''(!(«generateCondition(condition.expression)»))'''
 			}
 			default:
 				throw new UnsupportedOperationException("generateCondition()")

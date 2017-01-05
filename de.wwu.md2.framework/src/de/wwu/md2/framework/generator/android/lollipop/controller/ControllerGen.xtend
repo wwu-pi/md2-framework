@@ -14,7 +14,7 @@ class ControllerGen {
 	def static generateController(String mainPackage, App app, DataContainer data)'''
 		«var entities = data.entities»
 		«var contentProviders = data.contentProviders»
-		«var workflowElements = data.workflow.workflowElementEntries»
+		«var workflowElements = data.workflow.workflowElementEntries.filter(entry | app.workflowElements.map(wfe | wfe.workflowElementReference).contains(entry.workflowElement))»
 		
 		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.Md2Controller.generateController()
 		package «mainPackage».md2.controller;

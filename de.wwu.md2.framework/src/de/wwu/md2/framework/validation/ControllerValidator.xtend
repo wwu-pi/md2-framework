@@ -521,16 +521,18 @@ class ControllerValidator extends AbstractMD2JavaValidator {
         
         // Search for Entities with nested Entities and put them into hm
         for (cp : cpList) {
-            val entity = (cp.type as ReferencedModelType).entity as Entity
-            val refEntities = entity.attributes.filter[it.type instanceof ReferencedType].filter[(it.type as ReferencedType).element instanceof Entity].toList
-            for (rE : refEntities){
-                var temphashmap = hm.get(entity.name)
-                if (temphashmap == null){
-                    temphashmap = <String, String>newHashMap
-                    hm.put(entity.name, temphashmap)
-                }
-                temphashmap.put(rE.name, (rE.type as ReferencedType).element.name)              
-            }
+        	if((cp.type as ReferencedModelType).entity instanceof Entity) {
+	            val entity = (cp.type as ReferencedModelType).entity as Entity
+	            val refEntities = entity.attributes.filter[it.type instanceof ReferencedType].filter[(it.type as ReferencedType).element instanceof Entity].toList
+	            for (rE : refEntities){
+	                var temphashmap = hm.get(entity.name)
+	                if (temphashmap == null){
+	                    temphashmap = <String, String>newHashMap
+	                    hm.put(entity.name, temphashmap)
+	                }
+	                temphashmap.put(rE.name, (rE.type as ReferencedType).element.name)              
+	            }
+        	} // else skip enums
         }
         // Only do for CustomActions, that include a call to save a ContentProvider  
         val callTasks = caction.codeFragments.filter(CallTask)

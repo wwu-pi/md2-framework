@@ -119,6 +119,8 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			 ***************************************************/
 			// Entities
 			EntityGen.generateEntities(fsa, rootFolder, mainPath, mainPackage, dataContainer.entities)
+			// Enums
+			EntityGen.generateEnums(fsa, rootFolder, mainPath, mainPackage, dataContainer.enums)
 
 			// Content Provider
 			ContentProviderGen.generateContentProviders(fsa, rootFolder, mainPath, mainPackage,

@@ -13,6 +13,8 @@ import de.wwu.md2.framework.mD2.IntegerType
 import de.wwu.md2.framework.mD2.ReferencedType
 import de.wwu.md2.framework.mD2.StringType
 import de.wwu.md2.framework.mD2.TimeType
+import de.wwu.md2.framework.mD2.FileType
+import de.wwu.md2.framework.mD2.Enum
 
 class EntityGen {
 	
@@ -70,6 +72,47 @@ class EntityGen {
 		}
 	'''
 	
+	def static generateEnums(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
+		Iterable<Enum> enums) {
+		enums.forEach [ e |
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/" + e.name + ".java",
+				generateEnum(mainPackage, e))
+		]
+	}
+	
+	private def static generateEnum(String mainPackage, Enum entity) '''
+		// generated in de.wwu.md2.framework.generator.android.lollipop.model.Md2Entity.generateEnum()
+		package «mainPackage + ".md2.model"»;
+		
+		import java.util.ArrayList;
+		import java.util.Arrays;
+		
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Enum;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2String;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
+		
+		public class «entity.name.toFirstUpper» extends AbstractMd2Enum {
+		
+			ArrayList<Md2String> values = new ArrayList<Md2String>(Arrays.asList(
+			«FOR elem: entity.enumBody.elements SEPARATOR ", "»
+				new Md2String("«elem»")
+			«ENDFOR»));
+			
+			public «entity.name.toFirstUpper»(String enumName) {
+				super(enumName);
+			}
+			
+			public «entity.name.toFirstUpper»(String enumName, ArrayList<Md2String> values) {
+				super(enumName, values);
+			}
+			
+			@Override
+		    public Md2Type clone() {
+		        return new «entity.name.toFirstUpper»(this.enumName, this.getAll());
+		    }
+		}
+	'''
+	
 	private def static String getMd2TypeStringForAttributeType(AttributeType attributeType){
 		switch attributeType{
 			ReferencedType: attributeType.element.name.toFirstUpper
@@ -80,6 +123,7 @@ class EntityGen {
 			DateType: "Md2Date"
 			TimeType: "Md2Time"
 			DateTimeType: "Md2DateTime"			
+			FileType: "Object" // TODO not implemented
 		}		
 	}
 }
