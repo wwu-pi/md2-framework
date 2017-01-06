@@ -26,6 +26,36 @@ configurations {
 	}
 }
 
+eclipse {
+	classpath {	
+		file {
+			whenMerged { classpath ->
+				if(classpath.entries.findAll({entry -> entry instanceof org.gradle.plugins.ide.eclipse.model.Container && entry.path == 'org.eclipse.pde.core.requiredPlugins'
+				}).size == 0) {
+					
+					withXml {
+						def node = it.asNode()
+						
+						logger.info 'Add classpath entry for org.eclipse.pde.core.requiredPlugins'
+						
+						node.appendNode('classpathentry', [kind: 'con', path: 'org.eclipse.pde.core.requiredPlugins'])
+					}
+				}
+				
+				// Add source path
+				if(classpath.entries.findAll({entry -> entry instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder }).size == 0) {
+					classpath.entries.add( new org.gradle.plugins.ide.eclipse.model.SourceFolder('src', null))
+					classpath.entries.add( new org.gradle.plugins.ide.eclipse.model.SourceFolder('src-gen', null))
+					classpath.entries.add( new org.gradle.plugins.ide.eclipse.model.SourceFolder('xtend-gen', null))
+				}
+				
+				// Add Xtend_container (unknown if really necessary)
+				// node.appendNode('classpathentry', [kind: 'con', path: 'org.eclipse.xtend.XTEND_CONTAINER'])
+			}
+		}
+	}
+}
+
 task generateMD2(type: JavaExec, dependsOn: eclipseClasspath) {
 	main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
 	classpath = configurations.compile + files('./src/') // Cannot be set via sourceset as it throws errors before having generated the language files
