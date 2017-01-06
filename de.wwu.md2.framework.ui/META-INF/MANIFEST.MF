@@ -28,5 +28,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.wwu.md2.framework.ui.contentassist.antlr,
  de.wwu.md2.framework.ui.internal,
  de.wwu.md2.framework.ui.contentassist,
- de.wwu.md2.framework.ui.quickfix
+ de.wwu.md2.framework.ui.quickfix,
+ de.wwu.md2.framework.ui.contentassist.antlr.internal
 Bundle-Activator: de.wwu.md2.framework.ui.internal.MD2Activator
