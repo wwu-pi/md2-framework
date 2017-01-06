@@ -3,6 +3,7 @@
 buildscript {
 	repositories {
 		jcenter()
+		mavenLocal()
 	}
 	dependencies {
 		// NOTE: Do not place your application dependencies here; they belong
