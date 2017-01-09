@@ -39,3 +39,7 @@ xcuserdata/
 
 # Logging
 *.log
+
+# Eclipse project files
+.project
+.classpath
