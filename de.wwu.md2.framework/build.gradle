@@ -1,10 +1,7 @@
-apply plugin: 'java'
-apply plugin: 'eclipse'
-
 dependencies {
 	// To run MD2 creation workflow
-	compile 'org.ow2.asm:asm:5.2'
 	compile 'org.eclipse.equinox:org.eclipse.equinox.common:3.6.200.v20130402-1505'
+	compile 'org.ow2.asm:asm:5.2'
 	compile 'org.eclipse.emf:org.eclipse.emf.mwe2.launch:2.8.3'
 	compile 'org.eclipse.xtext:org.eclipse.xtext:2.10.0'
 	compile 'org.eclipse.xtext:org.eclipse.xtext.common.types:2.10.0'
@@ -16,7 +13,6 @@ dependencies {
 	
 	// Dependencies in Eclipse project
 	compile 'com.google.inject.extensions:guice-multibindings:3.0'
-	//compile 'commons-io:commons-io:2.5'
 	compile 'commons-codec:commons-codec:1.10'
 }
 
@@ -56,7 +52,7 @@ eclipse {
 	}
 }
 
-task generateMD2(type: JavaExec, dependsOn: eclipseClasspath) {
+task generateMD2LanguageArtifacts(type: JavaExec, dependsOn: 'eclipse') {
 	main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
 	classpath = configurations.compile + files('./src/') // Cannot be set via sourceset as it throws errors before having generated the language files
 	

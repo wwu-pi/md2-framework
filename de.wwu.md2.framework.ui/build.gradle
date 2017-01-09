@@ -1,0 +1,35 @@
+dependencies {
+	// Dependencies in Eclipse project
+	compile 'org.eclipse.xtext:org.eclipse.xtext.builder:2.10.0'
+	compile 'org.eclipse.platform:org.eclipse.ui:3.108.1'
+	compile 'org.eclipse.platform:org.eclipse.ui.workbench:3.108.2'
+	compile 'org.eclipse.platform:org.eclipse.jface:3.12.1'
+	compile 'org.eclipse.platform:org.eclipse.jface.text:3.11.2'
+	compile 'org.eclipse.platform:org.eclipse.core.resources:3.11.1'
+	compile 'org.zeroturnaround:zt-zip:1.10'
+	compile 'org.eclipse.xtext:org.eclipse.xtext.ide:2.10.0'
+	compile 'org.eclipse.xtext:org.eclipse.xtext.ui:2.10.0'
+	compile 'org.eclipse.xtext:org.eclipse.xtext.ui.shared:2.10.0'
+	compile 'org.eclipse.xtext:org.eclipse.xtext.ui.codetemplates.ui:2.10.0'
+	compile 'org.eclipse.xtext:org.eclipse.xtext.common.types.ui:2.10.0'
+	compile 'org.eclipse.emf:edit-ui:2.1.0'
+	compile 'org.eclipse.jdt:org.eclipse.jdt.core:3.12.2'
+	
+	// Runtime dependencies
+	compile 'com.google.inject.extensions:guice-multibindings:3.0'
+	
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs = ['src/', 'src-gen/'] 
+		}
+	}
+}
+
+task setupFrameworkUi(dependsOn: 'eclipse') {
+    doLast {
+        println 'SetupFrameworkUi done!'
+    }
+}

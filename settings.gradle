@@ -1,1 +1,1 @@
-include ':de.wwu.md2.framework'
+include ':de.wwu.md2.framework', ':de.wwu.md2.framework.ui'
