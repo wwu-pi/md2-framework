@@ -12,18 +12,37 @@ dependencies {
 	compile 'org.eclipse.xtext:org.eclipse.xtext.ui.shared:2.10.0'
 	compile 'org.eclipse.xtext:org.eclipse.xtext.ui.codetemplates.ui:2.10.0'
 	compile 'org.eclipse.xtext:org.eclipse.xtext.common.types.ui:2.10.0'
-	compile 'org.eclipse.emf:edit-ui:2.1.0'
+	//compile 'org.eclipse.emf.edit:ui:2.3.0-v200706262000'
 	compile 'org.eclipse.jdt:org.eclipse.jdt.core:3.12.2'
 	
 	// Runtime dependencies
 	compile 'com.google.inject.extensions:guice-multibindings:3.0'
-	
 }
 
 sourceSets {
 	main {
 		java {
 			srcDirs = ['src/', 'src-gen/'] 
+		}
+	}
+}
+
+eclipse {
+	classpath {	
+		file {
+			whenMerged { classpath ->
+				//if(classpath.entries.findAll({entry -> entry instanceof org.gradle.plugins.ide.eclipse.model.Container && entry.path == 'org.eclipse.pde.core.requiredPlugins'
+				//}).size == 0) {
+					
+					withXml {
+						def node = it.asNode()
+						
+						logger.info 'Add classpath entry for org.eclipse.pde.core.requiredPlugins'
+						
+						node.appendNode('classpathentry', [kind: 'lib', path: 'lib/org.eclipse.emf.edit.ui_2.12.0.v20160526-0356.jar'])
+					}
+				//}
+			}
 		}
 	}
 }
