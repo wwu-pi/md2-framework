@@ -1,5 +1,4 @@
 /.antlr-generator-*.jar
-/xtend-gen
 /src-gen
 /target
 

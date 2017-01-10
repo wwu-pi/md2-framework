@@ -47,7 +47,7 @@ eclipse {
 	}
 }
 
-task setupFrameworkUi(dependsOn: 'eclipse') {
+task setupFrameworkUi(dependsOn: 'eclipseProject') {
     doLast {
         println 'SetupFrameworkUi done!'
     }

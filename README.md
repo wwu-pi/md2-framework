@@ -13,14 +13,16 @@ To simplify development, initial setup is mostly automated using build scripts (
 The installation was tested with Eclipse Neon 2 and Xtext 2.10.0 (January 2017).
 
 1. Clone the repository to the local machine using `git clone https://github.com/wwu-pi/md2-framework.git`
-1. Cd into `/md2-framework` and initialize the project with `gradle setupMD2`. There might be some warnings but it should be fine if you find the line `[main] INFO  .emf.mwe2.runtime.workflow.Workflow  - Done.` towards the end.
+1. Cd into `/md2-framework` and initialize the project with `gradle setupMD2`. The first time, this will take a few minutes. There might be some warnings but it should be fine if you find the line `[main] INFO  .emf.mwe2.runtime.workflow.Workflow  - Done.` in the middle.
 1. Download and unzip the [Eclipse Modeling Tools package](http://www.eclipse.org/downloads/packages/eclipse-modeling-tools/neon2)
 1. Copy the file from the repository path `de.wwu.md2.framework.ui/lib/guice-multibindings-3.0.jar` to the `/plugin` directory of the unzipped Eclipse installation
 1. Start Eclipse and choose a workspace of your choice
-1. Go to `Help` > `Install New Software...`, click on `Add...` and add the Xtext Update Site `http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/`
-1. Install at least the `Xtext SDK` and `Xtend IDE` components from this site.
+1. Go to `Help` > `Install New Software...`, click on `Add...`, enter the Xtext Update Site `http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/`
+1. Install at least the `Xtext Complete SDK` and `Xtend IDE` components from this site.
 1. Restart Eclipse
-1. Import all projects contained in the local MD2 repository. There should be three of them (framework, ui, test)
+1. Switch to the Java perspective (red icon in top right corner) or open it first
+1. Import the `de.wwu.md2.framework` and `de.wwu.md2.framework.ui` projects contained in the local MD2 repository
+1. Trigger the compilation of the Xtend files by opening one of them (e.g. `de.wwu.md2.framework/generator/TestGenerator.xtend`). The `xtend-gen` directory should be populated now (sometimes adding a space and saving the .xtend file does the trick)
 1. Happy coding! To see your changes, run the de.wwu.md2.framework project as Eclipse Application. This way, the current projects are installed as plugins and you can test the modeling environment. End users should use the setup instructions in the previous chapter to avoid running this Eclipse-in-Eclipse construct.
 
 Additional (but potentially outdated) information can be found in the Installation section of the Developer's Handbook chapter in the [MD² documentation](https://github.com/ps-md2/md2-documentation) for information on how to set up the development environment for MD².
