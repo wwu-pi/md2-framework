@@ -52,6 +52,7 @@ import de.wwu.md2.framework.mD2.WorkflowElement
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import de.wwu.md2.framework.mD2.WebServiceCallAction
 import de.wwu.md2.framework.mD2.LocationAction
+import de.wwu.md2.framework.mD2.ValidatorBindingTask
 
 class ActionGen {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
@@ -213,6 +214,10 @@ class ActionGen {
 
 //			TODO: implement ViewElementSetTask
 			ViewElementSetTask:
+				return ""
+				
+			//TODO implement ValidatorBindingTask
+			ValidatorBindingTask:
 				return ""
 
 			ConditionalCodeFragment: {
