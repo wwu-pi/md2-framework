@@ -21,7 +21,7 @@ class EntityGen {
 	def static generateEntities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<Entity> entities) {
 		entities.forEach [ e |
-			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/" + e.name + ".java",
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/" + e.name.toFirstUpper + ".java",
 				generateEntity(mainPackage, e))
 		]
 	}
@@ -75,7 +75,7 @@ class EntityGen {
 	def static generateEnums(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<Enum> enums) {
 		enums.forEach [ e |
-			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/" + e.name + ".java",
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/" + e.name.toFirstUpper + ".java",
 				generateEnum(mainPackage, e))
 		]
 	}

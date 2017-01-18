@@ -10,7 +10,7 @@ class ContentProviderGen {
 	def static generateContentProviders(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<ContentProvider> contentProviders) {
 		contentProviders.forEach [ cp |
-			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/contentProvider/" + cp.name + ".java",
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/contentProvider/" + cp.name.toFirstUpper + ".java",
 				generateContentProvider(mainPackage, cp))
 		]
 	}
