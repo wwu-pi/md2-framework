@@ -39,4 +39,7 @@ Export-Package: de.wwu.md2.framework,
  de.wwu.md2.framework.scoping,
  de.wwu.md2.framework.generator,
  de.wwu.md2.framework.formatting,
- de.wwu.md2.framework.util
+ de.wwu.md2.framework.util,
+ com.google.inject,
+ org.apache.commons.codec
+Bundle-ClassPath: lib/guice-multibindings-3.0.jar,lib/commons-codec-1.10.jar,.

@@ -11,10 +11,9 @@ dependencies {
 	compile 'org.eclipse.xpand:org.eclipse.xtend:2.0.0'
 	compile 'org.eclipse.xpand:org.eclipse.xtend.typesystem.emf:2.0.0'
 	
-	// Dependencies in Eclipse project
-	compile 'com.google.inject:guice:4.1.0'
-	compile 'com.google.inject.extensions:guice-multibindings:4.1.0'
-	compile 'commons-codec:commons-codec:1.10'
+	// Dependencies to export as deployable plugin (currently manually managed in Eclipse project and /lib folder)
+	//compile 'com.google.inject.extensions:guice-multibindings:3.0' // Current version is 4.1 but requires base guice-4.1 which does not work because Eclipse ships with guice-3.0 and will not load a second (newer) jar
+	//compile 'commons-codec:commons-codec:1.10'
 }
 
 configurations {
@@ -31,12 +30,19 @@ eclipse {
 				}).size == 0) {
 					
 					withXml {
-						def node = it.asNode()
-						
 						logger.info 'Add classpath entry for org.eclipse.pde.core.requiredPlugins'
 						
+						def node = it.asNode()
 						node.appendNode('classpathentry', [kind: 'con', path: 'org.eclipse.pde.core.requiredPlugins'])
 					}
+				}
+				
+				withXml {
+					logger.info 'Add classpath entries for manually managed runtime dependencies'
+					
+					def node = it.asNode()
+					node.appendNode('classpathentry', [kind: 'lib', exported: 'true', path: 'lib/commons-codec-1.10.jar'])
+					node.appendNode('classpathentry', [kind: 'lib', exported: 'true', path: 'lib/guice-multibindings-3.0.jar'])
 				}
 				
 				// Add source path
@@ -44,10 +50,13 @@ eclipse {
 					classpath.entries.add( new org.gradle.plugins.ide.eclipse.model.SourceFolder('src', null))
 					classpath.entries.add( new org.gradle.plugins.ide.eclipse.model.SourceFolder('src-gen', null))
 					classpath.entries.add( new org.gradle.plugins.ide.eclipse.model.SourceFolder('xtend-gen', null))
+					classpath.entries.add( new org.gradle.plugins.ide.eclipse.model.SourceFolder('res', null)) // required as source folder at runtime to copy resources e.g. for backend
 				}
 				
 				// Add Xtend_container (unknown if really necessary)
-				// node.appendNode('classpathentry', [kind: 'con', path: 'org.eclipse.xtend.XTEND_CONTAINER'])
+				// withXml {
+				//	it.asNode().appendNode('classpathentry', [kind: 'con', path: 'org.eclipse.xtend.XTEND_CONTAINER'])
+				//}
 			}
 		}
 	}
