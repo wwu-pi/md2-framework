@@ -1,0 +1,39 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+	repositories {
+		jcenter()
+		mavenLocal()
+	}
+	dependencies {
+		// NOTE: Do not place your application dependencies here; they belong
+		// in the individual module build.gradle files
+	}
+}
+
+allprojects {
+	apply plugin: 'java'
+	apply plugin: 'eclipse'
+    
+	repositories {
+        jcenter()
+    }
+}
+
+task setupMD2 {
+	doLast {
+        println 'Setup done!'
+    }
+}
+
+// Project dependencies
+project(':de.wwu.md2.framework.ui') {
+    dependencies {
+        compile project(':de.wwu.md2.framework')
+    }
+}
+
+// Task ordering
+setupMD2.dependsOn ':de.wwu.md2.framework:generateMD2LanguageArtifacts'
+setupMD2.dependsOn ':de.wwu.md2.framework.ui:setupFrameworkUi'
+
+project.tasks.findByPath(':de.wwu.md2.framework.ui:setupFrameworkUi').mustRunAfter ':de.wwu.md2.framework:generateMD2LanguageArtifacts'

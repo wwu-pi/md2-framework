@@ -26,7 +26,7 @@ Import-Package: org.apache.commons.logging;resolution:=optional,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.xtend.lib,
  org.eclipse.xtend.lib.annotations
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.wwu.md2.framework,
  de.wwu.md2.framework.services,
  de.wwu.md2.framework.mD2,
@@ -40,7 +40,6 @@ Export-Package: de.wwu.md2.framework,
  de.wwu.md2.framework.generator,
  de.wwu.md2.framework.formatting,
  de.wwu.md2.framework.util,
- org.apache.commons.io,
  com.google.inject,
- org.zeroturnaround.zip
-Bundle-ClassPath: libs/guice-multibindings-3.0.jar,libs/guice-3.0.jar,libs/zt-zip-1.6.jar,libs/slf4j-api-1.7.7.jar,libs/commons-io-2.4.jar,libs/commons-codec-1.9.jar,.
+ org.apache.commons.codec
+Bundle-ClassPath: lib/guice-multibindings-3.0.jar,lib/commons-codec-1.10.jar,.
