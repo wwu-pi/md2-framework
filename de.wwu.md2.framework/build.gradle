@@ -3,10 +3,10 @@ dependencies {
 	compile 'org.eclipse.equinox:org.eclipse.equinox.common:3.6.200.v20130402-1505'
 	compile 'org.ow2.asm:asm:5.2'
 	compile 'org.eclipse.emf:org.eclipse.emf.mwe2.launch:2.8.3'
-	compile 'org.eclipse.xtext:org.eclipse.xtext:2.10.0'
-	compile 'org.eclipse.xtext:org.eclipse.xtext.common.types:2.10.0'
+	compile 'org.eclipse.xtext:org.eclipse.xtext:2.11.0'
+	compile 'org.eclipse.xtext:org.eclipse.xtext.common.types:2.11.0'
+	compile 'org.eclipse.xtext:org.eclipse.xtext.generator:2.11.0'
 	compile 'org.eclipse.emf:org.eclipse.emf.mwe.utils:1.3.20.201605261059'
-	compile 'org.eclipse.xtext:org.eclipse.xtext.generator:2.10.0'
 	compile 'org.eclipse.xpand:org.eclipse.xpand:2.0.0'
 	compile 'org.eclipse.xpand:org.eclipse.xtend:2.0.0'
 	compile 'org.eclipse.xpand:org.eclipse.xtend.typesystem.emf:2.0.0'
@@ -14,12 +14,7 @@ dependencies {
 	// Dependencies to export as deployable plugin (currently manually managed in Eclipse project and /lib folder)
 	//compile 'com.google.inject.extensions:guice-multibindings:3.0' // Current version is 4.1 but requires base guice-4.1 which does not work because Eclipse ships with guice-3.0 and will not load a second (newer) jar
 	//compile 'commons-codec:commons-codec:1.10'
-}
-
-configurations {
-	mwe2 {
-		extendsFrom compile
-	}
+	// TODO -> runtime configuration?
 }
 
 eclipse {
@@ -64,7 +59,7 @@ eclipse {
 
 task generateMD2LanguageArtifacts(type: JavaExec, dependsOn: 'eclipse') {
 	main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
-	classpath = configurations.compile + files('./src/') // Cannot be set via sourceset as it throws errors before having generated the language files
+	classpath = configurations.compile + files('./src/') + files('./antlr-generator-3.2.0-patch.jar') // Cannot be set via sourceset as it throws errors before having generated the language files
 	
 	outputs.dir 'src-gen'
 	args += 'src/de/wwu/md2/framework/GenerateMD2.mwe2'
