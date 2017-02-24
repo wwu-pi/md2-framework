@@ -1,3 +1,7 @@
+plugins {
+  id "org.xtext.xtend" version "1.0.17"
+}
+
 dependencies {
 	// To run MD2 creation workflow
 	compile 'org.eclipse.equinox:org.eclipse.equinox.common:3.6.200.v20130402-1505'
@@ -10,11 +14,21 @@ dependencies {
 	compile 'org.eclipse.xpand:org.eclipse.xpand:2.0.0'
 	compile 'org.eclipse.xpand:org.eclipse.xtend:2.0.0'
 	compile 'org.eclipse.xpand:org.eclipse.xtend.typesystem.emf:2.0.0'
+	compile 'org.eclipse.xtend:org.eclipse.xtend.lib:2.9.0'
 	
-	// Dependencies to export as deployable plugin (currently manually managed in Eclipse project and /lib folder)
-	//compile 'com.google.inject.extensions:guice-multibindings:3.0' // Current version is 4.1 but requires base guice-4.1 which does not work because Eclipse ships with guice-3.0 and will not load a second (newer) jar
-	//compile 'commons-codec:commons-codec:1.10'
+	// Dependencies to export as deployable plugin (currently manually added in Eclipse project and /lib folder)
 	// TODO -> runtime configuration?
+	compile 'commons-codec:commons-codec:1.10'
+	compile 'com.google.inject.extensions:guice-multibindings:3.0' // Current version is 4.1 but requires base guice-4.1 which does not work because Eclipse ships with guice-3.0 and will not load a second (newer) jar
+}
+
+sourceSets {
+	main.xtendOutputDir = 'xtend-gen'
+	test.xtendOutputDir = 'test/xtend-gen'
+	
+	main.java {
+		srcDirs = ['src/', 'src-gen/'] // TODO try with , 'xtend-gen/'
+	}
 }
 
 eclipse {
@@ -39,7 +53,8 @@ eclipse {
 					node.appendNode('classpathentry', [kind: 'lib', exported: 'true', path: 'lib/commons-codec-1.10.jar'])
 					node.appendNode('classpathentry', [kind: 'lib', exported: 'true', path: 'lib/guice-multibindings-3.0.jar'])
 				}
-				
+
+//TODO replace by second source set that is used to compile Java
 				// Add source path
 				if(classpath.entries.findAll({entry -> entry instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder }).size == 0) {
 					classpath.entries.add( new org.gradle.plugins.ide.eclipse.model.SourceFolder('src', null))
@@ -57,10 +72,34 @@ eclipse {
 	}
 }
 
-task generateMD2LanguageArtifacts(type: JavaExec, dependsOn: 'eclipse') {
+task runMweWorkflow(type: JavaExec, dependsOn: 'eclipse') {
 	main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
 	classpath = configurations.compile + files('./src/') + files('./antlr-generator-3.2.0-patch.jar') // Cannot be set via sourceset as it throws errors before having generated the language files
 	
 	outputs.dir 'src-gen'
 	args += 'src/de/wwu/md2/framework/GenerateMD2.mwe2'
 }
+
+// Apply first and then compile
+apply plugin: 'org.xtext.xtend'
+
+//task compile(type: JavaCompile, dependsOn: 'runMweWorkflow') {
+//	source = sourceSets.main.java //fileTree(dir: 'src', include: '**/*.java')
+//	destinationDir = file('bin')
+//	sourceCompatibility = '1.8'
+//	targetCompatibility = '1.8'
+//	//dependencyCacheDir = ???
+//	classpath = configurations.compile //files('build/classes/main')
+//	doLast{
+//		println sourceSets.main.java
+//	}
+//}
+
+task generateMD2LanguageArtifacts(dependsOn: ['runMweWorkflow', 'compileJava']) {
+	doLast {
+        println 'SetupFramework done!'
+    }
+}
+
+// Make sure mwe workflow runs before xtext validation (included in compileJavaStep)
+generateXtext.dependsOn runMweWorkflow

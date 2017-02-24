@@ -469,7 +469,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
     
     /**
      * Validator for nested entities -> throws a warning, if no content provider and initialization for nested entities exist.
-     * “A ContentProvider for a nested entity is missing.”
+     * "A ContentProvider for a nested entity is missing."
      *  
      *  @param ContentProvider
      */
@@ -506,7 +506,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
      /**
       * Validator for saving of nested entities. 
       * Show warning, if not set directly before saving.
-      * “Please be sure to check, if the provider is correctly set before using the saving operation.”
+      * "Please be sure to check, if the provider is correctly set before using the saving operation."
       * 
       * @param CustomAction
       */

@@ -1,6 +1,8 @@
 /.antlr-generator-*.jar
 /src-gen
+/xtend-gen
 /target
+/build
 
 # Eclipse project files
 .project
