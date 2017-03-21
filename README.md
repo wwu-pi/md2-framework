@@ -18,8 +18,8 @@ The installation was tested with Eclipse Neon 2 and Xtext 2.10.0 (January 2017).
 1. Start Eclipse and choose a workspace of your choice.
 1. Go to `Help` > `Install New Software...`, click on `Add...`, enter the Xtext Update Site `http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/`
 1. Install at least the `Xtext Complete SDK` and `Xtend IDE` components from this site and restart Eclipse.
-1. Switch to the Java perspective (red icon in top right corner) or open it first
-1. Import the `de.wwu.md2.framework` and `de.wwu.md2.framework.ui` projects contained in the local MD2 repository
+1. Switch to the Java perspective (red icon in top right corner) or open it first.
+1. In Eclipse, choose `File` > `Import` > `Existing Projects into Workspace`, select the directory created in step 1 as root directory, and import the `de.wwu.md2.framework` and `de.wwu.md2.framework.ui` projects contained in the local MD2 repository.
 1. Happy coding! To see your changes, run the de.wwu.md2.framework project as Eclipse Application. This way, the current projects are installed as plugins and you can test the modeling environment. End users should use the setup instructions in the previous chapter to avoid running this Eclipse-in-Eclipse construct.
 
 Additional (but potentially outdated) information can be found in the Installation section of the Developer's Handbook chapter in the [MD² documentation](https://github.com/ps-md2/md2-documentation) for information on how to set up the development environment for MD².
