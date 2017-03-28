@@ -44,7 +44,7 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			 * 
 			 ***************************************************/
 			// root folder
-			val rootFolder = rootFolder + "/md2_app_" + app.name
+			val rootFolder = rootFolder + "/md2_app_" + app.name + "/"
 
 			// main package and path for java code within Android project
 			val mainPackage = "md2." +
@@ -71,8 +71,7 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			 * 
 			 ***************************************************/
 			// copy md2Library for Android to the project
-			fsa.generateFileFromInputStream(
-				getSystemResource(Settings.MD2_RESOURCE_PATH + Settings.MD2LIBRARY_DEBUG_NAME),
+			fsa.generateFileFromInputStream(getSystemResource(Settings.MD2_RESOURCE_PATH + Settings.MD2LIBRARY_DEBUG_NAME),
 				rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.MD2LIBRARY_DEBUG_NAME)
 
 			// copy mipmap resources
@@ -103,8 +102,8 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			// gradle build files
 			fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.GRADLE_BUILD_NAME,
 				GradleGen.generateMd2LibraryBuild)
-			fsa.generateFile(rootFolder + "/" + Settings.GRADLE_BUILD_NAME, GradleGen.generateProjectBuild)
-			fsa.generateFile(rootFolder + "/" + Settings.GRADLE_SETTINGS_NAME, GradleGen.generateProjectSettings)
+			fsa.generateFile(rootFolder + Settings.GRADLE_BUILD_NAME, GradleGen.generateProjectBuild)
+			fsa.generateFile(rootFolder + Settings.GRADLE_SETTINGS_NAME, GradleGen.generateProjectSettings)
 			fsa.generateFile(rootFolder + Settings.APP_PATH + Settings.GRADLE_BUILD_NAME,
 				GradleGen.generateAppBuild(mainPackage, dataContainer.main.appVersion))
 
@@ -127,9 +126,9 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 				dataContainer.contentProviders)
 
 			// SQLite classes (DataContract and SQLiteHelper)
-			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "/md2/model/sqlite/Md2DataContract.java",
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2DataContract.java",
 				SQLiteGen.generateDataContract(mainPackage, dataContainer.getEntities))
-			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "/md2/model/sqlite/Md2SQLiteHelperImpl.java",
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2SQLiteHelperImpl.java",
 				SQLiteGen.generateSQLiteHelper(mainPackage, app, dataContainer.getMain, dataContainer.getEntities))
 
 			/***************************************************
@@ -171,7 +170,7 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			ActivityGen.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
 
 			// Controller
-			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "/md2/controller/Controller" + ".java",
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/controller/Controller" + ".java",
 				ControllerGen.generateController(mainPackage, app, dataContainer))
 
 			// Actions

@@ -5,7 +5,7 @@ public class Settings {
 	 * Generator
 	 */
 	public static String PLATTFORM_PREFIX = "androidLollipop"
-	public static String MD2_RESOURCE_PATH = "/android/lollipop/"
+	public static String MD2_RESOURCE_PATH = "android/lollipop/"
 	public static String MD2_RESOURCE_MIPMAP_PATH = MD2_RESOURCE_PATH + "mipmap/"
 
 	/***
@@ -13,7 +13,7 @@ public class Settings {
 	 */
 	// library
 	public static String MD2LIBRARY_DEBUG_NAME = "md2Library-debug.aar"
-	public static String MD2LIBRARY_DEBUG_PATH = "/md2Library-debug/"
+	public static String MD2LIBRARY_DEBUG_PATH = "md2Library-debug/"
 	public static String MD2LIBRARY_DEBUG_PROJECT = ":md2Library-debug"
 	public static String MD2LIBRARY_PACKAGE = "de.uni_muenster.wi.md2library."
 
@@ -42,7 +42,7 @@ public class Settings {
 	 * Android app
 	 */
 	// paths
-	public static String APP_PATH = "/app/"
+	public static String APP_PATH = "app/"
 	public static String MAIN_PATH = APP_PATH + "src/main/"
 	public static String JAVA_PATH = APP_PATH + "src/main/java/"
 	public static String RES_PATH = APP_PATH + "src/main/res/"
