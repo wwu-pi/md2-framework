@@ -27,7 +27,9 @@ sourceSets {
 	test.xtendOutputDir = 'test/xtend-gen'
 	
 	main.java {
-		srcDirs = ['src/', 'src-gen/'] // TODO try with , 'xtend-gen/'
+		srcDirs = ['src/', 'src-gen/', 'res/'] 
+		// "res" required as source folder at runtime to copy resources e.g. for backend must 
+		// TODO try with , 'xtend-gen/'
 	}
 }
 
