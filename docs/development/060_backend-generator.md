@@ -139,3 +139,150 @@ No further information about the file is stored or checked, i.e. original file n
 ### Version Negotiation
 This web service can be used by generated apps to check whether they were generated from the same model version as the backend.
 Consequently, this is only useful if the modeler updates the model version after making changes to the data model.
+
+## Backend connection specification
+
+### Resource Paths
+**Format:**
+
+VERB - Path - Request body
+> `<Status>` - `<Response body>`
+
+#### Entities
+**Load**
+
+`GET - /<entity.name>/?filter=<filter>`
+> `200 OK - List<Entity>`
+
+`GET - /<entity.name>/first?filter=<filter>`
+> `200 OK - Entity or 404 NOT FOUND`
+
+**Save**
+
+`PUT - /<entity.name>/ - List<Entity>`
+> `200 OK - List<{ “__internalId”: <id> }>`
+
+**Delete**
+
+`DEL - /<entity.name>/<id>`
+> `200 OK or 404 NOT FOUND`
+
+#### Remote Validations
+`GET - /md2_validator/<remoteValidator.name>/ - Entity`
+> `200 OK - ValidationResult object`
+
+`GET - /md2_validator/<remoteValidator.name>/?attrName1=content&attrName2=content ... &attrNameN=content`
+> `200 OK - ValidationResult object`
+
+attrNameX is a fully qualified name, having `contentProviderName.path.to.attribute`
+
+#### Filter Parameter
+`not <Attribute> (equals|greater|smaller| <= | >=) (<Int>|<Float>|<String>|<InputField>)
+((and|or)(not)? <Attribute> (equals|greater|smaller| <= | >=) (<Int>|<Float>|<String>|<InputField>))*
+`
+
+#### Resource for Model Version Checks
+The model version should be checked by the apps for all remote connections. Requests are only valid if the server accepts the current model version.
+
+`GET /md2_model_version/current`
+> `200 OK - <version>`
+
+`GET /md2_model_version/is_valid?version= <version>`
+> `200 OK - { "isValid": (true|false) }`
+
+### JSON Format Conventions
+**List<Entity>:**
+```Javascript
+{
+	"entityName": [
+	{
+		"attribute": <Value type see below>,
+		[...]
+	},
+	{
+		"attribut": <Value type see below>,
+		[...]
+	} [...]
+	]
+}
+```
+having `<Entity>` = Entity without root node
+
+**Entity:**
+```Javascript
+{
+	"entityName": [
+		"attribute": <Value type see below>,
+		[...]
+	}
+}
+```
+
+**Validation Result:**
+```Javascript
+{
+	"ok": (true|false),
+	"error": [
+	{
+		"message": "Allgemeine Fehlermeldung",
+		"attributes": ["attribut1", "attribut2"]
+	},
+	{
+		"message": "can’t be blank",
+		"attributes": ["forename", "surname"]
+	}
+	]
+	[...]
+}
+```
+
+**Data type mapping**:
+
+ Format: MD² language data type -> JSON type for attribute values
+
+* `Enum` -> `Int` (index of the currently selected value)
+* `Int` -> `Number`
+* `Float` -> `Number`
+* `Date` -> `String` (with format "yyyy-mm-ddThh:mm:ss+hh:m")
+* Everything else -> `String`
+
+### Examples
+
+*GET* `/customer/first` returning one customer
+```Javascript
+{
+	"customer": {
+		"__internalId": "0",
+		"firstName": "Ulrich",
+		"lastName": "M\u00c3\u00bcller",
+		"membership": "1",
+		"professionalCategory": "0"
+	}
+}
+```
+
+*GET* `/customer` returning multiple customers
+```Javascript
+{
+	"customer": [
+	{
+		"__internalId": "0",
+		"firstName": "Ulrich",
+		"lastName": "M\u00c3\u00bcller",
+		"membership": "1",
+		"professionalCategory": "0"
+	},
+	{
+		"__internalId": "0",
+		"firstName": "Hans",
+		"lastName": "Dampf",
+		"membership": "1",
+		"professionalCategory": "0"
+	}
+	]
+}
+```
+
+## What's next
+* [The structure of the Android generator](070_android-generator.html)
+* [The structure of the iOS generator](080_ios-generator.html)
