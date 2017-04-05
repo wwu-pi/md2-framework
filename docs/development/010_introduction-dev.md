@@ -1,4 +1,4 @@
-# Introduction to Developer Handbook
+# Introduction to Developer's Handbook
 
 This section is intended to provide MD² developers with detailed information necessary to further develop the framework.
 In its current version, this handbook contains information about the

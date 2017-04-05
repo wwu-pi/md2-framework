@@ -15,6 +15,7 @@
 * support temporary offline usage
 * access foreign apps such as the phone, camera and GPS
 * customizable columns within the list of open issues
+* unify UploadedImageOutput and Image fields
 
 ## Tooling improvements
 * Improve validators
@@ -39,6 +40,8 @@
 
 ## Android generator improvements
 * extend to feature parity with MD² language
+* Implement EntitySelector
 
 ## iOS generator modifications
 * extend to feature parity with MD² language
+* Implement EntitySelector
