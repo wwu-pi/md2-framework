@@ -1,3 +1,8 @@
+---
+title: Test
+layout: default
+---
+
 # Developing MD² apps for iOS
 
 This page gathers information relevant when developing the iOS generators that generate iOS apps.

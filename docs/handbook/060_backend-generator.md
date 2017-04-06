@@ -1,3 +1,8 @@
+---
+title: Test
+layout: default
+---
+
 # The backend generator
 
 The MD² backend is implemented in Java.

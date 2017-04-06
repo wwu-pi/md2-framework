@@ -1,3 +1,8 @@
+---
+title: Test
+layout: default
+---
+
 # Development TODOs and ideas for improvements
 
 * This list might be moved to Github issues allowing for discussion.

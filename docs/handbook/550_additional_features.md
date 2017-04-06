@@ -1,3 +1,8 @@
+---
+title: Test
+layout: default
+---
+
 # Advanced features of the MD² language
 
 ## Calling RESTful Web Services from an App

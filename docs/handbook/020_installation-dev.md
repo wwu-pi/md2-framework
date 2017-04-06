@@ -1,5 +1,9 @@
-Development Environment
-=======================
+---
+title: Test
+layout: default
+---
+
+# Development Environment
 
 To simplify development, the initial setup is mostly automated using build scripts (and automation is further improved in future). Therefore, Gradle should be installed on the system first.
 The installation was tested with Eclipse Neon 3 and Xtext 2.11.0 (March 2017).

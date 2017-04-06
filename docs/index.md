@@ -1,4 +1,13 @@
+---
+# You don't need to edit this file, it's empty on purpose.
+# Edit theme's home layout instead if you wanna make some changes
+# See: https://jekyllrb.com/docs/themes/#overriding-theme-defaults
+layout: default
+---
+
 # Documentation on MD²
+
+{% include navigation.html context="/" %}
 
 MD² is a framework for model-driven development of mobile business applications.
 It provides a domain specific language (DSL) for the specification of a textual model.

@@ -1,3 +1,8 @@
+---
+title: Test
+layout: default
+---
+
 # Preprocessor
 
 For each target platform, a generator class is created that implements the interface `IPlatformGenerator`.

@@ -1,3 +1,8 @@
+---
+title: Test
+layout: default
+---
+
 # DSL semantics
 
 The MD² framework is intended to provide a cross-platform solution for multiple mobile platforms such as Android or iOS.

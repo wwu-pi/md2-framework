@@ -1,3 +1,8 @@
+---
+title: Test
+layout: default
+---
+
 # Setting up your MD² Model Development Environment
 
 The following steps will provide you with the software required to enable modelling of MD² models:

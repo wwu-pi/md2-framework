@@ -1,3 +1,8 @@
+---
+title: Test
+layout: default
+---
+
 # Developing multiple apps
 
 The MD² framework allows to model and generate workflows that involve multiple apps.

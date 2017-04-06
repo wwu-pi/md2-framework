@@ -1,0 +1,60 @@
+{% capture html %}
+<ul>
+    {% if include.context == "/" %}
+        <li class="{% if page.url == "/" %}active{% endif %}">
+            <a href="{{ site.baseurl }}/">{{ site.title }}</a>
+        </li>
+    {% endif %}
+	
+	{% assign contextLength = include.context | size %}
+
+	{% assign lastFolder = "" %}
+	{% assign lastLevel = 0 %}	
+	
+    {% assign entries = site.pages | sort: "path" %}
+	{% for entry in entries %}
+	
+		{% assign currentLevel = entry.url | split: "/" | size | minus: 2 %}
+		
+		{% capture slug %}{{ entry.url | split: "/" | last }}{% endcapture %}
+		{% assign slugLength = slug | size %}
+		
+		{% assign entryLength = entry.url | size %}
+		
+		{% assign entryFolderLength = entryLength | minus: slugLength | minus: 1 %}
+		{% capture entryFolder %}{{ entry.url | slice : 0, entryFolderLength}}{% endcapture %}
+		
+		{% if currentLevel >= 0 %}
+		{% if entry.title | size > 0 %}
+			{% if slug | split: "." | last == "html" %}
+				{% if entryFolder != lastFolder %}
+					{% if lastLevel > currentLevel %}
+						{% assign levelDiff = lastLevel | minus: currentLevel %}
+						{% for level in (1..levelDiff) %}
+						</ul>
+						{% endfor %}
+					{% else if lastLevel < currentLevel %}
+						{% assign levelDiff = currentLevel | minus: lastLevel %}
+						{% for level in (1..levelDiff) %}
+						<ul>
+						{% endfor %}
+					{% endif %}					
+				{% endif %}
+				
+				<li class="{% if page.url contains entry.url %}active{% endif %}">
+					<a href="{{ site.baseurl }}{{ entry.url }}">{{ entry.title }}</a>
+				</li>
+			{% endif %}
+			
+			{% assign lastFolder = entryFolder %}
+			{% assign lastLevel = currentLevel %}
+		{% endif %}
+		{% endif %}
+	
+    {% endfor %}
+	
+	{% for level in (1..lastLevel) %}
+		</ul>
+	{% endfor %}
+</ul>
+{% endcapture %}{{ html | strip_newlines | replace:'    ','' | replace:'    ','' | replace:'  ',' ' }}

@@ -1,3 +1,8 @@
+---
+title: Test
+layout: default
+---
+
 # Introduction to Modeler's Handbook
 
 This section serves as a handbook for people who want to use the MD² framework to develop mobile business applications.

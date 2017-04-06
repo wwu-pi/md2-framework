@@ -1,3 +1,8 @@
+---
+title: Test
+layout: default
+---
+
 # Getting started with building single apps
 
 ## Creating a Project
