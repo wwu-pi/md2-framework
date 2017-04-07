@@ -26,3 +26,5 @@ Small adaptations have been made according as can be found in the `/docs/_layout
 
 By running `bundle exec jekyll serve` on the command line, a server is started that watches for file changes and rebuilds the site locally.
 By default, the pages are served at `http://localhost:4000/`.
+
+Known issue: In case the site does not build locally because of the error `GitHub Metadata: No GitHub API authentication could be found`, follow the instructions [here](http://knightcodes.com/miscellaneous/2016/09/13/fix-github-metadata-error.html).
