@@ -70,7 +70,7 @@ This means that the attribute is transformed to a parameter of the endpoint and 
 For the name of the parameter either the name of the attribute is used or an alternative alias can be defined.
 * If some attributes should always receive the same value regardless of the parameter values, they can be set to a default value using the second type.
 An example would be a status field which is set to "issue received" when the workflow is started.
-* The last type is similar to setting a content provider to an attribute (cf. [DSL specification for the controller layer](530_single-apps.html)).
+* The last type is similar to setting a content provider to an attribute (cf. [DSL specification for the controller layer](230_single-apps.html)).
 Since the language only knows how entities are related to each other, but not their corresponding content providers, this statement is needed for every nested entity.
 
 For each entity referenced within the definition an instance of it will be created and persisted.
@@ -81,4 +81,4 @@ It is not only necessary that the URLs of the remote connections are equal, but 
 If the body is missing, no entities or attributes are set.
 
 ## What's next
-* [Getting started with the development of the MD² framework itself](010_introduction-dev.html)
+* [Getting started with the development of the MD² framework itself](../40_handbook-dev/)

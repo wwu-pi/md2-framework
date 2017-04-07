@@ -31,10 +31,10 @@ order: 495
 * provide auto formatting in the IDE
 
 ## Documentation
-* [Elaborate on View layer](040_dsl-semantics.html)
-* [Getting Started with MD² Development](030_getting-started-dev.html)
-* [Android generator](070_android-generator.html)
-* [iOS generator](080_ios-generator.html)
+* [Elaborate on View layer](440_dsl-semantics.html)
+* [Getting Started with MD² Development](430_getting-started-dev.html)
+* [Android generator](470_android-generator.html)
+* [iOS generator](480_ios-generator.html)
 
 ## Preprocessor improvements
 * generate only relevant content for each app, e.g. only generate entities which are used by the apps,

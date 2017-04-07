@@ -201,6 +201,6 @@ Usually model transformations are transparent to the modeler and even for the de
 With the test generator, though, there is a way to get a glimpse of the model's state as XMI definition before it gets passed to the platform generators.
 
 ## What's next
-* [The structure of the backend generator](060_backend-generator.html)
-* [The structure of the Android generator](070_android-generator.html)
-* [The structure of the iOS generator](080_ios-generator.html)
+* [The structure of the backend generator](460_backend-generator.html)
+* [The structure of the Android generator](470_android-generator.html)
+* [The structure of the iOS generator](480_ios-generator.html)

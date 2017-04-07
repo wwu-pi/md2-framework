@@ -36,7 +36,7 @@ App <AppID2> {
 ```
 
 The deployment of multiple apps is similar to that of a single app.
-In this case, however, not just one but all created apps have to be deployed as described in the [previous section](530_single-apps.html) for each app.
+In this case, however, not just one but all created apps have to be deployed as described in the [previous section](230_single-apps.html) for each app.
 
 ## What's next
-* [information about more advanced additional features of the language](550_additional_features.html)
+* [information about more advanced additional features of the language](250_additional_features.html)

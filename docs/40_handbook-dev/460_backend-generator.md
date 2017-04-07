@@ -98,7 +98,7 @@ The class `CustomHashMapEntry` (and, therefore, each JSON object) consists of th
 
 ### Offer Webservices to Start Workflow
 Besides the possibility to start a workflow through an app, it is possible to invoke it using a webservice.
-The description of the corresponding model language is described in the Modeler's handbook in the [additional features](550_additional_features.html) section.
+The description of the corresponding model language is described in the Modeler's handbook in the [additional features](../20_handbook-modeler/250_additional_features.html) section.
 For each invokable workflow element a webservice is created and for each invoke definition a webservice endpoint is specified, including the defined parameters and the creation of the required entities.
 After the entities are saved using the internal beans, a `workflowState` is persisted using the workflow element the webservice belongs to.
 Additionally, the `lastEventFired` is set to the defined text specified in the workflow model after the `invokable` keyword, or to a default if not specified.
@@ -290,5 +290,5 @@ having `<Entity>` = Entity without root node
 ```
 
 ## What's next
-* [The structure of the Android generator](070_android-generator.html)
-* [The structure of the iOS generator](080_ios-generator.html)
+* [The structure of the Android generator](470_android-generator.html)
+* [The structure of the iOS generator](480_ios-generator.html)

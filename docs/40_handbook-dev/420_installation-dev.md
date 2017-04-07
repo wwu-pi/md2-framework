@@ -20,5 +20,5 @@ The installation was tested with Eclipse Neon 3 and Xtext 2.11.0 (March 2017).
 1. Happy coding! To see your changes, run the `de.wwu.md2.framework` project as Eclipse Application. This way, the current projects are installed as plugins and you can test the modeling environment. End users should use the setup instructions in the modeler's section to avoid running this Eclipse-in-Eclipse construct.
 
 ## What's next
-* [Getting Started with the development](030_getting-started-dev.html)
-* [Md² DSL semantics](040_dsl-semantics.html)
+* [Getting Started with the development](430_getting-started-dev.html)
+* [Md² DSL semantics](440_dsl-semantics.html)

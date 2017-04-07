@@ -771,5 +771,5 @@ In a Unix environment, you can combine both steps by running `./asadmin start-da
 * Start the server.
 
 ## What's next
-* [Information needed for the development of multiple apps](540_multiple-apps.html)
-* [information about more advanced additional features of the language](550_additional_features.html)
+* [Information needed for the development of multiple apps](240_multiple-apps.html)
+* [information about more advanced additional features of the language](250_additional_features.html)

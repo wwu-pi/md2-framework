@@ -37,7 +37,7 @@ In order to access core data functionality, a global data model has to be setup 
 This database is currently located in the backend and is accessible via RESTful web services for apps from all platforms.
 
 ## View Layer
-View elements should be implemented with the functionality described in the [Modeler's handbook](510_introduction-modeler.html).
+View elements should be implemented with the functionality described in the [Modeler's handbook](../20_handbook-modeler/).
 
 # Controller Layer
 The biggest and most important layer in this architecture is the controller layer, which has the role to connect the view with the model and vice versa.
@@ -55,13 +55,13 @@ When a workflow element fires a workflow event (in particular after completing t
 Depending on the next workflow eleent to start the handler might communicate the state of the workflow to the backend (as described above for the workflow layer).
 
 Within the body of workflow elements, the controller behavior can be defined using actions and process chains.
-Process chains will be converted to actions in the [preprocessor](050_preprocessor.html), and therefore do not require specific handling by the generators.
+Process chains will be converted to actions in the [preprocessor](450_preprocessor.html), and therefore do not require specific handling by the generators.
 
 Content providers in the controller layer are used for data provisioning, either locally using a `LocalContentProvider` or by the server backend using `RemoteContentProvider`.
 RESTful webservice-based communication to the backend is required for every platform in order to store and request the remotely stored data.
 
 ## What's next
-* [The preprocessor](050_preprocessor.html)
-* [The structure of the backend generator](060_backend-generator.html)
-* [The structure of the Android generator](070_android-generator.html)
-* [The structure of the iOS generator](080_ios-generator.html)
+* [The preprocessor](450_preprocessor.html)
+* [The structure of the backend generator](460_backend-generator.html)
+* [The structure of the Android generator](470_android-generator.html)
+* [The structure of the iOS generator](480_ios-generator.html)

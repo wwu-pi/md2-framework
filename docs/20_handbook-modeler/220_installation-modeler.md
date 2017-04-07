@@ -25,5 +25,5 @@ If you entered the correct path, it should output something similar to ```Found 
 1. Click "Finish".
 
 ## What's next
-* [Getting started with building single apps](530_single-apps.html)
-* [Information needed for the development of multiple apps](540_multiple-apps.html)
+* [Getting started with building single apps](230_single-apps.html)
+* [Information needed for the development of multiple apps](240_multiple-apps.html)
