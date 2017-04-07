@@ -12,11 +12,13 @@ In its current version, this handbook contains information about the
 * [Installation procedure](420_installation-dev.html),
 * [Getting started with the structure of the framework](430_getting-started-dev.html),
 * [DSL semantics](440_dsl-semantics.html),
-* [the preprocessor](450_preprocessor.html),
-* [the structure of the backend generator](460_backend-generator.html),
-* [the structure of the Android generator](470_android-generator.html),
-* [the structure of the iOS generator](480_ios-generator.html), and
-* [the structure of the mapapps backend and generator](490_mapapps.html).
+* [Preprocessor](450_preprocessor.html),
+* [Structure of the backend generator](460_backend-generator.html),
+* [Structure of the Android generator](470_android-generator.html),
+* [Structure of the iOS generator](480_ios-generator.html)
+* [Structure of the mapapps backend and generator](490_mapapps.html),
+* [Documentation itself](494_documentation.html), and
+* [Ideas for improvement](495_development-todos.html).
 
 The whole development project can be found in this repository, additional tools and example apps can be obtained from separate repositories belonging to the project's GitHub organisation.
 
