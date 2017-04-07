@@ -13,6 +13,16 @@
   </head>
 
   <body>
+	<style type="text/css">
+		#main_content_wrap.outer {
+			display: grid;
+			grid-template-columns:25% 75%;
+		}
+		
+		header.inner, section.inner {
+			max-width:75%;
+		}
+	</style>
 
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
@@ -33,6 +43,7 @@
 
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
+	  {% include navigation.html context="/" %}
       <section id="main_content" class="inner">
         {{ content }}
       </section>
