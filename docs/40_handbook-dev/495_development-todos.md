@@ -1,5 +1,5 @@
 ---
-title: Development TODOs and ideas for improvements
+title: Ideas for improvement
 layout: default
 order: 495
 ---
