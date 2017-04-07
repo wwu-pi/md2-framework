@@ -1,6 +1,7 @@
 ---
-title: Test
+title: Setting up your MD² Model Development Environment
 layout: default
+order: 220
 ---
 
 # Setting up your MD² Model Development Environment

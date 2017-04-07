@@ -1,6 +1,7 @@
 ---
-title: Test
+title: Getting Started with MD² Development
 layout: default
+order: 430
 ---
 
 # Getting Started with MD² Development

@@ -1,6 +1,7 @@
 ---
-title: Test
+title: Getting started with building single apps
 layout: default
+order: 230
 ---
 
 # Getting started with building single apps

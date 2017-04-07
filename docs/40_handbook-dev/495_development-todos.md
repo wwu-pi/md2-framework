@@ -1,6 +1,7 @@
 ---
-title: Test
+title: Development TODOs and ideas for improvements
 layout: default
+order: 495
 ---
 
 # Development TODOs and ideas for improvements

@@ -1,6 +1,7 @@
 ---
-title: Test
+title: Advanced features of the MD² language
 layout: default
+order: 250
 ---
 
 # Advanced features of the MD² language

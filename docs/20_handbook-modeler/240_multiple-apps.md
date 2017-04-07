@@ -1,6 +1,7 @@
 ---
-title: Test
+title: Developing multiple apps
 layout: default
+order: 240
 ---
 
 # Developing multiple apps

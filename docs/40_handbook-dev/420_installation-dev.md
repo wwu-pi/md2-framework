@@ -1,6 +1,7 @@
 ---
-title: Test
+title: Development Environment
 layout: default
+order: 420
 ---
 
 # Development Environment

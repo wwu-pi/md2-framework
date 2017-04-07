@@ -1,6 +1,7 @@
 ---
-title: Test
+title: Developer's Handbook
 layout: default
+order: 400
 ---
 
 # Introduction to Developer's Handbook

@@ -1,6 +1,7 @@
 ---
-title: Test
+title: Modeler's Handbook
 layout: default
+order: 200
 ---
 
 # Introduction to Modeler's Handbook

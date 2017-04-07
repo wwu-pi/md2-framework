@@ -7,8 +7,6 @@ layout: default
 
 # Documentation on MD²
 
-{% include navigation.html context="/" %}
-
 MD² is a framework for model-driven development of mobile business applications.
 It provides a domain specific language (DSL) for the specification of a textual model.
 Such a model can describe characteristics of a business scenario, including the communication between different apps and sequences of actions within each app, the views to be displayed and the data to be stored.

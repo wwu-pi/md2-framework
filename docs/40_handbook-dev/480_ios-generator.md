@@ -1,6 +1,7 @@
 ---
-title: Test
+title: Developing MD² apps for iOS
 layout: default
+order: 480
 ---
 
 # Developing MD² apps for iOS

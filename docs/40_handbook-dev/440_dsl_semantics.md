@@ -1,6 +1,7 @@
 ---
-title: Test
+title: DSL semantics
 layout: default
+order: 440
 ---
 
 # DSL semantics
