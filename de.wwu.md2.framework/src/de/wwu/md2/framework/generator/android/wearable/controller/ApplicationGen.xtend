@@ -1,6 +1,6 @@
 package de.wwu.md2.framework.generator.android.wearable.controller
 
-import de.wwu.md2.framework.generator.android.lollipop.Settings
+import de.wwu.md2.framework.generator.android.wearable.Settings
 import de.wwu.md2.framework.mD2.App
 
 class ApplicationGen {

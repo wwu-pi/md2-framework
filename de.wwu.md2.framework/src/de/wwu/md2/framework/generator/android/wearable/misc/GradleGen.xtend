@@ -1,6 +1,6 @@
 package de.wwu.md2.framework.generator.android.wearable.misc
 
-import de.wwu.md2.framework.generator.android.lollipop.Settings
+import de.wwu.md2.framework.generator.android.wearable.Settings
 
 class GradleGen {
 	// generates settings.gradle
