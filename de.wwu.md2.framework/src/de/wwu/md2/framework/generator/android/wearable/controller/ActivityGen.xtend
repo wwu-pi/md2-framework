@@ -28,12 +28,13 @@ class ActivityGen {
 	}
 	
 	def static generateStartActivity(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements)'''
-		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.Activity.generateStartActivity()
+		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateStartActivity()
 		package «mainPackage»;
 		
+		import android.os.Bundle;
 		import android.app.Activity;
 		import android.content.Intent;
-		import android.os.Bundle;
+		
 		import android.view.View;
 		
 		import «mainPackage».md2.controller.Controller;
