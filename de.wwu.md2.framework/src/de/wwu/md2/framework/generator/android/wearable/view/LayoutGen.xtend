@@ -66,6 +66,7 @@ class LayoutGen {
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
 			"http://schemas.android.com/apk/res/android")
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
+		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:app", "http://schemas.android.com/apk/res-auto")
 		
 		// create FrameLayout
 		var Element frameElement = doc.createElement("FrameLayout")
@@ -75,10 +76,11 @@ class LayoutGen {
 		frameElement.setAttribute("android:layout_width", "match_parent")
 		frameElement.setAttribute("app:layout_box", "all")
 		
+		
 		//create Scroll View
 		var Element scrollView = doc.createElement("ScrollView")
 		//set attributes of ScrollView
-		scrollView.setAttribute("android:layout_heigth", "match_parent")
+		scrollView.setAttribute("android:layout_height", "match_parent")
 		scrollView.setAttribute("android:layout_width", "match_parent")
 		
 		//append
@@ -133,6 +135,7 @@ class LayoutGen {
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
 			"http://schemas.android.com/apk/res/android")
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
+		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:app", "http://schemas.android.com/apk/res-auto")
 		
 		// create FrameLayout
 		var Element frameElement = doc.createElement("FrameLayout")
@@ -141,6 +144,7 @@ class LayoutGen {
 		frameElement.setAttribute("android:layout_height", "match_parent")
 		frameElement.setAttribute("android:layout_width", "match_parent")
 		frameElement.setAttribute("app:layout_box", "all")
+		
 		
 		//create Scroll View
 		var Element scrollView = doc.createElement("ScrollView")
