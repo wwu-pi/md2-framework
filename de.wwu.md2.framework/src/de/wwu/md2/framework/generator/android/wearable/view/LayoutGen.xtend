@@ -73,7 +73,7 @@ class LayoutGen {
 		frameElement.setAttribute("android:orientation", "vertical")
 		frameElement.setAttribute("android:layout_height", "match_parent")
 		frameElement.setAttribute("android:layout_width", "match_parent")
-		frameElement.setAttribute("android:layout_box", "all")
+		frameElement.setAttribute("app:layout_box", "all")
 		
 		//create Scroll View
 		var Element scrollView = doc.createElement("ScrollView")
@@ -140,12 +140,12 @@ class LayoutGen {
 		frameElement.setAttribute("android:orientation", "vertical")
 		frameElement.setAttribute("android:layout_height", "match_parent")
 		frameElement.setAttribute("android:layout_width", "match_parent")
-		frameElement.setAttribute("android:layout_box", "all")
+		frameElement.setAttribute("app:layout_box", "all")
 		
 		//create Scroll View
 		var Element scrollView = doc.createElement("ScrollView")
 		//set attributes of ScrollView
-		scrollView.setAttribute("android:layout_heigth", "match_parent")
+		scrollView.setAttribute("android:layout_height", "match_parent")
 		scrollView.setAttribute("android:layout_width", "match_parent")
 		
 		//append

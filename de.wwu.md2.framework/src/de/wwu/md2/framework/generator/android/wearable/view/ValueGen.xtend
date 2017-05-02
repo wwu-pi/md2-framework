@@ -19,6 +19,15 @@ class ValueGen {
 		<?xml version="1.0" encoding="utf-8"?>
 		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateIdsXml() -->
 		<resources>
+			«FOR wer : wers»
+				<item name="startActivity_«wer.workflowElementReference.name»Button" type="id"/>				
+			«ENDFOR»
+			«FOR ve : viewGUIElements»
+				«val qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(ve, "_")»
+				«IF (qualifiedName != null && !qualifiedName.empty)»
+					<item name="«qualifiedName»" type="id"/>
+				«ENDIF»
+			«ENDFOR»
 		</resources>
 	'''
 
@@ -26,9 +35,18 @@ class ValueGen {
 		Iterable<ViewGUIElement> viewGUIElements, Iterable<WorkflowElementReference> wers) '''
 		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateStringsXml() -->
 		<resources>
-		    <string name="app_name">MySampleWearableApp</string>
-		    <string name="hello_round">Hello Round World!</string>
-		    <string name="hello_square">Hello Square World!</string>
+			<string name="app_name">«app.appName»</string>
+			«FOR rce : rootContainerElements»
+				<string name="title_activity_«rce.name.toFirstLower»">«getActivityTitle(rce)»</string>
+			«ENDFOR»
+			
+			«FOR wer : wers»
+				<string name="«MD2AndroidLollipopUtil.getQualifiedNameAsString(wer, "_")»_alias">«wer.alias»</string>
+			«ENDFOR»
+			
+			«FOR ve : viewGUIElements»
+				«generateStringEntry(ve)»
+			«ENDFOR»
 		</resources>
 	'''
 	
