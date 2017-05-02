@@ -18,6 +18,7 @@ import de.wwu.md2.framework.generator.android.wearable.model.EntityGen
 import de.wwu.md2.framework.generator.android.lollipop.misc.ProguardGen
 import de.wwu.md2.framework.generator.android.wearable.model.ContentProviderGen
 import de.wwu.md2.framework.generator.android.wearable.view.ValueGen
+import de.wwu.md2.framework.generator.android.wearable.view.LayoutGen
 
 /**
  * This is the start point for the Android generator.
@@ -155,7 +156,7 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 			//fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, ValueGen.generateDimensXml)
 
 			// Layouts
-			//LayoutGen.generateLayouts(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
+			LayoutGen.generateLayouts(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
 
 			/***************************************************
 			 * 

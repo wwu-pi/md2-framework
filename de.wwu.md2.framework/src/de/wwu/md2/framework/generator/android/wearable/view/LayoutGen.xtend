@@ -1,7 +1,7 @@
 package de.wwu.md2.framework.generator.android.wearable.view
 
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
-import de.wwu.md2.framework.generator.android.lollipop.Settings
+import de.wwu.md2.framework.generator.android.wearable.Settings
 import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
 import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.ContainerElement
@@ -52,33 +52,46 @@ class LayoutGen {
 
 		// create doc and set namespace definitions
 		val doc = docBuilder.newDocument
-		val generationComment = doc.createComment("generated in de.wwu.md2.framework.generator.android.lollipop.view.Layout.generateStartLayout()")
+		val generationComment = doc.createComment("generated in de.wwu.md2.framework.generator.android.wearable.view.Layout.generateStartLayout()")
 		doc.appendChild(generationComment)
 
-		// create root element
-		var Element rootElement = doc.createElement("ScrollView")
+		// create root element: BoxInsetLayout, FrameLayout as child, ScrollView as Child
 		
-		// set attributes
-		rootElement.setAttribute("android:paddingBottom", "@dimen/activity_vertical_margin")
-		rootElement.setAttribute("android:paddingLeft", "@dimen/activity_horizontal_margin")
-		rootElement.setAttribute("android:paddingRight", "@dimen/activity_horizontal_margin")
-		rootElement.setAttribute("android:paddingTop", "@dimen/activity_vertical_margin")
+		// create BoxInsetLayout
+		var Element rootElement = doc.createElement("android.support.wearable.view.BoxInsetLayout")
+		// set attributes of BoxInsetLayout
 		rootElement.setAttribute("android:layout_height", "match_parent")
-		rootElement.setAttribute("android:layout_width", "match_parent")
-		rootElement.setAttribute("android:orientation", "vertical")		
+		rootElement.setAttribute("android:layout_width", "match_parent")	
 		rootElement.setAttribute("tools:context", mainPackage + ".StartActivity")
-
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
 			"http://schemas.android.com/apk/res/android")
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
-
+		
+		// create FrameLayout
+		var Element frameElement = doc.createElement("FrameLayout")
+		// set attributes of FrameLayout
+		frameElement.setAttribute("android:orientation", "vertical")
+		frameElement.setAttribute("android:layout_height", "match_parent")
+		frameElement.setAttribute("android:layout_width", "match_parent")
+		frameElement.setAttribute("android:layout_box", "all")
+		
+		//create Scroll View
+		var Element scrollView = doc.createElement("ScrollView")
+		//set attributes of ScrollView
+		scrollView.setAttribute("android:layout_heigth", "match_parent")
+		scrollView.setAttribute("android:layout_width", "match_parent")
+		
+		//append
+		frameElement.appendChild(scrollView)
+		rootElement.appendChild(frameElement)
 		doc.appendChild(rootElement)
 		
 		var Element rootContainer = doc.createElement(Settings.MD2LIBRARY_VIEW_FLOWLAYOUTPANE)
 		rootContainer.setAttribute("android:layout_height", "wrap_content")
 		rootContainer.setAttribute("android:layout_width", "match_parent")
 		rootContainer.setAttribute("android:orientation", "vertical")		
-		rootElement.appendChild(rootContainer)
+		scrollView.appendChild(rootContainer)
+		
 		
 		// add buttons
 		for(wfe : wfes){
@@ -106,34 +119,43 @@ class LayoutGen {
 
 		// create doc and set namespace definitions
 		val doc = docBuilder.newDocument
-		val generationComment = doc.createComment("generated in de.wwu.md2.framework.generator.android.lollipop.view.Layout.generateLayout()")
+		val generationComment = doc.createComment("generated in de.wwu.md2.framework.generator.android.wearable.view.Layout.generateLayout()")
 		doc.appendChild(generationComment)
-
-		// create root element
-		var Element rootElement = doc.createElement("ScrollView")
-		/*switch rv {
-			FlowLayoutPane: rootElement = createFlowLayoutPaneElement(doc, rv)
-			GridLayoutPane: rootElement = createGridLayoutPaneElement(doc, rv)
-			default: return ""
-		}*/
 		
-		// special settings for root attributes
-		rootElement.setAttribute("android:layout_width", "match_parent")
+		// create root element: BoxInsetLayout, FrameLayout as child, ScrollView as Child
+		
+		// create BoxInsetLayout
+		var Element rootElement = doc.createElement("android.support.wearable.view.BoxInsetLayout")
+		// set attributes of BoxInsetLayout
 		rootElement.setAttribute("android:layout_height", "match_parent")
-		rootElement.setAttribute("android:paddingBottom", "@dimen/activity_vertical_margin")
-		rootElement.setAttribute("android:paddingLeft", "@dimen/activity_horizontal_margin")
-		rootElement.setAttribute("android:paddingRight", "@dimen/activity_horizontal_margin")
-		rootElement.setAttribute("android:paddingTop", "@dimen/activity_vertical_margin")
+		rootElement.setAttribute("android:layout_width", "match_parent")	
 		rootElement.setAttribute("tools:context", mainPackage + "." + rv.name + "Activity")
-
-		doc.appendChild(rootElement)
-
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
 			"http://schemas.android.com/apk/res/android")
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
+		
+		// create FrameLayout
+		var Element frameElement = doc.createElement("FrameLayout")
+		// set attributes of FrameLayout
+		frameElement.setAttribute("android:orientation", "vertical")
+		frameElement.setAttribute("android:layout_height", "match_parent")
+		frameElement.setAttribute("android:layout_width", "match_parent")
+		frameElement.setAttribute("android:layout_box", "all")
+		
+		//create Scroll View
+		var Element scrollView = doc.createElement("ScrollView")
+		//set attributes of ScrollView
+		scrollView.setAttribute("android:layout_heigth", "match_parent")
+		scrollView.setAttribute("android:layout_width", "match_parent")
+		
+		//append
+		frameElement.appendChild(scrollView)
+		rootElement.appendChild(frameElement)
+		doc.appendChild(rootElement)
 
 		var Element rootContainer = null
 		
+		//sollte man nochmal testen, wie toll diese Layouts auf einer Uhr laufen
 		switch rv {
 			FlowLayoutPane: rootContainer = createFlowLayoutPaneElement(doc, rv)
 			GridLayoutPane: rootContainer = createGridLayoutPaneElement(doc, rv)
@@ -141,7 +163,7 @@ class LayoutGen {
 		}
 		
 		rootContainer.setAttribute("android:layout_width", "match_parent")
-		rootElement.appendChild(rootContainer)
+		scrollView.appendChild(rootContainer)
 
 		// depth first search to generate elements for all children
 		switch rv {
@@ -166,7 +188,10 @@ class LayoutGen {
 		transformer.transform(new DOMSource(doc), new StreamResult(writer))
 		return writer.buffer.toString
 	}
-
+	
+	/////////////////////creation of children elements completely adopted from lollipop/////////////////////////////
+	
+	//call different methods for different types of children
 	protected static def void createChildrenElements(Document doc, Element element, ViewElement viewElement) {
 		var Element newElement = null
 		switch viewElement {
@@ -191,7 +216,7 @@ class LayoutGen {
 				newElement = createTextInputElement(doc, viewElement)
 			}
 			Label: {
-				if(viewElement.name.startsWith("_title")) { return } // Skip title label
+				if(viewElement.name.startsWith("_title")) { return } // Skip title label --> landet das irgendwo anders?
 				newElement = createLabelElement(doc, viewElement)
 			}
 			default:
