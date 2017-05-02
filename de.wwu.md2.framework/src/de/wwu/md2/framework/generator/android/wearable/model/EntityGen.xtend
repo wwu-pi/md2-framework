@@ -3,6 +3,8 @@ package de.wwu.md2.framework.generator.android.wearable.model
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.android.wearable.Settings
 import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
+import de.wwu.md2.framework.generator.android.wearable.Settings
+import de.wwu.md2.framework.generator.android.wearable.util.MD2AndroidWearableUtil
 import de.wwu.md2.framework.mD2.AttributeType
 import de.wwu.md2.framework.mD2.BooleanType
 import de.wwu.md2.framework.mD2.DateTimeType
@@ -27,47 +29,89 @@ class EntityGen {
 	}
 
 	private def static generateEntity(String mainPackage, Entity entity) '''
-		// generated in de.wwu.md2.framework.generator.android.lollipop.model.Md2Entity.generateEntity()
-		package Â«mainPackage + ".md2.model"Â»;
+		// generated in de.wwu.md2.framework.generator.android.wearable.model.Md2Entity.generateEntity()
+		package «mainPackage + ".md2.model"»;
 		
 		import java.util.HashMap;
 		
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.type.implementation.AbstractMd2Entity;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.type.interfaces.Md2Type;
-		Â«MD2AndroidLollipopUtil.generateImportAllTypesÂ»
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Entity;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
+		«MD2AndroidLollipopUtil.generateImportAllTypes»
 
-		public class TestEntity extends AbstractMd2Entity {
+		public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		
-		    public TestEntity {
-		        super("TestEntity.toFirstUpperÂ»");
-		    }		
+		    public «entity.name.toFirstUpper»() {
+		        super("«entity.name.toFirstUpper»");
+		    }
+		
+		    public «entity.name.toFirstUpper»(HashMap attributes) {
+		        super("«entity.name.toFirstUpper»", attributes);
+		    }
+		    
+			@Override
+		    public void set(String attribute, Md2Type value){
+		        if(checkAttribute(attribute, value))
+		            super.set(attribute, value);
+		    }
+		
+		    private boolean checkAttribute(String attribute, Md2Type value){
+		    	if(value == null)
+		    		return true;
+		    		
+		        switch (attribute){
+		        	«FOR attribute : entity.attributes»
+		        		case "«attribute.name»": return (value instanceof «getMd2TypeStringForAttributeType(attribute.type)»);
+		            «ENDFOR»
+		            default: return false;
+		        }
+		    }
+		
 		    @Override
 		    public Md2Type clone() {
-		   
+		        «entity.name.toFirstUpper» newEntity = new «entity.name.toFirstUpper»(this.getAttributes());
+		        return newEntity;
 		    }
 		}
 	'''
 	
 	def static generateEnums(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
-		Iterable<Enum> enums) {		
-		fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/" + "TestEnum".toFirstUpper + ".java",
-				generateEnum(mainPackage, null))
+		Iterable<Enum> enums) {
+		enums.forEach [ e |
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/" + e.name.toFirstUpper + ".java",
+				generateEnum(mainPackage, e))
+		]
 	}
 	
 	private def static generateEnum(String mainPackage, Enum entity) '''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.model.Md2Entity.generateEnum()
-		package Â«mainPackage + ".md2.model"Â»;
+		package «mainPackage + ".md2.model"»;
 		
 		import java.util.ArrayList;
 		import java.util.Arrays;
 		
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.type.implementation.AbstractMd2Enum;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.type.implementation.Md2String;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.type.interfaces.Md2Type;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Enum;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2String;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
 		
-		public class TestEnum extends AbstractMd2Enum {
+		public class «entity.name.toFirstUpper» extends AbstractMd2Enum {
 		
-
+			ArrayList<Md2String> values = new ArrayList<Md2String>(Arrays.asList(
+			«FOR elem: entity.enumBody.elements SEPARATOR ", "»
+				new Md2String("«elem»")
+			«ENDFOR»));
+			
+			public «entity.name.toFirstUpper»(String enumName) {
+				super(enumName);
+			}
+			
+			public «entity.name.toFirstUpper»(String enumName, ArrayList<Md2String> values) {
+				super(enumName, values);
+			}
+			
+			@Override
+		    public Md2Type clone() {
+		        return new «entity.name.toFirstUpper»(this.enumName, this.getAll());
+		    }
 		}
 	'''
 	

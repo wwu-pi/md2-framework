@@ -17,17 +17,19 @@ class ContentProviderGen {
 	}
 
 	private def static generateContentProvider(String mainPackage, ContentProvider contentProvider) '''
-			// generated in de.wwu.md2.framework.generator.android.lollipop.model.Md2ContentProvider.generateContentProvider()
+			// generated in de.wwu.md2.framework.generator.android.wearable.model.Md2ContentProvider.generateContentProvider()
 			package «mainPackage».md2.model.contentProvider;
-			
+			«var content =  contentProvider.type as ReferencedModelType»
 
 			import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.AbstractMd2ContentProvider;
 			import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
 			import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
 			import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
 			
-			public class TestContentProvider extends AbstractMd2ContentProvider {
-			
+			public class «contentProvider.name.toFirstUpper» extends AbstractMd2ContentProvider {
+			    public «contentProvider.name.toFirstUpper»(«content.entity.name.toFirstUpper» content, Md2LocalStore md2DataStore) {
+			        super("«contentProvider.name»", content, md2DataStore);
+			    }
 			}
 		'''
 }
