@@ -20,7 +20,7 @@ class GradleGen {
 				jcenter()
 			}
 			dependencies {
-				classpath 'com.android.tools.build:gradle:2.1.3'
+				classpath 'com.android.tools.build:gradle:2.3.1'
 			}
 		}
 
@@ -37,13 +37,13 @@ class GradleGen {
 		apply plugin: 'com.android.application'
 		
 		android {
-		    compileSdkVersion 22
-		    buildToolsVersion "22.0.1"
+		    compileSdkVersion 25
+		    buildToolsVersion "25"
 		
 		    defaultConfig {
 		        applicationId "«appId»"
 		        minSdkVersion 21
-		        targetSdkVersion 22
+		        targetSdkVersion 25
 		        versionCode 1
 		        versionName "1.0"
 		    }
