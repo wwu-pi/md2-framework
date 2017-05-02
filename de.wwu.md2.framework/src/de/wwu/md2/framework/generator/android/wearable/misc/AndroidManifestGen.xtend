@@ -8,7 +8,7 @@ class AndroidManifestGen {
 	// generates android manifest for the project
 	def static String generateProjectAndroidManifest(App app, Iterable<ContainerElement> rootViews, String packageName)'''
 		<?xml version="1.0" encoding="utf-8"?>
-		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.misc.AndroidManifest.generateProjectAndroidManifest() -->
+		<!-- generated in de.wwu.md2.framework.generator.android.wearable.misc.AndroidManifest.generateProjectAndroidManifest() -->
 		<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 		    package="«packageName»" >
 		    

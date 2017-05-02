@@ -125,8 +125,8 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 			EntityGen.generateEnums(fsa, rootFolder, mainPath, mainPackage, dataContainer.enums)
 
 			// Content Provider
-			ContentProviderGen.generateContentProviders(fsa, rootFolder, mainPath, mainPackage,
-				dataContainer.contentProviders)
+//			ContentProviderGen.generateContentProviders(fsa, rootFolder, mainPath, mainPackage,
+//				dataContainer.contentProviders)
 
 			// SQLite classes (DataContract and SQLiteHelper)
 			//fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2DataContract.java",

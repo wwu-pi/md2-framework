@@ -17,7 +17,7 @@ class ValueGen {
 
 	def static String generateIdsXml(Iterable<ViewGUIElement> viewGUIElements, Iterable<WorkflowElementReference> wers) '''
 		<?xml version="1.0" encoding="utf-8"?>
-		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateIdsXml() -->
+		<!-- generated in de.wwu.md2.framework.generator.android.wearable.view.Values.generateIdsXml() -->
 		<resources>
 			«FOR wer : wers»
 				<item name="startActivity_«wer.workflowElementReference.name»Button" type="id"/>				
@@ -33,7 +33,7 @@ class ValueGen {
 
 	def static String generateStringsXml(App app, Iterable<ContainerElement> rootContainerElements,
 		Iterable<ViewGUIElement> viewGUIElements, Iterable<WorkflowElementReference> wers) '''
-		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateStringsXml() -->
+		<!-- generated in de.wwu.md2.framework.generator.android.wearable.view.Values.generateStringsXml() -->
 		<resources>
 			<string name="app_name">«app.appName»</string>
 			«FOR rce : rootContainerElements»
@@ -97,7 +97,7 @@ class ValueGen {
 
 	def static String generateViewsXml(Iterable<ContainerElement> rootContainerElements, String mainPackage) '''		
 		<?xml version="1.0" encoding="utf-8"?>
-		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateViewsXml() -->
+		<!-- generated in de.wwu.md2.framework.generator.android.wearable.view.Values.generateViewsXml() -->
 		<resources>
 		    <string name="StartActivity">«mainPackage».StartActivity</string>
 		    «FOR rce : rootContainerElements»
@@ -107,7 +107,7 @@ class ValueGen {
 	'''
 
 	def static String generateStylesXml() '''
-		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateStylesXml() -->
+		<!-- generated in de.wwu.md2.framework.generator.android.wearable.view.Values.generateStylesXml() -->
 		<resources>
 		    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
 		    </style>		
@@ -115,7 +115,7 @@ class ValueGen {
 	'''
 
 	def static String generateDimensXml() '''
-		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateDimensXml() -->
+		<!-- generated in de.wwu.md2.framework.generator.android.wearable.view.Values.generateDimensXml() -->
 		<resources>
 		    <dimen name="activity_horizontal_margin">16dp</dimen>
 		    <dimen name="activity_vertical_margin">16dp</dimen>

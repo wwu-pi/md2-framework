@@ -27,32 +27,32 @@ class ContentProviderGen {
 
 	private def static generateContentProvider(String mainPackage, ContentProvider contentProvider) '''
 			// generated in de.wwu.md2.framework.generator.android.wearable.model.Md2ContentProvider.generateContentProvider()
-			package «mainPackage».md2.model.contentProvider;
-			«var content =  contentProvider.type as ReferencedModelType»
+			package Â«mainPackageÂ».md2.model.contentProvider;
+			Â«var content =  contentProvider.type as ReferencedModelTypeÂ»
 
-			import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.AbstractMd2ContentProvider;
-			import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
-			import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
-			import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
+			import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.contentProvider.implementation.AbstractMd2ContentProvider;
+			import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.dataStore.interfaces.Md2LocalStore;
+			import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.dataStore.interfaces.Md2DataStore;
+			import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.type.interfaces.Md2Entity;
 			
-			public class «contentProvider.name.toFirstUpper» extends AbstractMd2ContentProvider {
-			    public «contentProvider.name.toFirstUpper»(«content.entity.name.toFirstUpper» content, Md2LocalStore md2DataStore) {
-			        super("«contentProvider.name»", content, md2DataStore);
+			public class Â«contentProvider.name.toFirstUpperÂ» extends AbstractMd2ContentProvider {
+			    public Â«contentProvider.name.toFirstUpperÂ»(Â«content.entity.name.toFirstUpperÂ» content, Md2LocalStore md2DataStore) {
+			        super("Â«contentProvider.nameÂ»", content, md2DataStore);
 			    }
 			}
 		'''
 		
 		private def static generateContentProviderPOJO(String mainPackage, ContentProvider contentProvider){ '''
 			// generated in de.wwu.md2.framework.generator.android.lollipop.model.Md2ContentProvider.generateContentProvider()
-			package «mainPackage».md2.model.contentProvider;
-				«var content =  contentProvider.type as ReferencedModelType»
+			package Â«mainPackageÂ».md2.model.contentProvider;
+				Â«var content =  contentProvider.type as ReferencedModelTypeÂ»
 
-			import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.AbstractMd2ContentProvider;
-			import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
-			import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
-			import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
+			import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.contentProvider.implementation.AbstractMd2ContentProvider;
+			import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.dataStore.interfaces.Md2LocalStore;
+			import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.dataStore.interfaces.Md2DataStore;
+			import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.type.interfaces.Md2Entity;
 			
-			public class ContentProviderFor«content.entity.name»    extends AbstractMd2ContentProvider {
+			public class ContentProviderForÂ«content.entity.nameÂ»    extends AbstractMd2ContentProvider {
 			
 			  protected String key;
 			    protected Md2Entity content;
@@ -182,19 +182,19 @@ class ContentProviderGen {
 		
 		private def static generateMultiContentProvider(String mainPackage, ContentProvider contentProvider){ '''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.model.Md2ContentProvider.generateContentProvider()
-		package «mainPackage».md2.model.contentProvider;
-		«var content =  contentProvider.type as ReferencedModelType»
+		package Â«mainPackageÂ».md2.model.contentProvider;
+		Â«var content =  contentProvider.type as ReferencedModelTypeÂ»
 		
-		import «mainPackage».md2.model.«content.entity.name.toFirstUpper»;
-		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.AbstractMd2ContentProvider;
-		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
-		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
-		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
+		import Â«mainPackageÂ».md2.model.Â«content.entity.name.toFirstUpperÂ»;
+		import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.contentProvider.implementation.AbstractMd2ContentProvider;
+		import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.dataStore.interfaces.Md2LocalStore;
+		import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.dataStore.interfaces.Md2DataStore;
+		import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.type.interfaces.Md2Entity;
 		
-		public class «contentProvider.name.toFirstUpper» extends AbstractMd2MultiContentProvider {
+		public class Â«contentProvider.name.toFirstUpperÂ» extends AbstractMd2MultiContentProvider {
 		  
-		  				    public «contentProvider.name.toFirstUpper»(«content.entity.name.toFirstUpper») {
-		  				        super("«contentProvider.name»");
+		  				    public Â«contentProvider.name.toFirstUpperÂ»(Â«content.entity.name.toFirstUpperÂ») {
+		  				        super("Â«contentProvider.nameÂ»");
 		  				    }
 		  				}
 		  
