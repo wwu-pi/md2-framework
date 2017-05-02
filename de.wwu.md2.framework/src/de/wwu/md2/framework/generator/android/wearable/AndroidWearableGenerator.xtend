@@ -3,21 +3,23 @@ package de.wwu.md2.framework.generator.android.wearable
 
 import de.wwu.md2.framework.generator.AbstractPlatformGenerator
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
+import de.wwu.md2.framework.generator.android.wearable.controller.ActionGen
+import de.wwu.md2.framework.generator.android.wearable.controller.ActivityGen
+//import de.wwu.md2.framework.generator.android.wearable.controller.ApplicationGen
+//import de.wwu.md2.framework.generator.android.wearable.controller.ControllerGen
+import de.wwu.md2.framework.generator.android.wearable.misc.GradleGen
+import de.wwu.md2.framework.generator.android.wearable.misc.AndroidManifestGen
+import de.wwu.md2.framework.generator.android.wearable.model.EntityGen
 
-
-
+import de.wwu.md2.framework.generator.android.lollipop.misc.ProguardGen
+import de.wwu.md2.framework.generator.android.wearable.model.ContentProviderGen
+import de.wwu.md2.framework.generator.android.wearable.view.ValueGen
 
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import org.apache.log4j.Logger
 
 import static de.wwu.md2.framework.util.MD2Util.*
-import de.wwu.md2.framework.generator.android.wearable.misc.GradleGen
-import de.wwu.md2.framework.generator.android.wearable.misc.AndroidManifestGen
-import de.wwu.md2.framework.generator.android.wearable.model.EntityGen
-import de.wwu.md2.framework.generator.android.lollipop.misc.ProguardGen
-import de.wwu.md2.framework.generator.android.wearable.model.ContentProviderGen
-import de.wwu.md2.framework.generator.android.wearable.view.ValueGen
 import de.wwu.md2.framework.generator.android.wearable.view.LayoutGen
 
 /**
@@ -168,14 +170,14 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 				//ApplicationGen.generateAppClass(mainPackage, app))
 
 			// Activities
-			//ActivityGen.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
+			ActivityGen.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
 
 			// Controller
 			//fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/controller/Controller" + ".java",
 			//	ControllerGen.generateController(mainPackage, app, dataContainer))
 
 			// Actions
-			//ActionGen.generateActions(fsa, rootFolder, mainPath, mainPackage, app, workflowElements)
+			ActionGen.generateActions(fsa, rootFolder, mainPath, mainPackage, app, workflowElements)
 
 			/***************************************************
 			 * 

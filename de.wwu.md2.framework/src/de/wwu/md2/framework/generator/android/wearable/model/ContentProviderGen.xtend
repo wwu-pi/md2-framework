@@ -1,10 +1,10 @@
 package de.wwu.md2.framework.generator.android.wearable.model
 
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
-
+import de.wwu.md2.framework.generator.android.wearable.Settings
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ReferencedModelType
-import de.wwu.md2.framework.generator.android.wearable.Settings
+
 
 class ContentProviderGen {
 	

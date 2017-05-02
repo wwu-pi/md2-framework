@@ -1,7 +1,7 @@
 package de.wwu.md2.framework.generator.android.wearable.model
 
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
-
+import de.wwu.md2.framework.generator.android.wearable.Settings
 import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
 import de.wwu.md2.framework.mD2.AttributeType
 import de.wwu.md2.framework.mD2.BooleanType
