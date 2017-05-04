@@ -22,7 +22,7 @@ return providers.get(name);
 
 public AbstractMd2MultiContentProvider(String key) {
 	super();
-	this.key = key;
+	this.setKey(key);
 }
 
 
@@ -94,6 +94,18 @@ public void RemoveSingle(String providerName){
 	if(this.providers.get(providerName)!=null){
 		this.providers.get(providerName).remove();}
 		}
+
+
+
+public String getKey() {
+	return key;
+}
+
+
+
+public void setKey(String key) {
+	this.key = key;
+}
 
 
 }

@@ -23,7 +23,7 @@ class EntityGen {
 		Iterable<Entity> entities) {
 			entities.forEach [ e |
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/" + e.name.toFirstUpper + ".java",
-				generateEntityPOJO(mainPackage, e))
+				generateEntity(mainPackage, e))
 		]
 		
 	}

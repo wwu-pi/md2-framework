@@ -16,12 +16,13 @@ class ContentProviderGen {
 		Iterable<ContentProvider> contentProviders) {
 		var Set<String> providers= new HashSet<String>;	
 		contentProviders.forEach [ cp |
-			if(cp.type.many){
+			/*if(cp.type.many){
 				fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/contentProvider/" + cp.name.toFirstUpper + ".java",
 				generateMultiContentProvider(mainPackage, cp));}
-				else{
+				else{*/
 					fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/contentProvider/" + cp.name.toFirstUpper + ".java",
-				generateContentProvider(mainPackage, cp))}
+				generateContentProvider(mainPackage, cp))
+				//}
 		]
 	}
 
