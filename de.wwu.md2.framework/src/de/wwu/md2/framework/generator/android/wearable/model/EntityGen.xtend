@@ -134,7 +134,7 @@ private def static generateEntityPOJO(String mainPackage, Entity entity){ '''
 		}	
 		
 		public void set«element.name.toFirstUpper»(«getMd2TypeStringForAttributeType(element.type)» «element.name» ){
-		this.«element.name»=»element.name»; 	
+		this.«element.name»=«element.name»; 	
 		}
 			«ELSE»		
 		public <«getMd2TypeStringForAttributeType(element.type)» get«element.name.toFirstUpper»(){

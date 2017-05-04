@@ -10,10 +10,10 @@ class ContentProviderGen {
 	
 	def static generateContentProviders(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<ContentProvider> contentProviders) {
-		
-			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/contentProvider/" + "TestContentProvider".toFirstUpper + ".java",
-				generateContentProvider(mainPackage, null))
-		
+		contentProviders.forEach [ cp |
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/contentProvider/" + cp.name.toFirstUpper + ".java",
+				generateContentProvider(mainPackage, cp))
+		]
 		/*var Set<String> providers= new HashSet<String>;	
 		contentProviders.forEach [ cp |
 			if(cp.type.many){
@@ -30,6 +30,7 @@ class ContentProviderGen {
 			package «mainPackage».md2.model.contentProvider;
 			«var content =  contentProvider.type as ReferencedModelType»
 
+			import «mainPackage».md2.model.«content.entity.name.toFirstUpper»;
 			import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.AbstractMd2ContentProvider;
 			import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
 			import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
