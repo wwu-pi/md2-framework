@@ -28,6 +28,12 @@ class AndroidManifestGen {
 					              <category android:name="android.intent.category.LAUNCHER" />
 					          </intent-filter>
 					      </activity>
+	        «FOR rv : rootViews»
+	        	<activity
+       		android:name=".«rv.name.toFirstLower»Activity"
+	        		android:label="@string/title_activity_«rv.name.toFirstLower»" >
+	        	</activity>
+	        «ENDFOR»
 					 </application>
 		</manifest>
 	'''

@@ -21,6 +21,7 @@ import static de.wwu.md2.framework.util.MD2Util.*
 import de.wwu.md2.framework.generator.android.wearable.view.LayoutGen
 import de.wwu.md2.framework.generator.android.wearable.controller.ApplicationGen
 import de.wwu.md2.framework.generator.android.wearable.controller.ControllerGen
+import de.wwu.md2.framework.generator.android.lollipop.model.SQLiteGen
 
 /**
  * This is the start point for the Android generator.
@@ -129,10 +130,10 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 				dataContainer.contentProviders)
 
 			// SQLite classes (DataContract and SQLiteHelper)
-			//fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2DataContract.java",
-				//SQLiteGen.generateDataContract(mainPackage, dataContainer.getEntities))
-			//fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2SQLiteHelperImpl.java",
-				//SQLiteGen.generateSQLiteHelper(mainPackage, app, dataContainer.getMain, dataContainer.getEntities))
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2DataContract.java",
+				SQLiteGen.generateDataContract(mainPackage, dataContainer.getEntities))
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2SQLiteHelperImpl.java",
+				SQLiteGen.generateSQLiteHelper(mainPackage, app, dataContainer.getMain, dataContainer.getEntities))
 
 			/***************************************************
 			 * 
