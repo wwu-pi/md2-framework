@@ -7,6 +7,17 @@ import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.generator.android.wearable.Settings
 import java.util.Set
 import java.util.HashSet
+import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.ReferencedType
+import de.wwu.md2.framework.mD2.IntegerType
+import de.wwu.md2.framework.mD2.StringType
+import de.wwu.md2.framework.mD2.BooleanType
+import de.wwu.md2.framework.mD2.FloatType
+import de.wwu.md2.framework.mD2.DateType
+import de.wwu.md2.framework.mD2.TimeType
+import de.wwu.md2.framework.mD2.DateTimeType
+import de.wwu.md2.framework.mD2.FileType
+import de.wwu.md2.framework.mD2.AttributeType
 
 class ContentProviderGen {
 	
@@ -122,11 +133,35 @@ class ContentProviderGen {
 			
 			
 			
-			    public Md2Type getValue(String attribute) {
+			    public Md2Type getValue(String attribute) {			
+			switch attribute{
+			«FOR attribute: (content.entity as Entity).attributes»			
+			case "«attribute.name»": return  content.get«attribute.name.toFirstUpper»();	
+			«ENDFOR»		
+			}
+			}
 			
-			    }
 			
+			public void setValue(String attribute, Md2Type attribute){
+			     if (content == null) {
+			            return;
+			        }
 			
+			        // set only if value is different to current value
+			        if ((this.getValue(attribute) == null && value != null) || !this.getValue(attribute).equals(value)) {
+			        switch attribute{
+			        			«FOR attribute: (content.entity as Entity).attributes»			
+			        			case "«attribute.name»": return  content.set«attribute.name.toFirstUpper»((«getMd2TypeStringForAttributeType(attribute.type)») attribute);	
+			        			«ENDFOR»		
+			        			}
+			        
+			        
+			            Md2OnAttributeChangedHandler handler = this.attributeChangedEventHandlers.get(attribute);
+			            if (handler != null) {
+			                handler.onChange(attribute);
+			            }
+			        }	
+			}
 			
 			    public void reset(){ 
 			       
@@ -206,6 +241,21 @@ class ContentProviderGen {
 		}
 	'''
 	}	
+	
+	
+	private def static String getMd2TypeStringForAttributeType(AttributeType attributeType){
+		switch attributeType{
+			ReferencedType: attributeType.element.name.toFirstUpper
+			IntegerType: "Md2Integer"
+			FloatType: "Md2Float"
+			StringType: "Md2String"
+			BooleanType: "Md2Boolean"
+			DateType: "Md2Date"
+			TimeType: "Md2Time"
+			DateTimeType: "Md2DateTime"			
+			FileType: "Object" // TODO not implemented
+		}		
+	}
 		
 }
 	

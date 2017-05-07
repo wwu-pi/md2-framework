@@ -9,6 +9,7 @@ import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.SimpleType
 import de.wwu.md2.framework.generator.util.DataContainer
 import de.wwu.md2.framework.mD2.WorkflowElementEntry
+import de.wwu.md2.framework.generator.android.wearable.util.MD2AndroidWearableUtil
 
 class ControllerGen {
 	def static generateController(String mainPackage, App app, DataContainer data)'''
@@ -80,9 +81,14 @@ class ControllerGen {
 		        
 		        «FOR cp: contentProviders»
 		        	«var typeName = getTypeName(cp)»
+		        	«IF cp.type.many»
+		        	Md2MultiContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»();
+		        	«ELSE»
 		        	
-		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»(new «MD2AndroidLollipopUtil.getTypeNameForContentProvider(cp)»(), (Md2SQLiteDataStore) lsf.getDataStore("«typeName»"));
+		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»(new «MD2AndroidWearableUtil.getTypeNameForContentProvider(cp)»(), (Md2SQLiteDataStore) lsf.getDataStore("«typeName»"));
+		        	«ENDIF»
 		        	cpr.add("«cp.name»", «cp.name.toFirstLower»);
+		        	cpr.addMultiContentProvider("«cp.name»", «cp.name.toFirstLower»);
 		        «ENDFOR»
 		    }
 		    
