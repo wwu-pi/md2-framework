@@ -21,7 +21,7 @@ import static de.wwu.md2.framework.util.MD2Util.*
 import de.wwu.md2.framework.generator.android.wearable.view.LayoutGen
 import de.wwu.md2.framework.generator.android.wearable.controller.ApplicationGen
 import de.wwu.md2.framework.generator.android.wearable.controller.ControllerGen
-import de.wwu.md2.framework.generator.android.lollipop.model.SQLiteGen
+import de.wwu.md2.framework.generator.android.wearable.model.SQLiteGen
 
 /**
  * This is the start point for the Android generator.

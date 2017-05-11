@@ -1671,6 +1671,8 @@ AttributeType:
 	{TimeType} 'time'											many ?= BRACKETS? ('(' (params += TimeTypeParam (',' params += TimeTypeParam)*)? ')')? |
 	{DateTimeType} 'datetime'									many ?= BRACKETS? ('(' (params += DateTimeTypeParam (',' params += DateTimeTypeParam)*)? ')')? |
 	{FileType} 'file'										    many ?= BRACKETS? ('(' (params += FileTypeParam (',' params += FileTypeParam)*)? ')')? |  
+	//TODO Eingefügt Sensor
+	{SensorType} 'sensor'										many ?= BRACKETS? ('(' (params += SensorTypeParam (',' params += SensorTypeParam)*)? ')')? |
 	
 	// EnumType => Transformed to explicit Enum (=> ReferencedType) after preprocessing
 	{EnumType} '{' (enumBody = EnumBody)? '}'					many ?= BRACKETS? ('(' (params += EnumTypeParam (',' params += EnumTypeParam)*)? ')')?
@@ -1696,8 +1698,8 @@ BRACKETS:
  * The AttributeTypeParam is not used in the language but will be used by the generators. Therefore
  * it can be seen as a workaround to manipulate the meta model, that will be built by Xtext.
  */
-AttributeTypeParam:
-	ReferencedTypeParam | IntegerTypeParam | FloatTypeParam | StringTypeParam | BooleanTypeParam | DateTypeParam | TimeTypeParam | DateTimeTypeParam | EnumTypeParam | FileTypeParam	
+AttributeTypeParam: //TODO: SensorTypeParam angefügt
+	ReferencedTypeParam | IntegerTypeParam | FloatTypeParam | StringTypeParam | BooleanTypeParam | DateTypeParam | TimeTypeParam | DateTimeTypeParam | EnumTypeParam | FileTypeParam | SensorTypeParam	
 ;
 
 /*
@@ -1742,6 +1744,18 @@ FloatTypeParam:
 	{AttrFloatDefault} 'default' value = FLOAT |
 	{AttrFloatMax} 'max' max = FLOAT |
 	{AttrFloatMin} 'min' min = FLOAT
+;
+
+/*TODO: SensorTypeParam 
+
+ */
+SensorTypeParam:
+	{AttrIsOptional} optional ?= 'optional' |
+	{AttrFloatDefault} 'default' value = FLOAT |
+	{AttrFloatMax} 'max' max = FLOAT |
+	{AttrFloatMin} 'min' min = FLOAT |
+	{AttrSensorTyp} accelerometer ?= 'accelerometer' | 
+	{AttrSensorTyp} lux ?= 'lux' 
 ;
 
 /*

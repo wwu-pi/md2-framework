@@ -37,6 +37,12 @@ class ActivityGen {
 		
 		import android.view.View;
 		
+		//Sensoren
+		import android.hardware.Sensor;
+		import android.hardware.SensorEvent;
+		import android.hardware.SensorEventListener;
+		import android.hardware.SensorManager;
+		
 		import «mainPackage».md2.controller.Controller;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAME»;
@@ -62,6 +68,33 @@ class ActivityGen {
 		        	«wer.workflowElementReference.name»Button.setWidgetId(R.id.startActivity_«wer.workflowElementReference.name»Button);
 		        	Md2WidgetRegistry.getInstance().addWidget(«wer.workflowElementReference.name»Button);
 		        «ENDFOR»
+		        
+                //Initialisieren vom SensorManager und vom Sensor
+                SensorManager mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+                Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        
+                //Eventlistener für den Sensor
+                SensorEventListener _SensorEventListener=   new SensorEventListener() {
+                    @Override
+                    public void onSensorChanged(SensorEvent event) {
+                        float Lux = event.values[0];
+                    }
+        
+                    @Override
+                    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        
+                    }
+                };
+        
+                //Prüfen ob SensorManager vorhanden
+                if(mSensorManager!=null){
+                    //Prüfen ob der entsprechende Sensor überhaupt verfügbar ist sieh Initialisierung
+                    if(mSensor != null){
+                        mSensorManager.registerListener(_SensorEventListener, mSensor, mSensorManager.SENSOR_DELAY_NORMAL);
+                    }
+                    else{
+                    }
+                }
 		    }
 		
 		    @Override
