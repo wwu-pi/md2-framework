@@ -1751,11 +1751,11 @@ FloatTypeParam:
  */
 SensorTypeParam:
 	{AttrIsOptional} optional ?= 'optional' |
-	{AttrFloatDefault} 'default' value = FLOAT |
-	{AttrFloatMax} 'max' max = FLOAT |
-	{AttrFloatMin} 'min' min = FLOAT |
-	{AttrSensorTyp} accelerometer ?= 'accelerometer' | 
+//	{AttrFloatDefault} 'default' value = FLOAT | 
+//	{AttrFloatMax} 'max' max = FLOAT |
+//	{AttrFloatMin} 'min' min = FLOAT |
 	{AttrSensorTyp} lux ?= 'lux' 
+	//	{AttrSensorTyp} accelerometer ?= 'accelerometer' | 
 ;
 
 /*

@@ -18,6 +18,7 @@ import de.wwu.md2.framework.mD2.TimeType
 import de.wwu.md2.framework.mD2.FileType
 import de.wwu.md2.framework.mD2.Enum
 import de.wwu.md2.framework.generator.android.wearable.Settings
+import de.wwu.md2.framework.mD2.SensorType
 
 class EntityGen {
 	
@@ -226,7 +227,9 @@ class EntityGen {
 			BooleanType: "Md2Boolean"
 			DateType: "Md2Date"
 			TimeType: "Md2Time"
-			DateTimeType: "Md2DateTime"			
+			DateTimeType: "Md2DateTime"		
+			
+			SensorType: "Md2Sensor"	
 			FileType: "Object" // TODO not implemented
 		}		
 	}
