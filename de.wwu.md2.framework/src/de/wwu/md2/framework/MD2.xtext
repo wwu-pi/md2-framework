@@ -1673,6 +1673,7 @@ AttributeType:
 	{FileType} 'file'										    many ?= BRACKETS? ('(' (params += FileTypeParam (',' params += FileTypeParam)*)? ')')? |  
 	//TODO Eingefügt Sensor
 	{SensorType} 'sensor'										many ?= BRACKETS? ('(' (params += SensorTypeParam (',' params += SensorTypeParam)*)? ')')? |
+
 	
 	// EnumType => Transformed to explicit Enum (=> ReferencedType) after preprocessing
 	{EnumType} '{' (enumBody = EnumBody)? '}'					many ?= BRACKETS? ('(' (params += EnumTypeParam (',' params += EnumTypeParam)*)? ')')?
@@ -1754,8 +1755,11 @@ SensorTypeParam:
 //	{AttrFloatDefault} 'default' value = FLOAT | 
 //	{AttrFloatMax} 'max' max = FLOAT |
 //	{AttrFloatMin} 'min' min = FLOAT |
-	{AttrSensorTyp} lux ?= 'lux' 
-	//	{AttrSensorTyp} accelerometer ?= 'accelerometer' | 
+	{AttrSensorTyp} accelerometer ?= 'accelerometer' | 
+	{AttrSensorTyp} gyroskop ?= 'gyroskop' | 
+	{AttrSensorTyp} compass ?= 'compass' | 
+	{AttrSensorTyp} pulsmesser ?= 'pulsmesser' | 
+	{AttrSensorTyp} schrittzaehler ?= 'schrittzähler' 
 ;
 
 /*
