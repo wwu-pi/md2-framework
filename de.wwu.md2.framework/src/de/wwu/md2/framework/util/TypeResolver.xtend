@@ -51,7 +51,8 @@ import de.wwu.md2.framework.mD2.FileType
 import de.wwu.md2.framework.mD2.FileUpload
 import de.wwu.md2.framework.mD2.UploadedImageOutput
 import de.wwu.md2.framework.mD2.Attribute
-
+import de.wwu.md2.framework.mD2.SensorType
+import de.wwu.md2.framework.mD2.SensorVal
 
 /**
  * Helper class to resolve the data type of a SimpleExpression.
@@ -72,6 +73,8 @@ class TypeResolver {
 			DateTimeVal: "datetime"
 			IntVal: "integer"
 			FloatVal: "float"
+			
+			SensorVal: "float"
 			
 			AbstractContentProviderPath: expr.abstractContentProviderPathType
 			AbstractProviderReference: expr.abstractContentProviderType
@@ -142,6 +145,9 @@ class TypeResolver {
 			DateType: "date"
 			TimeType: "time"
 			DateTimeType: "datetime"
+			
+			SensorType: "float" //Eingefügt
+			
 			ReferencedType: type.element.name
 			EnumType: "Enum"
 			default: System::err.println("Unexpected AttributeType found: " + type.eClass.name)
@@ -206,6 +212,9 @@ class TypeResolver {
 			OptionInput: viewGUIElement.enumReference?.name ?: "string"
 			Tooltip: "string"
 			Label: "string"
+			
+			//SensorType: "double" //Eingefügt
+			
 			default: "undefined"
 		}
 		
@@ -226,6 +235,9 @@ class TypeResolver {
 			IntVal: "int"
 			FloatVal: "double"
 			
+			SensorVal: "double"
+			
+						
 			AbstractContentProviderPath: expr.abstractJavaContentProviderPathType
 		}
 		
@@ -250,6 +262,9 @@ class TypeResolver {
 			DateType: "Date"
 			TimeType: "Date"
 			DateTimeType: "Date"
+			
+			SensorType:  "double"
+			
 			ReferencedType: System::err.println("ReferencedType can not be translated to Java")
 			EnumType: System::err.println("EnumType can not be translated to Java")
 			default: System::err.println("Unexpected AttributeType found: " + type.eClass.name)
