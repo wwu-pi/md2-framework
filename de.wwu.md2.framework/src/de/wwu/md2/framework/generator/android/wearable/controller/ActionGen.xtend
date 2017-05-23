@@ -53,6 +53,7 @@ import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import de.wwu.md2.framework.mD2.WebServiceCallAction
 import de.wwu.md2.framework.mD2.LocationAction
 import de.wwu.md2.framework.mD2.ValidatorBindingTask
+import de.wwu.md2.framework.mD2.SensorVal
 
 class ActionGen {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
@@ -370,6 +371,8 @@ class ActionGen {
 				return '''new Md2Integer(«expression.value»)'''
 			FloatVal:
 				return '''new Md2Float(«expression.value»)'''
+			SensorVal:
+				return '''new Md2Sensor(«expression.value»)'''
 			AbstractContentProviderPath: {
 				switch expression {
 					ContentProviderPath: return '''Md2ContentProviderRegistry.getInstance().getContentProvider("«expression.contentProviderRef.name»").getValue("«expression.tail.attributeRef.name»")'''

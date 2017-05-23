@@ -74,7 +74,7 @@ class TypeResolver {
 			IntVal: "integer"
 			FloatVal: "float"
 			
-			SensorVal: "float"
+			SensorVal: "sensor"
 			
 			AbstractContentProviderPath: expr.abstractContentProviderPathType
 			AbstractProviderReference: expr.abstractContentProviderType
@@ -146,7 +146,7 @@ class TypeResolver {
 			TimeType: "time"
 			DateTimeType: "datetime"
 			
-			SensorType: "float" //Eingefügt
+			SensorType: "float" //aktuelles Problem
 			
 			ReferencedType: type.element.name
 			EnumType: "Enum"
@@ -212,8 +212,6 @@ class TypeResolver {
 			OptionInput: viewGUIElement.enumReference?.name ?: "string"
 			Tooltip: "string"
 			Label: "string"
-			
-			//SensorType: "double" //Eingefügt
 			
 			default: "undefined"
 		}

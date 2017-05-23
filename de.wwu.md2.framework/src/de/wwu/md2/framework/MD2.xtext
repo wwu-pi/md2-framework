@@ -1183,7 +1183,7 @@ SimpleDataTypeWrapper:
  */
 enum SimpleDataType:
 	INTEGER = 'integer' | FLOAT = 'float' | STRING = 'string' | BOOLEAN = 'boolean' |
-	DATE = 'date' | TIME = 'time' | DATE_TIME = 'datetime'
+	DATE = 'date' | TIME = 'time' | DATE_TIME = 'datetime' | SENSOR = 'sensor'
 ;
 
 /*
@@ -1573,7 +1573,7 @@ MathLiteral returns SimpleExpression:
 	AbstractViewGUIElementRef |
 	{IntVal} value = INT |
 	{FloatVal} value = FLOAT |
-	{SensorVal} value = SENSOR //TODO
+	{SensorVal} value = SENSOR //TODO 
 ;
 
 AdditionSubtraction returns SimpleExpression:
@@ -1673,7 +1673,7 @@ AttributeType:
 	{DateTimeType} 'datetime'									many ?= BRACKETS? ('(' (params += DateTimeTypeParam (',' params += DateTimeTypeParam)*)? ')')? |
 	{FileType} 'file'										    many ?= BRACKETS? ('(' (params += FileTypeParam (',' params += FileTypeParam)*)? ')')? |  
 	//"Datentyp" Sensor für die Verwendung von Sensoren in MD2
-	//TODO: lediglich ein Sensore pro Attribut!
+	//TODO: lediglich ein Sensor pro Attribut!
 	{SensorType} 'sensor'										many ?= BRACKETS? '(' (params += SensorTypeParam ')') |
 
 	
@@ -1760,7 +1760,7 @@ SensorTypeParam:
 	{AttrSensorTyp} gyroskop ?= 'gyroskop' | 
 	{AttrSensorTyp} compass ?= 'compass' | 
 	{AttrSensorTyp} pulsmesser ?= 'pulsmesser' |
-	{AttrSensorTyp} schrittzaehler ?= 'schrittzähler' 
+	{AttrSensorTyp} schrittzaehler ?= 'schrittzähler'
 ;
 
 /*
