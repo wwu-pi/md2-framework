@@ -36,8 +36,8 @@ class LayoutGen {
 	def static generateLayouts(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements) {
 			
-		fsa.generateFile(rootFolder + Settings.LAYOUT_PATH + "activity_start.xml",
-				generateStartLayout(mainPackage, startableWorkflowElements))
+		//fsa.generateFile(rootFolder + Settings.LAYOUT_PATH + "activity_start.xml",
+		//		generateStartLayout(mainPackage, startableWorkflowElements))
 				
 		rootViews.forEach [ rv |
 			fsa.generateFile(rootFolder + Settings.LAYOUT_PATH + "activity_" + rv.name.toLowerCase + ".xml",
@@ -124,18 +124,35 @@ class LayoutGen {
 		val generationComment = doc.createComment("generated in de.wwu.md2.framework.generator.android.wearable.view.Layout.generateLayout()")
 		doc.appendChild(generationComment)
 		
-		// create root element: BoxInsetLayout, FrameLayout as child, ScrollView as Child
+		// create root element: WearableDrawerLayout, NavigationDrawer + BoxInsetLayout as children, FrameLayout as child of BIL, ScrollView as Child
 		
-		// create BoxInsetLayout
-		var Element rootElement = doc.createElement("android.support.wearable.view.BoxInsetLayout")
-		// set attributes of BoxInsetLayout
-		rootElement.setAttribute("android:layout_height", "match_parent")
-		rootElement.setAttribute("android:layout_width", "match_parent")	
-		rootElement.setAttribute("tools:context", mainPackage + "." + rv.name + "Activity")
+		//create WearableDrawerLayout
+		var Element rootElement = doc.createElement("android.support.wearable.view.drawer.WearableDrawerLayout")
+		rootElement.setAttribute("android:id","@+id/drawer_layout_"+rv.name);
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
 			"http://schemas.android.com/apk/res/android")
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
-		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:app", "http://schemas.android.com/apk/res-auto")
+		rootElement.setAttribute("android:layout_height", "match_parent")
+		rootElement.setAttribute("android:layout_width", "match_parent")
+		rootElement.setAttribute("tools:deviceIds", "wear")
+		
+		//create NavigationDrawer
+		var Element navElement = doc.createElement("android.support.wearable.view.drawer.WearableNavigationDrawer")
+		navElement.setAttribute("android:id", "@+id/navigation_drawer_"+rv.name)
+		navElement.setAttribute("android:layout_height", "match_parent")
+		navElement.setAttribute("android:layout_width", "match_parent")
+		
+		
+		// create BoxInsetLayout
+		var Element boxElement = doc.createElement("android.support.wearable.view.BoxInsetLayout")
+		// set attributes of BoxInsetLayout
+		boxElement.setAttribute("android:layout_height", "match_parent")
+		boxElement.setAttribute("android:layout_width", "match_parent")	
+		boxElement.setAttribute("tools:context", mainPackage + "." + rv.name + "Activity")
+		boxElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
+			"http://schemas.android.com/apk/res/android")
+		boxElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
+		boxElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:app", "http://schemas.android.com/apk/res-auto")
 		
 		// create FrameLayout
 		var Element frameElement = doc.createElement("FrameLayout")
@@ -154,7 +171,9 @@ class LayoutGen {
 		
 		//append
 		frameElement.appendChild(scrollView)
-		rootElement.appendChild(frameElement)
+		boxElement.appendChild(frameElement)
+		rootElement.appendChild(boxElement);
+		rootElement.appendChild(navElement);
 		doc.appendChild(rootElement)
 
 		var Element rootContainer = null

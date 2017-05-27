@@ -20,14 +20,14 @@ class AndroidManifestGen {
 		        android:icon="@mipmap/ic_launcher"
 		        android:label="TEst"
 		        android:theme="@style/AppTheme" >
-					<activity
+		<!--			<activity
 					          android:name=".StartActivity"
 					          android:label="@string/app_name" >
 					          <intent-filter>
 					              <action android:name="android.intent.action.MAIN" />			
 					              <category android:name="android.intent.category.LAUNCHER" />
 					          </intent-filter>
-					      </activity>
+					      </activity>		-->
 	        «FOR rv : rootViews»
 	        	<activity
        		android:name=".«rv.name.toFirstUpper»Activity"
