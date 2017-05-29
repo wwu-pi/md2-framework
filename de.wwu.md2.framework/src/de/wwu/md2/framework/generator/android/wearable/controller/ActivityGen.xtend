@@ -13,21 +13,22 @@ import de.wwu.md2.framework.mD2.ViewGUIElementReference
 import de.wwu.md2.framework.mD2.WorkflowElementReference
 import de.wwu.md2.framework.mD2.ContentContainer
 
+import de.wwu.md2.framework.mD2.Entity
+
 class ActivityGen {
-	
-	def static generateActivities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
-		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements) {
+	def static generateActivities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,	
+		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities) {
 		
 		fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "StartActivity.java",
-				generateStartActivity(mainPackage, startableWorkflowElements))	
-		
+				generateStartActivity(mainPackage, startableWorkflowElements, entities))
+							
 		rootViews.forEach [ rv |
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + rv.name + "Activity.java",
 				generateActivity(mainPackage, rv))
 		]
 	}
 	
-	def static generateStartActivity(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements)'''
+	def static generateStartActivity(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements,Iterable<Entity> entities)'''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateStartActivity()
 		package «mainPackage»;
 		
@@ -56,6 +57,7 @@ class ActivityGen {
 		«ENDFOR»
 		
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2GoToViewAction;
+		import «Settings.MD2LIBRARY_PACKAGE»model.SensorHelper;
 		
 		public class StartActivity extends Activity {
 		
@@ -68,33 +70,19 @@ class ActivityGen {
 		        	«wer.workflowElementReference.name»Button.setWidgetId(R.id.startActivity_«wer.workflowElementReference.name»Button);
 		        	Md2WidgetRegistry.getInstance().addWidget(«wer.workflowElementReference.name»Button);
 		        «ENDFOR»
-		        
-                //Initialisieren vom SensorManager und vom Sensor
-                SensorManager mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-                Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-        
-                //Eventlistener für den Sensor
-                SensorEventListener _SensorEventListener=   new SensorEventListener() {
-                    @Override
-                    public void onSensorChanged(SensorEvent event) {
-                        float Lux = event.values[0];
-                    }
-        
-                    @Override
-                    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        
-                    }
-                };
-        
-                //Prüfen ob SensorManager vorhanden
-                if(mSensorManager!=null){
-                    //Prüfen ob der entsprechende Sensor überhaupt verfügbar ist sieh Initialisierung
-                    if(mSensor != null){
-                        mSensorManager.registerListener(_SensorEventListener, mSensor, mSensorManager.SENSOR_DELAY_NORMAL);
-                    }
-                    else{
-                    }
-                }
+		       
+		       //Sensor TODO: Prüfen ob ein Attribut des Typssensor vorhanden ist 
+		       //Benötigt wird: Name des Attributes und der Sensortyp
+               SensorHelper meinSensorHelper = new SensorHelper(this, "meinSensor", "luxmeter");
+               
+               «FOR e: entities»
+					«FOR attribute : e.attributes»
+			        	«IF attribute.type.toString().contains("SensorTypeImpl")» //TODO
+			        		//Sensor erkannt
+			        		SensorHelper meinSensorHelper = new SensorHelper(this, «attribute.name», "luxmeter");
+			        	«ENDIF»
+        			«ENDFOR»
+               	«ENDFOR»
 		    }
 		
 		    @Override
