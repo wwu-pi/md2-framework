@@ -14,6 +14,9 @@ import de.wwu.md2.framework.mD2.WorkflowElementReference
 import de.wwu.md2.framework.mD2.ContentContainer
 
 import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.SensorTypeParam
+import de.wwu.md2.framework.mD2.SensorType
+import de.wwu.md2.framework.mD2.SimpleType
 
 class ActivityGen {
 	def static generateActivities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,	
@@ -71,18 +74,31 @@ class ActivityGen {
 		        	Md2WidgetRegistry.getInstance().addWidget(«wer.workflowElementReference.name»Button);
 		        «ENDFOR»
 		       
-		       //Sensor TODO: Prüfen ob ein Attribut des Typssensor vorhanden ist 
-		       //Benötigt wird: Name des Attributes und der Sensortyp
-               SensorHelper meinSensorHelper = new SensorHelper(this, "meinSensor", "luxmeter");
-               
-               «FOR e: entities»
-					«FOR attribute : e.attributes»
-			        	«IF attribute.type.toString().contains("SensorTypeImpl")» //TODO
-			        		//Sensor erkannt
-			        		SensorHelper meinSensorHelper = new SensorHelper(this, «attribute.name», "luxmeter");
-			        	«ENDIF»
-        			«ENDFOR»
-               	«ENDFOR»
+«««Prüfen ob ein Attribut des Typssensor vorhanden ist 
+           «FOR e: entities»
+				«FOR attribute : e.attributes»
+        			«IF attribute.type instanceof SensorType»
+    		«IF attribute.type.eContents.toString().contains("accelerometer: true")»
+    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "accelerometer");
+    		«ENDIF»
+    		«IF attribute.type.eContents.toString().contains("gyroskop: true")»
+    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "gyroskop");
+    		«ENDIF»
+			«IF attribute.type.eContents.toString().contains("compass: true")»
+    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "compass");
+    		«ENDIF»
+    		«IF attribute.type.eContents.toString().contains("pulsmesser: true")»
+    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "pulsmesser");
+    		«ENDIF»
+    		«IF attribute.type.eContents.toString().contains("schrittzaehler: true")»
+    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "schrittzaehler");
+    		«ENDIF»
+    		«IF attribute.type.eContents.toString().contains("luxmeter: true")»
+    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "luxmeter");
+    					«ENDIF»
+        			«ENDIF»
+				«ENDFOR»
+           	«ENDFOR»
 		    }
 		
 		    @Override
