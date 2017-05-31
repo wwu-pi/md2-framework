@@ -6,6 +6,7 @@ import de.wwu.md2.framework.mD2.ContainerElement
 class AndroidManifestGen {	
 	
 	// generates android manifest for the project
+	// startActivity muss gesetzt werden
 	def static String generateProjectAndroidManifest(App app, Iterable<ContainerElement> rootViews, String packageName)'''
 		<?xml version="1.0" encoding="utf-8"?>
 		<!-- generated in de.wwu.md2.framework.generator.android.wearable.misc.AndroidManifest.generateProjectAndroidManifest() -->
@@ -33,6 +34,12 @@ class AndroidManifestGen {
        		android:name=".«rv.name.toFirstUpper»Activity"
 	        		android:label="@string/title_activity_«rv.name.toFirstLower»" 
 	        		android:launchMode="singleInstance">
+	        		«IF rv.equals(rootViews.get(0))»
+	        		<intent-filter>
+	        			<action android:name="android.intent.action.MAIN" />			
+	        			<category android:name="android.intent.category.LAUNCHER" />
+	        		 </intent-filter>
+	        		«ENDIF»
 	        	</activity>
 	        «ENDFOR»
 					 </application>

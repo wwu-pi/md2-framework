@@ -29,7 +29,9 @@ class ActivityGen {
 				generateActivity(mainPackage, rv))
 		]
 	}
-	
+		
+		//generiert NavigationAdapter als Singleton, ersetzt die ursprüngliche StartActivity
+		//startActions werden in Konstruktor übergeben
 		def static generateNavigationAdapter(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements)'''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateStartActivity()
 		package «mainPackage»;
@@ -99,15 +101,11 @@ class ActivityGen {
 			public boolean close(){
 				if (active != selected){
 					active = selected;
-					actions.get(selected).execute();
+					actions.get(active).execute();
 					return true;
 				} else {
 					return false;
 				}
-			}
-			
-			public void open(){
-				selected = 0;
 			}
 			
 		}
@@ -220,7 +218,7 @@ class ActivityGen {
 	        	drawerLayout.setDrawerStateCallback(new WearableDrawerLayout.DrawerStateCallback() {
 	           		@Override
 	            	public void onDrawerOpened(View view) {
-	            		adapter.open();
+	            		navigationDrawer.setCurrentItem(adapter.getActive(), true);
 	            	}
 	            	@Override
 	            	public void onDrawerClosed(View view) {
@@ -230,13 +228,18 @@ class ActivityGen {
 	            	}
 	            	@Override
 	            	public void onDrawerStateChanged(@WearableDrawerView.DrawerState int i) {
+	            		if(i == 0){
+	            		   if(!navigationDrawer.isOpened()) {
+                          	 navigationDrawer.closeDrawer();
+                          }
+                       }
 	            	}
 	        	});		        
 		        
 		        navigationDrawer = (WearableNavigationDrawer) findViewById(R.id.navigation_drawer_«rv.name»);
 		        adapter = NavigationAdapter.getInstance();
 		        navigationDrawer.setAdapter(adapter);
-		        
+		        navigationDrawer.setCurrentItem(adapter.getActive(), true);
 		    }
 		
 		    @Override
@@ -248,7 +251,6 @@ class ActivityGen {
 		        	«generateLoadViewElement(viewElement)»
 		        «ENDFOR»
 		        
-		        drawerLayout.peekDrawer(Gravity.TOP);
 		        
 		        Md2TaskQueue.getInstance().tryExecutePendingTasks();
 		    }
