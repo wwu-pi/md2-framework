@@ -12,6 +12,8 @@ import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
 import de.wwu.md2.framework.mD2.WorkflowElementReference
 import de.wwu.md2.framework.mD2.ContentContainer
+import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.SensorType
 
 class ActivityGen {
 	def static generateActivities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,	
@@ -21,7 +23,7 @@ class ActivityGen {
 			generateNavigationAdapter(mainPackage, startableWorkflowElements))
 		
 		//fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "StartActivity.java",
-		//		generateStartActivity(mainPackage, startableWorkflowElements))	
+		//		generateStartActivity(mainPackage, startableWorkflowElements, Iterable<Entity> entities))	
 		
 		rootViews.forEach [ rv |
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + rv.name + "Activity.java",
@@ -29,19 +31,19 @@ class ActivityGen {
 		]
 	}
 		
-		//generiert NavigationAdapter als Singleton, ersetzt die ursprüngliche StartActivity
-		//startActions werden in Konstruktor übergeben
+		//generiert NavigationAdapter als Singleton, ersetzt die ursprÂ«ngliche StartActivity
+		//startActions werden in Konstruktor Â»bergeben
 		def static generateNavigationAdapter(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements)'''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateStartActivity()
-		package «mainPackage»;
+		package Â«mainPackageÂ»;
 		
 		import android.graphics.drawable.Drawable;
 		import android.support.wearable.view.drawer.WearableNavigationDrawer;
 		import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
 		import java.util.ArrayList;
-		«FOR wer : startableWorkflowElements»		        	
-			import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action;
-		«ENDFOR»
+		Â«FOR wer : startableWorkflowElementsÂ»		        	
+			import Â«mainPackageÂ».md2.controller.action.Â«wer.workflowElementReference.name.toFirstUpperÂ»___Â«wer.workflowElementReference.name.toFirstUpperÂ»_startupAction_Action;
+		Â«ENDFORÂ»
 		
 		public class NavigationAdapter extends WearableNavigationDrawer.WearableNavigationDrawerAdapter{
 			
@@ -63,10 +65,10 @@ class ActivityGen {
 				selected = 0;
 				names = new ArrayList<String>();
 				actions = new ArrayList<Md2Action>();
-				«FOR wer : startableWorkflowElements»
-					names.add("«wer.workflowElementReference.name.toFirstUpper»");
-					actions.add(new «wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action());
-				«ENDFOR»
+				Â«FOR wer : startableWorkflowElementsÂ»
+					names.add("Â«wer.workflowElementReference.name.toFirstUpperÂ»");
+					actions.add(new Â«wer.workflowElementReference.name.toFirstUpperÂ»___Â«wer.workflowElementReference.name.toFirstUpperÂ»_startupAction_Action());
+				Â«ENDFORÂ»
 			}
 			
 			@Override
@@ -111,9 +113,9 @@ class ActivityGen {
 		
 	'''
 	
-	def static generateStartActivity(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements)'''
+	def static generateStartActivity(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities)'''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateStartActivity()
-		package «mainPackage»;
+		package Â«mainPackageÂ»;
 		
 		import android.os.Bundle;
 		import android.app.Activity;
@@ -127,20 +129,20 @@ class ActivityGen {
 		import android.hardware.SensorEventListener;
 		import android.hardware.SensorManager;
 		
-		import «mainPackage».md2.controller.Controller;
-		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
-		import «Settings.MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAME»;
-		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
-		«MD2AndroidLollipopUtil.generateImportAllWidgets»
-		«MD2AndroidLollipopUtil.generateImportAllTypes»
-		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
+		import Â«mainPackageÂ».md2.controller.Controller;
+		import Â«Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAMEÂ»;
+		import Â«Settings.MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAMEÂ»;
+		import Â«Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAMEÂ»;
+		Â«MD2AndroidLollipopUtil.generateImportAllWidgetsÂ»
+		Â«MD2AndroidLollipopUtil.generateImportAllTypesÂ»
+		Â«MD2AndroidLollipopUtil.generateImportAllEventHandlerÂ»
 		
-		«FOR wer : startableWorkflowElements»		        	
-			import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action;
-		«ENDFOR»
+		Â«FOR wer : startableWorkflowElementsÂ»		        	
+			import Â«mainPackageÂ».md2.controller.action.Â«wer.workflowElementReference.name.toFirstUpperÂ»___Â«wer.workflowElementReference.name.toFirstUpperÂ»_startupAction_Action;
+		Â«ENDFORÂ»
 		
-		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2GoToViewAction;
-		import «Settings.MD2LIBRARY_PACKAGE»model.SensorHelper;
+		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.action.implementation.Md2GoToViewAction;
+		import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.SensorHelper;
 		
 		public class StartActivity extends Activity {
 		
@@ -149,37 +151,37 @@ class ActivityGen {
 		    protected void onCreate(Bundle savedInstanceState) {
 		        super.onCreate(savedInstanceState);
 		        setContentView(R.layout.activity_start);
-		        «FOR wer : startableWorkflowElements»
-		        	Md2Button «wer.workflowElementReference.name»Button = (Md2Button) findViewById(R.id.startActivity_«wer.workflowElementReference.name»Button);
-		        	«wer.workflowElementReference.name»Button.setWidgetId(R.id.startActivity_«wer.workflowElementReference.name»Button);
-		        	Md2WidgetRegistry.getInstance().addWidget(«wer.workflowElementReference.name»Button);
-		        «ENDFOR»
+		        Â«FOR wer : startableWorkflowElementsÂ»
+		        	Md2Button Â«wer.workflowElementReference.nameÂ»Button = (Md2Button) findViewById(R.id.startActivity_Â«wer.workflowElementReference.nameÂ»Button);
+		        	Â«wer.workflowElementReference.nameÂ»Button.setWidgetId(R.id.startActivity_Â«wer.workflowElementReference.nameÂ»Button);
+		        	Md2WidgetRegistry.getInstance().addWidget(Â«wer.workflowElementReference.nameÂ»Button);
+		        Â«ENDFORÂ»
 		       
-«««Prüfen ob ein Attribut des Typssensor vorhanden ist 
-           «FOR e: entities»
-				«FOR attribute : e.attributes»
-        			«IF attribute.type instanceof SensorType»
-    		«IF attribute.type.eContents.toString().contains("accelerometer: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "accelerometer");
-    		«ENDIF»
-    		«IF attribute.type.eContents.toString().contains("gyroskop: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "gyroskop");
-    		«ENDIF»
-			«IF attribute.type.eContents.toString().contains("compass: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "compass");
-    		«ENDIF»
-    		«IF attribute.type.eContents.toString().contains("pulsmesser: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "pulsmesser");
-    		«ENDIF»
-    		«IF attribute.type.eContents.toString().contains("schrittzaehler: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "schrittzaehler");
-    		«ENDIF»
-    		«IF attribute.type.eContents.toString().contains("luxmeter: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "luxmeter");
-    					«ENDIF»
-        			«ENDIF»
-				«ENDFOR»
-           	«ENDFOR»
+Â«Â«Â«PrÂ»fen ob ein Attribut des Typssensor vorhanden ist 
+           Â«FOR e: entitiesÂ»
+				Â«FOR attribute : e.attributesÂ»
+        			Â«IF attribute.type instanceof SensorTypeÂ»
+    		Â«IF attribute.type.eContents.toString().contains("accelerometer: true")Â»
+    			SensorHelper meinSensorHelper_Â«attribute.nameÂ» = new SensorHelper(this, "Â«attribute.nameÂ»", "accelerometer");
+    		Â«ENDIFÂ»
+    		Â«IF attribute.type.eContents.toString().contains("gyroskop: true")Â»
+    			SensorHelper meinSensorHelper_Â«attribute.nameÂ» = new SensorHelper(this, "Â«attribute.nameÂ»", "gyroskop");
+    		Â«ENDIFÂ»
+			Â«IF attribute.type.eContents.toString().contains("compass: true")Â»
+    			SensorHelper meinSensorHelper_Â«attribute.nameÂ» = new SensorHelper(this, "Â«attribute.nameÂ»", "compass");
+    		Â«ENDIFÂ»
+    		Â«IF attribute.type.eContents.toString().contains("pulsmesser: true")Â»
+    			SensorHelper meinSensorHelper_Â«attribute.nameÂ» = new SensorHelper(this, "Â«attribute.nameÂ»", "pulsmesser");
+    		Â«ENDIFÂ»
+    		Â«IF attribute.type.eContents.toString().contains("schrittzaehler: true")Â»
+    			SensorHelper meinSensorHelper_Â«attribute.nameÂ» = new SensorHelper(this, "Â«attribute.nameÂ»", "schrittzaehler");
+    		Â«ENDIFÂ»
+    		Â«IF attribute.type.eContents.toString().contains("luxmeter: true")Â»
+    			SensorHelper meinSensorHelper_Â«attribute.nameÂ» = new SensorHelper(this, "Â«attribute.nameÂ»", "luxmeter");
+    					Â«ENDIFÂ»
+        			Â«ENDIFÂ»
+				Â«ENDFORÂ»
+           	Â«ENDFORÂ»
 		    }
 		
 		    @Override
@@ -188,20 +190,20 @@ class ActivityGen {
 				Md2ViewManager.getInstance().setActiveView(this);
 		        
 		        // TODO move startableWorkflowElements to Md2WorkflowManager
-				«FOR wer : startableWorkflowElements»
-					Md2Button «wer.workflowElementReference.name»Button = (Md2Button) findViewById(R.id.startActivity_«wer.workflowElementReference.name»Button);
-					«wer.workflowElementReference.name»Button.getOnClickHandler().registerAction(new «wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action());
-		        «ENDFOR»
+				Â«FOR wer : startableWorkflowElementsÂ»
+					Md2Button Â«wer.workflowElementReference.nameÂ»Button = (Md2Button) findViewById(R.id.startActivity_Â«wer.workflowElementReference.nameÂ»Button);
+					Â«wer.workflowElementReference.nameÂ»Button.getOnClickHandler().registerAction(new Â«wer.workflowElementReference.name.toFirstUpperÂ»___Â«wer.workflowElementReference.name.toFirstUpperÂ»_startupAction_Action());
+		        Â«ENDFORÂ»
 				Md2TaskQueue.getInstance().tryExecutePendingTasks();
 		    }
 		    
 			@Override
 		    protected void onPause(){
 		        super.onPause();
-			«FOR wer : startableWorkflowElements»
-				Md2Button «wer.workflowElementReference.name»Button = (Md2Button) findViewById(R.id.startActivity_«wer.workflowElementReference.name»Button);
-				Md2WidgetRegistry.getInstance().saveWidget(«wer.workflowElementReference.name»Button);
-			«ENDFOR»
+			Â«FOR wer : startableWorkflowElementsÂ»
+				Md2Button Â«wer.workflowElementReference.nameÂ»Button = (Md2Button) findViewById(R.id.startActivity_Â«wer.workflowElementReference.nameÂ»Button);
+				Md2WidgetRegistry.getInstance().saveWidget(Â«wer.workflowElementReference.nameÂ»Button);
+			Â«ENDFORÂ»
 		    }
 		    
 		    @Override
@@ -213,7 +215,7 @@ class ActivityGen {
 
 	private def static generateActivity(String mainPackage, ContainerElement rv) '''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.Activity.generateActivity()
-		package «mainPackage»;
+		package Â«mainPackageÂ»;
 		
 		import android.app.Activity;
 		import android.content.Intent;
@@ -224,15 +226,15 @@ class ActivityGen {
 		import android.support.wearable.view.drawer.WearableDrawerView;
 		import android.support.wearable.view.drawer.WearableNavigationDrawer;
 		
-		import «mainPackage».md2.controller.Controller;
-		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
-		import «Settings.MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAME»;
-		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
-		«MD2AndroidLollipopUtil.generateImportAllWidgets»
-		«MD2AndroidLollipopUtil.generateImportAllTypes»
-		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
+		import Â«mainPackageÂ».md2.controller.Controller;
+		import Â«Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAMEÂ»;
+		import Â«Settings.MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAMEÂ»;
+		import Â«Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAMEÂ»;
+		Â«MD2AndroidLollipopUtil.generateImportAllWidgetsÂ»
+		Â«MD2AndroidLollipopUtil.generateImportAllTypesÂ»
+		Â«MD2AndroidLollipopUtil.generateImportAllEventHandlerÂ»
 				
-		public class «rv.name»Activity extends Activity {
+		public class Â«rv.nameÂ»Activity extends Activity {
 			
 			private WearableDrawerLayout drawerLayout;	
 			private WearableNavigationDrawer navigationDrawer;
@@ -241,12 +243,12 @@ class ActivityGen {
 		    @Override
 		    protected void onCreate(Bundle savedInstanceState) {
 		        super.onCreate(savedInstanceState);
-		        setContentView(R.layout.activity_«rv.name.toLowerCase»);
-		        «FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
-		        	«generateAddViewElement(viewElement)»
-		        «ENDFOR»
+		        setContentView(R.layout.activity_Â«rv.name.toLowerCaseÂ»);
+		        Â«FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterableÂ»
+		        	Â«generateAddViewElement(viewElement)Â»
+		        Â«ENDFORÂ»
 		        
-	     		drawerLayout = (WearableDrawerLayout) findViewById(R.id.drawer_layout_«rv.name»);
+	     		drawerLayout = (WearableDrawerLayout) findViewById(R.id.drawer_layout_Â«rv.nameÂ»);
 	        	drawerLayout.setDrawerStateCallback(new WearableDrawerLayout.DrawerStateCallback() {
 	           		@Override
 	            	public void onDrawerOpened(View view) {
@@ -255,7 +257,7 @@ class ActivityGen {
 	            	@Override
 	            	public void onDrawerClosed(View view) {
 	                	if(adapter.close()){
-	                		«rv.name»Activity.this.finish();
+	                		Â«rv.nameÂ»Activity.this.finish();
 	                	}
 	            	}
 	            	@Override
@@ -268,7 +270,7 @@ class ActivityGen {
 	            	}
 	        	});		        
 		        
-		        navigationDrawer = (WearableNavigationDrawer) findViewById(R.id.navigation_drawer_«rv.name»);
+		        navigationDrawer = (WearableNavigationDrawer) findViewById(R.id.navigation_drawer_Â«rv.nameÂ»);
 		        adapter = NavigationAdapter.getInstance();
 		        navigationDrawer.setAdapter(adapter);
 		        navigationDrawer.setCurrentItem(adapter.getActive(), true);
@@ -279,9 +281,9 @@ class ActivityGen {
 				super.onStart();
 		        Md2ViewManager.getInstance().setActiveView(this);
 		        
-		        «FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
-		        	«generateLoadViewElement(viewElement)»
-		        «ENDFOR»
+		        Â«FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterableÂ»
+		        	Â«generateLoadViewElement(viewElement)Â»
+		        Â«ENDFORÂ»
 		        
 		        
 		        Md2TaskQueue.getInstance().tryExecutePendingTasks();
@@ -290,9 +292,9 @@ class ActivityGen {
 			@Override
 		    protected void onPause(){
 		        super.onPause();
-		        «FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
-		        	«generateSaveViewElement(viewElement)»
-		        «ENDFOR»
+		        Â«FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterableÂ»
+		        	Â«generateSaveViewElement(viewElement)Â»
+		        Â«ENDFORÂ»
 		    }
 		    
 		    @Override
@@ -324,9 +326,9 @@ class ActivityGen {
 			return ""
 		
 		result = '''
-			«type» «qualifiedName.toFirstLower» = («type») findViewById(R.id.«qualifiedName»);
-			«qualifiedName.toFirstLower».setWidgetId(R.id.«qualifiedName»);
-			Md2WidgetRegistry.getInstance().addWidget(«qualifiedName.toFirstLower»);
+			Â«typeÂ» Â«qualifiedName.toFirstLowerÂ» = (Â«typeÂ») findViewById(R.id.Â«qualifiedNameÂ»);
+			Â«qualifiedName.toFirstLowerÂ».setWidgetId(R.id.Â«qualifiedNameÂ»);
+			Md2WidgetRegistry.getInstance().addWidget(Â«qualifiedName.toFirstLowerÂ»);
         '''
         return result
 	}
@@ -352,8 +354,8 @@ class ActivityGen {
 			return ""
 		
 		result = '''
-			«type» «qualifiedName.toFirstLower» = («type») findViewById(R.id.«qualifiedName»);
-			Md2WidgetRegistry.getInstance().loadWidget(«qualifiedName.toFirstLower»);
+			Â«typeÂ» Â«qualifiedName.toFirstLowerÂ» = (Â«typeÂ») findViewById(R.id.Â«qualifiedNameÂ»);
+			Md2WidgetRegistry.getInstance().loadWidget(Â«qualifiedName.toFirstLowerÂ»);
         '''
         
 		return result
@@ -380,8 +382,8 @@ class ActivityGen {
 			return ""
 		
 		result = '''
-			«type» «qualifiedName.toFirstLower» = («type») findViewById(R.id.«qualifiedName»);
-			Md2WidgetRegistry.getInstance().saveWidget(«qualifiedName.toFirstLower»);
+			Â«typeÂ» Â«qualifiedName.toFirstLowerÂ» = (Â«typeÂ») findViewById(R.id.Â«qualifiedNameÂ»);
+			Md2WidgetRegistry.getInstance().saveWidget(Â«qualifiedName.toFirstLowerÂ»);
         '''
         
 		return result

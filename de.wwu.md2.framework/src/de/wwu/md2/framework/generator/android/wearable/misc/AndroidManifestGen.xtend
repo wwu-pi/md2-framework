@@ -32,7 +32,6 @@ class AndroidManifestGen {
 	        «FOR rv : rootViews»
 	        	<activity
        		android:name=".«rv.name.toFirstUpper»Activity"
-<<<<<<< HEAD
 	        		android:label="@string/title_activity_«rv.name.toFirstLower»" 
 	        		android:launchMode="singleInstance">
 	        		«IF rv.equals(rootViews.get(0))»
@@ -41,9 +40,6 @@ class AndroidManifestGen {
 	        			<category android:name="android.intent.category.LAUNCHER" />
 	        		 </intent-filter>
 	        		«ENDIF»
-=======
-	        		android:label="@string/title_activity_«rv.name.toFirstLower»" >
->>>>>>> refs/remotes/origin/dev_sensoren
 	        	</activity>
 	        «ENDFOR»
 					 </application>

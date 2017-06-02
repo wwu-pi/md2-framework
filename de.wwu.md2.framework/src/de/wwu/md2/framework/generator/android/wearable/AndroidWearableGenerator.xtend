@@ -169,7 +169,7 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 			// Application class
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + app.name.toFirstUpper + ".java",
 				ApplicationGen.generateAppClass(mainPackage, app))
-
+ 
 			// Activities //hinzugefügt dataContainer.entities
 			ActivityGen.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements, dataContainer.entities)
 
