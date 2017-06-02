@@ -1183,7 +1183,7 @@ SimpleDataTypeWrapper:
  */
 enum SimpleDataType:
 	INTEGER = 'integer' | FLOAT = 'float' | STRING = 'string' | BOOLEAN = 'boolean' |
-	DATE = 'date' | TIME = 'time' | DATE_TIME = 'datetime'
+	DATE = 'date' | TIME = 'time' | DATE_TIME = 'datetime' | SENSOR = 'sensor'
 ;
 
 /*
@@ -1572,7 +1572,8 @@ MathLiteral returns SimpleExpression:
 	AbstractProviderReference |
 	AbstractViewGUIElementRef |
 	{IntVal} value = INT |
-	{FloatVal} value = FLOAT
+	{FloatVal} value = FLOAT |
+	{SensorVal} value = SENSOR //TODO 
 ;
 
 AdditionSubtraction returns SimpleExpression:
@@ -1671,8 +1672,10 @@ AttributeType:
 	{TimeType} 'time'											many ?= BRACKETS? ('(' (params += TimeTypeParam (',' params += TimeTypeParam)*)? ')')? |
 	{DateTimeType} 'datetime'									many ?= BRACKETS? ('(' (params += DateTimeTypeParam (',' params += DateTimeTypeParam)*)? ')')? |
 	{FileType} 'file'										    many ?= BRACKETS? ('(' (params += FileTypeParam (',' params += FileTypeParam)*)? ')')? |  
-	//TODO Eingefügt Sensor
-	{SensorType} 'sensor'										many ?= BRACKETS? ('(' (params += SensorTypeParam (',' params += SensorTypeParam)*)? ')')? |
+	//"Datentyp" Sensor für die Verwendung von Sensoren in MD2
+	//TODO: lediglich ein Sensor pro Attribut!
+	{SensorType} 'sensor'										many ?= BRACKETS? '(' (params += SensorTypeParam ')') |
+
 	
 	// EnumType => Transformed to explicit Enum (=> ReferencedType) after preprocessing
 	{EnumType} '{' (enumBody = EnumBody)? '}'					many ?= BRACKETS? ('(' (params += EnumTypeParam (',' params += EnumTypeParam)*)? ')')?
@@ -1747,15 +1750,17 @@ FloatTypeParam:
 ;
 
 /*TODO: SensorTypeParam 
-
+ * SensorTypeParam is a super type of all possible
+ * parametes of sensor Attributes. The selection
+ * of an explicit sensor (e.g. hearrate) is 
+ * mandatory.
  */
 SensorTypeParam:
-	{AttrIsOptional} optional ?= 'optional' |
-	{AttrFloatDefault} 'default' value = FLOAT |
-	{AttrFloatMax} 'max' max = FLOAT |
-	{AttrFloatMin} 'min' min = FLOAT |
-	{AttrSensorTyp} accelerometer ?= 'accelerometer' | 
-	{AttrSensorTyp} lux ?= 'lux' 
+	{AttrSensorTyp} accelerometer ?= 'accelerometer' |
+	{AttrSensorTyp} gyroskop ?= 'gyroskop' | 
+	{AttrSensorTyp} compass ?= 'compass' | 
+	{AttrSensorTyp} pulsmesser ?= 'pulsmesser' |
+	{AttrSensorTyp} schrittzaehler ?= 'schrittzähler'
 ;
 
 /*
@@ -1949,6 +1954,13 @@ DATE_TIME returns ecore::EDate:
  */
 FLOAT returns ecore::EDouble:
 	INT '.' INT
+;
+
+/**
+ * TODO Sensor #.#
+ */
+SENSOR returns ecore::EDouble:
+	INT "," INT
 ;
 
 /**

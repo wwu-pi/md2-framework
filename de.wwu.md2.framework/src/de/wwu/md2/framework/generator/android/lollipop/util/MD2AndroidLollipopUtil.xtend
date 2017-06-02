@@ -60,6 +60,9 @@ class MD2AndroidLollipopUtil {
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Integer;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2String;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Time;
+		
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Sensor;
+		
 	'''
 	
 	def static String generateImportAllActions()'''
