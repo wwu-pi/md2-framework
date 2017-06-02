@@ -39,6 +39,7 @@ class EntityGen {
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
+		
 		public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		
 		    public «entity.name.toFirstUpper»() {
@@ -76,7 +77,7 @@ class EntityGen {
 	'''}
 		
 	
-private def static generateEntityPOJO(String mainPackage, Entity entity){ '''
+	private def static generateEntityPOJO(String mainPackage, Entity entity){ '''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.model.Md2Entity.generateEntity()
 		package «mainPackage + ".md2.model"»;
 		
@@ -181,6 +182,7 @@ private def static generateEntityPOJO(String mainPackage, Entity entity){ '''
 				generateEnum(mainPackage, e))
 		]
 	}
+	
 	
 	private def static generateEnum(String mainPackage, Enum entity) '''
 		// generated in de.wwu.md2.framework.generator.android.wearable.model.Md2Entity.generateEnum()
