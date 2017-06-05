@@ -16,6 +16,9 @@ import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.SensorType
 
 class ActivityGen {
+	
+	static boolean FirstCall = true
+	
 	def static generateActivities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,	
 		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities) {
 		
@@ -27,13 +30,14 @@ class ActivityGen {
 		
 		rootViews.forEach [ rv |
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + rv.name + "Activity.java",
-				generateActivity(mainPackage, rv))
+				generateActivity(mainPackage, rv, entities, FirstCall))
+				FirstCall = false;
 		]
 	}
 		
 		//generiert NavigationAdapter als Singleton, ersetzt die urspr«ngliche StartActivity
 		//startActions werden in Konstruktor »bergeben
-		def static generateNavigationAdapter(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements)'''
+	def static generateNavigationAdapter(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements)'''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateStartActivity()
 		package «mainPackage»;
 		
@@ -212,8 +216,8 @@ class ActivityGen {
 			}
 		}
 	'''
-
-	private def static generateActivity(String mainPackage, ContainerElement rv) '''
+	
+	private def static generateActivity(String mainPackage, ContainerElement rv, Iterable<Entity> entities, boolean FirstCall) '''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.Activity.generateActivity()
 		package «mainPackage»;
 		
@@ -233,6 +237,8 @@ class ActivityGen {
 		«MD2AndroidLollipopUtil.generateImportAllWidgets»
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
 		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
+		
+		import «Settings.MD2LIBRARY_PACKAGE»model.SensorHelper;
 				
 		public class «rv.name»Activity extends Activity {
 			
@@ -274,6 +280,34 @@ class ActivityGen {
 		        adapter = NavigationAdapter.getInstance();
 		        navigationDrawer.setAdapter(adapter);
 		        navigationDrawer.setCurrentItem(adapter.getActive(), true);
+		        
+		       «IF FirstCall»
+			        «««Pruefen ob ein Attribut des Typssensor vorhanden ist 
+	               «FOR e: entities»
+	    				«FOR attribute : e.attributes»
+	            			«IF attribute.type instanceof SensorType»
+	        		«IF attribute.type.eContents.toString().contains("accelerometer: true")»
+	        			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "accelerometer");
+	        		«ENDIF»
+	        		«IF attribute.type.eContents.toString().contains("gyroskop: true")»
+	        			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "gyroskop");
+	        		«ENDIF»
+	    			«IF attribute.type.eContents.toString().contains("compass: true")»
+	        			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "compass");
+	        		«ENDIF»
+	        		«IF attribute.type.eContents.toString().contains("pulsmesser: true")»
+	        			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "pulsmesser");
+	        		«ENDIF»
+	        		«IF attribute.type.eContents.toString().contains("schrittzaehler: true")»
+	        			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "schrittzaehler");
+	        		«ENDIF»
+	        		«IF attribute.type.eContents.toString().contains("luxmeter: true")»
+	        			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "luxmeter");
+	        					«ENDIF»
+	            			«ENDIF»
+	    				«ENDFOR»
+	               	«ENDFOR»
+	            «ENDIF»
 		    }
 		
 		    @Override
