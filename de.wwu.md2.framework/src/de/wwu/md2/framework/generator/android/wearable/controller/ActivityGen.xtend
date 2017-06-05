@@ -53,6 +53,8 @@ class ActivityGen {
 			private ArrayList<String> names;
 			private ArrayList<Md2Action> actions;
 			
+			
+			
 			public static synchronized NavigationAdapter getInstance(){
 			        if (NavigationAdapter.instance == null) {
 			            NavigationAdapter.instance = new NavigationAdapter();
@@ -214,7 +216,7 @@ class ActivityGen {
 	'''
 
 	private def static generateActivity(String mainPackage, ContainerElement rv) '''
-		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.Activity.generateActivity()
+		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateActivity()
 		package «mainPackage»;
 		
 		import android.app.Activity;
@@ -287,6 +289,8 @@ class ActivityGen {
 		        
 		        
 		        Md2TaskQueue.getInstance().tryExecutePendingTasks();
+		        
+		      
 		    }
 		    
 			@Override

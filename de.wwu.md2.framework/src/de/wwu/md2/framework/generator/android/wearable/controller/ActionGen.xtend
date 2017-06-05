@@ -73,7 +73,7 @@ class ActionGen {
 
 	protected def static generateAction(String mainPackage, App app, WorkflowElement wfe, Action action,
 		String qualifiedActionName) '''
-		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.Actions.generateAction()
+		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Actions.generateAction()
 		package «mainPackage».md2.controller.action;
 		
 		import «mainPackage».«app.name.toFirstUpper»;
