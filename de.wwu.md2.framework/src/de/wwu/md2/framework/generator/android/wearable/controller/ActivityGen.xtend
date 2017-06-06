@@ -31,7 +31,6 @@ class ActivityGen {
 		rootViews.forEach [ rv |
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + rv.name + "Activity.java",
 				generateActivity(mainPackage, rv, entities, FirstCall))
-				FirstCall = false;
 		]
 	}
 		
@@ -282,36 +281,26 @@ class ActivityGen {
 		        adapter = NavigationAdapter.getInstance();
 		        navigationDrawer.setAdapter(adapter);
 		        navigationDrawer.setCurrentItem(adapter.getActive(), true);
-		        
-		       «IF FirstCall»
-			        «««Pruefen ob ein Attribut des Typssensor vorhanden ist 
-	               «FOR e: entities»
-	    				«FOR attribute : e.attributes»
-	            			«IF attribute.type instanceof SensorType»
-	        		«IF attribute.type.eContents.toString().contains("accelerometer: true")»
-	        			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "accelerometer");
-	        		«ENDIF»
-	        		«IF attribute.type.eContents.toString().contains("gyroskop: true")»
-	        			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "gyroskop");
-	        		«ENDIF»
-	    			«IF attribute.type.eContents.toString().contains("compass: true")»
-	        			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "compass");
-	        		«ENDIF»
-	        		«IF attribute.type.eContents.toString().contains("pulsmesser: true")»
-	        			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "pulsmesser");
-	        		«ENDIF»
-	        		«IF attribute.type.eContents.toString().contains("schrittzaehler: true")»
-	        			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "schrittzaehler");
-	        		«ENDIF»
-	        		«IF attribute.type.eContents.toString().contains("luxmeter: true")»
-	        			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "luxmeter");
-	        					«ENDIF»
-	            			«ENDIF»
-	    				«ENDFOR»
-	               	«ENDFOR»
-	   
-	               	
-	            «ENDIF»
+
+		«««Pruefen ob ein Attribut des Typssensor vorhanden ist 
+			«FOR e: entities»
+			«FOR attribute : e.attributes»
+				«IF attribute.type instanceof SensorType»
+					«IF attribute.type.eContents.toString().contains("accelerometer: true")»
+					SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "accelerometer");
+					«ENDIF»
+					«IF attribute.type.eContents.toString().contains("gyroskop: true")»
+					SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "gyroskop");
+					«ENDIF»
+					«IF attribute.type.eContents.toString().contains("heartrate: true")»
+					SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "heartrate");
+					«ENDIF»
+					«IF attribute.type.eContents.toString().contains("proximity: true")»
+					SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "proximity");
+					«ENDIF»
+				«ENDIF»
+			«ENDFOR»
+			«ENDFOR»
 		    }
 		
 		    @Override

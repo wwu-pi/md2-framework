@@ -1756,11 +1756,10 @@ FloatTypeParam:
  * mandatory.
  */
 SensorTypeParam:
-	{AttrSensorTyp} accelerometer ?= 'accelerometer' |
-	{AttrSensorTyp} gyroskop ?= 'gyroskop' | 
-	{AttrSensorTyp} compass ?= 'compass' | 
-	{AttrSensorTyp} pulsmesser ?= 'pulsmesser' |
-	{AttrSensorTyp} schrittzaehler ?= 'schrittzähler'
+	{AttrSensorTyp} accelerometer ?= 'Beschleunigungssensor' |
+	{AttrSensorTyp} gyroskop ?= 'Gyroskop' | 
+	{AttrSensorTyp} heartrate ?= 'Pulsmesser' |
+	{AttrSensorTyp} proximity ?= 'Annaeherungsschalter'
 ;
 
 /*
