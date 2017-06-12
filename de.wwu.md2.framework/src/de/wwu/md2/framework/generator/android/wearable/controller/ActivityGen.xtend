@@ -147,7 +147,7 @@ class ActivityGen {
 		«ENDFOR»
 		
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2GoToViewAction;
-		import «Settings.MD2LIBRARY_PACKAGE»model.SensorHelper;
+		import «Settings.MD2LIBRARY_PACKAGE»SensorHelper;
 		
 		public class StartActivity extends Activity {
 		
@@ -239,7 +239,7 @@ class ActivityGen {
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
 		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
 		
-		import «Settings.MD2LIBRARY_PACKAGE»model.SensorHelper;
+		import «Settings.MD2LIBRARY_PACKAGE»SensorHelper;
 				
 		public class «rv.name»Activity extends Activity {
 			
@@ -287,7 +287,16 @@ class ActivityGen {
 			«FOR attribute : e.attributes»
 				«IF attribute.type instanceof SensorType»
 					«IF attribute.type.eContents.toString().contains("accelerometer: true")»
-					SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "accelerometer");
+				«System.out.println(attribute.type.eContents.toString())»
+						«IF attribute.type.eContents.toString().contains("x: true")»
+						SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "accelerometer", "X");
+						«ENDIF»
+						«IF attribute.type.eContents.toString().contains("y: true")»
+						SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "accelerometer", "Y");
+						«ENDIF»
+						«IF attribute.type.eContents.toString().contains("z: true")»
+						SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "accelerometer", "Z");
+						«ENDIF»
 					«ENDIF»
 					«IF attribute.type.eContents.toString().contains("gyroskop: true")»
 					SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "gyroskop");
