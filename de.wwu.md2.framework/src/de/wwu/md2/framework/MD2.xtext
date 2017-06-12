@@ -1674,7 +1674,10 @@ AttributeType:
 	{FileType} 'file'										    many ?= BRACKETS? ('(' (params += FileTypeParam (',' params += FileTypeParam)*)? ')')? |  
 	//"Datentyp" Sensor für die Verwendung von Sensoren in MD2
 	//TODO: lediglich ein Sensor pro Attribut!
-	{SensorType} 'sensor'										many ?= BRACKETS? '(' (params += SensorTypeParam ')') |
+	//{SensorType} 'sensor'										many ?= BRACKETS? '(' (params += SensorTypeParam')') |
+	
+	{SensorType} 'sensor'										many ?= BRACKETS? '(' (params += SensorTypeParam')') |
+	{SensorType} 'sensor'										many ?= BRACKETS? ('(' (params += SensorTypeParam2 (',' params += SensorAxis)?)')') |
 
 	
 	// EnumType => Transformed to explicit Enum (=> ReferencedType) after preprocessing
@@ -1756,10 +1759,25 @@ FloatTypeParam:
  * mandatory.
  */
 SensorTypeParam:
-	{AttrSensorTyp} accelerometer ?= 'Beschleunigungssensor' |
-	{AttrSensorTyp} gyroskop ?= 'Gyroskop' | 
+//	{AttrSensorTyp} accelerometer ?= 'Beschleunigungssensor' |
+//	{AttrSensorTyp} gyroskop ?= 'Gyroskop' | 
 	{AttrSensorTyp} heartrate ?= 'Pulsmesser' |
 	{AttrSensorTyp} proximity ?= 'Annaeherungsschalter'
+;
+SensorTypeParam2:
+	{AttrSensorTyp} accelerometer ?= 'Beschleunigungssensor' |
+	{AttrSensorTyp} gyroskop ?= 'Gyroskop'
+;
+
+/*TODO: SensorAxis 
+ * SensorAxis provides the axis X,Y,Z which are 
+ * relevant for the accelorometer and 
+ * gyroskop.
+ */
+SensorAxis:
+	{AttrSensorAxis} x ?= 'x' |
+	{AttrSensorAxis} y ?= 'y' | 
+	{AttrSensorAxis} z ?= 'z' 
 ;
 
 /*
