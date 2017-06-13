@@ -14,6 +14,10 @@ import de.wwu.md2.framework.mD2.WorkflowElementReference
 import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.SensorType
+import de.wwu.md2.framework.services.MD2GrammarAccess.SensorTypeParamElements
+import de.wwu.md2.framework.mD2.impl.SensorTypeImpl
+import de.wwu.md2.framework.mD2.impl.SensorTypeParamImpl
+import de.wwu.md2.framework.mD2.impl.SimpleTypeImpl
 
 class ActivityGen {
 	
@@ -161,32 +165,6 @@ class ActivityGen {
 		        	«wer.workflowElementReference.name»Button.setWidgetId(R.id.startActivity_«wer.workflowElementReference.name»Button);
 		        	Md2WidgetRegistry.getInstance().addWidget(«wer.workflowElementReference.name»Button);
 		        «ENDFOR»
-		       
-«««Pr»fen ob ein Attribut des Typssensor vorhanden ist 
-           «FOR e: entities»
-				«FOR attribute : e.attributes»
-        			«IF attribute.type instanceof SensorType»
-    		«IF attribute.type.eContents.toString().contains("accelerometer: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "accelerometer");
-    		«ENDIF»
-    		«IF attribute.type.eContents.toString().contains("gyroskop: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "gyroskop");
-    		«ENDIF»
-			«IF attribute.type.eContents.toString().contains("compass: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "compass");
-    		«ENDIF»
-    		«IF attribute.type.eContents.toString().contains("pulsmesser: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "pulsmesser");
-    		«ENDIF»
-    		«IF attribute.type.eContents.toString().contains("schrittzaehler: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "schrittzaehler");
-    		«ENDIF»
-    		«IF attribute.type.eContents.toString().contains("luxmeter: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "luxmeter");
-    					«ENDIF»
-        			«ENDIF»
-				«ENDFOR»
-           	«ENDFOR»
 		    }
 		
 		    @Override
@@ -285,9 +263,14 @@ class ActivityGen {
 		«««Pruefen ob ein Attribut des Typssensor vorhanden ist 
 			«FOR e: entities»
 			«FOR attribute : e.attributes»
+«««				«println((attribute.type as SensorTypeImpl).params)»
+«««			«FOR param : attribute.type.eContents»
+«««				«println(param)»
+«««			«ENDFOR»
 				«IF attribute.type instanceof SensorType»
+					«println((attribute.type as SensorTypeImpl).params)»
 					«IF attribute.type.eContents.toString().contains("accelerometer: true")»
-				«System.out.println(attribute.type.eContents.toString())»
+«««						«System.out.println(attribute.type.eContents.toString())»
 						«IF attribute.type.eContents.toString().contains("x: true")»
 						SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "accelerometer", "X");
 						«ENDIF»
