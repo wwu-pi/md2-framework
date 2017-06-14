@@ -18,6 +18,7 @@ import de.wwu.md2.framework.services.MD2GrammarAccess.SensorTypeParamElements
 import de.wwu.md2.framework.mD2.impl.SensorTypeImpl
 import de.wwu.md2.framework.mD2.impl.SensorTypeParamImpl
 import de.wwu.md2.framework.mD2.impl.SimpleTypeImpl
+import de.wwu.md2.framework.mD2.SensorTypeParam
 
 class ActivityGen {
 	
@@ -268,7 +269,14 @@ class ActivityGen {
 «««				«println(param)»
 «««			«ENDFOR»
 				«IF attribute.type instanceof SensorType»
-					«println((attribute.type as SensorTypeImpl).params)»
+«««					«println((attribute.type as SensorTypeImpl).params)»
+					«FOR param : (attribute.type as SensorTypeImpl).params»
+					«IF param instanceof SensorTypeParam»
+					«FOR paramdeep : (param as SensorTypeImpl).eContents»
+						«println(paramdeep)»
+					«ENDFOR»
+					«ENDIF»
+					«ENDFOR»
 					«IF attribute.type.eContents.toString().contains("accelerometer: true")»
 «««						«System.out.println(attribute.type.eContents.toString())»
 						«IF attribute.type.eContents.toString().contains("x: true")»
