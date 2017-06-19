@@ -1672,11 +1672,10 @@ AttributeType:
 	{TimeType} 'time'											many ?= BRACKETS? ('(' (params += TimeTypeParam (',' params += TimeTypeParam)*)? ')')? |
 	{DateTimeType} 'datetime'									many ?= BRACKETS? ('(' (params += DateTimeTypeParam (',' params += DateTimeTypeParam)*)? ')')? |
 	{FileType} 'file'										    many ?= BRACKETS? ('(' (params += FileTypeParam (',' params += FileTypeParam)*)? ')')? |  
-	//"Datentyp" Sensor für die Verwendung von Sensoren in MD2
-	//TODO: lediglich ein Sensor pro Attribut!
-	//{SensorType} 'sensor'										many ?= BRACKETS? '(' (params += SensorTypeParam')') |
-	
+
+	//Sensoren mit keinem weiteren Achse/Dimension	
 	{SensorType} 'sensor'										many ?= BRACKETS? '(' (params += SensorTypeParam')') |
+	//Sensoren mit weiteren Ausprägungen
 	{SensorType} 'sensor'										many ?= BRACKETS? ('(' (params += SensorTypeParam2 (',' params += SensorAxis)?)')') |
 
 	
@@ -1704,7 +1703,7 @@ BRACKETS:
  * The AttributeTypeParam is not used in the language but will be used by the generators. Therefore
  * it can be seen as a workaround to manipulate the meta model, that will be built by Xtext.
  */
-AttributeTypeParam: //TODO: SensorTypeParam angefügt
+AttributeTypeParam:
 	ReferencedTypeParam | IntegerTypeParam | FloatTypeParam | StringTypeParam | BooleanTypeParam | DateTypeParam | TimeTypeParam | DateTimeTypeParam | EnumTypeParam | FileTypeParam | SensorTypeParam	
 ;
 
@@ -1752,15 +1751,13 @@ FloatTypeParam:
 	{AttrFloatMin} 'min' min = FLOAT
 ;
 
-/*TODO: SensorTypeParam 
+/* SensorTypeParam 
  * SensorTypeParam is a super type of all possible
- * parametes of sensor Attributes. The selection
- * of an explicit sensor (e.g. hearrate) is 
+ * parameters of sensor Attributes. The selection
+ * of an explicit sensor (e.g. heartrate) is 
  * mandatory.
  */
 SensorTypeParam:
-//	{AttrSensorTyp} accelerometer ?= 'Beschleunigungssensor' |
-//	{AttrSensorTyp} gyroskop ?= 'Gyroskop' | 
 	{AttrSensorTyp} heartrate ?= 'Pulsmesser' |
 	{AttrSensorTyp} proximity ?= 'Annaeherungsschalter'
 ;
@@ -1771,8 +1768,8 @@ SensorTypeParam2:
 
 /*TODO: SensorAxis 
  * SensorAxis provides the axis X,Y,Z which are 
- * relevant for the accelorometer and 
- * gyroskop.
+ * relevant for the accelerometer and 
+ * gyroscope.
  */
 SensorAxis:
 	{AttrSensorAxis} x ?= 'x' |
