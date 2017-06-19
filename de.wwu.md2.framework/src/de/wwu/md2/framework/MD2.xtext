@@ -1676,7 +1676,7 @@ AttributeType:
 	//Sensoren mit keinem weiteren Achse/Dimension	
 	{SensorType} 'sensor'										many ?= BRACKETS? '(' (params += SensorTypeParam')') |
 	//Sensoren mit weiteren Ausprägungen
-	{SensorType} 'sensor'										many ?= BRACKETS? ('(' (params += SensorTypeParam2 (',' params += SensorAxis)?)')') |
+	{SensorType} 'sensor'										many ?= BRACKETS? ('(' (params += SensorTypeParam2 (',' params += SensorAxis))')') |
 
 	
 	// EnumType => Transformed to explicit Enum (=> ReferencedType) after preprocessing
@@ -1766,7 +1766,7 @@ SensorTypeParam2:
 	{AttrSensorTyp} gyroskop ?= 'Gyroskop'
 ;
 
-/*TODO: SensorAxis 
+/* SensorAxis 
  * SensorAxis provides the axis X,Y,Z which are 
  * relevant for the accelerometer and 
  * gyroscope.
