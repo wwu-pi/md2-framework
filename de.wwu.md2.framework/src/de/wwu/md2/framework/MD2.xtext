@@ -515,9 +515,9 @@ Spacer:
 ;
 
 
-/////////////////////////////////////
-// View layer => Container elements
-/////////////////////////////////////
+//////////////////////////////////////
+// View layer => Container elements //
+//////////////////////////////////////
 
 /*
  * ContainerElements are used to composite ViewGUIElements.
@@ -530,7 +530,7 @@ ContainerElement:
  * ContentContainers can contain other Containers or ContentElements.
  */
 ContentContainer:
-	GridLayoutPane | FlowLayoutPane
+	GridLayoutPane | FlowLayoutPane | ActionDrawer
 ;
 
 /*
@@ -540,9 +540,10 @@ ContentContainer:
  */
 SubViewContainer:
 	AlternativesPane | TabbedAlternativesPane
-;
-
+; 	
+ 
 /*
+ * 
  * A GridLayoutPane allows the arrangement of ViewGUIElements in a grid structure. The user can specify the
  * number of columns or the number of rows. If one of those is specified the other one will be calculated by
  * MD2. If both are specified and the resulting number of cells is smaller than the number of contained
@@ -585,6 +586,19 @@ FlowLayoutPaneParam:
  */
 enum FlowDirection:
 	HORIZONTAL = 'horizontal' | VERTICAL = 'vertical'
+;
+
+/* An Action Drawer allows the arrangement of ViewGUIElements in a menu structure. The user can add Buttons 
+ * or Labels in a single-column view structure.
+ */
+ActionDrawer:
+	'ActionDrawer' name = EID '(' params += ActionDrawerParam ')' '{'
+	 elements += ViewElementType* 
+	 '}'
+;
+
+ActionDrawerParam:
+	{ActionDrawerTitleParam} 'title' value = STRING
 ;
 
 /*

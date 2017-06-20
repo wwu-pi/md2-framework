@@ -5,6 +5,7 @@ import de.wwu.md2.framework.generator.android.wearable.Settings
 import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
 import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.ContainerElement
+import de.wwu.md2.framework.mD2.ActionDrawer
 import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.Label
 import de.wwu.md2.framework.mD2.TextInput
@@ -207,6 +208,7 @@ class ActivityGen {
 			private WearableDrawerLayout drawerLayout;	
 			private WearableNavigationDrawer navigationDrawer;
 			private NavigationAdapter adapter;
+			private WearableActionDrawer actionDrawer;
 			
 		    @Override
 		    protected void onCreate(Bundle savedInstanceState) {
@@ -216,22 +218,24 @@ class ActivityGen {
 		        	«generateAddViewElement(viewElement)»
 		        «ENDFOR»
 		        
-	     		drawerLayout = (WearableDrawerLayout) findViewById(R.id.drawer_layout_«rv.name»);
-	        	drawerLayout.setDrawerStateCallback(new WearableDrawerLayout.DrawerStateCallback() {
-	           		@Override
-	            	public void onDrawerOpened(View view) {
-	            		adapter.open();
-	            	}
-	            	@Override
-	            	public void onDrawerClosed(View view) {
-	                	if(adapter.close()){
-	                		«rv.name»Activity.this.finish();
-	                	}
-	            	}
-	            	@Override
-	            	public void onDrawerStateChanged(@WearableDrawerView.DrawerState int i) {
-	            	}
-	        	});		        
+			drawerLayout = (WearableDrawerLayout) findViewById(R.id.drawer_layout_«rv.name»);
+			drawerLayout.setDrawerStateCallback(new WearableDrawerLayout.DrawerStateCallback() {
+							
+				@Override
+				public void onDrawerOpened(View view) {
+				adapter.open();
+				}
+				@Override
+				public void onDrawerClosed(View view) {
+				if(adapter.close()){
+			                		«rv.name»Activity.this.finish();
+				}
+			}
+			
+			@Override
+			public void onDrawerStateChanged(@WearableDrawerView.DrawerState int i) {
+			}
+			});		        
 		        
 		        navigationDrawer = (WearableNavigationDrawer) findViewById(R.id.navigation_drawer_«rv.name»);
 		        adapter = NavigationAdapter.getInstance();
@@ -270,7 +274,7 @@ class ActivityGen {
 	'''
 	
 	private static def String generateAddViewElement(ViewElementType vet){
-		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] != null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
+		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] !== null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
 			return "" // Skip title label
 		}
 		
@@ -278,7 +282,7 @@ class ActivityGen {
 		var String type = ""
 		
 		var qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(vet, "_")
-		if(qualifiedName == null || qualifiedName.empty)
+		if(qualifiedName === null || qualifiedName.empty)
 			return ""
 		
 		switch vet{
@@ -286,7 +290,7 @@ class ActivityGen {
 			default: type = getCustomViewTypeNameForViewElementType(vet)			
 		}
 		
-		if(type == null || type.empty)
+		if(type === null || type.empty)
 			return ""
 		
 		result = '''
@@ -298,7 +302,7 @@ class ActivityGen {
 	}
 	
 	private static def String generateLoadViewElement(ViewElementType vet){
-		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] != null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
+		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] !== null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
 			return "" // Skip title label
 		}
 		
@@ -306,7 +310,7 @@ class ActivityGen {
 		var String type = ""
 		
 		var qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(vet, "_")
-		if(qualifiedName == null || qualifiedName.empty)
+		if(qualifiedName === null || qualifiedName.empty)
 			return ""		
 		
 		switch vet{
@@ -314,7 +318,7 @@ class ActivityGen {
 			default: type = getCustomViewTypeNameForViewElementType(vet)			
 		}
 		
-		if(type == null || type.empty)
+		if(type === null || type.empty)
 			return ""
 		
 		result = '''
@@ -326,7 +330,7 @@ class ActivityGen {
 	}
 	
 	private static def String generateSaveViewElement(ViewElementType vet){
-		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] != null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
+		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] !== null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
 			return "" // Skip title label
 		}
 		
@@ -334,7 +338,7 @@ class ActivityGen {
 		var String type = ""
 		
 		var qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(vet, "_")
-		if(qualifiedName == null || qualifiedName.empty)
+		if(qualifiedName === null || qualifiedName.empty)
 			return ""		
 		
 		switch vet{
@@ -342,7 +346,7 @@ class ActivityGen {
 			default: type = getCustomViewTypeNameForViewElementType(vet)			
 		}
 		
-		if(type == null || type.empty)
+		if(type === null || type.empty)
 			return ""
 		
 		result = '''

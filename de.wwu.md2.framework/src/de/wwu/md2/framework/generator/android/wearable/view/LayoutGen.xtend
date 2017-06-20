@@ -13,6 +13,8 @@ import de.wwu.md2.framework.mD2.FlowLayoutPaneFlowDirectionParam
 import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam
 import de.wwu.md2.framework.mD2.GridLayoutPaneRowsParam
+import de.wwu.md2.framework.mD2.ActionDrawer
+import de.wwu.md2.framework.mD2.ActionDrawerParam
 import de.wwu.md2.framework.mD2.Label
 import de.wwu.md2.framework.mD2.SubViewContainer
 import de.wwu.md2.framework.mD2.TextInput
@@ -42,7 +44,11 @@ class LayoutGen {
 		rootViews.forEach [ rv |
 			fsa.generateFile(rootFolder + Settings.LAYOUT_PATH + "activity_" + rv.name.toLowerCase + ".xml",
 				generateLayout(mainPackage, rv))
-		]
+				
+			switch rv {				
+				ActionDrawer: fsa.generateFile(rootFolder + Settings.MENU_PATH + rv.name.toLowerCase + "_action_drawer_menu.xml", 
+					generateActionDrawerMenu(mainPackage, rv, startableWorkflowElements))
+			}]
 	}
 
 	
@@ -212,6 +218,39 @@ class LayoutGen {
 		return writer.buffer.toString
 	}
 	
+	// Generate Action Drawer Menu
+	protected static def generateActionDrawerMenu(String mainPackage, ContainerElement rv, Iterable<WorkflowElementReference> wfes) {
+		val docFactory = DocumentBuilderFactory.newInstance
+		val docBuilder = docFactory.newDocumentBuilder
+		
+		// create doc and set namespace definitions
+		val doc = docBuilder.newDocument
+		val generationComment = doc.createComment("generated in de.wwu.md2.framework.generator.android.wearable.view.Layout.generateActionDrawerMenu()")
+		doc.appendChild(generationComment)
+		
+		var Element rootElement = doc.createElement("menu")
+		rootElement.setAttribute("android:id","@+id/action_drawer_menu")
+		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
+			"http://schemas.android.com/apk/res/android")
+		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
+		rootElement.setAttribute("android:layout_height", "match_parent")
+		rootElement.setAttribute("android:layout_width", "match_parent")
+		rootElement.setAttribute("tools:deviceIds", "wear")		
+		
+		//Generate buttons in the menu
+		for(wfe : wfes){						
+			var Element item = doc.createElement("item")
+			item.setAttribute("android:id", "@+id/" + wfe.workflowElementReference.name) 
+			item.setAttribute("android:icon", "@drawable/") // + Name vom icon des ersten action drawer buttons + wfe.WorkflowReference.icon
+			item.setAttribute("android:title", "") // + Name zur Anzeige
+ 			rootElement.appendChild(item)
+		}
+		
+		//Append
+		doc.appendChild(rootElement)
+		// return xml file as string		
+		
+	}
 	/////////////////////creation of children elements completely adopted from lollipop/////////////////////////////
 	
 	//call different methods for different types of children
