@@ -485,6 +485,8 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 			parameters.addAll(((GridLayoutPane) container).getParams());
 		} else if(container instanceof FlowLayoutPane) {
 			parameters.addAll(((FlowLayoutPane) container).getParams());
+		} else if(container instanceof ActionDrawer) {
+			parameters.addAll(((ActionDrawer) container).getParams());
 		} else if(container instanceof AlternativesPane) {
 			parameters.addAll(((AlternativesPane) container).getParams());
 		} else if(container instanceof TabbedAlternativesPane) {

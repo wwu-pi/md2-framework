@@ -45,10 +45,10 @@ class LayoutGen {
 			fsa.generateFile(rootFolder + Settings.LAYOUT_PATH + "activity_" + rv.name.toLowerCase + ".xml",
 				generateLayout(mainPackage, rv))
 				
-			switch rv {				
-				ActionDrawer: fsa.generateFile(rootFolder + Settings.MENU_PATH + rv.name.toLowerCase + "_action_drawer_menu.xml", 
-					generateActionDrawerMenu(mainPackage, rv, startableWorkflowElements))
-			}]
+			
+			fsa.generateFile(rootFolder + Settings.MENU_PATH + rv.name.toLowerCase + "_action_drawer_menu.xml", 
+				generateActionDrawerMenu(mainPackage, rv, startableWorkflowElements))				
+			]
 	}
 
 	
@@ -248,7 +248,13 @@ class LayoutGen {
 		
 		//Append
 		doc.appendChild(rootElement)
-		// return xml file as string		
+		// return xml file as string
+		val transformerFactory = TransformerFactory.newInstance
+		val transformer = transformerFactory.newTransformer
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes")
+		val writer = new StringWriter
+		transformer.transform(new DOMSource(doc), new StreamResult(writer))
+		return writer.buffer.toString		
 		
 	}
 	/////////////////////creation of children elements completely adopted from lollipop/////////////////////////////

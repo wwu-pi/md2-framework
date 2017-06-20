@@ -230,6 +230,9 @@ class ActivityGen {
 				if(adapter.close()){
 			                		«rv.name»Activity.this.finish();
 				}
+				
+			actionDrawer = (ActionDrawer) findViewById(R.id.«rv.name»)_action_drawer_menu);
+			
 			}
 			
 			@Override
