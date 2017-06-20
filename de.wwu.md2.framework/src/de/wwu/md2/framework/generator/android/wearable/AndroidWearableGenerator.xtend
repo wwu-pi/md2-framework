@@ -3,21 +3,25 @@ package de.wwu.md2.framework.generator.android.wearable
 
 import de.wwu.md2.framework.generator.AbstractPlatformGenerator
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
+import de.wwu.md2.framework.generator.android.wearable.controller.ActionGen
+import de.wwu.md2.framework.generator.android.wearable.controller.ActivityGen
+import de.wwu.md2.framework.generator.android.wearable.misc.GradleGen
+import de.wwu.md2.framework.generator.android.wearable.misc.AndroidManifestGen
+import de.wwu.md2.framework.generator.android.wearable.model.EntityGen
 
-
-
+import de.wwu.md2.framework.generator.android.lollipop.misc.ProguardGen
+import de.wwu.md2.framework.generator.android.wearable.model.ContentProviderGen
+import de.wwu.md2.framework.generator.android.wearable.view.ValueGen
 
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import org.apache.log4j.Logger
 
 import static de.wwu.md2.framework.util.MD2Util.*
-import de.wwu.md2.framework.generator.android.wearable.misc.GradleGen
-import de.wwu.md2.framework.generator.android.wearable.misc.AndroidManifestGen
-import de.wwu.md2.framework.generator.android.wearable.model.EntityGen
-import de.wwu.md2.framework.generator.android.lollipop.misc.ProguardGen
-import de.wwu.md2.framework.generator.android.wearable.model.ContentProviderGen
-import de.wwu.md2.framework.generator.android.wearable.view.ValueGen
+import de.wwu.md2.framework.generator.android.wearable.view.LayoutGen
+import de.wwu.md2.framework.generator.android.wearable.controller.ApplicationGen
+import de.wwu.md2.framework.generator.android.wearable.controller.ControllerGen
+import de.wwu.md2.framework.generator.android.wearable.model.SQLiteGen
 
 /**
  * This is the start point for the Android generator.
@@ -126,10 +130,21 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 				dataContainer.contentProviders)
 
 			// SQLite classes (DataContract and SQLiteHelper)
-			//fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2DataContract.java",
-				//SQLiteGen.generateDataContract(mainPackage, dataContainer.getEntities))
-			//fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2SQLiteHelperImpl.java",
-				//SQLiteGen.generateSQLiteHelper(mainPackage, app, dataContainer.getMain, dataContainer.getEntities))
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2DataContract.java",
+				SQLiteGen.generateDataContract(mainPackage, dataContainer.getEntities))
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2SQLiteHelperImpl.java",
+				SQLiteGen.generateSQLiteHelper(mainPackage, app, dataContainer.getMain, dataContainer.getEntities))
+fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/DatabaseConfigUtil.java",
+				SQLiteGen.generateOrmLiteDatabaseConfigUtil(mainPackage,dataContainer.getEntities()));
+				
+				fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/DatabaseHelper.java",
+				SQLiteGen.generateDataBaseHelper(mainPackage,app,dataContainer.getEntities()));
+				
+				fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/ormlite_config.txt",
+				SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.getEntities()));
+				
+
+
 
 			/***************************************************
 			 * 
@@ -145,17 +160,17 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 				ValueGen.generateStringsXml(app, rootViews, viewGUIElements, startableWorkflowElements))
 
 			// Views String Values
-			//fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.VIEWS_XML_NAME,
-				//ValueGen.generateViewsXml(rootViews, mainPackage))
+			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.VIEWS_XML_NAME,
+				ValueGen.generateViewsXml(rootViews, mainPackage))
 
 			// Styles
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STYLES_XML_NAME, ValueGen.generateStylesXml)
 
 			// Dimensions
-			//fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, ValueGen.generateDimensXml)
+			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, ValueGen.generateDimensXml)
 
 			// Layouts
-			//LayoutGen.generateLayouts(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
+			LayoutGen.generateLayouts(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
 
 			/***************************************************
 			 * 
@@ -163,18 +178,18 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 			 * 
 			 ***************************************************/
 			// Application class
-			//fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + app.name.toFirstUpper + ".java",
-				//ApplicationGen.generateAppClass(mainPackage, app))
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + app.name.toFirstUpper + ".java",
+				ApplicationGen.generateAppClass(mainPackage, app))
 
 			// Activities
-			//ActivityGen.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
+			ActivityGen.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
 
 			// Controller
-			//fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/controller/Controller" + ".java",
-			//	ControllerGen.generateController(mainPackage, app, dataContainer))
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/controller/Controller" + ".java",
+			ControllerGen.generateController(mainPackage, app, dataContainer))
 
 			// Actions
-			//ActionGen.generateActions(fsa, rootFolder, mainPath, mainPackage, app, workflowElements)
+			ActionGen.generateActions(fsa, rootFolder, mainPath, mainPackage, app, workflowElements)
 
 			/***************************************************
 			 * 

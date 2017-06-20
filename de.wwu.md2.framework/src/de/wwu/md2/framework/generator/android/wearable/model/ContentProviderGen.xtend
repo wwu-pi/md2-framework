@@ -18,6 +18,7 @@ import de.wwu.md2.framework.mD2.TimeType
 import de.wwu.md2.framework.mD2.DateTimeType
 import de.wwu.md2.framework.mD2.FileType
 import de.wwu.md2.framework.mD2.AttributeType
+import de.wwu.md2.framework.generator.android.wearable.util.MD2AndroidWearableUtil
 
 class ContentProviderGen {
 	
@@ -27,13 +28,13 @@ class ContentProviderGen {
 		Iterable<ContentProvider> contentProviders) {
 		var Set<String> providers= new HashSet<String>;	
 		contentProviders.forEach [ cp |
-			/*if(cp.type.many){
+			if(cp.type.many){
 				fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/contentProvider/" + cp.name.toFirstUpper + ".java",
 				generateMultiContentProvider(mainPackage, cp));}
-				else{*/
+				else{
 					fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/contentProvider/" + cp.name.toFirstUpper + ".java",
-				generateContentProvider(mainPackage, cp))
-				//}
+				generateContentProviderPOJO(mainPackage, cp))
+				}
 		]
 	}
 
@@ -62,10 +63,12 @@ class ContentProviderGen {
 			package «mainPackage».md2.model.contentProvider;
 				«var content =  contentProvider.type as ReferencedModelType»
 
+			import java.util.HashMap;
 			import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.AbstractMd2ContentProvider;
 			import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
 			import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
 			import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
+			«MD2AndroidWearableUtil.generateImportAllTypes»
 			
 			public class ContentProviderFor«content.entity.name»    extends AbstractMd2ContentProvider {
 			
@@ -77,7 +80,7 @@ class ContentProviderGen {
 			    protected long internalId;
 			    protected boolean existsInDataStore;
 			
-			    public AbstractMd2ContentProvider(String key, Md2Entity content, Md2DataStore md2DataStore) {
+			    public ContentProviderFor«content.entity.name»(String key, Md2Entity content, Md2DataStore md2DataStore) {
 			        this.content = content;
 			        if(content != null) {
 			            this.backup = (Md2Entity)content.clone();
@@ -134,24 +137,24 @@ class ContentProviderGen {
 			
 			
 			    public Md2Type getValue(String attribute) {			
-			switch attribute{
+			switch (attribute){
 			«FOR attribute: (content.entity as Entity).attributes»			
-			case "«attribute.name»": return  content.get«attribute.name.toFirstUpper»();	
+			case "«attribute.name»": return  new «EntityGen.getMd2TypeStringForAttributeType(attribute.type)»(content.get«attribute.name.toFirstUpper»());	
 			«ENDFOR»		
 			}
 			}
 			
 			
-			public void setValue(String attribute, Md2Type attribute){
+			public void setValue(String name, Md2Type value){
 			     if (content == null) {
 			            return;
 			        }
 			
 			        // set only if value is different to current value
 			        if ((this.getValue(attribute) == null && value != null) || !this.getValue(attribute).equals(value)) {
-			        switch attribute{
+			        switch (attribute){
 			        			«FOR attribute: (content.entity as Entity).attributes»			
-			        			case "«attribute.name»": return  content.set«attribute.name.toFirstUpper»((«getMd2TypeStringForAttributeType(attribute.type)») attribute);	
+			        			case "«attribute.name»": return  content.set«attribute.name.toFirstUpper»((«getMd2TypeStringForAttributeType(attribute.type)») value);	
 			        			«ENDFOR»		
 			        			}
 			        

@@ -2,7 +2,6 @@ package de.wwu.md2.framework.generator.android.wearable.model
 
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 
-import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
 import de.wwu.md2.framework.mD2.AttributeType
 import de.wwu.md2.framework.mD2.BooleanType
 import de.wwu.md2.framework.mD2.DateTimeType
@@ -16,6 +15,7 @@ import de.wwu.md2.framework.mD2.TimeType
 import de.wwu.md2.framework.mD2.FileType
 import de.wwu.md2.framework.mD2.Enum
 import de.wwu.md2.framework.generator.android.wearable.Settings
+import de.wwu.md2.framework.generator.android.wearable.util.MD2AndroidWearableUtil
 
 class EntityGen {
 	
@@ -23,7 +23,7 @@ class EntityGen {
 		Iterable<Entity> entities) {
 			entities.forEach [ e |
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/" + e.name.toFirstUpper + ".java",
-				generateEntity(mainPackage, e))
+				generateEntityPOJO(mainPackage, e))
 		]
 		
 	}
@@ -36,7 +36,7 @@ class EntityGen {
 		
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
-		«MD2AndroidLollipopUtil.generateImportAllTypes»
+		«MD2AndroidWearableUtil.generateImportAllTypes»
 public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		
 		    public «entity.name.toFirstUpper»() {
@@ -82,21 +82,33 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		import java.util.HashMap;
 		import java.util.List;
 		import java.util.ArrayList;
+		import java.io.Serializable;
+		import com.j256.ormlite.field.DatabaseField;
+		import com.j256.ormlite.dao.ForeignCollection;
+		import com.j256.ormlite.field.ForeignCollectionField;
+		import com.j256.ormlite.table.DatabaseTable;
 		
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
-		«MD2AndroidLollipopUtil.generateImportAllTypes»
-
-		public class «entity.name» extends AbstractMd2Entity {
+		«MD2AndroidWearableUtil.generateImportAllTypes»
+@DatabaseTable(tableName = "«entity.name.toFirstLower»")
+		public class «entity.name»  implements Serializable{
 		
-		    private long _id;
+		@DatabaseField(generatedId = true, columnName = "id")
+		    private long id;
+		    
 		      protected String typeName;
 		«FOR element : entity.attributes»
-		«IF element.type.many»
-		private List<«getMd2TypeStringForAttributeType(element.type)»>	«element.name»= new ArrayList<«getMd2TypeStringForAttributeType(element.type)»>();
+		«IF  element.type instanceof ReferencedType && element.type.many»
+		@ForeignCollectionField
+		private ForeignCollection<«getMd2TypeStringForAttributeType(element.type)»>	«element.name»;
 			«ELSE»
-		
-		private «getMd2TypeStringForAttributeType(element.type)»	«element.name»;
+		«IF element.type instanceof ReferencedType»
+		@DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
+		«ELSE»	
+		@DatabaseField(columnName = "«entity.name.toFirstLower»_«element.name.toFirstLower»")
+		«ENDIF»	
+		private «getJavaTypeStringForAttributeType(element.type)»	«element.name»;		
 		«ENDIF»
 		«ENDFOR»
 		
@@ -115,11 +127,11 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		
 		
 		 public long getId() {
-		        return this._id;
+		        return this.id;
 		    }
 		
 		    public void setId(long id) {
-		        this._id = id;
+		        this.id = id;
 		    }
 		
 		 public String getTypeName() {
@@ -128,21 +140,25 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		
 		«FOR element : entity.attributes»
 		«IF element.type.many»
-		public List<«getMd2TypeStringForAttributeType(element.type)»> get«element.name.toFirstUpper»(){
+		public List<«getJavaTypeStringForAttributeType(element.type)»> get«element.name.toFirstUpper»(){
 		return this.«element.name»	
 		}	
 		
-		public void set«element.name.toFirstUpper»(«getMd2TypeStringForAttributeType(element.type)» «element.name» ){
+		public void set«element.name.toFirstUpper»(List<«getJavaTypeStringForAttributeType(element.type)»> «element.name» ){
 		this.«element.name»=«element.name»; 	
 		}
 			«ELSE»		
-		public <«getMd2TypeStringForAttributeType(element.type)» get«element.name.toFirstUpper»(){
+		public «getJavaTypeStringForAttributeType(element.type)» get«element.name.toFirstUpper»(){
 				return this.«element.name»	
 				}
+				
+		public void set«element.name.toFirstUpper»(«getJavaTypeStringForAttributeType(element.type)» «element.name» ){
+				this.«element.name»=«element.name»; 	
+				}		
 		«ENDIF»
 		«ENDFOR»
 		
-		
+		@Override
 		    public String toString() {
 		        StringBuffer result = new StringBuffer();
 		        result.append(this.getTypeName() + ": (");
@@ -153,6 +169,7 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		        return result.append(")").toString();
 		    }
 		
+		@Override
 		    public boolean equals(Md2Type value) {
 		        if(value == null) {
 		            return false;
@@ -162,7 +179,7 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		            Md2Entity md2EntityValue = («entity.name»)value;
 		            boolean b= true
 		           «FOR element : entity.attributes»
-		           b ?= this.«element.name».equals(value.get«entity.name.toFirstUpper») ;
+		           b &= this.«element.name».equals(((«entity.name»)value).get«entity.name.toFirstUpper») ;
 		           
 		           «ENDFOR» 
 		
@@ -197,7 +214,7 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		}
 	'''
 	
-	private def static String getMd2TypeStringForAttributeType(AttributeType attributeType){
+	public def static String getMd2TypeStringForAttributeType(AttributeType attributeType){
 		switch attributeType{
 			ReferencedType: attributeType.element.name.toFirstUpper
 			IntegerType: "Md2Integer"
@@ -210,4 +227,22 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 			FileType: "Object" // TODO not implemented
 		}		
 	}
+	
+	
+	private def static String getJavaTypeStringForAttributeType(AttributeType attributeType){
+		switch attributeType{
+			ReferencedType: attributeType.element.name.toFirstUpper
+			IntegerType: "Integer"
+			FloatType: "Float"
+			StringType: "String"
+			BooleanType: "Boolean"
+			DateType: "Date"
+			TimeType: "Md2Time"
+			DateTimeType: "Md2DateTime"			
+			FileType: "Object" // TODO not implemented
+		}		
+	}
+	
+	
+	
 }
