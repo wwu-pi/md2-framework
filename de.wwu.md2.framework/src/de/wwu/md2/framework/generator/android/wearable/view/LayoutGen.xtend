@@ -141,6 +141,7 @@ class LayoutGen {
 		navElement.setAttribute("android:id", "@+id/navigation_drawer_"+rv.name)
 		navElement.setAttribute("android:layout_height", "match_parent")
 		navElement.setAttribute("android:layout_width", "match_parent")
+		navElement.setAttribute("android:background", "@color/PSWatchappSemiTransperentDarkBlue")
 		
 		
 		// create BoxInsetLayout

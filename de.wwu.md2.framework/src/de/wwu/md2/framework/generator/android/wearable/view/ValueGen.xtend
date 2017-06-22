@@ -110,8 +110,23 @@ class ValueGen {
 	def static String generateStylesXml() '''
 		<!-- generated in de.wwu.md2.framework.generator.android.wearable.view.Values.generateStylesXml() -->
 		<resources>
-		    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
-		    </style>		
+		    <style name="AppBaseTheme" parent="android:Theme.Black"/>
+		    <style name="AppTheme" parent="AppBaseTheme"/>
+		
+		    <style name="PSWatchapp" parent="android:Theme.Material.Light.NoActionBar" >
+		        <item name="android:colorAccent">@color/PSWatchappBlueLight</item>
+		        <item name="android:colorPrimary">@color/PSWatchappSemiTransperentDarkBlue</item>
+		        <item name="android:colorPrimaryDark">@color/blue</item>
+		        <item name="android:colorBackground">@color/PSWatchappBackgroundBlue</item>
+		        <item name="android:textColorPrimary">@android:color/white</item>
+		        <item name="android:textColorSecondary">@color/primary_text_dark</item>
+		        <item name="android:windowBackground">@color/PSWatchappBackgroundBlue</item>
+		        <item name="android:statusBarColor">@color/PSWatchappBlueLight</item>
+		        <item name="android:navigationBarColor">@color/PSWatchappBlueLight</item>
+		        <item name="android:colorForeground">@color/white</item>
+		        <item name="android:textColorPrimaryInverse">@color/black</item>
+		        <item name="android:button">@color/PSWatchappBlueLight</item>
+		    </style>
 		</resources>
 	'''
 
@@ -120,6 +135,18 @@ class ValueGen {
 		<resources>
 		    <dimen name="activity_horizontal_margin">16dp</dimen>
 		    <dimen name="activity_vertical_margin">16dp</dimen>
+		</resources>
+	'''
+	
+	def static String generateColorXml() '''
+		<?xml version="1.0" encoding="utf-8"?>
+		<!-- generated in de.wwu.md2.framework.generator.android.wearable.view.Values.generateColorsXml() -->
+		<resources>
+			<color name="background_material_light">#032859</color>
+			<color name="PSWatchappBackgroundBlue">#0d568f</color>
+			<color name="PSWatchappBlueLight">#00a2d3</color>
+			<color name="foreground_material_light">#ff0909</color>
+			<color name="PSWatchappSemiTransperentDarkBlue">#bd00a2d3</color>
 		</resources>
 	'''
 }

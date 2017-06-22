@@ -239,7 +239,7 @@ class ActivityGen {
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
 		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
 		
-		import «Settings.MD2LIBRARY_PACKAGE»model.SensorHelper;
+		import «Settings.MD2LIBRARY_PACKAGE»SensorHelper;
 				
 		public class «rv.name»Activity extends Activity {
 			

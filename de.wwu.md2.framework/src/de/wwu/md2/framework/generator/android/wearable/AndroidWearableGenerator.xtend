@@ -154,6 +154,9 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 
 			// Styles
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STYLES_XML_NAME, ValueGen.generateStylesXml)
+			
+			// Colors
+			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.COLORS_XML_NAME, ValueGen.generateColorXml)
 
 			// Dimensions
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, ValueGen.generateDimensXml)
