@@ -9,7 +9,7 @@ import de.wwu.md2.framework.mD2.ReferencedType
 class SQLiteGen {
 	def static generateDataContract(String mainPackage, Iterable<Entity> entities)'''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.model.SQLite.generateDataContract()
-		package «mainPackage».md2.model.sqlite;
+		package Â«mainPackageÂ».md2.model.sqlite;
 		
 		import android.provider.BaseColumns;
 		
@@ -18,55 +18,55 @@ class SQLiteGen {
 		    public Md2DataContract() {
 		    }
 		
-		«FOR e : entities»
-			public static abstract class «e.name.toFirstUpper»Entry implements BaseColumns {
-				public static final String TABLE_NAME = "«e.name.toLowerCase»";
-				«FOR a : e.attributes»
-					public static final String COLUMN_NAME_«a.name.toUpperCase» = "«a.name»";
-				«ENDFOR»
+		Â«FOR e : entitiesÂ»
+			public static abstract class Â«e.name.toFirstUpperÂ»Entry implements BaseColumns {
+				public static final String TABLE_NAME = "Â«e.name.toLowerCaseÂ»";
+				Â«FOR a : e.attributesÂ»
+					public static final String COLUMN_NAME_Â«a.name.toUpperCaseÂ» = "Â«a.nameÂ»";
+				Â«ENDFORÂ»
 			}
-		«ENDFOR»
+		Â«ENDFORÂ»
 		}
 	'''
 	
 	def static generateSQLiteHelper(String mainPackage, App app, Main main, Iterable<Entity> entities)'''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.model.SQLite.generateSQLiteHelper()
-		package «mainPackage».md2.model.sqlite;
+		package Â«mainPackageÂ».md2.model.sqlite;
 		
 		import android.content.Context;
 		import android.database.sqlite.SQLiteDatabase;
 		import android.database.sqlite.SQLiteOpenHelper;
 		
-		«FOR e : entities»
-			import «mainPackage».md2.model.sqlite.Md2DataContract.«e.name.toFirstUpper»Entry;
-		«ENDFOR»
+		Â«FOR e : entitiesÂ»
+			import Â«mainPackageÂ».md2.model.sqlite.Md2DataContract.Â«e.name.toFirstUpperÂ»Entry;
+		Â«ENDFORÂ»
 		
-		import «Settings.MD2LIBRARY_PACKAGE» model.dataStore.interfaces.Md2SQLiteHelper;
+		import Â«Settings.MD2LIBRARY_PACKAGEÂ» model.dataStore.interfaces.Md2SQLiteHelper;
 		
 		public class Md2SQLiteHelperImpl extends SQLiteOpenHelper implements Md2SQLiteHelper {
-			private static final String DATABASE_NAME = "«app.name.toLowerCase».db";
-			private static final int DATABASE_VERSION = (int) «main.appVersion»;
+			private static final String DATABASE_NAME = "Â«app.name.toLowerCaseÂ».db";
+			private static final int DATABASE_VERSION = (int) Â«main.appVersionÂ»;
 			private static final String TEXT_TYPE = " TEXT";
 			private static final String COMMA_SEP = ",";
-			«FOR e : entities»
-				private static final String SQL_CREATE_«e.name.toUpperCase»_ENTRIES =
-					"CREATE TABLE " + «e.name.toFirstUpper»Entry.TABLE_NAME + " (" +
-					«e.name.toFirstUpper»Entry._ID + " INTEGER PRIMARY KEY" +
-					«IF e.attributes.size > 0»COMMA_SEP +«ENDIF»
-					«FOR a : e.attributes SEPARATOR " + TEXT_TYPE + COMMA_SEP +" AFTER " + TEXT_TYPE +"»
-						«e.name.toFirstUpper»Entry.COLUMN_NAME_«a.name.toUpperCase»
-					«ENDFOR»
+			Â«FOR e : entitiesÂ»
+				private static final String SQL_CREATE_Â«e.name.toUpperCaseÂ»_ENTRIES =
+					"CREATE TABLE " + Â«e.name.toFirstUpperÂ»Entry.TABLE_NAME + " (" +
+					Â«e.name.toFirstUpperÂ»Entry._ID + " INTEGER PRIMARY KEY" +
+					Â«IF e.attributes.size > 0Â»COMMA_SEP +Â«ENDIFÂ»
+					Â«FOR a : e.attributes SEPARATOR " + TEXT_TYPE + COMMA_SEP +" AFTER " + TEXT_TYPE +"Â»
+						Â«e.name.toFirstUpperÂ»Entry.COLUMN_NAME_Â«a.name.toUpperCaseÂ»
+					Â«ENDFORÂ»
 					" )";
 											
-					private static final String SQL_DELETE_«e.name.toUpperCase»_ENTRIES =
-						"DROP TABLE IF EXISTS " + «e.name.toFirstUpper»Entry.TABLE_NAME;
+					private static final String SQL_DELETE_Â«e.name.toUpperCaseÂ»_ENTRIES =
+						"DROP TABLE IF EXISTS " + Â«e.name.toFirstUpperÂ»Entry.TABLE_NAME;
 									
-					private final String[] all«e.name.toFirstUpper»Columns = {
-					«FOR a : e.attributes SEPARATOR ", "»
-						«e.name.toFirstUpper»Entry.COLUMN_NAME_«a.name.toUpperCase»
-					«ENDFOR»
+					private final String[] allÂ«e.name.toFirstUpperÂ»Columns = {
+					Â«FOR a : e.attributes SEPARATOR ", "Â»
+						Â«e.name.toFirstUpperÂ»Entry.COLUMN_NAME_Â«a.name.toUpperCaseÂ»
+					Â«ENDFORÂ»
 					};
-			«ENDFOR»
+			Â«ENDFORÂ»
 		
 		   public Md2SQLiteHelperImpl(Context context) {
 		       super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -75,16 +75,16 @@ class SQLiteGen {
 		
 		    @Override
 		    public void onCreate(SQLiteDatabase database) {
-		    	«FOR e : entities»
-		    		database.execSQL(SQL_CREATE_«e.name.toUpperCase»_ENTRIES);
-				«ENDFOR»
+		    	Â«FOR e : entitiesÂ»
+		    		database.execSQL(SQL_CREATE_Â«e.name.toUpperCaseÂ»_ENTRIES);
+				Â«ENDFORÂ»
 		    }
 		
 		    @Override
 		    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		    	«FOR e : entities»
-		    		db.execSQL(SQL_DELETE_«e.name.toUpperCase»_ENTRIES);
-				«ENDFOR»
+		    	Â«FOR e : entitiesÂ»
+		    		db.execSQL(SQL_DELETE_Â«e.name.toUpperCaseÂ»_ENTRIES);
+				Â«ENDFORÂ»
 		        onCreate(db);		
 		    }
 		
@@ -96,11 +96,11 @@ class SQLiteGen {
 		    @Override
 		    public String[] getAllColumns(String typeName) {
 		        switch (typeName) {
-		        	«FOR e : entities»
-		        		case "«e.name.toFirstUpper»": {
-		        			return this.all«e.name.toFirstUpper»Columns;
+		        	Â«FOR e : entitiesÂ»
+		        		case "Â«e.name.toFirstUpperÂ»": {
+		        			return this.allÂ«e.name.toFirstUpperÂ»Columns;
 		        		}
-					«ENDFOR»
+					Â«ENDFORÂ»
 		        }
 		        return null;
 		    }
@@ -112,34 +112,34 @@ class SQLiteGen {
 
 def static generateOrmLiteConfig(String mainPackage, Iterable<Entity> entities){
 '''
-«FOR entity : entities»
+Â«FOR entity : entitiesÂ»
 # --table-start--
-fieldName=«entity.name»Id
-columnName=«entity.name»_id
+fieldName=Â«entity.nameÂ»Id
+columnName=Â«entity.nameÂ»_id
 generatedId=true
 # --table-fields-start--
-«FOR attribute :entity.attributes »
-«IF attribute.type instanceof ReferencedType»
-«IF attribute.type.many»
-foreignCollectionFieldName=«attribute.name»
-columnName=«entity.name.toFirstLower»_«attribute.name.toFirstLower»
-«ELSE»
+Â«FOR attribute :entity.attributes Â»
+Â«IF attribute.type instanceof ReferencedTypeÂ»
+Â«IF attribute.type.manyÂ»
+foreignCollectionFieldName=Â«attribute.nameÂ»
+columnName=Â«entity.name.toFirstLowerÂ»_Â«attribute.name.toFirstLowerÂ»
+Â«ELSEÂ»
 # --field-start--
-fieldName=«attribute.name»
-columnName=«entity.name.toFirstLower»_«attribute.name.toFirstLower»
+fieldName=Â«attribute.nameÂ»
+columnName=Â«entity.name.toFirstLowerÂ»_Â«attribute.name.toFirstLowerÂ»
 foreign=true
 # --field-end--		
-«ENDIF»
-«ELSE»
+Â«ENDIFÂ»
+Â«ELSEÂ»
 # --field-start--
-fieldName=«attribute.name»
-columnName=«entity.name.toFirstLower»_«attribute.name.toFirstLower»
+fieldName=Â«attribute.nameÂ»
+columnName=Â«entity.name.toFirstLowerÂ»_Â«attribute.name.toFirstLowerÂ»
 # --field-end--	
-«ENDIF»	
-«ENDFOR»
+Â«ENDIFÂ»	
+Â«ENDFORÂ»
 # --table-fields-end--
 # --table-end--	
-«ENDFOR»
+Â«ENDFORÂ»
 '''
 	
 }
@@ -187,13 +187,13 @@ import com.j256.ormlite.table.TableUtils;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
  
  
-	private static final String DATABASE_NAME = "«app.name».db";
+	private static final String DATABASE_NAME = "Â«app.nameÂ».db";
 	private static final int DATABASE_VERSION = 1; 
  
 	
-	«FOR element : entities»
-	private Dao<«element.name», Integer> «element.name»Dao;	
-	«ENDFOR»
+	Â«FOR element : entitiesÂ»
+	private Dao<Â«element.nameÂ», Integer> Â«element.nameÂ»Dao;	
+	Â«ENDFORÂ»
 	
  
 	public DatabaseHelper(Context context) {
@@ -206,9 +206,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		try {
 			
 			// Create tables. This onCreate() method will be invoked only once of the application life time i.e. the first time when the application starts.
-			«FOR element : entities»
-			TableUtils.createTable(connectionSource, «element.name».class);	
-			«ENDFOR»
+			Â«FOR element : entitiesÂ»
+			TableUtils.createTable(connectionSource, Â«element.nameÂ».class);	
+			Â«ENDFORÂ»
 			
 		} catch (SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Unable to create datbases", e);
@@ -237,14 +237,14 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	// Create the getDao methods of all database tables to access those from android code.
 	// Insert, delete, read, update everything will be happened through DAOs
  
-«FOR element : entities»
-public Dao<«element.name», Integer> get«element.name»Dao() throws SQLException {
-		if («element.name»Dao == null) {
-			«element.name»Dao = getDao(«element.name».class);
+Â«FOR element : entitiesÂ»
+public Dao<Â«element.nameÂ», Integer> getÂ«element.nameÂ»Dao() throws SQLException {
+		if (Â«element.nameÂ»Dao == null) {
+			Â«element.nameÂ»Dao = getDao(Â«element.nameÂ».class);
 		}
-		return «element.name»Dao;
+		return Â«element.nameÂ»Dao;
 	}	
-«ENDFOR»
+Â«ENDFORÂ»
 	
  
 
