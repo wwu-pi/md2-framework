@@ -183,7 +183,7 @@ class ActivityGen {
 	'''
 
 	private def static generateActivity(String mainPackage, ContainerElement rv) '''
-		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.Activity.generateActivity()
+		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateActivity()
 		package «mainPackage»;
 		
 		import android.app.Activity;
@@ -194,6 +194,8 @@ class ActivityGen {
 		import android.support.wearable.view.drawer.WearableDrawerLayout;
 		import android.support.wearable.view.drawer.WearableDrawerView;
 		import android.support.wearable.view.drawer.WearableNavigationDrawer;
+		import android.support.wearable.view.drawer.WearableActionDrawer;
+		import android.graphics.drawable.Drawable;
 		
 		import «mainPackage».md2.controller.Controller;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
@@ -230,8 +232,6 @@ class ActivityGen {
 				if(adapter.close()){
 			                		«rv.name»Activity.this.finish();
 				}
-				
-			actionDrawer = (ActionDrawer) findViewById(R.id.«rv.name»)_action_drawer_menu);
 			
 			}
 			
@@ -243,6 +243,13 @@ class ActivityGen {
 		        navigationDrawer = (WearableNavigationDrawer) findViewById(R.id.navigation_drawer_«rv.name»);
 		        adapter = NavigationAdapter.getInstance();
 		        navigationDrawer.setAdapter(adapter);
+		        
+		        
+		        «FOR viewElement: rv.eAllContents.toIterable»
+    				«IF viewElement instanceof ActionDrawer»
+    					actionDrawer = (WearableActionDrawer) findViewById(R.id.«rv.name»_action_drawer);
+    				«ENDIF»
+    			«ENDFOR»	
 		        
 		    }
 		

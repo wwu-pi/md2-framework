@@ -30,7 +30,7 @@ class AndroidManifestGen {
 					      </activity>		-->
 	        «FOR rv : rootViews»
 	        	<activity
-       		android:name=".«rv.name.toFirstUpper»Activity"
+       				android:name=".«rv.name»Activity"
 	        		android:label="@string/title_activity_«rv.name.toFirstLower»" 
 	        		android:launchMode="singleInstance">
 	        	</activity>
