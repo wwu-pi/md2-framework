@@ -143,6 +143,8 @@ class ActionGen {
 				switch eventType {
 					case eventType == ON_CHANGE: eventString = "Md2WidgetEventType.ON_CHANGE"
 					case eventType == ON_CLICK: eventString = "Md2WidgetEventType.ON_CLICK"
+					//add longclick support
+					case eventType == ON_LONG_CLICK: eventString = "Md2WidgetEventType.ON_LONG_CLICK"
 					//add swipe support
 					case eventType == ON_LEFT_SWIPE: eventString = "Md2WidgetEventType.ON_LEFT_SWIPE"
 					case eventType == ON_RIGHT_SWIPE: eventString = "Md2WidgetEventType.ON_RIGHT_SWIPE"
