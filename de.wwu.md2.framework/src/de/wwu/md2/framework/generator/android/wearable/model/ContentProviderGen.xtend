@@ -6,7 +6,17 @@ import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import java.util.Set
 import java.util.HashSet
-import de.wwu.md2.framework.mD2.*
+import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.ReferencedType
+import de.wwu.md2.framework.mD2.IntegerType
+import de.wwu.md2.framework.mD2.StringType
+import de.wwu.md2.framework.mD2.BooleanType
+import de.wwu.md2.framework.mD2.FloatType
+import de.wwu.md2.framework.mD2.DateType
+import de.wwu.md2.framework.mD2.TimeType
+import de.wwu.md2.framework.mD2.DateTimeType
+import de.wwu.md2.framework.mD2.FileType
+import de.wwu.md2.framework.mD2.AttributeType
 import de.wwu.md2.framework.generator.android.wearable.util.MD2AndroidWearableUtil
 
 
@@ -21,7 +31,7 @@ class ContentProviderGen {
 				generateMultiContentProvider(mainPackage, cp));}
 				else{
 					fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/contentProvider/" + cp.name.toFirstUpper + ".java",
-				generateContentProvider(mainPackage, cp))
+				generateContentProviderPOJO(mainPackage, cp))
 				}
 		]
 	}
@@ -44,7 +54,7 @@ class ContentProviderGen {
 			}
 		'''
 		
-		private def static generateContentProviderPOJO(String mainPackage, ContentProvider contentProvider) '''
+		private def static generateContentProviderPOJO(String mainPackage, ContentProvider contentProvider) {'''
 			// generated in de.wwu.md2.framework.generator.android.lollipop.model.Md2ContentProvider.generateContentProvider()
 			package «mainPackage».md2.model.contentProvider;
 				«var content =  contentProvider.type as ReferencedModelType»
@@ -230,5 +240,21 @@ class ContentProviderGen {
 		}
 	'''
 	}	
+	
+	
+	private def static String getMd2TypeStringForAttributeType(AttributeType attributeType){
+		switch attributeType{
+			ReferencedType: attributeType.element.name.toFirstUpper
+			IntegerType: "Md2Integer"
+			FloatType: "Md2Float"
+			StringType: "Md2String"
+			BooleanType: "Md2Boolean"
+			DateType: "Md2Date"
+			TimeType: "Md2Time"
+			DateTimeType: "Md2DateTime"			
+			FileType: "Object" // TODO not implemented
+		}		
+	}
+		
 }
 	
