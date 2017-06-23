@@ -45,60 +45,60 @@ class MD2AndroidWearableUtil {
 	//		can automatically optimize imports for a whole project, but could be optimized anyway.	
 	
 	def static String generateImportAllWidgets()'''
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»view.widgets.implementation.Md2GridLayoutPane;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»view.widgets.implementation.Md2FlowLayoutPane;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»view.widgets.implementation.Md2Label;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»view.widgets.implementation.Md2Button;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»view.widgets.implementation.Md2TextInput;
+		import «Settings.MD2LIBRARY_PACKAGE»view.widgets.implementation.Md2GridLayoutPane;
+		import «Settings.MD2LIBRARY_PACKAGE»view.widgets.implementation.Md2FlowLayoutPane;
+		import «Settings.MD2LIBRARY_PACKAGE»view.widgets.implementation.Md2Label;
+		import «Settings.MD2LIBRARY_PACKAGE»view.widgets.implementation.Md2Button;
+		import «Settings.MD2LIBRARY_PACKAGE»view.widgets.implementation.Md2TextInput;
 	'''
 	
 	def static String generateImportAllTypes()'''
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.type.implementation.Md2Boolean;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.type.implementation.Md2Date;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.type.implementation.Md2DateTime;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.type.implementation.Md2Float;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.type.implementation.Md2Integer;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.type.implementation.Md2String;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.type.implementation.Md2Time;
-		
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»model.type.implementation.Md2Sensor;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Boolean;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Date;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2DateTime;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Float;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Integer;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2String;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Time;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Sensor;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2List;
 	'''
 	
 	def static String generateImportAllActions()'''
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.action.implementation.AbstractMd2Action;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.action.implementation.Md2ContentProviderOperationAction;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.action.implementation.Md2ContentProviderOperations;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.action.implementation.Md2ContentProviderResetAction;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.action.implementation.Md2DisplayMessageAction;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.action.implementation.Md2FireEventAction;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.action.implementation.Md2GoToViewAction;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.action.implementation.Md2SynchronizeContentProviderDataMappingAction;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.action.implementation.Md2SynchronizeWidgetDataMappingAction;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.action.interfaces.Md2Action;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.AbstractMd2Action;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderOperationAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderOperations;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderResetAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2DisplayMessageAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2FireEventAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2GoToViewAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2SynchronizeContentProviderDataMappingAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2SynchronizeWidgetDataMappingAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.interfaces.Md2Action;
 		
 	'''
 	
 	def static String generateImportAllEventHandler()'''
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.eventhandler.implementation.Md2ContentProviderEventTypes;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.eventhandler.implementation.Md2OnAttributeChangedHandler;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.eventhandler.implementation.Md2OnChangedHandler;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.eventhandler.implementation.Md2OnClickHandler;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.eventhandler.implementation.Md2OnLeftSwipeHandler;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.eventhandler.implementation.Md2OnRightSwipeHandler;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.eventhandler.implementation.Md2WidgetEventType;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2ContentProviderEventTypes;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnAttributeChangedHandler;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnChangedHandler;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnClickHandler;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnLeftSwipeHandler;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnRightSwipeHandler;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2WidgetEventType;
 	'''
 	
 	def static String generateImportAllExceptions()'''
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»exception.Md2WidgetNotCreatedException;
+		import «Settings.MD2LIBRARY_PACKAGE»exception.Md2WidgetNotCreatedException;
 	'''
 	
 	def static String generateImportAllCustomCodeTasks()'''
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.action.implementation.customCode.interfaces.Md2CustomCodeTask;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.action.implementation.customCode.Md2AttributeSetTask;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.action.implementation.customCode.Md2BindTask;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.action.implementation.customCode.Md2CallTask;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.action.implementation.customCode.Md2MapTask;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.action.implementation.customCode.Md2UnbindTask;
-		import Â«Settings.MD2LIBRARY_PACKAGEÂ»controller.action.implementation.customCode.Md2UnmapTask;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.interfaces.Md2CustomCodeTask;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.Md2AttributeSetTask;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.Md2BindTask;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.Md2CallTask;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.Md2MapTask;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.Md2UnbindTask;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.Md2UnmapTask;
 	'''
 }

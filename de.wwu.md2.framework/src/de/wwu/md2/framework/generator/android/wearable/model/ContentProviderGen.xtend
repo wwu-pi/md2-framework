@@ -4,25 +4,26 @@ import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.android.wearable.Settings
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ReferencedModelType
+import java.util.Set
+import java.util.HashSet
+import de.wwu.md2.framework.mD2.*
+import de.wwu.md2.framework.generator.android.wearable.util.MD2AndroidWearableUtil
 
 
 class ContentProviderGen {
 	
 	def static generateContentProviders(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<ContentProvider> contentProviders) {
-		contentProviders.forEach [ cp |
-			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/contentProvider/" + cp.name.toFirstUpper + ".java",
-				generateContentProvider(mainPackage, cp))
-		]
-		/*var Set<String> providers= new HashSet<String>;	
+		var Set<String> providers= new HashSet<String>;	
 		contentProviders.forEach [ cp |
 			if(cp.type.many){
 				fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/contentProvider/" + cp.name.toFirstUpper + ".java",
 				generateMultiContentProvider(mainPackage, cp));}
 				else{
 					fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/contentProvider/" + cp.name.toFirstUpper + ".java",
-				generateContentProvider(mainPackage, cp))}
-		]*/
+				generateContentProvider(mainPackage, cp))
+				}
+		]
 	}
 
 	private def static generateContentProvider(String mainPackage, ContentProvider contentProvider) '''
@@ -43,15 +44,17 @@ class ContentProviderGen {
 			}
 		'''
 		
-		private def static generateContentProviderPOJO(String mainPackage, ContentProvider contentProvider){ '''
+		private def static generateContentProviderPOJO(String mainPackage, ContentProvider contentProvider) '''
 			// generated in de.wwu.md2.framework.generator.android.lollipop.model.Md2ContentProvider.generateContentProvider()
 			package «mainPackage».md2.model.contentProvider;
 				«var content =  contentProvider.type as ReferencedModelType»
 
+			import java.util.HashMap;
 			import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.AbstractMd2ContentProvider;
 			import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
 			import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
 			import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
+			«MD2AndroidWearableUtil.generateImportAllTypes»
 			
 			public class ContentProviderFor«content.entity.name»    extends AbstractMd2ContentProvider {
 			
@@ -119,11 +122,35 @@ class ContentProviderGen {
 			
 			
 			
-			    public Md2Type getValue(String attribute) {
+			public Md2Type getValue(String attribute) {			
+			switch (attribute){
+			«FOR attribute: (content.entity as Entity).attributes»			
+			case "«attribute.name»": return  new «EntityGen.getMd2TypeStringForAttributeType(attribute.type)»(content.get«attribute.name.toFirstUpper»());	
+			«ENDFOR»		
+			}
+			}
 			
-			    }
 			
+			public void setValue(String name, Md2Type value){
+			     if (content == null) {
+			            return;
+			        }
 			
+			        // set only if value is different to current value
+			        if ((this.getValue(attribute) == null && value != null) || !this.getValue(attribute).equals(value)) {
+			        switch (attribute){
+			        			«FOR attribute: (content.entity as Entity).attributes»			
+			        			case "«attribute.name»": return  content.set«attribute.name.toFirstUpper»((«getMd2TypeStringForAttributeType(attribute.type)») value);	
+			        			«ENDFOR»		
+			        			}
+			        
+			        
+			            Md2OnAttributeChangedHandler handler = this.attributeChangedEventHandlers.get(attribute);
+			            if (handler != null) {
+			                handler.onChange(attribute);
+			            }
+			        }	
+			}
 			
 			    public void reset(){ 
 			       

@@ -34,12 +34,12 @@ class ActivityGen {
 		]
 	}
 		
-		//generiert NavigationAdapter als Singleton, ersetzt die urspr»ngliche StartActivity
+		//generiert NavigationAdapter als Singleton, ersetzt die urspr«ngliche StartActivity
 		//startActions werden in Konstruktor »bergeben
 	def static generateNavigationAdapter(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements)'''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateStartActivity()
 		package «mainPackage»;
-		
+
 		import android.graphics.drawable.Drawable;
 		import android.support.wearable.view.drawer.WearableNavigationDrawer;
 		import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
@@ -162,7 +162,7 @@ class ActivityGen {
 		        	Md2WidgetRegistry.getInstance().addWidget(«wer.workflowElementReference.name»Button);
 		        «ENDFOR»
 		       
-«««Pr»fen ob ein Attribut des Typssensor vorhanden ist 
+		       
            «FOR e: entities»
 				«FOR attribute : e.attributes»
         			«IF attribute.type instanceof SensorType»
@@ -199,6 +199,8 @@ class ActivityGen {
 					Md2Button «wer.workflowElementReference.name»Button = (Md2Button) findViewById(R.id.startActivity_«wer.workflowElementReference.name»Button);
 					«wer.workflowElementReference.name»Button.getOnClickHandler().registerAction(new «wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action());
 		        «ENDFOR»
+		        
+		        }
 				Md2TaskQueue.getInstance().tryExecutePendingTasks();
 		    }
 		    
@@ -221,6 +223,7 @@ class ActivityGen {
 	private def static generateActivity(String mainPackage, ContainerElement rv, Iterable<Entity> entities, boolean FirstCall) '''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateActivity()
 		package «mainPackage»;
+		
 		
 		import android.app.Activity;
 		import android.content.Intent;
@@ -282,7 +285,6 @@ class ActivityGen {
 		        navigationDrawer.setAdapter(adapter);
 		        navigationDrawer.setCurrentItem(adapter.getActive(), true);
 
-		«««Pruefen ob ein Attribut des Typssensor vorhanden ist 
 			«FOR e: entities»
 			«FOR attribute : e.attributes»
 				«IF attribute.type instanceof SensorType»

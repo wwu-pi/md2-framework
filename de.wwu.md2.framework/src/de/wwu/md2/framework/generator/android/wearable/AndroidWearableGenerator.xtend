@@ -132,8 +132,21 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 			// SQLite classes (DataContract and SQLiteHelper)
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2DataContract.java",
 				SQLiteGen.generateDataContract(mainPackage, dataContainer.getEntities))
+				
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2SQLiteHelperImpl.java",
 				SQLiteGen.generateSQLiteHelper(mainPackage, app, dataContainer.getMain, dataContainer.getEntities))
+				
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/DatabaseConfigUtil.java",
+				SQLiteGen.generateOrmLiteDatabaseConfigUtil(mainPackage,dataContainer.getEntities()));
+				
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/DatabaseHelper.java",
+				SQLiteGen.generateDataBaseHelper(mainPackage,app,dataContainer.getEntities()));
+				
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/ormlite_config.txt",
+				SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.getEntities()));
+				
+
+
 
 			/***************************************************
 			 * 
@@ -170,7 +183,7 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + app.name.toFirstUpper + ".java",
 				ApplicationGen.generateAppClass(mainPackage, app))
  
-			// Activities //hinzugefügt dataContainer.entities
+			// Activities //hinzugef�gt dataContainer.entities
 			ActivityGen.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements, dataContainer.entities)
 
 			// Controller

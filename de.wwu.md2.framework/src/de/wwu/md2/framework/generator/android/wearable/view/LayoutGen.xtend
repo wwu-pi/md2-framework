@@ -129,12 +129,15 @@ class LayoutGen {
 		//create WearableDrawerLayout
 		var Element rootElement = doc.createElement("android.support.wearable.view.drawer.WearableDrawerLayout")
 		rootElement.setAttribute("android:id","@+id/drawer_layout_"+rv.name);
-		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
+			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
 			"http://schemas.android.com/apk/res/android")
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
 		rootElement.setAttribute("android:layout_height", "match_parent")
 		rootElement.setAttribute("android:layout_width", "match_parent")
 		rootElement.setAttribute("tools:deviceIds", "wear")
+		
+		// create root element: BoxInsetLayout, FrameLayout as child, ScrollView as Child
+		
 		
 		//create NavigationDrawer
 		var Element navElement = doc.createElement("android.support.wearable.view.drawer.WearableNavigationDrawer")
@@ -174,6 +177,7 @@ class LayoutGen {
 		boxElement.appendChild(frameElement)
 		rootElement.appendChild(boxElement);
 		rootElement.appendChild(navElement);
+
 		doc.appendChild(rootElement)
 
 		var Element rootContainer = null

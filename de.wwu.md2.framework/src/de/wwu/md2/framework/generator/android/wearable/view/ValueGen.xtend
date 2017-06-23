@@ -40,10 +40,16 @@ class ValueGen {
 				<string name="title_activity_«rce.name.toFirstLower»">«getActivityTitle(rce)»</string>
 			«ENDFOR»
 			
+<<<<<<< HEAD
 		<!-- not necessary without Start activity
 			«FOR wer : wers»
 				<string name="«MD2AndroidLollipopUtil.getQualifiedNameAsString(wer, "_")»_alias">«wer.alias»</string>
 			«ENDFOR» -->
+=======
+			«FOR wer : wers»
+				<string name="«MD2AndroidLollipopUtil.getQualifiedNameAsString(wer, "_")»_alias">«wer.alias»</string>
+			«ENDFOR»
+>>>>>>> refs/heads/FelixPS
 			
 			«FOR ve : viewGUIElements»
 				«generateStringEntry(ve)»

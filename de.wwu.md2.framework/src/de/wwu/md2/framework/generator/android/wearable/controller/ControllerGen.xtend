@@ -9,6 +9,7 @@ import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.SimpleType
 import de.wwu.md2.framework.generator.util.DataContainer
 import de.wwu.md2.framework.mD2.WorkflowElementEntry
+import de.wwu.md2.framework.generator.android.wearable.util.MD2AndroidWearableUtil
 
 class ControllerGen {
 	def static generateController(String mainPackage, App app, DataContainer data)'''
@@ -77,12 +78,27 @@ class ControllerGen {
 		    public void registerContentProviders() {
 		        Md2ContentProviderRegistry cpr = Md2ContentProviderRegistry.getInstance();
 		        Md2LocalStoreFactory lsf = new Md2LocalStoreFactory(this.instance, "«mainPackage».md2.model.dataStore.LocalDataStoreFactory");
-		        
-		        «FOR cp: contentProviders»
+		        Md2RemoteDatastoreFactory rsf= new Md2RemoteStoreFactory()
+		        		        «FOR cp: contentProviders»
 		        	«var typeName = getTypeName(cp)»
+		        	«IF cp.type.many»
+		        	«IF cp.local»
+		        	Md2MultiContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»( lsf.getDataStore("«typeName»"));
+		        	«ELSE»
+		        	Md2MultiContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»( rsf.getDataStore(«cp.connection.uri»,"«typeName»"));
+		        			        	
+		        	«ENDIF»
 		        	
-		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»(new «MD2AndroidLollipopUtil.getTypeNameForContentProvider(cp)»(), (Md2SQLiteDataStore) lsf.getDataStore("«typeName»"));
+		        	«ELSE»
+		        	«IF cp.local»
+		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»(new «MD2AndroidWearableUtil.getTypeNameForContentProvider(cp)»(),  lsf.getDataStore("«typeName»"));
+		        	«ELSE»
+		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»(new «MD2AndroidWearableUtil.getTypeNameForContentProvider(cp)»(),  rsf.getDataStore(«cp.connection.uri»,"«typeName»"));
+		        			        	
+		        	«ENDIF»
+		        	«ENDIF»
 		        	cpr.add("«cp.name»", «cp.name.toFirstLower»);
+		        	cpr.addMultiContentProvider("«cp.name»", «cp.name.toFirstLower»);
 		        «ENDFOR»
 		    }
 		    
