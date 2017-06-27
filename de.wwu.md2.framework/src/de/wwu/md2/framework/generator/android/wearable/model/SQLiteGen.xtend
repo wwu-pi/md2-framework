@@ -5,6 +5,8 @@ import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.Main
 import de.wwu.md2.framework.generator.android.lollipop.Settings
 import de.wwu.md2.framework.mD2.ReferencedType
+import java.util.ArrayList
+import java.util.List
 
 class SQLiteGen {
 	def static generateDataContract(String mainPackage, Iterable<Entity> entities)'''
@@ -112,6 +114,7 @@ class SQLiteGen {
 
 def static generateOrmLiteConfig(String mainPackage, Iterable<Entity> entities){
 '''
+«var List<ForeignObject> foreignReferences= new ArrayList<ForeignObject>()»
 «FOR entity : entities»
 # --table-start--
 fieldName=«entity.name»Id
@@ -121,6 +124,7 @@ generatedId=true
 «FOR attribute :entity.attributes »
 «IF attribute.type instanceof ReferencedType»
 «IF attribute.type.many»
+«foreignReferences.add(new ForeignObject(entity.name, attribute.name, EntityGen.getMd2TypeStringForAttributeType(attribute.type)))»
 foreignCollectionFieldName=«attribute.name»
 columnName=«entity.name.toFirstLower»_«attribute.name.toFirstLower»
 «ELSE»
@@ -137,6 +141,15 @@ columnName=«entity.name.toFirstLower»_«attribute.name.toFirstLower»
 # --field-end--	
 «ENDIF»	
 «ENDFOR»
+«FOR element : foreignReferences»
+«IF element.targetClass.equals(entity.name)»
+# --field-start--
+fieldName=«element.attributeName»
+columnName=«entity.name.toFirstLower»_«element.attributeName.toFirstLower»
+foreign=true
+# --field-end--		
+«ENDIF»	
+«ENDFOR»
 # --table-fields-end--
 # --table-end--	
 «ENDFOR»
@@ -146,6 +159,7 @@ columnName=«entity.name.toFirstLower»_«attribute.name.toFirstLower»
 
 
 def static generateOrmLiteDatabaseConfigUtil(String mainPackage, Iterable<Entity> entities){'''
+package «mainPackage».md2.model.sqlite;
 import java.io.IOException;
 import java.sql.SQLException;
 import com.j256.ormlite.android.apptools.OrmLiteConfigUtil;
@@ -167,13 +181,20 @@ public class DatabaseConfigUtil extends OrmLiteConfigUtil {
 
 def static generateDataBaseHelper(String mainPackage,  App app, Iterable<Entity> entities){
 '''
+	package «mainPackage».md2.model.sqlite;
+
 import java.sql.SQLException;
- 
+import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Entity;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import «mainPackage».R;
+
+«FOR element : entities»
+	import «mainPackage».md2.model.«element.name»;
+«ENDFOR»
+
  
-import com.androidbegin.studentdirectory.R;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
@@ -227,7 +248,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			//TableUtils.dropTable(connectionSource, StudentDetails.class, true);
 			//onCreate(sqliteDatabase, connectionSource);
 			
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			Log.e(DatabaseHelper.class.getName(), "Unable to upgrade database from version " + oldVer + " to new "
 					+ newVer, e);
 		}
@@ -247,6 +268,26 @@ public Dao<«element.name», Integer> get«element.name»Dao() throws SQLExcepti
 «ENDFOR»
 	
  
+ public <T extends Md2Entity> Dao<T, Integer> getDaoByName(String entity){
+ final String entityType= entity;
+ try{
+ switch(entityType){
+ «FOR element : entities»
+ case "«element.name»": 	if («element.name»Dao == null) {
+ 			«element.name»Dao =  getDao(«element.name».class);
+ 		}
+ 		return (Dao<T, Integer>) «element.name»Dao;
+ «ENDFOR»
+ default: return null;	
+ } 	}
+ catch(SQLException e){
+ e.printStackTrace();	
+ return null;
+ }
+ 
+ }
+ 
+ 
 
 }
 '''	
@@ -255,6 +296,9 @@ public Dao<«element.name», Integer> get«element.name»Dao() throws SQLExcepti
 
 def static generateOrmLiteDatastore(String mainPackage,  App app, Iterable<Entity> entities){
 '''
+	package «mainPackage».md2.model.sqlite;
+
+import android.content.Context;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 
@@ -264,6 +308,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import de.uni_muenster.wi.md2library.model.dataStore.implementation.AbstractMd2OrmLiteDatastore;
 import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Entity;
 
 /**
@@ -273,24 +318,31 @@ import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Entity;
 
 public  class Md2OrmLiteDatastore<T extends  Md2Entity> extends AbstractMd2OrmLiteDatastore {
 
+private String entityType;
+private DatabaseHelper databaseHelper;
 
-    Dao<T , Integer> myDao;
+	Dao<T , Integer> myDao;
 
-   
+	public Md2OrmLiteDatastore(String entity){
+	this.entityType=entity;	
+	}
 
+public void initDatabaseHelper(Context context){
+    databaseHelper = OpenHelperManager.getHelper(context,DatabaseHelper.class);
+}
 
-    private DatabaseHelper getHelper() {
-        if (databaseHelper == null) {
-            databaseHelper = OpenHelperManager.getHelper(this,DatabaseHelper.class);
-        }
-        return databaseHelper;
-    }
+private DatabaseHelper getHelper() {
+
+return databaseHelper;
+}
+
 
 
 private Dao<T, Integer> getMyDao(){
    if(myDao==null) {
-   this.getHelper().
+   myDao= this.getHelper().getDaoByName(entityType);
    }
+  return myDao;	   
 }
 
 
@@ -312,10 +364,50 @@ public List<T> loadAll(){
 
 
 
-'''	
+'''		
+}
+
+ def static generateMd2LocalStoreFactory(String mainPackage,  App app, Iterable<Entity> entities){
+'''
+	package «mainPackage».md2.model.sqlite;
+	import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Entity;
+import de.uni_muenster.wi.md2library.controller.interfaces.Md2Controller;
+import de.uni_muenster.wi.md2library.model.dataStore.implementation.AbstractMd2LocalStoreFactory;
+import de.uni_muenster.wi.md2library.model.dataStore.interfaces.Md2LocalStore;
+«FOR element : entities»
+	import md2.einkaufsliste.md2.model.«element.name»;
+«ENDFOR»
+
+
+public class Md2LocalStoreFactory extends AbstractMd2LocalStoreFactory{
 	
+public Md2LocalStoreFactory(Md2Controller controller){
+	super(controller);
+
+}	
+
+ public <T extends Md2Entity>  Md2LocalStore<T> getDataStore(String entity){
+final String entityName= entity;
+switch(entity){
+	«FOR element : entities»
+	case "«element.name»": return new Md2OrmLiteDatastore<«element.name»>(entity); 	
+	«ENDFOR»
+default: throw new IllegalArgumentException("Unknown Entity Type: "+ entity); 
+} 	
+ 	
+ }
+
+
+
+
+
 	
 	
 	
 }
+
+
+
+'''}
+
 }

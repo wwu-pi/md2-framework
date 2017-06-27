@@ -224,7 +224,6 @@ class ActivityGen {
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateActivity()
 		package «mainPackage»;
 		
-		
 		import android.app.Activity;
 		import android.content.Intent;
 		import android.os.Bundle;

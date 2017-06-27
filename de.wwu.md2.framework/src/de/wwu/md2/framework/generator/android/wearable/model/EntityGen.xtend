@@ -18,14 +18,18 @@ import de.wwu.md2.framework.mD2.Enum
 import de.wwu.md2.framework.generator.android.wearable.Settings
 import de.wwu.md2.framework.mD2.SensorType
 import de.wwu.md2.framework.generator.android.wearable.util.MD2AndroidWearableUtil
+import java.util.ArrayList
+import java.util.List
 
 class EntityGen {
+	
+private static List<ForeignObject> foreinReferences= new ArrayList<ForeignObject>();	
 	
 	def static generateEntities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<Entity> entities) {
 			entities.forEach [ e |
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/" + e.name.toFirstUpper + ".java",
-				generateEntity(mainPackage, e))
+				generateEntityPOJO(mainPackage, e))
 		]
 		
 	}
@@ -38,9 +42,8 @@ class EntityGen {
 		
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
-		«MD2AndroidLollipopUtil.generateImportAllTypes»
-		
-		public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
+		«MD2AndroidWearableUtil.generateImportAllTypes»
+public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		
 		    public «entity.name.toFirstUpper»() {
 		        super("«entity.name.toFirstUpper»");
@@ -75,7 +78,8 @@ class EntityGen {
 		    }
 		}
 	'''}
-		
+	
+	
 	
 	private def static generateEntityPOJO(String mainPackage, Entity entity){ '''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.model.Md2Entity.generateEntity()
@@ -89,23 +93,22 @@ class EntityGen {
 		import com.j256.ormlite.dao.ForeignCollection;
 		import com.j256.ormlite.field.ForeignCollectionField;
 		import com.j256.ormlite.table.DatabaseTable;
-		
+		import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
 		«MD2AndroidWearableUtil.generateImportAllTypes»
-		
 @DatabaseTable(tableName = "«entity.name.toFirstLower»")
-		public class «entity.name»  implements Serializable{
+		public class «entity.name.toFirstUpper»  implements Serializable,Md2Entity{
 		
 		@DatabaseField(generatedId = true, columnName = "id")
 		    private long id;
 		    
 		      protected String typeName;
 		«FOR element : entity.attributes»
-		«IF element.type.many»
 		«IF  element.type instanceof ReferencedType && element.type.many»
 		@ForeignCollectionField
 		private ForeignCollection<«getMd2TypeStringForAttributeType(element.type)»>	«element.name»;
+		«foreinReferences.add(new ForeignObject(entity.name, element.name, getMd2TypeStringForAttributeType(element.type)))»
 			«ELSE»
 		«IF element.type instanceof ReferencedType»
 		@DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
@@ -114,12 +117,11 @@ class EntityGen {
 		«ENDIF»	
 		private «getJavaTypeStringForAttributeType(element.type)»	«element.name»;		
 		«ENDIF»
-		«ENDIF»
 		«ENDFOR»
 		
 		
 		
-		    public «entity.name» {
+		    public «entity.name.toFirstUpper»() {
 		        super();
 		    }
 		    
@@ -130,6 +132,31 @@ class EntityGen {
 		    }
 		}
 		
+		@Override
+			public Md2String getString() {
+				return null;
+			}
+		
+			@Override
+			public boolean equals(Md2Type md2Type) {
+				return false;}
+		
+			@Override
+			public Md2Type get(String s) {
+				return null;
+			}
+		
+			@Override
+			public void set(String s, Md2Type md2Type) {
+		
+			}
+		
+	
+		
+			@Override
+			public HashMap<String, Md2Type> getAttributes() {
+				return null;
+			}
 		
 		 public long getId() {
 		        return this._id;
@@ -175,16 +202,16 @@ class EntityGen {
 		    }
 		
 		@Override
-		    public boolean equals(Md2Type value) {
+		    public boolean equals(Object value) {
 		        if(value == null) {
 		            return false;
 		        } else if(!(value instanceof «entity.name»)) {
 		            return false;
 		        } else {
-		            Md2Entity md2EntityValue = («entity.name»)value;
-		            boolean b= true
+		            «entity.name» md2EntityValue = («entity.name»)value;
+		            boolean b= true;
 		           «FOR element : entity.attributes»
-		           b &= this.«element.name».equals(((«entity.name»)value).get«entity.name.toFirstUpper») ;
+		           b &= this.«element.name».equals(((«entity.name»)md2EntityValue).get«element.name.toFirstUpper»()) ;
 		           
 		           «ENDFOR» 
 		
@@ -195,12 +222,12 @@ class EntityGen {
 		
 	'''}
 	
+	
 	def static generateEnums(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<Enum> enums) {		
 		fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/" + "TestEnum".toFirstUpper + ".java",
 				generateEnum(mainPackage, null))
 	}
-	
 	
 	private def static generateEnum(String mainPackage, Enum entity) '''
 		// generated in de.wwu.md2.framework.generator.android.wearable.model.Md2Entity.generateEnum()
