@@ -29,7 +29,7 @@ private static List<ForeignObject> foreinReferences= new ArrayList<ForeignObject
 		Iterable<Entity> entities) {
 			entities.forEach [ e |
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/" + e.name.toFirstUpper + ".java",
-				generateEntityPOJO(mainPackage, e))
+				generateEntityPOJO(mainPackage, e, entities))
 		]
 		
 	}
@@ -39,6 +39,9 @@ private static List<ForeignObject> foreinReferences= new ArrayList<ForeignObject
 		package «mainPackage + ".md2.model"»;
 		
 		import java.util.HashMap;
+		
+	
+		
 		
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
@@ -81,9 +84,14 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 	
 	
 	
-	private def static generateEntityPOJO(String mainPackage, Entity entity){ '''
+	private def static generateEntityPOJO(String mainPackage, Entity entity, Iterable<Entity> entities){ '''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.model.Md2Entity.generateEntity()
 		package «mainPackage + ".md2.model"»;
+		
+		«FOR element : entities»
+				import «mainPackage + ".md2.model"».«element.name.toFirstUpper»;	
+		«ENDFOR»
+
 		
 		import java.util.HashMap;
 		import java.util.List;
@@ -108,7 +116,7 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		«IF  element.type instanceof ReferencedType && element.type.many»
 		@ForeignCollectionField
 		private ForeignCollection<«getMd2TypeStringForAttributeType(element.type)»>	«element.name»;
-		«foreinReferences.add(new ForeignObject(entity.name, element.name, getMd2TypeStringForAttributeType(element.type)))»
+		«var boolean b= foreinReferences.add(new ForeignObject(entity.name, element.name, getMd2TypeStringForAttributeType(element.type)))»
 			«ELSE»
 		«IF element.type instanceof ReferencedType»
 		@DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
@@ -117,6 +125,12 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		«ENDIF»	
 		private «getJavaTypeStringForAttributeType(element.type)»	«element.name»;		
 		«ENDIF»
+		«ENDFOR»
+		«FOR element : foreinReferences»
+		«IF element.targetClass.equals(entity.name)»
+@DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)		
+private «element.className» «element.attributeName»;			
+		«ENDIF»	
 		«ENDFOR»
 		
 		
@@ -128,9 +142,9 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		    		
 		    @Override
 		    public Md2Type clone() {
-		   
+		   return null; //TODO
 		    }
-		}
+		
 		
 		@Override
 			public Md2String getString() {
@@ -159,11 +173,11 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 			}
 		
 		 public long getId() {
-		        return this._id;
+		        return this.id;
 		    }
 		
 		    public void setId(long id) {
-		        this._id = id;
+		        this.id = id;
 		    }
 		
 		 public String getTypeName() {
@@ -173,15 +187,15 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		«FOR element : entity.attributes»
 		«IF element.type.many»
 		public List<«getJavaTypeStringForAttributeType(element.type)»> get«element.name.toFirstUpper»(){
-		return this.«element.name»	
+		return new ArrayList<«getJavaTypeStringForAttributeType(element.type)»>(this.«element.name»);	
 		}	
 		
 		public void set«element.name.toFirstUpper»(List<«getJavaTypeStringForAttributeType(element.type)»> «element.name» ){
-		this.«element.name»=«element.name»; 	
+		//this.«element.name»=«element.name»; 	
 		}
 			«ELSE»		
 		public «getJavaTypeStringForAttributeType(element.type)» get«element.name.toFirstUpper»(){
-				return this.«element.name»	
+				return this.«element.name»;	
 				}
 				
 		public void set«element.name.toFirstUpper»(«getJavaTypeStringForAttributeType(element.type)» «element.name» ){
@@ -218,7 +232,7 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		            return b;
 		        }
 		    }
-		
+		}
 		
 	'''}
 	

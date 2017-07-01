@@ -63,57 +63,48 @@ class ContentProviderGen {
 			package «mainPackage».md2.model.contentProvider;
 				«var content =  contentProvider.type as ReferencedModelType»
 
-import de.uni_muenster.wi.md2library.controller.eventhandler.implementation.Md2OnAttributeChangedHandler;
+«FOR element : (content.entity as Entity).attributes»
+«IF element.type instanceof ReferencedType»
+			import «mainPackage + ".md2.model"».«(element.type as ReferencedType).element.name.toFirstUpper»;		
+«ENDIF»
+	
+		«ENDFOR»
+
+import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnAttributeChangedHandler;
 			import java.util.HashMap;
-			import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Type;
+			import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
 			import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.AbstractMd2ContentProvider;
 			import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
 			import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
 			import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
 			
-			import md2.einkaufsliste.md2.model.«(content.entity as Entity).name»;
+			import «mainPackage».md2.model.«(content.entity as Entity).name»;
 			
 			«MD2AndroidWearableUtil.generateImportAllTypes»
 			
-			public class «content.entity.name»Provider    extends AbstractMd2ContentProvider {
+			public class «contentProvider.name.toFirstUpper»    extends AbstractMd2ContentProvider {
 			
-		
-			    protected Md2Entity backup;
-			    protected Md2DataStore md2DataStore;
-			    protected HashMap<String, Md2OnAttributeChangedHandler> attributeChangedEventHandlers;
-			    protected long internalId;
-			    protected boolean existsInDataStore;
 			    			
-			    public «content.entity.name»Provider(String key, Md2Entity content, Md2DataStore md2DataStore) {
+			    public «contentProvider.name.toFirstUpper»(String key, Md2Entity content, Md2DataStore md2DataStore) {
 			       super(key, content, md2DataStore);
-			        if(content != null) {
-			            this.backup = (Md2Entity)content.clone();
-			        }
-			
-			        this.attributeChangedEventHandlers = new HashMap();
-			        this.md2DataStore = md2DataStore;
-			        this.existsInDataStore = false;
-			        this.internalId = -1L;
-			        this.load();
-			        this.key = key;
 			    }
-			
+			@Override
 			    public String getKey() {
 			        return this.key;
 			    }
-			
+			@Override
 			    protected long getInternalId() {
 			        return this.internalId;
 			    }
-			
+			@Override
 			    protected void setInternalId(long internalId) {
 			        this.internalId = internalId;
 			    }
-			
+			@Override
 			    public Md2Entity getContent() {
 			        return this.content;
 			    }
-			
+			@Override
 			    public void setContent(Md2Entity content) {
 			        if(content != null) {
 			            this.content = content;
@@ -123,15 +114,15 @@ import de.uni_muenster.wi.md2library.controller.eventhandler.implementation.Md2O
 			        }
 			
 			    }
-			
+			@Override
 			    public void registerAttributeOnChangeHandler(String attribute, Md2OnAttributeChangedHandler onAttributeChangedHandler) {
 			        this.attributeChangedEventHandlers.put(attribute, onAttributeChangedHandler);
 			    }
-			
+			@Override
 			    public void unregisterAttributeOnChangeHandler(String attribute) {
 			        this.attributeChangedEventHandlers.remove(attribute);
 			    }
-			
+			@Override
 			    public Md2OnAttributeChangedHandler getOnAttributeChangedHandler(String attribute) {
 			        return (Md2OnAttributeChangedHandler)this.attributeChangedEventHandlers.get(attribute);
 			    }
@@ -139,17 +130,24 @@ import de.uni_muenster.wi.md2library.controller.eventhandler.implementation.Md2O
 			
 			
 			
-			
+			@Override
 			    public Md2Type getValue(String attribute) {			
 			switch (attribute){
 			«FOR attribute: (content.entity as Entity).attributes»			
-			case "«attribute.name»": return  new «EntityGen.getMd2TypeStringForAttributeType(attribute.type)»(((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»());	
+			case "«attribute.name»": return  
+			«IF attribute.type instanceof ReferencedType && !attribute.type.many»
+			((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»();	
+			«ELSE»
+			new «IF attribute.type.many»
+			Md2List<«EntityGen.getMd2TypeStringForAttributeType(attribute.type)»>	«ELSE»
+			«EntityGen.getMd2TypeStringForAttributeType(attribute.type)»«ENDIF»(((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»());	
+			«ENDIF»
 			«ENDFOR»
 			default:return null;		
 			}
 			}
 			
-			
+			@Override
 			public void setValue(String name, Md2Type value){
 			     if (content == null) {
 			            return;
@@ -159,7 +157,12 @@ import de.uni_muenster.wi.md2library.controller.eventhandler.implementation.Md2O
 			        if ((this.getValue(name) == null && value != null) || !this.getValue(name).equals(value)) {
 			        switch (name){
 			        			«FOR attribute: (content.entity as Entity).attributes»			
-			        			case "«attribute.name»":   ((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«getMd2TypeStringForAttributeType(attribute.type)») value).getPlatformValue());	
+			        			case "«attribute.name»":   ((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«IF attribute.type.many»
+			        				Md2List«ELSE»«getMd2TypeStringForAttributeType(attribute.type)»«ENDIF») value)«IF attribute.type instanceof ReferencedType && !attribute.type.many»
+			        				);
+			        				«ELSEIF attribute.type.many»
+			        				.getContents());
+			        				«ELSE».getPlatformValue());«ENDIF»	
 			        			«ENDFOR»		
 			        			}
 			        
@@ -177,7 +180,7 @@ import de.uni_muenster.wi.md2library.controller.eventhandler.implementation.Md2O
 			
 			
 			
-			
+			@Override
 			    public void load() {
 			        if(!(this.content == null | this.md2DataStore == null)) {
 			            if(this.content.getId() > 0L) {
@@ -197,7 +200,7 @@ import de.uni_muenster.wi.md2library.controller.eventhandler.implementation.Md2O
 			            }
 			        }
 			    }
-			
+			@Override
 			    public void save() {
 			        if(this.content != null && this.md2DataStore != null) {
 			            if(this.existsInDataStore) {
@@ -213,7 +216,7 @@ import de.uni_muenster.wi.md2library.controller.eventhandler.implementation.Md2O
 			            this.backup = (Md2Entity)this.content.clone();
 			        }
 			    }
-			
+			@Override
 			    public void remove() {
 			        if(this.content != null && this.md2DataStore != null) {
 			            this.md2DataStore.remove(this.internalId, this.content);

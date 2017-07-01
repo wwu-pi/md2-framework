@@ -117,14 +117,16 @@ def static generateOrmLiteConfig(String mainPackage, Iterable<Entity> entities){
 «var List<ForeignObject> foreignReferences= new ArrayList<ForeignObject>()»
 «FOR entity : entities»
 # --table-start--
-fieldName=«entity.name»Id
-columnName=«entity.name»_id
-generatedId=true
 # --table-fields-start--
+# --field-start--
+fieldName=id
+columnName=id
+generatedId=true
+# --field-end--	
 «FOR attribute :entity.attributes »
 «IF attribute.type instanceof ReferencedType»
 «IF attribute.type.many»
-«foreignReferences.add(new ForeignObject(entity.name, attribute.name, EntityGen.getMd2TypeStringForAttributeType(attribute.type)))»
+«var boolean b=foreignReferences.add(new ForeignObject(entity.name, attribute.name, EntityGen.getMd2TypeStringForAttributeType(attribute.type)))»
 foreignCollectionFieldName=«attribute.name»
 columnName=«entity.name.toFirstLower»_«attribute.name.toFirstLower»
 «ELSE»
@@ -297,6 +299,7 @@ public Dao<«element.name», Integer> get«element.name»Dao() throws SQLExcepti
 def static generateOrmLiteDatastore(String mainPackage,  App app, Iterable<Entity> entities){
 '''
 	package «mainPackage».md2.model.sqlite;
+	package «mainPackage».«app.name»;
 
 import android.content.Context;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -307,6 +310,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+
 
 import de.uni_muenster.wi.md2library.model.dataStore.implementation.AbstractMd2OrmLiteDatastore;
 import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Entity;
@@ -324,21 +328,22 @@ private DatabaseHelper databaseHelper;
 	Dao<T , Integer> myDao;
 
 	public Md2OrmLiteDatastore(String entity){
-	this.entityType=entity;	
+	this.entityType=entity;
+	    initDatabaseHelper(«app.name».getAppContext());
 	}
 
 public void initDatabaseHelper(Context context){
     databaseHelper = OpenHelperManager.getHelper(context,DatabaseHelper.class);
 }
 
-private DatabaseHelper getHelper() {
+public DatabaseHelper getHelper() {
 
 return databaseHelper;
 }
 
 
 
-private Dao<T, Integer> getMyDao(){
+public Dao<T, Integer> getMyDao(){
    if(myDao==null) {
    myDao= this.getHelper().getDaoByName(entityType);
    }
@@ -375,7 +380,7 @@ import de.uni_muenster.wi.md2library.controller.interfaces.Md2Controller;
 import de.uni_muenster.wi.md2library.model.dataStore.implementation.AbstractMd2LocalStoreFactory;
 import de.uni_muenster.wi.md2library.model.dataStore.interfaces.Md2LocalStore;
 «FOR element : entities»
-	import md2.einkaufsliste.md2.model.«element.name»;
+	import «mainPackage».md2.model.«element.name»;
 «ENDFOR»
 
 

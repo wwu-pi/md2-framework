@@ -21,6 +21,7 @@ public class ForeignObject {
 		super();
 		this.className = className;
 		this.attributeName = attributeName;
+		this.targetClass=targetClass;
 	}
 	public String getTargetClass() {
 		return targetClass;
