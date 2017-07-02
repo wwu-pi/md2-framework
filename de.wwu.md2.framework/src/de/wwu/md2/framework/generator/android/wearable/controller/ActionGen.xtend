@@ -54,6 +54,8 @@ import de.wwu.md2.framework.mD2.WebServiceCallAction
 import de.wwu.md2.framework.mD2.LocationAction
 import de.wwu.md2.framework.mD2.ValidatorBindingTask
 import de.wwu.md2.framework.mD2.SensorVal
+import de.wwu.md2.framework.mD2.ContentProviderRemoveActiveAction
+import de.wwu.md2.framework.mD2.ContentProviderGetActiveAction
 
 class ActionGen {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
@@ -88,6 +90,8 @@ class ActionGen {
 		import «Settings.MD2LIBRARY_CONTENTPROVIDERREGISTRY_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
+		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderAddAction;
+		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderRemoveActiveAction;
 
 		public class «qualifiedActionName.toFirstUpper»_Action extends AbstractMd2Action {
 		
@@ -302,14 +306,18 @@ class ActionGen {
 			ContentProviderResetAction:
 				result = '''Md2ContentProviderResetAction("«sa.contentProvider.contentProvider.name»")'''
 //			TODO: implement ContentProviderAddAction
-			ContentProviderAddAction: 
-			 	result = '''''' 
+			ContentProviderAddAction:
+				result = '''Md2ContentProviderAddAction("«sa.contentProviderTarget.contentProvider.name»","«sa.contentProviderSource.contentProvider.name»")''' 
 //			TODO: implement ContentProviderRemoveAction
 			ContentProviderRemoveAction:
 			  	result = ''''''
+			ContentProviderRemoveActiveAction:
+				result = '''Md2ContentProviderRemoveActiveAction("«sa.contentProvider.contentProvider.name»")'''
 //			TODO: implement ContentProviderGetAction
 			ContentProviderGetAction:
 			 result = ''''''
+			ContentProviderGetActiveAction:
+			 result = '''Md2ContentProviderGetActiveAction("«sa.contentProviderTarget.contentProvider.name»","«sa.contentProviderSource.contentProvider.name»")'''
 //			TODO: implement WebServiceCallAction
 			WebServiceCallAction:
 				result = ''''''

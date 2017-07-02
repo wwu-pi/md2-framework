@@ -299,7 +299,7 @@ public Dao<«element.name», Integer> get«element.name»Dao() throws SQLExcepti
 def static generateOrmLiteDatastore(String mainPackage,  App app, Iterable<Entity> entities){
 '''
 	package «mainPackage».md2.model.sqlite;
-	package «mainPackage».«app.name»;
+	//package «mainPackage».«app.name»;
 
 import android.content.Context;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -314,6 +314,7 @@ import java.util.List;
 
 import de.uni_muenster.wi.md2library.model.dataStore.implementation.AbstractMd2OrmLiteDatastore;
 import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Entity;
+import «mainPackage».«app.name»;
 
 /**
  * Created by felix_000 on 19.05.2017.

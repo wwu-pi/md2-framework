@@ -30,6 +30,7 @@ import javax.xml.transform.stream.StreamResult
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.w3c.dom.Document
 import org.w3c.dom.Element
+import de.wwu.md2.framework.mD2.ListView
 
 class LayoutGen {
 
@@ -124,26 +125,54 @@ class LayoutGen {
 		val generationComment = doc.createComment("generated in de.wwu.md2.framework.generator.android.wearable.view.Layout.generateLayout()")
 		doc.appendChild(generationComment)
 		
+		//spezielles Layout für Listview
+		if((rv as ContentContainer) instanceof ListView){
+		//create WearableDrawerLayout
+		var Element rootElement = doc.createElement("android.support.wearable.view.drawer.WearableDrawerLayout")
+		rootElement.setAttribute("android:id","@+id/drawer_layout_"+rv.name);
+		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
+			"http://schemas.android.com/apk/res/android")
+		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
+		rootElement.setAttribute("android:layout_height", "match_parent")
+		rootElement.setAttribute("android:layout_width", "match_parent")
+		rootElement.setAttribute("tools:deviceIds", "wear")
+		//create NavigationDrawer
+		var Element navElement = doc.createElement("android.support.wearable.view.drawer.WearableNavigationDrawer")
+		navElement.setAttribute("android:id", "@+id/navigation_drawer_"+rv.name)
+		navElement.setAttribute("android:layout_height", "match_parent")
+		navElement.setAttribute("android:layout_width", "match_parent")
+		navElement.setAttribute("android:background", "@android:color/holo_blue_bright")
+		//create WearableRecyclerView für Listendarstellung
+		var Element listElement = doc.createElement("android.support.wearable.view.WearableRecyclerView")
+		listElement.setAttribute("android:id","@+id/wearable_recycler_view_"+rv.name)
+		listElement.setAttribute("android:layout_height", "match_parent")
+		listElement.setAttribute("android:layout_width", "match_parent")
+		//append
+		rootElement.appendChild(listElement)
+		rootElement.appendChild(navElement)
+		doc.appendChild(rootElement)
+		}
+		
+		//StandardLayout
+		else{
 		// create root element: WearableDrawerLayout, NavigationDrawer + BoxInsetLayout as children, FrameLayout as child of BIL, ScrollView as Child
 		
 		//create WearableDrawerLayout
 		var Element rootElement = doc.createElement("android.support.wearable.view.drawer.WearableDrawerLayout")
 		rootElement.setAttribute("android:id","@+id/drawer_layout_"+rv.name);
-			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
+		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
 			"http://schemas.android.com/apk/res/android")
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
 		rootElement.setAttribute("android:layout_height", "match_parent")
 		rootElement.setAttribute("android:layout_width", "match_parent")
 		rootElement.setAttribute("tools:deviceIds", "wear")
 		
-		// create root element: BoxInsetLayout, FrameLayout as child, ScrollView as Child
-		
-		
 		//create NavigationDrawer
 		var Element navElement = doc.createElement("android.support.wearable.view.drawer.WearableNavigationDrawer")
 		navElement.setAttribute("android:id", "@+id/navigation_drawer_"+rv.name)
 		navElement.setAttribute("android:layout_height", "match_parent")
 		navElement.setAttribute("android:layout_width", "match_parent")
+		navElement.setAttribute("android:background", "@android:color/holo_blue_bright")
 		
 		
 		// create BoxInsetLayout
@@ -177,7 +206,6 @@ class LayoutGen {
 		boxElement.appendChild(frameElement)
 		rootElement.appendChild(boxElement);
 		rootElement.appendChild(navElement);
-
 		doc.appendChild(rootElement)
 
 		var Element rootContainer = null
@@ -206,7 +234,12 @@ class LayoutGen {
 					}
 				}
 		}
-
+		
+		
+		//Ende else / Ende StandardLayout
+		}
+		
+		
 		// return xml file as string
 		val transformerFactory = TransformerFactory.newInstance
 		val transformer = transformerFactory.newTransformer
@@ -214,7 +247,7 @@ class LayoutGen {
 		val writer = new StringWriter
 		transformer.transform(new DOMSource(doc), new StreamResult(writer))
 		return writer.buffer.toString
-	}
+}
 	
 	/////////////////////creation of children elements completely adopted from lollipop/////////////////////////////
 	

@@ -239,8 +239,8 @@ private «element.className» «element.attributeName»;
 	
 	def static generateEnums(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<Enum> enums) {		
-		fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/" + "TestEnum".toFirstUpper + ".java",
-				generateEnum(mainPackage, null))
+		//fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/" + "TestEnum".toFirstUpper + ".java",
+		//		generateEnum(mainPackage, null))
 	}
 	
 	private def static generateEnum(String mainPackage, Enum entity) '''

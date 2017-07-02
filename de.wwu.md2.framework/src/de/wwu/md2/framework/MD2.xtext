@@ -530,7 +530,7 @@ ContainerElement:
  * ContentContainers can contain other Containers or ContentElements.
  */
 ContentContainer:
-	GridLayoutPane | FlowLayoutPane
+	GridLayoutPane | FlowLayoutPane | ListView
 ;
 
 /*
@@ -540,6 +540,22 @@ ContentContainer:
  */
 SubViewContainer:
 	AlternativesPane | TabbedAlternativesPane
+;
+
+/*
+ * A ListView for using a whole Activity as a List
+ */
+ ListView:
+ 	'ListView' name = EID '(' params += ListViewParam ')' '{'
+ 		('connectedProvider' connectedProvider = ContentProviderPath)
+ 		('onClickAction' onClickAction = [Action | QUALIFIED_NAME])?
+ 		('leftSwipeAction' leftSwipeAction = [Action | QUALIFIED_NAME])?
+ 		('rightSwipeAction' rightSwipeAction = [Action | QUALIFIED_NAME])?
+ 		elements += ViewElementType*
+ 	'}'
+ ;
+ListViewParam:
+	{PlaceholderParam} 'placeholder' value = INT
 ;
 
 /*
@@ -831,12 +847,15 @@ SimpleAction:
 			('latitudeOutput' latitude=AbstractContentProviderPath 
 			&'longitudeOutput' longitude=AbstractContentProviderPath) ')' ')' ) |
 	
-	// TODO -- multi-valued content provider, not supported yet
-	{ContentProviderAddAction} ('ContentProviderAdd' '('contentProvider = ContentProviderReference ')') |
-	{ContentProviderRemoveAction} ('ContentProviderRemove' '('contentProvider = ContentProviderReference 'where' whereClause = WhereClauseCondition ')') |
+	//supported Actions for multi-valued ContentProviders
+	{ContentProviderAddAction} ('ContentProviderAdd' '('contentProviderTarget = ContentProviderReference  ','  contentProviderSource = ContentProviderReference ')') |
+	{ContentProviderGetActiveAction} ('ContentProviderGetActive' '(' contentProviderTarget = ContentProviderReference ',' contentProviderSource = ContentProviderReference')') |
+	{ContentProviderRemoveActiveAction} ('ContentProviderRemoveActive' '(' contentProvider = ContentProviderReference ')') |
 	
+	// TODO -- Support RemoveAction with whereClause
+	{ContentProviderRemoveAction} ('ContentProviderRemove' '('contentProvider = ContentProviderReference 'where' whereClause = WhereClauseCondition ')') |
 	// TODO -- does not make sense as action; maybe allow getters as follows :contentProviderRef(first where Customer.name equals "John").name
-	{ContentProviderGetAction} ('ContentProviderGet' '('contentProvider = AbstractProviderReference ('where' whereClause = WhereClauseCondition)? ')')
+    {ContentProviderGetAction} ('ContentProviderGet' '('contentProvider = AbstractProviderReference ('where' whereClause = WhereClauseCondition)? ')')
 ;
 
 /////////////////////////////////////

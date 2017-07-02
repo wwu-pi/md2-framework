@@ -163,6 +163,7 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			        				«ELSEIF attribute.type.many»
 			        				.getContents());
 			        				«ELSE».getPlatformValue());«ENDIF»	
+			        				break;
 			        			«ENDFOR»		
 			        			}
 			        

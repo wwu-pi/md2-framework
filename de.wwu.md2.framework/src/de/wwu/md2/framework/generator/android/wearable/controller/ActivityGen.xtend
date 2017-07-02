@@ -14,6 +14,7 @@ import de.wwu.md2.framework.mD2.WorkflowElementReference
 import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.SensorType
+import de.wwu.md2.framework.mD2.ListView
 
 class ActivityGen {
 	
@@ -31,92 +32,218 @@ class ActivityGen {
 		rootViews.forEach [ rv |
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + rv.name + "Activity.java",
 				generateActivity(mainPackage, rv, entities, FirstCall))
+				
+				if (rv instanceof ListView){
+				fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + rv.name + "ListAdapter.java",
+				generateListAdapter(mainPackage, rv))
+				} 
 		]
 	}
+		
+		//generiert ListAdapter für Inhalt einer Listenansicht
+		def static generateListAdapter(String mainPackage, ListView rv)'''
+		//generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateListAdapter()
+		package «mainPackage»;
+		
+		import android.support.v7.widget.RecyclerView;
+		import android.view.View;
+		import android.view.ViewGroup;
+		import de.uni_muenster.wi.md2library.controller.eventhandler.implementation.Md2ButtonOnSwipeHandler;
+		import de.uni_muenster.wi.md2library.controller.eventhandler.implementation.Md2OnClickHandler;
+		import de.uni_muenster.wi.md2library.view.widgets.implementation.Md2Button;
+		import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
+		import de.uni_muenster.wi.md2library.model.contentProvider.implementation.Md2ContentProviderRegistry;
+		import de.uni_muenster.wi.md2library.model.contentProvider.interfaces.Md2ContentProvider;
+		import de.uni_muenster.wi.md2library.model.contentProvider.interfaces.Md2MultiContentProvider;
+		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2UpdateListIndexAction;
+		«IF(!(rv.onClickAction === null))»
+			import «mainPackage».md2.controller.action.«MD2AndroidLollipopUtil.getQualifiedNameAsString(rv.onClickAction, "_").toFirstUpper»_Action;
+		«ENDIF»
+		«IF(!(rv.leftSwipeAction === null))»
+			import «mainPackage».md2.controller.action.«MD2AndroidLollipopUtil.getQualifiedNameAsString(rv.leftSwipeAction, "_").toFirstUpper»_Action;
+		«ENDIF»
+		«IF(!(rv.rightSwipeAction === null))»
+			import «mainPackage».md2.controller.action.«MD2AndroidLollipopUtil.getQualifiedNameAsString(rv.rightSwipeAction, "_").toFirstUpper»_Action;
+		«ENDIF»
+		
+		public class «rv.name»ListAdapter extends RecyclerView.Adapter{
+			
+			private Md2MultiContentProvider content;
+			private Md2ButtonOnSwipeHandler swipeHandler;
+			private Md2OnClickHandler clickHandler;
+			
+			public Md2ButtonOnSwipeHandler getOnSwipeHandler(){
+				return swipeHandler;
+			}
+			
+			public Md2OnClickHandler getOnClickHandler(){
+				return clickHandler;
+			}
+			
+			public «rv.name»ListAdapter(){
+				content = Md2ContentProviderRegistry.getInstance().getContentMultiProvider("«rv.connectedProvider.contentProviderRef.name»");
+				swipeHandler = new Md2ButtonOnSwipeHandler();
+				clickHandler = new Md2OnClickHandler();
+				«IF(!(rv.onClickAction === null))»
+					Md2Action ca = new «MD2AndroidLollipopUtil.getQualifiedNameAsString(rv.onClickAction, "_").toFirstUpper»_Action();
+					clickHandler.registerAction(ca);
+				«ENDIF»
+				«IF(!(rv.leftSwipeAction === null))»
+					Md2Action lsa = new «MD2AndroidLollipopUtil.getQualifiedNameAsString(rv.leftSwipeAction, "_").toFirstUpper»_Action();
+					swipeHandler.getLeftSwipeHandler().registerAction(lsa);
+				«ENDIF»
+				«IF(!(rv.rightSwipeAction === null))»
+					Md2Action rsa = new «MD2AndroidLollipopUtil.getQualifiedNameAsString(rv.rightSwipeAction, "_").toFirstUpper»_Action();
+					swipeHandler.getRightSwipeHandler().registerAction(rsa);
+				«ENDIF»
+			}
+			
+			@Override
+			public void onBindViewHolder(RecyclerView.ViewHolder vh, int i){
+				ListItem li = (ListItem) vh;
+				if(content.getContentsList().get(i).get("«rv.connectedProvider.tail.attributeRef.name»") != null){
+					li.getButton().setText(content.getContentsList().get(i).get("«rv.connectedProvider.tail.attributeRef.name»").getString().toString());
+				} else {
+					li.getButton().setText("Fehler");
+				}
+				//Listener hinzufügen
+				Md2UpdateListIndexAction indexAction = new Md2UpdateListIndexAction("«rv.name»", i, content);
+				Md2OnClickHandler ch = new Md2OnClickHandler();
+				Md2ButtonOnSwipeHandler sw = new Md2ButtonOnSwipeHandler();
+				ch.registerAction(indexAction);
+				ch.addActions(clickHandler.getActions());
+				sw.registerAction(indexAction, true);
+				sw.registerAction(indexAction, false);
+				sw.getLeftSwipeHandler().addActions(swipeHandler.getLeftSwipeHandler().getActions());
+				sw.getRightSwipeHandler().addActions(swipeHandler.getRightSwipeHandler().getActions());
+				li.getButton().setOnClickHandler(ch);
+				li.getButton().setOnSwipeHandler(sw);
+			}
+			
+			@Override
+			public int getItemCount() {
+				return content.getContents().size();
+			}
+			
+			@Override
+			public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup vg, int i){
+				Md2Button b = new Md2Button (vg.getContext());
+				ListItem li = new ListItem(b);
+				return li;
+			}
+			
+			public class ListItem extends RecyclerView.ViewHolder{
+				
+				private Md2Button button;
+				
+				public ListItem(View itemView){
+					super(itemView);
+					button = (Md2Button) itemView;
+				}
+				
+				public Md2Button getButton(){
+					return button;
+				}
+				
+				
+			}
+			
+		}
+		
+'''
+		
 		
 		//generiert NavigationAdapter als Singleton, ersetzt die urspr«ngliche StartActivity
 		//startActions werden in Konstruktor »bergeben
 	def static generateNavigationAdapter(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements)'''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateStartActivity()
-		package «mainPackage»;
-
-		import android.graphics.drawable.Drawable;
-		import android.support.wearable.view.drawer.WearableNavigationDrawer;
-		import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
-		import java.util.ArrayList;
-		«FOR wer : startableWorkflowElements»		        	
-			import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action;
-		«ENDFOR»
-		
-		public class NavigationAdapter extends WearableNavigationDrawer.WearableNavigationDrawerAdapter{
-			
-			private static NavigationAdapter instance;
-			private int active;
-			private int selected;
-			private ArrayList<String> names;
-			private ArrayList<Md2Action> actions;
-			
-			
-			
-			public static synchronized NavigationAdapter getInstance(){
-			        if (NavigationAdapter.instance == null) {
-			            NavigationAdapter.instance = new NavigationAdapter();
-			        }
-			        return instance;
-			}
-			
-			private NavigationAdapter(){
-				active = 0;
-				selected = 0;
-				names = new ArrayList<String>();
-				actions = new ArrayList<Md2Action>();
-				«FOR wer : startableWorkflowElements»
-					names.add("«wer.workflowElementReference.name.toFirstUpper»");
-					actions.add(new «wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action());
+				package «mainPackage»;
+				
+				import android.graphics.drawable.Drawable;
+				import android.support.wearable.view.drawer.WearableNavigationDrawer;
+				import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
+				import java.util.ArrayList;
+				«FOR wer : startableWorkflowElements»		        	
+					import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action;
 				«ENDFOR»
-			}
-			
-			@Override
-			public int getCount() {
-				return actions.size();
-			}
-			
-			@Override
-			public void onItemSelected(int position) {
-				selected = position;
-			}
-			
-			@Override
-			public String getItemText(int pos) {
-				return names.get(pos);
-			}
-			
-			@Override
-			public Drawable getItemDrawable(int position) {
-			    return null;
-			}
-			
-			public int getActive(){
-				return active;
-			}
-			
-			public int getSelected(){
-				return selected;
-			}
-			
-			public boolean close(){
-				if (active != selected){
-					active = selected;
-					actions.get(active).execute();
-					return true;
-				} else {
-					return false;
+				
+				public class NavigationAdapter extends WearableNavigationDrawer.WearableNavigationDrawerAdapter{
+					
+					private static NavigationAdapter instance;
+					private int active;
+					private int selected;
+					private ArrayList<String> names;
+					private ArrayList<Md2Action> actions;
+					private boolean isFirstStart;
+					
+					
+					public static synchronized NavigationAdapter getInstance(){
+					        if (NavigationAdapter.instance == null) {
+					            NavigationAdapter.instance = new NavigationAdapter();
+					        }
+					        return instance;
+					}
+					
+					private NavigationAdapter(){
+						active = 0;
+						selected = 0;
+						isFirstStart = true;
+						names = new ArrayList<String>();
+						actions = new ArrayList<Md2Action>();
+						«FOR wer : startableWorkflowElements»
+							names.add("«wer.workflowElementReference.name.toFirstUpper»");
+							actions.add(new «wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action());
+						«ENDFOR»
+					}
+					
+					@Override
+					public int getCount() {
+						return actions.size();
+					}
+					
+					@Override
+					public void onItemSelected(int position) {
+						selected = position;
+					}
+					
+					@Override
+					public String getItemText(int pos) {
+						return names.get(pos);
+					}
+					
+					@Override
+					public Drawable getItemDrawable(int position) {
+					    return null;
+					}
+					
+					public int getActive(){
+						return active;
+					}
+					
+					public int getSelected(){
+						return selected;
+					}
+					
+					public void maybeFirstStart(){
+						if(isFirstStart){
+							actions.get(0).execute();
+							isFirstStart = false;
+						}
+					}
+					
+					public boolean close(){
+						if (active != selected){
+							active = selected;
+							actions.get(active).execute();
+							return true;
+						} else {
+							return false;
+						}
+					}
+					
 				}
-			}
-			
-		}
-		
-	'''
+				
+			'''
 	
 	def static generateStartActivity(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities)'''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateStartActivity()
@@ -200,7 +327,7 @@ class ActivityGen {
 					«wer.workflowElementReference.name»Button.getOnClickHandler().registerAction(new «wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action());
 		        «ENDFOR»
 		        
-		        }
+		        }   
 				Md2TaskQueue.getInstance().tryExecutePendingTasks();
 		    }
 		    
@@ -232,6 +359,8 @@ class ActivityGen {
 		import android.support.wearable.view.drawer.WearableDrawerLayout;
 		import android.support.wearable.view.drawer.WearableDrawerView;
 		import android.support.wearable.view.drawer.WearableNavigationDrawer;
+		import android.support.wearable.view.CurvedChildLayoutManager;
+		import android.support.wearable.view.WearableRecyclerView;
 		
 		import «mainPackage».md2.controller.Controller;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
@@ -302,6 +431,16 @@ class ActivityGen {
 				«ENDIF»
 			«ENDFOR»
 			«ENDFOR»
+			
+			«IF (rv instanceof ListView)»
+					    	WearableRecyclerView wrv = (WearableRecyclerView) findViewById(R.id.wearable_recycler_view_«rv.name»);
+					    	«rv.name»ListAdapter listAdapter = new «rv.name»ListAdapter();
+						   	wrv.setAdapter(listAdapter);
+					    	wrv.setCenterEdgeItems(true);
+					    	CurvedChildLayoutManager clm = new CurvedChildLayoutManager(this);
+					    	wrv.setLayoutManager(clm);
+			«ENDIF»
+			
 		    }
 		
 		    @Override
@@ -313,6 +452,7 @@ class ActivityGen {
 		        	«generateLoadViewElement(viewElement)»
 		        «ENDFOR»
 		        
+		        adapter.maybeFirstStart();
 		        
 		        Md2TaskQueue.getInstance().tryExecutePendingTasks();
 		        

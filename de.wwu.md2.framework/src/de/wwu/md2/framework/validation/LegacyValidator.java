@@ -411,13 +411,21 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 	@Check
 	public void checkForAssignmentsOfSingleElementContentProvidersToContentProviderAddActions(ContentProviderAddAction addAction) {
 		
-		ContentProvider contentProvider = addAction.getContentProvider().getContentProvider();
+		ContentProvider contentProvider = addAction.getContentProviderTarget().getContentProvider();
 		
 		if(!contentProvider.getType().isMany()) {
 			acceptError("Tried to add an element to a content provider of type '" + getDataTypeName(contentProvider.getType())
 					+ "', but expected an is-many content provider " + getDataTypeName(contentProvider.getType()) + "[].",
-					addAction, MD2Package.eINSTANCE.getContentProviderAddAction_ContentProvider(), -1, null);
+					addAction, MD2Package.eINSTANCE.getContentProviderAddAction_ContentProviderTarget(), -1, null);
 		}
+		
+		 ContentProvider sp = addAction.getContentProviderSource().getContentProvider();
+		
+		 if(sp.getType().isMany()) {
+				acceptError("Tried to use a MultiContentProvider as source for addAction, only normal ContenProvider allowed",
+						addAction, MD2Package.eINSTANCE.getContentProviderAddAction_ContentProviderSource(), -1, null);
+			}
+		 
 	}
 	
 	/**
@@ -432,7 +440,7 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 		if(!contentProvider.getType().isMany()) {
 			acceptError("Tried to remove an element from a content provider of type '" + getDataTypeName(contentProvider.getType())
 					+ "', but expected an is-many content provider " + getDataTypeName(contentProvider.getType()) + "[].",
-					removeAction, MD2Package.eINSTANCE.getContentProviderAddAction_ContentProvider(), -1, null);
+					removeAction, MD2Package.eINSTANCE.getContentProviderRemoveAction_ContentProvider(), -1, null);
 		}
 	}
 	
