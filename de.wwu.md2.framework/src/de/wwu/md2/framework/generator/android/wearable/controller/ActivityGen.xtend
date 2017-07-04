@@ -101,8 +101,8 @@ class ActivityGen {
 			@Override
 			public void onBindViewHolder(RecyclerView.ViewHolder vh, int i){
 				ListItem li = (ListItem) vh;
-				if(content.getContentsList().get(i).get("«rv.connectedProvider.tail.attributeRef.name»") != null){
-					li.getButton().setText(content.getContentsList().get(i).get("«rv.connectedProvider.tail.attributeRef.name»").getString().toString());
+				if(content.getValue(i,"«rv.connectedProvider.tail.attributeRef.name»") != null){
+					li.getButton().setText(content.getValue(i,"«rv.connectedProvider.tail.attributeRef.name»"));
 				} else {
 					li.getButton().setText("Fehler");
 				}

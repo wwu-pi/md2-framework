@@ -241,13 +241,61 @@ import de.uni_muenster.wi.md2library.model.contentProvider.implementation.Abstra
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
+		
+		«MD2AndroidWearableUtil.generateImportAllTypes»
 		
 		public class «contentProvider.name.toFirstUpper» extends AbstractMd2MultiContentProvider {
 		  
 		  				    public «contentProvider.name.toFirstUpper»(String key , Md2DataStore dataStore) {
 		  				        super(key, dataStore);
 		  				    }
-		  				}		  	
+		  				    
+		  				    
+		  			  @Override
+		  			    			    public Md2Type getValue(int entityIndex,String attribute) {
+		  			    			  if(this.getContentsList()!=null && this.getContentsList().get(entityIndex)!=null){  				
+		  			    			switch (attribute){
+		  			    			«FOR attribute: (content.entity as Entity).attributes»			
+		  			    			case "«attribute.name»": return  
+		  			    			«IF attribute.type instanceof ReferencedType && !attribute.type.many»
+		  			    			((«(content.entity as Entity).name»)this.getContentsList().get(entityIndex)).get«attribute.name.toFirstUpper»();	
+		  			    			«ELSE»
+		  			    			new «IF attribute.type.many»
+		  			    			Md2List<«EntityGen.getMd2TypeStringForAttributeType(attribute.type)»>	«ELSE»
+		  			    			«EntityGen.getMd2TypeStringForAttributeType(attribute.type)»«ENDIF»(((«(content.entity as Entity).name»)this.getContentsList().get(entityIndex)).get«attribute.name.toFirstUpper»());	
+		  			    			«ENDIF»
+		  			    			«ENDFOR»
+		  			    			default:return null;		
+		  			    			}
+		  			    			}
+		  			    			return null;
+		  			    			}
+		  			    			
+		  			    			 @Override
+		  			    			public void setValue(int entityIndex, String name, Md2Type value){
+		  			    			    if(this.getContentsList()==null && this.getContentsList().get(entityIndex)!=null) {
+		  			    			            return;
+		  			    			        }
+		  			    			
+		  			    			        // set only if value is different to current value
+		  			    			        if ((this.getValue(entityIndex,name) == null && value != null) || !this.getValue(entityIndex,name).equals(value)) {
+		  			    			        switch (name){
+		  			    			        			«FOR attribute: (content.entity as Entity).attributes»			
+		  			    			        			case "«attribute.name»":   ((«(content.entity as Entity).name»)this.getContentsList().get(entityIndex)).set«attribute.name.toFirstUpper»(((«IF attribute.type.many»
+		  			    			        				Md2List«ELSE»«getMd2TypeStringForAttributeType(attribute.type)»«ENDIF») value)«IF attribute.type instanceof ReferencedType && !attribute.type.many»
+		  			    			        				);
+		  			    			        				«ELSEIF attribute.type.many»
+		  			    			        				.getContents());
+		  			    			        				«ELSE».getPlatformValue());«ENDIF»	
+		  			    			        				break;
+		  			    			        			«ENDFOR»		
+		  			    			        			}
+		  				    
+		  				    
+		  				}	
+		  				}
+		  				}	  	
 	'''
 	}	
 	
