@@ -22,6 +22,7 @@ import de.wwu.md2.framework.generator.android.wearable.view.LayoutGen
 import de.wwu.md2.framework.generator.android.wearable.controller.ApplicationGen
 import de.wwu.md2.framework.generator.android.wearable.controller.ControllerGen
 import de.wwu.md2.framework.generator.android.wearable.model.SQLiteGen
+import de.wwu.md2.framework.mD2.App
 
 /**
  * This is the start point for the Android generator.
@@ -190,7 +191,7 @@ SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.getEntities()));
 
 
 			// Activities
-			ActivityGen.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements,dataContainer.entities)
+			ActivityGen.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements,dataContainer.entities, app)
 
 			// Controller
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/controller/Controller" + ".java",

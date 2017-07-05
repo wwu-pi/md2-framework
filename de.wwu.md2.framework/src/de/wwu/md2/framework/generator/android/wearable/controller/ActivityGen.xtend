@@ -15,13 +15,14 @@ import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.SensorType
 import de.wwu.md2.framework.mD2.ListView
+import de.wwu.md2.framework.mD2.App
 
 class ActivityGen {
 	
 	static boolean FirstCall = true; 
 	
 	def static generateActivities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,	
-		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities) {
+		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities, App app) {
 		
 		fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "NavigationAdapter.java",
 			generateNavigationAdapter(mainPackage, startableWorkflowElements))
@@ -35,16 +36,22 @@ class ActivityGen {
 				
 				if (rv instanceof ListView){
 				fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + rv.name + "ListAdapter.java",
-				generateListAdapter(mainPackage, rv))
+				generateListAdapter(mainPackage, rv, app))
 				} 
 		]
 	}
 		
 		//generiert ListAdapter für Inhalt einer Listenansicht
-		def static generateListAdapter(String mainPackage, ListView rv)'''
+		def static generateListAdapter(String mainPackage, ListView rv, App app)'''
 		//generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateListAdapter()
 		package «mainPackage»;
 		
+		import android.content.Context;
+		import android.graphics.Color;
+		import android.graphics.Point;
+		import android.view.Display;
+		import android.view.Gravity;
+		import android.view.WindowManager;
 		import android.support.v7.widget.RecyclerView;
 		import android.view.View;
 		import android.view.ViewGroup;
@@ -56,6 +63,7 @@ class ActivityGen {
 		import de.uni_muenster.wi.md2library.model.contentProvider.interfaces.Md2ContentProvider;
 		import de.uni_muenster.wi.md2library.model.contentProvider.interfaces.Md2MultiContentProvider;
 		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2UpdateListIndexAction;
+		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2RefreshListAction;
 		«IF(!(rv.onClickAction === null))»
 			import «mainPackage».md2.controller.action.«MD2AndroidLollipopUtil.getQualifiedNameAsString(rv.onClickAction, "_").toFirstUpper»_Action;
 		«ENDIF»
@@ -102,7 +110,7 @@ class ActivityGen {
 			public void onBindViewHolder(RecyclerView.ViewHolder vh, int i){
 				ListItem li = (ListItem) vh;
 				if(content.getValue(i,"«rv.connectedProvider.tail.attributeRef.name»") != null){
-					li.getButton().setText(content.getValue(i,"«rv.connectedProvider.tail.attributeRef.name»"));
+					li.getButton().setText(content.getValue(i,"«rv.connectedProvider.tail.attributeRef.name»").getString().toString());
 				} else {
 					li.getButton().setText("Fehler");
 				}
@@ -116,6 +124,10 @@ class ActivityGen {
 				sw.registerAction(indexAction, false);
 				sw.getLeftSwipeHandler().addActions(swipeHandler.getLeftSwipeHandler().getActions());
 				sw.getRightSwipeHandler().addActions(swipeHandler.getRightSwipeHandler().getActions());
+				Md2RefreshListAction rflaction = new Md2RefreshListAction(this);
+				ch.registerAction(rflaction);
+				sw.registerAction(rflaction, true);
+				sw.registerAction(rflaction, false);
 				li.getButton().setOnClickHandler(ch);
 				li.getButton().setOnSwipeHandler(sw);
 			}
@@ -139,6 +151,14 @@ class ActivityGen {
 				public ListItem(View itemView){
 					super(itemView);
 					button = (Md2Button) itemView;
+					button.setBackgroundColor(Color.TRANSPARENT);
+					WindowManager wm = (WindowManager) «app.name.toFirstUpper».getAppContext().getSystemService(Context.WINDOW_SERVICE);
+					Display display = wm.getDefaultDisplay();
+					Point size = new Point();
+					display.getSize(size);
+					int width = size.x;
+					button.setWidth(width);
+					button.setGravity(Gravity.LEFT);
 				}
 				
 				public Md2Button getButton(){
