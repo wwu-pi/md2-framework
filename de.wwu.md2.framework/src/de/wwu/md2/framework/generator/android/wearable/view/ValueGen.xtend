@@ -12,6 +12,10 @@ import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.WorkflowElementReference
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import de.wwu.md2.framework.mD2.ContentContainer
+import de.wwu.md2.framework.mD2.GridLayoutPane
+import de.wwu.md2.framework.mD2.FlowLayoutPane
+import org.apache.log4j.Layout
+import de.wwu.md2.framework.mD2.GridLayoutPaneIcon
 
 class ValueGen {
 
@@ -37,10 +41,12 @@ class ValueGen {
 		<resources>
 			<string name="app_name">«app.appName»</string>
 			«FOR rce : rootContainerElements»
-				<string name="title_activity_«rce.name.toFirstLower»">«getActivityTitle(rce)»</string>
+				<string name="title_activity_«rce.name.toFirstLower»">«rce.name.toFirstUpper»</string>
 			«ENDFOR»
 			
-		<!-- not necessary without Start activity
+	«generateStringsIcon(rootContainerElements)»
+	
+			<!-- not necessary without Start activity
 			«FOR wer : wers»
 				<string name="«MD2AndroidLollipopUtil.getQualifiedNameAsString(wer, "_")»_alias">«wer.alias»</string>
 			«ENDFOR» -->
@@ -50,6 +56,26 @@ class ValueGen {
 			«ENDFOR»
 		</resources>
 	'''
+	
+	def static String generateStringsIcon(Iterable<ContainerElement> rootContainerElements){
+
+		var String icon;
+		var String view;
+		for(rCe : rootContainerElements)
+		{
+			for(param : (rCe as GridLayoutPane).params)
+			{
+				if(param instanceof GridLayoutPaneIcon){
+					//println((param as GridLayoutPaneIcon).value)
+					icon =  (param as GridLayoutPaneIcon).value;
+					view = rCe.name
+				}
+			}
+		}
+		println("<string name=\"" + view + "\">" + icon + "</string>")
+		return "<string name=\"" + "icon_" + view + "\">" + icon + "</string>";
+	}
+	
 	
 	def static getActivityTitle(ContainerElement element) {
 		switch element {
@@ -93,6 +119,7 @@ class ValueGen {
 					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_title">«viewGUIElement.name»</string>
 					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_text">«viewGUIElement.text»</string>
 				'''
+			
 		}
 	}
 

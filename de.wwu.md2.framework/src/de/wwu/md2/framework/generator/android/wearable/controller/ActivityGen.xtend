@@ -23,7 +23,7 @@ class ActivityGen {
 		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities) {
 		
 		fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "NavigationAdapter.java",
-			generateNavigationAdapter(mainPackage, startableWorkflowElements))
+			generateNavigationAdapter(mainPackage, startableWorkflowElements, rootViews))
 		
 		//fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "StartActivity.java",
 			//	generateStartActivity(mainPackage, startableWorkflowElements,  entities))	
@@ -36,13 +36,15 @@ class ActivityGen {
 		
 		//generiert NavigationAdapter als Singleton, ersetzt die urspr»ngliche StartActivity
 		//startActions werden in Konstruktor »bergeben
-	def static generateNavigationAdapter(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements)'''
+	def static generateNavigationAdapter(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<ContainerElement> rootViews)'''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateStartActivity()
 		package «mainPackage»;
 		
 		import android.graphics.drawable.Drawable;
 		import android.support.wearable.view.drawer.WearableNavigationDrawer;
 		import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
+		import de.uni_muenster.wi.md2library.view.management.implementation.Md2ViewManager;
+		
 		import java.util.ArrayList;
 		«FOR wer : startableWorkflowElements»		        	
 			import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action;
@@ -93,7 +95,15 @@ class ActivityGen {
 			
 			@Override
 			public Drawable getItemDrawable(int position) {
-			    return null;
+			String  activity_name=Md2ViewManager.getInstance().getActiveView().getTitle().toString();
+	           switch(activity_name){
+	           	«FOR rv : rootViews»
+	               case "«rv.name»":
+	                   return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable.close_button);
+               «ENDFOR»
+	               default:
+	                   return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable.accept_deny_dialog_positive_bg);
+	           }
 			}
 			
 			public int getActive(){

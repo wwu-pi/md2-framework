@@ -335,6 +335,7 @@ class LayoutGen {
 			isEnabled = false
 
 		buttonElement.setAttribute("android:enabled", String.valueOf(isEnabled))
+		buttonElement.setAttribute("android:textColor", "@color/black");
 
 		return buttonElement
 	}
