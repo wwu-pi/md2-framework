@@ -479,6 +479,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
         val cpList = (cprov.eContainer() as Controller).controllerElements.filter(typeof (ContentProvider))
         
         // Attributes of the contentProviderEntity
+        if(!(cprov.type instanceof ReferencedModelType) || !((cprov.type as ReferencedModelType).entity instanceof Entity)) return
         val refModelType = cprov.type as ReferencedModelType
         val cpEntity = refModelType.entity as Entity
         val cpEntityAttributes = cpEntity.attributes
