@@ -967,6 +967,7 @@ EventDef:
  */
 enum ElementEventType:
 	ON_CLICK = "onClick" |
+	ON_LONG_CLICK = "onLongClick" |
 	ON_CHANGE = "onChange" |
 	ON_LEFT_SWIPE = "onLeftSwipe" |
 	ON_RIGHT_SWIPE = "onRightSwipe" |
@@ -2030,7 +2031,7 @@ EID:
 	//'description' | 'optional' | 'tabTitle' | 'tabIcon' | 
 	//'displayAll' | 'fontSize' | 'color' | 'textStyle' | 
 	//	'only' | 'style' | 'text' | 'height' | 'width' |
-	//	'src' | 'columns' | 'rows' | 'horizontal' | 'vertical' |
+	//	'src' | 'columns' | 'rows' | 'horizontal' | 'vertical' | 'onLongClick' |
 	//	'onRightSwipe' | 'onWrongValidation' | 'onConnectionLost' | 'validator' |
 	//	'connection' | 'model' | 'attributes' | 'message' | 'format' | 'regEx' | 'max' | 'min' |
 	//	'maxLength' | 'minLength' | 'main' | 'appName' | 'appVersion' | 'defaultConnection' | 'startView' | 'modelVersion' |
