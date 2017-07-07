@@ -14,8 +14,23 @@ import de.wwu.md2.framework.mD2.WorkflowElementReference
 import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.SensorType
+
 import de.wwu.md2.framework.mD2.ListView
 import de.wwu.md2.framework.mD2.App
+
+import de.wwu.md2.framework.services.MD2GrammarAccess.SensorTypeParamElements
+import de.wwu.md2.framework.mD2.impl.SensorTypeImpl
+import de.wwu.md2.framework.mD2.impl.SensorTypeParamImpl
+import de.wwu.md2.framework.mD2.impl.SimpleTypeImpl
+import de.wwu.md2.framework.mD2.SensorTypeParam
+import java.util.List
+import de.wwu.md2.framework.mD2.AttrSensorTyp
+import de.wwu.md2.framework.mD2.impl.AttrSensorTypImpl
+import de.wwu.md2.framework.mD2.AttrSensorAxis
+import java.util.LinkedHashSet
+import java.util.LinkedList
+import java.util.Map
+
 
 class ActivityGen {
 	
@@ -33,12 +48,15 @@ class ActivityGen {
 		rootViews.forEach [ rv |
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + rv.name + "Activity.java",
 				generateActivity(mainPackage, rv, entities, FirstCall))
-				
+
 				if (rv instanceof ListView){
 				fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + rv.name + "ListAdapter.java",
 				generateListAdapter(mainPackage, rv, app))
 				} 
+
+				FirstCall=false;
 		]
+		FirstCall=true;
 	}
 		
 		//generiert ListAdapter für Inhalt einer Listenansicht
@@ -294,7 +312,7 @@ class ActivityGen {
 		«ENDFOR»
 		
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2GoToViewAction;
-		import «Settings.MD2LIBRARY_PACKAGE»model.SensorHelper;
+		import «Settings.MD2LIBRARY_PACKAGE»SensorHelper;
 		
 		public class StartActivity extends Activity {
 		
@@ -308,32 +326,6 @@ class ActivityGen {
 		        	«wer.workflowElementReference.name»Button.setWidgetId(R.id.startActivity_«wer.workflowElementReference.name»Button);
 		        	Md2WidgetRegistry.getInstance().addWidget(«wer.workflowElementReference.name»Button);
 		        «ENDFOR»
-		       
-		       
-           «FOR e: entities»
-				«FOR attribute : e.attributes»
-        			«IF attribute.type instanceof SensorType»
-    		«IF attribute.type.eContents.toString().contains("accelerometer: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "accelerometer");
-    		«ENDIF»
-    		«IF attribute.type.eContents.toString().contains("gyroskop: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "gyroskop");
-    		«ENDIF»
-			«IF attribute.type.eContents.toString().contains("compass: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "compass");
-    		«ENDIF»
-    		«IF attribute.type.eContents.toString().contains("pulsmesser: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "pulsmesser");
-    		«ENDIF»
-    		«IF attribute.type.eContents.toString().contains("schrittzaehler: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "schrittzaehler");
-    		«ENDIF»
-    		«IF attribute.type.eContents.toString().contains("luxmeter: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "luxmeter");
-    					«ENDIF»
-        			«ENDIF»
-				«ENDFOR»
-           	«ENDFOR»
 		    }
 		
 		    @Override
@@ -390,7 +382,7 @@ class ActivityGen {
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
 		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
 		
-		import «Settings.MD2LIBRARY_PACKAGE»model.SensorHelper;
+		import «Settings.MD2LIBRARY_PACKAGE»SensorHelper;
 				
 		public class «rv.name»Activity extends Activity {
 			
@@ -433,34 +425,11 @@ class ActivityGen {
 		        navigationDrawer.setAdapter(adapter);
 		        navigationDrawer.setCurrentItem(adapter.getActive(), true);
 
-			«FOR e: entities»
-			«FOR attribute : e.attributes»
-				«IF attribute.type instanceof SensorType»
-					«IF attribute.type.eContents.toString().contains("accelerometer: true")»
-					SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "accelerometer");
-					«ENDIF»
-					«IF attribute.type.eContents.toString().contains("gyroskop: true")»
-					SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "gyroskop");
-					«ENDIF»
-					«IF attribute.type.eContents.toString().contains("heartrate: true")»
-					SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "heartrate");
-					«ENDIF»
-					«IF attribute.type.eContents.toString().contains("proximity: true")»
-					SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "proximity");
-					«ENDIF»
-				«ENDIF»
-			«ENDFOR»
-			«ENDFOR»
-			
-			«IF (rv instanceof ListView)»
-					    	WearableRecyclerView wrv = (WearableRecyclerView) findViewById(R.id.wearable_recycler_view_«rv.name»);
-					    	«rv.name»ListAdapter listAdapter = new «rv.name»ListAdapter();
-						   	wrv.setAdapter(listAdapter);
-					    	wrv.setCenterEdgeItems(true);
-					    	CurvedChildLayoutManager clm = new CurvedChildLayoutManager(this);
-					    	wrv.setLayoutManager(clm);
+
+			«IF FirstCall»
+				//HardwareSensoren
+				«generateSensor(entities)»
 			«ENDIF»
-			
 		    }
 		
 		    @Override
@@ -591,6 +560,49 @@ class ActivityGen {
 			TextInput:
 				return "Md2TextInput"
 			default: return ""
+		}
+	}
+	
+	/**
+	 * generateSensor erwatet die Entites aus dem MD2 Modell, um daraus die entsprechenden
+	 * Attribute, die als Sensor, gekenzeichnet sind zu generieren. Der fertig generierte Code
+	 * wird als String zurückgegeben.
+	 */
+	private static def String generateSensor(Iterable<Entity> entities){
+		var String result = "";
+		//Alle Entities durchgehen
+		for (e : entities) {
+			for (attribute : e.attributes){
+				//Nur Attribute vom Typ Sensor bearbeiten
+				if(attribute.type instanceof SensorType){
+					//Parameter durchgehen
+					for(param : (attribute.type as SensorType).params){
+						//Parameter vom AttrSensorTyp
+						if(param instanceof AttrSensorTyp){
+							if(param.accelerometer){
+								result += ("SensorHelper meinSensorHelper_" + attribute.name +" = new SensorHelper(this, \"" + attribute.name + "\", \"accelerometer\", \"");
+							}
+							if(param.gyroskop){
+								result += ("SensorHelper meinSensorHelper_" + attribute.name +" = new SensorHelper(this, \"" + attribute.name + "\", \"gyroskop\", \"")
+							}
+							if(param.heartrate){
+								result += ("SensorHelper meinSensorHelper_" + attribute.name +" = new SensorHelper(this, \"" + attribute.name + "\", \"heartrate\");\r\n")
+							}
+							if(param.proximity){
+								result += ("SensorHelper meinSensorHelper_" + attribute.name +" = new SensorHelper(this, \"" + attribute.name + "\", \"proximity\");\r\n")
+							}
+						}
+						//Parameter vom AttrSensorAxis
+						if(param instanceof AttrSensorAxis){
+							if(param.x){result += ("X\");\r\n")}
+							if(param.y){result += ("Y\");\r\n")}
+							if(param.z){result += ("Z\");\r\n")}
+						}
+					}
+				}
+			}
+			println(result)
+			return result;
 		}
 	}
 }
