@@ -225,6 +225,10 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			        }
 			    }
 			
+			@Override
+				public void newEntity(){
+					content = new «(content.entity as Entity).name»();
+				}
 			
 			}
 		'''}
