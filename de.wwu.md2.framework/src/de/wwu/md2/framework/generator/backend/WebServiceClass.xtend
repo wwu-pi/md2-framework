@@ -554,4 +554,61 @@ class WebServiceClass {
             }
         }
 	'''
+
+
+
+
+
+def static createEntityJWSInterface(String basePackageName, Entity entity){
+'''
+	package «basePackageName».ws;
+import javax.jws.*;
+import «basePackageName».Config;
+		import «basePackageName».beans.«entity.name.toFirstUpper»Bean;
+		import «basePackageName».datatypes.InternalIdWrapper;
+		import «basePackageName».entities.models.«entity.name.toFirstUpper»;
+import java.util.List;
+
+@Webservice
+public interface «entity.name.toFirstUpper»WS{
+
+public List<«entity.name»> getAll(String filter, int limit);
+
+public «entity.name» get(int id);
+
+public List<«entity.name»>  get(List<Integer> ids);
+
+public List<Integer> createOrUpdate(List<«entity.name»> addresss)
+
+
+public void delete(int id);
+
+public List<Integer> deleteWithGet(List<Integer> ids);
+}
+'''	
+}
+def static createEntityJWS(String basePackageName, Entity entity){
+'''
+import javax.jws.WebService;
+
+@WebService( endpointInterface="webservices.«entity.name»WS" )
+public class «entity.name.toFirstUpper»WSImpl implements «entity.name.toFirstUpper»WS
+{
+   public List<«entity.name»> getAll(String filter, int limit);
+   
+   public «entity.name» get(int id);
+   
+   public List<«entity.name»>  get(List<Integer> ids);
+   
+   public List<Integer> createOrUpdate(List<«entity.name»> addresss)
+   
+   
+   public void delete(int id);
+   
+   public List<Integer> deleteWithGet(List<Integer> ids);
+   }
+}
+'''	
+}
+
 }

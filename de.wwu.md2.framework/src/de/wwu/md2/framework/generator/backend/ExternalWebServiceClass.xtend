@@ -32,7 +32,7 @@ class ExternalWebServiceClass {
 		«FOR cp: wfe.getInternalContentProviders(workflowManager)»
 		import «basePackageName».beans.«cp.contentProviderEntity.name.toFirstUpper»Bean;
 		«ENDFOR»
-		import CurrentStateProject.backend.beans.WorkflowStateBean;
+		import «basePackageName».beans.WorkflowStateBean;
 		
 		«FOR entity : wfe.allEntitiesWithinInvoke»
 		import «basePackageName».entities.models.«entity.name.toFirstUpper»;
