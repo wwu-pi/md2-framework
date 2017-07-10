@@ -99,9 +99,10 @@ class ActivityGen {
 			@Override
 			public Drawable getItemDrawable(int position) {
 			String  activity_name=Md2ViewManager.getInstance().getActiveView().getTitle().toString();
-	           switch(activity_name){
+	           switch(position){
+	           	«var viewnumber = 0»
 	           	«FOR rv : rootViews»
-	               case "«rv.name»":
+	               case «viewnumber++»:
 	               «FOR rve : (rv as GridLayoutPaneImpl).params»
 	               		«IF rve instanceof GridLayoutPaneIcon»
 	               			«IF (rve as GridLayoutPaneIcon).value === null»
