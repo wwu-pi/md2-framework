@@ -559,7 +559,7 @@ GridLayoutPane:
  * These are besides the number of columns and rows all TabSpecificParams.
  */
 GridLayoutPaneParam:
-	{GridLayoutPaneColumnsParam} 'columns' value = INT | {GridLayoutPaneRowsParam} 'rows' value = INT | CommonContainerParam | {GridLayoutPaneIcon} 'icon' value = "close_button"? "ic_launcher"?
+	{GridLayoutPaneColumnsParam} 'columns' value = INT | {GridLayoutPaneRowsParam} 'rows' value = INT | CommonContainerParam | {GridLayoutPaneIcon} 'icon' value = ("close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light")?
 ;
 
 /*

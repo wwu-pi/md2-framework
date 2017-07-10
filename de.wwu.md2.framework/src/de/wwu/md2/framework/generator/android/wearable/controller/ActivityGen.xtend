@@ -14,6 +14,9 @@ import de.wwu.md2.framework.mD2.WorkflowElementReference
 import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.SensorType
+import de.wwu.md2.framework.mD2.GridLayoutPaneIcon
+import de.wwu.md2.framework.mD2.impl.GridLayoutPaneImpl
+import de.wwu.md2.framework.mD2.impl.GridLayoutPaneIconImpl
 
 class ActivityGen {
 	
@@ -99,7 +102,14 @@ class ActivityGen {
 	           switch(activity_name){
 	           	«FOR rv : rootViews»
 	               case "«rv.name»":
-	                   return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable.close_button);
+	               «FOR rve : (rv as GridLayoutPaneImpl).params»
+	               		«IF rve instanceof GridLayoutPaneIcon»
+	               			«IF (rve as GridLayoutPaneIcon).value === null»
+	               				return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable.NULL);
+	               			«ENDIF»
+	               				 return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable.«(rve as GridLayoutPaneIcon).value»);
+	               		«ENDIF»
+	               «ENDFOR»
                «ENDFOR»
 	               default:
 	                   return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable.accept_deny_dialog_positive_bg);
