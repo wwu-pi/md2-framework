@@ -152,7 +152,7 @@ class LayoutGen {
 		
 		//create ActionDrawer
 		var Element drawerElement = doc.createElement("android.support.wearable.view.drawer.WearableActionDrawer")
-		drawerElement.setAttribute("android:id", "@+id/"+ rv.name + "_action_drawer")
+		drawerElement.setAttribute("android:id", "@+id/bottom_action_drawer_" + rv.name)
 		drawerElement.setAttribute("android:layout_height", "match_parent")
 		drawerElement.setAttribute("android:layout_width", "match_parent")
 		drawerElement.setAttribute("app:action_menu", "@menu/" + rv.name.toLowerCase + "_action_drawer_menu")
@@ -255,7 +255,7 @@ class LayoutGen {
 		for(wfe : wfes){						
 			var Element item = doc.createElement("item")
 			item.setAttribute("android:id", "@+id/" + wfe.workflowElementReference.name + "_action_item") 
-			//item.setAttribute("android:icon", "@drawable/") // + Name vom icon des ersten action drawer buttons + wfe.WorkflowReference.icon
+			item.setAttribute("android:icon", "@drawable/ic_info_outline_black_18dp") // + Name vom icon des ersten action drawer buttons + wfe.WorkflowReference.icon
 			item.setAttribute("android:title", wfe.workflowElementReference.name) // + Name zur Anzeige
  			rootElement.appendChild(item)
 		}

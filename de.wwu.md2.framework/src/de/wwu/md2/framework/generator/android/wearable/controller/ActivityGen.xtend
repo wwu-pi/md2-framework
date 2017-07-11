@@ -40,7 +40,7 @@ class ActivityGen {
 		import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
 		import java.util.ArrayList;
 		«FOR wer : startableWorkflowElements»		        	
-			import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action;
+			import «mainPackage».md2.controller.action.«wer.workflowElementReference.name»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action;
 		«ENDFOR»
 		
 		public class NavigationAdapter extends WearableNavigationDrawer.WearableNavigationDrawerAdapter{
@@ -65,7 +65,7 @@ class ActivityGen {
 				actions = new ArrayList<Md2Action>();
 				«FOR wer : startableWorkflowElements»
 					names.add("«wer.workflowElementReference.name.toFirstUpper»");
-					actions.add(new «wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action());
+					actions.add(new «wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name»_startupAction_Action());
 				«ENDFOR»
 			}
 			
@@ -233,6 +233,8 @@ class ActivityGen {
 			                		«rv.name»Activity.this.finish();
 				}
 			
+			
+			
 			}
 			
 			@Override
@@ -244,12 +246,13 @@ class ActivityGen {
 		        adapter = NavigationAdapter.getInstance();
 		        navigationDrawer.setAdapter(adapter);
 		        
-		        
 		        «FOR viewElement: rv.eAllContents.toIterable»
     				«IF viewElement instanceof ActionDrawer»
-    					actionDrawer = (WearableActionDrawer) findViewById(R.id.«rv.name»_action_drawer);
+    					actionDrawer = (WearableActionDrawer) findViewById(R.id.bottom_action_drawer_«rv.name»);
     				«ENDIF»
     			«ENDFOR»	
+		        
+		        
 		        
 		    }
 		
