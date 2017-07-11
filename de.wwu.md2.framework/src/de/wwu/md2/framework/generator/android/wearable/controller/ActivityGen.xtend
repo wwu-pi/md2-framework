@@ -424,8 +424,17 @@ class ActivityGen {
 		        adapter = NavigationAdapter.getInstance();
 		        navigationDrawer.setAdapter(adapter);
 		        navigationDrawer.setCurrentItem(adapter.getActive(), true);
-
-
+				
+				«IF (rv instanceof ListView)»
+				WearableRecyclerView wrv = (WearableRecyclerView) findViewById(R.id.wearable_recycler_view_«rv.name»);
+									    	«rv.name»ListAdapter listAdapter = new «rv.name»ListAdapter();
+										   	wrv.setAdapter(listAdapter);
+									    	wrv.setCenterEdgeItems(true);
+									    	CurvedChildLayoutManager clm = new CurvedChildLayoutManager(this);
+									    	wrv.setLayoutManager(clm);
+				«ENDIF»
+				
+				
 			«IF FirstCall»
 				//HardwareSensoren
 				«generateSensor(entities)»

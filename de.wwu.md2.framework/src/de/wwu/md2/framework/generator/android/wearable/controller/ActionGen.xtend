@@ -92,11 +92,12 @@ class ActionGen {
 		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
 		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderAddAction;
 		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderRemoveActiveAction;
+		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderGetActiveAction;
 
 		public class «qualifiedActionName.toFirstUpper»_Action extends AbstractMd2Action {
 		
 		    public «qualifiedActionName.toFirstUpper»_Action() {
-				super("«qualifiedActionName.toFirstUpper»_Action");
+				super("«qualifiedActionName.toFirstUpper»_Action"); 
 			}
 		
 		    @Override
