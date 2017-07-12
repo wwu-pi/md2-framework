@@ -20,6 +20,7 @@ import java.io.File
 import org.eclipse.xtext.generator.IFileSystemAccessExtension2
 
 import static de.wwu.md2.framework.generator.ios.Settings.*
+import static de.wwu.md2.framework.util.MD2Util.*
 import de.wwu.md2.framework.generator.ios.misc.TestTarget
 
 /**
@@ -27,7 +28,7 @@ import de.wwu.md2.framework.generator.ios.misc.TestTarget
  */
 class IOSGenerator extends AbstractPlatformGenerator {
 	
-	var rootFolder = "" // Override super type property
+	//var rootFolder = "" // Override super type property
 	
 	/**
 	 * Central generation method for the Swift-iOS generator.
@@ -37,14 +38,14 @@ class IOSGenerator extends AbstractPlatformGenerator {
 		
 		/***************************************************
 		 * 
-		 * Generate apps individually
+		 * Generate apps
 		 * 
 		 ***************************************************/
 		for (app : dataContainer.apps) {
 			// Folders
 			Settings.APP_NAME = app.name.replace(".", "-").toLowerCase
 			val appRoot = rootFolder + "/" + Settings.APP_NAME + "." + Settings.PLATFORM_PREFIX + "/"
-			rootFolder = appRoot + Settings.APP_NAME + "/"
+			val rootFolder = appRoot + Settings.APP_NAME + "/"
 			IOSGeneratorUtil.printDebug("Generate App: " + rootFolder, true)
 			
 			// Settings used within the project
@@ -52,33 +53,19 @@ class IOSGenerator extends AbstractPlatformGenerator {
 			Settings.XCODE_TARGET_TEST = Settings.APP_NAME + "Tests"
 			Settings.ROOT_FOLDER = rootFolder
 			
-			// Copy static part in target folder
-			val resourceFolderAbsolutePath = getClass().getResource("/resources/" 
-				+ Settings.PLATFORM_PREFIX + "/" + Settings.STATIC_CODE_PATH);
-			val targetFolderAbsolutePath = (fsa as IFileSystemAccessExtension2).getURI(rootFolder).toFileString()
-			
-			FileSystemUtil.createParentDirs(new File(targetFolderAbsolutePath)) // ensure path exists
-			
-			IOSGeneratorUtil.printDebug("Copy library files with static code:")
-			IOSGeneratorUtil.printDebug(FileSystemUtil.copyDirectory(
-				new File(resourceFolderAbsolutePath.toURI()),
-				new File(targetFolderAbsolutePath)).map[elem | 
-					elem.replace(targetFolderAbsolutePath, "").replace("\\","/")
-				].join("\n"))
-			
-			val resourceFolderTestsAbsolutePath = getClass().getResource("/resources/" 
-				+ Settings.PLATFORM_PREFIX + "/" + Settings.TEST_CODE_PATH);
-			val targetFolderTestsAbsolutePath = (fsa as IFileSystemAccessExtension2).getURI(appRoot + Settings.XCODE_TARGET_TEST + "/").toFileString()
-			
-			FileSystemUtil.createParentDirs(new File(targetFolderTestsAbsolutePath)) // ensure path exists
-			
-			IOSGeneratorUtil.printDebug("Copy test target files:")
-			IOSGeneratorUtil.printDebug(FileSystemUtil.copyDirectory(
-				new File(resourceFolderTestsAbsolutePath.toURI()),
-				new File(targetFolderTestsAbsolutePath)).map[elem | 
-					elem.replace(targetFolderTestsAbsolutePath, "").replace("\\","/")
-				].join("\n"))
+			/***************************************************
+			 * 
+			 * Copy static part in target folder
+			 * 
+			 ***************************************************/
+			//FileSystemUtil.createParentDirs(new File(targetFolderAbsolutePath)) // ensure path exists
+			IOSGeneratorUtil.printDebug("Copy library files with static code: " + Settings.PLATFORM_PREFIX + "/" + Settings.STATIC_CODE_PATH + "iosLib.zip" + " -> " + rootFolder)
+			extractArchive(getSystemResource(Settings.PLATFORM_PREFIX + "/" + Settings.STATIC_CODE_PATH + "iosLib.zip"), rootFolder, fsa)
 				
+			val targetFolderTestsPath = appRoot + Settings.XCODE_TARGET_TEST + "/";
+			IOSGeneratorUtil.printDebug("Copy test project files with test code: " + Settings.PLATFORM_PREFIX + "/" + Settings.TEST_CODE_PATH + "iosTest.zip" + " -> " + targetFolderTestsPath)
+			extractArchive(getSystemResource(Settings.PLATFORM_PREFIX + "/" + Settings.TEST_CODE_PATH + "iosTest.zip"), targetFolderTestsPath, fsa)
+			
 			/***************************************************
 			 * 
 			 * Misc 
@@ -146,6 +133,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 				if (!(cp.type instanceof SimpleType)) {
 					IOSGeneratorUtil.printDebug("Generate content provider: " 
 						+ cp.name.toFirstUpper, path)
+					println(path)
 					fsa.generateFile(path, IOSContentProvider.generateClass(cp))
 				}
 			]
@@ -206,6 +194,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 				+ Settings.PREFIX_GLOBAL + "WorkflowEvent.swift"
 			IOSGeneratorUtil.printDebug("Generate workflow events", pathWorkflowEvents) 		
  		 	fsa.generateFile(pathWorkflowEvents, IOSWorkflowEvent.generateClass(dataContainer))
+				
 		}
 
 		println("\nIOS GENERATION COMPLETED\n")

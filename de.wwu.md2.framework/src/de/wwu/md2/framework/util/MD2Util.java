@@ -167,7 +167,7 @@ public class MD2Util {
 	 * @param file File name. File paths have to be relative to the base directory /resources/.
 	 * @return Input stream for the given file.
 	 */
-	public static InputStream getSystemResource(final String file) {
+	public static InputStream getSystemResource(final String file) {System.out.println("/resources/" + file.replaceFirst("^(\\.)?/(resources/)?", new String()));
 		return MD2Util.class.getResourceAsStream("/resources/" + file.replaceFirst("^(\\.)?/(resources/)?", new String()));
 	}
 	

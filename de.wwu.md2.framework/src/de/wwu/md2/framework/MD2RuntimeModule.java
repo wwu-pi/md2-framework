@@ -27,7 +27,7 @@ public class MD2RuntimeModule extends de.wwu.md2.framework.AbstractMD2RuntimeMod
 		Multibinder<IPlatformGenerator> multiGenBinder = Multibinder.newSetBinder(binder, IPlatformGenerator.class);
 		
 		// Bind all generators here		
-		//multiGenBinder.addBinding().to(IOSGenerator.class);
+		multiGenBinder.addBinding().to(IOSGenerator.class);
 		multiGenBinder.addBinding().to(AndroidLollipopGenerator.class);
 		multiGenBinder.addBinding().to(BackendGenerator.class);
 		//multiGenBinder.addBinding().to(TestGenerator.class);
