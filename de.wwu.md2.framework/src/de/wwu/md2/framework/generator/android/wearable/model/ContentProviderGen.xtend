@@ -19,6 +19,7 @@ import de.wwu.md2.framework.mD2.DateTimeType
 import de.wwu.md2.framework.mD2.FileType
 import de.wwu.md2.framework.mD2.AttributeType
 import de.wwu.md2.framework.generator.android.wearable.util.MD2AndroidWearableUtil
+import de.wwu.md2.framework.mD2.SensorType
 
 class ContentProviderGen {
 	
@@ -313,7 +314,8 @@ import de.uni_muenster.wi.md2library.model.contentProvider.implementation.Abstra
 			BooleanType: "Md2Boolean"
 			DateType: "Md2Date"
 			TimeType: "Md2Time"
-			DateTimeType: "Md2DateTime"			
+			DateTimeType: "Md2DateTime"		
+			SensorType: "Md2Sensor"	
 			FileType: "Object" // TODO not implemented
 		}		
 	}
