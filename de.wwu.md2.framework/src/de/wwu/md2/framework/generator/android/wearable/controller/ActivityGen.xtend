@@ -17,6 +17,7 @@ import de.wwu.md2.framework.mD2.SensorType
 import de.wwu.md2.framework.mD2.GridLayoutPaneIcon
 import de.wwu.md2.framework.mD2.impl.GridLayoutPaneImpl
 import de.wwu.md2.framework.mD2.impl.GridLayoutPaneIconImpl
+import de.wwu.md2.framework.generator.android.wearable.view.ValueGen
 
 class ActivityGen {
 	
@@ -99,21 +100,20 @@ class ActivityGen {
 			@Override
 			public Drawable getItemDrawable(int position) {
 			String  activity_name=Md2ViewManager.getInstance().getActiveView().getTitle().toString();
-	           switch(position){
-	           	«var viewnumber = 0»
-	           	«FOR rv : rootViews»
-	               case «viewnumber++»:
-	               «FOR rve : (rv as GridLayoutPaneImpl).params»
-	               		«IF rve instanceof GridLayoutPaneIcon»
-	               			«IF (rve as GridLayoutPaneIcon).value === null»
-	               				return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable.NULL);
-	               			«ENDIF»
-	               				 return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable.«(rve as GridLayoutPaneIcon).value»);
-	               		«ENDIF»
-	               «ENDFOR»
+	       	switch(position){
+           	«var viewnumber = 0»
+           	«FOR rv : rootViews»
+               «FOR rve : (rv as GridLayoutPaneImpl).params»
+               		«IF rve instanceof GridLayoutPaneIcon» 
+           	case «viewnumber»:
+			      	return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable.«(rve as GridLayoutPaneIcon).value»);
+               		«ENDIF»
                «ENDFOR»
-	               default:
-	                   return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable.accept_deny_dialog_positive_bg);
+               «IF viewnumber++ == 0»
+               «ENDIF»
+           «ENDFOR»
+               default:
+                   return Md2ViewManager.getInstance().getActiveView().getDrawable(R.mipmap.ic_launcher);
 	           }
 			}
 			
