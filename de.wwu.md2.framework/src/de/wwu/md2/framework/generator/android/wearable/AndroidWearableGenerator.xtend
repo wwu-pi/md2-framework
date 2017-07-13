@@ -23,6 +23,7 @@ import de.wwu.md2.framework.generator.android.wearable.controller.ApplicationGen
 import de.wwu.md2.framework.generator.android.wearable.controller.ControllerGen
 import de.wwu.md2.framework.generator.android.wearable.model.SQLiteGen
 import de.wwu.md2.framework.mD2.App
+import de.wwu.md2.framework.mD2.ContainerElement
 
 /**
  * This is the start point for the Android generator.
@@ -173,6 +174,9 @@ SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.getEntities()));
 
 			// Styles
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STYLES_XML_NAME, ValueGen.generateStylesXml)
+			
+			// Colors
+			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.COLORS_XML_NAME, ValueGen.generateColorXml)
 
 			// Dimensions
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, ValueGen.generateDimensXml)

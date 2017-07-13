@@ -12,6 +12,10 @@ import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.WorkflowElementReference
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import de.wwu.md2.framework.mD2.ContentContainer
+import de.wwu.md2.framework.mD2.GridLayoutPane
+import de.wwu.md2.framework.mD2.FlowLayoutPane
+import org.apache.log4j.Layout
+import de.wwu.md2.framework.mD2.GridLayoutPaneIcon
 
 class ValueGen {
 
@@ -37,10 +41,11 @@ class ValueGen {
 		<resources>
 			<string name="app_name">«app.appName»</string>
 			«FOR rce : rootContainerElements»
-				<string name="title_activity_«rce.name.toFirstLower»">«getActivityTitle(rce)»</string>
+				<string name="title_activity_«rce.name.toFirstLower»">«rce.name.toFirstUpper»</string>
 			«ENDFOR»
 			
-		<!-- not necessary without Start activity
+	«generateStringsIcon(rootContainerElements)»
+			<!-- not necessary without Start activity
 			«FOR wer : wers»
 				<string name="«MD2AndroidLollipopUtil.getQualifiedNameAsString(wer, "_")»_alias">«wer.alias»</string>
 			«ENDFOR» -->
@@ -51,6 +56,26 @@ class ValueGen {
 			«ENDFOR»
 		</resources>
 	'''
+	
+	def static String generateStringsIcon(Iterable<ContainerElement> rootContainerElements){
+
+		var String icon;
+		var String view;
+		for(rCe : rootContainerElements)
+		{
+			for(param : (rCe as GridLayoutPane).params)
+			{
+				if(param instanceof GridLayoutPaneIcon){
+					//println((param as GridLayoutPaneIcon).value)
+					icon =  (param as GridLayoutPaneIcon).value;
+					view = rCe.name
+				}
+			}
+		}
+		println("<string name=\"" + view + "\">" + icon + "</string>")
+		return "<string name=\"" + "icon_" + view + "\">" + icon + "</string>";
+	}
+	
 	
 	def static getActivityTitle(ContainerElement element) {
 		switch element {
@@ -94,6 +119,7 @@ class ValueGen {
 					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_title">«viewGUIElement.name»</string>
 					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_text">«viewGUIElement.text»</string>
 				'''
+			
 		}
 	}
 
@@ -111,8 +137,23 @@ class ValueGen {
 	def static String generateStylesXml() '''
 		<!-- generated in de.wwu.md2.framework.generator.android.wearable.view.Values.generateStylesXml() -->
 		<resources>
-		    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
-		    </style>		
+		    <style name="AppBaseTheme" parent="android:Theme.Black"/>
+		    <style name="AppTheme" parent="AppBaseTheme"/>
+		
+		    <style name="PSWatchapp" parent="android:Theme.Material.Light.NoActionBar" >
+		        <item name="android:colorAccent">@color/PSWatchappBlueLight</item>
+		        <item name="android:colorPrimary">@color/PSWatchappSemiTransperentDarkBlue</item>
+		        <item name="android:colorPrimaryDark">@color/blue</item>
+		        <item name="android:colorBackground">@color/PSWatchappBackgroundBlue</item>
+		        <item name="android:textColorPrimary">@android:color/white</item>
+		        <item name="android:textColorSecondary">@color/primary_text_dark</item>
+		        <item name="android:windowBackground">@color/PSWatchappBackgroundBlue</item>
+		        <item name="android:statusBarColor">@color/PSWatchappBlueLight</item>
+		        <item name="android:navigationBarColor">@color/PSWatchappBlueLight</item>
+		        <item name="android:colorForeground">@color/white</item>
+		        <item name="android:textColorPrimaryInverse">@color/black</item>
+		        <item name="android:button">@color/PSWatchappBlueLight</item>
+		    </style>
 		</resources>
 	'''
 
@@ -121,6 +162,18 @@ class ValueGen {
 		<resources>
 		    <dimen name="activity_horizontal_margin">16dp</dimen>
 		    <dimen name="activity_vertical_margin">16dp</dimen>
+		</resources>
+	'''
+	
+	def static String generateColorXml() '''
+		<?xml version="1.0" encoding="utf-8"?>
+		<!-- generated in de.wwu.md2.framework.generator.android.wearable.view.Values.generateColorsXml() -->
+		<resources>
+			<color name="background_material_light">#032859</color>
+			<color name="PSWatchappBackgroundBlue">#0d568f</color>
+			<color name="PSWatchappBlueLight">#00a2d3</color>
+			<color name="foreground_material_light">#ff0909</color>
+			<color name="PSWatchappSemiTransperentDarkBlue">#bd00a2d3</color>
 		</resources>
 	'''
 }

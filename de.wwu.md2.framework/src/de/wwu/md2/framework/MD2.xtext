@@ -575,7 +575,7 @@ GridLayoutPane:
  * These are besides the number of columns and rows all TabSpecificParams.
  */
 GridLayoutPaneParam:
-	{GridLayoutPaneColumnsParam} 'columns' value = INT | {GridLayoutPaneRowsParam} 'rows' value = INT | CommonContainerParam
+	{GridLayoutPaneColumnsParam} 'columns' value = INT | {GridLayoutPaneRowsParam} 'rows' value = INT | CommonContainerParam | {GridLayoutPaneIcon} 'icon' value = ("close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light")?
 ;
 
 /*
@@ -1090,7 +1090,8 @@ NumberRangeValidatorParam:
 ;
 
 /*
- * The StringRangeValidatorParam allows the definition
+ * The 
+RangeValidatorParam allows the definition
  * of a string length range. The length of the STRING
  * input by the user will be checked against this range.
  * Additionally it contains the ValidatorMessageParam

@@ -65,6 +65,7 @@ public class Settings {
 	public static String STRINGS_XML_NAME = "strings.xml"
 	public static String STYLES_XML_NAME = "styles.xml"
 	public static String DIMENS_XML_NAME = "dimens.xml"
+	public static String COLORS_XML_NAME = "colors.xml"
 
 	// packages for app generation
 	public static String MD2_APP_FILES_PACKAGE = ".md2."
