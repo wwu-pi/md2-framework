@@ -67,11 +67,6 @@ class ActivityGen {
 		def static generateListAdapter(String mainPackage, ListView rv, App app)'''
 		//generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateListAdapter()
 
-		//generiert NavigationAdapter als Singleton, ersetzt die ursprüngliche StartActivity
-		//startActions werden in Konstruktor »bergeben
-	def static generateNavigationAdapter(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<ContainerElement> rootViews)'''
-		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateStartActivity()
-
 		package «mainPackage»;
 		
 		import android.content.Context;
@@ -92,6 +87,7 @@ class ActivityGen {
 		import de.uni_muenster.wi.md2library.model.contentProvider.interfaces.Md2MultiContentProvider;
 		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2UpdateListIndexAction;
 		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2RefreshListAction;
+		
 		«IF(!(rv.onClickAction === null))»
 			import «mainPackage».md2.controller.action.«MD2AndroidLollipopUtil.getQualifiedNameAsString(rv.onClickAction, "_").toFirstUpper»_Action;
 		«ENDIF»
@@ -103,15 +99,6 @@ class ActivityGen {
 		«ENDIF»
 		
 		public class «rv.name»ListAdapter extends RecyclerView.Adapter{
-		
-		import de.uni_muenster.wi.md2library.view.management.implementation.Md2ViewManager;
-		
-		import java.util.ArrayList;
-		«FOR wer : startableWorkflowElements»		        	
-			import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action;
-		«ENDFOR»
-		
-		public class NavigationAdapter extends WearableNavigationDrawer.WearableNavigationDrawerAdapter{
 			
 			private Md2MultiContentProvider content;
 			private Md2ButtonOnSwipeHandler swipeHandler;
@@ -179,28 +166,6 @@ class ActivityGen {
 				Md2Button b = new Md2Button (vg.getContext());
 				ListItem li = new ListItem(b);
 				return li;
-
-			public Drawable getItemDrawable(int position) {
-			String  activity_name=Md2ViewManager.getInstance().getActiveView().getTitle().toString();
-	       	switch(position){
-           	«var viewnumber = 0»
-           	«FOR rv : rootViews»
-               «FOR rve : (rv as GridLayoutPaneImpl).params»
-               		«IF rve instanceof GridLayoutPaneIcon» 
-           	case «viewnumber»:
-			      	return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable.«(rve as GridLayoutPaneIcon).value»);
-               		«ENDIF»
-               «ENDFOR»
-               «IF viewnumber++ == 0»
-               «ENDIF»
-           «ENDFOR»
-               default:
-                   return Md2ViewManager.getInstance().getActiveView().getDrawable(R.mipmap.ic_launcher);
-	           }
-			}
-			
-			public int getActive(){
-				return active;
 			}
 			
 			public class ListItem extends RecyclerView.ViewHolder{
@@ -231,16 +196,16 @@ class ActivityGen {
 		
 '''
 		
-		
 		//generiert NavigationAdapter als Singleton, ersetzt die urspr«ngliche StartActivity
 		//startActions werden in Konstruktor »bergeben
-	def static generateNavigationAdapter(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements)'''
+	def static generateNavigationAdapter(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<ContainerElement> rootViews)'''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateStartActivity()
 				package «mainPackage»;
 				
 				import android.graphics.drawable.Drawable;
 				import android.support.wearable.view.drawer.WearableNavigationDrawer;
 				import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
+				import de.uni_muenster.wi.md2library.view.management.implementation.Md2ViewManager;
 				import java.util.ArrayList;
 				«FOR wer : startableWorkflowElements»		        	
 					import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action;
@@ -292,7 +257,22 @@ class ActivityGen {
 					
 					@Override
 					public Drawable getItemDrawable(int position) {
-					    return null;
+	    			String  activity_name=Md2ViewManager.getInstance().getActiveView().getTitle().toString();
+	    	       	switch(position){
+	               	«var viewnumber = 0»
+	               	«FOR rv : rootViews»
+	                   «FOR rve : (rv as GridLayoutPaneImpl).params»
+	                   		«IF rve instanceof GridLayoutPaneIcon» 
+	               	case «viewnumber»:
+	    			      	return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable.«(rve as GridLayoutPaneIcon).value»);
+	                   		«ENDIF»
+	                   «ENDFOR»
+	                   «IF viewnumber++ == 0»
+	                   «ENDIF»
+	               «ENDFOR»
+	                   default:
+	                       return Md2ViewManager.getInstance().getActiveView().getDrawable(R.mipmap.ic_launcher);
+	    	           }
 					}
 					
 					public int getActive(){

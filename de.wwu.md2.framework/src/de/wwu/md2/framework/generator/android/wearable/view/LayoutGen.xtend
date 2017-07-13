@@ -415,6 +415,8 @@ class LayoutGen {
 			default:
 				textInputElement.setAttribute("android:inputType", "text")
 		}
+		
+		textInputElement.setAttribute("android:imeOptions","actionDone")
 
 		return textInputElement
 	}
