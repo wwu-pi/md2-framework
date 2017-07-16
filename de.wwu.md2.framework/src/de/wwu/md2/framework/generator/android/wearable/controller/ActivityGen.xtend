@@ -34,7 +34,7 @@ import de.wwu.md2.framework.mD2.AttrSensorAxis
 import java.util.LinkedHashSet
 import java.util.LinkedList
 import java.util.Map
-
+import de.wwu.md2.framework.mD2.IntegerInput
 
 class ActivityGen {
 	
@@ -258,21 +258,9 @@ class ActivityGen {
 					@Override
 					public Drawable getItemDrawable(int position) {
 	    			String  activity_name=Md2ViewManager.getInstance().getActiveView().getTitle().toString();
-	    	       	switch(position){
-	               	«var viewnumber = 0»
-	               	«FOR rv : rootViews»
-	                   «FOR rve : (rv as GridLayoutPaneImpl).params»
-	                   		«IF rve instanceof GridLayoutPaneIcon» 
-	               	case «viewnumber»:
-	    			      	return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable.«(rve as GridLayoutPaneIcon).value»);
-	                   		«ENDIF»
-	                   «ENDFOR»
-	                   «IF viewnumber++ == 0»
-	                   «ENDIF»
-	               «ENDFOR»
-	                   default:
+	    	       	
 	                       return Md2ViewManager.getInstance().getActiveView().getDrawable(R.mipmap.ic_launcher);
-	    	           }
+	    	          
 					}
 					
 					public int getActive(){
@@ -588,6 +576,8 @@ class ActivityGen {
 			Label:
 				return "Md2Label"
 			TextInput:
+				return "Md2TextInput"
+			IntegerInput:
 				return "Md2TextInput"
 			default: return ""
 		}

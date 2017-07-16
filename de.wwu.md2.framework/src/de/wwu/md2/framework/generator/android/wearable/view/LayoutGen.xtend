@@ -31,6 +31,7 @@ import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import de.wwu.md2.framework.mD2.ListView
+import de.wwu.md2.framework.mD2.IntegerInput
 
 class LayoutGen {
 
@@ -276,6 +277,9 @@ class LayoutGen {
 			TextInput: {
 				newElement = createTextInputElement(doc, viewElement)
 			}
+			IntegerInput: {
+				newElement = createIntegerInputElement(doc, viewElement)
+			}
 			Label: {
 				if(viewElement.name.startsWith("_title")) { return } // Skip title label --> landet das irgendwo anders?
 				newElement = createLabelElement(doc, viewElement)
@@ -441,5 +445,47 @@ class LayoutGen {
 		labelElement.setAttribute("android:text", "@string/" + qualifiedName + "_text")
 
 		return labelElement
+	}
+	protected static def createIntegerInputElement(Document doc, IntegerInput integerInput) {
+		val integerInputElement = doc.createElement(Settings.MD2LIBRARY_VIEW_TEXTINPUT)
+		val qnp = new DefaultDeclarativeQualifiedNameProvider
+		val qualifiedName = qnp.getFullyQualifiedName(integerInput).toString("_")
+
+		// id
+		integerInputElement.setAttribute("android:id", "@id/" + qualifiedName)
+
+		
+		integerInputElement.setAttribute("android:layout_width", "match_parent")
+		
+		integerInputElement.setAttribute("android:layout_height", "wrap_content")
+		integerInputElement.setAttribute("android:layout_gravity", "fill_horizontal")
+
+		integerInputElement.setAttribute("android:hint", "@string/" + qualifiedName + "_tooltip")
+
+		integerInputElement.setAttribute("android:text", integerInput.defaultValue.toString())
+		
+		// disabled
+		var isEnabled = true
+		if (integerInput.isDisabled)
+			isEnabled = false
+
+		integerInputElement.setAttribute("android:enabled", String.valueOf(isEnabled))
+	
+		integerInputElement.setAttribute("android:inputType", "number");
+		
+		integerInputElement.setAttribute("android:imeOptions","actionDone")
+		
+		// type ???
+		// switch textInput {
+		//	case textInput.type == TextInputType.PASSWORD:
+		//		textInputElement.setAttribute("android:inputType", "textPassword")
+		//	case textInput.type == TextInputType.TEXTAREA:
+		//		textInputElement.setAttribute("android:inputType",
+		//			"text|textMultiLine")
+		//	default:
+		//		textInputElement.setAttribute("android:inputType", "text")
+		//}
+
+		return integerInputElement
 	}
 }

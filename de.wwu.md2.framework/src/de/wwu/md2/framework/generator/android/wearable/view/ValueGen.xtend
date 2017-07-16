@@ -62,7 +62,8 @@ class ValueGen {
 		var String icon;
 		var String view;
 		for(rCe : rootContainerElements)
-		{
+		{	
+			if(rCe instanceof GridLayoutPane){
 			for(param : (rCe as GridLayoutPane).params)
 			{
 				if(param instanceof GridLayoutPaneIcon){
@@ -70,6 +71,7 @@ class ValueGen {
 					icon =  (param as GridLayoutPaneIcon).value;
 					view = rCe.name
 				}
+			}
 			}
 		}
 		println("<string name=\"" + view + "\">" + icon + "</string>")
