@@ -546,12 +546,12 @@ SubViewContainer:
  * A ListView for using a whole Activity as a List
  */
  ListView:
- 	'ListView' name = EID '(' params += ListViewParam ')' '{'
+ 	'ListView' name = EID '{'
  		('connectedProvider' connectedProvider = ContentProviderPath)
  		('onClickAction' onClickAction = [Action | QUALIFIED_NAME])?
  		('leftSwipeAction' leftSwipeAction = [Action | QUALIFIED_NAME])?
  		('rightSwipeAction' rightSwipeAction = [Action | QUALIFIED_NAME])?
- 		elements += ViewElementType*
+ 		elements += ViewElementType* 
  	'}'
  ;
 ListViewParam:

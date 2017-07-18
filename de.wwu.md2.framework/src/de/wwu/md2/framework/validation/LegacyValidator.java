@@ -35,6 +35,7 @@ import de.wwu.md2.framework.mD2.GridLayoutPane;
 import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam;
 import de.wwu.md2.framework.mD2.GridLayoutPaneParam;
 import de.wwu.md2.framework.mD2.GridLayoutPaneRowsParam;
+import de.wwu.md2.framework.mD2.ListView;
 import de.wwu.md2.framework.mD2.MD2Model;
 import de.wwu.md2.framework.mD2.MD2ModelLayer;
 import de.wwu.md2.framework.mD2.MD2Package;
@@ -81,8 +82,8 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 	@Check
 	public void checkRepeatedParams(ContainerElement containerElement) {
 		
-		// TabbedAlternativesPane is the only container element without parameters
-		if(containerElement instanceof TabbedAlternativesPane) {
+		// TabbedAlternativesPane and ListView are container elements without parameters
+		if(containerElement instanceof TabbedAlternativesPane || containerElement instanceof ListView) {
 			return;
 		}
 		
@@ -420,9 +421,9 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 		}
 		
 		 ContentProvider sp = addAction.getContentProviderSource().getContentProvider();
-		
+		 
 		 if(sp.getType().isMany()) {
-				acceptError("Tried to use a MultiContentProvider as source for addAction, only normal ContenProvider allowed",
+				acceptError("Tried to use a MultiContentProvider as source for addAction, only single ContenProvider allowed",
 						addAction, MD2Package.eINSTANCE.getContentProviderAddAction_ContentProviderSource(), -1, null);
 			}
 		 
@@ -475,6 +476,8 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 			elements.addAll(((AlternativesPane) container).getElements());
 		} else if(container instanceof TabbedAlternativesPane) {
 			elements.addAll(((TabbedAlternativesPane) container).getElements());
+		} else if(container instanceof ListView){
+			// has no elements
 		} else {
 			System.err.println("Unexpected ContainerElement subtype found: " + container.getClass().getName());
 		}
@@ -494,6 +497,8 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 			parameters.addAll(((AlternativesPane) container).getParams());
 		} else if(container instanceof TabbedAlternativesPane) {
 			// has no parameters
+		} else if(container instanceof ListView) {
+			// has no used parameters
 		} else {
 			System.err.println("Unexpected ContainerElement subtype found: " + container.getClass().getName());
 		}
