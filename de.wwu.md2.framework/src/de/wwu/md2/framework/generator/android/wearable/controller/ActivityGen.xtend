@@ -16,6 +16,8 @@ import de.wwu.md2.framework.mD2.ContentContainer
 
 class ActivityGen {
 	
+	static boolean FirstCall = true;
+	
 	def static generateActivities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements) {
 		
@@ -27,8 +29,11 @@ class ActivityGen {
 		
 		rootViews.forEach [ rv |
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + rv.name + "Activity.java",
-				generateActivity(mainPackage, rv))
+				generateActivity(mainPackage, rv, FirstCall))
+				
+				FirstCall=false;
 		]
+		FirstCall=true;
 	}
 	
 		def static generateNavigationAdapter(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements)'''
@@ -65,7 +70,7 @@ class ActivityGen {
 				actions = new ArrayList<Md2Action>();
 				«FOR wer : startableWorkflowElements»
 					names.add("«wer.workflowElementReference.name.toFirstUpper»");
-					actions.add(new «wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name»_startupAction_Action());
+					actions.add(new «wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstLower»_startupAction_Action());
 				«ENDFOR»
 			}
 			
@@ -182,7 +187,7 @@ class ActivityGen {
 		}
 	'''
 
-	private def static generateActivity(String mainPackage, ContainerElement rv) '''
+	private def static generateActivity(String mainPackage, ContainerElement rv, boolean FirstCall) '''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateActivity()
 		package «mainPackage»;
 		
@@ -191,11 +196,13 @@ class ActivityGen {
 		import android.os.Bundle;
 		import android.view.View;
 		import android.view.Gravity;
+		import android.support.wearable.activity.WearableActivity;
 		import android.support.wearable.view.drawer.WearableDrawerLayout;
 		import android.support.wearable.view.drawer.WearableDrawerView;
 		import android.support.wearable.view.drawer.WearableNavigationDrawer;
 		import android.support.wearable.view.drawer.WearableActionDrawer;
 		import android.graphics.drawable.Drawable;
+		import android.view.MenuItem;
 		
 		import «mainPackage».md2.controller.Controller;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
@@ -204,55 +211,64 @@ class ActivityGen {
 		«MD2AndroidLollipopUtil.generateImportAllWidgets»
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
 		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
+		«FOR viewElement: rv.eAllContents.toIterable»
+			«IF viewElement instanceof ActionDrawer»
+				«IF(!(viewElement.onItemClickAction === null))»
+					import «mainPackage».md2.controller.action.«MD2AndroidLollipopUtil.getQualifiedNameAsString(viewElement.onItemClickAction, "_")»_Action;
+				«ENDIF»
+			«ENDIF»
+		«ENDFOR»		        
+			
 				
-		public class «rv.name»Activity extends Activity {
+		public class «rv.name»Activity extends Activity implements WearableActionDrawer.OnMenuItemClickListener {
 			
 			private WearableDrawerLayout drawerLayout;	
 			private WearableNavigationDrawer navigationDrawer;
 			private NavigationAdapter adapter;
 			private WearableActionDrawer actionDrawer;
+			public Md2OnClickHandler clickHandler;
 			
 		    @Override
 		    protected void onCreate(Bundle savedInstanceState) {
 		        super.onCreate(savedInstanceState);
 		        setContentView(R.layout.activity_«rv.name.toLowerCase»);
+		        
+		        clickHandler = new Md2OnClickHandler();
+		        
 		        «FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
 		        	«generateAddViewElement(viewElement)»
 		        «ENDFOR»
 		        
-			drawerLayout = (WearableDrawerLayout) findViewById(R.id.drawer_layout_«rv.name»);
-			drawerLayout.setDrawerStateCallback(new WearableDrawerLayout.DrawerStateCallback() {
+				drawerLayout = (WearableDrawerLayout) findViewById(R.id.drawer_layout_«rv.name»);
+				drawerLayout.setDrawerStateCallback(new WearableDrawerLayout.DrawerStateCallback() {
 							
 				@Override
 				public void onDrawerOpened(View view) {
 				adapter.open();
 				}
+				
 				@Override
 				public void onDrawerClosed(View view) {
 				if(adapter.close()){
 			                		«rv.name»Activity.this.finish();
+					}			
 				}
-			
-			
-			
-			}
-			
-			@Override
-			public void onDrawerStateChanged(@WearableDrawerView.DrawerState int i) {
-			}
-			});		        
+							
+				@Override
+				public void onDrawerStateChanged(@WearableDrawerView.DrawerState int i) {
+				}
+				});		        
 		        
 		        navigationDrawer = (WearableNavigationDrawer) findViewById(R.id.navigation_drawer_«rv.name»);
 		        adapter = NavigationAdapter.getInstance();
 		        navigationDrawer.setAdapter(adapter);
 		        
 		        «FOR viewElement: rv.eAllContents.toIterable»
-    				«IF viewElement instanceof ActionDrawer»
-    					actionDrawer = (WearableActionDrawer) findViewById(R.id.bottom_action_drawer_«rv.name»);
-    				«ENDIF»
-    			«ENDFOR»	
-		        
-		        
+					«IF viewElement instanceof ActionDrawer»
+						actionDrawer = (WearableActionDrawer) findViewById(R.id.bottom_action_drawer_«rv.name»);
+						actionDrawer.setOnMenuItemClickListener(this);
+					«ENDIF»
+				«ENDFOR»		        
 		        
 		    }
 		
@@ -262,10 +278,13 @@ class ActivityGen {
 		        Md2ViewManager.getInstance().setActiveView(this);
 		        
 		        «FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
-		        	«generateLoadViewElement(viewElement)»
+		        	«IF !(viewElement instanceof ActionDrawer)»
+		        		«generateLoadViewElement(viewElement)»
+		        	«ENDIF»
 		        «ENDFOR»
 		        
 		        drawerLayout.peekDrawer(Gravity.TOP);
+		        drawerLayout.peekDrawer(Gravity.BOTTOM);
 		        
 		        Md2TaskQueue.getInstance().tryExecutePendingTasks();
 		    }
@@ -274,7 +293,9 @@ class ActivityGen {
 		    protected void onPause(){
 		        super.onPause();
 		        «FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
-		        	«generateSaveViewElement(viewElement)»
+		        	«IF !(viewElement instanceof ActionDrawer)»
+		        		«generateLoadViewElement(viewElement)»
+		        	«ENDIF»
 		        «ENDFOR»
 		    }
 		    
@@ -282,6 +303,46 @@ class ActivityGen {
 			public void onBackPressed() {
 				// go back to start screen
 				Md2ViewManager.getInstance().goTo(getString(R.string.StartActivity));
+			}
+			
+			@Override
+			public boolean onMenuItemClick(MenuItem menuItem) {		
+			
+«««			//TODO: Link item in ActionDrawerMenu to corresponding Action
+«««			
+«««			final int itemId = menuItem.getItemId();
+«««		
+«««			switch(itemId) {
+«««				
+«««				«FOR viewElement: rv.eAllContents.toIterable»				
+«««					«IF viewElement instanceof ActionDrawer»
+«««						«IF(!(viewElement.onItemClickAction === null))»
+«««								
+«««							case R.id.«viewElement.name»
+«««								executed = 1;
+«««								break;
+«««							
+«««						«ENDIF»
+«««					«ENDIF»
+«««				«ENDFOR»
+«««			}
+			
+			«FOR viewElement: rv.eAllContents.toIterable»				
+				«IF viewElement instanceof ActionDrawer»
+					«IF(!(viewElement.onItemClickAction === null))»					
+
+						Md2Action ca = new «MD2AndroidLollipopUtil.getQualifiedNameAsString(viewElement.onItemClickAction, "_").toFirstUpper»_Action();
+						clickHandler.registerAction(ca);
+						try {
+							ca.execute();
+							return true;
+						}catch(Exception e) {
+							return false;
+						}					
+					«ENDIF»
+				«ENDIF»
+			«ENDFOR»
+					
 			}
 		}
 	'''

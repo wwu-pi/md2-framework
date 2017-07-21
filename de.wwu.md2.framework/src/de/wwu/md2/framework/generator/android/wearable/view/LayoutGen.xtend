@@ -32,6 +32,7 @@ import javax.xml.transform.stream.StreamResult
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.w3c.dom.Document
 import org.w3c.dom.Element
+import de.wwu.md2.framework.mD2.Action
 
 class LayoutGen {
 
@@ -104,6 +105,7 @@ class LayoutGen {
 		
 		// add buttons
 		for(wfe : wfes){
+			
 			var btnElement = doc.createElement(Settings.MD2LIBRARY_VIEW_BUTTON)
 			btnElement.setAttribute("android:id", "@id/startActivity_" + wfe.workflowElementReference.name + "Button")
  			btnElement.setAttribute("android:layout_width", "match_parent")
@@ -251,13 +253,19 @@ class LayoutGen {
 		rootElement.setAttribute("android:layout_width", "match_parent")
 		rootElement.setAttribute("tools:deviceIds", "wear")		
 		
-		//Generate buttons in the menu
-		for(wfe : wfes){						
-			var Element item = doc.createElement("item")
-			item.setAttribute("android:id", "@+id/" + wfe.workflowElementReference.name + "_action_item") 
-			item.setAttribute("android:icon", "@drawable/ic_info_outline_black_18dp") // + Name vom icon des ersten action drawer buttons + wfe.WorkflowReference.icon
-			item.setAttribute("android:title", wfe.workflowElementReference.name) // + Name zur Anzeige
- 			rootElement.appendChild(item)
+		//Generate menu items in the menu
+		for(viewElement: rv.eAllContents.toIterable) {			
+			if(viewElement instanceof ActionDrawer) {
+				if(!(viewElement.onItemClickAction === null)) {					
+				
+					var Element item = doc.createElement("item")
+					item.setAttribute("android:id", "@+id/" + viewElement.name + "_action_item") 
+					item.setAttribute("android:icon", "@drawable/ic_info_outline_black_18dp") // + TODO generate drawable resources folder
+					item.setAttribute("android:title", viewElement.name) // + Name zur Anzeige
+		 			rootElement.appendChild(item)
+		 			
+		 		}				
+			}		
 		}
 		
 		//Append

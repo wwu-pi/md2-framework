@@ -593,6 +593,7 @@ enum FlowDirection:
  */
 ActionDrawer:
 	'ActionDrawer' name = EID '(' params += ActionDrawerParam ')' '{'
+	('onItemClickAction' onItemClickAction = [Action | QUALIFIED_NAME])?
 	 elements += ViewElementType* 
 	 '}'
 ;
