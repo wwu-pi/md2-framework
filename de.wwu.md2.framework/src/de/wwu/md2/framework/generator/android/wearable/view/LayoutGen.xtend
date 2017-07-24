@@ -48,6 +48,8 @@ class LayoutGen {
 				if (viewElement instanceof ActionDrawer) {
 					fsa.generateFile(rootFolder + Settings.MENU_PATH + rv.name.toLowerCase + "_action_drawer_menu.xml", 
 					generateActionDrawerMenu(mainPackage, rv, startableWorkflowElements))
+					
+//					fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH, generateDrawableIcons(mainPackage))
 				}
 			}					
 		]
@@ -256,14 +258,14 @@ class LayoutGen {
 		//Generate menu items in the menu
 		for(viewElement: rv.eAllContents.toIterable) {			
 			if(viewElement instanceof ActionDrawer) {
-				if(!(viewElement.onItemClickAction === null)) {					
-				
-					var Element item = doc.createElement("item")
-					item.setAttribute("android:id", "@+id/" + viewElement.name + "_action_item") 
-					item.setAttribute("android:icon", "@drawable/ic_info_outline_black_18dp") // + TODO generate drawable resources folder
-					item.setAttribute("android:title", viewElement.name) // + Name zur Anzeige
-		 			rootElement.appendChild(item)
-		 			
+				if(!(viewElement.onItemClickAction === null)) {	
+					for(itemClickAction: viewElement.onItemClickAction) {
+						var Element item = doc.createElement("item")
+						item.setAttribute("android:id", "@+id/" + itemClickAction.name + "_action_item") 
+						item.setAttribute("android:icon", "@drawable/ic_info_outline_black_18dp") // + TODO generate drawable resources folder
+						item.setAttribute("android:title", itemClickAction.name)
+			 			rootElement.appendChild(item)						
+					}	 			
 		 		}				
 			}		
 		}

@@ -593,9 +593,13 @@ enum FlowDirection:
  */
 ActionDrawer:
 	'ActionDrawer' name = EID '(' params += ActionDrawerParam ')' '{'
-	('onItemClickAction' onItemClickAction = [Action | QUALIFIED_NAME])?
-	 elements += ViewElementType* 
+	
+	 'Actions' '{'
+	 	onItemClickAction += [Action | QUALIFIED_NAME] (',' onItemClickAction += [Action | QUALIFIED_NAME ])*
 	 '}'
+	   
+	 elements += ViewElementType*
+	  '}'
 ;
 
 ActionDrawerParam:
@@ -789,7 +793,7 @@ WorkflowElement:
 
 /*
  * An Action provides the user the possibility to
- * declare a set of tasks. An Action can be
+ * declare a set of tasks. An ` can be
  * either a CustomAction or a CombinedAction.
  */
 Action:

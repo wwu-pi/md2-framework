@@ -45,7 +45,7 @@ class ActivityGen {
 		import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
 		import java.util.ArrayList;
 		«FOR wer : startableWorkflowElements»		        	
-			import «mainPackage».md2.controller.action.«wer.workflowElementReference.name»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action;
+			import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstLower»_startupAction_Action;
 		«ENDFOR»
 		
 		public class NavigationAdapter extends WearableNavigationDrawer.WearableNavigationDrawerAdapter{
@@ -213,14 +213,16 @@ class ActivityGen {
 		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
 		«FOR viewElement: rv.eAllContents.toIterable»
 			«IF viewElement instanceof ActionDrawer»
-				«IF(!(viewElement.onItemClickAction === null))»
-					import «mainPackage».md2.controller.action.«MD2AndroidLollipopUtil.getQualifiedNameAsString(viewElement.onItemClickAction, "_")»_Action;
+				«IF(viewElement.onItemClickAction !== null)»
+					«FOR itemClickAction: viewElement.onItemClickAction»
+						import «mainPackage».md2.controller.action.«MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "_")»_Action;
+					«ENDFOR»
 				«ENDIF»
 			«ENDIF»
 		«ENDFOR»		        
 			
 				
-		public class «rv.name»Activity extends Activity implements WearableActionDrawer.OnMenuItemClickListener {
+		public class «rv.name»Activity extends WearableActivity implements WearableActionDrawer.OnMenuItemClickListener {
 			
 			private WearableDrawerLayout drawerLayout;	
 			private WearableNavigationDrawer navigationDrawer;
@@ -329,12 +331,17 @@ class ActivityGen {
 			
 			«FOR viewElement: rv.eAllContents.toIterable»				
 				«IF viewElement instanceof ActionDrawer»
-					«IF(!(viewElement.onItemClickAction === null))»					
-
-						Md2Action ca = new «MD2AndroidLollipopUtil.getQualifiedNameAsString(viewElement.onItemClickAction, "_").toFirstUpper»_Action();
-						clickHandler.registerAction(ca);
+					«IF(viewElement.onItemClickAction !== null)»					
+						«FOR itemClickAction: viewElement.onItemClickAction»							
+							Md2Action «itemClickAction.name» = new «MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "_").toFirstUpper»_Action();
+							clickHandler.registerAction(«itemClickAction.name»);							
+						«ENDFOR»
+						
 						try {
-							ca.execute();
+							«FOR itemClickAction: viewElement.onItemClickAction»							
+								«itemClickAction.name».execute();						
+							«ENDFOR»
+							
 							return true;
 						}catch(Exception e) {
 							return false;
