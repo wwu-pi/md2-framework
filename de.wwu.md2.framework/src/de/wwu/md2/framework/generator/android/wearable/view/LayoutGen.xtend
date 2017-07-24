@@ -261,7 +261,7 @@ class LayoutGen {
 				if(!(viewElement.onItemClickAction === null)) {	
 					for(itemClickAction: viewElement.onItemClickAction) {
 						var Element item = doc.createElement("item")
-						item.setAttribute("android:id", "@+id/" + itemClickAction.name + "_action_item") 
+						item.setAttribute("android:id", "@+id/" + itemClickAction.name + "_item") 
 						item.setAttribute("android:icon", "@drawable/ic_info_outline_black_18dp") // + TODO generate drawable resources folder
 						item.setAttribute("android:title", itemClickAction.name)
 			 			rootElement.appendChild(item)						

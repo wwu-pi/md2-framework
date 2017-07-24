@@ -310,37 +310,31 @@ class ActivityGen {
 			@Override
 			public boolean onMenuItemClick(MenuItem menuItem) {		
 			
-«««			//TODO: Link item in ActionDrawerMenu to corresponding Action
-«««			
-«««			final int itemId = menuItem.getItemId();
-«««		
-«««			switch(itemId) {
-«««				
-«««				«FOR viewElement: rv.eAllContents.toIterable»				
-«««					«IF viewElement instanceof ActionDrawer»
-«««						«IF(!(viewElement.onItemClickAction === null))»
-«««								
-«««							case R.id.«viewElement.name»
-«««								executed = 1;
-«««								break;
-«««							
-«««						«ENDIF»
-«««					«ENDIF»
-«««				«ENDFOR»
-«««			}
-			
+«««					
 			«FOR viewElement: rv.eAllContents.toIterable»				
 				«IF viewElement instanceof ActionDrawer»
 					«IF(viewElement.onItemClickAction !== null)»					
-						«FOR itemClickAction: viewElement.onItemClickAction»							
-							Md2Action «itemClickAction.name» = new «MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "_").toFirstUpper»_Action();
-							clickHandler.registerAction(«itemClickAction.name»);							
-						«ENDFOR»
+«««						«FOR itemClickAction: viewElement.onItemClickAction»							
+«««							Md2Action «itemClickAction.name» = new «MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "_").toFirstUpper»_Action();
+«««							clickHandler.registerAction(«itemClickAction.name»);							
+«««						«ENDFOR»
+						Md2Action ca = null;
+						
+						final int itemId = menuItem.getItemId();
+						
+						switch(itemId) {
+							«FOR itemClickAction: viewElement.onItemClickAction»							
+								case R.id.«itemClickAction.name»_item:
+									ca = new «MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "_").toFirstUpper»_Action();
+									break;
+															
+							«ENDFOR»
+						}
+						
+						clickHandler.registerAction(ca);
 						
 						try {
-							«FOR itemClickAction: viewElement.onItemClickAction»							
-								«itemClickAction.name».execute();						
-							«ENDFOR»
+							ca.execute();
 							
 							return true;
 						}catch(Exception e) {
