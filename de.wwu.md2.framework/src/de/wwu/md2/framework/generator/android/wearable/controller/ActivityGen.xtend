@@ -314,10 +314,7 @@ class ActivityGen {
 			«FOR viewElement: rv.eAllContents.toIterable»				
 				«IF viewElement instanceof ActionDrawer»
 					«IF(viewElement.onItemClickAction !== null)»					
-«««						«FOR itemClickAction: viewElement.onItemClickAction»							
-«««							Md2Action «itemClickAction.name» = new «MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "_").toFirstUpper»_Action();
-«««							clickHandler.registerAction(«itemClickAction.name»);							
-«««						«ENDFOR»
+«««						
 						Md2Action ca = null;
 						
 						final int itemId = menuItem.getItemId();
