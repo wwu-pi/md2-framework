@@ -865,12 +865,15 @@ SimpleAction:
 			('latitudeOutput' latitude=AbstractContentProviderPath
 			&'longitudeOutput' longitude=AbstractContentProviderPath) ')' ')' ) |
 
-	// TODO -- multi-valued content provider, not supported yet
-	{ContentProviderAddAction} ('ContentProviderAdd' '('contentProvider = ContentProviderReference ')') |
+	//supported Actions for multi-valued ContentProviders
+	{ContentProviderAddAction} ('ContentProviderAdd' '('contentProviderTarget = ContentProviderReference  ','  contentProviderSource = ContentProviderReference ')') |
+	{ContentProviderGetActiveAction} ('ContentProviderGetActive' '(' contentProviderTarget = ContentProviderReference ',' contentProviderSource = ContentProviderReference')') |
+	{ContentProviderRemoveActiveAction} ('ContentProviderRemoveActive' '(' contentProvider = ContentProviderReference ')') |
+	
+	// TODO -- Support RemoveAction with whereClause
 	{ContentProviderRemoveAction} ('ContentProviderRemove' '('contentProvider = ContentProviderReference 'where' whereClause = WhereClauseCondition ')') |
-
 	// TODO -- does not make sense as action; maybe allow getters as follows :contentProviderRef(first where Customer.name equals "John").name
-	{ContentProviderGetAction} ('ContentProviderGet' '('contentProvider = AbstractProviderReference ('where' whereClause = WhereClauseCondition)? ')')
+    {ContentProviderGetAction} ('ContentProviderGet' '('contentProvider = AbstractProviderReference ('where' whereClause = WhereClauseCondition)? ')')
 ;
 
 /////////////////////////////////////
