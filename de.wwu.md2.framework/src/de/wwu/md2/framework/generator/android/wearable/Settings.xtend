@@ -50,6 +50,7 @@ public class Settings {
 	public static String LAYOUT_PATH = RES_PATH + "layout/"
 	public static String MENU_PATH = RES_PATH + "menu/"
 	public static String VALUES_PATH = RES_PATH + "values/"
+	public static String DRAWABLE_PATH = RES_PATH + "drawable/"
 	public static String MIPMAP_PATH = RES_PATH
 
 	// files

@@ -84,7 +84,10 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/entities/WorkflowState.java", createWorkflowState(rootFolder))
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/WorkflowStateWS.java", createWorkflowStateWS(rootFolder))
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/EventHandlerWS.java", createEventHandlerWS(rootFolder))
+
+		
 		//fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/FileUploadWS.java", createFileUploadWS(rootFolder))
+
 		
 		// Generate additional servlet
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/filedownload/DownloadServlet.java", createDownloadServlet(rootFolder))
@@ -101,10 +104,12 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		// Generate common backend files
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/Utils.java", createUtils(basePackageName))
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/Config.java", createConfig(basePackageName, dataContainer))
+
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/BackendApplication.java", createBackendApplication(basePackageName))
 		// Generate persistence.xml
 		fsa.generateFile(rootFolder + "/src/META-INF/persistence.xml", createPersistenceXml(basePackageName))
 		fsa.generateFile(rootFolder+"/pom.xml", createPom(basePackageName))
+
 		
 		// Generate .settings folder
 		// TODO: check necessity
@@ -125,7 +130,9 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		fsa.generateFile(rootFolder + "/WebContent/index.jsp", indexJsp)
 		fsa.generateFile(rootFolder + "/WebContent/META-INF/MANIFEST.MF", manifest)
 		fsa.generateFile(rootFolder + "/WebContent/WEB-INF/sun-web.xml", sunWebXml(basePackageName)) // TODO: necessary?
+
 		//fsa.generateFile(rootFolder + "/WebContent/WEB-INF/web.xml", webXml(basePackageName))
+
 		
 		// Copy static jar libs
 		fsa.generateFileFromInputStream(getSystemResource("/backend/json-simple-1.1.1.jar"), rootFolder + "/WebContent/WEB-INF/lib/json-simple-1.1.1.jar")
