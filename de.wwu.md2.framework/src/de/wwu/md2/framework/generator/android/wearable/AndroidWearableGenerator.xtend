@@ -21,7 +21,9 @@ import static de.wwu.md2.framework.util.MD2Util.*
 import de.wwu.md2.framework.generator.android.wearable.view.LayoutGen
 import de.wwu.md2.framework.generator.android.wearable.controller.ApplicationGen
 import de.wwu.md2.framework.generator.android.wearable.controller.ControllerGen
-import de.wwu.md2.framework.generator.android.lollipop.model.SQLiteGen
+import de.wwu.md2.framework.generator.android.wearable.model.SQLiteGen
+import de.wwu.md2.framework.mD2.App
+import de.wwu.md2.framework.mD2.ContainerElement
 
 /**
  * This is the start point for the Android generator.
@@ -134,6 +136,24 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 				SQLiteGen.generateDataContract(mainPackage, dataContainer.getEntities))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2SQLiteHelperImpl.java",
 				SQLiteGen.generateSQLiteHelper(mainPackage, app, dataContainer.getMain, dataContainer.getEntities))
+fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/DatabaseConfigUtil.java",
+				SQLiteGen.generateOrmLiteDatabaseConfigUtil(mainPackage,dataContainer.getEntities()));
+				
+				fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/DatabaseHelper.java",
+				SQLiteGen.generateDataBaseHelper(mainPackage,app,dataContainer.getEntities()));
+				
+
+				fsa.generateFile(rootFolder + Settings.RES_PATH + "raw/ormlite_config.txt",
+SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.getEntities()));
+				fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2LocalStoreFactory.java",
+					SQLiteGen.generateMd2LocalStoreFactory( mainPackage,   app,dataContainer.getEntities()) );
+					
+					fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2OrmLiteDatastore.java",
+					SQLiteGen.generateOrmLiteDatastore( mainPackage,   app,  dataContainer.getEntities()));
+					
+				
+
+
 
 			/***************************************************
 			 * 
@@ -154,6 +174,9 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 
 			// Styles
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STYLES_XML_NAME, ValueGen.generateStylesXml)
+			
+			// Colors
+			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.COLORS_XML_NAME, ValueGen.generateColorXml)
 
 			// Dimensions
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, ValueGen.generateDimensXml)
@@ -170,8 +193,9 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + app.name.toFirstUpper + ".java",
 				ApplicationGen.generateAppClass(mainPackage, app))
 
+
 			// Activities
-			ActivityGen.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
+			ActivityGen.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements,dataContainer.entities, app)
 
 			// Controller
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/controller/Controller" + ".java",

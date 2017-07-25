@@ -60,6 +60,8 @@ class MD2AndroidWearableUtil {
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Integer;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2String;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Time;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Sensor;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2List;
 	'''
 	
 	def static String generateImportAllActions()'''
@@ -81,6 +83,7 @@ class MD2AndroidWearableUtil {
 		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnAttributeChangedHandler;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnChangedHandler;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnClickHandler;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnLongClickHandler;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnLeftSwipeHandler;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnRightSwipeHandler;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2WidgetEventType;

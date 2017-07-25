@@ -32,30 +32,34 @@ import javax.xml.transform.stream.StreamResult
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.w3c.dom.Document
 import org.w3c.dom.Element
+
 import de.wwu.md2.framework.mD2.Action
+
+import de.wwu.md2.framework.mD2.ListView
+
 
 class LayoutGen {
 
 	def static generateLayouts(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements) {
-			
-				
+
+
 		rootViews.forEach [ rv |
 			fsa.generateFile(rootFolder + Settings.LAYOUT_PATH + "activity_" + rv.name.toLowerCase + ".xml",
 				generateLayout(mainPackage, rv))
-				
+
 			for(viewElement: rv.eAllContents.toIterable) {
 				if (viewElement instanceof ActionDrawer) {
-					fsa.generateFile(rootFolder + Settings.MENU_PATH + rv.name.toLowerCase + "_action_drawer_menu.xml", 
+					fsa.generateFile(rootFolder + Settings.MENU_PATH + rv.name.toLowerCase + "_action_drawer_menu.xml",
 					generateActionDrawerMenu(mainPackage, rv, startableWorkflowElements))
-					
+
 //					fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH, generateDrawableIcons(mainPackage))
 				}
-			}					
+			}
 		]
 	}
 
-	
+
 	protected static def generateStartLayout(String mainPackage, Iterable<WorkflowElementReference> wfes) {
 		val docFactory = DocumentBuilderFactory.newInstance
 		val docBuilder = docFactory.newDocumentBuilder
@@ -66,18 +70,18 @@ class LayoutGen {
 		doc.appendChild(generationComment)
 
 		// create root element: BoxInsetLayout, FrameLayout as child, ScrollView as Child
-		
+
 		// create BoxInsetLayout
 		var Element rootElement = doc.createElement("android.support.wearable.view.BoxInsetLayout")
 		// set attributes of BoxInsetLayout
 		rootElement.setAttribute("android:layout_height", "match_parent")
-		rootElement.setAttribute("android:layout_width", "match_parent")	
+		rootElement.setAttribute("android:layout_width", "match_parent")
 		rootElement.setAttribute("tools:context", mainPackage + ".StartActivity")
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
 			"http://schemas.android.com/apk/res/android")
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:app", "http://schemas.android.com/apk/res-auto")
-		
+
 		// create FrameLayout
 		var Element frameElement = doc.createElement("FrameLayout")
 		// set attributes of FrameLayout
@@ -85,29 +89,29 @@ class LayoutGen {
 		frameElement.setAttribute("android:layout_height", "match_parent")
 		frameElement.setAttribute("android:layout_width", "match_parent")
 		frameElement.setAttribute("app:layout_box", "all")
-		
-		
+
+
 		//create Scroll View
 		var Element scrollView = doc.createElement("ScrollView")
 		//set attributes of ScrollView
 		scrollView.setAttribute("android:layout_height", "match_parent")
 		scrollView.setAttribute("android:layout_width", "match_parent")
-		
+
 		//append
 		frameElement.appendChild(scrollView)
 		rootElement.appendChild(frameElement)
 		doc.appendChild(rootElement)
-		
+
 		var Element rootContainer = doc.createElement(Settings.MD2LIBRARY_VIEW_FLOWLAYOUTPANE)
 		rootContainer.setAttribute("android:layout_height", "wrap_content")
 		rootContainer.setAttribute("android:layout_width", "match_parent")
-		rootContainer.setAttribute("android:orientation", "vertical")		
+		rootContainer.setAttribute("android:orientation", "vertical")
 		scrollView.appendChild(rootContainer)
-		
-		
+
+
 		// add buttons
 		for(wfe : wfes){
-			
+
 			var btnElement = doc.createElement(Settings.MD2LIBRARY_VIEW_BUTTON)
 			btnElement.setAttribute("android:id", "@id/startActivity_" + wfe.workflowElementReference.name + "Button")
  			btnElement.setAttribute("android:layout_width", "match_parent")
@@ -134,9 +138,39 @@ class LayoutGen {
 		val doc = docBuilder.newDocument
 		val generationComment = doc.createComment("generated in de.wwu.md2.framework.generator.android.wearable.view.Layout.generateLayout()")
 		doc.appendChild(generationComment)
-		
+
+		//spezielles Layout für Listview
+		if((rv as ContentContainer) instanceof ListView){
+		//create WearableDrawerLayout
+		var Element rootElement = doc.createElement("android.support.wearable.view.drawer.WearableDrawerLayout")
+		rootElement.setAttribute("android:id","@+id/drawer_layout_"+rv.name);
+		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
+			"http://schemas.android.com/apk/res/android")
+		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
+		rootElement.setAttribute("android:layout_height", "match_parent")
+		rootElement.setAttribute("android:layout_width", "match_parent")
+		rootElement.setAttribute("tools:deviceIds", "wear")
+		//create NavigationDrawer
+		var Element navElement = doc.createElement("android.support.wearable.view.drawer.WearableNavigationDrawer")
+		navElement.setAttribute("android:id", "@+id/navigation_drawer_"+rv.name)
+		navElement.setAttribute("android:layout_height", "match_parent")
+		navElement.setAttribute("android:layout_width", "match_parent")
+		navElement.setAttribute("android:background", "@android:color/holo_blue_bright")
+		//create WearableRecyclerView für Listendarstellung
+		var Element listElement = doc.createElement("android.support.wearable.view.WearableRecyclerView")
+		listElement.setAttribute("android:id","@+id/wearable_recycler_view_"+rv.name)
+		listElement.setAttribute("android:layout_height", "match_parent")
+		listElement.setAttribute("android:layout_width", "match_parent")
+		//append
+		rootElement.appendChild(listElement)
+		rootElement.appendChild(navElement)
+		doc.appendChild(rootElement)
+		}
+
+		//StandardLayout
+		else{
 		// create root element: WearableDrawerLayout, NavigationDrawer + BoxInsetLayout as children, FrameLayout as child of BIL, ScrollView as Child
-		
+
 		//create WearableDrawerLayout
 		var Element rootElement = doc.createElement("android.support.wearable.view.drawer.WearableDrawerLayout")
 		rootElement.setAttribute("android:id","@+id/drawer_layout_"+rv.name);
@@ -147,32 +181,34 @@ class LayoutGen {
 		rootElement.setAttribute("android:layout_height", "match_parent")
 		rootElement.setAttribute("android:layout_width", "match_parent")
 		rootElement.setAttribute("tools:deviceIds", "wear")
-		
+
 		//create NavigationDrawer
 		var Element navElement = doc.createElement("android.support.wearable.view.drawer.WearableNavigationDrawer")
 		navElement.setAttribute("android:id", "@+id/navigation_drawer_"+rv.name)
 		navElement.setAttribute("android:layout_height", "match_parent")
 		navElement.setAttribute("android:layout_width", "match_parent")
-		
+
+		navElement.setAttribute("android:background", "@color/PSWatchappSemiTransperentDarkBlue")
+
 		//create ActionDrawer
 		var Element drawerElement = doc.createElement("android.support.wearable.view.drawer.WearableActionDrawer")
 		drawerElement.setAttribute("android:id", "@+id/bottom_action_drawer_" + rv.name)
 		drawerElement.setAttribute("android:layout_height", "match_parent")
 		drawerElement.setAttribute("android:layout_width", "match_parent")
 		drawerElement.setAttribute("app:action_menu", "@menu/" + rv.name.toLowerCase + "_action_drawer_menu")
-		
-				
+
+
 		// create BoxInsetLayout
 		var Element boxElement = doc.createElement("android.support.wearable.view.BoxInsetLayout")
 		// set attributes of BoxInsetLayout
 		boxElement.setAttribute("android:layout_height", "match_parent")
-		boxElement.setAttribute("android:layout_width", "match_parent")	
+		boxElement.setAttribute("android:layout_width", "match_parent")
 		boxElement.setAttribute("tools:context", mainPackage + "." + rv.name + "Activity")
 		boxElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
 			"http://schemas.android.com/apk/res/android")
 		boxElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
 		boxElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:app", "http://schemas.android.com/apk/res-auto")
-		
+
 		// create FrameLayout
 		var Element frameElement = doc.createElement("FrameLayout")
 		// set attributes of FrameLayout
@@ -180,14 +216,14 @@ class LayoutGen {
 		frameElement.setAttribute("android:layout_height", "match_parent")
 		frameElement.setAttribute("android:layout_width", "match_parent")
 		frameElement.setAttribute("app:layout_box", "all")
-		
-		
+
+
 		//create Scroll View
 		var Element scrollView = doc.createElement("ScrollView")
 		//set attributes of ScrollView
 		scrollView.setAttribute("android:layout_height", "match_parent")
 		scrollView.setAttribute("android:layout_width", "match_parent")
-		
+
 		//append
 		frameElement.appendChild(scrollView)
 		boxElement.appendChild(frameElement)
@@ -195,20 +231,20 @@ class LayoutGen {
 		rootElement.appendChild(navElement);
 		for( viewElement: rv.eAllContents.filter(ActionDrawer).toIterable) {
 			if (viewElement instanceof ActionDrawer) {
-				rootElement.appendChild(drawerElement)				
+				rootElement.appendChild(drawerElement)
 			}
 		}
 		doc.appendChild(rootElement)
 
 		var Element rootContainer = null
-		
+
 		//sollte man nochmal testen, wie toll diese Layouts auf einer Uhr laufen
 		switch rv {
 			FlowLayoutPane: rootContainer = createFlowLayoutPaneElement(doc, rv)
 			GridLayoutPane: rootContainer = createGridLayoutPaneElement(doc, rv)
 			default: return ""
 		}
-		
+
 		rootContainer.setAttribute("android:layout_width", "match_parent")
 		scrollView.appendChild(rootContainer)
 
@@ -227,6 +263,11 @@ class LayoutGen {
 				}
 		}
 
+
+		//Ende else / Ende StandardLayout
+		}
+
+
 		// return xml file as string
 		val transformerFactory = TransformerFactory.newInstance
 		val transformer = transformerFactory.newTransformer
@@ -234,18 +275,18 @@ class LayoutGen {
 		val writer = new StringWriter
 		transformer.transform(new DOMSource(doc), new StreamResult(writer))
 		return writer.buffer.toString
-	}
-	
+}
+
 	// Generate Action Drawer Menu
 	protected static def generateActionDrawerMenu(String mainPackage, ContainerElement rv, Iterable<WorkflowElementReference> wfes) {
 		val docFactory = DocumentBuilderFactory.newInstance
 		val docBuilder = docFactory.newDocumentBuilder
-		
+
 		// create doc and set namespace definitions
 		val doc = docBuilder.newDocument
 		val generationComment = doc.createComment("generated in de.wwu.md2.framework.generator.android.wearable.view.Layout.generateActionDrawerMenu()")
 		doc.appendChild(generationComment)
-		
+
 		var Element rootElement = doc.createElement("menu")
 		rootElement.setAttribute("android:id","@+id/"+ rv.name.toLowerCase + "_action_drawer_menu")
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
@@ -253,37 +294,37 @@ class LayoutGen {
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
 		rootElement.setAttribute("android:layout_height", "match_parent")
 		rootElement.setAttribute("android:layout_width", "match_parent")
-		rootElement.setAttribute("tools:deviceIds", "wear")		
-		
+		rootElement.setAttribute("tools:deviceIds", "wear")
+
 		//Generate menu items in the menu
-		for(viewElement: rv.eAllContents.toIterable) {			
+		for(viewElement: rv.eAllContents.toIterable) {
 			if(viewElement instanceof ActionDrawer) {
-				if(!(viewElement.onItemClickAction === null)) {	
+				if(!(viewElement.onItemClickAction === null)) {
 					for(itemClickAction: viewElement.onItemClickAction) {
 						var Element item = doc.createElement("item")
-						item.setAttribute("android:id", "@+id/" + itemClickAction.name + "_item") 
+						item.setAttribute("android:id", "@+id/" + itemClickAction.name + "_item")
 						item.setAttribute("android:icon", "@android:drawable/ic_dialog_info") // TODO: Icons auswählen können
 						item.setAttribute("android:title", MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "").toFirstUpper)
-			 			rootElement.appendChild(item)						
-					}	 			
-		 		}				
-			}		
+			 			rootElement.appendChild(item)
+					}
+		 		}
+			}
 		}
-		
+
 		//Append
 		doc.appendChild(rootElement)
-		
+
 		// return xml file as string
 		val transformerFactory = TransformerFactory.newInstance
 		val transformer = transformerFactory.newTransformer
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes")
 		val writer = new StringWriter
 		transformer.transform(new DOMSource(doc), new StreamResult(writer))
-		return writer.buffer.toString		
-		
+		return writer.buffer.toString
+
 	}
 	/////////////////////creation of children elements completely adopted from lollipop/////////////////////////////
-	
+
 	//call different methods for different types of children
 	protected static def void createChildrenElements(Document doc, Element element, ViewElement viewElement) {
 		var Element newElement = null
@@ -347,7 +388,7 @@ class LayoutGen {
 
 	protected static def createGridLayoutPaneElement(Document doc, GridLayoutPane glp) {
 		// create element
-		val glpElement = doc.createElement(Settings.MD2LIBRARY_VIEW_GRIDLAYOUTPANE)		
+		val glpElement = doc.createElement(Settings.MD2LIBRARY_VIEW_GRIDLAYOUTPANE)
 
 		// assign id
 		val qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(glp, "_")
@@ -357,7 +398,7 @@ class LayoutGen {
 		glpElement.setAttribute("android:layout_height", "wrap_content")
 		glpElement.setAttribute("android:layout_width", "match_parent")
 		glpElement.setAttribute("android:layout_gravity", "fill_horizontal")
-		
+
 		// handle parameters
 		glp.params.forEach [ p |
 			switch p {
@@ -391,7 +432,7 @@ class LayoutGen {
 			buttonElement.setAttribute("android:layout_width", "0dp")
 			buttonElement.setAttribute("android:layout_columnWeight", String.valueOf(button.width))
 		}
-		
+
 		buttonElement.setAttribute("android:layout_height", "wrap_content")
 		buttonElement.setAttribute("android:layout_gravity", "fill_horizontal")
 
@@ -404,6 +445,7 @@ class LayoutGen {
 			isEnabled = false
 
 		buttonElement.setAttribute("android:enabled", String.valueOf(isEnabled))
+		buttonElement.setAttribute("android:textColor", "@color/black");
 
 		return buttonElement
 	}
@@ -428,7 +470,7 @@ class LayoutGen {
 		textInputElement.setAttribute("android:hint", "@string/" + qualifiedName + "_tooltip")
 
 		textInputElement.setAttribute("android:text", textInput.defaultValue)
-		
+
 		// disabled
 		var isEnabled = true
 		if (textInput.isDisabled)
@@ -447,9 +489,11 @@ class LayoutGen {
 				textInputElement.setAttribute("android:inputType", "text")
 		}
 
+		textInputElement.setAttribute("android:imeOptions","actionDone")
+
 		return textInputElement
 	}
-	
+
 	protected static def createLabelElement(Document doc, Label label) {
 		val labelElement = doc.createElement(Settings.MD2LIBRARY_VIEW_LABEL)
 		val qnp = new DefaultDeclarativeQualifiedNameProvider

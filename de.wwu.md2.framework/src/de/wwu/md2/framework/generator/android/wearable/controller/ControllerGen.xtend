@@ -9,6 +9,7 @@ import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.SimpleType
 import de.wwu.md2.framework.generator.util.DataContainer
 import de.wwu.md2.framework.mD2.WorkflowElementEntry
+import de.wwu.md2.framework.generator.android.wearable.util.MD2AndroidWearableUtil
 
 class ControllerGen {
 	def static generateController(String mainPackage, App app, DataContainer data)'''
@@ -34,6 +35,9 @@ class ControllerGen {
 		import java.util.ArrayList;
 		import java.util.HashSet;
 		
+		import de.uni_muenster.wi.md2library.model.contentProvider.interfaces.Md2MultiContentProvider;
+		import de.uni_muenster.wi.md2library.model.dataStore.implementation.Md2RemoteStoreFactory;
+		
 		«MD2AndroidLollipopUtil.generateImportAllActions»
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
 		«MD2AndroidLollipopUtil.generateImportAllExceptions»
@@ -43,13 +47,13 @@ class ControllerGen {
 		import «Settings.MD2LIBRARY_PACKAGE»controller.implementation.AbstractMd2Controller;
 		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.Md2ContentProviderRegistry;
 		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.interfaces.Md2ContentProvider;
-		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.implementation.Md2LocalStoreFactory;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2SQLiteHelper;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.implementation.Md2SQLiteDataStore;
 		import «Settings.MD2LIBRARY_PACKAGE»view.management.implementation.Md2ViewManager;
 		import «Settings.MD2LIBRARY_PACKAGE»workflow.Md2WorkflowEventRegistry;
 		import «Settings.MD2LIBRARY_PACKAGE»workflow.Md2WorkflowElement;
 		import «Settings.MD2LIBRARY_PACKAGE»workflow.Md2WorkflowAction;
+		import «mainPackage».md2.model.sqlite.Md2LocalStoreFactory;
 		
 		public class Controller extends AbstractMd2Controller {
 		
@@ -76,13 +80,29 @@ class ControllerGen {
 
 		    public void registerContentProviders() {
 		        Md2ContentProviderRegistry cpr = Md2ContentProviderRegistry.getInstance();
-		        Md2LocalStoreFactory lsf = new Md2LocalStoreFactory(this.instance, "«mainPackage».md2.model.dataStore.LocalDataStoreFactory");
-		        
-		        «FOR cp: contentProviders»
+		        Md2LocalStoreFactory lsf = new Md2LocalStoreFactory(this.instance);
+		        Md2RemoteStoreFactory rsf= new Md2RemoteStoreFactory();
+		        		        «FOR cp: contentProviders»
 		        	«var typeName = getTypeName(cp)»
-		        	
-		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»(new «MD2AndroidLollipopUtil.getTypeNameForContentProvider(cp)»(), (Md2SQLiteDataStore) lsf.getDataStore("«typeName»"));
+		        	«IF cp.type.many»
+		        	«IF cp.local»
+		        	Md2MultiContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»( "«cp.name»",lsf.getDataStore("«typeName»"));
+		        	«ELSE»
+		        	Md2MultiContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»("«cp.name»", rsf.getDataStore(«cp.connection.uri»,"«typeName»"));
+		        			        	
+		        	«ENDIF»
+		        	cpr.addMultiContentProvider("«cp.name»", «cp.name.toFirstLower»);
+		        	«ELSE»
+		        	«IF cp.local»
+		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»("«cp.name»",new «MD2AndroidWearableUtil.getTypeNameForContentProvider(cp)»(),  lsf.getDataStore("«typeName»"));
+		        	«ELSE»
+		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»("«cp.name»",new «MD2AndroidWearableUtil.getTypeNameForContentProvider(cp)»(),  rsf.getDataStore(«cp.connection.uri»,"«typeName»"));
+		        			        	
+		        	«ENDIF»
 		        	cpr.add("«cp.name»", «cp.name.toFirstLower»);
+		        	«ENDIF»
+		        	
+		        	
 		        «ENDFOR»
 		    }
 		    
