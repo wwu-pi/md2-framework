@@ -44,7 +44,7 @@ class ValueGen {
 				<string name="title_activity_«rce.name.toFirstLower»">«rce.name.toFirstUpper»</string>
 			«ENDFOR»
 			
-	«generateStringsIcon(rootContainerElements)»
+«««	«generateStringsIcon(rootContainerElements)»
 			<!-- not necessary without Start activity
 			«FOR wer : wers»
 				<string name="«MD2AndroidLollipopUtil.getQualifiedNameAsString(wer, "_")»_alias">«wer.alias»</string>
@@ -57,24 +57,24 @@ class ValueGen {
 		</resources>
 	'''
 	
-	def static String generateStringsIcon(Iterable<ContainerElement> rootContainerElements){
-
-		var String icon;
-		var String view;
-		for(rCe : rootContainerElements)
-		{
-			for(param : (rCe as GridLayoutPane).params)
-			{
-				if(param instanceof GridLayoutPaneIcon){
-					//println((param as GridLayoutPaneIcon).value)
-					icon =  (param as GridLayoutPaneIcon).value;
-					view = rCe.name
-				}
-			}
-		}
-		println("<string name=\"" + view + "\">" + icon + "</string>")
-		return "<string name=\"" + "icon_" + view + "\">" + icon + "</string>";
-	}
+//	def static String generateStringsIcon(Iterable<ContainerElement> rootContainerElements){
+//
+//		var String icon;
+//		var String view;
+//		for(rCe : rootContainerElements)
+//		{
+//			for(param : (rCe as GridLayoutPane).params)
+//			{
+//				if(param instanceof GridLayoutPaneIcon){
+//					//println((param as GridLayoutPaneIcon).value)
+//					icon =  (param as GridLayoutPaneIcon).value;
+//					view = rCe.name
+//				}
+//			}
+//		}
+//		println("<string name=\"" + view + "\">" + icon + "</string>")
+//		return "<string name=\"" + "icon_" + view + "\">" + icon + "</string>";
+//	}
 	
 	
 	def static getActivityTitle(ContainerElement element) {

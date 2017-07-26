@@ -1178,7 +1178,8 @@ Main:
 ContentProvider:
 	'contentProvider' type = DataType name = EID '{' (
 		'providerType' (default ?= 'default' | local ?= 'local' | connection = [RemoteConnection]) &
-		(filter ?= 'filter' filterType = FilterType ('where' whereClause = WhereClauseCondition)?)? &
+		(filter ?= 'filter' filterType = FilterType ('where' whereClause = WhereClauseCondition)?
+		)? &
 		('readonly' (readonly ?= 'true' | 'false'))?
 	) '}'
 ;

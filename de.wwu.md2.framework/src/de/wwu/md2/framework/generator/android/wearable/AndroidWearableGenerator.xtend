@@ -24,6 +24,7 @@ import de.wwu.md2.framework.generator.android.wearable.controller.ControllerGen
 import de.wwu.md2.framework.generator.android.wearable.model.SQLiteGen
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.ContainerElement
+import de.wwu.md2.framework.generator.android.wearable.model.FilterGen
 
 /**
  * This is the start point for the Android generator.
@@ -211,6 +212,9 @@ SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.getEntities()));
 			 * 
 			 ***************************************************/
 			//log.info("Android Wearable Generator: generate app: \"" + app.appName + "\" finished")
+			
+			//Filter
+			FilterGen.generateFilter(dataContainer.contentProviders);
 		}
 		log.info("Android wearable Generator finished")
 	}
