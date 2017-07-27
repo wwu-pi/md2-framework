@@ -13,56 +13,47 @@ import de.wwu.md2.framework.mD2.EntityPath
 import de.wwu.md2.framework.mD2.SimpleExpression
 import de.wwu.md2.framework.mD2.impl.WhereClauseAndImpl
 import de.wwu.md2.framework.mD2.impl.WhereClauseOrImpl
+import de.wwu.md2.framework.mD2.impl.FloatValImpl
+import de.wwu.md2.framework.mD2.impl.SensorValImpl
+import de.wwu.md2.framework.mD2.impl.WhereClauseNotImpl
+
+/**
+ * Die Klasse FilterGen dient zur Erstellung der Filter, die bei einem ContenProvider definierte werden
+ * könnnen. Es wird der JavaCode zur Generierung des FilterTrees zurückgegeben. 
+ */
 
 class FilterGen {
 	def static String generateFilter(Iterable<ContentProvider> contentProviders){
-		//WhereClauseConditionalExpression WhereExpression
 		for (cp : contentProviders) {
 			if(cp.filter){
 				println(genWhereFilter(cp.whereClause))
+				return genWhereFilter(cp.whereClause)
 			}
 
 		}
-		return ""
 	}
 
 	def private static String genWhereFilter(WhereClauseCondition condition){
 		switch (condition) {
 			WhereClauseOr:{
-//				println("OR::")
-//				println(condition.toString)
-				return ("new CombinedExpression(" + genWhereFilter((condition as WhereClauseOrImpl).leftExpression) + "," + "or" + "," + genWhereFilter((condition as WhereClauseOrImpl).rightExpression)+")")
+				return ("new CombinedExpression(" + genWhereFilter((condition as WhereClauseOrImpl).leftExpression) + "," + "OR" + "," + genWhereFilter((condition as WhereClauseOrImpl).rightExpression)+")")
 			}
 			WhereClauseAnd:{
-//				println("AND:")
-//				println(condition.toString)
-//				println((condition as WhereClauseAndImpl).leftExpression.toString)
-//				println((condition as WhereClauseAndImpl).rightExpression.toString)
-//CombinedExpression(Expression leftExpression,  Junction junction, Expression rightExpression)
-
-				return("new CombinedExpression(" + genWhereFilter((condition as WhereClauseAndImpl).leftExpression) + "," + "and" + "," + genWhereFilter((condition as WhereClauseAndImpl).rightExpression)+")")
-				//println(genWhereFilter((condition as WhereClauseAndImpl).rightExpression))
+				return("new CombinedExpression(" + genWhereFilter((condition as WhereClauseAndImpl).leftExpression) + "," + "AND" + "," + genWhereFilter((condition as WhereClauseAndImpl).rightExpression)+")")
 			}
 			WhereClauseNot:{
 				println("NOT:")
 				println(condition.toString)
+				println((condition as WhereClauseNotImpl).expression.toString)
+				return "!" + genWhereFilter((condition as WhereClauseNotImpl).expression)
 			}
 			WhereClauseCompareExpression:{
-//				println("CompareExpression:")
-//				println(condition.toString)
-//				println(condition.eqLeft.toString)
-//				println(condition.eqRight.toString)
-//				
 				//Vergleich auflösen
 				return genCompare(condition.op, condition.eqLeft, condition.eqRight)
 				}
 			}
 	
 		}
-	
-	def private static String genTrav(){
-		
-	}
 	
 	def private static String genCompare(Operator operator, EntityPath Entity, SimpleExpression expr){
 		var op = "" 
@@ -77,8 +68,7 @@ class FilterGen {
 		var left = genEntity(Entity)
 		var right = genSimpleExpr(expr)
 		
-		var result = "(new AtomicExpression(" + left + "," + op + "," + right + "))"
-		//println(result)
+		var result = "(new AtomicExpression(" + left + "," + op + ",\"" + right + "\"))"
 		return result
 	}
 	
@@ -86,14 +76,14 @@ class FilterGen {
 		var result = "";
 		switch (expr) {
 			IntValImpl:result = (expr as IntValImpl).value.toString
+			FloatValImpl:result = (expr as FloatValImpl).value.toString
 			StringValImpl:result = (expr as StringValImpl).value
+			SensorValImpl:result = (expr as SensorValImpl).value.toString
 			}
-		//println(result)
 		return result
 	}
 	
 	def private static String genEntity(EntityPath EntityPath){
-		//println(EntityPath.tail.attributeRef.name)
 		return EntityPath.tail.attributeRef.name
 	}
 }
