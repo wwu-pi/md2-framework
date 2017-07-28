@@ -432,27 +432,6 @@ class ActivityGen {
 		        	«generateAddViewElement(viewElement)»
 		        «ENDFOR»
 
-
-				drawerLayout = (WearableDrawerLayout) findViewById(R.id.drawer_layout_«rv.name»);
-				drawerLayout.setDrawerStateCallback(new WearableDrawerLayout.DrawerStateCallback() {
-
-				@Override
-				public void onDrawerOpened(View view) {
-				adapter.open();
-				}
-
-				@Override
-				public void onDrawerClosed(View view) {
-				if(adapter.close()){
-			                		«rv.name»Activity.this.finish();
-					}
-				}
-
-				@Override
-				public void onDrawerStateChanged(@WearableDrawerView.DrawerState int i) {
-				}
-				});
-
 	     		drawerLayout = (WearableDrawerLayout) findViewById(R.id.drawer_layout_«rv.name»);
 	        	drawerLayout.setDrawerStateCallback(new WearableDrawerLayout.DrawerStateCallback() {
 	           		@Override
