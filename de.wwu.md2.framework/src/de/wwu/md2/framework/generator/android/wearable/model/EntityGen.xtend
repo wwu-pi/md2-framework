@@ -101,6 +101,7 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		import com.j256.ormlite.dao.ForeignCollection;
 		import com.j256.ormlite.field.ForeignCollectionField;
 		import com.j256.ormlite.table.DatabaseTable;
+		import com.google.gson.annotations.SerializedName;
 		import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;

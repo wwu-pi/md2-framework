@@ -188,7 +188,8 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			                this.existsInDataStore = true;
 			                this.internalId = this.content.getId();
 			            } else {
-			                long id = this.md2DataStore.getInternalId(this.content);
+			                long id = -1;
+			                this.md2DataStore.getInternalId(this.content);
 			                if(id == -1L) {
 			                    this.existsInDataStore = false;
 			                    this.internalId = -1L;
@@ -207,7 +208,8 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			            if(this.existsInDataStore) {
 			                this.md2DataStore.put(this.internalId, this.content);
 			            } else {
-			                long newId = this.md2DataStore.put(this.content);
+			                long newId = 0;
+			                this.md2DataStore.put(this.content);
 			                if(newId > 0L) {
 			                    this.existsInDataStore = true;
 			                    this.internalId = newId;
@@ -220,7 +222,7 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			@Override
 			    public void remove() {
 			        if(this.content != null && this.md2DataStore != null) {
-			            this.md2DataStore.remove(this.internalId, this.content);
+			            this.md2DataStore.remove(this.internalId, this.content.getClass());
 			            this.internalId = -1L;
 			        }
 			    }

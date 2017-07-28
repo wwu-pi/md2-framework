@@ -88,7 +88,7 @@ class ControllerGen {
 		        	«IF cp.local»
 		        	Md2MultiContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»( "«cp.name»",lsf.getDataStore("«typeName»"));
 		        	«ELSE»
-		        	Md2MultiContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»("«cp.name»", rsf.getDataStore(«cp.connection.uri»,"«typeName»"));
+		        	Md2MultiContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»("«cp.name»", rsf.getDataStore("«cp.connection.uri»",new «typeName»()));
 		        			        	
 		        	«ENDIF»
 		        	cpr.addMultiContentProvider("«cp.name»", «cp.name.toFirstLower»);
@@ -96,7 +96,7 @@ class ControllerGen {
 		        	«IF cp.local»
 		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»("«cp.name»",new «MD2AndroidWearableUtil.getTypeNameForContentProvider(cp)»(),  lsf.getDataStore("«typeName»"));
 		        	«ELSE»
-		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»("«cp.name»",new «MD2AndroidWearableUtil.getTypeNameForContentProvider(cp)»(),  rsf.getDataStore(«cp.connection.uri»,"«typeName»"));
+		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»("«cp.name»",new «MD2AndroidWearableUtil.getTypeNameForContentProvider(cp)»(),  rsf.getDataStore("«cp.connection.uri»",new «typeName»()));
 		        			        	
 		        	«ENDIF»
 		        	cpr.add("«cp.name»", «cp.name.toFirstLower»);
