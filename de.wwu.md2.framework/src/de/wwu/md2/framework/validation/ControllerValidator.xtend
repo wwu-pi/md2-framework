@@ -81,6 +81,8 @@ import de.wwu.md2.framework.mD2.Enum
 import de.wwu.md2.framework.mD2.EnumBody
 import de.wwu.md2.framework.mD2.InvokeStringValue
 import java.util.Set
+import de.wwu.md2.framework.mD2.ContentProviderGetActiveAction
+import de.wwu.md2.framework.mD2.ContentProviderRemoveActiveAction
 
 /**
  * Validators for all controller elements of MD2.
@@ -110,6 +112,41 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	/////////////////////////////////////////////////////////
 	
 	public static final String EVENTININIT = "EventInInitBlock"
+	
+	/**
+	 * Ensures correct use of single- and multicontentproviders in ContentProviderGetActiveAction
+	 */
+	@Check
+	def checkCorrectUseOfContentProvidersInGetActiveAction(ContentProviderGetActiveAction action){
+		
+		//check target
+		val cpt = action.contentProviderTarget.contentProvider;
+		if (cpt.getType.isMany()){
+			acceptError("Tried to use multicontentprovider as target, only singlecontentprovider allowed.",
+					action, null, -1, null);
+		}
+		
+		val cps = action.contentProviderSource.contentProvider;
+		if(!cps.getType.isMany()){
+			acceptError("Tried to use singlecontentprovider as source, only multicontentprovider allowed.",			
+			action, null, -1, null);
+		}
+		
+	}
+	
+	/**
+	 * Ensures correct use of amulticontentprovider in ContentProviderRemoveActiveAction
+	 */
+	@Check
+	def checkCorrectUseOfContentProviderInRemoveActiveAction(ContentProviderRemoveActiveAction action){
+		
+		val cpt = action.contentProvider.contentProvider;
+		if (!cpt.getType.isMany()){
+			acceptError("Tried to use singlecontentprovider in removeActiveAction, only multicontentprovider allowed.",
+					action, null, -1, null);
+		}
+		
+	}
 	
 	/**
 	 * Throws errors if a WorkflowEvent is fired in the init Block of a WorkflowElement.

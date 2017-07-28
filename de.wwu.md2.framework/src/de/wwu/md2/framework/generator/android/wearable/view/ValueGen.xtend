@@ -57,6 +57,7 @@ class ValueGen {
 		</resources>
 	'''
 	
+
 //	def static String generateStringsIcon(Iterable<ContainerElement> rootContainerElements){
 //
 //		var String icon;
