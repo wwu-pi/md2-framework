@@ -116,7 +116,7 @@ class ActionGen {
 
 	protected def static String generateCodeForCodeFragment(CustomCodeFragment ccf, App app, WorkflowElement wfe,
 		int counter) {
-		if (ccf == null)
+		if (ccf === null)
 			return ""
 
 		var intCounter = counter
@@ -176,7 +176,7 @@ class ActionGen {
 				val haction = ccf.action
 				switch haction {
 					ActionReference: {
-						if (haction.actionRef.eContainer == null) {
+						if (haction.actionRef.eContainer === null) {
 							actionString = wfe.name + "_" +
 								qualifiedNameProvider.getFullyQualifiedName(haction.actionRef).toString("_") +
 								"_Action()"	
@@ -245,7 +245,7 @@ class ActionGen {
 							«ENDFOR»
 						}				
 					«ENDFOR»
-					«IF ccf.^else != null»				
+					«IF ccf.^else !== null»				
 						else{
 							«FOR containedCcf : ccf.^else.codeFragments»
 								«containedCcf.generateCodeForCodeFragment(app, wfe, intCounter++)»

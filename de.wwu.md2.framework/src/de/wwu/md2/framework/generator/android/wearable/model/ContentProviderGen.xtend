@@ -161,6 +161,7 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			        if ((this.getValue(name) == null && value != null) || value != null && !this.getValue(name).toString().equals(value.toString())) {
 			        switch (name){
 			        			«FOR attribute: (content.entity as Entity).attributes»			
+
 			        			case "«attribute.name»":
 			        			   «IF !(attribute.type instanceof StringType)»
 			        			   
@@ -182,6 +183,7 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			        			   ((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«IF attribute.type.many»
 			        			   Md2List«ELSE»«getMd2TypeStringForAttributeType(attribute.type)»«ENDIF») value)«IF attribute.type instanceof ReferencedType && !attribute.type.many»
 			        			   );
+
 			        				«ELSEIF attribute.type.many»
 			        			   .getContents());
 			        				«ELSE».getPlatformValue());«ENDIF»	
