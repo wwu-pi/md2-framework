@@ -18,6 +18,7 @@ class ApplicationGen {
 		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAME»;
+		import «packageName».md2.model.dataStore.implementation.VolleyQueue;
 
 		public class «app.name.toFirstUpper» extends Application {
 		
@@ -39,6 +40,7 @@ class ApplicationGen {
 				tq = Md2TaskQueue.getInstance();
 				wr = Md2WidgetRegistry.getInstance();
 				context = getApplicationContext();
+				VolleyQueue.getInstance(context);
 		        Controller.getInstance().run();
 		    }
 		    
