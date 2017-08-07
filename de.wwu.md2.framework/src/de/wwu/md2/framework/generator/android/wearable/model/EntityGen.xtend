@@ -92,7 +92,7 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 				import «mainPackage + ".md2.model"».«element.name.toFirstUpper»;	
 		«ENDFOR»
 
-		
+		import java.sql.Timestamp;
 		import java.util.HashMap;
 		import java.util.List;
 		import java.util.ArrayList;
@@ -112,6 +112,16 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		@SerializedName("__internalId")
 		@DatabaseField(generatedId = true, columnName = "id")
 		    private long id;
+		    
+		    	@DatabaseField(columnName = "MODIFIED_DATE")
+		  private Timestamp modifiedDate;
+		   
+		  public Timestamp getModifiedDate(){
+		  	return this.modifiedDate;}
+		  	
+		  public void setModifiedDate(Timestamp modified){
+		  this.modifiedDate=modified;	
+		  }	  
 		    
 		      protected String typeName;
 		«FOR element : entity.attributes»

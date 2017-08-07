@@ -46,9 +46,9 @@ class WebServiceClass {
 			
 			@GET
 			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-			public Response getAll(@QueryParam("filter") final String filter, @QueryParam("limit") final int limit) {
+			public Response getAll(@QueryParam("filter") final String filter,@QueryParam("deleted")boolean deleted, @QueryParam("limit") final int limit) {
 				final GenericEntity<List<«entity.name.toFirstUpper»>> «entity.name.toFirstLower»s =
-						new GenericEntity<List<«entity.name.toFirstUpper»>>(«entity.name.toFirstLower»Bean.getAll«entity.name.toFirstUpper»s(filter, limit)) {};
+						new GenericEntity<List<«entity.name.toFirstUpper»>>(«entity.name.toFirstLower»Bean.getAll«entity.name.toFirstUpper»s(filter,deleted, limit)) {};
 				return Response
 						.ok()
 						.entity(«entity.name.toFirstLower»s)
@@ -59,8 +59,8 @@ class WebServiceClass {
 			@GET
 			@Path("{id}")
 			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-			public Response get(@PathParam("id") Integer id) {
-				final «entity.name.toFirstUpper» «entity.name.toFirstLower» = «entity.name.toFirstLower»Bean.get«entity.name.toFirstUpper»(id);
+			public Response get(@PathParam("id") Integer id, @QueryParam("deleted") boolean deleted) {
+				final «entity.name.toFirstUpper» «entity.name.toFirstLower» = «entity.name.toFirstLower»Bean.get«entity.name.toFirstUpper»(id, deleted);
 				
 				if («entity.name.toFirstLower» != null) {
 					return Response

@@ -22,7 +22,9 @@ class EnumAndEntityClass {
 		package «basePackageName».entities.models;
 		
 		import java.io.Serializable;
-		«IF entity.attributes.exists(a | isDateOrTimeType(a.type))»import java.util.Date;«ENDIF»
+		import java.sql.Timestamp;
+		
+	import java.util.Date;
 		«IF entity.attributes.exists(a | a.type.many)»import java.util.List;«ENDIF»
 		
 		«IF entity.attributes.exists(a | a.type instanceof ReferencedType && (a.type as ReferencedType).element instanceof Entity)»
@@ -51,6 +53,9 @@ class EnumAndEntityClass {
 		import javax.xml.bind.annotation.XmlAccessorType;
 		import javax.xml.bind.annotation.XmlElement;
 		import javax.xml.bind.annotation.XmlRootElement;
+		import javax.persistence.PrePersist;
+		import javax.persistence.PreUpdate;
+		import org.codehaus.jackson.annotate.JsonIgnore;
 		
 		@Entity
 		@XmlRootElement
@@ -65,6 +70,33 @@ class EnumAndEntityClass {
 			@Column(name="INTERNAL_ID__")
 			@XmlElement
 			protected int __internalId;
+			
+			
+			 @JsonIgnore
+				@Column(name="IS_DELETED")
+				private Boolean deleted= false; 
+				
+				 
+				 
+				 public Boolean getDeleted() {
+					return deleted;
+				}
+			
+				public void setDeleted(Boolean deleted) {
+					this.deleted = deleted;
+				}
+			
+			
+				@XmlElement(nillable=true)
+				@Column(name="MODIFIED_TIMESTAMP")
+				protected Timestamp modifiedDate;
+				
+				@PrePersist
+				@PreUpdate
+				private void setModifieddate(){
+				this.modifiedDate= new Timestamp(new Date().getTime());	
+				}
+			
 			
 			«FOR attribute : entity.attributes»
 				«getAnnotations(attribute.type)»
