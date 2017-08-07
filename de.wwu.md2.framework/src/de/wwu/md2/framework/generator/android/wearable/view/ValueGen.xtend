@@ -15,7 +15,6 @@ import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.FlowLayoutPane
 import org.apache.log4j.Layout
-import de.wwu.md2.framework.mD2.GridLayoutPaneIcon
 
 class ValueGen {
 
@@ -143,7 +142,7 @@ class ValueGen {
 		
 		    <style name="PSWatchapp" parent="android:Theme.Material.Light.NoActionBar" >
 		        <item name="android:colorAccent">@color/PSWatchappBlueLight</item>
-		        <item name="android:colorPrimary">@color/PSWatchappSemiTransperentDarkBlue</item>
+		        <item name="android:colorPrimary">@color/PSWatchappSemiTransparentDarkBlue</item>
 		        <item name="android:colorPrimaryDark">@color/blue</item>
 		        <item name="android:colorBackground">@color/PSWatchappBackgroundBlue</item>
 		        <item name="android:textColorPrimary">@android:color/white</item>
@@ -174,7 +173,7 @@ class ValueGen {
 			<color name="PSWatchappBackgroundBlue">#0d568f</color>
 			<color name="PSWatchappBlueLight">#00a2d3</color>
 			<color name="foreground_material_light">#ff0909</color>
-			<color name="PSWatchappSemiTransperentDarkBlue">#bd00a2d3</color>
+			<color name="PSWatchappSemiTransparentDarkBlue">#bd00a2d3</color>
 		</resources>
 	'''
 }

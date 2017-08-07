@@ -189,7 +189,7 @@ class LayoutGen {
 		navElement.setAttribute("android:layout_height", "match_parent")
 		navElement.setAttribute("android:layout_width", "match_parent")
 
-		navElement.setAttribute("android:background", "@color/PSWatchappSemiTransperentDarkBlue")
+		navElement.setAttribute("android:background", "@color/PSWatchappSemiTransparentDarkBlue")
 
 		//create ActionDrawer
 		var Element drawerElement = doc.createElement("android.support.wearable.view.drawer.WearableActionDrawer")

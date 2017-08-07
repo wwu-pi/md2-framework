@@ -15,9 +15,7 @@ import de.wwu.md2.framework.mD2.WorkflowElementReference
 import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.SensorType
-import de.wwu.md2.framework.mD2.GridLayoutPaneIcon
 import de.wwu.md2.framework.mD2.impl.GridLayoutPaneImpl
-import de.wwu.md2.framework.mD2.impl.GridLayoutPaneIconImpl
 import de.wwu.md2.framework.generator.android.wearable.view.ValueGen
 
 import de.wwu.md2.framework.mD2.ListView
@@ -36,6 +34,11 @@ import java.util.LinkedHashSet
 import java.util.LinkedList
 import java.util.Map
 import de.wwu.md2.framework.mD2.IntegerInput
+import java.awt.GridBagLayout
+import de.wwu.md2.framework.mD2.FlowLayoutPane
+import de.wwu.md2.framework.mD2.impl.FlowLayoutPaneImpl
+import de.wwu.md2.framework.mD2.impl.ListViewImpl
+import de.wwu.md2.framework.mD2.ViewIcon
 
 class ActivityGen {
 
@@ -258,10 +261,7 @@ class ActivityGen {
 					
 					@Override
 					public Drawable getItemDrawable(int position) {
-	    			String  activity_name=Md2ViewManager.getInstance().getActiveView().getTitle().toString();
-	    	       	
-	                       return Md2ViewManager.getInstance().getActiveView().getDrawable(R.mipmap.ic_launcher);
-	    	          
+						«println(generateIcons(rootViews))»
 					}
 					
 					public int getActive(){
@@ -292,6 +292,65 @@ class ActivityGen {
 				}
 				
 			'''
+	def private static String generateIcons(Iterable<ContainerElement> rootViews){
+//							switch(position){
+//		           	«var viewnumber = 0»
+//		           	«FOR rv : rootViews»
+//		               «FOR rve : (rv as GridLayoutPaneImpl).params»
+//		               		«IF rve instanceof GridLayoutPaneIcon» 
+//		           	case «viewnumber»:
+//		               		return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable.«(rve as GridLayoutPaneIcon).value»);
+//		               		«ENDIF»
+//		               «ENDFOR»
+//		               «IF viewnumber++ == 0»
+//		               «ENDIF»
+//		           «ENDFOR»
+//		               default:
+//		                   return Md2ViewManager.getInstance().getActiveView().getDrawable(R.mipmap.ic_launcher);
+//		}
+		var String result = "switch(position){"
+		var viewnumber = 0;
+		
+		for (rv : rootViews) {
+			println(rv)
+			switch (rv) {
+				GridLayoutPaneImpl: {
+					for (rve : (rv as GridLayoutPaneImpl).params) {
+						if(rve instanceof ViewIcon){
+							result += "\r\n case " + viewnumber + ":";
+							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+(rve as ViewIcon).value+");"
+						}		
+					}
+				}
+				FlowLayoutPaneImpl: {
+					println("FlowLAyoutPane")
+					for (rve : (rv as FlowLayoutPaneImpl).params) {
+						if(rve instanceof ViewIcon){
+							result += "\r\n case " + viewnumber + ":";
+							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+(rve as ViewIcon).value+");"
+						}		
+					}
+				}
+				ListView: {
+//					for (rve : (rv as ListViewPaneImpl).params) {
+//						if(rve instanceof ViewIcon){
+//							result += "\r\n case " + viewnumber + ":";
+//							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+(rve as ListViewPaneIcon).value+");"
+//						}		
+//					}
+				}
+				default: {
+					println("Kein GridLayoutPAne")
+				}
+			}
+
+			viewnumber++;
+		}
+		
+		result+="\r\ndefault:\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.mipmap.ic_launcher);}"
+		return result;
+	}
+	
 	def static generateStartActivity(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities)'''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateStartActivity()
 		package «mainPackage»;
