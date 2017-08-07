@@ -293,21 +293,6 @@ class ActivityGen {
 				
 			'''
 	def private static String generateIcons(Iterable<ContainerElement> rootViews){
-//							switch(position){
-//		           	«var viewnumber = 0»
-//		           	«FOR rv : rootViews»
-//		               «FOR rve : (rv as GridLayoutPaneImpl).params»
-//		               		«IF rve instanceof GridLayoutPaneIcon» 
-//		           	case «viewnumber»:
-//		               		return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable.«(rve as GridLayoutPaneIcon).value»);
-//		               		«ENDIF»
-//		               «ENDFOR»
-//		               «IF viewnumber++ == 0»
-//		               «ENDIF»
-//		           «ENDFOR»
-//		               default:
-//		                   return Md2ViewManager.getInstance().getActiveView().getDrawable(R.mipmap.ic_launcher);
-//		}
 		var String result = "switch(position){"
 		var viewnumber = 0;
 		

@@ -154,6 +154,11 @@ class ValueGen {
 		        <item name="android:textColorPrimaryInverse">@color/black</item>
 		        <item name="android:button">@color/PSWatchappBlueLight</item>
 		    </style>
+		    
+	        <style name="PSWatchappActionDrawer" parent="PSWatchapp" >
+	            //Action Drawer
+	            <item name="android:background">@color/PSWatchappSemiTransparentDarkBlue</item>
+	        </style>
 		</resources>
 	'''
 

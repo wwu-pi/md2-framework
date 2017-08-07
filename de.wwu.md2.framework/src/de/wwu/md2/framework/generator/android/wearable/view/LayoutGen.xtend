@@ -197,7 +197,7 @@ class LayoutGen {
 		drawerElement.setAttribute("android:layout_height", "match_parent")
 		drawerElement.setAttribute("android:layout_width", "match_parent")
 		drawerElement.setAttribute("app:action_menu", "@menu/" + rv.name.toLowerCase + "_action_drawer_menu")
-
+		drawerElement.setAttribute("android:theme","@style/PSWatchappActionDrawer")
 
 		// create BoxInsetLayout
 		var Element boxElement = doc.createElement("android.support.wearable.view.BoxInsetLayout")
@@ -311,6 +311,8 @@ class LayoutGen {
 		 		}
 			}
 		}
+		
+		
 
 		//Append
 		doc.appendChild(rootElement)
