@@ -213,8 +213,12 @@ SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.getEntities()));
 			 ***************************************************/
 			//log.info("Android Wearable Generator: generate app: \"" + app.appName + "\" finished")
 			
-			//Filter
-			FilterGen.generateFilter(dataContainer.contentProviders);
+			//Filter		
+			for (cp : dataContainer.contentProviders) {
+				if(cp.filter){
+					FilterGen.generateFilter(cp);
+				}
+			}
 		}
 		log.info("Android wearable Generator finished")
 	}

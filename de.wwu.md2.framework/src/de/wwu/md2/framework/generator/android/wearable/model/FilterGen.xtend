@@ -23,14 +23,9 @@ import de.wwu.md2.framework.mD2.impl.WhereClauseNotImpl
  */
 
 class FilterGen {
-	def static String generateFilter(Iterable<ContentProvider> contentProviders){
-		for (cp : contentProviders) {
-			if(cp.filter){
-				println(genWhereFilter(cp.whereClause))
-				return genWhereFilter(cp.whereClause)
-			}
-
-		}
+	def static String generateFilter(ContentProvider contentProvider){
+				println(genWhereFilter(contentProvider.whereClause))
+				return genWhereFilter(contentProvider.whereClause)
 	}
 
 	def private static String genWhereFilter(WhereClauseCondition condition){
@@ -58,17 +53,17 @@ class FilterGen {
 	def private static String genCompare(Operator operator, EntityPath Entity, SimpleExpression expr){
 		var op = "" 
 		switch (operator.toString) {
-			case "equals":{op = "equals";}
-			case ">":{op = "GREATER"}
-			case "<":{op = "LESS"}
-			case ">=":{op = "GREATEREQUAL"}
-			case "<=":{op = "LESSEQUAL"}
+			case "equals":{op = "Operator.equals";}
+			case ">":{op = "Operator.GREATER"}
+			case "<":{op = "Operator.LESS"}
+			case ">=":{op = "Operator.GREATEREQUAL"}
+			case "<=":{op = "Operator.LESSEQUAL"}
 		}
 		
 		var left = genEntity(Entity)
 		var right = genSimpleExpr(expr)
 		
-		var result = "(new AtomicExpression(" + left + "," + op + ",\"" + right + "\"))"
+		var result = "(new AtomicExpression(\"" + left + "\"," + op + ",\"" + right + "\"))"
 		return result
 	}
 	
