@@ -156,7 +156,7 @@ class LayoutGen {
 		navElement.setAttribute("android:id", "@+id/navigation_drawer_"+rv.name)
 		navElement.setAttribute("android:layout_height", "match_parent")
 		navElement.setAttribute("android:layout_width", "match_parent")
-		navElement.setAttribute("android:background", "@android:color/holo_blue_bright")
+		navElement.setAttribute("android:background", "@color/PSWatchappSemiTransparentDarkBlue")
 		//create WearableRecyclerView für Listendarstellung
 		var Element listElement = doc.createElement("android.support.wearable.view.WearableRecyclerView")
 		listElement.setAttribute("android:id","@+id/wearable_recycler_view_"+rv.name)

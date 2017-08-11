@@ -546,7 +546,7 @@ SubViewContainer:
  * A ListView for using a whole Activity as a List
  */
  ListView:
- 	'ListView' name = EID '{'
+ 	'ListView' name = EID '(' params += ListViewLayoutParam (',' params += ListViewLayoutParam)* ')' '{'
  		('connectedProvider' connectedProvider = ContentProviderPath)
  		('onClickAction' onClickAction = [Action | QUALIFIED_NAME])?
  		('leftSwipeAction' leftSwipeAction = [Action | QUALIFIED_NAME])?
@@ -556,6 +556,10 @@ SubViewContainer:
  ;
 ListViewParam:
 	{PlaceholderParam} 'placeholder' value = INT
+;
+
+ListViewLayoutParam:
+	{ViewIcon} 'icon' value = ("close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light")?
 ;
 
 /*

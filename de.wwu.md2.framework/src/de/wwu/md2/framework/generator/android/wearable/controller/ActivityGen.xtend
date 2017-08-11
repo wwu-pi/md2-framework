@@ -39,6 +39,7 @@ import de.wwu.md2.framework.mD2.FlowLayoutPane
 import de.wwu.md2.framework.mD2.impl.FlowLayoutPaneImpl
 import de.wwu.md2.framework.mD2.impl.ListViewImpl
 import de.wwu.md2.framework.mD2.ViewIcon
+import de.wwu.md2.framework.mD2.ListViewLayoutParam
 
 class ActivityGen {
 
@@ -316,13 +317,15 @@ class ActivityGen {
 						}		
 					}
 				}
-				ListView: {
-//					for (rve : (rv as ListViewPaneImpl).params) {
-//						if(rve instanceof ViewIcon){
-//							result += "\r\n case " + viewnumber + ":";
-//							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+(rve as ListViewPaneIcon).value+");"
-//						}		
-//					}
+				ListViewImpl: {
+					println("ListView gefunden" + rv);
+				for (rve : rv.params) {
+					println("RVE ListView:" + rve);
+						if(rve instanceof ViewIcon){
+							result += "\r\n case " + viewnumber + ":";
+							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+(rve as ViewIcon).value+");"
+						}		
+					}
 				}
 				default: {
 					println("Kein GridLayoutPAne")
@@ -571,7 +574,8 @@ class ActivityGen {
 
 			@Override
 			public boolean onMenuItemClick(MenuItem menuItem) {
-
+			//TODO
+			return true;
 
 			«FOR viewElement: rv.eAllContents.toIterable»
 				«IF viewElement instanceof ActionDrawer»
