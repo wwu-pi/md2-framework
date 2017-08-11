@@ -546,7 +546,7 @@ SubViewContainer:
  * A ListView for using a whole Activity as a List
  */
  ListView:
- 	'ListView' name = EID '(' params += ListViewLayoutParam (',' params += ListViewLayoutParam)* ')' '{'
+ 	'ListView' name = EID ('(' params += ListViewLayoutParam (',' params += ListViewLayoutParam)* ')')? '{'
  		('connectedProvider' connectedProvider = ContentProviderPath)
  		('onClickAction' onClickAction = [Action | QUALIFIED_NAME])?
  		('leftSwipeAction' leftSwipeAction = [Action | QUALIFIED_NAME])?
@@ -559,9 +559,13 @@ ListViewParam:
 ;
 
 ListViewLayoutParam:
-	{ViewIcon} 'icon' value = ("close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light")?
+	//{ViewIcon} 'icon' value = ("close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light")?
+	{ViewIcon} 'icon' value = ViewIcon?
 ;
 
+ViewIcon:
+	"close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light"|"preference_wrapped_icon" | "open_on_phone_animation" | "open_on_phone"
+;
 /*
  * A GridLayoutPane allows the arrangement of ViewGUIElements in a grid structure. The user can specify the
  * number of columns or the number of rows. If one of those is specified the other one will be calculated by
@@ -579,7 +583,7 @@ GridLayoutPane:
  * These are besides the number of columns and rows all TabSpecificParams.
  */
 GridLayoutPaneParam:
-	{GridLayoutPaneColumnsParam} 'columns' value = INT | {GridLayoutPaneRowsParam} 'rows' value = INT | CommonContainerParam | {ViewIcon} 'icon' value = ("close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light")?
+	{GridLayoutPaneColumnsParam} 'columns' value = INT | {GridLayoutPaneRowsParam} 'rows' value = INT | CommonContainerParam | {ViewIcon} 'icon' value = ViewIcon? //{ViewIcon} 'icon' value = ("close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light")?
 ;
 
 /*
@@ -596,7 +600,7 @@ FlowLayoutPane:
  * These are besides the flowDirection all TabSpecificParams.
  */
 FlowLayoutPaneParam:
-	{FlowLayoutPaneFlowDirectionParam} flowDirection = FlowDirection | CommonContainerParam | {ViewIcon} 'icon' value = ("close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light")?
+	{FlowLayoutPaneFlowDirectionParam} flowDirection = FlowDirection | CommonContainerParam | {ViewIcon} 'icon' value = ViewIcon? //{ViewIcon} 'icon' value = ("close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light")?
 ;
 
 /*
