@@ -302,8 +302,9 @@ class LayoutGen {
 		rootElement.setAttribute("android:layout_width", "match_parent")
 		rootElement.setAttribute("tools:deviceIds", "wear")
 
-		val myList = newArrayList()
-		myList.clear();
+		val ActionsIcons = newArrayList()
+		val ActionTitel = newArrayList()
+		
 		//Generate menu items in the menu
 		for(viewElement: rv.eAllContents.toIterable) {
 			if(viewElement instanceof ActionDrawer) {
@@ -313,13 +314,14 @@ class LayoutGen {
 				
 				for (acd : (viewElement as ActionDrawerImpl).params) {
 					if(acd instanceof ActionDrawerTitleParam){
-						ActionDrawerTitel = acd.value;
+						for (title  : acd.values) {
+							ActionTitel.add(title.toString);
+						}
 					}		
 					if(acd instanceof ViewIconActionDrawer){
 						for (icon  : acd.values) {
 							iconAction = icon.toString; //falls ein anderes Icon angegeben wurde wird dies verwendet
-							myList.add(iconAction);
-							println("~~~*********** Icon: " + iconAction);
+							ActionsIcons.add(iconAction);
 						}
 					}	
 						
@@ -332,8 +334,8 @@ class LayoutGen {
 						println("ActionDrawer itemClickAction:" + itemClickAction)
 						var Element item = doc.createElement("item")
 						item.setAttribute("android:id", ("@+id/" + (itemClickAction.name + "_item" + (ElementCounter++).toString)))
-						item.setAttribute("android:icon", ("@android:drawable/" + myList.get(ElementCounter-1))) // TODO: Icons auswählen können
-						item.setAttribute("android:title", ActionDrawerTitel);//MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "").toFirstUpper)
+						item.setAttribute("android:icon", ("@android:drawable/" + ActionsIcons.get(ElementCounter-1))) // TODO: Icons auswählen können
+						item.setAttribute("android:title", ActionTitel.get(ElementCounter-1));//MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "").toFirstUpper)
 			 			rootElement.appendChild(item)
 					}
 		 		}

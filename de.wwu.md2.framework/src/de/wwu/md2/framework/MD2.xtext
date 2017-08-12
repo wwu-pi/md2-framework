@@ -631,7 +631,7 @@ ActionDrawer:
 ;
 
 ActionDrawerParam:
-	{ActionDrawerTitleParam} 'title' value = STRING |
+	{ActionDrawerTitleParam} 'titles' ('('(values += STRING (',' values += STRING)*)?')') | //STRING |
 	{ViewIconActionDrawer} 'icons' ('('(values += ViewIconActionDrawer(',' values += ViewIconActionDrawer)*)?')')
 ;
 
