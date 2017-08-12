@@ -37,7 +37,9 @@ import de.wwu.md2.framework.mD2.Action
 
 import de.wwu.md2.framework.mD2.ListView
 import de.wwu.md2.framework.mD2.IntegerInput
-
+import de.wwu.md2.framework.mD2.ActionDrawerParam
+import de.wwu.md2.framework.mD2.ActionDrawerTitleParam
+import de.wwu.md2.framework.mD2.impl.ActionDrawerImpl
 
 class LayoutGen {
 
@@ -300,12 +302,21 @@ class LayoutGen {
 		//Generate menu items in the menu
 		for(viewElement: rv.eAllContents.toIterable) {
 			if(viewElement instanceof ActionDrawer) {
+				//Titel für die Beschriftung im ActionDrawer
+				var ActionDrawerTitel = "";
+				for (acd : (viewElement as ActionDrawerImpl).params) {
+					if(acd instanceof ActionDrawerTitleParam){
+						ActionDrawerTitel = acd.value;
+					}		
+				}
+				
 				if(!(viewElement.onItemClickAction === null)) {
 					for(itemClickAction: viewElement.onItemClickAction) {
+						println("ActionDrawer itemClickAction:" + itemClickAction)
 						var Element item = doc.createElement("item")
 						item.setAttribute("android:id", "@+id/" + itemClickAction.name + "_item")
 						item.setAttribute("android:icon", "@android:drawable/ic_dialog_info") // TODO: Icons auswählen können
-						item.setAttribute("android:title", MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "").toFirstUpper)
+						item.setAttribute("android:title", ActionDrawerTitel);//MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "").toFirstUpper)
 			 			rootElement.appendChild(item)
 					}
 		 		}
