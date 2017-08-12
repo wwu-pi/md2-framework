@@ -40,6 +40,7 @@ import de.wwu.md2.framework.mD2.IntegerInput
 import de.wwu.md2.framework.mD2.ActionDrawerParam
 import de.wwu.md2.framework.mD2.ActionDrawerTitleParam
 import de.wwu.md2.framework.mD2.impl.ActionDrawerImpl
+import de.wwu.md2.framework.mD2.ViewIcon
 
 class LayoutGen {
 
@@ -304,18 +305,23 @@ class LayoutGen {
 			if(viewElement instanceof ActionDrawer) {
 				//Titel für die Beschriftung im ActionDrawer
 				var ActionDrawerTitel = "";
+				var Icon = "ic_dialog_info"; //default Icon
 				for (acd : (viewElement as ActionDrawerImpl).params) {
 					if(acd instanceof ActionDrawerTitleParam){
 						ActionDrawerTitel = acd.value;
 					}		
+					if(acd instanceof ViewIcon){
+						Icon = acd.value; //falls ein anderes Icon angegeben wurde wird dies verwendet
+					}		
 				}
 				
+								
 				if(!(viewElement.onItemClickAction === null)) {
 					for(itemClickAction: viewElement.onItemClickAction) {
 						println("ActionDrawer itemClickAction:" + itemClickAction)
 						var Element item = doc.createElement("item")
 						item.setAttribute("android:id", "@+id/" + itemClickAction.name + "_item")
-						item.setAttribute("android:icon", "@android:drawable/ic_dialog_info") // TODO: Icons auswählen können
+						item.setAttribute("android:icon", ("@android:drawable/" + Icon)) // TODO: Icons auswählen können
 						item.setAttribute("android:title", ActionDrawerTitel);//MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "").toFirstUpper)
 			 			rootElement.appendChild(item)
 					}
