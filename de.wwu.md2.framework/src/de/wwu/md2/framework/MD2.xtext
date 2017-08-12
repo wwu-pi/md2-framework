@@ -568,7 +568,7 @@ ViewIcon:
 ;
 
 ViewIconActionDrawer:
-	"btn_star_big_on"
+	"btn_star_big_on" | "arrow_up_float"
 ;
 
 /*
@@ -632,7 +632,7 @@ ActionDrawer:
 
 ActionDrawerParam:
 	{ActionDrawerTitleParam} 'title' value = STRING |
-	{ViewIcon} 'icon' value = ViewIconActionDrawer?
+	{ViewIconActionDrawer} 'icons' ('('(values += ViewIconActionDrawer(',' values += ViewIconActionDrawer)*)?')')
 ;
 
 /*

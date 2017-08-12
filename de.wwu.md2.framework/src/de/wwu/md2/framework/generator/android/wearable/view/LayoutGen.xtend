@@ -41,6 +41,8 @@ import de.wwu.md2.framework.mD2.ActionDrawerParam
 import de.wwu.md2.framework.mD2.ActionDrawerTitleParam
 import de.wwu.md2.framework.mD2.impl.ActionDrawerImpl
 import de.wwu.md2.framework.mD2.ViewIcon
+import de.wwu.md2.framework.mD2.ViewIconActionDrawer
+import java.util.List
 
 class LayoutGen {
 
@@ -300,19 +302,27 @@ class LayoutGen {
 		rootElement.setAttribute("android:layout_width", "match_parent")
 		rootElement.setAttribute("tools:deviceIds", "wear")
 
+		val myList = newArrayList()
+		myList.clear();
 		//Generate menu items in the menu
 		for(viewElement: rv.eAllContents.toIterable) {
 			if(viewElement instanceof ActionDrawer) {
 				//Titel für die Beschriftung im ActionDrawer
 				var ActionDrawerTitel = "";
-				var Icon = "ic_dialog_info"; //default Icon
+				var iconAction = "ic_dialog_info"; //default Icon
+				
 				for (acd : (viewElement as ActionDrawerImpl).params) {
 					if(acd instanceof ActionDrawerTitleParam){
 						ActionDrawerTitel = acd.value;
 					}		
-					if(acd instanceof ViewIcon){
-						Icon = acd.value; //falls ein anderes Icon angegeben wurde wird dies verwendet
-					}		
+					if(acd instanceof ViewIconActionDrawer){
+						for (icon  : acd.values) {
+							iconAction = icon.toString; //falls ein anderes Icon angegeben wurde wird dies verwendet
+							myList.add(iconAction);
+							println("~~~*********** Icon: " + iconAction);
+						}
+					}	
+						
 				}
 				
 								
@@ -322,7 +332,7 @@ class LayoutGen {
 						println("ActionDrawer itemClickAction:" + itemClickAction)
 						var Element item = doc.createElement("item")
 						item.setAttribute("android:id", ("@+id/" + (itemClickAction.name + "_item" + (ElementCounter++).toString)))
-						item.setAttribute("android:icon", ("@android:drawable/" + Icon)) // TODO: Icons auswählen können
+						item.setAttribute("android:icon", ("@android:drawable/" + myList.get(ElementCounter-1))) // TODO: Icons auswählen können
 						item.setAttribute("android:title", ActionDrawerTitel);//MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "").toFirstUpper)
 			 			rootElement.appendChild(item)
 					}
