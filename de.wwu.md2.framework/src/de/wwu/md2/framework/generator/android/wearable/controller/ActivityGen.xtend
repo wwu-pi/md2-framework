@@ -586,8 +586,9 @@ class ActivityGen {
 						final int itemId = menuItem.getItemId();
 
 						switch(itemId) {
+							«var ElementCounter = 0»
 							«FOR itemClickAction: viewElement.onItemClickAction»
-								case R.id.«itemClickAction.name»_item:
+								case R.id.«itemClickAction.name»_item«ElementCounter++»:
 									ca = new «MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "_").toFirstUpper»_Action();
 									break;
 

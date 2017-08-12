@@ -317,10 +317,11 @@ class LayoutGen {
 				
 								
 				if(!(viewElement.onItemClickAction === null)) {
+					var ElementCounter = 0;
 					for(itemClickAction: viewElement.onItemClickAction) {
 						println("ActionDrawer itemClickAction:" + itemClickAction)
 						var Element item = doc.createElement("item")
-						item.setAttribute("android:id", "@+id/" + itemClickAction.name + "_item")
+						item.setAttribute("android:id", ("@+id/" + (itemClickAction.name + "_item" + (ElementCounter++).toString)))
 						item.setAttribute("android:icon", ("@android:drawable/" + Icon)) // TODO: Icons auswählen können
 						item.setAttribute("android:title", ActionDrawerTitel);//MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "").toFirstUpper)
 			 			rootElement.appendChild(item)
