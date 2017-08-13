@@ -444,6 +444,8 @@ class ActivityGen {
 		«MD2AndroidLollipopUtil.generateImportAllWidgets»
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
 		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
+		
+		import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
 
 		«FOR viewElement: rv.eAllContents.toIterable»
 			«IF viewElement instanceof ActionDrawer»
