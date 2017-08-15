@@ -37,7 +37,12 @@ import de.wwu.md2.framework.mD2.Action
 
 import de.wwu.md2.framework.mD2.ListView
 import de.wwu.md2.framework.mD2.IntegerInput
-
+import de.wwu.md2.framework.mD2.ActionDrawerParam
+import de.wwu.md2.framework.mD2.ActionDrawerTitleParam
+import de.wwu.md2.framework.mD2.impl.ActionDrawerImpl
+import de.wwu.md2.framework.mD2.ViewIcon
+import de.wwu.md2.framework.mD2.ViewIconActionDrawer
+import java.util.List
 
 class LayoutGen {
 
@@ -156,7 +161,7 @@ class LayoutGen {
 		navElement.setAttribute("android:id", "@+id/navigation_drawer_"+rv.name)
 		navElement.setAttribute("android:layout_height", "match_parent")
 		navElement.setAttribute("android:layout_width", "match_parent")
-		navElement.setAttribute("android:background", "@android:color/holo_blue_bright")
+		navElement.setAttribute("android:background", "@color/PSWatchappSemiTransparentDarkBlue")
 		//create WearableRecyclerView für Listendarstellung
 		var Element listElement = doc.createElement("android.support.wearable.view.WearableRecyclerView")
 		listElement.setAttribute("android:id","@+id/wearable_recycler_view_"+rv.name)
@@ -189,7 +194,7 @@ class LayoutGen {
 		navElement.setAttribute("android:layout_height", "match_parent")
 		navElement.setAttribute("android:layout_width", "match_parent")
 
-		navElement.setAttribute("android:background", "@color/PSWatchappSemiTransperentDarkBlue")
+		navElement.setAttribute("android:background", "@color/PSWatchappSemiTransparentDarkBlue")
 
 		//create ActionDrawer
 		var Element drawerElement = doc.createElement("android.support.wearable.view.drawer.WearableActionDrawer")
@@ -197,7 +202,7 @@ class LayoutGen {
 		drawerElement.setAttribute("android:layout_height", "match_parent")
 		drawerElement.setAttribute("android:layout_width", "match_parent")
 		drawerElement.setAttribute("app:action_menu", "@menu/" + rv.name.toLowerCase + "_action_drawer_menu")
-
+		drawerElement.setAttribute("android:theme","@style/PSWatchappActionDrawer")
 
 		// create BoxInsetLayout
 		var Element boxElement = doc.createElement("android.support.wearable.view.BoxInsetLayout")
@@ -297,20 +302,47 @@ class LayoutGen {
 		rootElement.setAttribute("android:layout_width", "match_parent")
 		rootElement.setAttribute("tools:deviceIds", "wear")
 
+		val ActionsIcons = newArrayList()
+		val ActionTitel = newArrayList()
+		
 		//Generate menu items in the menu
 		for(viewElement: rv.eAllContents.toIterable) {
 			if(viewElement instanceof ActionDrawer) {
+				//Titel für die Beschriftung im ActionDrawer
+				var ActionDrawerTitel = "";
+				var iconAction = "ic_dialog_info"; //default Icon
+				
+				for (acd : (viewElement as ActionDrawerImpl).params) {
+					if(acd instanceof ActionDrawerTitleParam){
+						for (title  : acd.values) {
+							ActionTitel.add(title.toString);
+						}
+					}		
+					if(acd instanceof ViewIconActionDrawer){
+						for (icon  : acd.values) {
+							iconAction = icon.toString; //falls ein anderes Icon angegeben wurde wird dies verwendet
+							ActionsIcons.add(iconAction);
+						}
+					}	
+						
+				}
+				
+								
 				if(!(viewElement.onItemClickAction === null)) {
+					var ElementCounter = 0;
 					for(itemClickAction: viewElement.onItemClickAction) {
+						println("ActionDrawer itemClickAction:" + itemClickAction)
 						var Element item = doc.createElement("item")
-						item.setAttribute("android:id", "@+id/" + itemClickAction.name + "_item")
-						item.setAttribute("android:icon", "@android:drawable/ic_dialog_info") // TODO: Icons auswählen können
-						item.setAttribute("android:title", MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "").toFirstUpper)
+						item.setAttribute("android:id", ("@+id/" + (itemClickAction.name + "_item" + (ElementCounter++).toString)))
+						item.setAttribute("android:icon", ("@android:drawable/" + ActionsIcons.get(ElementCounter-1))) // TODO: Icons auswählen können
+						item.setAttribute("android:title", ActionTitel.get(ElementCounter-1));//MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "").toFirstUpper)
 			 			rootElement.appendChild(item)
 					}
 		 		}
 			}
 		}
+		
+		
 
 		//Append
 		doc.appendChild(rootElement)

@@ -15,9 +15,7 @@ import de.wwu.md2.framework.mD2.WorkflowElementReference
 import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.SensorType
-import de.wwu.md2.framework.mD2.GridLayoutPaneIcon
 import de.wwu.md2.framework.mD2.impl.GridLayoutPaneImpl
-import de.wwu.md2.framework.mD2.impl.GridLayoutPaneIconImpl
 import de.wwu.md2.framework.generator.android.wearable.view.ValueGen
 
 import de.wwu.md2.framework.mD2.ListView
@@ -36,6 +34,12 @@ import java.util.LinkedHashSet
 import java.util.LinkedList
 import java.util.Map
 import de.wwu.md2.framework.mD2.IntegerInput
+import java.awt.GridBagLayout
+import de.wwu.md2.framework.mD2.FlowLayoutPane
+import de.wwu.md2.framework.mD2.impl.FlowLayoutPaneImpl
+import de.wwu.md2.framework.mD2.impl.ListViewImpl
+import de.wwu.md2.framework.mD2.ViewIcon
+import de.wwu.md2.framework.mD2.ListViewLayoutParam
 
 class ActivityGen {
 
@@ -258,10 +262,7 @@ class ActivityGen {
 					
 					@Override
 					public Drawable getItemDrawable(int position) {
-	    			String  activity_name=Md2ViewManager.getInstance().getActiveView().getTitle().toString();
-	    	       	
-	                       return Md2ViewManager.getInstance().getActiveView().getDrawable(R.mipmap.ic_launcher);
-	    	          
+						«println(generateIcons(rootViews))»
 					}
 					
 					public int getActive(){
@@ -292,6 +293,52 @@ class ActivityGen {
 				}
 				
 			'''
+	def private static String generateIcons(Iterable<ContainerElement> rootViews){
+		var String result = "switch(position){"
+		var viewnumber = 0;
+		
+		for (rv : rootViews) {
+			println(rv)
+			switch (rv) {
+				GridLayoutPaneImpl: {
+					for (rve : (rv as GridLayoutPaneImpl).params) {
+						if(rve instanceof ViewIcon){
+							result += "\r\n case " + viewnumber + ":";
+							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+(rve as ViewIcon).value+");"
+						}		
+					}
+				}
+				FlowLayoutPaneImpl: {
+					println("FlowLAyoutPane")
+					for (rve : (rv as FlowLayoutPaneImpl).params) {
+						if(rve instanceof ViewIcon){
+							result += "\r\n case " + viewnumber + ":";
+							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+(rve as ViewIcon).value+");"
+						}		
+					}
+				}
+				ListViewImpl: {
+					println("ListView gefunden" + rv);
+				for (rve : rv.params) {
+					println("RVE ListView:" + rve);
+						if(rve instanceof ViewIcon){
+							result += "\r\n case " + viewnumber + ":";
+							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+(rve as ViewIcon).value+");"
+						}		
+					}
+				}
+				default: {
+					println("Kein GridLayoutPAne")
+				}
+			}
+
+			viewnumber++;
+		}
+		
+		result+="\r\ndefault:\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.mipmap.ic_launcher);}"
+		return result;
+	}
+	
 	def static generateStartActivity(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities)'''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateStartActivity()
 		package «mainPackage»;
@@ -397,6 +444,8 @@ class ActivityGen {
 		«MD2AndroidLollipopUtil.generateImportAllWidgets»
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
 		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
+		
+		import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
 
 		«FOR viewElement: rv.eAllContents.toIterable»
 			«IF viewElement instanceof ActionDrawer»
@@ -527,7 +576,8 @@ class ActivityGen {
 
 			@Override
 			public boolean onMenuItemClick(MenuItem menuItem) {
-
+			//TODO
+			return true;
 
 			«FOR viewElement: rv.eAllContents.toIterable»
 				«IF viewElement instanceof ActionDrawer»
@@ -538,8 +588,9 @@ class ActivityGen {
 						final int itemId = menuItem.getItemId();
 
 						switch(itemId) {
+							«var ElementCounter = 0»
 							«FOR itemClickAction: viewElement.onItemClickAction»
-								case R.id.«itemClickAction.name»_item:
+								case R.id.«itemClickAction.name»_item«ElementCounter++»:
 									ca = new «MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "_").toFirstUpper»_Action();
 									break;
 

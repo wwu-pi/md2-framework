@@ -249,8 +249,11 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 				public void newEntity(){
 					content = new «(content.entity as Entity).name»();
 				}
-			
+						public void update() {
+				System.out.println("single wurde geupdated");			
+						}
 			}
+			
 		'''}
 		
 		
@@ -319,7 +322,10 @@ import de.uni_muenster.wi.md2library.model.contentProvider.implementation.Abstra
 		  				    
 		  				}	
 		  				}
-		  				}	  	
+		  				public void update() {
+		  					System.out.println("multi wurde geupdated");
+		  				}	
+		  				  	
 	'''
 	}	
 	

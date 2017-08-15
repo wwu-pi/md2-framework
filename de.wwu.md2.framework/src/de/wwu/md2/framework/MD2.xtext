@@ -546,7 +546,7 @@ SubViewContainer:
  * A ListView for using a whole Activity as a List
  */
  ListView:
- 	'ListView' name = EID '{'
+ 	'ListView' name = EID ('(' params += ListViewLayoutParam (',' params += ListViewLayoutParam)* ')')? '{'
  		('connectedProvider' connectedProvider = ContentProviderPath)
  		('onClickAction' onClickAction = [Action | QUALIFIED_NAME])?
  		('leftSwipeAction' leftSwipeAction = [Action | QUALIFIED_NAME])?
@@ -556,6 +556,19 @@ SubViewContainer:
  ;
 ListViewParam:
 	{PlaceholderParam} 'placeholder' value = INT
+;
+
+ListViewLayoutParam:
+	//{ViewIcon} 'icon' value = ("close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light")?
+	{ViewIcon} 'icon' value = ViewIcon?
+;
+
+ViewIcon:
+	"close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light"|"preference_wrapped_icon" | "open_on_phone_animation" | "open_on_phone"
+;
+
+ViewIconActionDrawer:
+	"btn_star_big_on" | "arrow_up_float"
 ;
 
 /*
@@ -575,7 +588,7 @@ GridLayoutPane:
  * These are besides the number of columns and rows all TabSpecificParams.
  */
 GridLayoutPaneParam:
-	{GridLayoutPaneColumnsParam} 'columns' value = INT | {GridLayoutPaneRowsParam} 'rows' value = INT | CommonContainerParam | {GridLayoutPaneIcon} 'icon' value = ("close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light")?
+	{GridLayoutPaneColumnsParam} 'columns' value = INT | {GridLayoutPaneRowsParam} 'rows' value = INT | CommonContainerParam | {ViewIcon} 'icon' value = ViewIcon? //{ViewIcon} 'icon' value = ("close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light")?
 ;
 
 /*
@@ -592,7 +605,7 @@ FlowLayoutPane:
  * These are besides the flowDirection all TabSpecificParams.
  */
 FlowLayoutPaneParam:
-	{FlowLayoutPaneFlowDirectionParam} flowDirection = FlowDirection | CommonContainerParam
+	{FlowLayoutPaneFlowDirectionParam} flowDirection = FlowDirection | CommonContainerParam | {ViewIcon} 'icon' value = ViewIcon? //{ViewIcon} 'icon' value = ("close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light")?
 ;
 
 /*
@@ -607,7 +620,7 @@ enum FlowDirection:
  * or Labels in a single-column view structure.
  */
 ActionDrawer:
-	'ActionDrawer' name = EID '(' params += ActionDrawerParam ')' '{'
+	'ActionDrawer' name = EID ('('(params += ActionDrawerParam (',' params += ActionDrawerParam)*)?')')? '{'
 
 	 'Actions' '{'
 	 	onItemClickAction += [Action | QUALIFIED_NAME] (',' onItemClickAction += [Action | QUALIFIED_NAME ])*
@@ -618,7 +631,8 @@ ActionDrawer:
 ;
 
 ActionDrawerParam:
-	{ActionDrawerTitleParam} 'title' value = STRING
+	{ActionDrawerTitleParam} 'titles' ('('(values += STRING (',' values += STRING)*)?')') | //STRING |
+	{ViewIconActionDrawer} 'icons' ('('(values += ViewIconActionDrawer(',' values += ViewIconActionDrawer)*)?')')
 ;
 
 /*
