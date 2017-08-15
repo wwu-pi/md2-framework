@@ -203,6 +203,9 @@ class LayoutGen {
 		drawerElement.setAttribute("android:layout_width", "match_parent")
 		drawerElement.setAttribute("app:action_menu", "@menu/" + rv.name.toLowerCase + "_action_drawer_menu")
 		drawerElement.setAttribute("android:theme","@style/PSWatchappActionDrawer")
+		drawerElement.setAttribute("app:show_overflow_in_peek", "true")
+		//Methode zum titel finden und setzen
+        //app:drawer_title="TestTitel des Drawers"
 
 		// create BoxInsetLayout
 		var Element boxElement = doc.createElement("android.support.wearable.view.BoxInsetLayout")
