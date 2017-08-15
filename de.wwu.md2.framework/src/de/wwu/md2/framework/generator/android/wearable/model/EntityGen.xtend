@@ -109,7 +109,7 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 @DatabaseTable(tableName = "«entity.name.toFirstLower»")
 		public class «entity.name.toFirstUpper»  implements Serializable,Md2Entity{
 		
-		@SerializedName("__internalId")
+«««		@SerializedName("__internalId")
 		@DatabaseField(generatedId = true, columnName = "id")
 		    private long id;
 		    

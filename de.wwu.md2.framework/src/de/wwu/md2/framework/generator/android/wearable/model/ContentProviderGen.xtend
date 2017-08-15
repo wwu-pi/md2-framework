@@ -19,6 +19,7 @@ import de.wwu.md2.framework.mD2.DateTimeType
 import de.wwu.md2.framework.mD2.FileType
 import de.wwu.md2.framework.mD2.AttributeType
 import de.wwu.md2.framework.generator.android.wearable.util.MD2AndroidWearableUtil
+import de.wwu.md2.framework.mD2.SensorType
 
 class ContentProviderGen {
 	
@@ -134,7 +135,9 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			    public Md2Type getValue(String attribute) {			
 			switch (attribute){
 			«FOR attribute: (content.entity as Entity).attributes»			
-			case "«attribute.name»": return  
+			case "«attribute.name»":
+			if(((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»() != null){
+			return  
 			«IF attribute.type instanceof ReferencedType && !attribute.type.many»
 			((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»();	
 			«ELSE»
@@ -142,6 +145,7 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			Md2List<«EntityGen.getMd2TypeStringForAttributeType(attribute.type)»>	«ELSE»
 			«EntityGen.getMd2TypeStringForAttributeType(attribute.type)»«ENDIF»(((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»());	
 			«ENDIF»
+			} else { return null;}
 			«ENDFOR»
 			default:return null;		
 			}
@@ -154,24 +158,40 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			        }
 			
 			        // set only if value is different to current value
-			        if ((this.getValue(name) == null && value != null) || !this.getValue(name).equals(value)) {
+			        if ((this.getValue(name) == null && value != null) || value != null && !this.getValue(name).toString().equals(value.toString())) {
 			        switch (name){
 			        			«FOR attribute: (content.entity as Entity).attributes»			
-			        			case "«attribute.name»":   ((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«IF attribute.type.many»
-			        				Md2List«ELSE»«getMd2TypeStringForAttributeType(attribute.type)»«ENDIF») value)«IF attribute.type instanceof ReferencedType && !attribute.type.many»
-			        				);
+
+			        			case "«attribute.name»":
+			        			   «IF !(attribute.type instanceof StringType)»
+			        			   
+			        			   		// Umgang mit anderen Datentypen hier einfügen - derzeit kein Support für Listen innerhalb v. Entities
+			        			   		// angenommen wird entweder Md2String oder passender Md2Type als value
+			        			   		
+			        			   		«IF (attribute.type instanceof IntegerType)»
+			        			   		if(!(value instanceof «getMd2TypeStringForAttributeType(attribute.type)»)){
+			        			   			if(!(value.getString().toString().isEmpty())) {
+			        			   		 	((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(Integer.parseInt(value.getString().toString()));	
+			        			   			notifyChangeHandler(name);
+			        			   			}
+			        			   		} else {
+			        			   			((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«getMd2TypeStringForAttributeType(attribute.type)»)value).getPlatformValue());
+			        			   		}
+			        			   		break;
+			        			   		«ENDIF»
+			        			   «ELSE»
+			        			   ((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«IF attribute.type.many»
+			        			   Md2List«ELSE»«getMd2TypeStringForAttributeType(attribute.type)»«ENDIF») value)«IF attribute.type instanceof ReferencedType && !attribute.type.many»
+			        			   );
+
 			        				«ELSEIF attribute.type.many»
-			        				.getContents());
+			        			   .getContents());
 			        				«ELSE».getPlatformValue());«ENDIF»	
-			        				break;
+				        					notifyChangeHandler(name);
+					        				break;
+			        				«ENDIF»
 			        			«ENDFOR»		
 			        			}
-			        
-			        
-			            Md2OnAttributeChangedHandler handler = this.attributeChangedEventHandlers.get(name);
-			            if (handler != null) {
-			                handler.onChange(name);
-			            }
 			        }	
 			}
 			
@@ -231,8 +251,11 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 				public void newEntity(){
 					content = new «(content.entity as Entity).name»();
 				}
-			
+						public void update() {
+				System.out.println("single wurde geupdated");			
+						}
 			}
+			
 		'''}
 		
 		
@@ -301,7 +324,10 @@ import de.uni_muenster.wi.md2library.model.contentProvider.implementation.Abstra
 		  				    
 		  				}	
 		  				}
-		  				}	  	
+		  				public void update() {
+		  					System.out.println("multi wurde geupdated");
+		  				}	
+		  				  	
 	'''
 	}	
 	
@@ -315,7 +341,8 @@ import de.uni_muenster.wi.md2library.model.contentProvider.implementation.Abstra
 			BooleanType: "Md2Boolean"
 			DateType: "Md2Date"
 			TimeType: "Md2Time"
-			DateTimeType: "Md2DateTime"			
+			DateTimeType: "Md2DateTime"		
+			SensorType: "Md2Sensor"	
 			FileType: "Object" // TODO not implemented
 		}		
 	}

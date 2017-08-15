@@ -92,11 +92,12 @@ class ActionGen {
 		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
 		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderAddAction;
 		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderRemoveActiveAction;
+		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderGetActiveAction;
 
 		public class «qualifiedActionName.toFirstUpper»_Action extends AbstractMd2Action {
 		
 		    public «qualifiedActionName.toFirstUpper»_Action() {
-				super("«qualifiedActionName.toFirstUpper»_Action");
+				super("«qualifiedActionName.toFirstUpper»_Action"); 
 			}
 		
 		    @Override
@@ -115,7 +116,7 @@ class ActionGen {
 
 	protected def static String generateCodeForCodeFragment(CustomCodeFragment ccf, App app, WorkflowElement wfe,
 		int counter) {
-		if (ccf == null)
+		if (ccf === null)
 			return ""
 
 		var intCounter = counter
@@ -147,6 +148,8 @@ class ActionGen {
 				switch eventType {
 					case eventType == ON_CHANGE: eventString = "Md2WidgetEventType.ON_CHANGE"
 					case eventType == ON_CLICK: eventString = "Md2WidgetEventType.ON_CLICK"
+					//add longclick support
+					case eventType == ON_LONG_CLICK: eventString = "Md2WidgetEventType.ON_LONG_CLICK"
 					//add swipe support
 					case eventType == ON_LEFT_SWIPE: eventString = "Md2WidgetEventType.ON_LEFT_SWIPE"
 					case eventType == ON_RIGHT_SWIPE: eventString = "Md2WidgetEventType.ON_RIGHT_SWIPE"
@@ -173,7 +176,7 @@ class ActionGen {
 				val haction = ccf.action
 				switch haction {
 					ActionReference: {
-						if (haction.actionRef.eContainer == null) {
+						if (haction.actionRef.eContainer === null) {
 							actionString = wfe.name + "_" +
 								qualifiedNameProvider.getFullyQualifiedName(haction.actionRef).toString("_") +
 								"_Action()"	
@@ -242,7 +245,7 @@ class ActionGen {
 							«ENDFOR»
 						}				
 					«ENDFOR»
-					«IF ccf.^else != null»				
+					«IF ccf.^else !== null»				
 						else{
 							«FOR containedCcf : ccf.^else.codeFragments»
 								«containedCcf.generateCodeForCodeFragment(app, wfe, intCounter++)»

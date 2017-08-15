@@ -113,11 +113,11 @@ class ControllerGen {
 		    	        "Md2FireEventAction«fireEventEntry.event.name.toFirstUpper»",
 		    	        «IF fireEventEntry.endWorkflow»
 		    	        new Md2WorkflowElement("«(fireEventEntry.eContainer as WorkflowElementEntry).workflowElement.name.toFirstUpper»", 
-		    	        	new «mainPackage».md2.controller.action.«(fireEventEntry.eContainer as WorkflowElementEntry).workflowElement.name.toFirstUpper»___«(fireEventEntry.eContainer as WorkflowElementEntry).workflowElement.name.toFirstUpper»_startupAction_Action()),
+		    	        	new «mainPackage».md2.controller.action.«(fireEventEntry.eContainer as WorkflowElementEntry).workflowElement.name.toFirstUpper»___«(fireEventEntry.eContainer as WorkflowElementEntry).workflowElement.name»_startupAction_Action()),
 		    	        Md2WorkflowAction.END);
 		    	        «ELSE»
 		    	        new Md2WorkflowElement("«fireEventEntry.startedWorkflowElement.name.toFirstUpper»", 
-		    	        	new «mainPackage».md2.controller.action.«fireEventEntry.startedWorkflowElement.name.toFirstUpper»___«fireEventEntry.startedWorkflowElement.name.toFirstUpper»_startupAction_Action()),
+		    	        	new «mainPackage».md2.controller.action.«fireEventEntry.startedWorkflowElement.name.toFirstUpper»___«fireEventEntry.startedWorkflowElement.name»_startupAction_Action()),
 		    	        Md2WorkflowAction.START);
 		    	        «ENDIF»
 		    	«ENDFOR»

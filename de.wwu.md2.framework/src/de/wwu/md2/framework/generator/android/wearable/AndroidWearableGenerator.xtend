@@ -22,6 +22,9 @@ import de.wwu.md2.framework.generator.android.wearable.view.LayoutGen
 import de.wwu.md2.framework.generator.android.wearable.controller.ApplicationGen
 import de.wwu.md2.framework.generator.android.wearable.controller.ControllerGen
 import de.wwu.md2.framework.generator.android.wearable.model.SQLiteGen
+import de.wwu.md2.framework.mD2.App
+import de.wwu.md2.framework.mD2.ContainerElement
+import de.wwu.md2.framework.generator.android.wearable.model.FilterGen
 
 /**
  * This is the start point for the Android generator.
@@ -172,6 +175,9 @@ SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.getEntities()));
 
 			// Styles
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STYLES_XML_NAME, ValueGen.generateStylesXml)
+			
+			// Colors
+			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.COLORS_XML_NAME, ValueGen.generateColorXml)
 
 			// Dimensions
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, ValueGen.generateDimensXml)
@@ -190,7 +196,7 @@ SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.getEntities()));
 
 
 			// Activities
-			ActivityGen.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements,dataContainer.entities)
+			ActivityGen.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements,dataContainer.entities, app)
 
 			// Controller
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/controller/Controller" + ".java",
@@ -206,6 +212,13 @@ SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.getEntities()));
 			 * 
 			 ***************************************************/
 			//log.info("Android Wearable Generator: generate app: \"" + app.appName + "\" finished")
+			
+			//Filter		
+			for (cp : dataContainer.contentProviders) {
+				if(cp.filter){
+					FilterGen.generateFilter(cp);
+				}
+			}
 		}
 		log.info("Android wearable Generator finished")
 	}

@@ -5,6 +5,7 @@ import de.wwu.md2.framework.generator.android.wearable.Settings
 import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
 import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.ContainerElement
+import de.wwu.md2.framework.mD2.ActionDrawer
 import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.Label
 import de.wwu.md2.framework.mD2.TextInput
@@ -14,37 +15,71 @@ import de.wwu.md2.framework.mD2.WorkflowElementReference
 import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.SensorType
+import de.wwu.md2.framework.mD2.impl.GridLayoutPaneImpl
+import de.wwu.md2.framework.generator.android.wearable.view.ValueGen
+
 import de.wwu.md2.framework.mD2.ListView
+import de.wwu.md2.framework.mD2.App
+
+import de.wwu.md2.framework.services.MD2GrammarAccess.SensorTypeParamElements
+import de.wwu.md2.framework.mD2.impl.SensorTypeImpl
+import de.wwu.md2.framework.mD2.impl.SensorTypeParamImpl
+import de.wwu.md2.framework.mD2.impl.SimpleTypeImpl
+import de.wwu.md2.framework.mD2.SensorTypeParam
+import java.util.List
+import de.wwu.md2.framework.mD2.AttrSensorTyp
+import de.wwu.md2.framework.mD2.impl.AttrSensorTypImpl
+import de.wwu.md2.framework.mD2.AttrSensorAxis
+import java.util.LinkedHashSet
+import java.util.LinkedList
+import java.util.Map
+import de.wwu.md2.framework.mD2.IntegerInput
+import java.awt.GridBagLayout
+import de.wwu.md2.framework.mD2.FlowLayoutPane
+import de.wwu.md2.framework.mD2.impl.FlowLayoutPaneImpl
+import de.wwu.md2.framework.mD2.impl.ListViewImpl
+import de.wwu.md2.framework.mD2.ViewIcon
+import de.wwu.md2.framework.mD2.ListViewLayoutParam
 
 class ActivityGen {
-	
-	static boolean FirstCall = true; 
-	
-	def static generateActivities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,	
-		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities) {
-		
+
+	static boolean FirstCall = true;
+
+	def static generateActivities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
+		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities, App app) {
+
 		fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "NavigationAdapter.java",
-			generateNavigationAdapter(mainPackage, startableWorkflowElements))
-		
+			generateNavigationAdapter(mainPackage, startableWorkflowElements, rootViews))
+
 		//fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "StartActivity.java",
-			//	generateStartActivity(mainPackage, startableWorkflowElements,  entities))	
-		
+			//	generateStartActivity(mainPackage, startableWorkflowElements,  entities))
+
 		rootViews.forEach [ rv |
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + rv.name + "Activity.java",
 				generateActivity(mainPackage, rv, entities, FirstCall))
-				
+
 				if (rv instanceof ListView){
 				fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + rv.name + "ListAdapter.java",
-				generateListAdapter(mainPackage, rv))
-				} 
+				generateListAdapter(mainPackage, rv, app))
+				}
+
+				FirstCall=false;
 		]
+		FirstCall=true;
 	}
-		
+
 		//generiert ListAdapter für Inhalt einer Listenansicht
-		def static generateListAdapter(String mainPackage, ListView rv)'''
+		def static generateListAdapter(String mainPackage, ListView rv, App app)'''
 		//generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateListAdapter()
+
 		package «mainPackage»;
 		
+		import android.content.Context;
+		import android.graphics.Color;
+		import android.graphics.Point;
+		import android.view.Display;
+		import android.view.Gravity;
+		import android.view.WindowManager;
 		import android.support.v7.widget.RecyclerView;
 		import android.view.View;
 		import android.view.ViewGroup;
@@ -56,6 +91,8 @@ class ActivityGen {
 		import de.uni_muenster.wi.md2library.model.contentProvider.interfaces.Md2ContentProvider;
 		import de.uni_muenster.wi.md2library.model.contentProvider.interfaces.Md2MultiContentProvider;
 		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2UpdateListIndexAction;
+		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2RefreshListAction;
+		
 		«IF(!(rv.onClickAction === null))»
 			import «mainPackage».md2.controller.action.«MD2AndroidLollipopUtil.getQualifiedNameAsString(rv.onClickAction, "_").toFirstUpper»_Action;
 		«ENDIF»
@@ -102,7 +139,7 @@ class ActivityGen {
 			public void onBindViewHolder(RecyclerView.ViewHolder vh, int i){
 				ListItem li = (ListItem) vh;
 				if(content.getValue(i,"«rv.connectedProvider.tail.attributeRef.name»") != null){
-					li.getButton().setText(content.getValue(i,"«rv.connectedProvider.tail.attributeRef.name»"));
+					li.getButton().setText(content.getValue(i,"«rv.connectedProvider.tail.attributeRef.name»").getString().toString());
 				} else {
 					li.getButton().setText("Fehler");
 				}
@@ -116,6 +153,10 @@ class ActivityGen {
 				sw.registerAction(indexAction, false);
 				sw.getLeftSwipeHandler().addActions(swipeHandler.getLeftSwipeHandler().getActions());
 				sw.getRightSwipeHandler().addActions(swipeHandler.getRightSwipeHandler().getActions());
+				Md2RefreshListAction rflaction = new Md2RefreshListAction(this);
+				ch.registerAction(rflaction);
+				sw.registerAction(rflaction, true);
+				sw.registerAction(rflaction, false);
 				li.getButton().setOnClickHandler(ch);
 				li.getButton().setOnSwipeHandler(sw);
 			}
@@ -139,6 +180,14 @@ class ActivityGen {
 				public ListItem(View itemView){
 					super(itemView);
 					button = (Md2Button) itemView;
+					button.setBackgroundColor(Color.TRANSPARENT);
+					WindowManager wm = (WindowManager) «app.name.toFirstUpper».getAppContext().getSystemService(Context.WINDOW_SERVICE);
+					Display display = wm.getDefaultDisplay();
+					Point size = new Point();
+					display.getSize(size);
+					int width = size.x;
+					button.setWidth(width);
+					button.setGravity(Gravity.LEFT);
 				}
 				
 				public Md2Button getButton(){
@@ -152,16 +201,16 @@ class ActivityGen {
 		
 '''
 		
-		
 		//generiert NavigationAdapter als Singleton, ersetzt die urspr«ngliche StartActivity
 		//startActions werden in Konstruktor »bergeben
-	def static generateNavigationAdapter(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements)'''
+	def static generateNavigationAdapter(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<ContainerElement> rootViews)'''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateStartActivity()
 				package «mainPackage»;
 				
 				import android.graphics.drawable.Drawable;
 				import android.support.wearable.view.drawer.WearableNavigationDrawer;
 				import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
+				import de.uni_muenster.wi.md2library.view.management.implementation.Md2ViewManager;
 				import java.util.ArrayList;
 				«FOR wer : startableWorkflowElements»		        	
 					import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action;
@@ -213,7 +262,7 @@ class ActivityGen {
 					
 					@Override
 					public Drawable getItemDrawable(int position) {
-					    return null;
+						«println(generateIcons(rootViews))»
 					}
 					
 					public int getActive(){
@@ -244,23 +293,68 @@ class ActivityGen {
 				}
 				
 			'''
+	def private static String generateIcons(Iterable<ContainerElement> rootViews){
+		var String result = "switch(position){"
+		var viewnumber = 0;
+		
+		for (rv : rootViews) {
+			println(rv)
+			switch (rv) {
+				GridLayoutPaneImpl: {
+					for (rve : (rv as GridLayoutPaneImpl).params) {
+						if(rve instanceof ViewIcon){
+							result += "\r\n case " + viewnumber + ":";
+							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+(rve as ViewIcon).value+");"
+						}		
+					}
+				}
+				FlowLayoutPaneImpl: {
+					println("FlowLAyoutPane")
+					for (rve : (rv as FlowLayoutPaneImpl).params) {
+						if(rve instanceof ViewIcon){
+							result += "\r\n case " + viewnumber + ":";
+							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+(rve as ViewIcon).value+");"
+						}		
+					}
+				}
+				ListViewImpl: {
+					println("ListView gefunden" + rv);
+				for (rve : rv.params) {
+					println("RVE ListView:" + rve);
+						if(rve instanceof ViewIcon){
+							result += "\r\n case " + viewnumber + ":";
+							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+(rve as ViewIcon).value+");"
+						}		
+					}
+				}
+				default: {
+					println("Kein GridLayoutPAne")
+				}
+			}
+
+			viewnumber++;
+		}
+		
+		result+="\r\ndefault:\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.mipmap.ic_launcher);}"
+		return result;
+	}
 	
 	def static generateStartActivity(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities)'''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateStartActivity()
 		package «mainPackage»;
-		
+
 		import android.os.Bundle;
 		import android.app.Activity;
 		import android.content.Intent;
-		
+
 		import android.view.View;
-		
+
 		//Sensoren
 		import android.hardware.Sensor;
 		import android.hardware.SensorEvent;
 		import android.hardware.SensorEventListener;
 		import android.hardware.SensorManager;
-		
+
 		import «mainPackage».md2.controller.Controller;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAME»;
@@ -268,17 +362,17 @@ class ActivityGen {
 		«MD2AndroidLollipopUtil.generateImportAllWidgets»
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
 		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
-		
-		«FOR wer : startableWorkflowElements»		        	
+
+		«FOR wer : startableWorkflowElements»
 			import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action;
 		«ENDFOR»
-		
+
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2GoToViewAction;
-		import «Settings.MD2LIBRARY_PACKAGE»model.SensorHelper;
-		
+		import «Settings.MD2LIBRARY_PACKAGE»SensorHelper;
+
 		public class StartActivity extends Activity {
-		
-			
+
+
 		    @Override
 		    protected void onCreate(Bundle savedInstanceState) {
 		        super.onCreate(savedInstanceState);
@@ -288,49 +382,23 @@ class ActivityGen {
 		        	«wer.workflowElementReference.name»Button.setWidgetId(R.id.startActivity_«wer.workflowElementReference.name»Button);
 		        	Md2WidgetRegistry.getInstance().addWidget(«wer.workflowElementReference.name»Button);
 		        «ENDFOR»
-		       
-		       
-           «FOR e: entities»
-				«FOR attribute : e.attributes»
-        			«IF attribute.type instanceof SensorType»
-    		«IF attribute.type.eContents.toString().contains("accelerometer: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "accelerometer");
-    		«ENDIF»
-    		«IF attribute.type.eContents.toString().contains("gyroskop: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "gyroskop");
-    		«ENDIF»
-			«IF attribute.type.eContents.toString().contains("compass: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "compass");
-    		«ENDIF»
-    		«IF attribute.type.eContents.toString().contains("pulsmesser: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "pulsmesser");
-    		«ENDIF»
-    		«IF attribute.type.eContents.toString().contains("schrittzaehler: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "schrittzaehler");
-    		«ENDIF»
-    		«IF attribute.type.eContents.toString().contains("luxmeter: true")»
-    			SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "luxmeter");
-    					«ENDIF»
-        			«ENDIF»
-				«ENDFOR»
-           	«ENDFOR»
 		    }
-		
+
 		    @Override
 		    protected void onStart(){
 				super.onStart();
 				Md2ViewManager.getInstance().setActiveView(this);
-		        
+
 		        // TODO move startableWorkflowElements to Md2WorkflowManager
 				«FOR wer : startableWorkflowElements»
 					Md2Button «wer.workflowElementReference.name»Button = (Md2Button) findViewById(R.id.startActivity_«wer.workflowElementReference.name»Button);
 					«wer.workflowElementReference.name»Button.getOnClickHandler().registerAction(new «wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action());
 		        «ENDFOR»
-		        
-		        }   
+
+		        }
 				Md2TaskQueue.getInstance().tryExecutePendingTasks();
 		    }
-		    
+
 			@Override
 		    protected void onPause(){
 		        super.onPause();
@@ -339,29 +407,36 @@ class ActivityGen {
 				Md2WidgetRegistry.getInstance().saveWidget(«wer.workflowElementReference.name»Button);
 			«ENDFOR»
 		    }
-		    
+
 		    @Override
 			public void onBackPressed() {
 				// remain on start screen
 			}
 		}
 	'''
-	
+
 	private def static generateActivity(String mainPackage, ContainerElement rv, Iterable<Entity> entities, boolean FirstCall) '''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateActivity()
 		package «mainPackage»;
-		
+
 		import android.app.Activity;
 		import android.content.Intent;
 		import android.os.Bundle;
 		import android.view.View;
 		import android.view.Gravity;
+		import android.support.wearable.activity.WearableActivity;
 		import android.support.wearable.view.drawer.WearableDrawerLayout;
 		import android.support.wearable.view.drawer.WearableDrawerView;
 		import android.support.wearable.view.drawer.WearableNavigationDrawer;
+
+		import android.support.wearable.view.drawer.WearableActionDrawer;
+		import android.graphics.drawable.Drawable;
+		import android.view.MenuItem;
+
 		import android.support.wearable.view.CurvedChildLayoutManager;
 		import android.support.wearable.view.WearableRecyclerView;
-		
+
+
 		import «mainPackage».md2.controller.Controller;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAME»;
@@ -370,22 +445,42 @@ class ActivityGen {
 		«MD2AndroidLollipopUtil.generateImportAllTypes»
 		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
 		
-		import «Settings.MD2LIBRARY_PACKAGE»model.SensorHelper;
-				
-		public class «rv.name»Activity extends Activity {
-			
-			private WearableDrawerLayout drawerLayout;	
+		import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
+
+		«FOR viewElement: rv.eAllContents.toIterable»
+			«IF viewElement instanceof ActionDrawer»
+				«IF(viewElement.onItemClickAction !== null)»
+					«FOR itemClickAction: viewElement.onItemClickAction»
+						import «mainPackage».md2.controller.action.«MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "_")»_Action;
+					«ENDFOR»
+				«ENDIF»
+			«ENDIF»
+		«ENDFOR»
+
+
+
+		import «Settings.MD2LIBRARY_PACKAGE»SensorHelper;
+
+
+		public class «rv.name»Activity extends WearableActivity implements WearableActionDrawer.OnMenuItemClickListener {
+
+			private WearableDrawerLayout drawerLayout;
 			private WearableNavigationDrawer navigationDrawer;
 			private NavigationAdapter adapter;
-			
+			private WearableActionDrawer actionDrawer;
+			public Md2OnClickHandler clickHandler;
+
 		    @Override
 		    protected void onCreate(Bundle savedInstanceState) {
 		        super.onCreate(savedInstanceState);
 		        setContentView(R.layout.activity_«rv.name.toLowerCase»);
+
+		        clickHandler = new Md2OnClickHandler();
+
 		        «FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
 		        	«generateAddViewElement(viewElement)»
 		        «ENDFOR»
-		        
+
 	     		drawerLayout = (WearableDrawerLayout) findViewById(R.id.drawer_layout_«rv.name»);
 	        	drawerLayout.setDrawerStateCallback(new WearableDrawerLayout.DrawerStateCallback() {
 	           		@Override
@@ -406,95 +501,139 @@ class ActivityGen {
                           }
                        }
 	            	}
-	        	});		        
-		        
+	        	});
+
+
 		        navigationDrawer = (WearableNavigationDrawer) findViewById(R.id.navigation_drawer_«rv.name»);
 		        adapter = NavigationAdapter.getInstance();
 		        navigationDrawer.setAdapter(adapter);
+
+
+		        «FOR viewElement: rv.eAllContents.toIterable»
+					«IF viewElement instanceof ActionDrawer»
+						actionDrawer = (WearableActionDrawer) findViewById(R.id.bottom_action_drawer_«rv.name»);
+						actionDrawer.setOnMenuItemClickListener(this);
+					«ENDIF»
+				«ENDFOR»
+
+
 		        navigationDrawer.setCurrentItem(adapter.getActive(), true);
 
-			«FOR e: entities»
-			«FOR attribute : e.attributes»
-				«IF attribute.type instanceof SensorType»
-					«IF attribute.type.eContents.toString().contains("accelerometer: true")»
-					SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "accelerometer");
-					«ENDIF»
-					«IF attribute.type.eContents.toString().contains("gyroskop: true")»
-					SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "gyroskop");
-					«ENDIF»
-					«IF attribute.type.eContents.toString().contains("heartrate: true")»
-					SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "heartrate");
-					«ENDIF»
-					«IF attribute.type.eContents.toString().contains("proximity: true")»
-					SensorHelper meinSensorHelper_«attribute.name» = new SensorHelper(this, "«attribute.name»", "proximity");
-					«ENDIF»
+				«IF (rv instanceof ListView)»
+				WearableRecyclerView wrv = (WearableRecyclerView) findViewById(R.id.wearable_recycler_view_«rv.name»);
+									    	«rv.name»ListAdapter listAdapter = new «rv.name»ListAdapter();
+										   	wrv.setAdapter(listAdapter);
+									    	wrv.setCenterEdgeItems(true);
+									    	CurvedChildLayoutManager clm = new CurvedChildLayoutManager(this);
+									    	wrv.setLayoutManager(clm);
 				«ENDIF»
-			«ENDFOR»
-			«ENDFOR»
-			
-			«IF (rv instanceof ListView)»
-					    	WearableRecyclerView wrv = (WearableRecyclerView) findViewById(R.id.wearable_recycler_view_«rv.name»);
-					    	«rv.name»ListAdapter listAdapter = new «rv.name»ListAdapter();
-						   	wrv.setAdapter(listAdapter);
-					    	wrv.setCenterEdgeItems(true);
-					    	CurvedChildLayoutManager clm = new CurvedChildLayoutManager(this);
-					    	wrv.setLayoutManager(clm);
+
+
+			«IF FirstCall»
+				//HardwareSensoren
+				«generateSensor(entities)»
 			«ENDIF»
-			
+
 		    }
-		
+
 		    @Override
 		    protected void onStart(){
 				super.onStart();
 		        Md2ViewManager.getInstance().setActiveView(this);
-		        
+
 		        «FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
-		        	«generateLoadViewElement(viewElement)»
+		        	«IF !(viewElement instanceof ActionDrawer)»
+		        		«generateLoadViewElement(viewElement)»
+		        	«ENDIF»
 		        «ENDFOR»
-		        
+
+		        drawerLayout.peekDrawer(Gravity.TOP);
+		        drawerLayout.peekDrawer(Gravity.BOTTOM);
+
 		        adapter.maybeFirstStart();
-		        
+
+
 		        Md2TaskQueue.getInstance().tryExecutePendingTasks();
-		        
-		      
+
+
 		    }
-		    
+
 			@Override
 		    protected void onPause(){
 		        super.onPause();
 		        «FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
-		        	«generateSaveViewElement(viewElement)»
+		        	«IF !(viewElement instanceof ActionDrawer)»
+		        		«generateLoadViewElement(viewElement)»
+		        	«ENDIF»
 		        «ENDFOR»
 		    }
-		    
+
 		    @Override
 			public void onBackPressed() {
 				// go back to start screen
 				Md2ViewManager.getInstance().goTo(getString(R.string.StartActivity));
 			}
+
+			@Override
+			public boolean onMenuItemClick(MenuItem menuItem) {
+			//TODO
+			return true;
+
+			«FOR viewElement: rv.eAllContents.toIterable»
+				«IF viewElement instanceof ActionDrawer»
+					«IF(viewElement.onItemClickAction !== null)»
+
+						Md2Action ca = null;
+
+						final int itemId = menuItem.getItemId();
+
+						switch(itemId) {
+							«var ElementCounter = 0»
+							«FOR itemClickAction: viewElement.onItemClickAction»
+								case R.id.«itemClickAction.name»_item«ElementCounter++»:
+									ca = new «MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "_").toFirstUpper»_Action();
+									break;
+
+							«ENDFOR»
+						}
+
+						clickHandler.registerAction(ca);
+
+						try {
+							ca.execute();
+
+							return true;
+						}catch(Exception e) {
+							return false;
+						}
+					«ENDIF»
+				«ENDIF»
+			«ENDFOR»
+
+			}
 		}
 	'''
-	
+
 	private static def String generateAddViewElement(ViewElementType vet){
-		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] != null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
+		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] !== null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
 			return "" // Skip title label
 		}
-		
+
 		var String result = ""
 		var String type = ""
-		
+
 		var qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(vet, "_")
-		if(qualifiedName == null || qualifiedName.empty)
+		if(qualifiedName === null || qualifiedName.empty)
 			return ""
-		
+
 		switch vet{
-			ViewGUIElementReference: return generateSaveViewElement(vet.value)			
-			default: type = getCustomViewTypeNameForViewElementType(vet)			
+			ViewGUIElementReference: return generateSaveViewElement(vet.value)
+			default: type = getCustomViewTypeNameForViewElementType(vet)
 		}
-		
-		if(type == null || type.empty)
+
+		if(type === null || type.empty)
 			return ""
-		
+
 		result = '''
 			«type» «qualifiedName.toFirstLower» = («type») findViewById(R.id.«qualifiedName»);
 			«qualifiedName.toFirstLower».setWidgetId(R.id.«qualifiedName»);
@@ -502,63 +641,63 @@ class ActivityGen {
         '''
         return result
 	}
-	
+
 	private static def String generateLoadViewElement(ViewElementType vet){
-		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] != null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
+		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] !== null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
 			return "" // Skip title label
 		}
-		
+
 		var String result = ""
 		var String type = ""
-		
+
 		var qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(vet, "_")
-		if(qualifiedName == null || qualifiedName.empty)
-			return ""		
-		
-		switch vet{
-			ViewGUIElementReference: return generateSaveViewElement(vet.value)			
-			default: type = getCustomViewTypeNameForViewElementType(vet)			
-		}
-		
-		if(type == null || type.empty)
+		if(qualifiedName === null || qualifiedName.empty)
 			return ""
-		
+
+		switch vet{
+			ViewGUIElementReference: return generateSaveViewElement(vet.value)
+			default: type = getCustomViewTypeNameForViewElementType(vet)
+		}
+
+		if(type === null || type.empty)
+			return ""
+
 		result = '''
 			«type» «qualifiedName.toFirstLower» = («type») findViewById(R.id.«qualifiedName»);
 			Md2WidgetRegistry.getInstance().loadWidget(«qualifiedName.toFirstLower»);
         '''
-        
+
 		return result
 	}
-	
+
 	private static def String generateSaveViewElement(ViewElementType vet){
-		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] != null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
+		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] !== null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
 			return "" // Skip title label
 		}
-		
+
 		var String result = ""
 		var String type = ""
-		
+
 		var qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(vet, "_")
-		if(qualifiedName == null || qualifiedName.empty)
-			return ""		
-		
-		switch vet{
-			ViewGUIElementReference: return generateSaveViewElement(vet.value)			
-			default: type = getCustomViewTypeNameForViewElementType(vet)			
-		}
-		
-		if(type == null || type.empty)
+		if(qualifiedName === null || qualifiedName.empty)
 			return ""
-		
+
+		switch vet{
+			ViewGUIElementReference: return generateSaveViewElement(vet.value)
+			default: type = getCustomViewTypeNameForViewElementType(vet)
+		}
+
+		if(type === null || type.empty)
+			return ""
+
 		result = '''
 			«type» «qualifiedName.toFirstLower» = («type») findViewById(R.id.«qualifiedName»);
 			Md2WidgetRegistry.getInstance().saveWidget(«qualifiedName.toFirstLower»);
         '''
-        
+
 		return result
 	}
-	
+
 	private static def String getCustomViewTypeNameForViewElementType(ViewElementType vet){
 		switch vet{
 			ViewGUIElementReference: return generateSaveViewElement(vet.value)
@@ -570,7 +709,52 @@ class ActivityGen {
 				return "Md2Label"
 			TextInput:
 				return "Md2TextInput"
+			IntegerInput:
+				return "Md2TextInput"
 			default: return ""
+		}
+	}
+
+	/**
+	 * generateSensor erwatet die Entites aus dem MD2 Modell, um daraus die entsprechenden
+	 * Attribute, die als Sensor, gekenzeichnet sind zu generieren. Der fertig generierte Code
+	 * wird als String zurückgegeben.
+	 */
+	private static def String generateSensor(Iterable<Entity> entities){
+		var String result = "";
+		//Alle Entities durchgehen
+		for (e : entities) {
+			for (attribute : e.attributes){
+				//Nur Attribute vom Typ Sensor bearbeiten
+				if(attribute.type instanceof SensorType){
+					//Parameter durchgehen
+					for(param : (attribute.type as SensorType).params){
+						//Parameter vom AttrSensorTyp
+						if(param instanceof AttrSensorTyp){
+							if(param.accelerometer){
+								result += ("SensorHelper meinSensorHelper_" + attribute.name +" = new SensorHelper(this, \"" + attribute.name + "\", \"accelerometer\", \"");
+							}
+							if(param.gyroskop){
+								result += ("SensorHelper meinSensorHelper_" + attribute.name +" = new SensorHelper(this, \"" + attribute.name + "\", \"gyroskop\", \"")
+							}
+							if(param.heartrate){
+								result += ("SensorHelper meinSensorHelper_" + attribute.name +" = new SensorHelper(this, \"" + attribute.name + "\", \"heartrate\");\r\n")
+							}
+							if(param.proximity){
+								result += ("SensorHelper meinSensorHelper_" + attribute.name +" = new SensorHelper(this, \"" + attribute.name + "\", \"proximity\");\r\n")
+							}
+						}
+						//Parameter vom AttrSensorAxis
+						if(param instanceof AttrSensorAxis){
+							if(param.x){result += ("X\");\r\n")}
+							if(param.y){result += ("Y\");\r\n")}
+							if(param.z){result += ("Z\");\r\n")}
+						}
+					}
+				}
+			}
+			println(result)
+			return result;
 		}
 	}
 }

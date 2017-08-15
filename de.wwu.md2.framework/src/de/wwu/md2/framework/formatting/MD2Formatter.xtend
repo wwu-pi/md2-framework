@@ -26,6 +26,7 @@ public class MD2Formatter extends AbstractDeclarativeFormatter {
 		/*
 		 * general Formatting
 		 */
+		 
  		//Package
 		c.setAutoLinewrap(120);
  		
@@ -110,7 +111,10 @@ public class MD2Formatter extends AbstractDeclarativeFormatter {
 
 		//FlowLayoutPane
 		c.setLinewrap.before(f.flowLayoutPaneAccess.flowLayoutPaneKeyword_0)
-
+		
+		//ActionDrawer
+		c.setLinewrap.before(f.actionDrawerAccess.actionDrawerKeyword_0)
+		
 		//AlternativesPane
 		c.setLinewrap.before(f.alternativesPaneAccess.alternativesPaneKeyword_0)
 
