@@ -18,6 +18,8 @@ class ApplicationGen {
 		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAME»;
+		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.Polling;
+		
 
 		public class «app.name.toFirstUpper» extends Application {
 		
@@ -40,6 +42,9 @@ class ApplicationGen {
 				wr = Md2WidgetRegistry.getInstance();
 				context = getApplicationContext();
 		        Controller.getInstance().run();
+		        Thread t = new Thread(new Polling(cpr));
+		        t.start();
+		        
 		    }
 		    
 			public static Context getAppContext() {
