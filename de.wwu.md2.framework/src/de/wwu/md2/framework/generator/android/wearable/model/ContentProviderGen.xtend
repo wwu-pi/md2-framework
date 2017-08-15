@@ -88,6 +88,9 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			    			
 			    public «contentProvider.name.toFirstUpper»(String key, Md2Entity content, Md2DataStore md2DataStore) {
 			       super(key, content, md2DataStore);
+			       «IF contentProvider.filter»
+			       this.filter = new Filter(«FilterGen.generateFilter(contentProvider)»);
+			       «ENDIF»
 			    }
 			@Override
 			    public String getKey() {

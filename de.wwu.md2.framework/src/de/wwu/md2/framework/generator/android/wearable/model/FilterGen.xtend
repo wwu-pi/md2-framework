@@ -53,7 +53,7 @@ class FilterGen {
 	def private static String genCompare(Operator operator, EntityPath Entity, SimpleExpression expr){
 		var op = "" 
 		switch (operator.toString) {
-			case "equals":{op = "Operator.equals";}
+			case "equals":{op = "Operator.EQUAL";}
 			case ">":{op = "Operator.GREATER"}
 			case "<":{op = "Operator.LESS"}
 			case ">=":{op = "Operator.GREATEREQUAL"}
