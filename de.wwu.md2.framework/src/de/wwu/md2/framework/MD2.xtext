@@ -631,8 +631,9 @@ ActionDrawer:
 ;
 
 ActionDrawerParam:
-	{ActionDrawerTitleParam} 'titles' ('('(values += STRING (',' values += STRING)*)?')') | //STRING |
-	{ViewIconActionDrawer} 'icons' ('('(values += ViewIconActionDrawer(',' values += ViewIconActionDrawer)*)?')')
+	{ActionDrawerBezeichnung} 'ActionDrawerTitel' value = STRING |
+	{ActionDrawerTitleParam} 'Actions_titels' ('('(values += STRING (',' values += STRING)*)?')') | //STRING |
+	{ViewIconActionDrawer} 'Actions_icons' ('('(values += ViewIconActionDrawer(',' values += ViewIconActionDrawer)*)?')')
 ;
 
 /*
@@ -1194,7 +1195,7 @@ ContentProvider:
 		'providerType' (default ?= 'default' | local ?= 'local' | connection = [RemoteConnection]) &
 		(filter ?= 'filter' filterType = FilterType ('where' whereClause = WhereClauseCondition)?
 		)? &
-		('readonly' (readonly ?= 'true' | 'false'))?
+		('readonly' (readonly ?= 'true' | 'false') | ('polling' (polling ?= 'true' | 'false')))?
 	) '}'
 ;
 

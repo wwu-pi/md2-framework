@@ -44,6 +44,7 @@ import de.wwu.md2.framework.mD2.ViewIcon
 import de.wwu.md2.framework.mD2.ViewIconActionDrawer
 import java.util.List
 
+
 class LayoutGen {
 
 	def static generateLayouts(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
@@ -205,6 +206,7 @@ class LayoutGen {
 		drawerElement.setAttribute("android:theme","@style/PSWatchappActionDrawer")
 		drawerElement.setAttribute("app:show_overflow_in_peek", "true")
 		//Methode zum titel finden und setzen
+		//drawerElement.setAttribute("app:drawer_title", rv.name)
         //app:drawer_title="TestTitel des Drawers"
 
 		// create BoxInsetLayout

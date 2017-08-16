@@ -15,6 +15,11 @@ import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.FlowLayoutPane
 import org.apache.log4j.Layout
+import de.wwu.md2.framework.mD2.impl.ActionDrawerImpl
+import de.wwu.md2.framework.mD2.ActionDrawer
+import de.wwu.md2.framework.mD2.ActionDrawerBezeichnung
+import de.wwu.md2.framework.mD2.impl.ActionDrawerBezeichnungImpl
+import de.wwu.md2.framework.mD2.IfCodeBlock
 
 class ValueGen {
 
@@ -42,8 +47,8 @@ class ValueGen {
 			«FOR rce : rootContainerElements»
 				<string name="title_activity_«rce.name.toFirstLower»">«rce.name.toFirstUpper»</string>
 			«ENDFOR»
-			
-«««	«generateStringsIcon(rootContainerElements)»
+
+					
 			<!-- not necessary without Start activity
 			«FOR wer : wers»
 				<string name="«MD2AndroidLollipopUtil.getQualifiedNameAsString(wer, "_")»_alias">«wer.alias»</string>
@@ -55,26 +60,6 @@ class ValueGen {
 			«ENDFOR»
 		</resources>
 	'''
-	
-
-//	def static String generateStringsIcon(Iterable<ContainerElement> rootContainerElements){
-//
-//		var String icon;
-//		var String view;
-//		for(rCe : rootContainerElements)
-//		{
-//			for(param : (rCe as GridLayoutPane).params)
-//			{
-//				if(param instanceof GridLayoutPaneIcon){
-//					//println((param as GridLayoutPaneIcon).value)
-//					icon =  (param as GridLayoutPaneIcon).value;
-//					view = rCe.name
-//				}
-//			}
-//		}
-//		println("<string name=\"" + view + "\">" + icon + "</string>")
-//		return "<string name=\"" + "icon_" + view + "\">" + icon + "</string>";
-//	}
 	
 	
 	def static getActivityTitle(ContainerElement element) {
@@ -88,6 +73,19 @@ class ValueGen {
 			}
 		}
 		return element.name
+	}
+	
+	def static getActionDrawerBezeichner(ContainerElement element){
+	switch element {
+		ActionDrawer:{
+			for(actionParam : (element as ActionDrawerImpl).params){
+				if(actionParam instanceof ActionDrawerBezeichnung){
+					return (actionParam as ActionDrawerBezeichnungImpl).value
+				}
+			}
+		}
+	}
+	return null
 	}
 
 	protected def static String generateStringEntry(ViewGUIElement viewGUIElement) {
