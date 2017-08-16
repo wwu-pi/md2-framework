@@ -50,6 +50,8 @@ class ContentProviderGen {
 				import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
 				import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
 				
+				import java.util.List; //TODO nur BugFix für dev_filter_design_pol
+				
 				public class «contentProvider.name.toFirstUpper» extends AbstractMd2ContentProvider {
 				    public «contentProvider.name.toFirstUpper»(«content.entity.name.toFirstUpper» content, Md2LocalStore md2DataStore) {
 				        super("«contentProvider.name»", content, md2DataStore);
@@ -62,6 +64,7 @@ class ContentProviderGen {
 		private def static generateContentProviderPOJO(String mainPackage, ContentProvider contentProvider){ '''
 			// generated in de.wwu.md2.framework.generator.android.lollipop.model.Md2ContentProvider.generateContentProvider()
 			package «mainPackage».md2.model.contentProvider;
+			
 				«var content =  contentProvider.type as ReferencedModelType»
 
 «FOR element : (content.entity as Entity).attributes»
@@ -78,6 +81,9 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
 			import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
 			import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
+			import de.uni_muenster.wi.md2library.model.type.implementation.Md2List;
+			
+			import java.util.List; //TODO nur BugFix für dev_filter_design_pol
 			
 			import «mainPackage».md2.model.«(content.entity as Entity).name»;
 			
@@ -275,6 +281,8 @@ import de.uni_muenster.wi.md2library.model.contentProvider.implementation.Abstra
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
 		
+		import java.util.List; //TODO nur BugFix für dev_filter_design_pol
+		
 		«MD2AndroidWearableUtil.generateImportAllTypes»
 		
 		public class «contentProvider.name.toFirstUpper» extends AbstractMd2MultiContentProvider {
@@ -327,10 +335,16 @@ import de.uni_muenster.wi.md2library.model.contentProvider.implementation.Abstra
 		  				    
 		  				}	
 		  				}
+		  				
+	  					@Override
+	  					public void overwriteContent(List<Md2Entity> list) {
+	  						
+	  					}
+		  					
 		  				public void update() {
 		  					System.out.println("multi wurde geupdated");
 		  				}	
-		  				  	
+		  				} 	
 	'''
 	}	
 	

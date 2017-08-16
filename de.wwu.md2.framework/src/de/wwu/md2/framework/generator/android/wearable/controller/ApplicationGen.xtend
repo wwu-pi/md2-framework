@@ -18,8 +18,8 @@ class ApplicationGen {
 		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAME»;
-		import «Settings.MD2LIBRARY_PACKAGE».model.dataStore.implementation.VolleyQueue;
-		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.Polling;
+		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.implementation.VolleyQueue;
+		//import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.Polling;
 		
 
 		public class «app.name.toFirstUpper» extends Application {
@@ -44,8 +44,8 @@ class ApplicationGen {
 				context = getApplicationContext();
 				VolleyQueue.getInstance(context);
 		        Controller.getInstance().run();
-		        Thread t = new Thread(new Polling(cpr));
-		        t.start();
+«««		        Thread t = new Thread(new Polling(cpr));
+«««		        t.start();
 		        
 		    }
 		    
