@@ -298,7 +298,9 @@ private «element.className» «element.attributeName»;
 			BooleanType: "Boolean"
 			DateType: "Date"
 			TimeType: "Md2Time"
-			DateTimeType: "Md2DateTime"			
+			DateTimeType: "Md2DateTime"		
+			
+			SensorType: "Md2Sensor"		
 			FileType: "Object" // TODO not implemented
 		}		
 	}

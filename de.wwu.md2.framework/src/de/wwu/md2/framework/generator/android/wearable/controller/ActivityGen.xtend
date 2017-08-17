@@ -63,7 +63,7 @@ class ActivityGen {
 				generateListAdapter(mainPackage, rv, app))
 				}
 
-				FirstCall=false;
+				//FirstCall=false;
 		]
 		FirstCall=true;
 	}
@@ -298,7 +298,6 @@ class ActivityGen {
 		var viewnumber = 0;
 		
 		for (rv : rootViews) {
-			println(rv)
 			switch (rv) {
 				GridLayoutPaneImpl: {
 					for (rve : (rv as GridLayoutPaneImpl).params) {
@@ -309,7 +308,6 @@ class ActivityGen {
 					}
 				}
 				FlowLayoutPaneImpl: {
-					println("FlowLAyoutPane")
 					for (rve : (rv as FlowLayoutPaneImpl).params) {
 						if(rve instanceof ViewIcon){
 							result += "\r\n case " + viewnumber + ":";
@@ -318,7 +316,6 @@ class ActivityGen {
 					}
 				}
 				ListViewImpl: {
-					println("ListView gefunden" + rv);
 				for (rve : rv.params) {
 					println("RVE ListView:" + rve);
 						if(rve instanceof ViewIcon){
@@ -328,7 +325,7 @@ class ActivityGen {
 					}
 				}
 				default: {
-					println("Kein GridLayoutPAne")
+					println("Kein GridLayoutPane")
 				}
 			}
 

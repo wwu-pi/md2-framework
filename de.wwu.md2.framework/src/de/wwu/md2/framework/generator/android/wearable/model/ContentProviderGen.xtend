@@ -137,24 +137,34 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			        return (Md2OnAttributeChangedHandler)this.attributeChangedEventHandlers.get(attribute);
 			    }
 			
-			
+«««						if(((Artikel)content).getSensorTest() != null){
+«««						return new
+«««						Md2Sensor(((Artikel)content).getSensorTest());	
 			
 			
 			@Override
 			    public Md2Type getValue(String attribute) {			
 			switch (attribute){
 			«FOR attribute: (content.entity as Entity).attributes»			
-			case "«attribute.name»":
-			if(((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»() != null){
-			return  
-			«IF attribute.type instanceof ReferencedType && !attribute.type.many»
-			((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»();	
-			«ELSE»
-			new «IF attribute.type.many»
-			Md2List<«EntityGen.getMd2TypeStringForAttributeType(attribute.type)»>	«ELSE»
-			«EntityGen.getMd2TypeStringForAttributeType(attribute.type)»«ENDIF»(((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»());	
-			«ENDIF»
-			} else { return null;}
+				case "«attribute.name»":
+				if(((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»() != null){
+				return  
+				«IF attribute.type instanceof ReferencedType && !attribute.type.many»
+					((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»();	
+				«ELSE»
+					new 
+					«IF attribute.type.many»
+						Md2List<«EntityGen.getMd2TypeStringForAttributeType(attribute.type)»>	
+					«ELSE»
+						«EntityGen.getMd2TypeStringForAttributeType(attribute.type)»
+					«ENDIF»
+					«IF (EntityGen.getMd2TypeStringForAttributeType(attribute.type) == "Md2Sensor")»
+						(((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»().getPlatformValue());
+					«ELSE»		
+						(((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»());
+					«ENDIF»
+				«ENDIF»
+				} else { return null;}
 			«ENDFOR»
 			default:return null;		
 			}
@@ -170,7 +180,6 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			        if ((this.getValue(name) == null && value != null) || value != null && !this.getValue(name).toString().equals(value.toString())) {
 			        switch (name){
 			        			«FOR attribute: (content.entity as Entity).attributes»			
-
 			        			case "«attribute.name»":
 			        			   «IF !(attribute.type instanceof StringType)»
 			        			   
@@ -178,19 +187,22 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			        			   		// angenommen wird entweder Md2String oder passender Md2Type als value
 			        			   		
 			        			   		«IF (attribute.type instanceof IntegerType)»
-			        			   		if(!(value instanceof «getMd2TypeStringForAttributeType(attribute.type)»)){
-			        			   			if(!(value.getString().toString().isEmpty())) {
-			        			   		 	((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(Integer.parseInt(value.getString().toString()));	
-			        			   			notifyChangeHandler(name);
-			        			   			}
-			        			   		} else {
-			        			   			((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«getMd2TypeStringForAttributeType(attribute.type)»)value).getPlatformValue());
-			        			   		}
-			        			   		break;
+				        			   		if(!(value instanceof «getMd2TypeStringForAttributeType(attribute.type)»)){
+				        			   			if(!(value.getString().toString().isEmpty())) {
+				        			   		 	((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(Integer.parseInt(value.getString().toString()));	
+				        			   			notifyChangeHandler(name);
+				        			   			}
+				        			   		} else {
+				        			   				((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«getMd2TypeStringForAttributeType(attribute.type)»)value).getPlatformValue());
+				        			   		}
+				        			   		break;
 			        			   		«ENDIF»
 			        			   «ELSE»
-			        			   ((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«IF attribute.type.many»
-			        			   Md2List«ELSE»«getMd2TypeStringForAttributeType(attribute.type)»«ENDIF») value)«IF attribute.type instanceof ReferencedType && !attribute.type.many»
+				        			   ((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«IF attribute.type.many»
+				        			   Md2List
+				        			   «ELSE»«getMd2TypeStringForAttributeType(attribute.type)»
+			        			   «ENDIF») value)
+			        			   «IF attribute.type instanceof ReferencedType && !attribute.type.many»
 			        			   );
 
 			        				«ELSEIF attribute.type.many»
