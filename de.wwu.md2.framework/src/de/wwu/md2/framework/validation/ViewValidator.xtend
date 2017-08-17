@@ -9,6 +9,7 @@ import org.eclipse.xtext.validation.EValidatorRegistrar
 import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.ListView
 import de.wwu.md2.framework.mD2.MD2Package
+import de.wwu.md2.framework.mD2.ActionDrawer
 
 /**
  * Valaidators for all view elements of MD2.
@@ -32,10 +33,15 @@ class ViewValidator extends AbstractMD2JavaValidator {
 	def checkListViews(ContainerElement ce){
 		if (ce instanceof ListView){
 			if (ce.elements.size > 0){
-				acceptError("ViewElements inside a ListView are not allowed - ListView uses a dedicated activity to display a list without additional content",
-				ce, null, -1, null);
+				for(e : ce.elements){
+					if (!(e instanceof ActionDrawer)){
+						acceptError("ViewElements inside a ListView are not allowed - ListView uses a dedicated activity to display a list without additional content",
+						ce, null, -1, null);
+					}
+				}
 			}
 		}
 	}
+
 	    
 }

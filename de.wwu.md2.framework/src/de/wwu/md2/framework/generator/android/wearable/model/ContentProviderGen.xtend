@@ -327,7 +327,7 @@ import de.uni_muenster.wi.md2library.model.contentProvider.implementation.Abstra
 		  				public void update() {
 		  					System.out.println("multi wurde geupdated");
 		  				}	
-		  				  	
+		  		}		  	
 	'''
 	}	
 	
