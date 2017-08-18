@@ -621,11 +621,13 @@ class ActivityGen {
 
 			@Override
 			public boolean onMenuItemClick(MenuItem menuItem) {
-			//TODO
-			return true;
-
+			
+			
+			«var int z = 0»
 			«FOR viewElement: rv.eAllContents.toIterable»
 				«IF viewElement instanceof ActionDrawer»
+					«IF(z++ == 0)»
+					«ENDIF»
 					«IF(viewElement.onItemClickAction !== null)»
 
 						Md2Action ca = null;
@@ -654,7 +656,9 @@ class ActivityGen {
 					«ENDIF»
 				«ENDIF»
 			«ENDFOR»
-
+			«IF (z == 0)»
+				return true;
+			«ENDIF»
 			}
 		}
 	'''
