@@ -119,6 +119,7 @@ class ActivityGen {
 			
 			public «rv.name»ListAdapter(){
 				content = Md2ContentProviderRegistry.getInstance().getContentMultiProvider("«rv.connectedProvider.contentProviderRef.name»");
+				content.addAdapter(this, "«rv.name»ListAdapter");
 				swipeHandler = new Md2ButtonOnSwipeHandler();
 				clickHandler = new Md2OnClickHandler();
 				«IF(!(rv.onClickAction === null))»
@@ -598,9 +599,6 @@ class ActivityGen {
 		    @Override
 		    protected void onResume(){
 		    	super.onResume();
-		    	«IF (rv instanceof ListView)»
-		    	wrv.getAdapter().notifyDataSetChanged();
-		    	«ENDIF»
 		    }
 		    
 		    @Override
