@@ -13,6 +13,8 @@ import de.wwu.md2.framework.mD2.WorkflowElementReference
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.OptionInput
+import de.wwu.md2.framework.mD2.Spacer
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 
 class ValueGen {
 
@@ -27,6 +29,8 @@ class ValueGen {
 				«val qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(ve, "_")»
 				«IF (qualifiedName !== null && !qualifiedName.empty)»
 					<item name="«qualifiedName»" type="id"/>
+				«ELSEIF ve instanceof Spacer»
+					<item name="spacer«MD2GeneratorUtil.getName(ve)»" type="id"/>
 				«ENDIF»
 			«ENDFOR»
 		</resources>

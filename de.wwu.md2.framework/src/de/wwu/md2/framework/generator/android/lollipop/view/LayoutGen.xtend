@@ -31,6 +31,8 @@ import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import de.wwu.md2.framework.mD2.OptionInput
+import de.wwu.md2.framework.mD2.Spacer
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 
 class LayoutGen {
 
@@ -197,6 +199,9 @@ class LayoutGen {
 			}
 			OptionInput: {
 				newElement = createOptionInputElement(doc, viewElement)
+			}
+			Spacer: {
+				newElement = createSpacerElement(doc, viewElement)
 			}
 			default:
 				return
@@ -385,5 +390,18 @@ class LayoutGen {
 		optionInputElement.setAttribute("android:enabled", String.valueOf(isEnabled))
 
 		return optionInputElement
+	}
+	
+	protected static def createSpacerElement(Document doc, Spacer spacer) {
+		val spacerElement = doc.createElement("android.widget.Space")
+		val qualifiedName = "spacer" + MD2GeneratorUtil.getName(spacer); // Spacer has no name in model
+
+		// id
+		spacerElement.setAttribute("android:id", "@id/" + qualifiedName)
+
+		spacerElement.setAttribute("android:layout_width", "match_parent")
+		spacerElement.setAttribute("android:layout_height", "30dp")
+		
+		return spacerElement
 	}
 }
