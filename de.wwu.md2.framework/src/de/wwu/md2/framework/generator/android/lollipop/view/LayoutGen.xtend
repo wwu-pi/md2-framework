@@ -30,6 +30,7 @@ import javax.xml.transform.stream.StreamResult
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.w3c.dom.Document
 import org.w3c.dom.Element
+import de.wwu.md2.framework.mD2.OptionInput
 
 class LayoutGen {
 
@@ -194,6 +195,9 @@ class LayoutGen {
 				if(viewElement.name.startsWith("_title")) { return } // Skip title label
 				newElement = createLabelElement(doc, viewElement)
 			}
+			OptionInput: {
+				newElement = createOptionInputElement(doc, viewElement)
+			}
 			default:
 				return
 		}
@@ -352,5 +356,34 @@ class LayoutGen {
 		labelElement.setAttribute("android:text", "@string/" + qualifiedName + "_text")
 
 		return labelElement
+	}
+	
+	protected static def createOptionInputElement(Document doc, OptionInput optionInput) {
+		val optionInputElement = doc.createElement(Settings.MD2LIBRARY_VIEW_OPTIONINPUT)
+		val qnp = new DefaultDeclarativeQualifiedNameProvider
+		val qualifiedName = qnp.getFullyQualifiedName(optionInput).toString("_")
+
+		// id
+		optionInputElement.setAttribute("android:id", "@id/" + qualifiedName)
+
+		if(optionInput.width == -1){
+			optionInputElement.setAttribute("android:layout_width", "match_parent")
+		}else{
+			optionInputElement.setAttribute("android:layout_width", "0dp")
+			optionInputElement.setAttribute("android:layout_columnWeight", String.valueOf(optionInput.width))
+		}
+		optionInputElement.setAttribute("android:layout_height", "wrap_content")
+		
+		optionInputElement.setAttribute("android:entries", "@array/" + qualifiedName + "_entries")
+		
+		// disabled 
+		//TODO working on Spinners?
+		var isEnabled = true
+		if (optionInput.isDisabled)
+			isEnabled = false
+
+		optionInputElement.setAttribute("android:enabled", String.valueOf(isEnabled))
+
+		return optionInputElement
 	}
 }

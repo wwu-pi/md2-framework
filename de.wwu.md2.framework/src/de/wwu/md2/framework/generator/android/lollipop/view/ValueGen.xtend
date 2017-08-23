@@ -12,6 +12,7 @@ import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.WorkflowElementReference
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import de.wwu.md2.framework.mD2.ContentContainer
+import de.wwu.md2.framework.mD2.OptionInput
 
 class ValueGen {
 
@@ -24,7 +25,7 @@ class ValueGen {
 			«ENDFOR»
 			«FOR ve : viewGUIElements»
 				«val qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(ve, "_")»
-				«IF (qualifiedName != null && !qualifiedName.empty)»
+				«IF (qualifiedName !== null && !qualifiedName.empty)»
 					<item name="«qualifiedName»" type="id"/>
 				«ENDIF»
 			«ENDFOR»
@@ -53,7 +54,7 @@ class ValueGen {
 	def static getActivityTitle(ContainerElement element) {
 		switch element {
 			ContentContainer: {
-				if(element.elements.filter(Label).findFirst[label | label.name.startsWith("_title")] != null){
+				if(element.elements.filter(Label).findFirst[label | label.name.startsWith("_title")] !== null){
 					return element.elements.filter(Label).findFirst[label | label.name.startsWith("_title")].text
 				} else {
 					return ""
@@ -66,6 +67,21 @@ class ValueGen {
 	protected def static String generateStringEntry(ViewGUIElement viewGUIElement) {
 		val qnp = new DefaultDeclarativeQualifiedNameProvider
 		switch viewGUIElement {
+			OptionInput:
+				return '''
+					<string-array name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_entries">
+						«IF viewGUIElement.enumBody !== null»
+							«FOR elem : viewGUIElement.enumBody.elements»
+								<item>«elem»</item>
+							«ENDFOR»
+						«ENDIF»
+						«IF viewGUIElement.enumReference !== null && viewGUIElement.enumReference.enumBody !== null»
+							«FOR elem : viewGUIElement.enumReference.enumBody.elements»
+								<item>«elem»</item>
+							«ENDFOR»
+						«ENDIF»
+					</string-array>
+				'''
 			InputElement:
 				return '''
 					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_title">«viewGUIElement.name»</string>
