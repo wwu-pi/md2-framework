@@ -248,6 +248,7 @@ class LayoutGen {
 		glpElement.setAttribute("android:layout_height", "wrap_content")
 		glpElement.setAttribute("android:layout_width", "match_parent")
 		glpElement.setAttribute("android:layout_gravity", "fill_horizontal")
+		glpElement.setAttribute("android:layout_marginTop", "5dp")
 		
 		// handle parameters
 		glp.params.forEach [ p |
@@ -357,8 +358,9 @@ class LayoutGen {
 		}
 		labelElement.setAttribute("android:layout_height", "wrap_content")
 		labelElement.setAttribute("android:layout_gravity", "fill_horizontal")
-
-		labelElement.setAttribute("android:text", "@string/" + qualifiedName + "_text")
+		
+		labelElement.setAttribute("android:textSize", "18sp")
+    	labelElement.setAttribute("android:text", "@string/" + qualifiedName + "_text")
 
 		return labelElement
 	}
