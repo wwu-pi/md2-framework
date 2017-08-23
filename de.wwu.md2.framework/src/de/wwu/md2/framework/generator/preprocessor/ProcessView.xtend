@@ -447,7 +447,7 @@ class ProcessView extends AbstractPreprocessor {
 	    val inputs = view.eAllContents.toIterable.filter(InputElement).toList
 		
 		for (input : inputs) {
-			if(input.eIsSet(MD2Package.eINSTANCE.inputElement_LabelText) || input.eIsSet(MD2Package.eINSTANCE.inputElement_TooltipText)) {
+			if((input.eIsSet(MD2Package.eINSTANCE.inputElement_LabelText) && input.labelText.trim.length > 0) || input.eIsSet(MD2Package.eINSTANCE.inputElement_TooltipText)) {
 				
 				// position of input element in container
 				val lst = input.eContainer.eGet(input.eContainingFeature) as EList<EObject>
@@ -457,7 +457,7 @@ class ProcessView extends AbstractPreprocessor {
 				val gridLayout = factory.createGridLayoutPane
 				val columnsParam = factory.createGridLayoutPaneColumnsParam
 				val rowsParam = factory.createGridLayoutPaneRowsParam
-				val numOfCols = if (input.eIsSet(MD2Package.eINSTANCE.inputElement_LabelText)) 3 else 2
+				val numOfCols = if (input.eIsSet(MD2Package.eINSTANCE.inputElement_LabelText) && input.labelText.trim.length > 0) 3 else 2
 				gridLayout.setName("__Container" + input.name)
 				columnsParam.setValue(numOfCols)
 				rowsParam.setValue(1)
@@ -470,7 +470,7 @@ class ProcessView extends AbstractPreprocessor {
 				}
 				
 				// add label
-				if (input.eIsSet(MD2Package.eINSTANCE.inputElement_LabelText)) {
+				if (input.eIsSet(MD2Package.eINSTANCE.inputElement_LabelText) && input.labelText.trim.length > 0) {
 					val label = factory.createLabel
 					label.setName("__Label" + input.name)
 					label.setText(input.labelText)
@@ -479,7 +479,7 @@ class ProcessView extends AbstractPreprocessor {
 				}
 				
 				// add this input
-				val width = if (input.eIsSet(MD2Package.eINSTANCE.inputElement_LabelText)) 50 else 90
+				val width = if (input.eIsSet(MD2Package.eINSTANCE.inputElement_LabelText) && input.labelText.trim.length > 0) 50 else 90
 				input.setWidth(width)
 				gridLayout.elements.add(input)
 				
