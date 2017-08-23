@@ -249,6 +249,7 @@ class LayoutGen {
 		glpElement.setAttribute("android:layout_width", "match_parent")
 		glpElement.setAttribute("android:layout_gravity", "fill_horizontal")
 		glpElement.setAttribute("android:layout_marginTop", "5dp")
+		glpElement.setAttribute("android:layout_marginBottom", "15dp")
 		
 		// handle parameters
 		glp.params.forEach [ p |
@@ -402,7 +403,7 @@ class LayoutGen {
 		spacerElement.setAttribute("android:id", "@id/" + qualifiedName)
 
 		spacerElement.setAttribute("android:layout_width", "match_parent")
-		spacerElement.setAttribute("android:layout_height", "30dp")
+		spacerElement.setAttribute("android:layout_height", "35dp")
 		
 		return spacerElement
 	}
