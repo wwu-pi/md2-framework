@@ -619,6 +619,18 @@ class LayoutGen {
       	generateMaterialIconsXMLStrings("M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM17,13h-4v4h-2v-4L7,13v-2h4L11,7h2v4h4v2z", "white"
 		))	
 		
+		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_add_circle_outline_white_24dp.xml",
+      generateMaterialIconsXMLStrings("M13,7h-2v4L7,11v2h4v4h2v-4h4v-2h-4L13,7zM12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM12,20c-4.41,0 -8,-3.59 -8,-8s3.59,-8 8,-8 8,3.59 8,8 -3.59,8 -8,8z", "white"
+		))	
+
+		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_build_white_24dp.xml",
+      	generateMaterialIconsXMLStrings("M22.7,19l-9.1,-9.1c0.9,-2.3 0.4,-5 -1.5,-6.9 -2,-2 -5,-2.4 -7.4,-1.3L9,6 6,9 1.6,4.7C0.4,7.1 0.9,10.1 2.9,12.1c1.9,1.9 4.6,2.4 6.9,1.5l9.1,9.1c0.4,0.4 1,0.4 1.4,0l2.3,-2.3c0.5,-0.4 0.5,-1.1 0.1,-1.4z", "white"
+		))	
+
+		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_flare_white_24dp.xml",
+      generateMaterialIconsXMLStrings("M7,11L1,11v2h6v-2zM9.17,7.76L7.05,5.64 5.64,7.05l2.12,2.12 1.41,-1.41zM13,1h-2v6h2L13,1zM18.36,7.05l-1.41,-1.41 -2.12,2.12 1.41,1.41 2.12,-2.12zM17,11v2h6v-2h-6zM12,9c-1.66,0 -3,1.34 -3,3s1.34,3 3,3 3,-1.34 3,-3 -1.34,-3 -3,-3zM14.83,16.24l2.12,2.12 1.41,-1.41 -2.12,-2.12 -1.41,1.41zM5.64,16.95l1.41,1.41 2.12,-2.12 -1.41,-1.41 -2.12,2.12zM11,23h2v-6h-2v6z", "white"
+		))	
+
 //		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_add_circle_white_24dp.xml",
 //      generateMaterialIconsXMLStrings("", "white"
 //		))	

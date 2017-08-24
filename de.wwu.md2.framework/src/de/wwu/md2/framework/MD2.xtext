@@ -563,7 +563,7 @@ ListViewLayoutParam:
 ;
 
 ViewIcon:
-	"ic_add_shopping_cart_white_24dp" |"ic_shopping_cart_white_24dp"|"ic_remove_shopping_cart_white_24dp"
+	"ic_add_shopping_cart_white_24dp" | "ic_shopping_cart_white_24dp" | "ic_remove_shopping_cart_white_24dp" | "ic_add_circle_outline_white_24dp" | "ic_build_white_24dp" | "ic_flare_white_24dp" | "ic_add_circle_white_24dp"
 ;
 
 ViewIconActionDrawer:
