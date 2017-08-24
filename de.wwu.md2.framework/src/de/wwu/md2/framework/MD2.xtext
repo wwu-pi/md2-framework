@@ -564,7 +564,8 @@ ListViewLayoutParam:
 ;
 
 ViewIcon:
-	"close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light"|"preference_wrapped_icon" | "open_on_phone_animation" | "open_on_phone"
+	"close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light"|"preference_wrapped_icon" | "open_on_phone_animation" | "open_on_phone" |
+	"ic_add_shopping_cart_black_24dp" |"ic_shopping_cart_black_24dp"|"ic_remove_shopping_cart_black_24dp"
 ;
 
 ViewIconActionDrawer:
