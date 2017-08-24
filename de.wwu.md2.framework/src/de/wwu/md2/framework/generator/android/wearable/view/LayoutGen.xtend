@@ -604,50 +604,26 @@ class LayoutGen {
 
 
 		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_add_shopping_cart_white_24dp.xml",
-      	generateMaterialIconsXMLStrings("M11,9h2L13,6h3L16,4h-3L13,1h-2v3L8,4v2h3v3zM7,18c-1.1,0 -1.99,0.9 -1.99,2S5.9,22 7,22s2,-0.9 2,-2 -0.9,-2 -2,-2zM17,18c-1.1,0 -1.99,0.9 -1.99,2s0.89,2 1.99,2 2,-0.9 2,-2 -0.9,-2 -2,-2zM7.17,14.75l0.03,-0.12 0.9,-1.63h7.45c0.75,0 1.41,-0.41 1.75,-1.03l3.86,-7.01L19.42,4h-0.01l-1.1,2 -2.76,5L8.53,11l-0.13,-0.27L6.16,6l-0.95,-2 -0.94,-2L1,2v2h2l3.6,7.59 -1.35,2.45c-0.16,0.28 -0.25,0.61 -0.25,0.96 0,1.1 0.9,2 2,2h12v-2L7.42,15c-0.13,0 -0.25,-0.11 -0.25,-0.25z"
+      	generateMaterialIconsXMLStrings("M11,9h2L13,6h3L16,4h-3L13,1h-2v3L8,4v2h3v3zM7,18c-1.1,0 -1.99,0.9 -1.99,2S5.9,22 7,22s2,-0.9 2,-2 -0.9,-2 -2,-2zM17,18c-1.1,0 -1.99,0.9 -1.99,2s0.89,2 1.99,2 2,-0.9 2,-2 -0.9,-2 -2,-2zM7.17,14.75l0.03,-0.12 0.9,-1.63h7.45c0.75,0 1.41,-0.41 1.75,-1.03l3.86,-7.01L19.42,4h-0.01l-1.1,2 -2.76,5L8.53,11l-0.13,-0.27L6.16,6l-0.95,-2 -0.94,-2L1,2v2h2l3.6,7.59 -1.35,2.45c-0.16,0.28 -0.25,0.61 -0.25,0.96 0,1.1 0.9,2 2,2h12v-2L7.42,15c-0.13,0 -0.25,-0.11 -0.25,-0.25z", "white"
 		))
 		
 		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_shopping_cart_white_24dp.xml",
-			"<vector xmlns:android=\"http://schemas.android.com/apk/res/android\"
-        android:width=\"24dp\"
-        android:height=\"24dp\"
-        android:viewportWidth=\"24.0\"
-        android:viewportHeight=\"24.0\">
-    	<path
-        android:fillColor=\"@color/white\"
-        android:pathData=\"M7,18c-1.1,0 -1.99,0.9 -1.99,2S5.9,22 7,22s2,-0.9 2,-2 -0.9,-2 -2,-2zM1,2v2h2l3.6,7.59 -1.35,2.45c-0.16,0.28 -0.25,0.61 -0.25,0.96 0,1.1 0.9,2 2,2h12v-2L7.42,15c-0.14,0 -0.25,-0.11 -0.25,-0.25l0.03,-0.12 0.9,-1.63h7.45c0.75,0 1.41,-0.41 1.75,-1.03l3.58,-6.49c0.08,-0.14 0.12,-0.31 0.12,-0.48 0,-0.55 -0.45,-1 -1,-1L5.21,4l-0.94,-2L1,2zM17,18c-1.1,0 -1.99,0.9 -1.99,2s0.89,2 1.99,2 2,-0.9 2,-2 -0.9,-2 -2,-2z\"/>
-		</vector>")
+      	generateMaterialIconsXMLStrings("M7,18c-1.1,0 -1.99,0.9 -1.99,2S5.9,22 7,22s2,-0.9 2,-2 -0.9,-2 -2,-2zM1,2v2h2l3.6,7.59 -1.35,2.45c-0.16,0.28 -0.25,0.61 -0.25,0.96 0,1.1 0.9,2 2,2h12v-2L7.42,15c-0.14,0 -0.25,-0.11 -0.25,-0.25l0.03,-0.12 0.9,-1.63h7.45c0.75,0 1.41,-0.41 1.75,-1.03l3.58,-6.49c0.08,-0.14 0.12,-0.31 0.12,-0.48 0,-0.55 -0.45,-1 -1,-1L5.21,4l-0.94,-2L1,2zM17,18c-1.1,0 -1.99,0.9 -1.99,2s0.89,2 1.99,2 2,-0.9 2,-2 -0.9,-2 -2,-2z", "white"
+		))
 		
 		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_remove_shopping_cart_white_24dp.xml",
-			"<vector xmlns:android=\"http://schemas.android.com/apk/res/android\"
-        android:width=\"24dp\"
-        android:height=\"24dp\"
-        android:viewportWidth=\"24.0\"
-        android:viewportHeight=\"24.0\">
-    	<path
-        android:fillColor=\"@color/white\"
-        android:pathData=\"M22.73,22.73L2.77,2.77 2,2l-0.73,-0.73L0,2.54l4.39,4.39 2.21,4.66 -1.35,2.45c-0.16,0.28 -0.25,0.61 -0.25,0.96 0,1.1 0.9,2 2,2h7.46l1.38,1.38c-0.5,0.36 -0.83,0.95 -0.83,1.62 0,1.1 0.89,2 1.99,2 0.67,0 1.26,-0.33 1.62,-0.84L21.46,24l1.27,-1.27zM7.42,15c-0.14,0 -0.25,-0.11 -0.25,-0.25l0.03,-0.12 0.9,-1.63h2.36l2,2L7.42,15zM15.55,13c0.75,0 1.41,-0.41 1.75,-1.03l3.58,-6.49c0.08,-0.14 0.12,-0.31 0.12,-0.48 0,-0.55 -0.45,-1 -1,-1L6.54,4l9.01,9zM7,18c-1.1,0 -1.99,0.9 -1.99,2S5.9,22 7,22s2,-0.9 2,-2 -0.9,-2 -2,-2z\"/>
-		</vector>")
-		
-		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_remove_shopping_cart_white_24dp.xml",
-			"<vector xmlns:android=\"http://schemas.android.com/apk/res/android\"
-        android:width=\"24dp\"
-        android:height=\"24dp\"
-        android:viewportWidth=\"24.0\"
-        android:viewportHeight=\"24.0\">
-    	<path
-        android:fillColor=\"@color/white\"
-        android:pathData=\"M22.73,22.73L2.77,2.77 2,2l-0.73,-0.73L0,2.54l4.39,4.39 2.21,4.66 -1.35,2.45c-0.16,0.28 -0.25,0.61 -0.25,0.96 0,1.1 0.9,2 2,2h7.46l1.38,1.38c-0.5,0.36 -0.83,0.95 -0.83,1.62 0,1.1 0.89,2 1.99,2 0.67,0 1.26,-0.33 1.62,-0.84L21.46,24l1.27,-1.27zM7.42,15c-0.14,0 -0.25,-0.11 -0.25,-0.25l0.03,-0.12 0.9,-1.63h2.36l2,2L7.42,15zM15.55,13c0.75,0 1.41,-0.41 1.75,-1.03l3.58,-6.49c0.08,-0.14 0.12,-0.31 0.12,-0.48 0,-0.55 -0.45,-1 -1,-1L6.54,4l9.01,9zM7,18c-1.1,0 -1.99,0.9 -1.99,2S5.9,22 7,22s2,-0.9 2,-2 -0.9,-2 -2,-2z\"/>
-		</vector>")
+      	generateMaterialIconsXMLStrings("M22.73,22.73L2.77,2.77 2,2l-0.73,-0.73L0,2.54l4.39,4.39 2.21,4.66 -1.35,2.45c-0.16,0.28 -0.25,0.61 -0.25,0.96 0,1.1 0.9,2 2,2h7.46l1.38,1.38c-0.5,0.36 -0.83,0.95 -0.83,1.62 0,1.1 0.89,2 1.99,2 0.67,0 1.26,-0.33 1.62,-0.84L21.46,24l1.27,-1.27zM7.42,15c-0.14,0 -0.25,-0.11 -0.25,-0.25l0.03,-0.12 0.9,-1.63h2.36l2,2L7.42,15zM15.55,13c0.75,0 1.41,-0.41 1.75,-1.03l3.58,-6.49c0.08,-0.14 0.12,-0.31 0.12,-0.48 0,-0.55 -0.45,-1 -1,-1L6.54,4l9.01,9zM7,18c-1.1,0 -1.99,0.9 -1.99,2S5.9,22 7,22s2,-0.9 2,-2 -0.9,-2 -2,-2z", "white"
+		))	
+
 	}
 	
-	protected static def generateMaterialIconsXMLStrings(String pathData){
+	protected static def generateMaterialIconsXMLStrings(String pathData, String color){
 		var head = "<vector xmlns:android=\"http://schemas.android.com/apk/res/android\" android:width=\"24dp\"
         android:height=\"24dp\"
         android:viewportWidth=\"24.0\"
         android:viewportHeight=\"24.0\">
     	<path
-        android:fillColor=\"@color/white\"
+        android:fillColor=\"@color/"+ color + "\"
 		android:pathData="
 		var tail = "/>	</vector>"
 		return head + "\"" + pathData + "\""+ tail
