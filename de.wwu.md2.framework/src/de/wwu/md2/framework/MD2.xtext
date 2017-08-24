@@ -559,18 +559,15 @@ ListViewParam:
 ;
 
 ListViewLayoutParam:
-//	{ViewIcon} 'icon' value = ViewIcon?
-	{ViewIcon} 'icon' value = ("close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light"|"preference_wrapped_icon" | "open_on_phone_animation" | "open_on_phone" |
-	"ic_add_shopping_cart_white_24dp" |"ic_shopping_cart_white_24dp"|"ic_remove_shopping_cart_white_24dp")?
+	{ViewIcon} 'icon' value = ViewIcon?
 ;
 
 ViewIcon:
-	"close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light"|"preference_wrapped_icon" | "open_on_phone_animation" | "open_on_phone" |
-	"ic_add_shopping_cart_black_24dp" |"ic_shopping_cart_black_24dp"|"ic_remove_shopping_cart_black_24dp"
+	"ic_add_shopping_cart_white_24dp" |"ic_shopping_cart_white_24dp"|"ic_remove_shopping_cart_white_24dp"
 ;
 
 ViewIconActionDrawer:
-	"btn_star_big_on" | "arrow_up_float"
+	ViewIcon//"ic_shopping_cart_white_24dp" | "ic_remove_shopping_cart_white_24dp" | "ic_add_circle_white_24dp" | "ic_add_shopping_cart_white_24dp"
 ;
 
 /*
@@ -590,7 +587,7 @@ GridLayoutPane:
  * These are besides the number of columns and rows all TabSpecificParams.
  */
 GridLayoutPaneParam:
-	{GridLayoutPaneColumnsParam} 'columns' value = INT | {GridLayoutPaneRowsParam} 'rows' value = INT | CommonContainerParam | {ViewIcon} 'icon' value = ViewIcon? //{ViewIcon} 'icon' value = ("close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light")?
+	{GridLayoutPaneColumnsParam} 'columns' value = INT | {GridLayoutPaneRowsParam} 'rows' value = INT | CommonContainerParam | {ViewIcon} 'icon' value = ViewIcon? 
 ;
 
 /*

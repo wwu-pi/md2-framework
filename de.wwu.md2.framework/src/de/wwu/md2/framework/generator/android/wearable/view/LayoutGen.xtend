@@ -339,7 +339,7 @@ class LayoutGen {
 						println("ActionDrawer itemClickAction:" + itemClickAction)
 						var Element item = doc.createElement("item")
 						item.setAttribute("android:id", ("@+id/" + (itemClickAction.name + "_item" + (ElementCounter++).toString)))
-						item.setAttribute("android:icon", ("@android:drawable/" + ActionsIcons.get(ElementCounter-1))) // TODO: Icons auswählen können
+						item.setAttribute("android:icon", ("@drawable/" + ActionsIcons.get(ElementCounter-1))) // TODO: Icons auswählen können
 						item.setAttribute("android:title", ActionTitel.get(ElementCounter-1));//MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "").toFirstUpper)
 			 			rootElement.appendChild(item)
 					}
@@ -614,6 +614,15 @@ class LayoutGen {
 		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_remove_shopping_cart_white_24dp.xml",
       	generateMaterialIconsXMLStrings("M22.73,22.73L2.77,2.77 2,2l-0.73,-0.73L0,2.54l4.39,4.39 2.21,4.66 -1.35,2.45c-0.16,0.28 -0.25,0.61 -0.25,0.96 0,1.1 0.9,2 2,2h7.46l1.38,1.38c-0.5,0.36 -0.83,0.95 -0.83,1.62 0,1.1 0.89,2 1.99,2 0.67,0 1.26,-0.33 1.62,-0.84L21.46,24l1.27,-1.27zM7.42,15c-0.14,0 -0.25,-0.11 -0.25,-0.25l0.03,-0.12 0.9,-1.63h2.36l2,2L7.42,15zM15.55,13c0.75,0 1.41,-0.41 1.75,-1.03l3.58,-6.49c0.08,-0.14 0.12,-0.31 0.12,-0.48 0,-0.55 -0.45,-1 -1,-1L6.54,4l9.01,9zM7,18c-1.1,0 -1.99,0.9 -1.99,2S5.9,22 7,22s2,-0.9 2,-2 -0.9,-2 -2,-2z", "white"
 		))	
+		
+		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_add_circle_white_24dp.xml",
+      	generateMaterialIconsXMLStrings("M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM17,13h-4v4h-2v-4L7,13v-2h4L11,7h2v4h4v2z", "white"
+		))	
+		
+//		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_add_circle_white_24dp.xml",
+//      generateMaterialIconsXMLStrings("", "white"
+//		))	
+		
 
 	}
 	
