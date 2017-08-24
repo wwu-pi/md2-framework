@@ -8,6 +8,7 @@ public class Settings {
 	public static String MD2_RESOURCE_PATH = "android/wear/"
 	public static String MD2_RESOURCE_PATH_LOLLIPOP = "android/lollipop/"
 	public static String MD2_RESOURCE_MIPMAP_PATH = MD2_RESOURCE_PATH_LOLLIPOP + "mipmap/"
+	public static String MD2_RESOURCE_DRAWABLE_PATH = MD2_RESOURCE_PATH_LOLLIPOP + "drawable/"
 
 	/***
 	 * MD2Library for android

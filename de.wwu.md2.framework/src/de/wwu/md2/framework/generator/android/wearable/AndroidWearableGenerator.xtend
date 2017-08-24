@@ -184,6 +184,8 @@ SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.getEntities()));
 
 			// Layouts
 			LayoutGen.generateLayouts(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
+			
+			LayoutGen.generateMaterialIcons(fsa, rootFolder)
 
 			/***************************************************
 			 * 
