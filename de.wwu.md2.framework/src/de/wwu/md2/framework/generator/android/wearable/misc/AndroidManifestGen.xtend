@@ -19,7 +19,7 @@ class AndroidManifestGen {
 		        android:name=".«app.name»"
 		        android:allowBackup="true"
 		        android:icon="@mipmap/ic_launcher"
-		        android:label="Test"
+		        android:label="«app.name»"
 		        android:theme="@style/PSWatchapp" >
 		<!--			<activity
 					          android:name=".StartActivity"
@@ -32,7 +32,7 @@ class AndroidManifestGen {
 	        «FOR rv : rootViews»
 	        	<activity
        		android:name=".«rv.name.toFirstUpper»Activity"
-	        		android:label="@string/title_activity_«rv.name.toFirstLower»"
+	        		<!-- android:label="@string/title_activity_«rv.name.toFirstLower»" -->
 	        		android:launchMode="singleInstance">
 	        		«IF rv.equals(rootViews.get(0))»
 		        		<intent-filter>
