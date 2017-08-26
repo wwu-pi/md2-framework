@@ -553,6 +553,7 @@ class LayoutGen {
 		labelElement.setAttribute("android:layout_gravity", "fill_horizontal")
 
 		labelElement.setAttribute("android:text", "@string/" + qualifiedName + "_text")
+		labelElement.setAttribute("android:textColor","@color/white");
 
 		return labelElement
 	}
