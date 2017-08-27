@@ -621,7 +621,7 @@ class LayoutGen {
 		))	
 		
 		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_add_circle_outline_white_24dp.xml",
-      generateMaterialIconsXMLStrings("M13,7h-2v4L7,11v2h4v4h2v-4h4v-2h-4L13,7zM12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM12,20c-4.41,0 -8,-3.59 -8,-8s3.59,-8 8,-8 8,3.59 8,8 -3.59,8 -8,8z", "white"
+      	generateMaterialIconsXMLStrings("M13,7h-2v4L7,11v2h4v4h2v-4h4v-2h-4L13,7zM12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM12,20c-4.41,0 -8,-3.59 -8,-8s3.59,-8 8,-8 8,3.59 8,8 -3.59,8 -8,8z", "white"
 		))	
 
 		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_build_white_24dp.xml",
@@ -629,7 +629,31 @@ class LayoutGen {
 		))	
 
 		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_flare_white_24dp.xml",
-      generateMaterialIconsXMLStrings("M7,11L1,11v2h6v-2zM9.17,7.76L7.05,5.64 5.64,7.05l2.12,2.12 1.41,-1.41zM13,1h-2v6h2L13,1zM18.36,7.05l-1.41,-1.41 -2.12,2.12 1.41,1.41 2.12,-2.12zM17,11v2h6v-2h-6zM12,9c-1.66,0 -3,1.34 -3,3s1.34,3 3,3 3,-1.34 3,-3 -1.34,-3 -3,-3zM14.83,16.24l2.12,2.12 1.41,-1.41 -2.12,-2.12 -1.41,1.41zM5.64,16.95l1.41,1.41 2.12,-2.12 -1.41,-1.41 -2.12,2.12zM11,23h2v-6h-2v6z", "white"
+      	generateMaterialIconsXMLStrings("M7,11L1,11v2h6v-2zM9.17,7.76L7.05,5.64 5.64,7.05l2.12,2.12 1.41,-1.41zM13,1h-2v6h2L13,1zM18.36,7.05l-1.41,-1.41 -2.12,2.12 1.41,1.41 2.12,-2.12zM17,11v2h6v-2h-6zM12,9c-1.66,0 -3,1.34 -3,3s1.34,3 3,3 3,-1.34 3,-3 -1.34,-3 -3,-3zM14.83,16.24l2.12,2.12 1.41,-1.41 -2.12,-2.12 -1.41,1.41zM5.64,16.95l1.41,1.41 2.12,-2.12 -1.41,-1.41 -2.12,2.12zM11,23h2v-6h-2v6z", "white"
+		))	
+		
+		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_add_box_white_24dp.xml",
+     	generateMaterialIconsXMLStrings("M19,3L5,3c-1.11,0 -2,0.9 -2,2v14c0,1.1 0.89,2 2,2h14c1.1,0 2,-0.9 2,-2L21,5c0,-1.1 -0.9,-2 -2,-2zM17,13h-4v4h-2v-4L7,13v-2h4L11,7h2v4h4v2z", "white"
+		))	
+		
+		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_remove_circle_white_24dp.xml",
+     	generateMaterialIconsXMLStrings("M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM17,13L7,13v-2h10v2z", "white"
+		))	
+		
+		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_create_white_24dp.xml",
+     	generateMaterialIconsXMLStrings("M3,17.25V21h3.75L17.81,9.94l-3.75,-3.75L3,17.25zM20.71,7.04c0.39,-0.39 0.39,-1.02 0,-1.41l-2.34,-2.34c-0.39,-0.39 -1.02,-0.39 -1.41,0l-1.83,1.83 3.75,3.75 1.83,-1.83z", "white"
+		))	
+		
+		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_clear_white_24dp.xml",
+     	generateMaterialIconsXMLStrings("M19,6.41L17.59,5 12,10.59 6.41,5 5,6.41 10.59,12 5,17.59 6.41,19 12,13.41 17.59,19 19,17.59 13.41,12z", "white"
+		))	
+		
+		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_help_white_24dp.xml",
+     	generateMaterialIconsXMLStrings("M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM13,19h-2v-2h2v2zM15.07,11.25l-0.9,0.92C13.45,12.9 13,13.5 13,15h-2v-0.5c0,-1.1 0.45,-2.1 1.17,-2.83l1.24,-1.26c0.37,-0.36 0.59,-0.86 0.59,-1.41 0,-1.1 -0.9,-2 -2,-2s-2,0.9 -2,2L8,9c0,-2.21 1.79,-4 4,-4s4,1.79 4,4c0,0.88 -0.36,1.68 -0.93,2.25z", "white"
+		))	
+		
+		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_lightbulb_outline_white_24dp.xml",
+     	generateMaterialIconsXMLStrings("M9,21c0,0.55 0.45,1 1,1h4c0.55,0 1,-0.45 1,-1v-1L9,20v1zM12,2C8.14,2 5,5.14 5,9c0,2.38 1.19,4.47 3,5.74L8,17c0,0.55 0.45,1 1,1h6c0.55,0 1,-0.45 1,-1v-2.26c1.81,-1.27 3,-3.36 3,-5.74 0,-3.86 -3.14,-7 -7,-7zM14.85,13.1l-0.85,0.6L14,16h-4v-2.3l-0.85,-0.6C7.8,12.16 7,10.63 7,9c0,-2.76 2.24,-5 5,-5s5,2.24 5,5c0,1.63 -0.8,3.16 -2.15,4.1z", "white"
 		))	
 
 //		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_add_circle_white_24dp.xml",
