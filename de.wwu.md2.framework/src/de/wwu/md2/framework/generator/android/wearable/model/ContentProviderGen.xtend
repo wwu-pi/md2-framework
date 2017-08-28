@@ -82,7 +82,7 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			import de.uni_muenster.wi.md2library.model.type.implementation.Md2List;
 			import de.uni_muenster.wi.md2library.model.dataStore.AtomicExpression;
 			import de.uni_muenster.wi.md2library.model.dataStore.Operator;
-			import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Type;
+			import de.uni_muenster.wi.md2library.model.dataStore.Filter;
 						
 			import «mainPackage».md2.model.«(content.entity as Entity).name»;
 			
@@ -256,9 +256,9 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 				public void newEntity(){
 					content = new «(content.entity as Entity).name»();
 				}
-						public void update() {
-				System.out.println("single wurde geupdated");			
-						}
+«««						public void update() {
+«««				System.out.println("single wurde geupdated");			
+«««						}
 			}
 			
 		'''}
@@ -278,7 +278,7 @@ import de.uni_muenster.wi.md2library.model.contentProvider.implementation.Abstra
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
 		import de.uni_muenster.wi.md2library.model.dataStore.AtomicExpression;
 		import de.uni_muenster.wi.md2library.model.dataStore.Operator;
-		import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Type;
+		import de.uni_muenster.wi.md2library.model.dataStore.Filter;
 		
 		
 		«MD2AndroidWearableUtil.generateImportAllTypes»
