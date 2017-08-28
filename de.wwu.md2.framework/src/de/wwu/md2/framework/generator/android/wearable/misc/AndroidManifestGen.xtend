@@ -14,6 +14,7 @@ class AndroidManifestGen {
 		    package="«packageName»" >
 
 		     <uses-feature android:name="android.hardware.type.watch" />
+		     <uses-permission android:name="android.permission.INTERNET" />
 
 		    <application
 		        android:name=".«app.name»"
