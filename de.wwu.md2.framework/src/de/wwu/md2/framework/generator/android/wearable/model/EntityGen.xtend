@@ -110,7 +110,8 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 @DatabaseTable(tableName = "«entity.name.toFirstLower»")
 		public class «entity.name.toFirstUpper»  implements Serializable,Md2Entity{
 		
-«««		@SerializedName("__internalId")
+		@SerializedName("__internalId")
+		@Expose
 		@DatabaseField(generatedId = true, columnName = "id")
 		    private long id;
 		    
@@ -152,6 +153,7 @@ private «element.className» «element.attributeName»;
 		
 		    public «entity.name.toFirstUpper»() {
 		        super();
+		        this.setModifiedDate(new Timestamp(system.currentTimeMillis()));
 		    }
 		    
 		    		
@@ -211,6 +213,7 @@ private «element.className» «element.attributeName»;
 				
 		public void set«element.name.toFirstUpper»(«getJavaTypeStringForAttributeType(element.type)» «element.name» ){
 				this.«element.name»=«element.name»; 	
+				this.setModifiedDate(new Timestamp(system.currentTimeMillis()));
 				}		
 		«ENDIF»
 		«ENDFOR»
