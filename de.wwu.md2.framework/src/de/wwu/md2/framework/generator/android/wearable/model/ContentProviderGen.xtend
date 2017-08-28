@@ -80,6 +80,9 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
 			import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
 			import de.uni_muenster.wi.md2library.model.type.implementation.Md2List;
+			import de.uni_muenster.wi.md2library.model.dataStore.AtomicExpression;
+			import de.uni_muenster.wi.md2library.model.dataStore.Operator;
+			import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Type;
 						
 			import «mainPackage».md2.model.«(content.entity as Entity).name»;
 			
@@ -91,7 +94,7 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			    public «contentProvider.name.toFirstUpper»(String key, Md2Entity content, Md2DataStore md2DataStore) {
 			       super(key, content, md2DataStore);
 			       «IF contentProvider.filter»
-			       this.filter = new Filter(«FilterGen.generateFilter(contentProvider)»);
+			       	this.filter = new Filter(«FilterGen.generateFilter(contentProvider)»);
 			       «ENDIF»
 			    }
 			@Override
@@ -273,17 +276,23 @@ import de.uni_muenster.wi.md2library.model.contentProvider.implementation.Abstra
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
+		import de.uni_muenster.wi.md2library.model.dataStore.AtomicExpression;
+		import de.uni_muenster.wi.md2library.model.dataStore.Operator;
+		import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Type;
 		
 		
 		«MD2AndroidWearableUtil.generateImportAllTypes»
 		
 		public class «contentProvider.name.toFirstUpper» extends AbstractMd2MultiContentProvider {
 		  
-		  				    public «contentProvider.name.toFirstUpper»(String key , Md2DataStore dataStore) {
+		  				    public «contentProvider.name.toFirstUpper»(String key , Md2DataStore dataStore) {			       
 		  				        super(key, dataStore);
+		  				    	«IF contentProvider.filter»
+			       				this.filter = new Filter(«FilterGen.generateFilter(contentProvider)»);
+			       				«ENDIF»
 		  				    }
 		  				    
-		  				    
+
 		  			  @Override
 		  			    			    public Md2Type getValue(int entityIndex,String attribute) {
 		  			    			  if(this.getContentsList()!=null && this.getContentsList().get(entityIndex)!=null){  				
