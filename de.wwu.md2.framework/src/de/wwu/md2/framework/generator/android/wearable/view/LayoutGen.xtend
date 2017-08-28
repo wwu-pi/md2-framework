@@ -669,6 +669,10 @@ class LayoutGen {
      	generateMaterialIconsXMLStrings("M9,21c0,0.55 0.45,1 1,1h4c0.55,0 1,-0.45 1,-1v-1L9,20v1zM12,2C8.14,2 5,5.14 5,9c0,2.38 1.19,4.47 3,5.74L8,17c0,0.55 0.45,1 1,1h6c0.55,0 1,-0.45 1,-1v-2.26c1.81,-1.27 3,-3.36 3,-5.74 0,-3.86 -3.14,-7 -7,-7zM14.85,13.1l-0.85,0.6L14,16h-4v-2.3l-0.85,-0.6C7.8,12.16 7,10.63 7,9c0,-2.76 2.24,-5 5,-5s5,2.24 5,5c0,1.63 -0.8,3.16 -2.15,4.1z", "white"
 		))	
 
+		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_access_time_white_24dp.xml",
+      generateMaterialIconsXMLStrings("M11.99,2C6.47,2 2,6.48 2,12s4.47,10 9.99,10C17.52,22 22,17.52 22,12S17.52,2 11.99,2zM12,20c-4.42,0 -8,-3.58 -8,-8s3.58,-8 8,-8 8,3.58 8,8 -3.58,8 -8,8zM12.5,7H11v6l5.25,3.15 0.75,-1.23 -4.5,-2.67z", "white"
+		))
+		
 //		fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH + "ic_add_circle_white_24dp.xml",
 //      generateMaterialIconsXMLStrings("", "white"
 //		))	
