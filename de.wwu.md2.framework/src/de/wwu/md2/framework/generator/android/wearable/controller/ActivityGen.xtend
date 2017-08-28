@@ -119,6 +119,7 @@ class ActivityGen {
 			
 			public «rv.name»ListAdapter(){
 				content = Md2ContentProviderRegistry.getInstance().getContentMultiProvider("«rv.connectedProvider.contentProviderRef.name»");
+				content.addAdapter(this, "«rv.name»ListAdapter");
 				swipeHandler = new Md2ButtonOnSwipeHandler();
 				clickHandler = new Md2OnClickHandler();
 				«IF(!(rv.onClickAction === null))»
@@ -419,6 +420,7 @@ class ActivityGen {
 		import android.app.Activity;
 		import android.content.Intent;
 		import android.os.Bundle;
+		import android.os.Handler;
 		import android.view.View;
 		import android.view.Gravity;
 		import android.support.wearable.activity.WearableActivity;
@@ -465,6 +467,7 @@ class ActivityGen {
 			private WearableNavigationDrawer navigationDrawer;
 			private NavigationAdapter adapter;
 			private WearableActionDrawer actionDrawer;
+			private WearableRecyclerView wrv;
 			public Md2OnClickHandler clickHandler;
 
 		    @Override
@@ -475,7 +478,9 @@ class ActivityGen {
 		        clickHandler = new Md2OnClickHandler();
 
 		        «FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
-		        	«generateAddViewElement(viewElement)»
+		        	«IF !(viewElement instanceof ActionDrawer)»
+		        		«generateAddViewElement(viewElement)»
+		        	«ENDIF»
 		        «ENDFOR»
 
 	     		drawerLayout = (WearableDrawerLayout) findViewById(R.id.drawer_layout_«rv.name»);
@@ -493,11 +498,34 @@ class ActivityGen {
 	            	@Override
 	            	public void onDrawerStateChanged(@WearableDrawerView.DrawerState int i) {
 	            		if(i == 0){
-	            		   if(!navigationDrawer.isOpened()) {
-                          	 navigationDrawer.closeDrawer();
+	            		   if(navigationDrawer.isPeeking()) {
+	            		   		final Handler handler = new Handler();
+	            		   		handler.postDelayed(new Runnable() {
+	            		   			@Override
+	            		   			public void run() {
+	            		   				if(navigationDrawer.isPeeking()){
+	            		   					navigationDrawer.closeDrawer();
+	            		   				}
+	            	 			    }
+	            		   		 }, 2000);
+	            		    }
+	            		    «FOR viewElement: rv.eAllContents.toIterable»
+	            		    «IF viewElement instanceof ActionDrawer»
+	            		    if(actionDrawer.isPeeking()){
+	            				final Handler handler = new Handler();
+	            		   		handler.postDelayed(new Runnable() {
+	        						 @Override
+	           						 public void run() {
+	            						  if(actionDrawer.isPeeking()){
+	            		   						actionDrawer.closeDrawer();
+	            		   					}
+	            		   			  }
+	            		   		 }, 2000);
+	            		    }
+	            		   	«ENDIF»
+	           				«ENDFOR» 
                           }
                        }
-	            	}
 	        	});
 
 
@@ -517,7 +545,7 @@ class ActivityGen {
 		        navigationDrawer.setCurrentItem(adapter.getActive(), true);
 
 				«IF (rv instanceof ListView)»
-				WearableRecyclerView wrv = (WearableRecyclerView) findViewById(R.id.wearable_recycler_view_«rv.name»);
+				wrv = (WearableRecyclerView) findViewById(R.id.wearable_recycler_view_«rv.name»);
 									    	«rv.name»ListAdapter listAdapter = new «rv.name»ListAdapter();
 										   	wrv.setAdapter(listAdapter);
 									    	wrv.setCenterEdgeItems(true);
@@ -560,9 +588,24 @@ class ActivityGen {
 		        super.onPause();
 		        «FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
 		        	«IF !(viewElement instanceof ActionDrawer)»
-		        		«generateLoadViewElement(viewElement)»
+		        		«generateSaveViewElement(viewElement)»
 		        	«ENDIF»
 		        «ENDFOR»
+		    }
+		    
+		    @Override
+		    protected void onResume(){
+		    	super.onResume();
+		    }
+		    
+		    @Override
+		    protected void onDestroy(){
+		    	super.onDestroy();
+		    	«FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
+		    		«IF !(viewElement instanceof ActionDrawer)»
+		    			«generateSaveViewElement(viewElement)»
+		 	       	«ENDIF»
+		       «ENDFOR»
 		    }
 
 		    @Override
@@ -573,11 +616,13 @@ class ActivityGen {
 
 			@Override
 			public boolean onMenuItemClick(MenuItem menuItem) {
-			//TODO
-			return true;
-
+			
+			
+			«var int z = 0»
 			«FOR viewElement: rv.eAllContents.toIterable»
 				«IF viewElement instanceof ActionDrawer»
+					«IF(z++ == 0)»
+					«ENDIF»
 					«IF(viewElement.onItemClickAction !== null)»
 
 						Md2Action ca = null;
@@ -606,7 +651,9 @@ class ActivityGen {
 					«ENDIF»
 				«ENDIF»
 			«ENDFOR»
-
+			«IF (z == 0)»
+				return true;
+			«ENDIF»
 			}
 		}
 	'''

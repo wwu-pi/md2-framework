@@ -154,6 +154,7 @@ class LayoutGen {
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
 			"http://schemas.android.com/apk/res/android")
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
+		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:app", "http://schemas.android.com/apk/res-auto")
 		rootElement.setAttribute("android:layout_height", "match_parent")
 		rootElement.setAttribute("android:layout_width", "match_parent")
 		rootElement.setAttribute("tools:deviceIds", "wear")
@@ -168,9 +169,21 @@ class LayoutGen {
 		listElement.setAttribute("android:id","@+id/wearable_recycler_view_"+rv.name)
 		listElement.setAttribute("android:layout_height", "match_parent")
 		listElement.setAttribute("android:layout_width", "match_parent")
+		//create ActionDrawer
+		var Element drawerElement = doc.createElement("android.support.wearable.view.drawer.WearableActionDrawer")
+		drawerElement.setAttribute("android:id", "@+id/bottom_action_drawer_" + rv.name)
+		drawerElement.setAttribute("android:layout_height", "match_parent")
+		drawerElement.setAttribute("android:layout_width", "match_parent")
+		drawerElement.setAttribute("app:action_menu", "@menu/" + rv.name.toLowerCase + "_action_drawer_menu")
+		drawerElement.setAttribute("android:theme","@style/PSWatchappActionDrawer")
 		//append
 		rootElement.appendChild(listElement)
 		rootElement.appendChild(navElement)
+		for( viewElement: rv.eAllContents.filter(ActionDrawer).toIterable) {
+			if (viewElement instanceof ActionDrawer) {
+				rootElement.appendChild(drawerElement)
+			}
+		}
 		doc.appendChild(rootElement)
 		}
 

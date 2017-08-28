@@ -19,7 +19,7 @@ class AndroidManifestGen {
 		        android:name=".«app.name»"
 		        android:allowBackup="true"
 		        android:icon="@mipmap/ic_launcher"
-		        android:label="Test"
+		        android:label="«app.name»"
 		        android:theme="@style/PSWatchapp" >
 		<!--			<activity
 					          android:name=".StartActivity"

@@ -340,6 +340,7 @@ import de.uni_muenster.wi.md2library.model.contentProvider.implementation.Abstra
 		  			    			        				«ELSEIF attribute.type.many»
 		  			    			        				.getContents());
 		  			    			        				«ELSE».getPlatformValue());«ENDIF»	
+		  			    			        				notifyAllAdapters();
 		  			    			        				break;
 		  			    			        			«ENDFOR»		
 		  			    			        			}
@@ -356,7 +357,8 @@ import de.uni_muenster.wi.md2library.model.contentProvider.implementation.Abstra
 		  				public void update() {
 		  					System.out.println("multi wurde geupdated");
 		  				}	
-		  				} 	
+		  		}		  	
+
 	'''
 	}	
 	
