@@ -153,7 +153,7 @@ private «element.className» «element.attributeName»;
 		
 		    public «entity.name.toFirstUpper»() {
 		        super();
-		        this.setModifiedDate(new Timestamp(system.currentTimeMillis()));
+		        this.setModifiedDate(new Timestamp(System.currentTimeMillis()));
 		    }
 		    
 		    		
@@ -213,7 +213,7 @@ private «element.className» «element.attributeName»;
 				
 		public void set«element.name.toFirstUpper»(«getJavaTypeStringForAttributeType(element.type)» «element.name» ){
 				this.«element.name»=«element.name»; 	
-				this.setModifiedDate(new Timestamp(system.currentTimeMillis()));
+				this.setModifiedDate(new Timestamp(System.currentTimeMillis()));
 				}		
 		«ENDIF»
 		«ENDFOR»
@@ -228,6 +228,11 @@ private «element.className» «element.attributeName»;
 		
 		        return result.append(")").toString();
 		    }
+		
+		@Override
+		public boolean equals(Md2Type t){
+			return this.equals((Object)t);
+			} 
 		
 		@Override
 		    public boolean equals(Object value) {
