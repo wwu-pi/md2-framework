@@ -102,6 +102,7 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		import com.j256.ormlite.field.ForeignCollectionField;
 		import com.j256.ormlite.table.DatabaseTable;
 		import com.google.gson.annotations.SerializedName;
+		import com.google.gson.annotations.Expose;
 		import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
@@ -113,6 +114,7 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		@DatabaseField(generatedId = true, columnName = "id")
 		    private long id;
 		    
+		    @Expose(serialize = false)
 		    	@DatabaseField(columnName = "MODIFIED_DATE")
 		  private Timestamp modifiedDate;
 		   
@@ -133,6 +135,7 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		«IF element.type instanceof ReferencedType»
 		@DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
 		«ELSE»	
+		@Expose
 		@DatabaseField(columnName = "«entity.name.toFirstLower»_«element.name.toFirstLower»")
 		«ENDIF»	
 		private «getJavaTypeStringForAttributeType(element.type)»	«element.name»;		
