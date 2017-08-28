@@ -164,10 +164,6 @@ private «element.className» «element.attributeName»;
 			}
 		
 			@Override
-			public boolean equals(Md2Type md2Type) {
-				return false;}
-		
-			@Override
 			public Md2Type get(String s) {
 				return null;
 			}
