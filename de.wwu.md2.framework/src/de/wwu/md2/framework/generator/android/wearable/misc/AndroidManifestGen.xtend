@@ -32,7 +32,7 @@ class AndroidManifestGen {
 	        «FOR rv : rootViews»
 	        	<activity
        		android:name=".«rv.name.toFirstUpper»Activity"
-	        		<!-- android:label="@string/title_activity_«rv.name.toFirstLower»" -->
+	        		android:label="@string/title_activity_«rv.name.toFirstLower»"
 	        		android:launchMode="singleInstance">
 	        		«IF rv.equals(rootViews.get(0))»
 		        		<intent-filter>
