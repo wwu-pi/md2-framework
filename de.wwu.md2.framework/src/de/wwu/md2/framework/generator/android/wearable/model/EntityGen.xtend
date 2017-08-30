@@ -244,8 +244,12 @@ private «element.className» «element.attributeName»;
 		            «entity.name» md2EntityValue = («entity.name»)value;
 		            boolean b= true;
 		           «FOR element : entity.attributes»
-		           b &= this.«element.name».equals(((«entity.name»)md2EntityValue).get«element.name.toFirstUpper»()) ;
-		           
+		           if(this.«element.name»== null) {
+		           		b &= ( ((«entity.name»)md2EntityValue).get«element.name.toFirstUpper»()==null)	
+		           }
+		           else{
+		           		b &= this.«element.name».equals(((«entity.name»)md2EntityValue).get«element.name.toFirstUpper»()) ;
+		           }
 		           «ENDFOR» 
 		
 		            return b;
