@@ -56,6 +56,7 @@ import de.wwu.md2.framework.mD2.ValidatorBindingTask
 import de.wwu.md2.framework.mD2.SensorVal
 import de.wwu.md2.framework.mD2.ContentProviderRemoveActiveAction
 import de.wwu.md2.framework.mD2.ContentProviderGetActiveAction
+import de.wwu.md2.framework.mD2.ElementEventType;
 
 class ActionGen {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
@@ -143,7 +144,7 @@ class ActionGen {
 
 				val event = ccf.events.head as ViewElementEventRef
 				val viewElementType = event.referencedField.ref
-				val eventType = event.event
+				val ElementEventType eventType = event.event
 				var eventString = ""
 				switch eventType {
 					case eventType == ON_CHANGE: eventString = "Md2WidgetEventType.ON_CHANGE"

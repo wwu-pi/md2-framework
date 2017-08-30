@@ -116,7 +116,7 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		    private long id;
 		    
 		    @Expose(serialize = false)
-		    	@DatabaseField(columnName = "MODIFIED_DATE")
+		   
 		  private Timestamp modifiedDate;
 		   
 		  public Timestamp getModifiedDate(){
@@ -137,7 +137,7 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		@DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
 		«ELSE»	
 		@Expose
-		@DatabaseField(columnName = "«entity.name.toFirstLower»_«element.name.toFirstLower»")
+		@DatabaseField(columnName = "«element.name.toFirstLower»")
 		«ENDIF»	
 		private «getJavaTypeStringForAttributeType(element.type)»	«element.name»;		
 		«ENDIF»

@@ -304,16 +304,22 @@ def static generateOrmLiteDatastore(String mainPackage,  App app, Iterable<Entit
 import android.content.Context;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.Where;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
+import java.text.SimpleDateFormat;
 
-
+import de.uni_muenster.wi.md2library.model.dataStore.AtomicExpression;
+import de.uni_muenster.wi.md2library.model.dataStore.CombinedExpression;
+import de.uni_muenster.wi.md2library.model.dataStore.Expression;
 import de.uni_muenster.wi.md2library.model.dataStore.implementation.AbstractMd2OrmLiteDatastore;
 import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Entity;
+
 import «mainPackage».«app.name»;
 
 /**
@@ -321,16 +327,19 @@ import «mainPackage».«app.name»;
  */
 
 
-public  class Md2OrmLiteDatastore<T extends  Md2Entity> extends AbstractMd2OrmLiteDatastore {
+public  class Md2OrmLiteDatastore<T extends  Md2Entity> extends AbstractMd2OrmLiteDatastore<T> {
 
 private String entityType;
 private DatabaseHelper databaseHelper;
 
 	Dao<T , Integer> myDao;
+	   private  SimpleDateFormat simpleDateFormat;
 
 	public Md2OrmLiteDatastore(String entity){
 	this.entityType=entity;
 	    initDatabaseHelper(«app.name».getAppContext());
+	     this.simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	        this.simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 	}
 
 public void initDatabaseHelper(Context context){
@@ -364,6 +373,71 @@ public List<T> loadAll(){
     }
 
 
+@Override
+public Where<T, Integer> whereBuilder(Expression exp, Where<T, Integer> where ){
+    if (exp != null) {
+
+        if (exp instanceof AtomicExpression) {
+            AtomicExpression aexp = (AtomicExpression) exp;
+          switch (aexp.getOperator()) {
+              case EQUAL:
+                  try {
+                      where.eq((aexp).getLeftOperand(), aexp.getRightOperand());
+                  } catch (SQLException e) {
+                      e.printStackTrace();
+                  }
+                  break;
+              case GREATEREQUAL:
+                  try {
+                      where.ge((aexp).getLeftOperand(), aexp.getRightOperand());
+                  } catch (SQLException e) {
+                      e.printStackTrace();
+                  }
+                  break;
+              case LESSEQUAL:
+                  try {
+                      where.le((aexp).getLeftOperand(), aexp.getRightOperand());
+                  } catch (SQLException e) {
+                      e.printStackTrace();
+                  }
+                  break;
+              case LESS:
+                  try {
+                      where.lt((aexp).getLeftOperand(), aexp.getRightOperand());
+                  } catch (SQLException e) {
+                      e.printStackTrace();
+                  }
+                  break;
+              case GREATER:
+                  try {
+                      where.gt((aexp).getLeftOperand(), aexp.getRightOperand());
+                  } catch (SQLException e) {
+                      e.printStackTrace();
+                  }
+                  break;
+
+          }
+        } else {
+            CombinedExpression cexp = (CombinedExpression) exp;
+            whereBuilder(cexp.getLeftExpression(),where);
+            whereBuilder(cexp.getRightExpression(),where);
+            switch (cexp.getJunction()) {
+                case AND:
+                    where.and(2);
+                    break;
+                case OR:
+                    where.or(2);
+                    break;
+            }
+
+        }
+
+    }
+    return where;
+}
+
+
+
 }
 
 
@@ -376,6 +450,7 @@ public List<T> loadAll(){
  def static generateMd2LocalStoreFactory(String mainPackage,  App app, Iterable<Entity> entities){
 '''
 	package «mainPackage».md2.model.sqlite;
+	import de.uni_muenster.wi.md2library.model.dataStore.interfaces.Md2DataStore;
 	import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Entity;
 import de.uni_muenster.wi.md2library.controller.interfaces.Md2Controller;
 import de.uni_muenster.wi.md2library.model.dataStore.implementation.AbstractMd2LocalStoreFactory;
@@ -392,7 +467,7 @@ public Md2LocalStoreFactory(Md2Controller controller){
 
 }	
 
- public <T extends Md2Entity>  Md2LocalStore<T> getDataStore(String entity){
+ public <T extends Md2Entity>  Md2DataStore getDataStore(String entity){
 final String entityName= entity;
 switch(entity){
 	«FOR element : entities»
