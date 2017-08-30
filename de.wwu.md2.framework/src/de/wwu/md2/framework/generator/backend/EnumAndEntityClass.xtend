@@ -404,11 +404,11 @@ class EnumAndEntityClass {
 	def private static getDataType(AttributeType type) {
 		val dataType = switch type {
 			ReferencedType: type.element.name.toFirstUpper
-			IntegerType: "int"
-			FloatType: "double"
+			IntegerType: "Integer"
+			FloatType: "Double"
 			StringType: "String"
 			FileType: "String"
-			BooleanType: "boolean"
+			BooleanType: "Boolean"
 			DateType: "Date"
 			TimeType: "Date"
 			DateTimeType: "Date"
