@@ -57,6 +57,7 @@ import de.wwu.md2.framework.mD2.SensorVal
 import de.wwu.md2.framework.mD2.ContentProviderRemoveActiveAction
 import de.wwu.md2.framework.mD2.ContentProviderGetActiveAction
 import de.wwu.md2.framework.mD2.ElementEventType;
+import de.wwu.md2.framework.mD2.ContentProviderResetLocalAction
 
 class ActionGen {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
@@ -94,6 +95,7 @@ class ActionGen {
 		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderAddAction;
 		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderRemoveActiveAction;
 		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderGetActiveAction;
+		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderResetLocalAction;
 
 		public class «qualifiedActionName.toFirstUpper»_Action extends AbstractMd2Action {
 		
@@ -322,6 +324,8 @@ class ActionGen {
 			 result = ''''''
 			ContentProviderGetActiveAction:
 			 result = '''Md2ContentProviderGetActiveAction("«sa.contentProviderTarget.contentProvider.name»","«sa.contentProviderSource.contentProvider.name»")'''
+			ContentProviderResetLocalAction:
+			 result = '''Md2ContentProviderResetLocalAction("«sa.contentProvider.contentProvider.name»")'''
 //			TODO: implement WebServiceCallAction
 			WebServiceCallAction:
 				result = ''''''
