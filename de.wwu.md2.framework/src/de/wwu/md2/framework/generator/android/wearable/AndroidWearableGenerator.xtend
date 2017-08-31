@@ -199,7 +199,6 @@ SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.getEntities()));
 
 			// Activities
 			ActivityGen.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements,dataContainer.entities, app)
-			println("Actrivities: " + ActivityGen.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements,dataContainer.entities, app))
 
 			// Controller
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/controller/Controller" + ".java",

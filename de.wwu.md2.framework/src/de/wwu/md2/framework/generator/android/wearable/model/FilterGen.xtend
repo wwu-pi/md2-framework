@@ -24,7 +24,6 @@ import de.wwu.md2.framework.mD2.impl.WhereClauseNotImpl
 
 class FilterGen {
 	def static String generateFilter(ContentProvider contentProvider){
-				println(genWhereFilter(contentProvider.whereClause))
 				return genWhereFilter(contentProvider.whereClause)
 	}
 
@@ -37,9 +36,6 @@ class FilterGen {
 				return("new CombinedExpression(" + genWhereFilter((condition as WhereClauseAndImpl).leftExpression) + "," + "AND" + "," + genWhereFilter((condition as WhereClauseAndImpl).rightExpression)+")")
 			}
 			WhereClauseNot:{
-				println("NOT:")
-				println(condition.toString)
-				println((condition as WhereClauseNotImpl).expression.toString)
 				return "!" + genWhereFilter((condition as WhereClauseNotImpl).expression)
 			}
 			WhereClauseCompareExpression:{
