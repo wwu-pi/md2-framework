@@ -888,7 +888,9 @@ SimpleAction:
 	// TODO -- Support RemoveAction with whereClause
 	{ContentProviderRemoveAction} ('ContentProviderRemove' '('contentProvider = ContentProviderReference 'where' whereClause = WhereClauseCondition ')') |
 	// TODO -- does not make sense as action; maybe allow getters as follows :contentProviderRef(first where Customer.name equals "John").name
-    {ContentProviderGetAction} ('ContentProviderGet' '('contentProvider = AbstractProviderReference ('where' whereClause = WhereClauseCondition)? ')')
+    {ContentProviderGetAction} ('ContentProviderGet' '('contentProvider = AbstractProviderReference ('where' whereClause = WhereClauseCondition)? ')') |
+	
+	{ContentProviderResetLocalAction} ('ContentProviderResetLocal' '('contentProvider = ContentProviderReference ')')
 ;
 
 /////////////////////////////////////
