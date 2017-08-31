@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.generator.android.lollipop.util
+package de.wwu.md2.framework.generator.android.wearable.util
 
 import com.google.common.base.Joiner
 import de.wwu.md2.framework.mD2.ContentProvider
@@ -6,9 +6,9 @@ import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.SimpleType
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
-import de.wwu.md2.framework.generator.android.lollipop.Settings
+import de.wwu.md2.framework.generator.android.wearable.Settings
 
-class MD2AndroidLollipopUtil {
+class MD2AndroidWearableUtil {
 	
 	/**
 	 * Returns the package name that is being derived from the String path
@@ -60,9 +60,8 @@ class MD2AndroidLollipopUtil {
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Integer;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2String;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Time;
-		
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Sensor;
-		
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2List;
 	'''
 	
 	def static String generateImportAllActions()'''

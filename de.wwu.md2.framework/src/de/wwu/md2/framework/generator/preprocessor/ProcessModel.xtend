@@ -39,6 +39,7 @@ import de.wwu.md2.framework.mD2.WorkflowElement
 import static de.wwu.md2.framework.generator.preprocessor.util.Util.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
+import de.wwu.md2.framework.mD2.SensorType
 
 class ProcessModel extends AbstractPreprocessor {
 	

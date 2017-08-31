@@ -1,12 +1,12 @@
-package de.wwu.md2.framework.generator.android.lollipop.misc
+package de.wwu.md2.framework.generator.android.wearable.misc
 
-import de.wwu.md2.framework.generator.android.lollipop.Settings
+import de.wwu.md2.framework.generator.android.wearable.Settings
 
 class GradleGen {
 	// generates settings.gradle
 	def static String generateProjectSettings()'''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.misc.Gradle.generateProjectSettings()
-		include ':app', '«Settings.MD2LIBRARY_DEBUG_PROJECT»'
+		include ':wear', '«Settings.MD2LIBRARY_DEBUG_PROJECT»'
 	'''
 	
 	// generates build.gradle for the project
@@ -23,12 +23,17 @@ class GradleGen {
 				classpath 'com.android.tools.build:gradle:2.3.1'
 			}
 		}
-
+		
 		allprojects {
 			repositories {
 				jcenter()
 			}
-		}
+		} 
+		
+		task clean(type: Delete) {
+				    delete rootProject.buildDir
+				}
+				
 	'''
 	
 	// generates build.gradle for the app
@@ -42,7 +47,7 @@ class GradleGen {
 		
 		    defaultConfig {
 		        applicationId "«appId»"
-		        minSdkVersion 21
+		        minSdkVersion 25
 		        targetSdkVersion 25
 		        versionCode 1
 		        versionName "1.0"
@@ -55,17 +60,23 @@ class GradleGen {
 		        debug {
 		            debuggable true
 		            minifyEnabled false
-		        }
+		        } 
 		    }
 			compileOptions {
-		        sourceCompatibility JavaVersion.VERSION_1_7
-		        targetCompatibility JavaVersion.VERSION_1_7
-		    }
+			       sourceCompatibility JavaVersion.VERSION_1_7
+			       targetCompatibility JavaVersion.VERSION_1_7
+			   }
 		}
 		
 		dependencies {
 		    compile fileTree(include: ['*.jar'], dir: 'libs')
-		    compile project('«Settings.MD2LIBRARY_DEBUG_PROJECT»')
+		       compile project(':md2Library-debug')
+		       compile 'com.google.android.support:wearable:2.0.1'
+		       compile 'com.google.android.gms:play-services-wearable:10.2.1'
+		       compile group: 'com.j256.ormlite', name: 'ormlite-android', version: '4.45'
+		       compile 'com.google.code.gson:gson:2.8.0'
+		       compile 'com.android.volley:volley:1.0.0'
+		       
 		}
 	'''
 	

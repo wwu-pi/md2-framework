@@ -41,8 +41,8 @@ class BeanClass {
 			 * Default logic to get and set «entity.name.toFirstUpper» entities
 			 */
 			
-			public List<«entity.name.toFirstUpper»> getAll«entity.name.toFirstUpper»s(String filter, int limit) {
-				TypedQuery<«entity.name.toFirstUpper»> query = em.createQuery("SELECT t FROM «entity.name.toFirstUpper» t " + Utils.buildWhereParameterFromFilterString(filter), «entity.name.toFirstUpper».class);
+			public List<«entity.name.toFirstUpper»> getAll«entity.name.toFirstUpper»s(String filter,boolean deleted, int limit) {
+				TypedQuery<«entity.name.toFirstUpper»> query = em.createQuery("SELECT t FROM «entity.name.toFirstUpper» t " + Utils.buildWhereParameterFromFilterString(filter, deleted), «entity.name.toFirstUpper».class);
 				
 				if (limit > 0) {
 					query.setMaxResults(limit);
@@ -51,10 +51,14 @@ class BeanClass {
 				return query.getResultList();
 			}
 			
-			public «entity.name.toFirstUpper» get«entity.name.toFirstUpper»(int id) {
+			public «entity.name.toFirstUpper» get«entity.name.toFirstUpper»(int id, boolean deleted) {
 				«entity.name.toFirstUpper» «entity.name.toFirstLower» = em.find(«entity.name.toFirstUpper».class, id);
-				
-				return «entity.name.toFirstLower»;
+				if(«entity.name.toFirstLower».getDeleted()==deleted){
+				return «entity.name.toFirstLower»;	
+				}
+				else{
+				return null;	
+				}
 			}
 			
 			public List<«entity.name.toFirstUpper»> get«entity.name.toFirstUpper»s(List<Integer> ids) {
@@ -94,7 +98,8 @@ class BeanClass {
 					.getSingleResult();
 				
 				if(count == ids.size()) {
-					em.createQuery("DELETE FROM «entity.name.toFirstUpper» t WHERE t.__internalId IN :ids")
+					
+					em.createQuery("UPDATE «entity.name.toFirstUpper» t SET IS_DELETED=true WHERE t.__internalId IN :ids AND IS_DELETED=false")
 						.setParameter("ids", ids)
 						.executeUpdate();
 					return true;
