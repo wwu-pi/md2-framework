@@ -112,7 +112,7 @@ class ActionGen {
 		int counter) {
 		if (ccf == null)
 			return ""
-
+			
 		var intCounter = counter
 
 		val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider
