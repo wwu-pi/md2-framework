@@ -112,7 +112,7 @@ abstract class AbstractPreprocessor {
 				Workflow: {
 					workflow.workflowElementEntries += modelLayer.workflowElementEntries
 					workflow.apps += modelLayer.apps
-					if((workflow.eContainer as MD2Model).package == null) (workflow.eContainer as MD2Model).package = md2model.
+					if((workflow.eContainer as MD2Model).package === null) (workflow.eContainer as MD2Model).package = md2model.
 						package
 				}
 			}
