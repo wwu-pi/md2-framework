@@ -4,7 +4,7 @@ public class Settings {
 	/***
 	 * Generator
 	 */
-	public static String PLATTFORM_PREFIX = "androidLollipop"
+	public static String PLATTFORM_PREFIX = "lollipop"
 	public static String MD2_RESOURCE_PATH = "android/lollipop/"
 	public static String MD2_RESOURCE_MIPMAP_PATH = MD2_RESOURCE_PATH + "mipmap/"
 

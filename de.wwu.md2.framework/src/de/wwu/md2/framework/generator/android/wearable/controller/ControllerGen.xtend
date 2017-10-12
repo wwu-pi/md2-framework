@@ -82,7 +82,7 @@ class ControllerGen {
 		        Md2ContentProviderRegistry cpr = Md2ContentProviderRegistry.getInstance();
 		        Md2LocalStoreFactory lsf = new Md2LocalStoreFactory(this.instance);
 		        Md2RemoteStoreFactory rsf= new Md2RemoteStoreFactory();
-		        		        «FOR cp: contentProviders»
+		        «FOR cp: contentProviders»
 		        	«var typeName = getTypeName(cp)»
 		        	«IF cp.type.many»
 		        	«IF cp.local»

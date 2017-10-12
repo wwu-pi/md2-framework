@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.generator.android.wearable.model
+package de.wwu.md2.framework.generator.android.common.model
 
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.WhereClauseCondition

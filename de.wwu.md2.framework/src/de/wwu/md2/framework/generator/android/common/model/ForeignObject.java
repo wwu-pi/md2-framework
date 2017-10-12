@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.generator.android.wearable.model;
+package de.wwu.md2.framework.generator.android.common.model;
 
 public class ForeignObject {
 

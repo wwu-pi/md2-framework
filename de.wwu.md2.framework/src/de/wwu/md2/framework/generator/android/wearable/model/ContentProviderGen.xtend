@@ -5,6 +5,7 @@ import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.generator.android.wearable.Settings
+import de.wwu.md2.framework.generator.android.common.model.FilterGen
 import java.util.Set
 import java.util.HashSet
 import de.wwu.md2.framework.mD2.Entity
@@ -56,23 +57,20 @@ class ContentProviderGen {
 				    }
 				}
 		'''}
-		
-		
-		
-		private def static generateContentProviderPOJO(String mainPackage, ContentProvider contentProvider){ '''
+
+		private def static generateContentProviderPOJO(String mainPackage, ContentProvider contentProvider) '''
 			// generated in de.wwu.md2.framework.generator.android.lollipop.model.Md2ContentProvider.generateContentProvider()
 			package «mainPackage».md2.model.contentProvider;
 			
-				«var content =  contentProvider.type as ReferencedModelType»
+			«var content =  contentProvider.type as ReferencedModelType»
 
-«FOR element : (content.entity as Entity).attributes»
-«IF element.type instanceof ReferencedType»
-			import «mainPackage + ".md2.model"».«(element.type as ReferencedType).element.name.toFirstUpper»;		
-«ENDIF»
-	
-		«ENDFOR»
+			«FOR element : (content.entity as Entity).attributes»
+				«IF element.type instanceof ReferencedType»
+					import «mainPackage + ".md2.model"».«(element.type as ReferencedType).element.name.toFirstUpper»;		
+				«ENDIF»
+			«ENDFOR»
 
-import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnAttributeChangedHandler;
+			import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnAttributeChangedHandler;
 			import java.util.HashMap;
 			import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
 			import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.AbstractMd2ContentProvider;
@@ -192,19 +190,17 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			        				«ELSEIF attribute.type.many»
 			        			   .getContents());
 			        				«ELSE».getPlatformValue());«ENDIF»	
-				        					notifyChangeHandler(name);
-					        				break;
+			        			   notifyChangeHandler(name);
+			        			   break;
 			        				«ENDIF»
 			        			«ENDFOR»		
 			        			}
 			        }	
 			}
 			
-			    public void reset(){ 
-			       
-			    }
-			
-			
+		    public void reset(){ 
+		       
+		    }
 			
 			@Override
 			    public void load() {
@@ -227,6 +223,7 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 			            }
 			        }
 			    }
+			
 			@Override
 			    public void save() {
 			        if(this.content != null && this.md2DataStore != null) {
@@ -261,17 +258,15 @@ import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2
 «««						}
 			}
 			
-		'''}
+		'''
 		
-		
-		
-		private def static generateMultiContentProvider(String mainPackage, ContentProvider contentProvider){ '''
-		// generated in de.wwu.md2.framework.generator.android.lollipop.model.Md2ContentProvider.generateContentProvider()
+		private def static generateMultiContentProvider(String mainPackage, ContentProvider contentProvider) '''
+		// generated in de.wwu.md2.framework.generator.android.wear.model.Md2ContentProvider.generateMultiContentProvider()
 		package «mainPackage».md2.model.contentProvider;
 		«var content =  contentProvider.type as ReferencedModelType»
 		
 		import «mainPackage».md2.model.«content.entity.name.toFirstUpper»;
-import de.uni_muenster.wi.md2library.model.contentProvider.implementation.AbstractMd2MultiContentProvider;
+		import de.uni_muenster.wi.md2library.model.contentProvider.implementation.AbstractMd2MultiContentProvider;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
@@ -333,16 +328,10 @@ import de.uni_muenster.wi.md2library.model.contentProvider.implementation.Abstra
 		  			    			        				break;
 		  			    			        			«ENDFOR»		
 		  			    			        			}
-		  				    
-		  				    
 		  				}	
-		  				}
-		  				
-		  		}		  	
-
-	'''
-	}	
-	
+		  			}
+		  		}
+	'''	
 	
 	private def static String getMd2TypeStringForAttributeType(AttributeType attributeType){
 		switch attributeType{
@@ -358,6 +347,5 @@ import de.uni_muenster.wi.md2library.model.contentProvider.implementation.Abstra
 			FileType: "Object" // TODO not implemented
 		}		
 	}
-		
 }
 	

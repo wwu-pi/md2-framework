@@ -130,7 +130,17 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 				SQLiteGen.generateDataContract(mainPackage, dataContainer.getEntities))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2SQLiteHelperImpl.java",
 				SQLiteGen.generateSQLiteHelper(mainPackage, app, dataContainer.getMain, dataContainer.getEntities))
-
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/DatabaseConfigUtil.java",
+				SQLiteGen.generateOrmLiteDatabaseConfigUtil(mainPackage,dataContainer.getEntities()));
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/DatabaseHelper.java",
+				SQLiteGen.generateDataBaseHelper(mainPackage,app,dataContainer.getEntities()));
+			fsa.generateFile(rootFolder + Settings.RES_PATH + "raw/ormlite_config.txt",
+				SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.getEntities()));
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2LocalStoreFactory.java",
+				SQLiteGen.generateMd2LocalStoreFactory(mainPackage, app, dataContainer.getEntities()) );
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2OrmLiteDatastore.java",
+				SQLiteGen.generateOrmLiteDatastore(mainPackage, app, dataContainer.getEntities()));
+			
 			/***************************************************
 			 * 
 			 * View

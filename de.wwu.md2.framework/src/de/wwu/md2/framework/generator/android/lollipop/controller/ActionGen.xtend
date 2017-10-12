@@ -53,6 +53,11 @@ import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import de.wwu.md2.framework.mD2.WebServiceCallAction
 import de.wwu.md2.framework.mD2.LocationAction
 import de.wwu.md2.framework.mD2.ValidatorBindingTask
+import de.wwu.md2.framework.mD2.SensorVal
+import de.wwu.md2.framework.mD2.ContentProviderRemoveActiveAction
+import de.wwu.md2.framework.mD2.ContentProviderGetActiveAction
+import de.wwu.md2.framework.mD2.ElementEventType;
+import de.wwu.md2.framework.mD2.ContentProviderResetLocalAction
 
 class ActionGen {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
@@ -87,11 +92,15 @@ class ActionGen {
 		import «Settings.MD2LIBRARY_CONTENTPROVIDERREGISTRY_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
+		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderAddAction;
+		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderRemoveActiveAction;
+		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderGetActiveAction;
+		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderResetLocalAction;
 
 		public class «qualifiedActionName.toFirstUpper»_Action extends AbstractMd2Action {
 		
 		    public «qualifiedActionName.toFirstUpper»_Action() {
-				super("«qualifiedActionName.toFirstUpper»_Action");
+				super("«qualifiedActionName.toFirstUpper»_Action"); 
 			}
 		
 		    @Override
@@ -110,9 +119,9 @@ class ActionGen {
 
 	protected def static String generateCodeForCodeFragment(CustomCodeFragment ccf, App app, WorkflowElement wfe,
 		int counter) {
-		if (ccf == null)
+		if (ccf === null)
 			return ""
-			
+
 		var intCounter = counter
 
 		val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider
@@ -137,11 +146,16 @@ class ActionGen {
 
 				val event = ccf.events.head as ViewElementEventRef
 				val viewElementType = event.referencedField.ref
-				val eventType = event.event
+				val ElementEventType eventType = event.event
 				var eventString = ""
 				switch eventType {
 					case eventType == ON_CHANGE: eventString = "Md2WidgetEventType.ON_CHANGE"
 					case eventType == ON_CLICK: eventString = "Md2WidgetEventType.ON_CLICK"
+					//add longclick support
+					case eventType == ON_LONG_CLICK: eventString = "Md2WidgetEventType.ON_LONG_CLICK"
+					//add swipe support
+					case eventType == ON_LEFT_SWIPE: eventString = "Md2WidgetEventType.ON_LEFT_SWIPE"
+					case eventType == ON_RIGHT_SWIPE: eventString = "Md2WidgetEventType.ON_RIGHT_SWIPE"
 				}
 
 				val qualifiedNameView = qualifiedNameProvider.getFullyQualifiedName(viewElementType).toString("_")
@@ -165,7 +179,7 @@ class ActionGen {
 				val haction = ccf.action
 				switch haction {
 					ActionReference: {
-						if (haction.actionRef.eContainer == null) {
+						if (haction.actionRef.eContainer === null) {
 							actionString = wfe.name + "_" +
 								qualifiedNameProvider.getFullyQualifiedName(haction.actionRef).toString("_") +
 								"_Action()"	
@@ -234,7 +248,7 @@ class ActionGen {
 							«ENDFOR»
 						}				
 					«ENDFOR»
-					«IF ccf.^else != null»				
+					«IF ccf.^else !== null»				
 						else{
 							«FOR containedCcf : ccf.^else.codeFragments»
 								«containedCcf.generateCodeForCodeFragment(app, wfe, intCounter++)»
@@ -298,14 +312,20 @@ class ActionGen {
 			ContentProviderResetAction:
 				result = '''Md2ContentProviderResetAction("«sa.contentProvider.contentProvider.name»")'''
 //			TODO: implement ContentProviderAddAction
-			ContentProviderAddAction: 
-			 	result = '''''' 
+			ContentProviderAddAction:
+				result = '''Md2ContentProviderAddAction("«sa.contentProviderTarget.contentProvider.name»","«sa.contentProviderSource.contentProvider.name»")''' 
 //			TODO: implement ContentProviderRemoveAction
 			ContentProviderRemoveAction:
 			  	result = ''''''
+			ContentProviderRemoveActiveAction:
+				result = '''Md2ContentProviderRemoveActiveAction("«sa.contentProvider.contentProvider.name»")'''
 //			TODO: implement ContentProviderGetAction
 			ContentProviderGetAction:
 			 result = ''''''
+			ContentProviderGetActiveAction:
+			 result = '''Md2ContentProviderGetActiveAction("«sa.contentProviderTarget.contentProvider.name»","«sa.contentProviderSource.contentProvider.name»")'''
+			ContentProviderResetLocalAction:
+			 result = '''Md2ContentProviderResetLocalAction("«sa.contentProvider.contentProvider.name»")'''
 //			TODO: implement WebServiceCallAction
 			WebServiceCallAction:
 				result = ''''''
@@ -370,6 +390,8 @@ class ActionGen {
 				return '''new Md2Integer(«expression.value»)'''
 			FloatVal:
 				return '''new Md2Float(«expression.value»)'''
+			SensorVal:
+				return '''new Md2Sensor(«expression.value»)'''
 			AbstractContentProviderPath: {
 				switch expression {
 					ContentProviderPath: return '''Md2ContentProviderRegistry.getInstance().getContentProvider("«expression.contentProviderRef.name»").getValue("«expression.tail.attributeRef.name»")'''

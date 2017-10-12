@@ -2,24 +2,23 @@ package de.wwu.md2.framework.generator.android.wearable.model
 
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.android.wearable.Settings
-import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
+import de.wwu.md2.framework.generator.android.wearable.util.MD2AndroidWearableUtil
 import de.wwu.md2.framework.mD2.AttributeType
 import de.wwu.md2.framework.mD2.BooleanType
 import de.wwu.md2.framework.mD2.DateTimeType
 import de.wwu.md2.framework.mD2.DateType
 import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.Enum
+import de.wwu.md2.framework.mD2.FileType
 import de.wwu.md2.framework.mD2.FloatType
 import de.wwu.md2.framework.mD2.IntegerType
 import de.wwu.md2.framework.mD2.ReferencedType
+import de.wwu.md2.framework.mD2.SensorType
 import de.wwu.md2.framework.mD2.StringType
 import de.wwu.md2.framework.mD2.TimeType
-import de.wwu.md2.framework.mD2.FileType
-import de.wwu.md2.framework.mD2.Enum
-import de.wwu.md2.framework.generator.android.wearable.Settings
-import de.wwu.md2.framework.mD2.SensorType
-import de.wwu.md2.framework.generator.android.wearable.util.MD2AndroidWearableUtil
 import java.util.ArrayList
 import java.util.List
+import de.wwu.md2.framework.generator.android.common.model.ForeignObject
 
 class EntityGen {
 	

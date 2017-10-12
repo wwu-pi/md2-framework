@@ -7,6 +7,7 @@ import de.wwu.md2.framework.generator.android.lollipop.Settings
 import de.wwu.md2.framework.mD2.ReferencedType
 import java.util.ArrayList
 import java.util.List
+import de.wwu.md2.framework.generator.android.common.model.ForeignObject
 
 class SQLiteGen {
 	def static generateDataContract(String mainPackage, Iterable<Entity> entities)'''
