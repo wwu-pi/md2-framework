@@ -72,4 +72,4 @@ public class Settings {
 	// packages for app generation
 	public static String MD2_APP_FILES_PACKAGE = ".md2."
 	public static String MD2_APP_FILES_CONTROLLER_PACKAGE_NAME = MD2_APP_FILES_PACKAGE + "controller.Controller"
-}	
+}

@@ -66,6 +66,9 @@ class GradleGen {
 		dependencies {
 		    compile fileTree(include: ['*.jar'], dir: 'libs')
 		    compile project('«Settings.MD2LIBRARY_DEBUG_PROJECT»')
+			compile group: 'com.j256.ormlite', name: 'ormlite-android', version: '4.45'
+		    compile 'com.google.code.gson:gson:2.8.0'
+			compile 'com.android.volley:volley:1.0.0'
 		}
 	'''
 	

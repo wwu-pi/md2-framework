@@ -9,7 +9,7 @@ import de.wwu.md2.framework.generator.android.wearable.misc.GradleGen
 import de.wwu.md2.framework.generator.android.wearable.misc.AndroidManifestGen
 import de.wwu.md2.framework.generator.android.wearable.model.EntityGen
 
-import de.wwu.md2.framework.generator.android.lollipop.misc.ProguardGen
+import de.wwu.md2.framework.generator.android.common.misc.ProguardGen
 import de.wwu.md2.framework.generator.android.wearable.model.ContentProviderGen
 import de.wwu.md2.framework.generator.android.wearable.view.ValueGen
 

@@ -20,7 +20,7 @@ class AndroidManifestGen {
 		        android:name=".«app.name»"
 		        android:allowBackup="true"
 		        android:icon="@drawable/ic_shopping_cart_white_24dp"
-		        android:label="«app.name»"
+		        android:label="@string/app_name"
 		        android:theme="@style/PSWatchapp" >
 		<!--			<activity
 					          android:name=".StartActivity"

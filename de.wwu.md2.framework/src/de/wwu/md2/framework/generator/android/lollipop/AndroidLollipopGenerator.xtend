@@ -8,7 +8,7 @@ import de.wwu.md2.framework.generator.android.lollipop.controller.ApplicationGen
 import de.wwu.md2.framework.generator.android.lollipop.controller.ControllerGen
 import de.wwu.md2.framework.generator.android.lollipop.misc.AndroidManifestGen
 import de.wwu.md2.framework.generator.android.lollipop.misc.GradleGen
-import de.wwu.md2.framework.generator.android.lollipop.misc.ProguardGen
+import de.wwu.md2.framework.generator.android.common.misc.ProguardGen
 import de.wwu.md2.framework.generator.android.lollipop.model.ContentProviderGen
 import de.wwu.md2.framework.generator.android.lollipop.model.EntityGen
 import de.wwu.md2.framework.generator.android.lollipop.model.SQLiteGen
