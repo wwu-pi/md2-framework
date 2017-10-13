@@ -2,7 +2,7 @@ package de.wwu.md2.framework.generator.android.lollipop.controller
 
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.android.lollipop.Settings
-import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
+import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
 import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.GridLayoutPane
@@ -40,9 +40,9 @@ class ActivityGen {
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
-		«MD2AndroidLollipopUtil.generateImportAllWidgets»
-		«MD2AndroidLollipopUtil.generateImportAllTypes»
-		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
+		«MD2AndroidUtil.generateImportAllWidgets»
+		«MD2AndroidUtil.generateImportAllTypes»
+		«MD2AndroidUtil.generateImportAllEventHandler»
 		
 		«FOR wer : startableWorkflowElements»		        	
 			import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action;
@@ -105,9 +105,9 @@ class ActivityGen {
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
-		«MD2AndroidLollipopUtil.generateImportAllWidgets»
-		«MD2AndroidLollipopUtil.generateImportAllTypes»
-		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
+		«MD2AndroidUtil.generateImportAllWidgets»
+		«MD2AndroidUtil.generateImportAllTypes»
+		«MD2AndroidUtil.generateImportAllEventHandler»
 				
 		public class «rv.name»Activity extends Activity {
 		
@@ -156,7 +156,7 @@ class ActivityGen {
 		var String result = ""
 		var String type = ""
 		
-		var qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(vet, "_")
+		var qualifiedName = MD2AndroidUtil.getQualifiedNameAsString(vet, "_")
 		if(qualifiedName == null || qualifiedName.empty)
 			return ""
 		
@@ -184,7 +184,7 @@ class ActivityGen {
 		var String result = ""
 		var String type = ""
 		
-		var qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(vet, "_")
+		var qualifiedName = MD2AndroidUtil.getQualifiedNameAsString(vet, "_")
 		if(qualifiedName == null || qualifiedName.empty)
 			return ""		
 		
@@ -212,7 +212,7 @@ class ActivityGen {
 		var String result = ""
 		var String type = ""
 		
-		var qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(vet, "_")
+		var qualifiedName = MD2AndroidUtil.getQualifiedNameAsString(vet, "_")
 		if(qualifiedName == null || qualifiedName.empty)
 			return ""		
 		

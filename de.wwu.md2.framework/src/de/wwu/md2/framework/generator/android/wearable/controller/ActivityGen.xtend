@@ -2,7 +2,7 @@ package de.wwu.md2.framework.generator.android.wearable.controller
 
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.android.wearable.Settings
-import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
+import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
 import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.ActionDrawer
@@ -94,13 +94,13 @@ class ActivityGen {
 		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2RefreshListAction;
 		
 		«IF(!(rv.onClickAction === null))»
-			import «mainPackage».md2.controller.action.«MD2AndroidLollipopUtil.getQualifiedNameAsString(rv.onClickAction, "_").toFirstUpper»_Action;
+			import «mainPackage».md2.controller.action.«MD2AndroidUtil.getQualifiedNameAsString(rv.onClickAction, "_").toFirstUpper»_Action;
 		«ENDIF»
 		«IF(!(rv.leftSwipeAction === null))»
-			import «mainPackage».md2.controller.action.«MD2AndroidLollipopUtil.getQualifiedNameAsString(rv.leftSwipeAction, "_").toFirstUpper»_Action;
+			import «mainPackage».md2.controller.action.«MD2AndroidUtil.getQualifiedNameAsString(rv.leftSwipeAction, "_").toFirstUpper»_Action;
 		«ENDIF»
 		«IF(!(rv.rightSwipeAction === null))»
-			import «mainPackage».md2.controller.action.«MD2AndroidLollipopUtil.getQualifiedNameAsString(rv.rightSwipeAction, "_").toFirstUpper»_Action;
+			import «mainPackage».md2.controller.action.«MD2AndroidUtil.getQualifiedNameAsString(rv.rightSwipeAction, "_").toFirstUpper»_Action;
 		«ENDIF»
 		
 		public class «rv.name»ListAdapter extends RecyclerView.Adapter{
@@ -123,15 +123,15 @@ class ActivityGen {
 				swipeHandler = new Md2ButtonOnSwipeHandler();
 				clickHandler = new Md2OnClickHandler();
 				«IF(!(rv.onClickAction === null))»
-					Md2Action ca = new «MD2AndroidLollipopUtil.getQualifiedNameAsString(rv.onClickAction, "_").toFirstUpper»_Action();
+					Md2Action ca = new «MD2AndroidUtil.getQualifiedNameAsString(rv.onClickAction, "_").toFirstUpper»_Action();
 					clickHandler.registerAction(ca);
 				«ENDIF»
 				«IF(!(rv.leftSwipeAction === null))»
-					Md2Action lsa = new «MD2AndroidLollipopUtil.getQualifiedNameAsString(rv.leftSwipeAction, "_").toFirstUpper»_Action();
+					Md2Action lsa = new «MD2AndroidUtil.getQualifiedNameAsString(rv.leftSwipeAction, "_").toFirstUpper»_Action();
 					swipeHandler.getLeftSwipeHandler().registerAction(lsa);
 				«ENDIF»
 				«IF(!(rv.rightSwipeAction === null))»
-					Md2Action rsa = new «MD2AndroidLollipopUtil.getQualifiedNameAsString(rv.rightSwipeAction, "_").toFirstUpper»_Action();
+					Md2Action rsa = new «MD2AndroidUtil.getQualifiedNameAsString(rv.rightSwipeAction, "_").toFirstUpper»_Action();
 					swipeHandler.getRightSwipeHandler().registerAction(rsa);
 				«ENDIF»
 			}
@@ -357,9 +357,9 @@ class ActivityGen {
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
-		«MD2AndroidLollipopUtil.generateImportAllWidgets»
-		«MD2AndroidLollipopUtil.generateImportAllTypes»
-		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
+		«MD2AndroidUtil.generateImportAllWidgets»
+		«MD2AndroidUtil.generateImportAllTypes»
+		«MD2AndroidUtil.generateImportAllEventHandler»
 
 		«FOR wer : startableWorkflowElements»
 			import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action;
@@ -440,9 +440,9 @@ class ActivityGen {
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
-		«MD2AndroidLollipopUtil.generateImportAllWidgets»
-		«MD2AndroidLollipopUtil.generateImportAllTypes»
-		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
+		«MD2AndroidUtil.generateImportAllWidgets»
+		«MD2AndroidUtil.generateImportAllTypes»
+		«MD2AndroidUtil.generateImportAllEventHandler»
 		
 		import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
 
@@ -450,7 +450,7 @@ class ActivityGen {
 			«IF viewElement instanceof ActionDrawer»
 				«IF(viewElement.onItemClickAction !== null)»
 					«FOR itemClickAction: viewElement.onItemClickAction»
-						import «mainPackage».md2.controller.action.«MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "_")»_Action;
+						import «mainPackage».md2.controller.action.«MD2AndroidUtil.getQualifiedNameAsString(itemClickAction, "_")»_Action;
 					«ENDFOR»
 				«ENDIF»
 			«ENDIF»
@@ -633,7 +633,7 @@ class ActivityGen {
 							«var ElementCounter = 0»
 							«FOR itemClickAction: viewElement.onItemClickAction»
 								case R.id.«itemClickAction.name»_item«ElementCounter++»:
-									ca = new «MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "_").toFirstUpper»_Action();
+									ca = new «MD2AndroidUtil.getQualifiedNameAsString(itemClickAction, "_").toFirstUpper»_Action();
 									break;
 
 							«ENDFOR»
@@ -666,7 +666,7 @@ class ActivityGen {
 		var String result = ""
 		var String type = ""
 
-		var qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(vet, "_")
+		var qualifiedName = MD2AndroidUtil.getQualifiedNameAsString(vet, "_")
 		if(qualifiedName === null || qualifiedName.empty)
 			return ""
 
@@ -694,7 +694,7 @@ class ActivityGen {
 		var String result = ""
 		var String type = ""
 
-		var qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(vet, "_")
+		var qualifiedName = MD2AndroidUtil.getQualifiedNameAsString(vet, "_")
 		if(qualifiedName === null || qualifiedName.empty)
 			return ""
 
@@ -722,7 +722,7 @@ class ActivityGen {
 		var String result = ""
 		var String type = ""
 
-		var qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(vet, "_")
+		var qualifiedName = MD2AndroidUtil.getQualifiedNameAsString(vet, "_")
 		if(qualifiedName === null || qualifiedName.empty)
 			return ""
 

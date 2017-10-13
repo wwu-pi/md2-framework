@@ -1,6 +1,6 @@
 package de.wwu.md2.framework.generator.android.wearable.view
 
-import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
+import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.ContainerElement
@@ -20,6 +20,7 @@ import de.wwu.md2.framework.mD2.ActionDrawer
 import de.wwu.md2.framework.mD2.ActionDrawerBezeichnung
 import de.wwu.md2.framework.mD2.impl.ActionDrawerBezeichnungImpl
 import de.wwu.md2.framework.mD2.IfCodeBlock
+import de.wwu.md2.framework.mD2.OptionInput
 
 class ValueGen {
 
@@ -31,8 +32,8 @@ class ValueGen {
 				<item name="startActivity_«wer.workflowElementReference.name»Button" type="id"/>				
 			«ENDFOR»
 			«FOR ve : viewGUIElements»
-				«val qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(ve, "_")»
-				«IF (qualifiedName != null && !qualifiedName.empty)»
+				«val qualifiedName = MD2AndroidUtil.getQualifiedNameAsString(ve, "_")»
+				«IF (qualifiedName !== null && !qualifiedName.empty)»
 					<item name="«qualifiedName»" type="id"/>
 				«ENDIF»
 			«ENDFOR»
@@ -50,9 +51,10 @@ class ValueGen {
 
 					
 			<!-- not necessary without Start activity
-			«FOR wer : wers»
-				<string name="«MD2AndroidLollipopUtil.getQualifiedNameAsString(wer, "_")»_alias">«wer.alias»</string>
-			«ENDFOR» -->
+«««			«FOR wer : wers»
+«««				<string name="«MD2AndroidLollipopUtil.getQualifiedNameAsString(wer, "_")»_alias">«wer.alias»</string>
+«««			«ENDFOR»  
+			-->
 
 			
 			«FOR ve : viewGUIElements»
@@ -65,7 +67,7 @@ class ValueGen {
 	def static getActivityTitle(ContainerElement element) {
 		switch element {
 			ContentContainer: {
-				if(element.elements.filter(Label).findFirst[label | label.name.startsWith("_title")] != null){
+				if(element.elements.filter(Label).findFirst[label | label.name.startsWith("_title")] !== null){
 					return element.elements.filter(Label).findFirst[label | label.name.startsWith("_title")].text
 				} else {
 					return ""
@@ -91,6 +93,21 @@ class ValueGen {
 	protected def static String generateStringEntry(ViewGUIElement viewGUIElement) {
 		val qnp = new DefaultDeclarativeQualifiedNameProvider
 		switch viewGUIElement {
+			OptionInput:
+				return '''
+					<string-array name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_entries">
+						«IF viewGUIElement.enumBody !== null»
+							«FOR elem : viewGUIElement.enumBody.elements»
+								<item>«elem»</item>
+							«ENDFOR»
+						«ENDIF»
+						«IF viewGUIElement.enumReference !== null && viewGUIElement.enumReference.enumBody !== null»
+							«FOR elem : viewGUIElement.enumReference.enumBody.elements»
+								<item>«elem»</item>
+							«ENDFOR»
+						«ENDIF»
+					</string-array>
+				'''
 			InputElement:
 				return '''
 					<string name="«qnp.getFullyQualifiedName(viewGUIElement).toString("_")»_title">«viewGUIElement.name»</string>

@@ -1,7 +1,7 @@
 package de.wwu.md2.framework.generator.android.wearable.controller
 
 import de.wwu.md2.framework.generator.android.wearable.Settings
-import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
+import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.Entity
@@ -9,7 +9,7 @@ import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.SimpleType
 import de.wwu.md2.framework.generator.util.DataContainer
 import de.wwu.md2.framework.mD2.WorkflowElementEntry
-import de.wwu.md2.framework.generator.android.wearable.util.MD2AndroidWearableUtil
+import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
 
 class ControllerGen {
 	def static generateController(String mainPackage, App app, DataContainer data)'''
@@ -38,11 +38,11 @@ class ControllerGen {
 		import de.uni_muenster.wi.md2library.model.contentProvider.interfaces.Md2MultiContentProvider;
 		import de.uni_muenster.wi.md2library.model.dataStore.implementation.Md2RemoteStoreFactory;
 		
-		«MD2AndroidLollipopUtil.generateImportAllActions»
-		«MD2AndroidLollipopUtil.generateImportAllTypes»
-		«MD2AndroidLollipopUtil.generateImportAllExceptions»
-		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
-		«MD2AndroidLollipopUtil.generateImportAllCustomCodeTasks»
+		«MD2AndroidUtil.generateImportAllActions»
+		«MD2AndroidUtil.generateImportAllTypes»
+		«MD2AndroidUtil.generateImportAllExceptions»
+		«MD2AndroidUtil.generateImportAllEventHandler»
+		«MD2AndroidUtil.generateImportAllCustomCodeTasks»
 		
 		import «Settings.MD2LIBRARY_PACKAGE»controller.implementation.AbstractMd2Controller;
 		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.Md2ContentProviderRegistry;
@@ -94,9 +94,9 @@ class ControllerGen {
 		        	cpr.addMultiContentProvider("«cp.name»", «cp.name.toFirstLower»);
 		        	«ELSE»
 		        	«IF cp.local»
-		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»("«cp.name»",new «MD2AndroidWearableUtil.getTypeNameForContentProvider(cp)»(),  lsf.getDataStore("«typeName»"));
+		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»("«cp.name»",new «MD2AndroidUtil.getTypeNameForContentProvider(cp)»(),  lsf.getDataStore("«typeName»"));
 		        	«ELSE»
-		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»("«cp.name»",new «MD2AndroidWearableUtil.getTypeNameForContentProvider(cp)»(),  rsf.getDataStore("«cp.connection.uri»",new «typeName»()));
+		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»("«cp.name»",new «MD2AndroidUtil.getTypeNameForContentProvider(cp)»(),  rsf.getDataStore("«cp.connection.uri»",new «typeName»()));
 		        			        	
 		        	«ENDIF»
 		        	cpr.add("«cp.name»", «cp.name.toFirstLower»);

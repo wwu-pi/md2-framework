@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.generator.android.wearable.util
+package de.wwu.md2.framework.generator.android.common.util
 
 import com.google.common.base.Joiner
 import de.wwu.md2.framework.mD2.ContentProvider
@@ -8,7 +8,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import de.wwu.md2.framework.generator.android.wearable.Settings
 
-class MD2AndroidWearableUtil {
+class MD2AndroidUtil {
 	
 	/**
 	 * Returns the package name that is being derived from the String path
@@ -36,7 +36,7 @@ class MD2AndroidWearableUtil {
 	def static getQualifiedNameAsString(EObject obj, String delimiter){
 		val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider
 		var qualifiedName = qualifiedNameProvider.getFullyQualifiedName(obj)
-		if(qualifiedName != null)
+		if(qualifiedName !== null)
 			return qualifiedName.toString(delimiter)
 		return ""
 	}

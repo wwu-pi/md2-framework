@@ -1,6 +1,6 @@
 package de.wwu.md2.framework.generator.android.lollipop.view
 
-import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
+import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.ContainerElement
@@ -26,7 +26,7 @@ class ValueGen {
 				<item name="startActivity_«wer.workflowElementReference.name»Button" type="id"/>				
 			«ENDFOR»
 			«FOR ve : viewGUIElements»
-				«val qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(ve, "_")»
+				«val qualifiedName = MD2AndroidUtil.getQualifiedNameAsString(ve, "_")»
 				«IF (qualifiedName !== null && !qualifiedName.empty)»
 					<item name="«qualifiedName»" type="id"/>
 				«ELSEIF ve instanceof Spacer»
@@ -46,7 +46,7 @@ class ValueGen {
 			«ENDFOR»
 			
 			«FOR wer : wers»
-				<string name="«MD2AndroidLollipopUtil.getQualifiedNameAsString(wer, "_")»_alias">«wer.alias»</string>
+				<string name="«MD2AndroidUtil.getQualifiedNameAsString(wer, "_")»_alias">«wer.alias»</string>
 			«ENDFOR»
 			
 			«FOR ve : viewGUIElements»
@@ -139,6 +139,15 @@ class ValueGen {
 		<resources>
 		    <dimen name="activity_horizontal_margin">16dp</dimen>
 		    <dimen name="activity_vertical_margin">16dp</dimen>
+		</resources>
+	'''
+	
+	def static String generateColorXml() '''
+		<?xml version="1.0" encoding="utf-8"?>
+		<!-- generated in de.wwu.md2.framework.generator.android.wearable.view.Values.generateColorsXml() -->
+		<resources>
+			<color name="background_material_light">#032859</color>
+			<color name="foreground_material_light">#ff0909</color>
 		</resources>
 	'''
 }

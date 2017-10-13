@@ -2,7 +2,7 @@ package de.wwu.md2.framework.generator.android.lollipop.model
 
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.android.lollipop.Settings
-import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
+import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
 import de.wwu.md2.framework.mD2.AttributeType
 import de.wwu.md2.framework.mD2.BooleanType
 import de.wwu.md2.framework.mD2.DateTimeType
@@ -40,7 +40,7 @@ class EntityGen {
 		
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
-		«MD2AndroidLollipopUtil.generateImportAllTypes»
+		«MD2AndroidUtil.generateImportAllTypes»
 
 		public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		
@@ -100,7 +100,7 @@ class EntityGen {
 		import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
-		«MD2AndroidLollipopUtil.generateImportAllTypes»
+		«MD2AndroidUtil.generateImportAllTypes»
 @DatabaseTable(tableName = "«entity.name.toFirstLower»")
 		public class «entity.name.toFirstUpper»  implements Serializable,Md2Entity{
 		

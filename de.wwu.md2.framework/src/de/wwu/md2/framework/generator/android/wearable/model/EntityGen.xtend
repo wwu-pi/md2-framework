@@ -2,7 +2,7 @@ package de.wwu.md2.framework.generator.android.wearable.model
 
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.android.wearable.Settings
-import de.wwu.md2.framework.generator.android.wearable.util.MD2AndroidWearableUtil
+import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
 import de.wwu.md2.framework.mD2.AttributeType
 import de.wwu.md2.framework.mD2.BooleanType
 import de.wwu.md2.framework.mD2.DateTimeType
@@ -44,7 +44,7 @@ private static List<ForeignObject> foreinReferences= new ArrayList<ForeignObject
 		
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
-		«MD2AndroidWearableUtil.generateImportAllTypes»
+		«MD2AndroidUtil.generateImportAllTypes»
 public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		
 		    public «entity.name.toFirstUpper»() {
@@ -105,7 +105,7 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
-		«MD2AndroidWearableUtil.generateImportAllTypes»
+		«MD2AndroidUtil.generateImportAllTypes»
 @DatabaseTable(tableName = "«entity.name.toFirstLower»")
 		public class «entity.name.toFirstUpper»  implements Serializable,Md2Entity{
 		

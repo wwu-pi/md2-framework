@@ -1,7 +1,7 @@
 package de.wwu.md2.framework.generator.android.wearable.view
 
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
-import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
+import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
 import de.wwu.md2.framework.generator.android.wearable.Settings
 import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.ContainerElement
@@ -124,7 +124,7 @@ class LayoutGen {
  			btnElement.setAttribute("android:layout_width", "match_parent")
  			btnElement.setAttribute("android:layout_height", "wrap_content")
  			btnElement.setAttribute("android:layout_gravity", "fill_horizontal")
- 			btnElement.setAttribute("android:text", "@string/" + MD2AndroidLollipopUtil.getQualifiedNameAsString(wfe, "_") + "_alias")
+ 			btnElement.setAttribute("android:text", "@string/" + MD2AndroidUtil.getQualifiedNameAsString(wfe, "_") + "_alias")
  			rootContainer.appendChild(btnElement);
 		}
 
@@ -147,150 +147,149 @@ class LayoutGen {
 		doc.appendChild(generationComment)
 
 		//spezielles Layout für Listview
-		if((rv as ContentContainer) instanceof ListView){
-		//create WearableDrawerLayout
-		var Element rootElement = doc.createElement("android.support.wearable.view.drawer.WearableDrawerLayout")
-		rootElement.setAttribute("android:id","@+id/drawer_layout_"+rv.name);
-		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
-			"http://schemas.android.com/apk/res/android")
-		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
-		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:app", "http://schemas.android.com/apk/res-auto")
-		rootElement.setAttribute("android:layout_height", "match_parent")
-		rootElement.setAttribute("android:layout_width", "match_parent")
-		rootElement.setAttribute("tools:deviceIds", "wear")
-		//create NavigationDrawer
-		var Element navElement = doc.createElement("android.support.wearable.view.drawer.WearableNavigationDrawer")
-		navElement.setAttribute("android:id", "@+id/navigation_drawer_"+rv.name)
-		navElement.setAttribute("android:layout_height", "match_parent")
-		navElement.setAttribute("android:layout_width", "match_parent")
-		navElement.setAttribute("android:background", "@color/PSWatchappSemiTransparentDarkBlue")
-		//create WearableRecyclerView für Listendarstellung
-		var Element listElement = doc.createElement("android.support.wearable.view.WearableRecyclerView")
-		listElement.setAttribute("android:id","@+id/wearable_recycler_view_"+rv.name)
-		listElement.setAttribute("android:layout_height", "match_parent")
-		listElement.setAttribute("android:layout_width", "match_parent")
-		//create ActionDrawer
-		var Element drawerElement = doc.createElement("android.support.wearable.view.drawer.WearableActionDrawer")
-		drawerElement.setAttribute("android:id", "@+id/bottom_action_drawer_" + rv.name)
-		drawerElement.setAttribute("android:layout_height", "match_parent")
-		drawerElement.setAttribute("android:layout_width", "match_parent")
-		drawerElement.setAttribute("app:action_menu", "@menu/" + rv.name.toLowerCase + "_action_drawer_menu")
-		drawerElement.setAttribute("android:theme","@style/PSWatchappActionDrawer")
-		//append
-		rootElement.appendChild(listElement)
-		rootElement.appendChild(navElement)
-		for( viewElement: rv.eAllContents.filter(ActionDrawer).toIterable) {
-			if (viewElement instanceof ActionDrawer) {
-				rootElement.appendChild(drawerElement)
-			}
-		}
-		doc.appendChild(rootElement)
-		}
-
-		//StandardLayout
-		else{
-		// create root element: WearableDrawerLayout, NavigationDrawer + BoxInsetLayout as children, FrameLayout as child of BIL, ScrollView as Child
-
-		//create WearableDrawerLayout
-		var Element rootElement = doc.createElement("android.support.wearable.view.drawer.WearableDrawerLayout")
-		rootElement.setAttribute("android:id","@+id/drawer_layout_"+rv.name);
-		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
-			"http://schemas.android.com/apk/res/android")
-		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
-		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:app", "http://schemas.android.com/apk/res-auto")
-		rootElement.setAttribute("android:layout_height", "match_parent")
-		rootElement.setAttribute("android:layout_width", "match_parent")
-		rootElement.setAttribute("tools:deviceIds", "wear")
-
-		//create NavigationDrawer
-		var Element navElement = doc.createElement("android.support.wearable.view.drawer.WearableNavigationDrawer")
-		navElement.setAttribute("android:id", "@+id/navigation_drawer_"+rv.name)
-		navElement.setAttribute("android:layout_height", "match_parent")
-		navElement.setAttribute("android:layout_width", "match_parent")
-
-		navElement.setAttribute("android:background", "@color/PSWatchappSemiTransparentDarkBlue")
-
-		//create ActionDrawer
-		var Element drawerElement = doc.createElement("android.support.wearable.view.drawer.WearableActionDrawer")
-		drawerElement.setAttribute("android:id", "@+id/bottom_action_drawer_" + rv.name)
-		drawerElement.setAttribute("android:layout_height", "match_parent")
-		drawerElement.setAttribute("android:layout_width", "match_parent")
-		drawerElement.setAttribute("app:action_menu", "@menu/" + rv.name.toLowerCase + "_action_drawer_menu")
-		drawerElement.setAttribute("android:theme","@style/PSWatchappActionDrawer")
-		drawerElement.setAttribute("app:show_overflow_in_peek", "true")
-		//Methode zum titel finden und setzen
-		//drawerElement.setAttribute("app:drawer_title", rv.name)
-        //app:drawer_title="TestTitel des Drawers"
-
-		// create BoxInsetLayout
-		var Element boxElement = doc.createElement("android.support.wearable.view.BoxInsetLayout")
-		// set attributes of BoxInsetLayout
-		boxElement.setAttribute("android:layout_height", "match_parent")
-		boxElement.setAttribute("android:layout_width", "match_parent")
-		boxElement.setAttribute("tools:context", mainPackage + "." + rv.name + "Activity")
-		boxElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
-			"http://schemas.android.com/apk/res/android")
-		boxElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
-		boxElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:app", "http://schemas.android.com/apk/res-auto")
-
-		// create FrameLayout
-		var Element frameElement = doc.createElement("FrameLayout")
-		// set attributes of FrameLayout
-		frameElement.setAttribute("android:orientation", "vertical")
-		frameElement.setAttribute("android:layout_height", "match_parent")
-		frameElement.setAttribute("android:layout_width", "match_parent")
-		frameElement.setAttribute("app:layout_box", "all")
-
-
-		//create Scroll View
-		var Element scrollView = doc.createElement("ScrollView")
-		//set attributes of ScrollView
-		scrollView.setAttribute("android:layout_height", "match_parent")
-		scrollView.setAttribute("android:layout_width", "match_parent")
-
-		//append
-		frameElement.appendChild(scrollView)
-		boxElement.appendChild(frameElement)
-		rootElement.appendChild(boxElement);
-		rootElement.appendChild(navElement);
-		for( viewElement: rv.eAllContents.filter(ActionDrawer).toIterable) {
-			if (viewElement instanceof ActionDrawer) {
-				rootElement.appendChild(drawerElement)
-			}
-		}
-		doc.appendChild(rootElement)
-
-		var Element rootContainer = null
-
-		//sollte man nochmal testen, wie toll diese Layouts auf einer Uhr laufen
-		switch rv {
-			FlowLayoutPane: rootContainer = createFlowLayoutPaneElement(doc, rv)
-			GridLayoutPane: rootContainer = createGridLayoutPaneElement(doc, rv)
-			default: return ""
-		}
-
-		rootContainer.setAttribute("android:layout_width", "match_parent")
-		scrollView.appendChild(rootContainer)
-
-		// depth first search to generate elements for all children
-		switch rv {
-			ContentContainer:
-				for (elem : rv.elements) {
-					createChildrenElements(doc, rootContainer, elem)
+		if ((rv as ContentContainer) instanceof ListView) {
+			// create WearableDrawerLayout
+			var Element rootElement = doc.createElement("android.support.wearable.view.drawer.WearableDrawerLayout")
+			rootElement.setAttribute("android:id", "@+id/drawer_layout_" + rv.name);
+			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
+				"http://schemas.android.com/apk/res/android")
+			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools",
+				"http://schemas.android.com/tools")
+			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:app",
+				"http://schemas.android.com/apk/res-auto")
+			rootElement.setAttribute("android:layout_height", "match_parent")
+			rootElement.setAttribute("android:layout_width", "match_parent")
+			rootElement.setAttribute("tools:deviceIds", "wear")
+			// create NavigationDrawer
+			var Element navElement = doc.createElement("android.support.wearable.view.drawer.WearableNavigationDrawer")
+			navElement.setAttribute("android:id", "@+id/navigation_drawer_" + rv.name)
+			navElement.setAttribute("android:layout_height", "match_parent")
+			navElement.setAttribute("android:layout_width", "match_parent")
+			navElement.setAttribute("android:background", "@color/PSWatchappSemiTransparentDarkBlue")
+			// create WearableRecyclerView für Listendarstellung
+			var Element listElement = doc.createElement("android.support.wearable.view.WearableRecyclerView")
+			listElement.setAttribute("android:id", "@+id/wearable_recycler_view_" + rv.name)
+			listElement.setAttribute("android:layout_height", "match_parent")
+			listElement.setAttribute("android:layout_width", "match_parent")
+			// create ActionDrawer
+			var Element drawerElement = doc.createElement("android.support.wearable.view.drawer.WearableActionDrawer")
+			drawerElement.setAttribute("android:id", "@+id/bottom_action_drawer_" + rv.name)
+			drawerElement.setAttribute("android:layout_height", "match_parent")
+			drawerElement.setAttribute("android:layout_width", "match_parent")
+			drawerElement.setAttribute("app:action_menu", "@menu/" + rv.name.toLowerCase + "_action_drawer_menu")
+			drawerElement.setAttribute("android:theme", "@style/PSWatchappActionDrawer")
+			// append
+			rootElement.appendChild(listElement)
+			rootElement.appendChild(navElement)
+			for (viewElement : rv.eAllContents.filter(ActionDrawer).toIterable) {
+				if (viewElement instanceof ActionDrawer) {
+					rootElement.appendChild(drawerElement)
 				}
-			SubViewContainer:
-				for (elem : rv.elements) {
-					switch elem {
-						ContainerElement: createChildrenElements(doc, rootContainer, elem)
-						ContainerElementReference: createChildrenElements(doc, rootContainer, elem.value)
+			}
+			doc.appendChild(rootElement)
+		} // StandardLayout
+		else {
+			// create root element: WearableDrawerLayout, NavigationDrawer + BoxInsetLayout as children, FrameLayout as child of BIL, ScrollView as Child
+			// create WearableDrawerLayout
+			var Element rootElement = doc.createElement("android.support.wearable.view.drawer.WearableDrawerLayout")
+			rootElement.setAttribute("android:id", "@+id/drawer_layout_" + rv.name);
+			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
+				"http://schemas.android.com/apk/res/android")
+			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools",
+				"http://schemas.android.com/tools")
+			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:app",
+				"http://schemas.android.com/apk/res-auto")
+			rootElement.setAttribute("android:layout_height", "match_parent")
+			rootElement.setAttribute("android:layout_width", "match_parent")
+			rootElement.setAttribute("tools:deviceIds", "wear")
+
+			// create NavigationDrawer
+			var Element navElement = doc.createElement("android.support.wearable.view.drawer.WearableNavigationDrawer")
+			navElement.setAttribute("android:id", "@+id/navigation_drawer_" + rv.name)
+			navElement.setAttribute("android:layout_height", "match_parent")
+			navElement.setAttribute("android:layout_width", "match_parent")
+
+			navElement.setAttribute("android:background", "@color/PSWatchappSemiTransparentDarkBlue")
+
+			// create ActionDrawer
+			var Element drawerElement = doc.createElement("android.support.wearable.view.drawer.WearableActionDrawer")
+			drawerElement.setAttribute("android:id", "@+id/bottom_action_drawer_" + rv.name)
+			drawerElement.setAttribute("android:layout_height", "match_parent")
+			drawerElement.setAttribute("android:layout_width", "match_parent")
+			drawerElement.setAttribute("app:action_menu", "@menu/" + rv.name.toLowerCase + "_action_drawer_menu")
+			drawerElement.setAttribute("android:theme", "@style/PSWatchappActionDrawer")
+			drawerElement.setAttribute("app:show_overflow_in_peek", "true")
+			// Methode zum titel finden und setzen
+			// drawerElement.setAttribute("app:drawer_title", rv.name)
+			// app:drawer_title="TestTitel des Drawers"
+			// create BoxInsetLayout
+			var Element boxElement = doc.createElement("android.support.wearable.view.BoxInsetLayout")
+			// set attributes of BoxInsetLayout
+			boxElement.setAttribute("android:layout_height", "match_parent")
+			boxElement.setAttribute("android:layout_width", "match_parent")
+			boxElement.setAttribute("tools:context", mainPackage + "." + rv.name + "Activity")
+			boxElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
+				"http://schemas.android.com/apk/res/android")
+			boxElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools",
+				"http://schemas.android.com/tools")
+			boxElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:app",
+				"http://schemas.android.com/apk/res-auto")
+
+			// create FrameLayout
+			var Element frameElement = doc.createElement("FrameLayout")
+			// set attributes of FrameLayout
+			frameElement.setAttribute("android:orientation", "vertical")
+			frameElement.setAttribute("android:layout_height", "match_parent")
+			frameElement.setAttribute("android:layout_width", "match_parent")
+			frameElement.setAttribute("app:layout_box", "all")
+
+			// create Scroll View
+			var Element scrollView = doc.createElement("ScrollView")
+			// set attributes of ScrollView
+			scrollView.setAttribute("android:layout_height", "match_parent")
+			scrollView.setAttribute("android:layout_width", "match_parent")
+
+			// append
+			frameElement.appendChild(scrollView)
+			boxElement.appendChild(frameElement)
+			rootElement.appendChild(boxElement);
+			rootElement.appendChild(navElement);
+			for (viewElement : rv.eAllContents.filter(ActionDrawer).toIterable) {
+				if (viewElement instanceof ActionDrawer) {
+					rootElement.appendChild(drawerElement)
+				}
+			}
+			doc.appendChild(rootElement)
+
+			var Element rootContainer = null
+
+			// TODO sollte man nochmal testen, wie toll diese Layouts auf einer Uhr laufen
+			switch rv {
+				FlowLayoutPane: rootContainer = createFlowLayoutPaneElement(doc, rv)
+				GridLayoutPane: rootContainer = createGridLayoutPaneElement(doc, rv)
+				default: return ""
+			}
+
+			rootContainer.setAttribute("android:layout_width", "match_parent")
+			scrollView.appendChild(rootContainer)
+
+			// depth first search to generate elements for all children
+			switch rv {
+				ContentContainer:
+					for (elem : rv.elements) {
+						createChildrenElements(doc, rootContainer, elem)
 					}
-				}
+				SubViewContainer:
+					for (elem : rv.elements) {
+						switch elem {
+							ContainerElement: createChildrenElements(doc, rootContainer, elem)
+							ContainerElementReference: createChildrenElements(doc, rootContainer, elem.value)
+						}
+					}
+			}
+
+		// Ende else / Ende StandardLayout
 		}
-
-
-		//Ende else / Ende StandardLayout
-		}
-
 
 		// return xml file as string
 		val transformerFactory = TransformerFactory.newInstance
@@ -299,7 +298,7 @@ class LayoutGen {
 		val writer = new StringWriter
 		transformer.transform(new DOMSource(doc), new StreamResult(writer))
 		return writer.buffer.toString
-}
+	}
 
 	// Generate Action Drawer Menu
 	protected static def generateActionDrawerMenu(String mainPackage, ContainerElement rv, Iterable<WorkflowElementReference> wfes) {
@@ -445,7 +444,7 @@ class LayoutGen {
 		val glpElement = doc.createElement(Settings.MD2LIBRARY_VIEW_GRIDLAYOUTPANE)
 
 		// assign id
-		val qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(glp, "_")
+		val qualifiedName = MD2AndroidUtil.getQualifiedNameAsString(glp, "_")
 		glpElement.setAttribute("android:id", "@id/" + qualifiedName)
 
 		// set default width and height

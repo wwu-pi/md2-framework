@@ -19,6 +19,7 @@ import de.wwu.md2.framework.mD2.ViewGUIElement
 import org.apache.log4j.Logger
 
 import static de.wwu.md2.framework.util.MD2Util.*
+import de.wwu.md2.framework.generator.android.common.model.FilterGen
 
 /**
  * This is the start point for the Android generator.
@@ -161,12 +162,17 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			// Styles
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STYLES_XML_NAME, ValueGen.generateStylesXml)
 
+			// Colors
+			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.COLORS_XML_NAME, ValueGen.generateColorXml)
+
 			// Dimensions
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, ValueGen.generateDimensXml)
 
 			// Layouts
 			LayoutGen.generateLayouts(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
 
+			LayoutGen.generateMaterialIcons(fsa, rootFolder)
+			
 			/***************************************************
 			 * 
 			 * Controller
@@ -193,6 +199,13 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			 * 
 			 ***************************************************/
 			log.info("Android Lollipop Generator: generate app: \"" + app.appName + "\" finished")
+			
+			//Filter		
+			for (cp : dataContainer.contentProviders) {
+				if(cp.filter){
+					FilterGen.generateFilter(cp);
+				}
+			}
 		}
 		log.info("Android Lollipop Generator finished")
 	}

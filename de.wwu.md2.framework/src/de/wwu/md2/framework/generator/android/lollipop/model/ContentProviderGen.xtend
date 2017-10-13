@@ -18,9 +18,9 @@ import de.wwu.md2.framework.mD2.TimeType
 import de.wwu.md2.framework.mD2.DateTimeType
 import de.wwu.md2.framework.mD2.FileType
 import de.wwu.md2.framework.mD2.AttributeType
-import de.wwu.md2.framework.generator.android.wearable.util.MD2AndroidWearableUtil
+import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
 import de.wwu.md2.framework.mD2.SensorType
-import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
+import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
 
 class ContentProviderGen {
 	
@@ -81,7 +81,7 @@ class ContentProviderGen {
 						
 			import «mainPackage».md2.model.«(content.entity as Entity).name»;
 			
-			«MD2AndroidWearableUtil.generateImportAllTypes»
+			«MD2AndroidUtil.generateImportAllTypes»
 			
 			public class «contentProvider.name.toFirstUpper»    extends AbstractMd2ContentProvider {
 			
@@ -273,7 +273,7 @@ class ContentProviderGen {
 		import de.uni_muenster.wi.md2library.model.dataStore.Filter;
 		
 		
-		«MD2AndroidLollipopUtil.generateImportAllTypes»
+		«MD2AndroidUtil.generateImportAllTypes»
 		
 		public class «contentProvider.name.toFirstUpper» extends AbstractMd2MultiContentProvider {
 		  

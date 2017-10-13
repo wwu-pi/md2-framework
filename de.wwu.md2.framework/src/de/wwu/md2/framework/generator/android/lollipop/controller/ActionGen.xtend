@@ -2,7 +2,7 @@ package de.wwu.md2.framework.generator.android.lollipop.controller
 
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.android.lollipop.Settings
-import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
+import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
 import de.wwu.md2.framework.mD2.AbstractContentProviderPath
 import de.wwu.md2.framework.mD2.AbstractProviderReference
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
@@ -66,7 +66,7 @@ class ActionGen {
 		// generate actions that belong to each workflow element
 		workflowElements.forEach [ wfe |
 			wfe.actions.forEach [ a |
-				val qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(a, "_")
+				val qualifiedName = MD2AndroidUtil.getQualifiedNameAsString(a, "_")
 				fsa.generateFile(
 					rootFolder + Settings.JAVA_PATH + mainPath + "md2/controller/action/" + qualifiedName.toFirstUpper +
 						"_Action.java", generateAction(mainPackage, app, wfe, a, qualifiedName))
@@ -84,11 +84,11 @@ class ActionGen {
 		import «mainPackage».R;
 		
 		import «mainPackage»«Settings.MD2_APP_FILES_CONTROLLER_PACKAGE_NAME»;
-		«MD2AndroidLollipopUtil.generateImportAllActions»
-		«MD2AndroidLollipopUtil.generateImportAllTypes»
-		«MD2AndroidLollipopUtil.generateImportAllExceptions»
-		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
-		«MD2AndroidLollipopUtil.generateImportAllCustomCodeTasks»
+		«MD2AndroidUtil.generateImportAllActions»
+		«MD2AndroidUtil.generateImportAllTypes»
+		«MD2AndroidUtil.generateImportAllExceptions»
+		«MD2AndroidUtil.generateImportAllEventHandler»
+		«MD2AndroidUtil.generateImportAllCustomCodeTasks»
 		import «Settings.MD2LIBRARY_CONTENTPROVIDERREGISTRY_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
@@ -209,7 +209,7 @@ class ActionGen {
 					}
 				}
 
-				instantiation = '''"«contentProvider»", R.id.«MD2AndroidLollipopUtil.getQualifiedName(ccf.referencedViewField.ref).toString("_")», "«attribute»"'''
+				instantiation = '''"«contentProvider»", R.id.«MD2AndroidUtil.getQualifiedName(ccf.referencedViewField.ref).toString("_")», "«attribute»"'''
 			}
 			
 //			TODO: implement UnmappingTask
@@ -405,7 +405,7 @@ class ActionGen {
 				}
 			}
 			AbstractViewGUIElementRef:
-				return '''Md2ViewManager.getInstance().getWidgetValue(R.id.«MD2AndroidLollipopUtil.getQualifiedNameAsString(expression.ref, "_")»)'''
+				return '''Md2ViewManager.getInstance().getWidgetValue(R.id.«MD2AndroidUtil.getQualifiedNameAsString(expression.ref, "_")»)'''
 			default:
 				throw new UnsupportedOperationException("generateSimpleExpression()")
 		}
