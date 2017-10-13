@@ -43,7 +43,10 @@ import de.wwu.md2.framework.mD2.impl.ActionDrawerImpl
 import de.wwu.md2.framework.mD2.ViewIcon
 import de.wwu.md2.framework.mD2.ViewIconActionDrawer
 import java.util.List
-
+import de.wwu.md2.framework.mD2.OptionInput
+import de.wwu.md2.framework.mD2.Spacer
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
+import de.wwu.md2.framework.mD2.IntegerInputType
 
 class LayoutGen {
 
@@ -403,8 +406,15 @@ class LayoutGen {
 				newElement = createIntegerInputElement(doc, viewElement)
 			}
 			Label: {
-				if(viewElement.name.startsWith("_title")) { return } // Skip title label --> landet das irgendwo anders?
+				//if(viewElement.name.startsWith("_title")) { return } // Skip title label --> landet das irgendwo anders?
 				newElement = createLabelElement(doc, viewElement)
+			}
+//TODO
+//			OptionInput: {
+//				newElement = createOptionInputElement(doc, viewElement)
+//			}
+			Spacer: {
+				newElement = createSpacerElement(doc, viewElement)
 			}
 			default:
 				return
@@ -569,6 +579,36 @@ class LayoutGen {
 
 		return labelElement
 	}
+	
+	// TODO untested
+	protected static def createOptionInputElement(Document doc, OptionInput optionInput) {
+		val optionInputElement = doc.createElement(Settings.MD2LIBRARY_VIEW_OPTIONINPUT)
+		val qnp = new DefaultDeclarativeQualifiedNameProvider
+		val qualifiedName = qnp.getFullyQualifiedName(optionInput).toString("_")
+
+		// id
+		optionInputElement.setAttribute("android:id", "@id/" + qualifiedName)
+
+		if(optionInput.width == -1){
+			optionInputElement.setAttribute("android:layout_width", "match_parent")
+		}else{
+			optionInputElement.setAttribute("android:layout_width", "0dp")
+			optionInputElement.setAttribute("android:layout_columnWeight", String.valueOf(optionInput.width))
+		}
+		optionInputElement.setAttribute("android:layout_height", "wrap_content")
+		
+		optionInputElement.setAttribute("android:entries", "@array/" + qualifiedName + "_entries")
+		
+		// disabled 
+		//TODO working on Spinners?
+		var isEnabled = true
+		if (optionInput.isDisabled)
+			isEnabled = false
+
+		optionInputElement.setAttribute("android:enabled", String.valueOf(isEnabled))
+
+		return optionInputElement
+	}
 
 	protected static def createIntegerInputElement(Document doc, IntegerInput integerInput) {
 		val integerInputElement = doc.createElement(Settings.MD2LIBRARY_VIEW_TEXTINPUT)
@@ -598,19 +638,21 @@ class LayoutGen {
 		integerInputElement.setAttribute("android:inputType", "number");
 		
 		integerInputElement.setAttribute("android:imeOptions","actionDone")
-		
-		// type ???
-		// switch textInput {
-		//	case textInput.type == TextInputType.PASSWORD:
-		//		textInputElement.setAttribute("android:inputType", "textPassword")
-		//	case textInput.type == TextInputType.TEXTAREA:
-		//		textInputElement.setAttribute("android:inputType",
-		//			"text|textMultiLine")
-		//	default:
-		//		textInputElement.setAttribute("android:inputType", "text")
-		//}
 
 		return integerInputElement
+	}
+	
+	protected static def createSpacerElement(Document doc, Spacer spacer) {
+		val spacerElement = doc.createElement("android.widget.Space")
+		val qualifiedName = "spacer" + MD2GeneratorUtil.getName(spacer); // Spacer has no name in model
+
+		// id
+		spacerElement.setAttribute("android:id", "@id/" + qualifiedName)
+
+		spacerElement.setAttribute("android:layout_width", "match_parent")
+		spacerElement.setAttribute("android:layout_height", "35dp")
+		
+		return spacerElement
 	}
 	
 	def static generateMaterialIcons(IExtendedFileSystemAccess fsa, String rootFolder) {

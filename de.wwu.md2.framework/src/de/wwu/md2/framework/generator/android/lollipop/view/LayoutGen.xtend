@@ -34,6 +34,7 @@ import de.wwu.md2.framework.mD2.OptionInput
 import de.wwu.md2.framework.mD2.Spacer
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.ListView
+import de.wwu.md2.framework.mD2.IntegerInput
 
 class LayoutGen {
 
@@ -198,6 +199,9 @@ class LayoutGen {
 			TextInput: {
 				newElement = createTextInputElement(doc, viewElement)
 			}
+			IntegerInput: {
+				newElement = createIntegerInputElement(doc, viewElement)
+			}
 			Label: {
 				if(viewElement.name.startsWith("_title")) { return } // Skip title label
 				newElement = createLabelElement(doc, viewElement)
@@ -344,6 +348,8 @@ class LayoutGen {
 			default:
 				textInputElement.setAttribute("android:inputType", "text")
 		}
+		
+		textInputElement.setAttribute("android:imeOptions","actionDone")
 
 		return textInputElement
 	}
@@ -398,6 +404,38 @@ class LayoutGen {
 		optionInputElement.setAttribute("android:enabled", String.valueOf(isEnabled))
 
 		return optionInputElement
+	}
+	
+	protected static def createIntegerInputElement(Document doc, IntegerInput integerInput) {
+		val integerInputElement = doc.createElement(Settings.MD2LIBRARY_VIEW_TEXTINPUT)
+		val qnp = new DefaultDeclarativeQualifiedNameProvider
+		val qualifiedName = qnp.getFullyQualifiedName(integerInput).toString("_")
+
+		// id
+		integerInputElement.setAttribute("android:id", "@id/" + qualifiedName)
+
+		
+		integerInputElement.setAttribute("android:layout_width", "match_parent")
+		
+		integerInputElement.setAttribute("android:layout_height", "wrap_content")
+		integerInputElement.setAttribute("android:layout_gravity", "fill_horizontal")
+
+		integerInputElement.setAttribute("android:hint", "@string/" + qualifiedName + "_tooltip")
+
+		integerInputElement.setAttribute("android:text", integerInput.defaultValue.toString())
+		
+		// disabled
+		var isEnabled = true
+		if (integerInput.isDisabled)
+			isEnabled = false
+
+		integerInputElement.setAttribute("android:enabled", String.valueOf(isEnabled))
+	
+		integerInputElement.setAttribute("android:inputType", "number");
+		
+		integerInputElement.setAttribute("android:imeOptions","actionDone")
+
+		return integerInputElement
 	}
 	
 	protected static def createSpacerElement(Document doc, Spacer spacer) {

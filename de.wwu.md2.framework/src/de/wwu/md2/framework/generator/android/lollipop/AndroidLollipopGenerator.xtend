@@ -183,7 +183,7 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 				ApplicationGen.generateAppClass(mainPackage, app))
 
 			// Activities
-			ActivityGen.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
+			ActivityGen.generateActivities(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements, dataContainer.entities, app)
 
 			// Controller
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/controller/Controller" + ".java",
