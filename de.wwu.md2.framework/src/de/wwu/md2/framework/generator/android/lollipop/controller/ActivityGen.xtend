@@ -277,7 +277,6 @@ class ActivityGen {
 				wrv = (RecyclerView) findViewById(R.id.recycler_view_«rv.name»);
 											«rv.name»ListAdapter listAdapter = new «rv.name»ListAdapter();
 										   	wrv.setAdapter(listAdapter);
-											wrv.setCenterEdgeItems(true);
 				«ENDIF»
 		    }
 		    

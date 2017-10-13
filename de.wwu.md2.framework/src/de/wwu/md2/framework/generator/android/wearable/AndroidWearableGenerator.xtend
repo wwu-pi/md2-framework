@@ -79,7 +79,10 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 			// copy md2Library for Android to the project
 			fsa.generateFileFromInputStream(getSystemResource(Settings.MD2_RESOURCE_PATH_LOLLIPOP + Settings.MD2LIBRARY_DEBUG_NAME),
 				rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.MD2LIBRARY_DEBUG_NAME)
-
+			// Special library for generic Android Wear functionalitities
+			fsa.generateFileFromInputStream(getSystemResource(Settings.MD2_RESOURCE_PATH + Settings.MD2LIBRARY_WEAR_NAME),
+				rootFolder + Settings.MD2LIBRARY_WEAR_PATH + Settings.MD2LIBRARY_WEAR_NAME)
+			
 			// copy mipmap resources
 			// TODO: copy whole folder instead of each file separately
 			fsa.generateFileFromInputStream(
@@ -108,6 +111,8 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 			// gradle build files
 			fsa.generateFile(rootFolder + Settings.MD2LIBRARY_DEBUG_PATH + Settings.GRADLE_BUILD_NAME,
 				GradleGen.generateMd2LibraryBuild)
+			fsa.generateFile(rootFolder + Settings.MD2LIBRARY_WEAR_PATH + Settings.GRADLE_BUILD_NAME,
+				GradleGen.generateMd2WearLibraryBuild)
 			fsa.generateFile(rootFolder + Settings.GRADLE_BUILD_NAME, GradleGen.generateProjectBuild)
 			fsa.generateFile(rootFolder + Settings.GRADLE_SETTINGS_NAME, GradleGen.generateProjectSettings)
 			fsa.generateFile(rootFolder + Settings.APP_PATH + Settings.GRADLE_BUILD_NAME,
@@ -137,25 +142,17 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 				SQLiteGen.generateDataContract(mainPackage, dataContainer.getEntities))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2SQLiteHelperImpl.java",
 				SQLiteGen.generateSQLiteHelper(mainPackage, app, dataContainer.getMain, dataContainer.getEntities))
-fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/DatabaseConfigUtil.java",
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/DatabaseConfigUtil.java",
 				SQLiteGen.generateOrmLiteDatabaseConfigUtil(mainPackage,dataContainer.getEntities()));
-				
-				fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/DatabaseHelper.java",
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/DatabaseHelper.java",
 				SQLiteGen.generateDataBaseHelper(mainPackage,app,dataContainer.getEntities()));
-				
-
-				fsa.generateFile(rootFolder + Settings.RES_PATH + "raw/ormlite_config.txt",
-SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.getEntities()));
-				fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2LocalStoreFactory.java",
-					SQLiteGen.generateMd2LocalStoreFactory( mainPackage,   app,dataContainer.getEntities()) );
-					
-					fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2OrmLiteDatastore.java",
-					SQLiteGen.generateOrmLiteDatastore( mainPackage,   app,  dataContainer.getEntities()));
-					
-				
-
-
-
+			fsa.generateFile(rootFolder + Settings.RES_PATH + "raw/ormlite_config.txt",
+				SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.getEntities()));
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2LocalStoreFactory.java",
+				SQLiteGen.generateMd2LocalStoreFactory(mainPackage, app, dataContainer.getEntities()) );
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2OrmLiteDatastore.java",
+				SQLiteGen.generateOrmLiteDatastore(mainPackage, app, dataContainer.getEntities()));
+			
 			/***************************************************
 			 * 
 			 * View
