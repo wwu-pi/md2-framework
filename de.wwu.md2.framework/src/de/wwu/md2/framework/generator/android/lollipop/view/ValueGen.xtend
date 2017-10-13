@@ -46,7 +46,7 @@ class ValueGen {
 			«ENDFOR»
 			
 			«FOR wer : wers»
-				<string name="«MD2AndroidUtil.getQualifiedNameAsString(wer, "_")»_alias">«wer.alias»</string>
+				<string name="«MD2AndroidUtil.getQualifiedNameAsString(wer.workflowElementReference, "_")»_alias">«wer.alias»</string>
 			«ENDFOR»
 			
 			«FOR ve : viewGUIElements»
@@ -148,6 +148,7 @@ class ValueGen {
 		<resources>
 			<color name="background_material_light">#032859</color>
 			<color name="foreground_material_light">#ff0909</color>
+			<color name="white">#ffffff</color>
 		</resources>
 	'''
 }

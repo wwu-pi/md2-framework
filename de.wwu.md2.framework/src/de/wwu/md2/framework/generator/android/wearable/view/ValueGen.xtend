@@ -194,6 +194,7 @@ class ValueGen {
 			<color name="PSWatchappBlueLight">#00a2d3</color>
 			<color name="foreground_material_light">#ff0909</color>
 			<color name="PSWatchappSemiTransparentDarkBlue">#bd00a2d3</color>
+			<color name="white">#ffffff</color>
 		</resources>
 	'''
 }

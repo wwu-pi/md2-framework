@@ -251,7 +251,7 @@ class ActivityGen {
 		import android.os.Bundle;
 		import android.view.View;
 		
-		import android.support.widget.RecyclerView;
+		import android.support.v7.widget.RecyclerView;
 		
 		import «mainPackage».md2.controller.Controller;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;

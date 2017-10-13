@@ -92,7 +92,7 @@ class LayoutGen {
  			btnElement.setAttribute("android:layout_width", "match_parent")
  			btnElement.setAttribute("android:layout_height", "wrap_content")
  			btnElement.setAttribute("android:layout_gravity", "fill_horizontal")
- 			btnElement.setAttribute("android:text", "@string/" + MD2AndroidUtil.getQualifiedNameAsString(wfe, "_") + "_alias")
+ 			btnElement.setAttribute("android:text", "@string/" + MD2AndroidUtil.getQualifiedNameAsString(wfe.workflowElementReference, "_") + "_alias")
  			rootContainer.appendChild(btnElement);
 		}
 
@@ -116,6 +116,27 @@ class LayoutGen {
 
 		if ((rv as ContentContainer) instanceof ListView) {
 			//TODO spezielles Layout für Listview
+			
+			var Element rootElement = doc.createElement("android.support.v7.widget.RecyclerView")
+			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
+				"http://schemas.android.com/apk/res/android")
+			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools",
+				"http://schemas.android.com/tools")
+			
+			rootElement.setAttribute("android:id", "@+id/recycler_view_" + rv.name)
+			rootElement.setAttribute("android:layout_width", "match_parent")
+			rootElement.setAttribute("android:layout_height", "match_parent")
+			rootElement.setAttribute("android:paddingBottom", "@dimen/activity_vertical_margin")
+			rootElement.setAttribute("android:paddingLeft", "@dimen/activity_horizontal_margin")
+			rootElement.setAttribute("android:paddingRight", "@dimen/activity_horizontal_margin")
+			rootElement.setAttribute("android:paddingTop", "@dimen/activity_vertical_margin")
+			rootElement.setAttribute("android:scrollbars", "vertical")
+			rootElement.setAttribute("tools:context", mainPackage + "." + rv.name + "Activity")
+	
+	//		<android.support.v7.widget.RecyclerView
+//    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    
 		} else {
 			// create root element
 			var Element rootElement = doc.createElement("ScrollView")

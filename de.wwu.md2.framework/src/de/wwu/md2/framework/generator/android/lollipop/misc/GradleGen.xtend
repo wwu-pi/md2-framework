@@ -20,7 +20,7 @@ class GradleGen {
 				jcenter()
 			}
 			dependencies {
-				classpath 'com.android.tools.build:gradle:2.3.1'
+				classpath 'com.android.tools.build:gradle:2.3.3'
 			}
 		}
 
@@ -69,6 +69,7 @@ class GradleGen {
 			compile group: 'com.j256.ormlite', name: 'ormlite-android', version: '4.45'
 		    compile 'com.google.code.gson:gson:2.8.0'
 			compile 'com.android.volley:volley:1.0.0'
+			compile 'com.android.support:recyclerview-v7:21.0.+'
 		}
 	'''
 	
