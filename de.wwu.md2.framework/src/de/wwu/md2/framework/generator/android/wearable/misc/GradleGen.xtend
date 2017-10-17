@@ -72,6 +72,7 @@ class GradleGen {
 		    compile fileTree(include: ['*.jar'], dir: 'libs')
 		       compile project('«Settings.MD2LIBRARY_DEBUG_PROJECT»')
 		       compile project('«Settings.MD2LIBRARY_WEAR_PROJECT»')
+		       provided 'com.google.android.wearable:wearable:2.0.1'
 		       compile 'com.google.android.support:wearable:2.0.1'
 		       compile 'com.google.android.gms:play-services-wearable:10.2.1'
 		       compile group: 'com.j256.ormlite', name: 'ormlite-android', version: '4.45'

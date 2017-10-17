@@ -31,59 +31,13 @@ class EntityGen {
 				generateEntityPOJO(mainPackage, e, entities))
 		]
 	}
-
-	private def static generateEntity(String mainPackage, Entity entity) '''
-		// generated in de.wwu.md2.framework.generator.android.lollipop.model.Md2Entity.generateEntity()
-		package «mainPackage + ".md2.model"»;
-		
-		import java.util.HashMap;
-		
-		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Entity;
-		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
-		«MD2AndroidUtil.generateImportAllTypes»
-
-		public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
-		
-		    public «entity.name.toFirstUpper»() {
-		        super("«entity.name.toFirstUpper»");
-		    }
-		
-		    public «entity.name.toFirstUpper»(HashMap attributes) {
-		        super("«entity.name.toFirstUpper»", attributes);
-		    }
-		    
-			@Override
-		    public void set(String attribute, Md2Type value){
-		        if(checkAttribute(attribute, value))
-		            super.set(attribute, value);
-		    }
-		
-		    private boolean checkAttribute(String attribute, Md2Type value){
-		    	if(value == null)
-		    		return true;
-		    		
-		        switch (attribute){
-		        	«FOR attribute : entity.attributes»
-		        		case "«attribute.name»": return (value instanceof «getMd2TypeStringForAttributeType(attribute.type)»);
-		            «ENDFOR»
-		            default: return false;
-		        }
-		    }
-		
-		    @Override
-		    public Md2Type clone() {
-		        «entity.name.toFirstUpper» newEntity = new «entity.name.toFirstUpper»(this.getAttributes());
-		        return newEntity;
-		    }
-		}
-	'''
 	
 	private def static generateEntityPOJO(String mainPackage, Entity entity, Iterable<Entity> entities){ '''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.model.Md2Entity.generateEntity()
 		package «mainPackage + ".md2.model"»;
 		
 		«FOR element : entities»
-				import «mainPackage + ".md2.model"».«element.name.toFirstUpper»;	
+			import «mainPackage + ".md2.model"».«element.name.toFirstUpper»;	
 		«ENDFOR»
 
 		import java.sql.Timestamp;
@@ -101,158 +55,159 @@ class EntityGen {
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
 		«MD2AndroidUtil.generateImportAllTypes»
-@DatabaseTable(tableName = "«entity.name.toFirstLower»")
-		public class «entity.name.toFirstUpper»  implements Serializable,Md2Entity{
+		
+		@DatabaseTable(tableName = "«entity.name.toFirstLower»")
+		public class «entity.name.toFirstUpper» implements Serializable, Md2Entity{
 		
 			@SerializedName("__internalId")
 			@Expose
 			@DatabaseField(generatedId = true, columnName = "id")
 			private long id;
-		    
+			
 			@Expose(serialize = false)
-		   
 			private Timestamp modifiedDate;
-		   
+
 			public Timestamp getModifiedDate(){
 		  		return this.modifiedDate;
 		  	}
-		  	
+
 		  	public void setModifiedDate(Timestamp modified){
 		  		this.modifiedDate=modified;	
 		  	}
-		    
+
 			protected final String typeName = "«entity.name.toFirstUpper»";
-			
+
 		«FOR element : entity.attributes»
-		«IF  element.type instanceof ReferencedType && element.type.many»
-		@ForeignCollectionField
-		private ForeignCollection<«getMd2TypeStringForAttributeType(element.type)»>	«element.name»;
-		«var boolean b= foreinReferences.add(new ForeignObject(entity.name, element.name, getMd2TypeStringForAttributeType(element.type)))»
+			«IF element.type instanceof ReferencedType && element.type.many»
+				@ForeignCollectionField
+				private ForeignCollection<«getMd2TypeStringForAttributeType(element.type)»>	«element.name»;
+				«var boolean b = foreinReferences.add(new ForeignObject(entity.name, element.name, getMd2TypeStringForAttributeType(element.type)))»
 			«ELSE»
-		«IF element.type instanceof ReferencedType»
-		@DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
-		«ELSE»	
-		@Expose
-		@DatabaseField(columnName = "«element.name.toFirstLower»")
-		«ENDIF»	
-		private «getJavaTypeStringForAttributeType(element.type)»	«element.name»;		
-		«ENDIF»
+				«IF element.type instanceof ReferencedType»
+					@DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
+				«ELSE»	
+					@Expose
+					@DatabaseField(columnName = "«element.name.toFirstLower»")
+				«ENDIF»	
+				private «getJavaTypeStringForAttributeType(element.type)» «element.name»;
+			«ENDIF»
+			
 		«ENDFOR»
+		
 		«FOR element : foreinReferences»
-		«IF element.targetClass.equals(entity.name)»
-@DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)		
-private «element.className» «element.attributeName»;			
-		«ENDIF»	
+			«IF element.targetClass.equals(entity.name)»
+				@DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)		
+				private «element.className» «element.attributeName»;
+			«ENDIF»
+			
 		«ENDFOR»
 		
+			public «entity.name.toFirstUpper»() {
+				super();
+				this.setModifiedDate(new Timestamp(System.currentTimeMillis()));
+			}
+			
+
+			@Override
+			public Md2Type clone() {
+				«entity.name.toFirstUpper» result = new «entity.name.toFirstUpper»();
+			
+				«FOR element : entity.attributes»
+					result.set«element.name.toFirstUpper»(this.get«element.name.toFirstUpper»());
+				«ENDFOR»
+				return result;
+			}
 		
-		
-		    public «entity.name.toFirstUpper»() {
-		        super();
-		        this.setModifiedDate(new Timestamp(System.currentTimeMillis()));
-		    }
-		    
-		    		
-		    @Override
-		    public Md2Type clone() {
-		   return null; //TODO
-		    }
-		
-		
-		@Override
+			@Override
 			public Md2String getString() {
-				return null;
+				return null; //TODO
 			}
 		
 			@Override
 			public Md2Type get(String s) {
-				return null;
+				return null; //TODO
 			}
 		
 			@Override
 			public void set(String s, Md2Type md2Type) {
-		
+				//TODO
 			}
-		
-	
 		
 			@Override
 			public HashMap<String, Md2Type> getAttributes() {
-				return null;
+				return null; //TODO
 			}
 		
-		 public long getId() {
-		        return this.id;
-		    }
+			public long getId() {
+				return this.id;
+			}
 		
-		    public void setId(long id) {
-		        this.id = id;
-		    }
+			public void setId(long id) {
+				this.id = id;
+			}
 		
-		 public String getTypeName() {
-		        return this.typeName;
-		    }
+			public String getTypeName() {
+				return this.typeName;
+			}
 		
 		«FOR element : entity.attributes»
-		«IF element.type.many»
-		public List<«getJavaTypeStringForAttributeType(element.type)»> get«element.name.toFirstUpper»(){
-		return new ArrayList<«getJavaTypeStringForAttributeType(element.type)»>(this.«element.name»);	
-		}	
-		
-		public void set«element.name.toFirstUpper»(List<«getJavaTypeStringForAttributeType(element.type)»> «element.name» ){
-		//this.«element.name»=«element.name»; 	
-		}
-			«ELSE»		
-		public «getJavaTypeStringForAttributeType(element.type)» get«element.name.toFirstUpper»(){
-				return this.«element.name»;	
-				}
+			«IF element.type.many»
+				public List<«getJavaTypeStringForAttributeType(element.type)»> get«element.name.toFirstUpper»(){
+					return new ArrayList<«getJavaTypeStringForAttributeType(element.type)»>(this.«element.name»);
+				}	
 				
-		public void set«element.name.toFirstUpper»(«getJavaTypeStringForAttributeType(element.type)» «element.name» ){
-				this.«element.name»=«element.name»; 	
-				this.setModifiedDate(new Timestamp(System.currentTimeMillis()));
-				}		
-		«ENDIF»
+				public void set«element.name.toFirstUpper»(List<«getJavaTypeStringForAttributeType(element.type)»> «element.name» ){
+					//this.«element.name»=«element.name»;
+				}
+			«ELSE»		
+				public «getJavaTypeStringForAttributeType(element.type)» get«element.name.toFirstUpper»(){
+					return this.«element.name»;	
+				}
+
+				public void set«element.name.toFirstUpper»(«getJavaTypeStringForAttributeType(element.type)» «element.name» ){
+					this.«element.name»=«element.name»;
+					this.setModifiedDate(new Timestamp(System.currentTimeMillis()));
+				}
+			«ENDIF»
 		«ENDFOR»
 		
-		@Override
-		    public String toString() {
-		        StringBuffer result = new StringBuffer();
-		        result.append(this.getTypeName() + ": (");
-		        «FOR element : entity.attributes»
-		        result.append(this.«element.name»);
-		«ENDFOR» 
+			@Override
+			public String toString() {
+				StringBuffer result = new StringBuffer();
+				result.append(this.getTypeName() + ": (");
+			«FOR element : entity.attributes»
+				result.append(this.«element.name» + " ");
+			«ENDFOR» 
 		
-		        return result.append(")").toString();
-		    }
+				return result.append(")").toString();
+			}
 		
-		@Override
-		public boolean equals(Md2Type t){
-			return this.equals((Object)t);
-			} 
+			@Override
+			public boolean equals(Md2Type t){
+				return this.equals((Object)t);
+			}
 		
-		@Override
-		    public boolean equals(Object value) {
-		        if(value == null) {
-		            return false;
-		        } else if(!(value instanceof «entity.name»)) {
-		            return false;
-		        } else {
-		            «entity.name» md2EntityValue = («entity.name»)value;
-		            boolean b= true;
-		           «FOR element : entity.attributes»
-		           if(this.«element.name»== null) {
-		           		b &= ( ((«entity.name»)md2EntityValue).get«element.name.toFirstUpper»()==null);	
-		           }
-		           else{
-		           		b &= this.«element.name».equals(((«entity.name»)md2EntityValue).get«element.name.toFirstUpper»()) ;
-		           }
-		           «ENDFOR» 
+			@Override
+			public boolean equals(Object value) {
+				if(value == null) {
+					return false;
+				} else if(!(value instanceof «entity.name»)) {
+					return false;
+				} else {
+					«entity.name» md2EntityValue = («entity.name»)value;
+					boolean b = true;
+					«FOR element : entity.attributes»
+					if(this.«element.name»== null) {
+						b &= ((«entity.name») md2EntityValue).get«element.name.toFirstUpper»() == null;	
+					} else {
+						b &= this.«element.name».equals(((«entity.name») md2EntityValue).get«element.name.toFirstUpper»()) ;
+					}
+					«ENDFOR» 
 		
-		            return b;
-		        }
-		    }
+					return b;
+				}
+			}
 		}
-		
 	'''}
 	
 	def static generateEnums(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
@@ -290,9 +245,9 @@ private «element.className» «element.attributeName»;
 			}
 			
 			@Override
-		    public Md2Type clone() {
-		        return new «entity.name.toFirstUpper»(this.enumName, this.getAll());
-		    }
+			public Md2Type clone() {
+				return new «entity.name.toFirstUpper»(this.enumName, this.getAll());
+			}
 		}
 	'''
 	
@@ -312,18 +267,18 @@ private «element.className» «element.attributeName»;
 	}
 	
 	private def static String getJavaTypeStringForAttributeType(AttributeType attributeType){
-				switch attributeType{
-					ReferencedType: attributeType.element.name.toFirstUpper
-					IntegerType: "Integer"
-					FloatType: "Float"
-					StringType: "String"
-					BooleanType: "Boolean"
-					DateType: "Date"
-					TimeType: "Md2Time"
-					DateTimeType: "Md2DateTime"		
-					
-					SensorType: "Float"		
-					FileType: "Object" // TODO not implemented
+		switch attributeType{
+			ReferencedType: attributeType.element.name.toFirstUpper
+			IntegerType: "Integer"
+			FloatType: "Float"
+			StringType: "String"
+			BooleanType: "Boolean"
+			DateType: "Date"
+			TimeType: "Md2Time"
+			DateTimeType: "Md2DateTime"		
+			
+			SensorType: "Float"		
+			FileType: "Object" // TODO not implemented
 		}
 	}
 }
