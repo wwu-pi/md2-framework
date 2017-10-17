@@ -253,6 +253,8 @@ class ActivityGen {
 		
 		import android.support.v7.widget.RecyclerView;
 		import android.support.v7.widget.LinearLayoutManager;
+		import android.support.v7.widget.DividerItemDecoration;
+		import android.support.v7.widget.DefaultItemAnimator;
 		
 		import «mainPackage».md2.controller.Controller;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
@@ -266,23 +268,29 @@ class ActivityGen {
 		
 			private RecyclerView wrv;
 		
-		    @Override
-		    protected void onCreate(Bundle savedInstanceState) {
-		        super.onCreate(savedInstanceState);
-		        setContentView(R.layout.activity_«rv.name.toLowerCase»);
+			@Override
+			protected void onCreate(Bundle savedInstanceState) {
+				super.onCreate(savedInstanceState);
+				setContentView(R.layout.activity_«rv.name.toLowerCase»);
 		        «FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
-		        	«generateAddViewElement(viewElement)»
+					«generateAddViewElement(viewElement)»
 		        «ENDFOR»
-		        
+
 		        «IF (rv instanceof ListView)»
 				wrv = (RecyclerView) findViewById(R.id.recycler_view_«rv.name»);
 				
 				final LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
 				layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-		        wrv.setLayoutManager(layoutManager);
+				wrv.setLayoutManager(layoutManager);
 				        
-					«rv.name»ListAdapter listAdapter = new «rv.name»ListAdapter();
-				   	wrv.setAdapter(listAdapter);
+				«rv.name»ListAdapter listAdapter = new «rv.name»ListAdapter();
+				wrv.setAdapter(listAdapter);
+				   	
+				wrv.addItemDecoration(new DividerItemDecoration(
+					wrv.getContext(),
+				   	layoutManager.getOrientation()
+				));
+				wrv.setItemAnimator(new DefaultItemAnimator());
 				«ENDIF»
 		    }
 		    
