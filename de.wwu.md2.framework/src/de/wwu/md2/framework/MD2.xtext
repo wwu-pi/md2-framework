@@ -559,7 +559,8 @@ ListViewParam:
 ;
 
 ListViewLayoutParam:
-	{ViewIcon} 'icon' value = ViewIcon?
+	{ViewIcon} 'icon' value = ViewIcon? |
+	{ListViewTitleParam} 'title' value = STRING
 ;
 
 ViewIcon:
@@ -632,7 +633,7 @@ ActionDrawer:
 
 ActionDrawerParam:
 	{ActionDrawerBezeichnung} 'ActionDrawerTitel' value = STRING |
-	{ActionDrawerTitleParam} 'Actions_titels' ('('(values += STRING (',' values += STRING)*)?')') | //STRING |
+	{ActionDrawerTitleParam} 'Actions_titels' ('('(values += STRING (',' values += STRING)*)?')') | //STRING | // TODO incorporate in above action
 	{ViewIconActionDrawer} 'Actions_icons' ('('(values += ViewIconActionDrawer(',' values += ViewIconActionDrawer)*)?')')
 ;
 

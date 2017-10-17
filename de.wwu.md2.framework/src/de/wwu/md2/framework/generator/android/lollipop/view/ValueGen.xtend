@@ -15,6 +15,8 @@ import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.OptionInput
 import de.wwu.md2.framework.mD2.Spacer
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
+import de.wwu.md2.framework.mD2.ListView
+import de.wwu.md2.framework.mD2.ListViewTitleParam
 
 class ValueGen {
 
@@ -57,6 +59,11 @@ class ValueGen {
 	
 	def static getActivityTitle(ContainerElement element) {
 		switch element {
+			ListView: {
+				if(element.params.filter(ListViewTitleParam).head !== null){
+					return element.params.filter(ListViewTitleParam).head.value
+				}
+			}
 			ContentContainer: {
 				if(element.elements.filter(Label).findFirst[label | label.name.startsWith("_title")] !== null){
 					return element.elements.filter(Label).findFirst[label | label.name.startsWith("_title")].text
