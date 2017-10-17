@@ -252,6 +252,7 @@ class ActivityGen {
 		import android.view.View;
 		
 		import android.support.v7.widget.RecyclerView;
+		import android.support.v7.widget.LinearLayoutManager;
 		
 		import «mainPackage».md2.controller.Controller;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
@@ -275,8 +276,13 @@ class ActivityGen {
 		        
 		        «IF (rv instanceof ListView)»
 				wrv = (RecyclerView) findViewById(R.id.recycler_view_«rv.name»);
-											«rv.name»ListAdapter listAdapter = new «rv.name»ListAdapter();
-										   	wrv.setAdapter(listAdapter);
+				
+				final LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+				layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+		        wrv.setLayoutManager(layoutManager);
+				        
+					«rv.name»ListAdapter listAdapter = new «rv.name»ListAdapter();
+				   	wrv.setAdapter(listAdapter);
 				«ENDIF»
 		    }
 		    

@@ -98,6 +98,7 @@ class SQLiteGen {
 		
 		    @Override
 		    public String[] getAllColumns(String typeName) {
+		    	if(typeName == null) return null;
 		        switch (typeName) {
 		        	«FOR e : entities»
 		        	case "«e.name.toFirstUpper»": {

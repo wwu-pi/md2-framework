@@ -186,7 +186,7 @@ class ActivityGen {
 		//generiert NavigationAdapter als Singleton, ersetzt die urspruengliche StartActivity
 		//startActions werden in Konstruktor uebergeben
 	def static generateNavigationAdapter(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<ContainerElement> rootViews)'''
-		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateStartActivity()
+		// generated in de.wwu.md2.framework.generator.android.wearable.controller.ActivityGen.generateNavigationAdapter()
 				package «mainPackage»;
 				
 				import android.graphics.drawable.Drawable;
@@ -244,7 +244,7 @@ class ActivityGen {
 					
 					@Override
 					public Drawable getItemDrawable(int position) {
-						«println(generateIcons(rootViews))»
+						«generateIcons(rootViews)»
 					}
 					
 					public int getActive(){

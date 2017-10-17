@@ -125,7 +125,8 @@ public class «entity.name.toFirstUpper» extends AbstractMd2Entity {
 		  this.modifiedDate=modified;	
 		  }	  
 		    
-		      protected String typeName;
+		  protected final String typeName = "«entity.name.toFirstUpper»";
+		  
 		«FOR element : entity.attributes»
 		«IF  element.type instanceof ReferencedType && element.type.many»
 		@ForeignCollectionField

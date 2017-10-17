@@ -133,10 +133,8 @@ class LayoutGen {
 			rootElement.setAttribute("android:scrollbars", "vertical")
 			rootElement.setAttribute("tools:context", mainPackage + "." + rv.name + "Activity")
 	
-	//		<android.support.v7.widget.RecyclerView
-//    xmlns:android="http://schemas.android.com/apk/res/android"
+			doc.appendChild(rootElement)
 
-    
 		} else {
 			// create root element
 			var Element rootElement = doc.createElement("ScrollView")

@@ -104,23 +104,25 @@ class EntityGen {
 @DatabaseTable(tableName = "«entity.name.toFirstLower»")
 		public class «entity.name.toFirstUpper»  implements Serializable,Md2Entity{
 		
-		@SerializedName("__internalId")
-		@Expose
-		@DatabaseField(generatedId = true, columnName = "id")
-		    private long id;
+			@SerializedName("__internalId")
+			@Expose
+			@DatabaseField(generatedId = true, columnName = "id")
+			private long id;
 		    
-		    @Expose(serialize = false)
+			@Expose(serialize = false)
 		   
-		  private Timestamp modifiedDate;
+			private Timestamp modifiedDate;
 		   
-		  public Timestamp getModifiedDate(){
-		  	return this.modifiedDate;}
+			public Timestamp getModifiedDate(){
+		  		return this.modifiedDate;
+		  	}
 		  	
-		  public void setModifiedDate(Timestamp modified){
-		  this.modifiedDate=modified;	
-		  }	  
+		  	public void setModifiedDate(Timestamp modified){
+		  		this.modifiedDate=modified;	
+		  	}
 		    
-		      protected String typeName;
+			protected final String typeName = "«entity.name.toFirstUpper»";
+			
 		«FOR element : entity.attributes»
 		«IF  element.type instanceof ReferencedType && element.type.many»
 		@ForeignCollectionField
