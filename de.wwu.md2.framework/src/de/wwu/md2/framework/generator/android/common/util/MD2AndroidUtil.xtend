@@ -7,6 +7,8 @@ import de.wwu.md2.framework.mD2.SimpleType
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import de.wwu.md2.framework.generator.android.wearable.Settings
+import de.wwu.md2.framework.mD2.ViewIcon
+import de.wwu.md2.framework.mD2.ViewIcon
 
 class MD2AndroidUtil {
 	
@@ -102,4 +104,24 @@ class MD2AndroidUtil {
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.Md2UnbindTask;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.Md2UnmapTask;
 	'''
+	
+	def static String getAndroidIconString(ViewIcon icon){
+		switch icon{ 
+			case SHOPPING_CART_ADD:		return "ic_add_shopping_cart_white_24dp"
+			case ACCESS_TIME: 			return "ic_access_time_white_24dp"
+			case BOX_ADD: 				return "ic_add_box_white_24dp"
+			case CIRCLE_ADD: 			return "ic_add_circle_white_24dp"
+			case CIRCLE_OUTLINE_ADD: 	return "ic_add_circle_outline_white_24dp"
+			case CIRCLE_REMOVE: 		return "ic_remove_circle_white_24dp"
+			case CLEAR: 				return "ic_clear_white_24dp"
+			case CREATE: 				return "ic_create_white_24dp"
+			case FLARE: 				return "ic_flare_white_24dp"
+			case HELP: 					return "ic_help_white_24dp"
+			case LIGHTBULB: 			return "ic_lightbulb_outline_white_24dp"
+			case SHOPPING_CART: 		return "ic_shopping_cart_white_24dp"
+			case SHOPPING_CART_REMOVE: 	return "ic_remove_shopping_cart_white_24dp"
+			case WRENCH: 				return "ic_build_white_24dp"
+		}
+		//default: return "ic_dialog_info"
+	}
 }

@@ -559,17 +559,13 @@ ListViewParam:
 ;
 
 ListViewLayoutParam:
-	{ViewIcon} 'icon' value = ViewIcon? |
+	{ListViewIconParam} 'icon' value = ViewIcon? |
 	{ListViewTitleParam} 'title' value = STRING
 ;
 
-ViewIcon:
-	"ic_add_shopping_cart_white_24dp" | "ic_shopping_cart_white_24dp" | "ic_remove_shopping_cart_white_24dp" | "ic_add_circle_outline_white_24dp" | "ic_build_white_24dp" | "ic_flare_white_24dp" | "ic_add_circle_white_24dp" |
-	"ic_add_box_white_24dp" |"ic_remove_circle_white_24dp" |"ic_create_white_24dp"|"ic_clear_white_24dp"|"ic_help_white_24dp"|"ic_lightbulb_outline_white_24dp" | "ic_access_time_white_24dp"
-;
-
-ViewIconActionDrawer:
-	ViewIcon//"ic_shopping_cart_white_24dp" | "ic_remove_shopping_cart_white_24dp" | "ic_add_circle_white_24dp" | "ic_add_shopping_cart_white_24dp"
+enum ViewIcon:
+	ShoppingCartAdd | ShoppingCart | ShoppingCartRemove | Flare | CircleAdd | CircleOutlineAdd | Wrench | BoxAdd | CircleRemove |
+	Create | Clear | Help | Lightbulb | AccessTime
 ;
 
 /*
@@ -589,7 +585,10 @@ GridLayoutPane:
  * These are besides the number of columns and rows all TabSpecificParams.
  */
 GridLayoutPaneParam:
-	{GridLayoutPaneColumnsParam} 'columns' value = INT | {GridLayoutPaneRowsParam} 'rows' value = INT | CommonContainerParam | {ViewIcon} 'icon' value = ViewIcon? 
+	{GridLayoutPaneColumnsParam} 'columns' value = INT | 
+	{GridLayoutPaneRowsParam} 'rows' value = INT | 
+	CommonContainerParam | 
+	{GridLayoutPaneIconParam} 'icon' value = ViewIcon?
 ;
 
 /*
@@ -606,7 +605,9 @@ FlowLayoutPane:
  * These are besides the flowDirection all TabSpecificParams.
  */
 FlowLayoutPaneParam:
-	{FlowLayoutPaneFlowDirectionParam} flowDirection = FlowDirection | CommonContainerParam | {ViewIcon} 'icon' value = ViewIcon? //{ViewIcon} 'icon' value = ("close_button"|"common_full_open_on_phone"|"common_google_signin_btn_icon_light")?
+	{FlowLayoutPaneFlowDirectionParam} flowDirection = FlowDirection | 
+	CommonContainerParam | 
+	{FlowLayoutPaneIconParam} 'icon' value = ViewIcon?
 ;
 
 /*
@@ -633,8 +634,8 @@ ActionDrawer:
 
 ActionDrawerParam:
 	{ActionDrawerBezeichnung} 'ActionDrawerTitel' value = STRING |
-	{ActionDrawerTitleParam} 'Actions_titels' ('('(values += STRING (',' values += STRING)*)?')') | //STRING | // TODO incorporate in above action
-	{ViewIconActionDrawer} 'Actions_icons' ('('(values += ViewIconActionDrawer(',' values += ViewIconActionDrawer)*)?')')
+	{ActionDrawerTitleParam} 'Actions_titels' ('('(values += STRING (',' values += STRING)*)?')') | // TODO incorporate in above action
+	{ActionDrawerIconParam} 'Actions_icons' ('('(values += ViewIcon(',' values += ViewIcon)*)?')')
 ;
 
 /*

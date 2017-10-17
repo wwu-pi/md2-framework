@@ -40,13 +40,12 @@ import de.wwu.md2.framework.mD2.IntegerInput
 import de.wwu.md2.framework.mD2.ActionDrawerParam
 import de.wwu.md2.framework.mD2.ActionDrawerTitleParam
 import de.wwu.md2.framework.mD2.impl.ActionDrawerImpl
-import de.wwu.md2.framework.mD2.ViewIcon
-import de.wwu.md2.framework.mD2.ViewIconActionDrawer
 import java.util.List
 import de.wwu.md2.framework.mD2.OptionInput
 import de.wwu.md2.framework.mD2.Spacer
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.IntegerInputType
+import de.wwu.md2.framework.mD2.ActionDrawerIconParam
 
 class LayoutGen {
 
@@ -330,23 +329,20 @@ class LayoutGen {
 			if(viewElement instanceof ActionDrawer) {
 				//Titel für die Beschriftung im ActionDrawer
 				var ActionDrawerTitel = "";
-				var iconAction = "ic_dialog_info"; //default Icon
 				
 				for (acd : (viewElement as ActionDrawerImpl).params) {
 					if(acd instanceof ActionDrawerTitleParam){
 						for (title  : acd.values) {
 							ActionTitel.add(title.toString);
 						}
-					}		
-					if(acd instanceof ViewIconActionDrawer){
+					}
+						
+					if(acd instanceof ActionDrawerIconParam){
 						for (icon  : acd.values) {
-							iconAction = icon.toString; //falls ein anderes Icon angegeben wurde wird dies verwendet
-							ActionsIcons.add(iconAction);
+							ActionsIcons.add(MD2AndroidUtil.getAndroidIconString(icon));
 						}
 					}	
-						
 				}
-				
 								
 				if(!(viewElement.onItemClickAction === null)) {
 					var ElementCounter = 0;

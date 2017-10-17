@@ -19,11 +19,13 @@ import de.wwu.md2.framework.mD2.SensorType
 import de.wwu.md2.framework.mD2.TextInput
 import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
-import de.wwu.md2.framework.mD2.ViewIcon
 import de.wwu.md2.framework.mD2.WorkflowElementReference
 import de.wwu.md2.framework.mD2.impl.FlowLayoutPaneImpl
 import de.wwu.md2.framework.mD2.impl.GridLayoutPaneImpl
 import de.wwu.md2.framework.mD2.impl.ListViewImpl
+import de.wwu.md2.framework.mD2.ListViewIconParam
+import de.wwu.md2.framework.mD2.FlowLayoutPaneIconParam
+import de.wwu.md2.framework.mD2.GridLayoutPaneIconParam
 
 class ActivityGen {
 
@@ -275,6 +277,7 @@ class ActivityGen {
 				}
 				
 			'''
+			
 	def private static String generateIcons(Iterable<ContainerElement> rootViews){
 		var String result = "switch(position){"
 		var viewnumber = 0;
@@ -283,26 +286,26 @@ class ActivityGen {
 			switch (rv) {
 				GridLayoutPaneImpl: {
 					for (rve : (rv as GridLayoutPaneImpl).params) {
-						if(rve instanceof ViewIcon){
+						if(rve instanceof GridLayoutPaneIconParam){
 							result += "\r\n case " + viewnumber + ":";
-							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+(rve as ViewIcon).value+");"
+							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+ MD2AndroidUtil.getAndroidIconString((rve as GridLayoutPaneIconParam).value)+");"
 						}		
 					}
 				}
 				FlowLayoutPaneImpl: {
 					for (rve : (rv as FlowLayoutPaneImpl).params) {
-						if(rve instanceof ViewIcon){
+						if(rve instanceof FlowLayoutPaneIconParam){
 							result += "\r\n case " + viewnumber + ":";
-							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+(rve as ViewIcon).value+");"
+							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+MD2AndroidUtil.getAndroidIconString((rve as FlowLayoutPaneIconParam).value)+");"
 						}		
 					}
 				}
 				ListViewImpl: {
 				for (rve : rv.params) {
 					println("RVE ListView:" + rve);
-						if(rve instanceof ViewIcon){
+						if(rve instanceof ListViewIconParam){
 							result += "\r\n case " + viewnumber + ":";
-							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+(rve as ViewIcon).value+");"
+							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+MD2AndroidUtil.getAndroidIconString((rve as ListViewIconParam).value)+");"
 						}		
 					}
 				}
