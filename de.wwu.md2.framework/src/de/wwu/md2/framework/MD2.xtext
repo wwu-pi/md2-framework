@@ -547,10 +547,10 @@ SubViewContainer:
  */
  ListView:
  	'ListView' name = EID ('(' params += ListViewLayoutParam (',' params += ListViewLayoutParam)* ')')? '{'
- 		('connectedProvider' connectedProvider = ContentProviderPath)
- 		('onClickAction' onClickAction = [Action | QUALIFIED_NAME])?
- 		('leftSwipeAction' leftSwipeAction = [Action | QUALIFIED_NAME])?
- 		('rightSwipeAction' rightSwipeAction = [Action | QUALIFIED_NAME])?
+ 		(('connectedProvider' connectedProvider = ContentProviderPath) &
+ 		('onClickAction' onClickAction = [Action | QUALIFIED_NAME])? &
+ 		('leftSwipeAction' leftSwipeAction = [Action | QUALIFIED_NAME])? &
+ 		('rightSwipeAction' rightSwipeAction = [Action | QUALIFIED_NAME])?)
  		elements += ViewElementType* 
  	'}'
  ;
