@@ -128,19 +128,19 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
 			// SQLite classes (DataContract and SQLiteHelper)
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2DataContract.java",
-				SQLiteGen.generateDataContract(mainPackage, dataContainer.getEntities))
+				SQLiteGen.generateDataContract(mainPackage, dataContainer.entities))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2SQLiteHelperImpl.java",
-				SQLiteGen.generateSQLiteHelper(mainPackage, app, dataContainer.getMain, dataContainer.getEntities))
+				SQLiteGen.generateSQLiteHelper(mainPackage, app, dataContainer.main, dataContainer.entities))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/DatabaseConfigUtil.java",
-				SQLiteGen.generateOrmLiteDatabaseConfigUtil(mainPackage,dataContainer.getEntities()));
+				SQLiteGen.generateOrmLiteDatabaseConfigUtil(mainPackage,dataContainer.entities))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/DatabaseHelper.java",
-				SQLiteGen.generateDataBaseHelper(mainPackage,app,dataContainer.getEntities()));
+				SQLiteGen.generateDataBaseHelper(mainPackage,app,dataContainer.entities))
 			fsa.generateFile(rootFolder + Settings.RES_PATH + "raw/ormlite_config.txt",
-				SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.getEntities()));
+				SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.entities))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2LocalStoreFactory.java",
-				SQLiteGen.generateMd2LocalStoreFactory(mainPackage, app, dataContainer.getEntities()) );
+				SQLiteGen.generateMd2LocalStoreFactory(mainPackage, app, dataContainer.entities))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2OrmLiteDatastore.java",
-				SQLiteGen.generateOrmLiteDatastore(mainPackage, app, dataContainer.getEntities()));
+				SQLiteGen.generateOrmLiteDatastore(mainPackage, app, dataContainer.entities))
 			
 			/***************************************************
 			 * 

@@ -1,14 +1,13 @@
 package de.wwu.md2.framework.generator.android.common.util
 
 import com.google.common.base.Joiner
+import de.wwu.md2.framework.generator.android.common.Settings
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.SimpleType
+import de.wwu.md2.framework.mD2.ViewIcon
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
-import de.wwu.md2.framework.generator.android.wearable.Settings
-import de.wwu.md2.framework.mD2.ViewIcon
-import de.wwu.md2.framework.mD2.ViewIcon
 
 class MD2AndroidUtil {
 	

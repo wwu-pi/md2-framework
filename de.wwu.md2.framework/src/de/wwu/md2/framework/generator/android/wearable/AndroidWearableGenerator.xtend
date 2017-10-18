@@ -1,30 +1,25 @@
 package de.wwu.md2.framework.generator.android.wearable
 
-
 import de.wwu.md2.framework.generator.AbstractPlatformGenerator
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
+import de.wwu.md2.framework.generator.android.common.misc.ProguardGen
+import de.wwu.md2.framework.generator.android.common.model.FilterGen
 import de.wwu.md2.framework.generator.android.wearable.controller.ActionGen
 import de.wwu.md2.framework.generator.android.wearable.controller.ActivityGen
-import de.wwu.md2.framework.generator.android.wearable.misc.GradleGen
+import de.wwu.md2.framework.generator.android.wearable.controller.ApplicationGen
+import de.wwu.md2.framework.generator.android.wearable.controller.ControllerGen
 import de.wwu.md2.framework.generator.android.wearable.misc.AndroidManifestGen
-import de.wwu.md2.framework.generator.android.wearable.model.EntityGen
-
-import de.wwu.md2.framework.generator.android.common.misc.ProguardGen
+import de.wwu.md2.framework.generator.android.wearable.misc.GradleGen
 import de.wwu.md2.framework.generator.android.wearable.model.ContentProviderGen
+import de.wwu.md2.framework.generator.android.wearable.model.EntityGen
+import de.wwu.md2.framework.generator.android.wearable.model.SQLiteGen
+import de.wwu.md2.framework.generator.android.wearable.view.LayoutGen
 import de.wwu.md2.framework.generator.android.wearable.view.ValueGen
-
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import org.apache.log4j.Logger
 
 import static de.wwu.md2.framework.util.MD2Util.*
-import de.wwu.md2.framework.generator.android.wearable.view.LayoutGen
-import de.wwu.md2.framework.generator.android.wearable.controller.ApplicationGen
-import de.wwu.md2.framework.generator.android.wearable.controller.ControllerGen
-import de.wwu.md2.framework.generator.android.wearable.model.SQLiteGen
-import de.wwu.md2.framework.mD2.App
-import de.wwu.md2.framework.mD2.ContainerElement
-import de.wwu.md2.framework.generator.android.wearable.model.FilterGen
 
 /**
  * This is the start point for the Android generator.
@@ -139,19 +134,19 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 
 			// SQLite classes (DataContract and SQLiteHelper)
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2DataContract.java",
-				SQLiteGen.generateDataContract(mainPackage, dataContainer.getEntities))
+				SQLiteGen.generateDataContract(mainPackage, dataContainer.entities))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2SQLiteHelperImpl.java",
-				SQLiteGen.generateSQLiteHelper(mainPackage, app, dataContainer.getMain, dataContainer.getEntities))
+				SQLiteGen.generateSQLiteHelper(mainPackage, app, dataContainer.main, dataContainer.entities))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/DatabaseConfigUtil.java",
-				SQLiteGen.generateOrmLiteDatabaseConfigUtil(mainPackage,dataContainer.getEntities()));
+				SQLiteGen.generateOrmLiteDatabaseConfigUtil(mainPackage,dataContainer.entities))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/DatabaseHelper.java",
-				SQLiteGen.generateDataBaseHelper(mainPackage,app,dataContainer.getEntities()));
+				SQLiteGen.generateDataBaseHelper(mainPackage,app,dataContainer.entities))
 			fsa.generateFile(rootFolder + Settings.RES_PATH + "raw/ormlite_config.txt",
-				SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.getEntities()));
+				SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.entities))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2LocalStoreFactory.java",
-				SQLiteGen.generateMd2LocalStoreFactory(mainPackage, app, dataContainer.getEntities()) );
+				SQLiteGen.generateMd2LocalStoreFactory(mainPackage, app, dataContainer.entities))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2OrmLiteDatastore.java",
-				SQLiteGen.generateOrmLiteDatastore(mainPackage, app, dataContainer.getEntities()));
+				SQLiteGen.generateOrmLiteDatastore(mainPackage, app, dataContainer.entities))
 			
 			/***************************************************
 			 * 
