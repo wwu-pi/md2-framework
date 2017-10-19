@@ -40,6 +40,7 @@ import static de.wwu.md2.framework.generator.preprocessor.util.Util.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 
 class ProcessViewReferences extends AbstractPreprocessor {
 	
@@ -140,7 +141,12 @@ class ProcessViewReferences extends AbstractPreprocessor {
 								newTask.events.clear
 								val newEventRef = factory.createViewElementEventRef()
 								val newAbstractRef = factory.createAbstractViewGUIElementRef()
-								newAbstractRef.ref = cloned
+								
+								val nestedAbstractViewGUIElementRef = factory.createAbstractViewGUIElementRef
+								newAbstractRef.ref = MD2GeneratorUtil.getViewFrameForGUIElement(cloned)
+								newAbstractRef.tail = nestedAbstractViewGUIElementRef
+								nestedAbstractViewGUIElementRef.viewElementRef = cloned
+							
 								newEventRef.referencedField = newAbstractRef
 								newEventRef.event = eventRef.event
 								newTask.events.add(newEventRef)
@@ -158,7 +164,12 @@ class ProcessViewReferences extends AbstractPreprocessor {
 								newTask.events.clear
 								val newEventRef = factory.createViewElementEventRef()
 								val newAbstractRef = factory.createAbstractViewGUIElementRef()
-								newAbstractRef.ref = cloned
+								
+								val nestedAbstractViewGUIElementRef = factory.createAbstractViewGUIElementRef
+								newAbstractRef.ref = MD2GeneratorUtil.getViewFrameForGUIElement(cloned)
+								newAbstractRef.tail = nestedAbstractViewGUIElementRef
+								nestedAbstractViewGUIElementRef.viewElementRef = cloned
+								
 								newEventRef.referencedField = newAbstractRef
 								newEventRef.event = eventRef.event
 								newTask.events.add(newEventRef)
@@ -175,7 +186,13 @@ class ProcessViewReferences extends AbstractPreprocessor {
 								val newTask = copyElement(codeFragment)
 								newTask.referencedFields.clear
 								val newAbstractRef = factory.createAbstractViewGUIElementRef()
-								newAbstractRef.ref = cloned
+								
+								val nestedAbstractViewGUIElementRef = factory.createAbstractViewGUIElementRef
+								newAbstractRef.ref = MD2GeneratorUtil.getViewFrameForGUIElement(cloned)
+								newAbstractRef.tail = nestedAbstractViewGUIElementRef
+								nestedAbstractViewGUIElementRef.viewElementRef = cloned
+								
+								newAbstractRef.tail = nestedAbstractViewGUIElementRef
 								newTask.referencedFields.add(newAbstractRef)
 								newTask.addToParentCodeContainer(codeFragment.eContainer)
 								clonedCodeFragments.put(codeFragment, original)
@@ -190,7 +207,12 @@ class ProcessViewReferences extends AbstractPreprocessor {
 								val newTask = copyElement(codeFragment)
 								newTask.referencedFields.clear
 								val newAbstractRef = factory.createAbstractViewGUIElementRef()
-								newAbstractRef.ref = cloned
+								
+								val nestedAbstractViewGUIElementRef = factory.createAbstractViewGUIElementRef
+								newAbstractRef.ref = MD2GeneratorUtil.getViewFrameForGUIElement(cloned)
+								newAbstractRef.tail = nestedAbstractViewGUIElementRef
+								nestedAbstractViewGUIElementRef.viewElementRef = cloned
+								
 								newTask.referencedFields.add(newAbstractRef)
 								newTask.addToParentCodeContainer(codeFragment.eContainer)
 								clonedCodeFragments.put(codeFragment, original)
@@ -203,7 +225,12 @@ class ProcessViewReferences extends AbstractPreprocessor {
 						if (original == codeFragment.referencedViewField.resolveViewElement && workflowSpecificViewElements.contains(cloned)) {		
 							val newTask = copyElement(codeFragment)
 							val newAbstractRef = factory.createAbstractViewGUIElementRef()
-							newAbstractRef.ref = cloned
+							
+							val nestedAbstractViewGUIElementRef = factory.createAbstractViewGUIElementRef
+							newAbstractRef.ref = MD2GeneratorUtil.getViewFrameForGUIElement(cloned)
+							newAbstractRef.tail = nestedAbstractViewGUIElementRef
+							nestedAbstractViewGUIElementRef.viewElementRef = cloned
+							
 							newTask.referencedViewField = newAbstractRef
 							newTask.addToParentCodeContainer(codeFragment.eContainer)
 							clonedCodeFragments.put(codeFragment, original)
@@ -215,7 +242,12 @@ class ProcessViewReferences extends AbstractPreprocessor {
 						if (original == codeFragment.referencedViewField.resolveViewElement && workflowSpecificViewElements.contains(cloned)) {		
 							val newTask = copyElement(codeFragment)
 							val newAbstractRef = factory.createAbstractViewGUIElementRef()
-							newAbstractRef.ref = cloned
+							
+							val nestedAbstractViewGUIElementRef = factory.createAbstractViewGUIElementRef
+							newAbstractRef.ref = MD2GeneratorUtil.getViewFrameForGUIElement(cloned)
+							newAbstractRef.tail = nestedAbstractViewGUIElementRef
+							nestedAbstractViewGUIElementRef.viewElementRef = cloned
+								
 							newTask.referencedViewField = newAbstractRef
 							newTask.addToParentCodeContainer(codeFragment.eContainer)
 							clonedCodeFragments.put(codeFragment, original)
@@ -273,12 +305,13 @@ class ProcessViewReferences extends AbstractPreprocessor {
 		
 		val autogenAction = wfe.eAllContents.filter(CustomAction).filter(action | action.name == autoGenerationActionName).last
 		
-		abstractRefs.forEach[ abstractRef |
-			abstractRef.ref = resolveAbstractViewGUIElementRef(abstractRef, null, clonedElements, autogenAction)
-			abstractRef.tail?.remove
-			abstractRef.path?.remove
-			abstractRef.simpleType?.remove
-		]
+//		TODO check and fix
+//		abstractRefs.forEach[ abstractRef |
+//			abstractRef.ref = resolveAbstractViewGUIElementRef(abstractRef, null, clonedElements, autogenAction)
+//			abstractRef.tail?.remove
+//			abstractRef.path?.remove
+//			abstractRef.simpleType?.remove
+//		]
 	}
 	
 	/**

@@ -1,24 +1,19 @@
 package de.wwu.md2.framework.generator.android.lollipop.view
 
 import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.Button
-import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.Image
 import de.wwu.md2.framework.mD2.InputElement
 import de.wwu.md2.framework.mD2.Label
+import de.wwu.md2.framework.mD2.OptionInput
+import de.wwu.md2.framework.mD2.Spacer
 import de.wwu.md2.framework.mD2.Tooltip
+import de.wwu.md2.framework.mD2.ViewFrame
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.WorkflowElementReference
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
-import de.wwu.md2.framework.mD2.ContentContainer
-import de.wwu.md2.framework.mD2.OptionInput
-import de.wwu.md2.framework.mD2.Spacer
-import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
-import de.wwu.md2.framework.mD2.ListView
-import de.wwu.md2.framework.mD2.ListViewTitleParam
-import de.wwu.md2.framework.mD2.ViewFrame
-import de.wwu.md2.framework.mD2.ViewElement
 
 class ValueGen {
 

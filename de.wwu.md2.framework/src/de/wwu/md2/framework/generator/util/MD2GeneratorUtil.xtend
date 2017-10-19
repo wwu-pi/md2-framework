@@ -42,6 +42,7 @@ import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import de.wwu.md2.framework.mD2.WorkflowElement
 import de.wwu.md2.framework.mD2.ViewElementType
+import de.wwu.md2.framework.mD2.ViewFrame
 
 class MD2GeneratorUtil {
 	
@@ -346,9 +347,16 @@ class MD2GeneratorUtil {
 	 */
 	def static getEscapedStoragePath(RemoteConnection remoteConnection) {
 		val path = remoteConnection?.storagePath
-		if (path == null) return ''''''
+		if (path === null) return ''''''
 		
 		return path.replace("\\", "\\\\")
 	}
-
+	
+	def static ViewFrame getViewFrameForGUIElement(ViewElementType elem){
+		if(elem.eContainer instanceof ViewFrame) {
+			return elem.eContainer as ViewFrame
+		} else {
+			return getViewFrameForGUIElement(elem.eContainer as ViewGUIElement)
+		}
+	}	
 }

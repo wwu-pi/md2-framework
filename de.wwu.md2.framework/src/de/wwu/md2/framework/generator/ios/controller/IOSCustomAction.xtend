@@ -154,7 +154,7 @@ class «className»: MD2Action {
 		
 		«IF task.pathDefinition instanceof ContentProviderPath»
 		MD2DataMapper.instance.map(
-			MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«MD2GeneratorUtil.getName(task.referencedViewField.ref).toFirstUpper»)!,
+			MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«MD2GeneratorUtil.getName(task.referencedViewField.tail.viewElementRef).toFirstUpper»)!,
 			contentProvider: MD2ContentProviderRegistry.instance.getContentProvider("«(task.pathDefinition as ContentProviderPath).contentProviderRef.name»")!,
 			attribute: "«(task.pathDefinition as ContentProviderPath).tail.attributeRef.name»")
         «ELSE»
@@ -166,7 +166,7 @@ class «className»: MD2Action {
 		
 		«IF task.pathDefinition instanceof ContentProviderPath»
 		MD2DataMapper.instance.unmap(
-			MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«MD2GeneratorUtil.getName(task.referencedViewField.ref).toFirstUpper»)!,
+			MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«MD2GeneratorUtil.getName(task.referencedViewField.tail.viewElementRef).toFirstUpper»)!,
 			contentProvider: MD2ContentProviderRegistry.instance.getContentProvider("«(task.pathDefinition as ContentProviderPath).contentProviderRef.name»")!,
 			attribute: "«(task.pathDefinition as ContentProviderPath).tail.attributeRef.name»")
         «ELSE»
@@ -179,7 +179,7 @@ class «className»: MD2Action {
 		«FOR i : 0..<task.referencedFields.length»
 		«FOR j : 0..<task.validators.length»
 			let codeFragment«actionCounter»_«(i+1)»_«(j+1)» = «IOSValidator.generateValidator("validator" + actionCounter + "_" + (i+1) + "_" + (j+1), task.validators.get(j))»
-			MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«MD2GeneratorUtil.getName(task.referencedFields.get(i).ref)»)!
+			MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«MD2GeneratorUtil.getName(task.referencedFields.get(i).tail.viewElementRef)»)!
 				.addValidator(codeFragment«actionCounter»_«(i+1)»_«(j+1)»)
 		«ENDFOR»
 		«ENDFOR»
@@ -191,7 +191,7 @@ class «className»: MD2Action {
 		«FOR i : 0..<task.referencedFields.length»
 		«FOR j : 0..<task.validators.length»
 			let codeFragment«actionCounter»_«(i+1)»_«(j+1)» = «IOSValidator.generateValidator("validator" + actionCounter + "_" + (i+1) + "_" + (j+1), task.validators.get(j))»
-			MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«MD2GeneratorUtil.getName(task.referencedFields.get(i).ref)»)!
+			MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«MD2GeneratorUtil.getName(task.referencedFields.get(i).tail.viewElementRef)»)!
 				.removeValidator(codeFragment«actionCounter»_«(i+1)»_«(j+1)»)
 		«ENDFOR»
 		«ENDFOR»
@@ -238,27 +238,27 @@ class «className»: MD2Action {
 			case ElementEventType.ON_CLICK: {
 				return "MD2OnClickHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
 					+ ", widget: MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping." 
-					+ MD2GeneratorUtil.getName((event as ViewElementEventRef).referencedField.ref) + ")!)"
+					+ MD2GeneratorUtil.getName((event as ViewElementEventRef).referencedField.tail.viewElementRef) + ")!)"
 			}
 			case ElementEventType.ON_CHANGE: {
 				return "MD2OnWidgetChangeHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
 					+ ", widget: MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping." 
-					+ MD2GeneratorUtil.getName((event as ViewElementEventRef).referencedField.ref) + ")!)"
+					+ MD2GeneratorUtil.getName((event as ViewElementEventRef).referencedField.tail.viewElementRef) + ")!)"
 			}
 			case ElementEventType.ON_LEFT_SWIPE: {
 				return "MD2OnLeftSwipeHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
 					+ ", widget: MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping." 
-					+ MD2GeneratorUtil.getName((event as ViewElementEventRef).referencedField.ref) + ")!)"
+					+ MD2GeneratorUtil.getName((event as ViewElementEventRef).referencedField.tail.viewElementRef) + ")!)"
 			}
 			case ElementEventType.ON_RIGHT_SWIPE: {
 				return "MD2OnRightSwipeHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
 					+ ", widget: MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping." 
-					+ MD2GeneratorUtil.getName((event as ViewElementEventRef).referencedField.ref) + ")!)"
+					+ MD2GeneratorUtil.getName((event as ViewElementEventRef).referencedField.tail.viewElementRef) + ")!)"
 			}
 			case ElementEventType.ON_WRONG_VALIDATION: {
 				return "MD2OnWrongValidationHandler.instance." + UnRegister + "registerAction(" + actionStringRef 
 					+ ", widget: MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping." 
-					+ MD2GeneratorUtil.getName((event as ViewElementEventRef).referencedField.ref) + ")!)"
+					+ MD2GeneratorUtil.getName((event as ViewElementEventRef).referencedField.tail.viewElementRef) + ")!)"
 			}
 			case ContentProviderEventType.ON_CHANGE: {
 				return "MD2OnContentChangeHandler.instance." + UnRegister + "registerAction(" + actionStringRef 

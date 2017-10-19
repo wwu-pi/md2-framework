@@ -35,6 +35,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 
 class ProcessView extends AbstractPreprocessor {
 	
@@ -564,7 +565,11 @@ class ProcessView extends AbstractPreprocessor {
 				val simpleActionRef = factory.createSimpleActionRef
 				val disableAction = factory.createDisableAction
 				val abstractViewGUIElementRef = factory.createAbstractViewGUIElementRef
-				abstractViewGUIElementRef.setRef(guiElement)
+				val nestedAbstractViewGUIElementRef = factory.createAbstractViewGUIElementRef
+				abstractViewGUIElementRef.setTail(nestedAbstractViewGUIElementRef)
+				abstractViewGUIElementRef.setRef(MD2GeneratorUtil.getViewFrameForGUIElement(guiElement))
+				nestedAbstractViewGUIElementRef.viewElementRef = guiElement
+				
 				callTask.setAction(simpleActionRef)
 				simpleActionRef.setAction(disableAction)
 				disableAction.setInputField(abstractViewGUIElementRef)

@@ -37,6 +37,7 @@ import de.wwu.md2.framework.mD2.PathTail;
 import de.wwu.md2.framework.mD2.ReferencedModelType;
 import de.wwu.md2.framework.mD2.ReferencedType;
 import de.wwu.md2.framework.mD2.ViewElementType;
+import de.wwu.md2.framework.mD2.ViewFrame;
 import de.wwu.md2.framework.mD2.ViewGUIElementReference;
 import de.wwu.md2.framework.mD2.WorkflowElementEntry;
 import de.wwu.md2.framework.mD2.WorkflowEvent;
@@ -198,12 +199,14 @@ public class MD2ScopeProvider extends AbstractDeclarativeScopeProvider {
 //		});
 //	}	
 	
-	private static boolean isContentElement(AbstractViewGUIElementRef abtractRef) {
-		ViewElementType objInQuestion = abtractRef.getRef();
-		if (abtractRef.getRef() instanceof ViewGUIElementReference) {
-			objInQuestion = ((ViewGUIElementReference)abtractRef.getRef()).getValue();
-		}
-		return objInQuestion instanceof ContentElement;
+	private static boolean isContentElement(AbstractViewGUIElementRef abstractRef) {
+		return false;
+		
+//		ViewElementType objInQuestion = abstractRef.getRef();
+//		if (abtractRef.getRef() instanceof ViewGUIElementReference) {
+//			objInQuestion = ((ViewGUIElementReference)abtractRef.getRef()).getValue();
+//		}
+//		return objInQuestion instanceof ContentElement;
 	}
 	
 	private static boolean isRestrictedToContainer(EObject context) {
