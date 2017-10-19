@@ -7,7 +7,6 @@ import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.ContainerElementReference
 import de.wwu.md2.framework.mD2.ContentContainer
-import de.wwu.md2.framework.mD2.ActionDrawer
 import de.wwu.md2.framework.mD2.FlowDirection
 import de.wwu.md2.framework.mD2.FlowLayoutPane
 import de.wwu.md2.framework.mD2.FlowLayoutPaneFlowDirectionParam
@@ -37,37 +36,26 @@ import de.wwu.md2.framework.mD2.Action
 
 import de.wwu.md2.framework.mD2.ListView
 import de.wwu.md2.framework.mD2.IntegerInput
-import de.wwu.md2.framework.mD2.ActionDrawerParam
-import de.wwu.md2.framework.mD2.ActionDrawerTitleParam
-import de.wwu.md2.framework.mD2.impl.ActionDrawerImpl
 import java.util.List
 import de.wwu.md2.framework.mD2.OptionInput
 import de.wwu.md2.framework.mD2.Spacer
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.IntegerInputType
-import de.wwu.md2.framework.mD2.ActionDrawerIconParam
+import de.wwu.md2.framework.mD2.ViewFrame
 
 class LayoutGen {
 
 	def static generateLayouts(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
-		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements) {
-
-
+		Iterable<ViewFrame> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements) {
+			
+		fsa.generateFile(rootFolder + Settings.LAYOUT_PATH + "activity_start.xml",
+				generateStartLayout(mainPackage, startableWorkflowElements))
+				
 		rootViews.forEach [ rv |
 			fsa.generateFile(rootFolder + Settings.LAYOUT_PATH + "activity_" + rv.name.toLowerCase + ".xml",
 				generateLayout(mainPackage, rv))
-
-			for(viewElement: rv.eAllContents.toIterable) {
-				if (viewElement instanceof ActionDrawer) {
-					fsa.generateFile(rootFolder + Settings.MENU_PATH + rv.name.toLowerCase + "_action_drawer_menu.xml",
-					generateActionDrawerMenu(mainPackage, rv, startableWorkflowElements))
-
-//					fsa.generateFile(rootFolder + Settings.DRAWABLE_PATH, generateDrawableIcons(mainPackage))
-				}
-			}
 		]
 	}
-
 
 	protected static def generateStartLayout(String mainPackage, Iterable<WorkflowElementReference> wfes) {
 		val docFactory = DocumentBuilderFactory.newInstance
@@ -139,7 +127,7 @@ class LayoutGen {
 		return writer.buffer.toString
 	}
 
-	protected static def generateLayout(String mainPackage, ContainerElement rv) {
+	protected static def generateLayout(String mainPackage, ViewFrame frame) {
 		val docFactory = DocumentBuilderFactory.newInstance
 		val docBuilder = docFactory.newDocumentBuilder
 
@@ -149,10 +137,10 @@ class LayoutGen {
 		doc.appendChild(generationComment)
 
 		//spezielles Layout für Listview
-		if ((rv as ContentContainer) instanceof ListView) {
+		if (frame.elements.filter(ListView).length > 0) {
 			// create WearableDrawerLayout
 			var Element rootElement = doc.createElement("android.support.wearable.view.drawer.WearableDrawerLayout")
-			rootElement.setAttribute("android:id", "@+id/drawer_layout_" + rv.name);
+			rootElement.setAttribute("android:id", "@+id/drawer_layout_" + frame.name);
 			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
 				"http://schemas.android.com/apk/res/android")
 			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools",
@@ -164,37 +152,37 @@ class LayoutGen {
 			rootElement.setAttribute("tools:deviceIds", "wear")
 			// create NavigationDrawer
 			var Element navElement = doc.createElement("android.support.wearable.view.drawer.WearableNavigationDrawer")
-			navElement.setAttribute("android:id", "@+id/navigation_drawer_" + rv.name)
+			navElement.setAttribute("android:id", "@+id/navigation_drawer_" + frame.name)
 			navElement.setAttribute("android:layout_height", "match_parent")
 			navElement.setAttribute("android:layout_width", "match_parent")
 			navElement.setAttribute("android:background", "@color/PSWatchappSemiTransparentDarkBlue")
 			// create WearableRecyclerView für Listendarstellung
 			var Element listElement = doc.createElement("android.support.wearable.view.WearableRecyclerView")
-			listElement.setAttribute("android:id", "@+id/wearable_recycler_view_" + rv.name)
+			listElement.setAttribute("android:id", "@+id/wearable_recycler_view_" + frame.name)
 			listElement.setAttribute("android:layout_height", "match_parent")
 			listElement.setAttribute("android:layout_width", "match_parent")
 			// create ActionDrawer
 			var Element drawerElement = doc.createElement("android.support.wearable.view.drawer.WearableActionDrawer")
-			drawerElement.setAttribute("android:id", "@+id/bottom_action_drawer_" + rv.name)
+			drawerElement.setAttribute("android:id", "@+id/bottom_action_drawer_" + frame.name)
 			drawerElement.setAttribute("android:layout_height", "match_parent")
 			drawerElement.setAttribute("android:layout_width", "match_parent")
-			drawerElement.setAttribute("app:action_menu", "@menu/" + rv.name.toLowerCase + "_action_drawer_menu")
+			drawerElement.setAttribute("app:action_menu", "@menu/" + frame.name.toLowerCase + "_action_drawer_menu")
 			drawerElement.setAttribute("android:theme", "@style/PSWatchappActionDrawer")
 			// append
 			rootElement.appendChild(listElement)
 			rootElement.appendChild(navElement)
-			for (viewElement : rv.eAllContents.filter(ActionDrawer).toIterable) {
-				if (viewElement instanceof ActionDrawer) {
-					rootElement.appendChild(drawerElement)
-				}
+			
+			if(frame.viewActions.length > 0){
+				rootElement.appendChild(drawerElement)
 			}
+			
 			doc.appendChild(rootElement)
 		} // StandardLayout
 		else {
 			// create root element: WearableDrawerLayout, NavigationDrawer + BoxInsetLayout as children, FrameLayout as child of BIL, ScrollView as Child
 			// create WearableDrawerLayout
 			var Element rootElement = doc.createElement("android.support.wearable.view.drawer.WearableDrawerLayout")
-			rootElement.setAttribute("android:id", "@+id/drawer_layout_" + rv.name);
+			rootElement.setAttribute("android:id", "@+id/drawer_layout_" + frame.name);
 			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
 				"http://schemas.android.com/apk/res/android")
 			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools",
@@ -207,7 +195,7 @@ class LayoutGen {
 
 			// create NavigationDrawer
 			var Element navElement = doc.createElement("android.support.wearable.view.drawer.WearableNavigationDrawer")
-			navElement.setAttribute("android:id", "@+id/navigation_drawer_" + rv.name)
+			navElement.setAttribute("android:id", "@+id/navigation_drawer_" + frame.name)
 			navElement.setAttribute("android:layout_height", "match_parent")
 			navElement.setAttribute("android:layout_width", "match_parent")
 
@@ -215,10 +203,10 @@ class LayoutGen {
 
 			// create ActionDrawer
 			var Element drawerElement = doc.createElement("android.support.wearable.view.drawer.WearableActionDrawer")
-			drawerElement.setAttribute("android:id", "@+id/bottom_action_drawer_" + rv.name)
+			drawerElement.setAttribute("android:id", "@+id/bottom_action_drawer_" + frame.name)
 			drawerElement.setAttribute("android:layout_height", "match_parent")
 			drawerElement.setAttribute("android:layout_width", "match_parent")
-			drawerElement.setAttribute("app:action_menu", "@menu/" + rv.name.toLowerCase + "_action_drawer_menu")
+			drawerElement.setAttribute("app:action_menu", "@menu/" + frame.name.toLowerCase + "_action_drawer_menu")
 			drawerElement.setAttribute("android:theme", "@style/PSWatchappActionDrawer")
 			drawerElement.setAttribute("app:show_overflow_in_peek", "true")
 			// Methode zum titel finden und setzen
@@ -229,7 +217,7 @@ class LayoutGen {
 			// set attributes of BoxInsetLayout
 			boxElement.setAttribute("android:layout_height", "match_parent")
 			boxElement.setAttribute("android:layout_width", "match_parent")
-			boxElement.setAttribute("tools:context", mainPackage + "." + rv.name + "Activity")
+			boxElement.setAttribute("tools:context", mainPackage + "." + frame.name + "Activity")
 			boxElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
 				"http://schemas.android.com/apk/res/android")
 			boxElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools",
@@ -256,38 +244,39 @@ class LayoutGen {
 			boxElement.appendChild(frameElement)
 			rootElement.appendChild(boxElement);
 			rootElement.appendChild(navElement);
-			for (viewElement : rv.eAllContents.filter(ActionDrawer).toIterable) {
-				if (viewElement instanceof ActionDrawer) {
-					rootElement.appendChild(drawerElement)
-				}
+			if(frame.viewActions.length > 0){
+				rootElement.appendChild(drawerElement)
 			}
 			doc.appendChild(rootElement)
 
-			var Element rootContainer = null
-
-			// TODO sollte man nochmal testen, wie toll diese Layouts auf einer Uhr laufen
-			switch rv {
-				FlowLayoutPane: rootContainer = createFlowLayoutPaneElement(doc, rv)
-				GridLayoutPane: rootContainer = createGridLayoutPaneElement(doc, rv)
-				default: return ""
-			}
-
-			rootContainer.setAttribute("android:layout_width", "match_parent")
-			scrollView.appendChild(rootContainer)
-
-			// depth first search to generate elements for all children
-			switch rv {
-				ContentContainer:
-					for (elem : rv.elements) {
-						createChildrenElements(doc, rootContainer, elem)
-					}
-				SubViewContainer:
-					for (elem : rv.elements) {
-						switch elem {
-							ContainerElement: createChildrenElements(doc, rootContainer, elem)
-							ContainerElementReference: createChildrenElements(doc, rootContainer, elem.value)
-						}
-					}
+//			var Element rootContainer = null
+//
+//			// TODO sollte man nochmal testen, wie toll diese Layouts auf einer Uhr laufen
+//			switch frame {
+//				FlowLayoutPane: rootContainer = createFlowLayoutPaneElement(doc, rv)
+//				GridLayoutPane: rootContainer = createGridLayoutPaneElement(doc, rv)
+//				default: return ""
+//			}
+//
+//			rootContainer.setAttribute("android:layout_width", "match_parent")
+//			scrollView.appendChild(rootContainer)
+//
+//			// depth first search to generate elements for all children
+//			switch rv {
+//				ContentContainer:
+//					for (elem : rv.elements) {
+//						createChildrenElements(doc, rootContainer, elem)
+//					}
+//				SubViewContainer:
+//					for (elem : rv.elements) {
+//						switch elem {
+//							ContainerElement: createChildrenElements(doc, rootContainer, elem)
+//							ContainerElementReference: createChildrenElements(doc, rootContainer, elem.value)
+//						}
+//					}
+//			}
+			for(elem : frame.elements){
+				createChildrenElements(doc, rootElement, elem)
 			}
 
 		// Ende else / Ende StandardLayout
@@ -303,7 +292,7 @@ class LayoutGen {
 	}
 
 	// Generate Action Drawer Menu
-	protected static def generateActionDrawerMenu(String mainPackage, ContainerElement rv, Iterable<WorkflowElementReference> wfes) {
+	protected static def generateActionDrawerMenu(String mainPackage, ViewFrame frame, Iterable<WorkflowElementReference> wfes) {
 		val docFactory = DocumentBuilderFactory.newInstance
 		val docBuilder = docFactory.newDocumentBuilder
 
@@ -313,7 +302,7 @@ class LayoutGen {
 		doc.appendChild(generationComment)
 
 		var Element rootElement = doc.createElement("menu")
-		rootElement.setAttribute("android:id","@+id/"+ rv.name.toLowerCase + "_action_drawer_menu")
+		rootElement.setAttribute("android:id","@+id/"+ frame.name.toLowerCase + "_action_drawer_menu")
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
 			"http://schemas.android.com/apk/res/android")
 		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
@@ -321,44 +310,16 @@ class LayoutGen {
 		rootElement.setAttribute("android:layout_width", "match_parent")
 		rootElement.setAttribute("tools:deviceIds", "wear")
 
-		val ActionsIcons = newArrayList()
-		val ActionTitel = newArrayList()
-		
 		//Generate menu items in the menu
-		for(viewElement: rv.eAllContents.toIterable) {
-			if(viewElement instanceof ActionDrawer) {
-				//Titel für die Beschriftung im ActionDrawer
-				var ActionDrawerTitel = "";
-				
-				for (acd : (viewElement as ActionDrawerImpl).params) {
-					if(acd instanceof ActionDrawerTitleParam){
-						for (title  : acd.values) {
-							ActionTitel.add(title.toString);
-						}
-					}
-						
-					if(acd instanceof ActionDrawerIconParam){
-						for (icon  : acd.values) {
-							ActionsIcons.add(MD2AndroidUtil.getAndroidIconString(icon));
-						}
-					}	
-				}
-								
-				if(!(viewElement.onItemClickAction === null)) {
-					var ElementCounter = 0;
-					for(itemClickAction: viewElement.onItemClickAction) {
-						println("ActionDrawer itemClickAction:" + itemClickAction)
-						var Element item = doc.createElement("item")
-						item.setAttribute("android:id", ("@+id/" + (itemClickAction.name + "_item" + (ElementCounter++).toString)))
-						item.setAttribute("android:icon", ("@drawable/" + ActionsIcons.get(ElementCounter-1))) // TODO: Icons auswählen können
-						item.setAttribute("android:title", ActionTitel.get(ElementCounter-1));//MD2AndroidLollipopUtil.getQualifiedNameAsString(itemClickAction, "").toFirstUpper)
-			 			rootElement.appendChild(item)
-					}
-		 		}
-			}
+		var elementCounter = 0;
+		for(menuItem : frame.viewActions){
+			println("ActionDrawer itemClickAction:" + menuItem.action)
+			var Element item = doc.createElement("item")
+			item.setAttribute("android:id", ("@+id/" + (frame.name + "_item" + (elementCounter++).toString)))
+			item.setAttribute("android:icon", ("@drawable/" + MD2AndroidUtil.getAndroidIconString(menuItem.icon)))
+			item.setAttribute("android:title", menuItem.title);
+ 			rootElement.appendChild(item)
 		}
-		
-		
 
 		//Append
 		doc.appendChild(rootElement)
@@ -375,7 +336,7 @@ class LayoutGen {
 	/////////////////////creation of children elements completely adopted from lollipop/////////////////////////////
 
 	//call different methods for different types of children
-	protected static def void createChildrenElements(Document doc, Element element, ViewElement viewElement) {
+	protected static def void createChildrenElements(Document doc, Element element, ViewElementType viewElement) {
 		var Element newElement = null
 		switch viewElement {
 			ViewGUIElementReference:

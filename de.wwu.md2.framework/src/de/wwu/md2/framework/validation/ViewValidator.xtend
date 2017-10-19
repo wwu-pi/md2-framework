@@ -1,15 +1,10 @@
 package de.wwu.md2.framework.validation
 
 import com.google.inject.Inject
-import org.eclipse.xtext.validation.EValidatorRegistrar
-import org.eclipse.xtext.Keyword
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils
+import de.wwu.md2.framework.mD2.MD2Package
+import de.wwu.md2.framework.mD2.ViewFrame
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
-import de.wwu.md2.framework.mD2.ContainerElement
-import de.wwu.md2.framework.mD2.ListView
-import de.wwu.md2.framework.mD2.MD2Package
-import de.wwu.md2.framework.mD2.ActionDrawer
 
 /**
  * Valaidators for all view elements of MD2.
@@ -27,19 +22,18 @@ class ViewValidator extends AbstractMD2JavaValidator {
 	/////////////////////////////////////////////////////////
 	
 	/**
-	 * Ensures no ViewElements are used inside of a ListView
+	 * Ensures only one default proceed/back action exists per ViewFrame
 	 */
 	@Check
-	def checkListViews(ContainerElement ce){
-		if (ce instanceof ListView){
-			if (ce.elements.size > 0){
-				for(e : ce.elements){
-					if (!(e instanceof ActionDrawer)){
-						acceptError("ViewElements inside a ListView are not allowed - ListView uses a dedicated activity to display a list without additional content",
-						ce, null, -1, null);
-					}
-				}
-			}
+	def checkViewActions(ViewFrame frame){
+		if(frame.viewActions.filter[va | va.defaultBack === true].length > 1){
+			acceptWarning("More than one default back action specified",
+				frame.viewActions.filter[va | va.defaultBack === true].get(1), MD2Package.VIEW_ACTION__DEFAULT_BACK, -1, null);
+		}
+
+		if(frame.viewActions.filter[va | va.defaultProceed === true].length > 1){
+			acceptWarning("More than one default back action specified",
+				frame.viewActions.filter[va | va.defaultProceed === true].get(1), MD2Package.VIEW_ACTION__DEFAULT_PROCEED, -1, null);
 		}
 	}
 

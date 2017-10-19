@@ -11,6 +11,7 @@ import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.RemoteConnection
 import de.wwu.md2.framework.mD2.Style
 import java.lang.invoke.MethodHandles
+import de.wwu.md2.framework.mD2.ViewFrame
 
 /**
  * Generate the main MD2Controller class.
@@ -76,7 +77,7 @@ class MD2Controller {
 		 * 
 		 ***************************************************/
 		«««Only root view containers for views within the app»»
-		«val relevantRootViews = data.extractRootViews(app.workflowElements.map[wfe | wfe.workflowElementReference ]).values.flatten»
+		«val relevantRootViews = data.view.eAllContents.filter(ViewFrame).toList» «««data.extractRootViews(app.workflowElements.map[wfe | wfe.workflowElementReference ]).values.flatten »»»
         «FOR view : relevantRootViews»
         // View: «view.name»
         «IOSView.generateView(view, data.view.eAllContents.filter(Style).toList)»
@@ -111,7 +112,7 @@ class MD2Controller {
         viewManager.window = window
         
         «FOR rootView : relevantRootViews»
-        viewManager.setupView("«MD2GeneratorUtil.getName(rootView).toFirstUpper»", view: «MD2GeneratorUtil.getName(rootView).toFirstLower»)
+        viewManager.setupView("«rootView.name.toFirstUpper»", view: «rootView.name.toFirstLower»)
         «ENDFOR»
         
         /***************************************************

@@ -19,24 +19,25 @@ import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.SensorType
 import de.wwu.md2.framework.mD2.AttrSensorTyp
 import de.wwu.md2.framework.mD2.AttrSensorAxis
+import de.wwu.md2.framework.mD2.ViewFrame
 
 class ActivityGen {
 	
 	static boolean FirstCall = true;
 	
 	def static generateActivities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
-		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities, App app) {
+		Iterable<ViewFrame> frames, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities, App app) {
 		
 		fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "StartActivity.java",
 				generateStartActivity(mainPackage, startableWorkflowElements))	
 		
-		rootViews.forEach [ rv |
-			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + rv.name + "Activity.java",
-				generateActivity(mainPackage, entities, rv))
+		frames.forEach [ frame |
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + frame.name + "Activity.java",
+				generateActivity(mainPackage, entities, frame))
 				
-				if (rv instanceof ListView){
-					fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + rv.name + "ListAdapter.java",
-					generateListAdapter(mainPackage, rv, app))
+				if (frame instanceof ListView){
+					fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + frame.name + "ListAdapter.java",
+					generateListAdapter(mainPackage, frame, app))
 				}
 		]
 		
@@ -242,7 +243,7 @@ class ActivityGen {
 		}
 	'''
 
-	private def static generateActivity(String mainPackage, Iterable<Entity> entities, ContainerElement rv) '''
+	private def static generateActivity(String mainPackage, Iterable<Entity> entities, ViewFrame frame) '''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.Activity.generateActivity()
 		package «mainPackage»;
 		
@@ -264,26 +265,26 @@ class ActivityGen {
 		«MD2AndroidUtil.generateImportAllTypes»
 		«MD2AndroidUtil.generateImportAllEventHandler»
 				
-		public class «rv.name»Activity extends Activity {
+		public class «frame.name»Activity extends Activity {
 		
 			private RecyclerView wrv;
 		
 			@Override
 			protected void onCreate(Bundle savedInstanceState) {
 				super.onCreate(savedInstanceState);
-				setContentView(R.layout.activity_«rv.name.toLowerCase»);
-		        «FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
+				setContentView(R.layout.activity_«frame.name.toLowerCase»);
+		        «FOR viewElement: frame.eAllContents.filter(ViewElementType).toIterable»
 					«generateAddViewElement(viewElement)»
 		        «ENDFOR»
 
-		        «IF (rv instanceof ListView)»
-				wrv = (RecyclerView) findViewById(R.id.recycler_view_«rv.name»);
+		        «IF (frame instanceof ListView)»
+				wrv = (RecyclerView) findViewById(R.id.recycler_view_«frame.name»);
 				
 				final LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
 				layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 				wrv.setLayoutManager(layoutManager);
 				        
-				«rv.name»ListAdapter listAdapter = new «rv.name»ListAdapter();
+				«frame.name»ListAdapter listAdapter = new «frame.name»ListAdapter();
 				wrv.setAdapter(listAdapter);
 				   	
 				wrv.addItemDecoration(new DividerItemDecoration(
@@ -304,7 +305,7 @@ class ActivityGen {
 				super.onStart();
 		        Md2ViewManager.getInstance().setActiveView(this);
 		        
-		        «FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
+		        «FOR viewElement: frame.eAllContents.filter(ViewElementType).toIterable»
 		        	«generateLoadViewElement(viewElement)»
 		        «ENDFOR»
 		        
@@ -314,7 +315,7 @@ class ActivityGen {
 			@Override
 		    protected void onPause(){
 		        super.onPause();
-		        «FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
+		        «FOR viewElement: frame.eAllContents.filter(ViewElementType).toIterable»
 		        	«generateSaveViewElement(viewElement)»
 		        «ENDFOR»
 		    }
@@ -328,10 +329,6 @@ class ActivityGen {
 	'''
 	
 	private static def String generateAddViewElement(ViewElementType vet){
-		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] !== null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
-			return "" // Skip title label
-		}
-		
 		var String result = ""
 		var String type = ""
 		
@@ -356,10 +353,6 @@ class ActivityGen {
 	}
 	
 	private static def String generateLoadViewElement(ViewElementType vet){
-		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] !== null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
-			return "" // Skip title label
-		}
-		
 		var String result = ""
 		var String type = ""
 		
@@ -384,10 +377,6 @@ class ActivityGen {
 	}
 	
 	private static def String generateSaveViewElement(ViewElementType vet){
-		if (vet instanceof Label && vet.eContainer() instanceof ContentContainer && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")] !== null && (vet.eContainer() as ContentContainer).elements.filter(Label).findFirst[label | label.name.startsWith("_title")].equals(vet)) {
-			return "" // Skip title label
-		}
-		
 		var String result = ""
 		var String type = ""
 		

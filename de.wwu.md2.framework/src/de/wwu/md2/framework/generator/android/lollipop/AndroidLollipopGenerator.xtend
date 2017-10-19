@@ -20,6 +20,7 @@ import org.apache.log4j.Logger
 
 import static de.wwu.md2.framework.util.MD2Util.*
 import de.wwu.md2.framework.generator.android.common.model.FilterGen
+import de.wwu.md2.framework.mD2.ViewFrame
 
 /**
  * This is the start point for the Android generator.
@@ -56,12 +57,10 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			val workflowElements = dataContainer.workflowElementsForApp(app)
 
 			// all root views for current app
-			val rootViews = app.workflowElements.map [ wer |
-				dataContainer.rootViewContainers.get(wer.workflowElementReference)
-			].flatten.toSet
+			val rootViews = dataContainer.view.viewElements.filter(ViewFrame)
 
 			// all GUI elements for app
-			val viewGUIElements = rootViews + rootViews.map[rv|rv.eAllContents.filter(ViewGUIElement).toSet].flatten
+			val viewGUIElements = rootViews.map[rv|rv.eAllContents.filter(ViewGUIElement).toSet].flatten
 
 			// startable WorkflowElements
 			val startableWorkflowElements = app.workflowElements.filter[we|we.startable]
@@ -149,7 +148,7 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			 ***************************************************/
 			// Element Ids
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.IDS_XML_NAME,
-				ValueGen.generateIdsXml(viewGUIElements, startableWorkflowElements))
+				ValueGen.generateIdsXml(viewGUIElements, rootViews, startableWorkflowElements))
 
 			// String Values
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STRINGS_XML_NAME,

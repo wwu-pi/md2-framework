@@ -59,7 +59,27 @@ View:
  * but not within containers. This is why ViewElement and ViewElementType are distinguished.
  */
 ViewElement:
-	ViewElementType | Style
+	ViewFrame | Style
+;
+
+
+/* The view frame contains meta information about the contained ViewGUIElements.
+ */
+ViewFrame:
+	'View' name=ID '{'
+		('title' title=STRING)?
+		('icon' icon=ViewIcon)?
+		viewActions += ViewAction*
+		elements += ViewElementType+
+	'}'
+;
+
+/*
+ * A ViewAction represents available actions that can be started from a view. 
+ * It can e.g. be represented as menu structure, in the navigation bar, or as ActionDrawer.
+ */
+ViewAction:
+	'action' title=STRING ('(' icon=ViewIcon ')')? 'onClick' action=[Action | QUALIFIED_NAME] (defaultProceed?='defaultProceed' | defaultBack?='defaultBack')?
 ;
 
 /*
@@ -530,7 +550,7 @@ ContainerElement:
  * ContentContainers can contain other Containers or ContentElements.
  */
 ContentContainer:
-	GridLayoutPane | FlowLayoutPane | ActionDrawer | ListView
+	GridLayoutPane | FlowLayoutPane | ListView
 ;
 
 /*
@@ -550,7 +570,7 @@ SubViewContainer:
  		(('connectedProvider' connectedProvider = ContentProviderPath) &
  		('onClickAction' onClickAction = [Action | QUALIFIED_NAME])? &
  		('leftSwipeAction' leftSwipeAction = [Action | QUALIFIED_NAME])? &
- 		('rightSwipeAction' rightSwipeAction = [Action | QUALIFIED_NAME])?)
+ 		('rightSwipeAction' rightSwipeAction = [Action | QUALIFIED_NAME])?) //TODO remove
  		elements += ViewElementType* 
  	'}'
  ;
@@ -618,26 +638,6 @@ enum FlowDirection:
 	HORIZONTAL = 'horizontal' | VERTICAL = 'vertical'
 ;
 
-/* An Action Drawer allows the arrangement of ViewGUIElements in a menu structure. The user can add Buttons
- * or Labels in a single-column view structure.
- */
-ActionDrawer:
-	'ActionDrawer' name = EID ('('(params += ActionDrawerParam (',' params += ActionDrawerParam)*)?')')? '{'
-
-	 'Actions' '{'
-	 	onItemClickAction += [Action | QUALIFIED_NAME] (',' onItemClickAction += [Action | QUALIFIED_NAME ])*
-	 '}'
-
-	 elements += ViewElementType*
-	  '}'
-;
-
-ActionDrawerParam:
-	{ActionDrawerBezeichnung} 'ActionDrawerTitel' value = STRING |
-	{ActionDrawerTitleParam} 'Actions_titels' ('('(values += STRING (',' values += STRING)*)?')') | // TODO incorporate in above action
-	{ActionDrawerIconParam} 'Actions_icons' ('('(values += ViewIcon(',' values += ViewIcon)*)?')')
-;
-
 /*
  * The AlternativesPane allows the definition of several ContainerElements of which one will be
  * shown to the user. The user will be able to choose which ContainerElement shall be displayed.
@@ -703,7 +703,6 @@ ContainerElementReference returns ViewGUIElementReference:
 ContainerElementType:
 	ContainerElement | ContainerElementReference
 ;
-
 
 /////////////////////////////////////////
 // View layer => Style definitions
@@ -991,6 +990,7 @@ ActionDef:
 /*
  * The EventDef allows the user to refer to one of the four possible event types.
  */
+ // TODO allow binding action to view 
 EventDef:
 	=>AbstractContentProviderPath {ContentProviderPathEventRef.pathDefinition=current} '.' event = ContentProviderEventType |
 	AbstractProviderReference {ContentProviderEventRef.contentProvider=current} '.' event = ContentProviderEventType |

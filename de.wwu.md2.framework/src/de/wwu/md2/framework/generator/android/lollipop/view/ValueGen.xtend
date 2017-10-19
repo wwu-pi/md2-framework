@@ -17,15 +17,20 @@ import de.wwu.md2.framework.mD2.Spacer
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.ListView
 import de.wwu.md2.framework.mD2.ListViewTitleParam
+import de.wwu.md2.framework.mD2.ViewFrame
+import de.wwu.md2.framework.mD2.ViewElement
 
 class ValueGen {
 
-	def static String generateIdsXml(Iterable<ViewGUIElement> viewGUIElements, Iterable<WorkflowElementReference> wers) '''
+	def static String generateIdsXml(Iterable<ViewGUIElement> viewGUIElements, Iterable<ViewFrame> rootFrames, Iterable<WorkflowElementReference> wers) '''
 		<?xml version="1.0" encoding="utf-8"?>
 		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateIdsXml() -->
 		<resources>
 			«FOR wer : wers»
 				<item name="startActivity_«wer.workflowElementReference.name»Button" type="id"/>				
+			«ENDFOR»
+			«FOR ve : rootFrames»
+				<item name="«MD2AndroidUtil.getQualifiedNameAsString(ve, "_")»" type="id"/>
 			«ENDFOR»
 			«FOR ve : viewGUIElements»
 				«val qualifiedName = MD2AndroidUtil.getQualifiedNameAsString(ve, "_")»
@@ -38,13 +43,13 @@ class ValueGen {
 		</resources>
 	'''
 
-	def static String generateStringsXml(App app, Iterable<ContainerElement> rootContainerElements,
+	def static String generateStringsXml(App app, Iterable<ViewFrame> frames,
 		Iterable<ViewGUIElement> viewGUIElements, Iterable<WorkflowElementReference> wers) '''
 		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateStringsXml() -->
 		<resources>
 			<string name="app_name">«app.appName»</string>
-			«FOR rce : rootContainerElements»
-				<string name="title_activity_«rce.name.toFirstLower»">«getActivityTitle(rce)»</string>
+			«FOR frame : frames»
+				<string name="title_activity_«frame.name.toFirstLower»">«frame.title»</string>
 			«ENDFOR»
 			
 			«FOR wer : wers»
@@ -56,24 +61,6 @@ class ValueGen {
 			«ENDFOR»
 		</resources>
 	'''
-	
-	def static getActivityTitle(ContainerElement element) {
-		switch element {
-			ListView: {
-				if(element.params.filter(ListViewTitleParam).head !== null){
-					return element.params.filter(ListViewTitleParam).head.value
-				}
-			}
-			ContentContainer: {
-				if(element.elements.filter(Label).findFirst[label | label.name.startsWith("_title")] !== null){
-					return element.elements.filter(Label).findFirst[label | label.name.startsWith("_title")].text
-				} else {
-					return ""
-				}
-			}
-		}
-		return element.name
-	}
 
 	protected def static String generateStringEntry(ViewGUIElement viewGUIElement) {
 		val qnp = new DefaultDeclarativeQualifiedNameProvider
@@ -122,7 +109,7 @@ class ValueGen {
 		}
 	}
 
-	def static String generateViewsXml(Iterable<ContainerElement> rootContainerElements, String mainPackage) '''		
+	def static String generateViewsXml(Iterable<ViewFrame> rootContainerElements, String mainPackage) '''		
 		<?xml version="1.0" encoding="utf-8"?>
 		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateViewsXml() -->
 		<resources>

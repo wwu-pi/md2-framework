@@ -1,28 +1,21 @@
 package de.wwu.md2.framework.generator.android.wearable.view
 
 import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.ContainerElement
+import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.Image
 import de.wwu.md2.framework.mD2.InputElement
 import de.wwu.md2.framework.mD2.Label
+import de.wwu.md2.framework.mD2.OptionInput
+import de.wwu.md2.framework.mD2.Spacer
 import de.wwu.md2.framework.mD2.Tooltip
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.WorkflowElementReference
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
-import de.wwu.md2.framework.mD2.ContentContainer
-import de.wwu.md2.framework.mD2.GridLayoutPane
-import de.wwu.md2.framework.mD2.FlowLayoutPane
-import org.apache.log4j.Layout
-import de.wwu.md2.framework.mD2.impl.ActionDrawerImpl
-import de.wwu.md2.framework.mD2.ActionDrawer
-import de.wwu.md2.framework.mD2.ActionDrawerBezeichnung
-import de.wwu.md2.framework.mD2.impl.ActionDrawerBezeichnungImpl
-import de.wwu.md2.framework.mD2.IfCodeBlock
-import de.wwu.md2.framework.mD2.OptionInput
-import de.wwu.md2.framework.mD2.Spacer
-import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
+import de.wwu.md2.framework.mD2.ViewFrame
 
 class ValueGen {
 
@@ -44,7 +37,7 @@ class ValueGen {
 		</resources>
 	'''
 
-	def static String generateStringsXml(App app, Iterable<ContainerElement> rootContainerElements,
+	def static String generateStringsXml(App app, Iterable<ViewFrame> rootContainerElements,
 		Iterable<ViewGUIElement> viewGUIElements, Iterable<WorkflowElementReference> wers) '''
 		<!-- generated in de.wwu.md2.framework.generator.android.wearable.view.Values.generateStringsXml() -->
 		<resources>
@@ -79,19 +72,6 @@ class ValueGen {
 			}
 		}
 		return element.name
-	}
-	
-	def static getActionDrawerBezeichner(ContainerElement element){
-	switch element {
-		ActionDrawer:{
-			for(actionParam : (element as ActionDrawerImpl).params){
-				if(actionParam instanceof ActionDrawerBezeichnung){
-					return (actionParam as ActionDrawerBezeichnungImpl).value
-				}
-			}
-		}
-	}
-	return null
 	}
 
 	protected def static String generateStringEntry(ViewGUIElement viewGUIElement) {
@@ -142,13 +122,13 @@ class ValueGen {
 		}
 	}
 
-	def static String generateViewsXml(Iterable<ContainerElement> rootContainerElements, String mainPackage) '''		
+	def static String generateViewsXml(Iterable<ViewFrame> frames, String mainPackage) '''		
 		<?xml version="1.0" encoding="utf-8"?>
 		<!-- generated in de.wwu.md2.framework.generator.android.wearable.view.Values.generateViewsXml() -->
 		<resources>
 		    <string name="StartActivity">«mainPackage».StartActivity</string>
-		    «FOR rce : rootContainerElements»
-		    	<string name="«rce.name»Activity">«mainPackage».«rce.name»Activity</string>
+		    «FOR frame : frames»
+		    	<string name="«frame.name»Activity">«mainPackage».«frame.name»Activity</string>
 			«ENDFOR»
 		</resources>
 	'''

@@ -35,11 +35,13 @@ import de.wwu.md2.framework.mD2.Spacer
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.ListView
 import de.wwu.md2.framework.mD2.IntegerInput
+import de.wwu.md2.framework.mD2.ViewFrame
+import de.wwu.md2.framework.mD2.ViewElementType
 
 class LayoutGen {
 
 	def static generateLayouts(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
-		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements) {
+		Iterable<ViewFrame> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements) {
 			
 		fsa.generateFile(rootFolder + Settings.LAYOUT_PATH + "activity_start.xml",
 				generateStartLayout(mainPackage, startableWorkflowElements))
@@ -105,7 +107,7 @@ class LayoutGen {
 		return writer.buffer.toString
 	}
 
-	protected static def generateLayout(String mainPackage, ContainerElement rv) {
+	protected static def generateLayout(String mainPackage, ViewFrame frame) {
 		val docFactory = DocumentBuilderFactory.newInstance
 		val docBuilder = docFactory.newDocumentBuilder
 
@@ -114,7 +116,7 @@ class LayoutGen {
 		val generationComment = doc.createComment("generated in de.wwu.md2.framework.generator.android.lollipop.view.Layout.generateLayout()")
 		doc.appendChild(generationComment)
 
-		if ((rv as ContentContainer) instanceof ListView) {
+		if (frame.elements.filter(ListView).length > 0) {
 			//TODO spezielles Layout für Listview
 			
 			var Element rootElement = doc.createElement("android.support.v7.widget.RecyclerView")
@@ -123,7 +125,7 @@ class LayoutGen {
 			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools",
 				"http://schemas.android.com/tools")
 			
-			rootElement.setAttribute("android:id", "@+id/recycler_view_" + rv.name)
+			rootElement.setAttribute("android:id", "@+id/recycler_view_" + frame.name)
 			rootElement.setAttribute("android:layout_width", "match_parent")
 			rootElement.setAttribute("android:layout_height", "match_parent")
 			rootElement.setAttribute("android:paddingBottom", "@dimen/activity_vertical_margin")
@@ -131,18 +133,12 @@ class LayoutGen {
 			rootElement.setAttribute("android:paddingRight", "@dimen/activity_horizontal_margin")
 			rootElement.setAttribute("android:paddingTop", "@dimen/activity_vertical_margin")
 			rootElement.setAttribute("android:scrollbars", "vertical")
-			rootElement.setAttribute("tools:context", mainPackage + "." + rv.name + "Activity")
+			rootElement.setAttribute("tools:context", mainPackage + "." + frame.name + "Activity")
 	
 			doc.appendChild(rootElement)
 
 		} else {
-			// create root element
 			var Element rootElement = doc.createElement("ScrollView")
-			/*switch rv {
-				FlowLayoutPane: rootElement = createFlowLayoutPaneElement(doc, rv)
-				GridLayoutPane: rootElement = createGridLayoutPaneElement(doc, rv)
-				default: return ""
-			}*/
 			
 			// special settings for root attributes
 			rootElement.setAttribute("android:layout_width", "match_parent")
@@ -151,7 +147,7 @@ class LayoutGen {
 			rootElement.setAttribute("android:paddingLeft", "@dimen/activity_horizontal_margin")
 			rootElement.setAttribute("android:paddingRight", "@dimen/activity_horizontal_margin")
 			rootElement.setAttribute("android:paddingTop", "@dimen/activity_vertical_margin")
-			rootElement.setAttribute("tools:context", mainPackage + "." + rv.name + "Activity")
+			rootElement.setAttribute("tools:context", mainPackage + "." + frame.name + "Activity")
 	
 			doc.appendChild(rootElement)
 	
@@ -159,31 +155,35 @@ class LayoutGen {
 				"http://schemas.android.com/apk/res/android")
 			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
 	
-			var Element rootContainer = null
+//			var Element rootContainer = null
 			
-			switch rv {
-				FlowLayoutPane: rootContainer = createFlowLayoutPaneElement(doc, rv)
-				GridLayoutPane: rootContainer = createGridLayoutPaneElement(doc, rv)
-				default: return ""
+			for(elem : frame.elements){
+				createChildrenElements(doc, rootElement, elem)
 			}
 			
-			rootContainer.setAttribute("android:layout_width", "match_parent")
-			rootElement.appendChild(rootContainer)
-	
-			// depth first search to generate elements for all children
-			switch rv {
-				ContentContainer:
-					for (elem : rv.elements) {
-						createChildrenElements(doc, rootContainer, elem)
-					}
-				SubViewContainer:
-					for (elem : rv.elements) {
-						switch elem {
-							ContainerElement: createChildrenElements(doc, rootContainer, elem)
-							ContainerElementReference: createChildrenElements(doc, rootContainer, elem.value)
-						}
-					}
-			}
+//			switch frame {
+//				FlowLayoutPane: rootContainer = createFlowLayoutPaneElement(doc, frame)
+//				GridLayoutPane: rootContainer = createGridLayoutPaneElement(doc, frame)
+//				default: return ""
+//			}
+//			
+//			rootContainer.setAttribute("android:layout_width", "match_parent")
+//			rootElement.appendChild(rootContainer)
+//	
+//			// depth first search to generate elements for all children
+//			switch frame {
+//				ContentContainer:
+//					for (elem : frame.elements) {
+//						createChildrenElements(doc, rootContainer, elem)
+//					}
+//				SubViewContainer:
+//					for (elem : frame.elements) {
+//						switch elem {
+//							ContainerElement: createChildrenElements(doc, rootContainer, elem)
+//							ContainerElementReference: createChildrenElements(doc, rootContainer, elem.value)
+//						}
+//					}
+//			}
 		}
 
 		// return xml file as string
@@ -195,11 +195,11 @@ class LayoutGen {
 		return writer.buffer.toString
 	}
 
-	protected static def void createChildrenElements(Document doc, Element element, ViewElement viewElement) {
+	protected static def void createChildrenElements(Document doc, Element parent, ViewElementType viewElement) {
 		var Element newElement = null
 		switch viewElement {
 			ViewGUIElementReference:
-				createChildrenElements(doc, element, viewElement.value)
+				createChildrenElements(doc, parent, viewElement.value)
 			FlowLayoutPane: {
 				newElement = createFlowLayoutPaneElement(doc, viewElement)
 				for (elem : viewElement.elements) {
@@ -234,7 +234,7 @@ class LayoutGen {
 			default:
 				return
 		}
-		element.appendChild(newElement)
+		parent.appendChild(newElement)
 	}
 
 

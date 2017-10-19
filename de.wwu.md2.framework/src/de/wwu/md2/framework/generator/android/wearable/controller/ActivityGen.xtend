@@ -3,7 +3,6 @@ package de.wwu.md2.framework.generator.android.wearable.controller
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
 import de.wwu.md2.framework.generator.android.wearable.Settings
-import de.wwu.md2.framework.mD2.ActionDrawer
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.AttrSensorAxis
 import de.wwu.md2.framework.mD2.AttrSensorTyp
@@ -26,13 +25,14 @@ import de.wwu.md2.framework.mD2.impl.ListViewImpl
 import de.wwu.md2.framework.mD2.ListViewIconParam
 import de.wwu.md2.framework.mD2.FlowLayoutPaneIconParam
 import de.wwu.md2.framework.mD2.GridLayoutPaneIconParam
+import de.wwu.md2.framework.mD2.ViewFrame
 
 class ActivityGen {
 
 	static boolean FirstCall = true;
 
 	def static generateActivities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
-		Iterable<ContainerElement> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities, App app) {
+		Iterable<ViewFrame> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities, App app) {
 
 		fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "NavigationAdapter.java",
 			generateNavigationAdapter(mainPackage, startableWorkflowElements, rootViews))
@@ -187,7 +187,7 @@ class ActivityGen {
 		
 		//generiert NavigationAdapter als Singleton, ersetzt die urspruengliche StartActivity
 		//startActions werden in Konstruktor uebergeben
-	def static generateNavigationAdapter(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<ContainerElement> rootViews)'''
+	def static generateNavigationAdapter(String mainPackage, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<ViewFrame> rootViews)'''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.ActivityGen.generateNavigationAdapter()
 				package «mainPackage»;
 				
@@ -278,50 +278,56 @@ class ActivityGen {
 				
 			'''
 			
-	def private static String generateIcons(Iterable<ContainerElement> rootViews){
-		var String result = "switch(position){"
-		var viewnumber = 0;
-		
-		for (rv : rootViews) {
-			switch (rv) {
-				GridLayoutPaneImpl: {
-					for (rve : (rv as GridLayoutPaneImpl).params) {
-						if(rve instanceof GridLayoutPaneIconParam){
-							result += "\r\n case " + viewnumber + ":";
-							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+ MD2AndroidUtil.getAndroidIconString((rve as GridLayoutPaneIconParam).value)+");"
-						}		
-					}
-				}
-				FlowLayoutPaneImpl: {
-					for (rve : (rv as FlowLayoutPaneImpl).params) {
-						if(rve instanceof FlowLayoutPaneIconParam){
-							result += "\r\n case " + viewnumber + ":";
-							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+MD2AndroidUtil.getAndroidIconString((rve as FlowLayoutPaneIconParam).value)+");"
-						}		
-					}
-				}
-				ListViewImpl: {
-				for (rve : rv.params) {
-					println("RVE ListView:" + rve);
-						if(rve instanceof ListViewIconParam){
-							result += "\r\n case " + viewnumber + ":";
-							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+MD2AndroidUtil.getAndroidIconString((rve as ListViewIconParam).value)+");"
-						}		
-					}
-				}
-				default: {
-					println("Kein GridLayoutPane")
-				}
-			}
-
-			viewnumber++;
+	def private static String generateIcons(Iterable<ViewFrame> frames){//ContainerElement
+		if(frames.length === 0 || frames.get(0).icon === null) {
+		return '''return Md2ViewManager.getInstance().getActiveView().getDrawable(R.mipmap.ic_launcher);'''
+		} else { 
+		return '''return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable.«MD2AndroidUtil.getAndroidIconString(frames.get(0).icon)»);'''
 		}
 		
-		result+="\r\ndefault:\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.mipmap.ic_launcher);}"
-		return result;
+//		var String result = "switch(position){"
+//		var viewnumber = 0;
+//		
+//		for (rv : rootViews) {
+//			switch (rv) {
+//				GridLayoutPaneImpl: {
+//					for (rve : (rv as GridLayoutPaneImpl).params) {
+//						if(rve instanceof GridLayoutPaneIconParam){
+//							result += "\r\n case " + viewnumber + ":";
+//							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+ MD2AndroidUtil.getAndroidIconString((rve as GridLayoutPaneIconParam).value)+");"
+//						}		
+//					}
+//				}
+//				FlowLayoutPaneImpl: {
+//					for (rve : (rv as FlowLayoutPaneImpl).params) {
+//						if(rve instanceof FlowLayoutPaneIconParam){
+//							result += "\r\n case " + viewnumber + ":";
+//							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+MD2AndroidUtil.getAndroidIconString((rve as FlowLayoutPaneIconParam).value)+");"
+//						}		
+//					}
+//				}
+//				ListViewImpl: {
+//				for (rve : rv.params) {
+//					println("RVE ListView:" + rve);
+//						if(rve instanceof ListViewIconParam){
+//							result += "\r\n case " + viewnumber + ":";
+//							result += "\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable."+MD2AndroidUtil.getAndroidIconString((rve as ListViewIconParam).value)+");"
+//						}		
+//					}
+//				}
+//				default: {
+//					println("Kein GridLayoutPane")
+//				}
+//			}
+//
+//			viewnumber++;
+//		}
+//		
+//		result+="\r\ndefault:\r\n return Md2ViewManager.getInstance().getActiveView().getDrawable(R.mipmap.ic_launcher);}"
+//		return result;
 	}
 
-	private def static generateActivity(String mainPackage, ContainerElement rv, Iterable<Entity> entities, boolean FirstCall) '''
+	private def static generateActivity(String mainPackage, ViewFrame frame, Iterable<Entity> entities, boolean FirstCall) '''
 		// generated in de.wwu.md2.framework.generator.android.wearable.controller.Activity.generateActivity()
 		package «mainPackage»;
 
@@ -354,22 +360,14 @@ class ActivityGen {
 		
 		import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
 
-		«FOR viewElement: rv.eAllContents.toIterable»
-			«IF viewElement instanceof ActionDrawer»
-				«IF(viewElement.onItemClickAction !== null)»
-					«FOR itemClickAction: viewElement.onItemClickAction»
-						import «mainPackage».md2.controller.action.«MD2AndroidUtil.getQualifiedNameAsString(itemClickAction, "_")»_Action;
-					«ENDFOR»
-				«ENDIF»
-			«ENDIF»
+		«FOR action: frame.viewActions»
+			import «mainPackage».md2.controller.action.«MD2AndroidUtil.getQualifiedNameAsString(action, "_")»_Action;
 		«ENDFOR»
-
-
 
 		import «Settings.MD2LIBRARY_PACKAGE»SensorHelper;
 
 
-		public class «rv.name»Activity extends WearableActivity implements WearableActionDrawer.OnMenuItemClickListener {
+		public class «frame.name»Activity extends WearableActivity implements WearableActionDrawer.OnMenuItemClickListener {
 
 			private WearableDrawerLayout drawerLayout;
 			private WearableNavigationDrawer navigationDrawer;
@@ -381,17 +379,15 @@ class ActivityGen {
 			@Override
 			protected void onCreate(Bundle savedInstanceState) {
 				super.onCreate(savedInstanceState);
-				setContentView(R.layout.activity_«rv.name.toLowerCase»);
+				setContentView(R.layout.activity_«frame.name.toLowerCase»);
 
 				clickHandler = new Md2OnClickHandler();
 
-				«FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
-					«IF !(viewElement instanceof ActionDrawer)»
-						«generateAddViewElement(viewElement)»
-					«ENDIF»
+				«FOR viewElement: frame.eAllContents.filter(ViewElementType).toIterable»
+					«generateAddViewElement(viewElement)»
 				«ENDFOR»
 				
-				drawerLayout = (WearableDrawerLayout) findViewById(R.id.drawer_layout_«rv.name»);
+				drawerLayout = (WearableDrawerLayout) findViewById(R.id.drawer_layout_«frame.name»);
 				drawerLayout.setDrawerStateCallback(new WearableDrawerLayout.DrawerStateCallback() {
 			   		@Override
 					public void onDrawerOpened(View view) {
@@ -400,7 +396,7 @@ class ActivityGen {
 					@Override
 					public void onDrawerClosed(View view) {
 						if(adapter.close()){
-							«rv.name»Activity.this.finish();
+							«frame.name»Activity.this.finish();
 						}
 					}
 					@Override
@@ -417,8 +413,8 @@ class ActivityGen {
 					 				}
 						   		 }, 2000);
 							}
-							«FOR viewElement: rv.eAllContents.toIterable»
-		 					«IF viewElement instanceof ActionDrawer»
+							«FOR viewElement: frame.eAllContents.toIterable»
+		 					«IF frame.viewActions.length > 0»
 							if(actionDrawer.isPeeking()){
 								final Handler handler = new Handler();
 								handler.postDelayed(new Runnable() {
@@ -437,24 +433,20 @@ class ActivityGen {
 				});
 
 
-				navigationDrawer = (WearableNavigationDrawer) findViewById(R.id.navigation_drawer_«rv.name»);
+				navigationDrawer = (WearableNavigationDrawer) findViewById(R.id.navigation_drawer_«frame.name»);
 				adapter = NavigationAdapter.getInstance();
 				navigationDrawer.setAdapter(adapter);
 
-
-				«FOR viewElement: rv.eAllContents.toIterable»
-					«IF viewElement instanceof ActionDrawer»
-						actionDrawer = (WearableActionDrawer) findViewById(R.id.bottom_action_drawer_«rv.name»);
-						actionDrawer.setOnMenuItemClickListener(this);
-					«ENDIF»
-				«ENDFOR»
-
+				«IF frame.viewActions.length > 0»
+					actionDrawer = (WearableActionDrawer) findViewById(R.id.bottom_action_drawer_«frame.name»);
+					actionDrawer.setOnMenuItemClickListener(this);
+				«ENDIF»
 
 				navigationDrawer.setCurrentItem(adapter.getActive(), true);
 
-				«IF (rv instanceof ListView)»
-				wrv = (WearableRecyclerView) findViewById(R.id.wearable_recycler_view_«rv.name»);
-											«rv.name»ListAdapter listAdapter = new «rv.name»ListAdapter();
+				«IF frame.elements.filter(ListView).length > 0»
+				wrv = (WearableRecyclerView) findViewById(R.id.wearable_recycler_view_«frame.name»);
+											«frame.name»ListAdapter listAdapter = new «frame.name»ListAdapter();
 										   	wrv.setAdapter(listAdapter);
 											wrv.setCenterEdgeItems(true);
 											CurvedChildLayoutManager clm = new CurvedChildLayoutManager(this);
@@ -474,10 +466,8 @@ class ActivityGen {
 				super.onStart();
 				Md2ViewManager.getInstance().setActiveView(this);
 
-				«FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
-					«IF !(viewElement instanceof ActionDrawer)»
-						«generateLoadViewElement(viewElement)»
-					«ENDIF»
+				«FOR viewElement: frame.eAllContents.filter(ViewElementType).toIterable»
+					«generateLoadViewElement(viewElement)»
 				«ENDFOR»
 
 				drawerLayout.peekDrawer(Gravity.TOP);
@@ -494,10 +484,8 @@ class ActivityGen {
 			@Override
 			protected void onPause(){
 				super.onPause();
-				«FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
-					«IF !(viewElement instanceof ActionDrawer)»
-						«generateSaveViewElement(viewElement)»
-					«ENDIF»
+				«FOR viewElement: frame.eAllContents.filter(ViewElementType).toIterable»
+					«generateSaveViewElement(viewElement)»
 				«ENDFOR»
 			}
 			
@@ -509,10 +497,8 @@ class ActivityGen {
 			@Override
 			protected void onDestroy(){
 				super.onDestroy();
-				«FOR viewElement: rv.eAllContents.filter(ViewElementType).toIterable»
-					«IF !(viewElement instanceof ActionDrawer)»
-						«generateSaveViewElement(viewElement)»
-		 		   	«ENDIF»
+				«FOR viewElement: frame.eAllContents.filter(ViewElementType).toIterable»
+					«generateSaveViewElement(viewElement)»
 			   «ENDFOR»
 			}
 
@@ -525,43 +511,30 @@ class ActivityGen {
 			@Override
 			public boolean onMenuItemClick(MenuItem menuItem) {
 			
-			
-			«var int z = 0»
-			«FOR viewElement: rv.eAllContents.toIterable»
-				«IF viewElement instanceof ActionDrawer»
-					«IF(z++ == 0)»
-					«ENDIF»
-					«IF(viewElement.onItemClickAction !== null)»
+				Md2Action ca = null;
 
-						Md2Action ca = null;
+				final int itemId = menuItem.getItemId();
 
-						final int itemId = menuItem.getItemId();
+				switch(itemId) {
+					«var ElementCounter = 0»
+					«FOR itemClickAction: frame.viewActions.map[vA | vA.action]»
+						case R.id.«itemClickAction.name»_item«ElementCounter++»:
+							ca = new «MD2AndroidUtil.getQualifiedNameAsString(itemClickAction, "_").toFirstUpper»_Action();
+							break;
 
-						switch(itemId) {
-							«var ElementCounter = 0»
-							«FOR itemClickAction: viewElement.onItemClickAction»
-								case R.id.«itemClickAction.name»_item«ElementCounter++»:
-									ca = new «MD2AndroidUtil.getQualifiedNameAsString(itemClickAction, "_").toFirstUpper»_Action();
-									break;
+					«ENDFOR»
+				}
 
-							«ENDFOR»
-						}
+				clickHandler.registerAction(ca);
 
-						clickHandler.registerAction(ca);
+				try {
+					ca.execute();
+					return true;
+				}catch(Exception e) {
+					return false;
+				}
 
-						try {
-							ca.execute();
-
-							return true;
-						}catch(Exception e) {
-							return false;
-						}
-					«ENDIF»
-				«ENDIF»
-			«ENDFOR»
-			«IF (z == 0)»
 				return true;
-			«ENDIF»
 			}
 		}
 	'''
