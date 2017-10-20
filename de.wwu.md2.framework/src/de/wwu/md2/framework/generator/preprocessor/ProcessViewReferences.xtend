@@ -124,7 +124,7 @@ class ProcessViewReferences extends AbstractPreprocessor {
 		
 		val codeFragments = wfe.eAllContents.toIterable.filter(CustomCodeFragment).toList
 		// get a list of all ViewElements that are referenced in the WorkflowElement
-		val viewElementsReferencedInWorkflow = wfe.eAllContents.filter(AbstractViewGUIElementRef).map[it.ref as ViewElement]
+		val viewElementsReferencedInWorkflow = wfe.eAllContents.filter(AbstractViewGUIElementRef).map[it.ref as ViewElementType]
 		// get all view elements that belong to views referenced by the WorkflowElement
 		val workflowSpecificViewElements = viewElementsReferencedInWorkflow.map[it.eAllContents.toList].toList.flatten.toList
 		
@@ -245,7 +245,7 @@ class ProcessViewReferences extends AbstractPreprocessor {
 		val gotoViewActions = controller.eAllContents.toIterable.filter(GotoViewAction)
 		
 		// get all containers that are used as views
-		val rootViews = gotoViewActions.map[ action | action.view.resolveViewElement].toSet
+		val rootViews = gotoViewActions.map[ action | action.view.ref].toSet
 		
 		// check for all cloned code fragments if they are child of any of the root views
 		// => if not remove code fragment

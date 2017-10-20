@@ -198,7 +198,7 @@ class ManifestJson {
 								"name": "«view.name»",
 								"dataForm": {
 									"dataform-version": "1.0.0",
-									«getViewElement(view, false)»
+									«««TODO getViewElement(view, false)»»»
 								}
 							}
 						«ENDFOR»

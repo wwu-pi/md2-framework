@@ -859,7 +859,7 @@ SimpleAction:
 	{SetProcessChainAction} 'SetProcessChain' '(' processChain = [ProcessChain] ')' |
 
 	// core actions that have to be supported by the platform
-	{GotoViewAction} ('GotoView' '(' view = AbstractViewGUIElementRef ')' ) |
+	{GotoViewAction} ('GotoView' '(' view = AbstractViewFrameRef ')' ) |
 	{DisableAction} ('Disable' '(' inputField = AbstractViewGUIElementRef ')' ) |
 	{EnableAction} ('Enable' '(' inputField = AbstractViewGUIElementRef ')' ) |
 	{DisplayMessageAction} ('DisplayMessage' '(' message = SimpleExpression ')' ) |
@@ -936,6 +936,10 @@ ElseCodeBlock:
  */
 ContainsCodeFragments:
 	CustomAction | IfCodeBlock | ElseCodeBlock
+;
+
+AbstractViewFrameRef:
+	ref = [ViewFrame]
 ;
 
 /*
@@ -1415,7 +1419,7 @@ ProcessChain:
  */
 ProcessChainStep:
 	'step' name = EID ':' (
-		('view' view = AbstractViewGUIElementRef) &
+		('view' view = AbstractViewFrameRef) &
 		(gotos += ProcessChainGoToDefinition)* &
 		('message' message = SimpleExpression)?
 	)

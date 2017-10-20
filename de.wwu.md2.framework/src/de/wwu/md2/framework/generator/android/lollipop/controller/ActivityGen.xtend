@@ -35,9 +35,9 @@ class ActivityGen {
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + frame.name + "Activity.java",
 				generateActivity(mainPackage, entities, frame))
 				
-				if (frame instanceof ListView){
+				if (frame.elements.filter(ListView).length > 0){
 					fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + frame.name + "ListAdapter.java",
-					generateListAdapter(mainPackage, frame, app))
+					generateListAdapter(mainPackage, frame.elements.filter(ListView).get(0), app))
 				}
 		]
 		

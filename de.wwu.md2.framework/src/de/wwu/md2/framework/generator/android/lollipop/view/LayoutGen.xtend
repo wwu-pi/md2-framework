@@ -37,6 +37,7 @@ import de.wwu.md2.framework.mD2.ListView
 import de.wwu.md2.framework.mD2.IntegerInput
 import de.wwu.md2.framework.mD2.ViewFrame
 import de.wwu.md2.framework.mD2.ViewElementType
+import de.wwu.md2.framework.mD2.MD2Factory
 
 class LayoutGen {
 
@@ -155,10 +156,20 @@ class LayoutGen {
 				"http://schemas.android.com/apk/res/android")
 			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
 	
-//			var Element rootContainer = null
+			// Scrollview must have a single child -> wrapper flowlayoutpane
+			var wrapperLayout = MD2Factory.eINSTANCE.createFlowLayoutPane
+			wrapperLayout.name = frame.name + "__wrapperFlowLayout"
 			
+			var flowDirection = MD2Factory.eINSTANCE.createFlowLayoutPaneFlowDirectionParam
+			flowDirection.flowDirection = FlowDirection.VERTICAL
+			wrapperLayout.params.add(flowDirection)
+			
+			var wrapperElement = createFlowLayoutPaneElement(doc, wrapperLayout)
+			rootElement.appendChild(wrapperElement)
+			
+			// Generate children
 			for(elem : frame.elements){
-				createChildrenElements(doc, rootElement, elem)
+				createChildrenElements(doc, wrapperElement, elem)
 			}
 			
 //			switch frame {

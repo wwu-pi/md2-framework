@@ -32,18 +32,18 @@ class ActivityGen {
 	static boolean FirstCall = true;
 
 	def static generateActivities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
-		Iterable<ViewFrame> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities, App app) {
+		Iterable<ViewFrame> frames, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities, App app) {
 
 		fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "NavigationAdapter.java",
-			generateNavigationAdapter(mainPackage, startableWorkflowElements, rootViews))
+			generateNavigationAdapter(mainPackage, startableWorkflowElements, frames))
 
-		rootViews.forEach [ rv |
-			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + rv.name + "Activity.java",
-				generateActivity(mainPackage, rv, entities, FirstCall))
+		frames.forEach [ frame |
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + frame.name + "Activity.java",
+				generateActivity(mainPackage, frame, entities, FirstCall))
 
-				if (rv instanceof ListView){
-				fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + rv.name + "ListAdapter.java",
-				generateListAdapter(mainPackage, rv, app))
+				if (frame.elements.filter(ListView).length > 0){
+				fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + frame.name + "ListAdapter.java",
+				generateListAdapter(mainPackage, frame.elements.filter(ListView).get(0), app))
 				}
 
 				//FirstCall=false;

@@ -42,6 +42,7 @@ import de.wwu.md2.framework.mD2.Spacer
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.IntegerInputType
 import de.wwu.md2.framework.mD2.ViewFrame
+import de.wwu.md2.framework.mD2.MD2Factory
 
 class LayoutGen {
 
@@ -275,8 +276,21 @@ class LayoutGen {
 //						}
 //					}
 //			}
+			
+			// Scrollview must have a single child -> wrapper flowlayoutpane
+			var wrapperLayout = MD2Factory.eINSTANCE.createFlowLayoutPane
+			wrapperLayout.name = frame.name + "__wrapperFlowLayout"
+			
+			var flowDirection = MD2Factory.eINSTANCE.createFlowLayoutPaneFlowDirectionParam
+			flowDirection.flowDirection = FlowDirection.VERTICAL
+			wrapperLayout.params.add(flowDirection)
+			
+			var wrapperElement = createFlowLayoutPaneElement(doc, wrapperLayout)
+			rootElement.appendChild(wrapperElement)
+			
+			// Generate children
 			for(elem : frame.elements){
-				createChildrenElements(doc, rootElement, elem)
+				createChildrenElements(doc, wrapperElement, elem)
 			}
 
 		// Ende else / Ende StandardLayout

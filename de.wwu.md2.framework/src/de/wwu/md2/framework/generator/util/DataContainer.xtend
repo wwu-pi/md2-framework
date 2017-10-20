@@ -27,6 +27,7 @@ import org.eclipse.xtend.lib.annotations.Accessors
 
 import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import org.eclipse.emf.common.util.EList
+import de.wwu.md2.framework.mD2.ViewFrame
 
 /**
  * DataContainer to store data that are used throughout the generation process.
@@ -86,7 +87,7 @@ class DataContainer {
 	 * any view containers that are accessed by a GotoViewAction.
 	 */
 	@Accessors
-	public Map<WorkflowElement, Set<ContainerElement>> rootViewContainers
+	public Map<WorkflowElement, Set<ViewFrame>> rootViewContainers
 	
 	
 	///////////////////////////////////////
@@ -202,17 +203,11 @@ class DataContainer {
 			val containers = (workflowElement.actions + workflowElement.initActions).filter(CustomAction).map[ customAction |
 					customAction.eAllContents.toIterable
 				].flatten.filter(GotoViewAction).map[ gotoView |
-					resolveContainerElement(gotoView.view)
+					gotoView.view.ref
 				]
 			
 			// Calculate root view for each view that is accessed via a GotoViewAction
-			rootViews.put(workflowElement, containers.map[ container |
-				var EObject elem = container
-				while (!(elem.eContainer instanceof View)) {
-					elem = elem.eContainer
-				}
-				elem as ContainerElement
-			].toSet)
+			rootViews.put(workflowElement, containers.toSet)
 		}
 		
 		return rootViews

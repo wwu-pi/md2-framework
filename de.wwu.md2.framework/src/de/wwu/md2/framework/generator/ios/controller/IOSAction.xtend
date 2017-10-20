@@ -91,7 +91,7 @@ class IOSAction {
 	 */
 	def static generateGotoViewAction(String actionSignature, GotoViewAction action) '''
 		MD2GotoViewAction(actionSignature: "«actionSignature»", 
-			targetView: MD2WidgetMapping.«MD2GeneratorUtil.getName(action.view.ref)»)
+			targetView: MD2WidgetMapping.«action.view.ref.name»)
 	'''
 	
 	/**
