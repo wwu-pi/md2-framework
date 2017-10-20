@@ -115,7 +115,7 @@ class LayoutGen {
  			btnElement.setAttribute("android:layout_width", "match_parent")
  			btnElement.setAttribute("android:layout_height", "wrap_content")
  			btnElement.setAttribute("android:layout_gravity", "fill_horizontal")
- 			btnElement.setAttribute("android:text", "@string/" + MD2AndroidUtil.getQualifiedNameAsString(wfe, "_") + "_alias")
+ 			btnElement.setAttribute("android:text", "@string/" + MD2AndroidUtil.getQualifiedNameAsString(wfe.workflowElementReference, "_") + "_alias")
  			rootContainer.appendChild(btnElement);
 		}
 

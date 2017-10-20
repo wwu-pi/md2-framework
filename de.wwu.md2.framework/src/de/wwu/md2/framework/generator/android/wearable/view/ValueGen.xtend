@@ -19,12 +19,16 @@ import de.wwu.md2.framework.mD2.ViewFrame
 
 class ValueGen {
 
-	def static String generateIdsXml(Iterable<ViewGUIElement> viewGUIElements, Iterable<WorkflowElementReference> wers) '''
+	def static String generateIdsXml(Iterable<ViewGUIElement> viewGUIElements, Iterable<ViewFrame> rootFrames, Iterable<WorkflowElementReference> wers) '''
 		<?xml version="1.0" encoding="utf-8"?>
 		<!-- generated in de.wwu.md2.framework.generator.android.wearable.view.Values.generateIdsXml() -->
 		<resources>
 			«FOR wer : wers»
 				<item name="startActivity_«wer.workflowElementReference.name»Button" type="id"/>				
+			«ENDFOR»
+			«FOR ve : rootFrames»
+				<item name="«MD2AndroidUtil.getQualifiedNameAsString(ve, "_")»" type="id"/>
+				<item name="«MD2AndroidUtil.getQualifiedNameAsString(ve, "_") + "__wrapperFlowLayout"»" type="id"/>
 			«ENDFOR»
 			«FOR ve : viewGUIElements»
 				«val qualifiedName = MD2AndroidUtil.getQualifiedNameAsString(ve, "_")»
@@ -46,12 +50,9 @@ class ValueGen {
 				<string name="title_activity_«rce.name.toFirstLower»">«rce.name.toFirstUpper»</string>
 			«ENDFOR»
 
-					
-			<!-- not necessary without Start activity
-«««			«FOR wer : wers»
-«««				<string name="«MD2AndroidLollipopUtil.getQualifiedNameAsString(wer, "_")»_alias">«wer.alias»</string>
-«««			«ENDFOR»  
-			-->
+			«FOR wer : wers»
+				<string name="«MD2AndroidUtil.getQualifiedNameAsString(wer.workflowElementReference, "_")»_alias">«wer.alias»</string>
+			«ENDFOR»
 
 			
 			«FOR ve : viewGUIElements»

@@ -47,7 +47,7 @@ class GradleGen {
 		
 		    defaultConfig {
 		        applicationId "«appId»"
-		        minSdkVersion 25
+		        minSdkVersion 24
 		        targetSdkVersion 25
 		        versionCode 1
 		        versionName "1.0"

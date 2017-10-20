@@ -37,7 +37,7 @@ class ActivityGen {
 				
 				if (frame.elements.filter(ListView).length > 0){
 					fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + frame.name + "ListAdapter.java",
-					generateListAdapter(mainPackage, frame.elements.filter(ListView).get(0), app))
+					generateListAdapter(mainPackage, frame, app))
 				}
 		]
 		
@@ -45,7 +45,8 @@ class ActivityGen {
 	}
 	
 		//generiert ListAdapter für Inhalt einer Listenansicht
-	def static generateListAdapter(String mainPackage, ListView rv, App app)'''
+	def static generateListAdapter(String mainPackage, ViewFrame frame, App app)'''
+		«val ListView list = frame.elements.filter(ListView).get(0)»
 		//generated in de.wwu.md2.framework.generator.android.lollipop.controller.Activity.generateListAdapter()
 
 		package «mainPackage»;
@@ -69,17 +70,17 @@ class ActivityGen {
 		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2UpdateListIndexAction;
 		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2RefreshListAction;
 		
-		«IF(!(rv.onClickAction === null))»
-			import «mainPackage».md2.controller.action.«MD2AndroidUtil.getQualifiedNameAsString(rv.onClickAction, "_").toFirstUpper»_Action;
+		«IF(!(list.onClickAction === null))»
+			import «mainPackage».md2.controller.action.«MD2AndroidUtil.getQualifiedNameAsString(list.onClickAction, "_").toFirstUpper»_Action;
 		«ENDIF»
-		«IF(!(rv.leftSwipeAction === null))»
-			import «mainPackage».md2.controller.action.«MD2AndroidUtil.getQualifiedNameAsString(rv.leftSwipeAction, "_").toFirstUpper»_Action;
+		«IF(!(list.leftSwipeAction === null))»
+			import «mainPackage».md2.controller.action.«MD2AndroidUtil.getQualifiedNameAsString(list.leftSwipeAction, "_").toFirstUpper»_Action;
 		«ENDIF»
-		«IF(!(rv.rightSwipeAction === null))»
-			import «mainPackage».md2.controller.action.«MD2AndroidUtil.getQualifiedNameAsString(rv.rightSwipeAction, "_").toFirstUpper»_Action;
+		«IF(!(list.rightSwipeAction === null))»
+			import «mainPackage».md2.controller.action.«MD2AndroidUtil.getQualifiedNameAsString(list.rightSwipeAction, "_").toFirstUpper»_Action;
 		«ENDIF»
 		
-		public class «rv.name»ListAdapter extends RecyclerView.Adapter{
+		public class «frame.name»ListAdapter extends RecyclerView.Adapter{
 			
 			private Md2MultiContentProvider content;
 			private Md2ButtonOnSwipeHandler swipeHandler;
@@ -93,21 +94,21 @@ class ActivityGen {
 				return clickHandler;
 			}
 			
-			public «rv.name»ListAdapter(){
-				content = Md2ContentProviderRegistry.getInstance().getContentMultiProvider("«rv.connectedProvider.contentProviderRef.name»");
-				content.addAdapter(this, "«rv.name»ListAdapter");
+			public «frame.name»ListAdapter(){
+				content = Md2ContentProviderRegistry.getInstance().getContentMultiProvider("«list.connectedProvider.contentProviderRef.name»");
+				content.addAdapter(this, "«frame.name»ListAdapter");
 				swipeHandler = new Md2ButtonOnSwipeHandler();
 				clickHandler = new Md2OnClickHandler();
-				«IF(!(rv.onClickAction === null))»
-					Md2Action ca = new «MD2AndroidUtil.getQualifiedNameAsString(rv.onClickAction, "_").toFirstUpper»_Action();
+				«IF(!(list.onClickAction === null))»
+					Md2Action ca = new «MD2AndroidUtil.getQualifiedNameAsString(list.onClickAction, "_").toFirstUpper»_Action();
 					clickHandler.registerAction(ca);
 				«ENDIF»
-				«IF(!(rv.leftSwipeAction === null))»
-					Md2Action lsa = new «MD2AndroidUtil.getQualifiedNameAsString(rv.leftSwipeAction, "_").toFirstUpper»_Action();
+				«IF(!(list.leftSwipeAction === null))»
+					Md2Action lsa = new «MD2AndroidUtil.getQualifiedNameAsString(list.leftSwipeAction, "_").toFirstUpper»_Action();
 					swipeHandler.getLeftSwipeHandler().registerAction(lsa);
 				«ENDIF»
-				«IF(!(rv.rightSwipeAction === null))»
-					Md2Action rsa = new «MD2AndroidUtil.getQualifiedNameAsString(rv.rightSwipeAction, "_").toFirstUpper»_Action();
+				«IF(!(list.rightSwipeAction === null))»
+					Md2Action rsa = new «MD2AndroidUtil.getQualifiedNameAsString(list.rightSwipeAction, "_").toFirstUpper»_Action();
 					swipeHandler.getRightSwipeHandler().registerAction(rsa);
 				«ENDIF»
 			}
@@ -115,13 +116,13 @@ class ActivityGen {
 			@Override
 			public void onBindViewHolder(RecyclerView.ViewHolder vh, int i){
 				ListItem li = (ListItem) vh;
-				if(content.getValue(i,"«rv.connectedProvider.tail.attributeRef.name»") != null){
-					li.getButton().setText(content.getValue(i,"«rv.connectedProvider.tail.attributeRef.name»").getString().toString());
+				if(content.getValue(i,"«list.connectedProvider.tail.attributeRef.name»") != null){
+					li.getButton().setText(content.getValue(i,"«list.connectedProvider.tail.attributeRef.name»").getString().toString());
 				} else {
 					li.getButton().setText("Fehler");
 				}
 				//Listener hinzufügen
-				Md2UpdateListIndexAction indexAction = new Md2UpdateListIndexAction("«rv.name»", i, content);
+				Md2UpdateListIndexAction indexAction = new Md2UpdateListIndexAction("«list.name»", i, content);
 				Md2OnClickHandler ch = new Md2OnClickHandler();
 				Md2ButtonOnSwipeHandler sw = new Md2ButtonOnSwipeHandler();
 				ch.registerAction(indexAction);
@@ -277,7 +278,7 @@ class ActivityGen {
 					«generateAddViewElement(viewElement)»
 		        «ENDFOR»
 
-		        «IF (frame instanceof ListView)»
+		        «IF (frame.elements.filter(ListView).length > 0)»
 				wrv = (RecyclerView) findViewById(R.id.recycler_view_«frame.name»);
 				
 				final LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());

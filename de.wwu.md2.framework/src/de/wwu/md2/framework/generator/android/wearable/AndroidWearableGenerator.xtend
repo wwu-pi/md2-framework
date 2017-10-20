@@ -154,7 +154,7 @@ class AndroidWearableGenerator extends AbstractPlatformGenerator {
 			 ***************************************************/
 			// Element Ids
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.IDS_XML_NAME,
-				ValueGen.generateIdsXml(viewGUIElements, startableWorkflowElements))
+				ValueGen.generateIdsXml(viewGUIElements, rootViews, startableWorkflowElements))
 
 			// String Values
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.STRINGS_XML_NAME,
