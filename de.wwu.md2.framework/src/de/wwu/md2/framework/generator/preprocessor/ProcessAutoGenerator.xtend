@@ -305,9 +305,7 @@ class ProcessAutoGenerator extends AbstractPreprocessor {
 		if (autoGenAction == null) return null
 		val mappingTask = factory.createMappingTask()
 		mappingTask.referencedViewField = factory.createAbstractViewGUIElementRef()
-		mappingTask.referencedViewField.ref = MD2GeneratorUtil.getViewFrameForGUIElement(guiElem)
-		mappingTask.referencedViewField.tail = factory.createAbstractViewGUIElementRef()
-		mappingTask.referencedViewField.tail.viewElementRef = guiElem
+		mappingTask.referencedViewField.ref = guiElem
 		mappingTask.pathDefinition = pathDefinition as ContentProviderPath
 		autoGenAction.codeFragments.add(mappingTask)
 	}

@@ -574,10 +574,13 @@ SubViewContainer:
  		elements += ViewElementType* 
  	'}'
  ;
+ListViewParam:
+	{PlaceholderParam} 'placeholder' value = INT
+;
 
 ListViewLayoutParam:
-	{ListViewIconParam} 'icon' value = ViewIcon |
-	CommonContainerParam
+	{ListViewIconParam} 'icon' value = ViewIcon? |
+	{ListViewTitleParam} 'title' value = STRING
 ;
 
 enum ViewIcon:
@@ -605,7 +608,7 @@ GridLayoutPaneParam:
 	{GridLayoutPaneColumnsParam} 'columns' value = INT | 
 	{GridLayoutPaneRowsParam} 'rows' value = INT | 
 	CommonContainerParam | 
-	{GridLayoutPaneIconParam} 'icon' value = ViewIcon
+	{GridLayoutPaneIconParam} 'icon' value = ViewIcon?
 ;
 
 /*
@@ -624,7 +627,7 @@ FlowLayoutPane:
 FlowLayoutPaneParam:
 	{FlowLayoutPaneFlowDirectionParam} flowDirection = FlowDirection | 
 	CommonContainerParam | 
-	{FlowLayoutPaneIconParam} 'icon' value = ViewIcon
+	{FlowLayoutPaneIconParam} 'icon' value = ViewIcon?
 ;
 
 /*
@@ -947,7 +950,7 @@ ContainsCodeFragments:
  * generated ViewGUIElement containing the value of the specified Attribute.
  */
 AbstractViewGUIElementRef:
-	ref = [ViewFrame | QUALIFIED_NAME] (
+	ref = [ViewElementType | QUALIFIED_NAME] (
 		tail = NestedAbstractViewGUIElementRef |
 		'[' (path = EntityPath | simpleType = SimpleDataTypeWrapper) ']'
 	)?
@@ -969,7 +972,7 @@ AbstractViewGUIElementRef:
  * shall be referenced.
  */
 NestedAbstractViewGUIElementRef returns AbstractViewGUIElementRef:
-	'->' viewElementRef = [ViewElementType | QUALIFIED_NAME] (
+	'->' ref = [ViewElementType | QUALIFIED_NAME] (
 		tail = NestedAbstractViewGUIElementRef |
 		'[' (path = EntityPath | simpleType = SimpleDataTypeWrapper) ']'
 	)?

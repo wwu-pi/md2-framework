@@ -48,7 +48,7 @@ class SimpleExpressionUtil {
 			// Use string interpolation to facilitate generation (no need to create the string concatenation)
 			AbstractViewGUIElementRef: {
 				return  '\\(MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.' 
-					+ MD2GeneratorUtil.getName(expression.tail.viewElementRef).toFirstUpper
+					+ MD2GeneratorUtil.getName(expression.ref).toFirstUpper
 					+ ')!.value.toString())'
 			}
 			/* Content providers cannot be used in combination with string interpolation because of the

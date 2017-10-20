@@ -85,7 +85,7 @@ class ConditionalExpressionUtil {
 	 * @return The Swift string representing the expression.
 	 */
 	def static evaluateGuiElementStateExpression(GuiElementStateExpression expression) {
-		val element = "MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping." + MD2GeneratorUtil.getName(expression.reference.tail.viewElementRef).toFirstUpper + ")!"
+		val element = "MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping." + MD2GeneratorUtil.getName(expression.reference.ref).toFirstUpper + ")!"
 		
 		switch expression.isState{
 			case VALID: return element + ".validate() == true"

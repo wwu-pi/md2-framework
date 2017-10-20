@@ -157,12 +157,12 @@ class TypeResolver {
 	
 	def private static String getAbstractViewGUIElementType(AbstractViewGUIElementRef ref) {
 		
-		if (ref.path !== null) {
+		if (ref.path != null) {
 			return ref.path.tail.resolveAttributeType.attributeTypeName
-		} else if (ref.simpleType !== null) {
+		} else if (ref.simpleType != null) {
 			return ref.simpleType.type.toString
-		} else if (ref.tail === null) {
-			return ref.viewElementRef.viewElementTypeName
+		} else if (ref.tail == null) {
+			return ref.ref.viewElementTypeName
 		}
 		ref.tail.abstractViewGUIElementType
 		

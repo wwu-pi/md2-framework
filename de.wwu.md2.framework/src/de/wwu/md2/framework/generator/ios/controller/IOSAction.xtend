@@ -91,7 +91,7 @@ class IOSAction {
 	 */
 	def static generateGotoViewAction(String actionSignature, GotoViewAction action) '''
 		MD2GotoViewAction(actionSignature: "«actionSignature»", 
-			targetView: MD2WidgetMapping.«MD2GeneratorUtil.getName(action.view.tail.viewElementRef)»)
+			targetView: MD2WidgetMapping.«MD2GeneratorUtil.getName(action.view.ref)»)
 	'''
 	
 	/**
@@ -103,7 +103,7 @@ class IOSAction {
 	 */
 	def static generateDisableAction(String actionSignature, DisableAction action) '''
 		MD2DisableAction(actionSignature: "«actionSignature»", 
-			viewElement: MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«MD2GeneratorUtil.getName(action.inputField.tail.viewElementRef)»)!)
+			viewElement: MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«MD2GeneratorUtil.getName(action.inputField.ref)»)!)
 	'''
 	
 	/**
@@ -115,7 +115,7 @@ class IOSAction {
 	 */
 	def static generateEnableAction(String actionSignature, EnableAction action) '''
 		MD2EnableAction(actionSignature: "«actionSignature»", 
-			viewElement: MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«MD2GeneratorUtil.getName(action.inputField.tail.viewElementRef)»)!)
+			viewElement: MD2WidgetRegistry.instance.getWidget(MD2WidgetMapping.«MD2GeneratorUtil.getName(action.inputField.ref)»)!)
 	'''
 	
 	/**
