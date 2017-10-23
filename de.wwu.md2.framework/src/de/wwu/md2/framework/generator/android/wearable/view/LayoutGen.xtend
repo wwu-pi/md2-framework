@@ -250,33 +250,6 @@ class LayoutGen {
 			}
 			doc.appendChild(rootElement)
 
-//			var Element rootContainer = null
-//
-//			// TODO sollte man nochmal testen, wie toll diese Layouts auf einer Uhr laufen
-//			switch frame {
-//				FlowLayoutPane: rootContainer = createFlowLayoutPaneElement(doc, rv)
-//				GridLayoutPane: rootContainer = createGridLayoutPaneElement(doc, rv)
-//				default: return ""
-//			}
-//
-//			rootContainer.setAttribute("android:layout_width", "match_parent")
-//			scrollView.appendChild(rootContainer)
-//
-//			// depth first search to generate elements for all children
-//			switch rv {
-//				ContentContainer:
-//					for (elem : rv.elements) {
-//						createChildrenElements(doc, rootContainer, elem)
-//					}
-//				SubViewContainer:
-//					for (elem : rv.elements) {
-//						switch elem {
-//							ContainerElement: createChildrenElements(doc, rootContainer, elem)
-//							ContainerElementReference: createChildrenElements(doc, rootContainer, elem.value)
-//						}
-//					}
-//			}
-			
 			// Scrollview must have a single child -> wrapper flowlayoutpane
 			var wrapperLayout = MD2Factory.eINSTANCE.createFlowLayoutPane
 			wrapperLayout.name = frame.name + "__wrapperFlowLayout"
@@ -286,14 +259,12 @@ class LayoutGen {
 			wrapperLayout.params.add(flowDirection)
 			
 			var wrapperElement = createFlowLayoutPaneElement(doc, wrapperLayout)
-			rootElement.appendChild(wrapperElement)
+			scrollView.appendChild(wrapperElement)
 			
 			// Generate children
 			for(elem : frame.elements){
 				createChildrenElements(doc, wrapperElement, elem)
 			}
-
-		// Ende else / Ende StandardLayout
 		}
 
 		// return xml file as string

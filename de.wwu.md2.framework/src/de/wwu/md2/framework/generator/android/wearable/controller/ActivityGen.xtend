@@ -534,8 +534,6 @@ class ActivityGen {
 				}catch(Exception e) {
 					return false;
 				}
-
-				return true;
 			}
 		}
 	'''
