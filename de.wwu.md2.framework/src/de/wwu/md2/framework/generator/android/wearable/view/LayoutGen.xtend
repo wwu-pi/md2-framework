@@ -167,6 +167,7 @@ class LayoutGen {
 			listElement.setAttribute("android:id", "@+id/wearable_recycler_view_" + frame.name)
 			listElement.setAttribute("android:layout_height", "match_parent")
 			listElement.setAttribute("android:layout_width", "match_parent")
+			listElement.setAttribute("android:layout_marginLeft", "10dp") 
 			// create ActionDrawer
 			var Element drawerElement = doc.createElement("android.support.wearable.view.drawer.WearableActionDrawer")
 			drawerElement.setAttribute("android:id", "@+id/bottom_action_drawer_" + frame.name)
