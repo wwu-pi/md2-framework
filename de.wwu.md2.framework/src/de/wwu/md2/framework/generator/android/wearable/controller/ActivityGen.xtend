@@ -362,7 +362,7 @@ class ActivityGen {
 		import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
 
 		«FOR action: frame.viewActions»
-			import «mainPackage».md2.controller.action.«MD2AndroidUtil.getQualifiedNameAsString(action, "_")»_Action;
+			import «mainPackage».md2.controller.action.«MD2AndroidUtil.getQualifiedNameAsString(action.action, "_")»_Action;
 		«ENDFOR»
 
 		import «Settings.MD2LIBRARY_PACKAGE»SensorHelper;
@@ -519,7 +519,7 @@ class ActivityGen {
 				switch(itemId) {
 					«var ElementCounter = 0»
 					«FOR itemClickAction: frame.viewActions.map[vA | vA.action]»
-						case R.id.«itemClickAction.name»_item«ElementCounter++»:
+						case R.id.«frame.name»_item«ElementCounter++»:
 							ca = new «MD2AndroidUtil.getQualifiedNameAsString(itemClickAction, "_").toFirstUpper»_Action();
 							break;
 

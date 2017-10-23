@@ -51,10 +51,15 @@ class LayoutGen {
 			
 		fsa.generateFile(rootFolder + Settings.LAYOUT_PATH + "activity_start.xml",
 				generateStartLayout(mainPackage, startableWorkflowElements))
-				
+
 		rootViews.forEach [ rv |
 			fsa.generateFile(rootFolder + Settings.LAYOUT_PATH + "activity_" + rv.name.toLowerCase + ".xml",
 				generateLayout(mainPackage, rv))
+				
+			if(rv.viewActions.size > 0){
+				fsa.generateFile(rootFolder + Settings.MENU_PATH + rv.name.toLowerCase + "_action_drawer_menu.xml",
+					generateActionDrawerMenu(mainPackage, rv))
+			}
 		]
 	}
 
@@ -277,7 +282,7 @@ class LayoutGen {
 	}
 
 	// Generate Action Drawer Menu
-	protected static def generateActionDrawerMenu(String mainPackage, ViewFrame frame, Iterable<WorkflowElementReference> wfes) {
+	protected static def generateActionDrawerMenu(String mainPackage, ViewFrame frame) {
 		val docFactory = DocumentBuilderFactory.newInstance
 		val docBuilder = docFactory.newDocumentBuilder
 
