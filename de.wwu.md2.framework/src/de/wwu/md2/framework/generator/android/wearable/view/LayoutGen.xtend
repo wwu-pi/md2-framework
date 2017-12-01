@@ -362,7 +362,9 @@ class LayoutGen {
 //				newElement = createOptionInputElement(doc, viewElement)
 //			}
 			Spacer: {
-				newElement = createSpacerElement(doc, viewElement)
+				return
+				//dont generate spacers
+				//newElement = createSpacerElement(doc, viewElement)
 			}
 			default:
 				return

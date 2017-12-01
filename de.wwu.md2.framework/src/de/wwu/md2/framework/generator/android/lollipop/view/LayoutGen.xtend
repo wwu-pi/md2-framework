@@ -38,6 +38,8 @@ import de.wwu.md2.framework.mD2.IntegerInput
 import de.wwu.md2.framework.mD2.ViewFrame
 import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.MD2Factory
+import de.wwu.md2.framework.mD2.BooleanInput
+import de.wwu.md2.framework.mD2.BooleanInputType
 
 class LayoutGen {
 
@@ -242,6 +244,9 @@ class LayoutGen {
 			Spacer: {
 				newElement = createSpacerElement(doc, viewElement)
 			}
+			BooleanInput: {
+				newElement = createBooleanInputElement(doc, viewElement)
+			}
 			default:
 				return
 		}
@@ -301,7 +306,7 @@ class LayoutGen {
 				// width
 				WidthParam:{
 					glpElement.setAttribute("android:layout_columnWeight", String.valueOf(p.width))
-					glpElement.getAttributeNode("android:layout_width").nodeValue = "0dp"
+					glpElement.getAttributeNode("android:layout_width").nodeValue = "0dp" //removeAttribute("android:layout_width") //
 				}
 			}
 		]
@@ -445,7 +450,12 @@ class LayoutGen {
 		integerInputElement.setAttribute("android:id", "@id/" + qualifiedName)
 
 		
-		integerInputElement.setAttribute("android:layout_width", "match_parent")
+		if(integerInput.width == -1){
+			integerInputElement.setAttribute("android:layout_width", "match_parent")
+		}else{
+			integerInputElement.setAttribute("android:layout_width", "0dp")
+			integerInputElement.setAttribute("android:layout_columnWeight", String.valueOf(integerInput.width))
+		}
 		
 		integerInputElement.setAttribute("android:layout_height", "wrap_content")
 		integerInputElement.setAttribute("android:layout_gravity", "fill_horizontal")
@@ -466,6 +476,46 @@ class LayoutGen {
 		integerInputElement.setAttribute("android:imeOptions","actionDone")
 
 		return integerInputElement
+	}
+	
+	protected static def createBooleanInputElement(Document doc, BooleanInput booleanInput) {
+		//TODO real boolean switch
+		val booleanInputElement = doc.createElement(Settings.MD2LIBRARY_VIEW_TEXTINPUT)
+		val qnp = new DefaultDeclarativeQualifiedNameProvider
+		val qualifiedName = qnp.getFullyQualifiedName(booleanInput).toString("_")
+
+		// id
+		booleanInputElement.setAttribute("android:id", "@id/" + qualifiedName)
+
+		if(booleanInput.width == -1){
+			booleanInputElement.setAttribute("android:layout_width", "match_parent")
+		}else{
+			booleanInputElement.setAttribute("android:layout_width", "0dp")
+			booleanInputElement.setAttribute("android:layout_columnWeight", String.valueOf(booleanInput.width))
+		}
+		booleanInputElement.setAttribute("android:layout_height", "wrap_content")
+		booleanInputElement.setAttribute("android:layout_gravity", "fill_horizontal")
+
+		booleanInputElement.setAttribute("android:hint", "@string/" + qualifiedName + "_tooltip")
+
+		booleanInputElement.setAttribute("android:text", booleanInput.defaultValue)
+		
+		// disabled
+		var isEnabled = true
+		if (booleanInput.isDisabled)
+			isEnabled = false
+
+		booleanInputElement.setAttribute("android:enabled", String.valueOf(isEnabled))
+
+		// type
+		switch booleanInput {
+			default:
+				booleanInputElement.setAttribute("android:inputType", "text")
+		}
+		
+		booleanInputElement.setAttribute("android:imeOptions","actionDone")
+
+		return booleanInputElement
 	}
 	
 	protected static def createSpacerElement(Document doc, Spacer spacer) {

@@ -3,7 +3,7 @@ package de.wwu.md2.framework.generator.android.lollipop.model
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.android.common.model.FilterGen
 import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
-import de.wwu.md2.framework.generator.android.wearable.Settings
+import de.wwu.md2.framework.generator.android.lollipop.Settings
 import de.wwu.md2.framework.mD2.AttributeType
 import de.wwu.md2.framework.mD2.BooleanType
 import de.wwu.md2.framework.mD2.ContentProvider
