@@ -526,7 +526,7 @@ class ProcessView extends AbstractPreprocessor {
 		// get all views that are accessed by GotoViewActions at some time
 		val accessibleViews = wfe.eAllContents.filter(CustomAction).map[ customAction |
 			customAction.eAllContents.toIterable].filter(GotoViewAction).map[ gotoView |
-				resolveContainerElement(gotoView.view)
+				gotoView.view.ref
 			].toSet
 		
 		// get all GUI elements that are contained in an accessible view

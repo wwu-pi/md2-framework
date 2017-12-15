@@ -35,6 +35,7 @@ import de.wwu.md2.framework.mD2.GridLayoutPane;
 import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam;
 import de.wwu.md2.framework.mD2.GridLayoutPaneParam;
 import de.wwu.md2.framework.mD2.GridLayoutPaneRowsParam;
+import de.wwu.md2.framework.mD2.ListView;
 import de.wwu.md2.framework.mD2.MD2Model;
 import de.wwu.md2.framework.mD2.MD2ModelLayer;
 import de.wwu.md2.framework.mD2.MD2Package;
@@ -54,38 +55,39 @@ import de.wwu.md2.framework.mD2.WidthParam;
 import de.wwu.md2.framework.util.MD2Util;
 
 public class LegacyValidator extends AbstractMD2JavaValidator {
-	
+
 	@Inject
 	private ValidatorHelpers helper;
-	
+
 	@Inject
 	private MD2Util util;
-	
+
 	@Override
     @Inject
     public void register(EValidatorRegistrar registrar) {
         // nothing to do
     }
-	
-	
-	
+
+
+
 	/////////////////////////////////////////////////////////
 	/// View layer
 	/////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Prevent from defining parameters multiple times in any of the view ContainerElements.
-	 * 
+	 *
 	 * @param containerElement
 	 */
 	@Check
 	public void checkRepeatedParams(ContainerElement containerElement) {
 		
-		// TabbedAlternativesPane is the only container element without parameters
-		if(containerElement instanceof TabbedAlternativesPane) {
+		// TabbedAlternativesPane and ListView are container elements without parameters
+		if(containerElement instanceof TabbedAlternativesPane || containerElement instanceof ListView) {
+
 			return;
 		}
-		
+
 		helper.repeatedParamsError(containerElement, MD2Package.eINSTANCE.getViewElement_Name(), this,
 				"GridLayoutPaneRowsParam", "rows", "GridLayoutPaneColumnsParam", "columns",
 				"FlowLayoutPaneFlowDirectionParam", "horizontal | vertical",
@@ -93,35 +95,35 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 				"MultiPaneDisplayAllParam", "displayAll",
 				"TabTitleParam", "tabTitle", "TabIconParam", "tabIcon", "TabStaticParam", "static");
 	}
-	
+
 	/**
-	 * Ensure that tab-specific parameters are only assigned to elements within a tabbed pane. 
-	 * 
+	 * Ensure that tab-specific parameters are only assigned to elements within a tabbed pane.
+	 *
 	 * @param tabSpecificParam
 	 */
 	@Check
 	public void ensureThatTabParamsOnlyInTabContainer(TabSpecificParam tabSpecificParam) {
-		
+
 		EObject obj = tabSpecificParam.eContainer();
 		while (!((obj = obj.eContainer()) instanceof TabbedAlternativesPane) && obj != null);
-		
+
 		// if no parent container of type tabbed pane found
 		if(obj == null) acceptWarning("Specifiying a tab-specific parameter outside of a tabbed pane has no effect.", tabSpecificParam, null, -1, null);
 	}
-	
+
 	/**
 	 * Prevent from defining parameters multiple times in any of the references.
-	 * 
+	 *
 	 * @param containerRef
 	 */
 	@Check
 	public void checkRepeatedParams(ContainerElementReference containerRef) {
 		helper.repeatedParamsError(containerRef, null, this, "TabTitleParam", "tabTitle", "TabIconParam", "tabIcon");
 	}
-	
+
 	/**
 	 * Assure that the spacer # param is > 0
-	 * 
+	 *
 	 * @param spacer
 	 */
 	@Check
@@ -130,35 +132,35 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 			acceptError("The number param has to be > 0", spacer, MD2Package.eINSTANCE.getSpacer_Number(), -1, null);
 		}
 	}
-	
+
 	/**
 	 * Checks whether a grid layout defines at least the 'rows' or the 'columns' parameter.
-	 * 
+	 *
 	 * @param gridLayoutPane GridLayout to be checked.
 	 */
 	@Check
 	public void checkThatRowsOrColumnsParamIsSet(GridLayoutPane gridLayoutPane) {
-		
+
 		for(GridLayoutPaneParam param : gridLayoutPane.getParams()) {
 			if(param instanceof GridLayoutPaneColumnsParam || param instanceof GridLayoutPaneRowsParam) {
 				return;
 			}
 		}
-		
+
 		acceptError("At least the 'rows' or the 'columns' parameter has to be specified.", gridLayoutPane, null, -1, null);
 	}
-	
+
 	/**
 	 * Checks if the grid layout contains more than 'rows'x'columns' elements.
-	 * 
+	 *
 	 * @param gridLayoutPane GridLayout to be checked.
 	 */
 	@Check
 	public void checkWhetherGridLayoutSizeFits(GridLayoutPane gridLayoutPane) {
-		
+
 		int columns = -1;
 		int rows = -1;
-		
+
 		for(GridLayoutPaneParam param : gridLayoutPane.getParams()) {
 			if(param instanceof GridLayoutPaneColumnsParam) {
 				columns = ((GridLayoutPaneColumnsParam)param).getValue();
@@ -167,7 +169,7 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 				rows = ((GridLayoutPaneRowsParam)param).getValue();
 			}
 		}
-		
+
 		// calculate total number of elements in grid layout
 		int size = 0;
 		for(ViewElementType e : gridLayoutPane.getElements()) {
@@ -177,7 +179,7 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 				size++;
 			}
 		}
-		
+
 		// both parameters are set and there are too few cells for all elements to fit in
 		if(columns != -1 && rows != -1 && size > columns * rows) {
 			acceptWarning("The grid layout contains more than 'rows'x'columns' elements: " +
@@ -185,24 +187,24 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 					"All elements that do not fit in the grid will be omitted.", gridLayoutPane, null, -1, null);
 		}
 	}
-	
+
 	/**
 	 * This validator avoids the reuse of an element (via reference) multiple times without renaming.
-	 * 
+	 *
 	 * @param ref
 	 */
 	@Check
 	public void avoidReuseOfElementWithoutRenamingGeneric(ContainerElement container) {
-		
+
 		Map<String, Map<Boolean, Set<EObject>>> refrencedObjName = Maps.newHashMap();
-		
+
 		// iterate over all references in the container and store their names in a hash map
 		// collect duplicate elements
 		for(EObject elem : getElementsOfContainerElement(container)) {
 			ViewGUIElement guiElement;
 			boolean isRenamed;
 			String renameName;
-			
+
 			if(elem instanceof ViewGUIElementReference) {
 				guiElement = ((ViewGUIElementReference) elem).getValue();
 				isRenamed = ((ViewGUIElementReference) elem).isRename();
@@ -210,7 +212,7 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 			} else {
 				continue;
 			}
-			
+
 			// remember all objects in corresponding sets (name -> isRename => set of corresponding elements)
 			if(!refrencedObjName.keySet().contains(isRenamed ? renameName : guiElement.getName())) {
 				Map<Boolean, Set<EObject>> map = Maps.newHashMapWithExpectedSize(2);
@@ -220,7 +222,7 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 			}
 			refrencedObjName.get(isRenamed ? renameName : guiElement.getName()).get(isRenamed).add(elem);
 		}
-		
+
 		// generate errors if more than one object for a certain name is stored
 		for (Map<Boolean, Set<EObject>> map : refrencedObjName.values()) {
 			if(map.get(false).size() + map.get(true).size() > 1) {
@@ -233,7 +235,7 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 			}
 		}
 	}
-	
+
 	@Check
 	public void checkEntitySelectorContentProviderIsMany(ContentProviderPath contentProviderPathDefinition) {
 		if (contentProviderPathDefinition.eContainer() instanceof EntitySelector) {
@@ -245,11 +247,11 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 			}
 		}
 	}
-	
+
 	/**
 	 * Checks the width attribute of all GUI elements. If the value is 0% or greater than 100% an error is thrown. The default value for the width as
 	 * specified in the model (via MD2PostProcessor) is -1, so that the error is only shown if the user set this optional attribute explicitly.
-	 * 
+	 *
 	 * @param guiElement
 	 */
 	@Check
@@ -272,27 +274,27 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 			}
 		}
 	}
-	
+
 	/////////////////////////////////////////////////////////
 	/// Controller layer
 	/////////////////////////////////////////////////////////
-	
+
 	/**
 	 * This validator enforces the declaration of exactly one Main block in each of the
 	 * controller files.
-	 * 
+	 *
 	 * @param controller
 	 */
 	@Check
 	public void ensureThatExactlyOneMainBlockExists(Controller controller) {
-		
+
 		// this list only stores the Main objects of the controller currently validated
-		// this information is needed to mark all duplicate Main blocks 
+		// this information is needed to mark all duplicate Main blocks
 		List<Main> mainObjects = null;
-		
+
 		// this counter stores the overall occurrences of main blocks throughout all controllers
 		int occurencesOfMain = 0;
-		
+
 		// collect all Main Objects of this controller and count the overall main objects over all controllers
 		Collection<MD2Model> md2Models = util.getAllMD2Models(controller.eResource());
 		for(MD2Model m : md2Models) {
@@ -300,13 +302,13 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 			if(ml instanceof Controller) {
 				List<Main> lst = EcoreUtil2.getAllContentsOfType(ml, Main.class);
 				occurencesOfMain += lst.size();
-				
+
 				if(ml.eResource().getURI().equals(controller.eResource().getURI())) {
 					mainObjects = lst;
 				}
 			}
 		}
-		
+
 		// throw error if not exactly one main block exists
 		if(occurencesOfMain == 0 && !md2Models.isEmpty()) {
 			error("The Main declaration block is missing", MD2Package.eINSTANCE.getController_ControllerElements());
@@ -317,33 +319,33 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 			}
 		}
 	}
-	
+
 	@Check
 	public void checkForMultiplicityInContentProvider(ContentProvider contentProvider) {
 		//if(contentProvider.
 	}
-	
+
 	/**
 	 * Prevent from defining parameters multiple times in any of the validators.
-	 * 
+	 *
 	 * @param validator
 	 */
 	@Check
 	public void checkRepeatedParams(Validator validator) {
 		helper.repeatedParamsError(validator, MD2Package.eINSTANCE.getValidator_Name(), this, validatorParams());
 	}
-	
+
 	/**
 	 * Prevent from defining parameters multiple times in any of the standard validators.
-	 * 
+	 *
 	 * @param validator
-	 * 
+	 *
 	 */
 	@Check
 	public void checkRepeatedParams(StandardValidator validator) {
 		helper.repeatedParamsError(validator, MD2Package.eINSTANCE.getStandardValidator_Params(), this, validatorParams());
 	}
-	
+
 	private String[] validatorParams() {
 		return new String[] {
 			"ValidatorMessageParam", "message",
@@ -353,7 +355,7 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 			"ValidatorMaxLengthParam", "maxLenght", "ValidatorMinLengthParam", "minLength"
 		};
 	}
-	
+
 	/**
 	 * Make sure the the ContentProviderPathDefinition for a ReferencedModelType-ContentProvider provides at least one attribute
 	 * Mainly used for MappingTasks.
@@ -364,14 +366,14 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 		if (pathDef.getContentProviderRef() != null) {
 			if (pathDef.getContentProviderRef().getType() instanceof ReferencedModelType) {
 				if (pathDef.getTail() == null) {
-					error("No attribute specified", MD2Package.eINSTANCE.getContentProviderPath_ContentProviderRef());	
+					error("No attribute specified", MD2Package.eINSTANCE.getContentProviderPath_ContentProviderRef());
 				}
 			}
 		}
 	}
-	
+
 	/**
-	 * Make sure the referenced auto-generated element from a Simple-Type-ContentProvider exists 
+	 * Make sure the referenced auto-generated element from a Simple-Type-ContentProvider exists
 	 * @param abstractRef
 	 */
 	@Check
@@ -392,7 +394,7 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 		if (simpleTypes.size() > 0) warning += " Choose from: " + simpleTypes;
 		error(warning, MD2Package.eINSTANCE.getAbstractViewGUIElementRef_SimpleType());
 	}
-	
+
 	/**
 	 * Prevent user from referencing an AutoGeneratorContentElement
 	 * @param abstractRef
@@ -403,43 +405,51 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 			warning("No attribute specified.", MD2Package.eINSTANCE.getAbstractViewGUIElementRef_Path());
 		}
 	}
-	
+
 	/**
 	 * This validator avoids the assignment of none-toMany content providers (providing X[]) to ContentProviderAddActions.
 	 * @param addAction
 	 */
 	@Check
 	public void checkForAssignmentsOfSingleElementContentProvidersToContentProviderAddActions(ContentProviderAddAction addAction) {
-		
-		ContentProvider contentProvider = addAction.getContentProvider().getContentProvider();
-		
+
+		ContentProvider contentProvider = addAction.getContentProviderTarget().getContentProvider();
+
 		if(!contentProvider.getType().isMany()) {
 			acceptError("Tried to add an element to a content provider of type '" + getDataTypeName(contentProvider.getType())
 					+ "', but expected an is-many content provider " + getDataTypeName(contentProvider.getType()) + "[].",
-					addAction, MD2Package.eINSTANCE.getContentProviderAddAction_ContentProvider(), -1, null);
+					addAction, MD2Package.eINSTANCE.getContentProviderAddAction_ContentProviderTarget(), -1, null);
 		}
+
+		 ContentProvider sp = addAction.getContentProviderSource().getContentProvider();
+
+		 if(sp.getType().isMany()) {
+				acceptError("Tried to use a MultiContentProvider as source for addAction, only single ContenProvider allowed",
+						addAction, MD2Package.eINSTANCE.getContentProviderAddAction_ContentProviderSource(), -1, null);
+			}
+
 	}
-	
+
 	/**
 	 * This validator avoids the assignment of none-toMany content providers (providing X[]) to ContentProviderRemoveActions.
 	 * @param removeAction
 	 */
 	@Check
 	public void checkForAssignmentsOfSingleElementContentProvidersToContentProviderRemoveActions(ContentProviderRemoveAction removeAction) {
-		
+
 		ContentProvider contentProvider = removeAction.getContentProvider().getContentProvider();
-		
+
 		if(!contentProvider.getType().isMany()) {
 			acceptError("Tried to remove an element from a content provider of type '" + getDataTypeName(contentProvider.getType())
 					+ "', but expected an is-many content provider " + getDataTypeName(contentProvider.getType()) + "[].",
-					removeAction, MD2Package.eINSTANCE.getContentProviderAddAction_ContentProvider(), -1, null);
+					removeAction, MD2Package.eINSTANCE.getContentProviderRemoveAction_ContentProvider(), -1, null);
 		}
 	}
-	
+
 	public static final String FILTERMULTIPLIYITY = "filtermultipliyity";
-	
+
 	/**
-	 * Avoid the assignment of 'all' filters to single-instance content providers. 
+	 * Avoid the assignment of 'all' filters to single-instance content providers.
 	 * @param contentProvider
 	 */
 	@Check
@@ -449,16 +459,16 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 				"instance. Change parameter to 'first'.", contentProvider, MD2Package.eINSTANCE.getContentProvider_FilterType(), -1, FILTERMULTIPLIYITY);
 		}
 	}
-	
-	
+
+
 	/////////////////////////////////////////////////////////
 	/// Private helpers
 	/////////////////////////////////////////////////////////
-	
+
 	private Set<EObject> getElementsOfContainerElement(ContainerElement container) {
-		
+
 		Set<EObject> elements = Sets.newHashSet();
-		
+
 		if(container instanceof GridLayoutPane) {
 			elements.addAll(((GridLayoutPane) container).getElements());
 		} else if(container instanceof FlowLayoutPane) {
@@ -467,17 +477,19 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 			elements.addAll(((AlternativesPane) container).getElements());
 		} else if(container instanceof TabbedAlternativesPane) {
 			elements.addAll(((TabbedAlternativesPane) container).getElements());
+		} else if(container instanceof ListView){
+			elements.addAll(((ListView) container).getElements());
 		} else {
 			System.err.println("Unexpected ContainerElement subtype found: " + container.getClass().getName());
 		}
-		
+
 		return elements;
 	}
-	
+
 	private Set<EObject> getParametersOfContainerElement(ContainerElement container) {
-		
+
 		Set<EObject> parameters = Sets.newHashSet();
-		
+
 		if(container instanceof GridLayoutPane) {
 			parameters.addAll(((GridLayoutPane) container).getParams());
 		} else if(container instanceof FlowLayoutPane) {
@@ -486,17 +498,19 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 			parameters.addAll(((AlternativesPane) container).getParams());
 		} else if(container instanceof TabbedAlternativesPane) {
 			// has no parameters
+		} else if(container instanceof ListView) {
+			// has no used parameters
 		} else {
 			System.err.println("Unexpected ContainerElement subtype found: " + container.getClass().getName());
 		}
-		
+
 		return parameters;
 	}
-	
+
 	private String getDataTypeName(DataType dataType) {
-		
+
 		String str = "";
-		
+
 		if(dataType instanceof ReferencedModelType) {
 			str = ((ReferencedModelType) dataType).getEntity().getName();
 		} else if(dataType instanceof SimpleType) {
@@ -504,8 +518,8 @@ public class LegacyValidator extends AbstractMD2JavaValidator {
 		} else {
 			System.err.println("Unexpected DataType found: " + dataType.getClass().getName());
 		}
-		
+
 		return str;
 	}
-	
+
 }

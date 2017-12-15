@@ -1,14 +1,15 @@
-package de.wwu.md2.framework.generator.android.lollipop.util
+package de.wwu.md2.framework.generator.android.common.util
 
 import com.google.common.base.Joiner
+import de.wwu.md2.framework.generator.android.common.Settings
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.SimpleType
+import de.wwu.md2.framework.mD2.ViewIcon
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
-import de.wwu.md2.framework.generator.android.lollipop.Settings
 
-class MD2AndroidLollipopUtil {
+class MD2AndroidUtil {
 	
 	/**
 	 * Returns the package name that is being derived from the String path
@@ -36,7 +37,7 @@ class MD2AndroidLollipopUtil {
 	def static getQualifiedNameAsString(EObject obj, String delimiter){
 		val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider
 		var qualifiedName = qualifiedNameProvider.getFullyQualifiedName(obj)
-		if(qualifiedName != null)
+		if(qualifiedName !== null)
 			return qualifiedName.toString(delimiter)
 		return ""
 	}
@@ -60,6 +61,8 @@ class MD2AndroidLollipopUtil {
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Integer;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2String;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Time;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Sensor;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2List;
 	'''
 	
 	def static String generateImportAllActions()'''
@@ -81,6 +84,7 @@ class MD2AndroidLollipopUtil {
 		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnAttributeChangedHandler;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnChangedHandler;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnClickHandler;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnLongClickHandler;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnLeftSwipeHandler;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnRightSwipeHandler;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2WidgetEventType;
@@ -99,4 +103,24 @@ class MD2AndroidLollipopUtil {
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.Md2UnbindTask;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.Md2UnmapTask;
 	'''
+	
+	def static String getAndroidIconString(ViewIcon icon){
+		switch icon{ 
+			case SHOPPING_CART_ADD:		return "ic_add_shopping_cart_white_24dp"
+			case ACCESS_TIME: 			return "ic_access_time_white_24dp"
+			case BOX_ADD: 				return "ic_add_box_white_24dp"
+			case CIRCLE_ADD: 			return "ic_add_circle_white_24dp"
+			case CIRCLE_OUTLINE_ADD: 	return "ic_add_circle_outline_white_24dp"
+			case CIRCLE_REMOVE: 		return "ic_remove_circle_white_24dp"
+			case CLEAR: 				return "ic_clear_white_24dp"
+			case CREATE: 				return "ic_create_white_24dp"
+			case FLARE: 				return "ic_flare_white_24dp"
+			case HELP: 					return "ic_help_white_24dp"
+			case LIGHTBULB: 			return "ic_lightbulb_outline_white_24dp"
+			case SHOPPING_CART: 		return "ic_shopping_cart_white_24dp"
+			case SHOPPING_CART_REMOVE: 	return "ic_remove_shopping_cart_white_24dp"
+			case WRENCH: 				return "ic_build_white_24dp"
+		}
+		//default: return "ic_dialog_info"
+	}
 }

@@ -2,7 +2,7 @@ package de.wwu.md2.framework.generator.android.lollipop.controller
 
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.android.lollipop.Settings
-import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
+import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
 import de.wwu.md2.framework.mD2.AbstractContentProviderPath
 import de.wwu.md2.framework.mD2.AbstractProviderReference
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
@@ -53,6 +53,11 @@ import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import de.wwu.md2.framework.mD2.WebServiceCallAction
 import de.wwu.md2.framework.mD2.LocationAction
 import de.wwu.md2.framework.mD2.ValidatorBindingTask
+import de.wwu.md2.framework.mD2.SensorVal
+import de.wwu.md2.framework.mD2.ContentProviderRemoveActiveAction
+import de.wwu.md2.framework.mD2.ContentProviderGetActiveAction
+import de.wwu.md2.framework.mD2.ElementEventType;
+import de.wwu.md2.framework.mD2.ContentProviderResetLocalAction
 
 class ActionGen {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
@@ -61,7 +66,7 @@ class ActionGen {
 		// generate actions that belong to each workflow element
 		workflowElements.forEach [ wfe |
 			wfe.actions.forEach [ a |
-				val qualifiedName = MD2AndroidLollipopUtil.getQualifiedNameAsString(a, "_")
+				val qualifiedName = MD2AndroidUtil.getQualifiedNameAsString(a, "_")
 				fsa.generateFile(
 					rootFolder + Settings.JAVA_PATH + mainPath + "md2/controller/action/" + qualifiedName.toFirstUpper +
 						"_Action.java", generateAction(mainPackage, app, wfe, a, qualifiedName))
@@ -79,19 +84,23 @@ class ActionGen {
 		import «mainPackage».R;
 		
 		import «mainPackage»«Settings.MD2_APP_FILES_CONTROLLER_PACKAGE_NAME»;
-		«MD2AndroidLollipopUtil.generateImportAllActions»
-		«MD2AndroidLollipopUtil.generateImportAllTypes»
-		«MD2AndroidLollipopUtil.generateImportAllExceptions»
-		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
-		«MD2AndroidLollipopUtil.generateImportAllCustomCodeTasks»
+		«MD2AndroidUtil.generateImportAllActions»
+		«MD2AndroidUtil.generateImportAllTypes»
+		«MD2AndroidUtil.generateImportAllExceptions»
+		«MD2AndroidUtil.generateImportAllEventHandler»
+		«MD2AndroidUtil.generateImportAllCustomCodeTasks»
 		import «Settings.MD2LIBRARY_CONTENTPROVIDERREGISTRY_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
+		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderAddAction;
+		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderRemoveActiveAction;
+		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderGetActiveAction;
+		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderResetLocalAction;
 
 		public class «qualifiedActionName.toFirstUpper»_Action extends AbstractMd2Action {
 		
 		    public «qualifiedActionName.toFirstUpper»_Action() {
-				super("«qualifiedActionName.toFirstUpper»_Action");
+				super("«qualifiedActionName.toFirstUpper»_Action"); 
 			}
 		
 		    @Override
@@ -110,7 +119,7 @@ class ActionGen {
 
 	protected def static String generateCodeForCodeFragment(CustomCodeFragment ccf, App app, WorkflowElement wfe,
 		int counter) {
-		if (ccf == null)
+		if (ccf === null)
 			return ""
 
 		var intCounter = counter
@@ -137,11 +146,16 @@ class ActionGen {
 
 				val event = ccf.events.head as ViewElementEventRef
 				val viewElementType = event.referencedField.ref
-				val eventType = event.event
+				val ElementEventType eventType = event.event
 				var eventString = ""
 				switch eventType {
 					case eventType == ON_CHANGE: eventString = "Md2WidgetEventType.ON_CHANGE"
 					case eventType == ON_CLICK: eventString = "Md2WidgetEventType.ON_CLICK"
+					//add longclick support
+					case eventType == ON_LONG_CLICK: eventString = "Md2WidgetEventType.ON_LONG_CLICK"
+					//add swipe support
+					case eventType == ON_LEFT_SWIPE: eventString = "Md2WidgetEventType.ON_LEFT_SWIPE"
+					case eventType == ON_RIGHT_SWIPE: eventString = "Md2WidgetEventType.ON_RIGHT_SWIPE"
 				}
 
 				val qualifiedNameView = qualifiedNameProvider.getFullyQualifiedName(viewElementType).toString("_")
@@ -165,7 +179,7 @@ class ActionGen {
 				val haction = ccf.action
 				switch haction {
 					ActionReference: {
-						if (haction.actionRef.eContainer == null) {
+						if (haction.actionRef.eContainer === null) {
 							actionString = wfe.name + "_" +
 								qualifiedNameProvider.getFullyQualifiedName(haction.actionRef).toString("_") +
 								"_Action()"	
@@ -195,7 +209,7 @@ class ActionGen {
 					}
 				}
 
-				instantiation = '''"«contentProvider»", R.id.«MD2AndroidLollipopUtil.getQualifiedName(ccf.referencedViewField.ref).toString("_")», "«attribute»"'''
+				instantiation = '''"«contentProvider»", R.id.«MD2AndroidUtil.getQualifiedName(ccf.referencedViewField.ref).toString("_")», "«attribute»"'''
 			}
 			
 //			TODO: implement UnmappingTask
@@ -234,7 +248,7 @@ class ActionGen {
 							«ENDFOR»
 						}				
 					«ENDFOR»
-					«IF ccf.^else != null»				
+					«IF ccf.^else !== null»				
 						else{
 							«FOR containedCcf : ccf.^else.codeFragments»
 								«containedCcf.generateCodeForCodeFragment(app, wfe, intCounter++)»
@@ -298,14 +312,20 @@ class ActionGen {
 			ContentProviderResetAction:
 				result = '''Md2ContentProviderResetAction("«sa.contentProvider.contentProvider.name»")'''
 //			TODO: implement ContentProviderAddAction
-			ContentProviderAddAction: 
-			 	result = '''''' 
+			ContentProviderAddAction:
+				result = '''Md2ContentProviderAddAction("«sa.contentProviderTarget.contentProvider.name»","«sa.contentProviderSource.contentProvider.name»")''' 
 //			TODO: implement ContentProviderRemoveAction
 			ContentProviderRemoveAction:
 			  	result = ''''''
+			ContentProviderRemoveActiveAction:
+				result = '''Md2ContentProviderRemoveActiveAction("«sa.contentProvider.contentProvider.name»")'''
 //			TODO: implement ContentProviderGetAction
 			ContentProviderGetAction:
 			 result = ''''''
+			ContentProviderGetActiveAction:
+			 result = '''Md2ContentProviderGetActiveAction("«sa.contentProviderTarget.contentProvider.name»","«sa.contentProviderSource.contentProvider.name»")'''
+			ContentProviderResetLocalAction:
+			 result = '''Md2ContentProviderResetLocalAction("«sa.contentProvider.contentProvider.name»")'''
 //			TODO: implement WebServiceCallAction
 			WebServiceCallAction:
 				result = ''''''
@@ -370,6 +390,8 @@ class ActionGen {
 				return '''new Md2Integer(«expression.value»)'''
 			FloatVal:
 				return '''new Md2Float(«expression.value»)'''
+			SensorVal:
+				return '''new Md2Sensor(«expression.value»)'''
 			AbstractContentProviderPath: {
 				switch expression {
 					ContentProviderPath: return '''Md2ContentProviderRegistry.getInstance().getContentProvider("«expression.contentProviderRef.name»").getValue("«expression.tail.attributeRef.name»")'''
@@ -383,7 +405,7 @@ class ActionGen {
 				}
 			}
 			AbstractViewGUIElementRef:
-				return '''Md2ViewManager.getInstance().getWidgetValue(R.id.«MD2AndroidLollipopUtil.getQualifiedNameAsString(expression.ref, "_")»)'''
+				return '''Md2ViewManager.getInstance().getWidgetValue(R.id.«MD2AndroidUtil.getQualifiedNameAsString(expression.ref, "_")»)'''
 			default:
 				throw new UnsupportedOperationException("generateSimpleExpression()")
 		}

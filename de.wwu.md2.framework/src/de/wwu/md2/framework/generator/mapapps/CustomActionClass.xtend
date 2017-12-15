@@ -249,7 +249,7 @@ class CustomActionClass {
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(GotoViewAction action, String varName, Map<String, String> imports) '''
-		var «varName» = this.$.actionFactory.getGotoViewAction("«getName(resolveViewElement(action.view))»");
+		var «varName» = this.$.actionFactory.getGotoViewAction("«action.view.ref.name»");
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(DisableAction action, String varName, Map<String, String> imports) '''

@@ -34,6 +34,8 @@ import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam
 import de.wwu.md2.framework.mD2.GridLayoutPaneRowsParam
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
+import de.wwu.md2.framework.mD2.ViewFrame
+import de.wwu.md2.framework.mD2.ViewElementType
 
 /**
  * Generate the definition of the view element hierarchy for the MD2Controller class.
@@ -52,13 +54,13 @@ class IOSView {
 	 * @param styles A list of all styles used within the app.
 	 * @return The view declaration block for the MD2Controller class.
 	 */
-	def static String generateView(ContainerElement rootView, Iterable<Style> styles){
+	def static String generateView(ViewFrame frame, Iterable<Style> styles){
 		// Prepare styles
 		styles.forEach[ style |
 			IOSView.styles.put(style.name, style)
 		]
 		
-		return generateViewElement(rootView, null)
+		return generateViewElement(frame.elements.get(0), null) // TODO generate all elements
 	}
 	
 	/**
@@ -68,7 +70,7 @@ class IOSView {
 	 * @param container The container element to the current view element (if exists).
 	 * @return The Swift code to programmatically create the view element.
 	 */
-	def static String generateViewElement(ViewElement element, ContainerElement container) {
+	def static String generateViewElement(ViewElementType element, ContainerElement container) {
 		switch element {
 			ViewGUIElement:	return generateViewGUIElement(element, container)
 			ViewGUIElementReference: return generateViewGUIElement((element as ViewGUIElementReference).value, container)

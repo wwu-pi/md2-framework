@@ -28,7 +28,7 @@ import de.wwu.md2.framework.mD2.RemoteConnection
 import de.wwu.md2.framework.mD2.SimpleType
 import de.wwu.md2.framework.mD2.StandardValidator
 import de.wwu.md2.framework.mD2.TabTitleParam
-import de.wwu.md2.framework.mD2.ViewElementType
+import de.wwu.md2.framework.mD2.ViewElement
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import java.util.Collection
 import java.util.HashMap
@@ -41,6 +41,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import de.wwu.md2.framework.mD2.WorkflowElement
+import de.wwu.md2.framework.mD2.ViewElementType
 
 class MD2GeneratorUtil {
 	

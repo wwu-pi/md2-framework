@@ -1,7 +1,7 @@
 package de.wwu.md2.framework.generator.android.lollipop.controller
 
 import de.wwu.md2.framework.generator.android.lollipop.Settings
-import de.wwu.md2.framework.generator.android.lollipop.util.MD2AndroidLollipopUtil
+import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.Entity
@@ -34,11 +34,14 @@ class ControllerGen {
 		import java.util.ArrayList;
 		import java.util.HashSet;
 		
-		«MD2AndroidLollipopUtil.generateImportAllActions»
-		«MD2AndroidLollipopUtil.generateImportAllTypes»
-		«MD2AndroidLollipopUtil.generateImportAllExceptions»
-		«MD2AndroidLollipopUtil.generateImportAllEventHandler»
-		«MD2AndroidLollipopUtil.generateImportAllCustomCodeTasks»
+		import de.uni_muenster.wi.md2library.model.contentProvider.interfaces.Md2MultiContentProvider;
+		import de.uni_muenster.wi.md2library.model.dataStore.implementation.Md2RemoteStoreFactory;
+		
+		«MD2AndroidUtil.generateImportAllActions»
+		«MD2AndroidUtil.generateImportAllTypes»
+		«MD2AndroidUtil.generateImportAllExceptions»
+		«MD2AndroidUtil.generateImportAllEventHandler»
+		«MD2AndroidUtil.generateImportAllCustomCodeTasks»
 		
 		import «Settings.MD2LIBRARY_PACKAGE»controller.implementation.AbstractMd2Controller;
 		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.Md2ContentProviderRegistry;
@@ -76,13 +79,27 @@ class ControllerGen {
 
 		    public void registerContentProviders() {
 		        Md2ContentProviderRegistry cpr = Md2ContentProviderRegistry.getInstance();
-		        Md2LocalStoreFactory lsf = new Md2LocalStoreFactory(this.instance, "«mainPackage».md2.model.dataStore.LocalDataStoreFactory");
-		        
+		        Md2LocalStoreFactory lsf = new Md2LocalStoreFactory(this.instance);
+		        Md2RemoteStoreFactory rsf= new Md2RemoteStoreFactory();
 		        «FOR cp: contentProviders»
 		        	«var typeName = getTypeName(cp)»
-		        	
-		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»(new «MD2AndroidLollipopUtil.getTypeNameForContentProvider(cp)»(), (Md2SQLiteDataStore) lsf.getDataStore("«typeName»"));
+		        	«IF cp.type.many»
+		        	«IF cp.local»
+		        	Md2MultiContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»( "«cp.name»",lsf.getDataStore("«typeName»"));
+		        	«ELSE»
+		        	Md2MultiContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»("«cp.name»", rsf.getDataStore("«cp.connection.uri»",new «typeName»()));
+		        			        	
+		        	«ENDIF»
+		        	cpr.addMultiContentProvider("«cp.name»", «cp.name.toFirstLower»);
+		        	«ELSE»
+		        	«IF cp.local»
+		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»("«cp.name»",new «MD2AndroidUtil.getTypeNameForContentProvider(cp)»(),  lsf.getDataStore("«typeName»"));
+		        	«ELSE»
+		        	Md2ContentProvider «cp.name.toFirstLower» = new «cp.name.toFirstUpper»("«cp.name»",new «MD2AndroidUtil.getTypeNameForContentProvider(cp)»(),  rsf.getDataStore("«cp.connection.uri»",new «typeName»()));
+		        			        	
+		        	«ENDIF»
 		        	cpr.add("«cp.name»", «cp.name.toFirstLower»);
+		        	«ENDIF»
 		        «ENDFOR»
 		    }
 		    
@@ -97,7 +114,7 @@ class ControllerGen {
 		    	        Md2WorkflowAction.END);
 		    	        «ELSE»
 		    	        new Md2WorkflowElement("«fireEventEntry.startedWorkflowElement.name.toFirstUpper»", 
-		    	        	new «mainPackage».md2.controller.action.«fireEventEntry.startedWorkflowElement.name.toFirstUpper»___«fireEventEntry.startedWorkflowElement.name.toFirstUpper»_startupAction_Action()),
+		    	        	new «mainPackage».md2.controller.action.«fireEventEntry.startedWorkflowElement.name»___«fireEventEntry.startedWorkflowElement.name»_startupAction_Action()),
 		    	        Md2WorkflowAction.START);
 		    	        «ENDIF»
 		    	«ENDFOR»
