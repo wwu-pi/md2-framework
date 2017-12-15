@@ -246,6 +246,11 @@ class ContentProviderGen {
 		«var content =  contentProvider.type as ReferencedModelType»
 		
 		import «mainPackage».md2.model.«content.entity.name.toFirstUpper»;
+		«FOR element : (content.entity as Entity).attributes»
+			«IF element.type instanceof ReferencedType»
+				import «mainPackage + ".md2.model"».«(element.type as ReferencedType).element.name.toFirstUpper»;		
+			«ENDIF»
+		«ENDFOR»
 		import de.uni_muenster.wi.md2library.model.contentProvider.implementation.AbstractMd2MultiContentProvider;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
