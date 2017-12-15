@@ -120,63 +120,66 @@ class LayoutGen {
 		val generationComment = doc.createComment("generated in de.wwu.md2.framework.generator.android.lollipop.view.Layout.generateLayout()")
 		doc.appendChild(generationComment)
 
-		var Element rootElement;
+		var rootElement = doc.createElement("ScrollView")
 		
-		if (frame.elements.filter(ListView).length > 0) {
-			//TODO spezielles Layout für Listview
-			
-			rootElement = doc.createElement("android.support.v7.widget.RecyclerView")
-			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
-				"http://schemas.android.com/apk/res/android")
-			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools",
-				"http://schemas.android.com/tools")
-			
-			rootElement.setAttribute("android:id", "@+id/recycler_view_" + frame.name)
-			rootElement.setAttribute("android:layout_width", "match_parent")
-			rootElement.setAttribute("android:layout_height", "match_parent")
-			rootElement.setAttribute("android:paddingBottom", "@dimen/activity_vertical_margin")
-			rootElement.setAttribute("android:paddingLeft", "@dimen/activity_horizontal_margin")
-			rootElement.setAttribute("android:paddingRight", "@dimen/activity_horizontal_margin")
-			rootElement.setAttribute("android:paddingTop", "@dimen/activity_vertical_margin")
-			rootElement.setAttribute("android:scrollbars", "vertical")
-			rootElement.setAttribute("tools:context", mainPackage + "." + frame.name + "Activity")
-	
-			doc.appendChild(rootElement)
+		// special settings for root attributes
+		rootElement.setAttribute("android:layout_width", "match_parent")
+		rootElement.setAttribute("android:layout_height", "match_parent")
+		rootElement.setAttribute("android:paddingBottom", "@dimen/activity_vertical_margin")
+		rootElement.setAttribute("android:paddingLeft", "@dimen/activity_horizontal_margin")
+		rootElement.setAttribute("android:paddingRight", "@dimen/activity_horizontal_margin")
+		rootElement.setAttribute("android:paddingTop", "@dimen/activity_vertical_margin")
+		rootElement.setAttribute("tools:context", mainPackage + "." + frame.name + "Activity")
 
-		} else {
-			rootElement = doc.createElement("ScrollView")
-			
-			// special settings for root attributes
-			rootElement.setAttribute("android:layout_width", "match_parent")
-			rootElement.setAttribute("android:layout_height", "match_parent")
-			rootElement.setAttribute("android:paddingBottom", "@dimen/activity_vertical_margin")
-			rootElement.setAttribute("android:paddingLeft", "@dimen/activity_horizontal_margin")
-			rootElement.setAttribute("android:paddingRight", "@dimen/activity_horizontal_margin")
-			rootElement.setAttribute("android:paddingTop", "@dimen/activity_vertical_margin")
-			rootElement.setAttribute("tools:context", mainPackage + "." + frame.name + "Activity")
-	
-			doc.appendChild(rootElement)
-	
-			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
-				"http://schemas.android.com/apk/res/android")
-			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
-	
-			// Scrollview must have a single child -> wrapper flowlayoutpane
-			var wrapperLayout = MD2Factory.eINSTANCE.createFlowLayoutPane
-			wrapperLayout.name = frame.name + "__wrapperFlowLayout"
-			
-			var flowDirection = MD2Factory.eINSTANCE.createFlowLayoutPaneFlowDirectionParam
-			flowDirection.flowDirection = FlowDirection.VERTICAL
-			wrapperLayout.params.add(flowDirection)
-			
-			var wrapperElement = createFlowLayoutPaneElement(doc, wrapperLayout)
-			rootElement.appendChild(wrapperElement)
+		doc.appendChild(rootElement)
+
+		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
+			"http://schemas.android.com/apk/res/android")
+		rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools", "http://schemas.android.com/tools")
+
+		// Scrollview must have a single child -> wrapper flowlayoutpane
+		var wrapperLayout = MD2Factory.eINSTANCE.createFlowLayoutPane
+		wrapperLayout.name = frame.name + "__wrapperFlowLayout"
+		
+		var flowDirection = MD2Factory.eINSTANCE.createFlowLayoutPaneFlowDirectionParam
+		flowDirection.flowDirection = FlowDirection.VERTICAL
+		wrapperLayout.params.add(flowDirection)
+		
+		var wrapperElement = createFlowLayoutPaneElement(doc, wrapperLayout)
+		rootElement.appendChild(wrapperElement)
+		
+//		if (frame.elements.filter(ListView).length > 0) {
+//			//TODO spezielles Layout für Listview
+//			
+//			var listElement = doc.createElement("android.support.v7.widget.RecyclerView")
+//			listElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
+//				"http://schemas.android.com/apk/res/android")
+//			listElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools",
+//				"http://schemas.android.com/tools")
+//			
+//			listElement.setAttribute("android:id", "@+id/recycler_view_" + frame.name)
+//			listElement.setAttribute("android:layout_width", "match_parent")
+//			listElement.setAttribute("android:layout_height", "match_parent")
+//			listElement.setAttribute("android:paddingBottom", "@dimen/activity_vertical_margin")
+//			listElement.setAttribute("android:paddingLeft", "@dimen/activity_horizontal_margin")
+//			listElement.setAttribute("android:paddingRight", "@dimen/activity_horizontal_margin")
+//			listElement.setAttribute("android:paddingTop", "@dimen/activity_vertical_margin")
+//			listElement.setAttribute("android:scrollbars", "vertical")
+//			listElement.setAttribute("tools:context", mainPackage + "." + frame.name + "Activity")
+//	
+//			wrapperElement.appendChild(listElement)
+//			
+//			// Generate children
+//			for(elem : frame.elements){
+//				createChildrenElements(doc, wrapperElement, elem)
+//			}
+//		} else {
 			
 			// Generate children
 			for(elem : frame.elements){
 				createChildrenElements(doc, wrapperElement, elem)
 			}
-			
+//		}
 //			switch frame {
 //				FlowLayoutPane: rootContainer = createFlowLayoutPaneElement(doc, frame)
 //				GridLayoutPane: rootContainer = createGridLayoutPaneElement(doc, frame)
@@ -200,7 +203,6 @@ class LayoutGen {
 //						}
 //					}
 //			}
-		}
 		
 		// return xml file as string
 		val transformerFactory = TransformerFactory.newInstance
@@ -249,6 +251,9 @@ class LayoutGen {
 			}
 			BooleanInput: {
 				newElement = createBooleanInputElement(doc, viewElement)
+			}
+			ListView: {
+				newElement = createListViewElement(doc, viewElement)
 			}
 			default:
 				return
@@ -519,6 +524,26 @@ class LayoutGen {
 		booleanInputElement.setAttribute("android:imeOptions","actionDone")
 
 		return booleanInputElement
+	}
+	
+	protected static def createListViewElement(Document doc, ListView listView) {
+		var listElement = doc.createElement("android.support.v7.widget.RecyclerView")
+		listElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
+			"http://schemas.android.com/apk/res/android")
+		listElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools",
+			"http://schemas.android.com/tools")
+		
+		listElement.setAttribute("android:id", "@+id/recycler_view_" + (listView.eContainer as ViewFrame).name)
+		listElement.setAttribute("android:layout_width", "match_parent")
+		listElement.setAttribute("android:layout_height", "match_parent")
+		listElement.setAttribute("android:paddingBottom", "@dimen/activity_vertical_margin")
+		listElement.setAttribute("android:paddingLeft", "@dimen/activity_horizontal_margin")
+		listElement.setAttribute("android:paddingRight", "@dimen/activity_horizontal_margin")
+		listElement.setAttribute("android:paddingTop", "@dimen/activity_vertical_margin")
+		listElement.setAttribute("android:scrollbars", "vertical")
+		//listElement.setAttribute("tools:context", mainPackage + "." + frame.name + "Activity")
+
+		return listElement
 	}
 	
 	protected static def createSpacerElement(Document doc, Spacer spacer) {
