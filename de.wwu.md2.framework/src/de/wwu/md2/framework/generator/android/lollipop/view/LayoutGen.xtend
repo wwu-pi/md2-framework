@@ -40,6 +40,7 @@ import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.MD2Factory
 import de.wwu.md2.framework.mD2.BooleanInput
 import de.wwu.md2.framework.mD2.BooleanInputType
+import de.wwu.md2.framework.mD2.MD2Package
 
 class LayoutGen {
 
@@ -119,10 +120,12 @@ class LayoutGen {
 		val generationComment = doc.createComment("generated in de.wwu.md2.framework.generator.android.lollipop.view.Layout.generateLayout()")
 		doc.appendChild(generationComment)
 
+		var Element rootElement;
+		
 		if (frame.elements.filter(ListView).length > 0) {
 			//TODO spezielles Layout für Listview
 			
-			var Element rootElement = doc.createElement("android.support.v7.widget.RecyclerView")
+			rootElement = doc.createElement("android.support.v7.widget.RecyclerView")
 			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:android",
 				"http://schemas.android.com/apk/res/android")
 			rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tools",
@@ -141,7 +144,7 @@ class LayoutGen {
 			doc.appendChild(rootElement)
 
 		} else {
-			var Element rootElement = doc.createElement("ScrollView")
+			rootElement = doc.createElement("ScrollView")
 			
 			// special settings for root attributes
 			rootElement.setAttribute("android:layout_width", "match_parent")
@@ -198,7 +201,7 @@ class LayoutGen {
 //					}
 //			}
 		}
-
+		
 		// return xml file as string
 		val transformerFactory = TransformerFactory.newInstance
 		val transformer = transformerFactory.newTransformer
@@ -306,7 +309,7 @@ class LayoutGen {
 				// width
 				WidthParam:{
 					glpElement.setAttribute("android:layout_columnWeight", String.valueOf(p.width))
-					glpElement.getAttributeNode("android:layout_width").nodeValue = "0dp" //removeAttribute("android:layout_width") //
+					glpElement.getAttributeNode("android:layout_width").nodeValue = "0dp"
 				}
 			}
 		]
@@ -525,7 +528,8 @@ class LayoutGen {
 		// id
 		spacerElement.setAttribute("android:id", "@id/" + qualifiedName)
 
-		spacerElement.setAttribute("android:layout_width", "match_parent")
+		spacerElement.setAttribute("android:layout_width", "0dp")
+		//spacerElement.setAttribute("android:layout_width", "match_parent")
 		spacerElement.setAttribute("android:layout_height", "35dp")
 		
 		return spacerElement

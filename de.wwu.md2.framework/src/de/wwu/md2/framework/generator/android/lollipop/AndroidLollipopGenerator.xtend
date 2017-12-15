@@ -21,17 +21,22 @@ import org.apache.log4j.Logger
 import static de.wwu.md2.framework.util.MD2Util.*
 import de.wwu.md2.framework.generator.android.common.model.FilterGen
 import de.wwu.md2.framework.mD2.ViewFrame
+import de.wwu.md2.framework.generator.preprocessor.SmartphonePreprocessor
+import de.wwu.md2.framework.generator.util.DataContainer
 
 /**
  * This is the start point for the Android generator.
  * It calls all the other sub-generators.
  * 
- * @Author Fabian Wrede
+ * @Author Fabian Wrede, Christoph Rieger
  */
 class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
 	override doGenerate(IExtendedFileSystemAccess fsa) {
-
+		// Apply device class preprocessing
+		processedInput = SmartphonePreprocessor.getPreprocessedModel(processedInput)
+		dataContainer = new DataContainer(processedInput);
+		
 		val Logger log = Logger.getLogger(this.class)
 
 		log.info("Android Lollipop Generator started")
