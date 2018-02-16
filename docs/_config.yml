@@ -16,7 +16,7 @@
 title: MD² documentation
 email: your-email@domain.com
 description: Model-Driven Mobile Development for cross-platform generation of native mobile apps
-baseurl: "" # the subpath of your site, e.g. /blog
+baseurl: "/md2-framework" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: jekyllrb
 github_username:  jekyll

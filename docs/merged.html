@@ -1,0 +1,2715 @@
+﻿{% capture html %}
+<style type="text/css">
+nav {
+	margin:25px 0px 50px 0px;
+}
+
+nav ul {
+	list-style-type: none;
+	margin-bottom: 0px;
+}
+
+nav ul li {
+	margin-bottom: 5px;
+}
+
+nav &gt; ul &gt; li {
+	font-weight: bold;
+}
+
+nav ul li a, nav ul li a:hover, nav ul li a:visited, nav ul li a:focus, nav ul li a:link {
+	color: black;
+}
+
+nav li.active {
+	margin-left: -0.5em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    color: #fff;
+    font-weight: bold;
+    background: #7a8288;
+    border-radius: 4px;
+}
+
+nav li.active a {
+	color: #fff !important;
+}
+</style>
+
+<nav>
+<ul>
+    {% if include.context == &quot;/&quot; %}
+        <li class='&quot;{% if page.url == &quot;/'>
+            <a href="{{ site.baseurl }}/">{{ site.title }}</a>
+        </li>
+    {% endif %}
+	
+	{% assign contextLength = include.context | size %}
+
+	{% assign lastFolder = &quot;&quot; %}
+	{% assign lastLevel = 0 %}	
+	
+    {% assign entries = site.pages | sort: &quot;order&quot; %}
+	{% for entry in entries %}
+	
+		{% assign currentLevel = entry.url | split: &quot;/&quot; | size | minus: 2 %}
+		
+		{% capture slug %}{{ entry.url | split: &quot;/&quot; | last }}{% endcapture %}
+		{% assign slugLength = slug | size %}
+		
+		{% assign entryLength = entry.url | size %}
+		
+		{% assign entryFolderLength = entryLength | minus: slugLength | minus: 1 %}
+		{% capture entryFolder %}{{ entry.url | slice : 0, entryFolderLength}}{% endcapture %}
+		
+		{% if currentLevel &gt;= 0 %}
+		{% if entry.title | size &gt; 0 %}
+			{% if slug | split: &quot;.&quot; | last == &quot;html&quot; %}
+				{% if entryFolder != lastFolder %}
+					{% if lastLevel &gt; currentLevel %}
+						{% assign levelDiff = lastLevel | minus: currentLevel %}
+						{% for level in (1..levelDiff) %}
+						</ul>
+						{% endfor %}
+					{% else if lastLevel &lt; currentLevel %}
+						{% assign levelDiff = currentLevel | minus: lastLevel %}
+						{% for level in (1..levelDiff) %}
+						<ul>
+						{% endfor %}
+					{% endif %}					
+				{% endif %}
+				
+				<li class="{% if page.url == entry.url %}active{% endif %}">
+					<a href="{{ site.baseurl }}{{ entry.url }}">{{ entry.title }}</a>
+				</li>
+			{% endif %}
+			
+			{% assign lastFolder = entryFolder %}
+			{% assign lastLevel = currentLevel %}
+		{% endif %}
+		{% endif %}
+	
+    {% endfor %}
+	
+	{% for level in (1..lastLevel) %}
+		</ul>
+	{% endfor %}
+</ul>
+</nav>
+{% endcapture %}{{ html | strip_newlines | replace:&apos;    &apos;,&apos;&apos; | replace:&apos;    &apos;,&apos;&apos; | replace:&apos;  &apos;,&apos; &apos; }}
+
+
+  
+
+  
+<a name="1_"></a>
+
+	<style type="text/css">
+		#main_content_wrap.outer {
+			display: grid;
+			grid-template-columns:25% 75%;
+		}
+		
+		header.inner, section.inner {
+			max-width:75%;
+		}
+	</style>
+
+    <!--HEADER -->
+    <div class="outer" id="header_wrap">
+        <header class="inner">
+          <a href="{{ site.github.repository_url }}" id="forkme_banner">View on GitHub</a>
+
+          <h1 id="project_title">{{ site.title | default: site.github.repository_name }}</h1>
+          <h2 id="project_tagline">{{ site.description | default: site.github.project_tagline }}</h2>
+
+          {% if site.show_downloads %}
+            <section id="downloads">
+              <a class="zip_download_link" href="{{ site.github.zip_url }}">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="{{ site.github.tar_url }}">Download this project as a tar.gz file</a>
+            </section>
+          {% endif %}
+        </header>
+    </div>
+
+    <!--MAIN CONTENT -->
+    <div class="outer" id="main_content_wrap">
+	  {% include navigation.html context=&quot;/&quot; %}
+      <section class="inner" id="main_content">
+        {{ content }}
+      </section>
+    </div>
+
+    <!--FOOTER  -->
+    <div class="outer" id="footer_wrap">
+      <footer class="inner">
+        {% if site.github.is_project_page %}
+        <p class="copyright">{{ site.title | default: site.github.repository_name }} maintained by <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a></p>
+        {% endif %}
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    {% if site.google_analytics %}
+      <script type="text/javascript">
+        (function(i,s,o,g,r,a,m){i[&apos;GoogleAnalyticsObject&apos;]=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,&apos;script&apos;,&apos;//www.google-analytics.com/analytics.js&apos;,&apos;ga&apos;);
+        ga(&apos;create&apos;, &apos;{{ site.google_analytics }}&apos;, &apos;auto&apos;);
+        ga(&apos;send&apos;, &apos;pageview&apos;);
+      </script>
+    {% endif %}
+  
+
+<hr/>
+
+
+
+  
+
+  
+<a name="2_"></a>
+
+	<style type="text/css">
+		#main_content_wrap.outer {
+			display: grid;
+			grid-template-columns:25% 75%;
+		}
+		
+		header.inner, section.inner {
+			max-width:75%;
+		}
+	</style>
+
+    <!--HEADER -->
+    <div class="outer" id="header_wrap">
+        <header class="inner">
+          <a href="http://github.com/wwu-pi/md2-framework" id="forkme_banner">View on GitHub</a>
+
+          <h1 id="project_title">MD² documentation</h1>
+          <h2 id="project_tagline">Model-Driven Mobile Development for cross-platform generation of native mobile apps</h2>
+
+          
+        </header>
+    </div>
+
+    <!--MAIN CONTENT -->
+    <div class="outer" id="main_content_wrap">
+	  <style type="text/css">nav {	margin:25px 0px 50px 0px;}nav ul {	list-style-type: none;	margin-bottom: 0px;}nav ul li {	margin-bottom: 5px;}nav &gt; ul &gt; li {	font-weight: bold;}nav ul li a, nav ul li a:hover, nav ul li a:visited, nav ul li a:focus, nav ul li a:link {	color: black;}nav li.active {	margin-left: -0.5em;padding-left: 0.5em;padding-right: 0.5em;color: #fff;font-weight: bold;background: #7a8288;border-radius: 4px;}nav li.active a {	color: #fff !important;}</style><nav><ul><li class=""><a href="/">MD² documentation</a></li>																																																																																																																																																														<li class="">					<a href="/20_handbook-modeler/">Modeler&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="active">					<a href="/20_handbook-modeler/220_installation-modeler.html">Setting up your MD² Model Development Environment</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/230_single-apps.html">Getting started with building single apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/240_multiple-apps.html">Developing multiple apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/250_additional_features.html">Advanced features of the MD² language</a>				</li>																																																																								</ul>																												<li class="">					<a href="/40_handbook-dev/">Developer&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/40_handbook-dev/420_installation-dev.html">Development Environment</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/430_getting-started-dev.html">Getting Started with MD² Development</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/440_dsl_semantics.html">DSL semantics</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/450_preprocessor.html">Preprocessor</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/460_backend-generator.html">The backend generator</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/470_android-generator.html">Developing MD² apps for Android</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/480_ios-generator.html">Developing MD² apps for iOS</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/490_mapapps.html">map.apps Implementation</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/495_development-todos.html">Development TODOs and ideas for improvements</a>				</li>																					</ul>	</ul></nav>
+      <section class="inner" id="main_content">
+        <h1 id="setting-up-your-md-model-development-environment">Setting up your MD² Model Development Environment</h1>
+
+<p>The following steps will provide you with the software required to enable modelling of MD² models:</p>
+
+<ul>
+  <li>Download a current Eclipse IDE with support for Java EE development (e.g. Neon package).</li>
+  <li>Install a current version of the Xtext redistributable using the <a href="https://eclipse.org/Xtext/download.html">Xtext Update Site</a>.</li>
+  <li>Install the MD² features from the archive that you obtained together with this documentation.</li>
+</ul>
+
+<h2 id="setting-up-glassfish-to-run-generated-backends">Setting up GlassFish to Run Generated Backends</h2>
+<p>To deploy the generated backends, follow the subsequent steps:</p>
+
+<ol>
+  <li>In Eclipse, open the “Servers” tab.</li>
+  <li>Right-click it and choose “New” &gt; “Server”.</li>
+  <li>If the GlassFish adapter is not installed yet (look for “GlassFish” in the list of types), click “Download additional server adapters” and install the entry “GlassFish Tools”.</li>
+  <li>From the list of types, choose “GlassFish” &gt; “GlassFish 4.0” and click “Next”.</li>
+  <li>For the Glassfish Server Directory field, navigate to the <code class="highlighter-rouge">glassfish/</code> subdirectory in your installation.
+If you entered the correct path, it should output something similar to <code class="highlighter-rouge">Found GlassFish Server version 4.0.0</code>.
+ Otherwise, follow the assistant’s hints.</li>
+  <li>Click “Finish”.</li>
+</ol>
+
+<h2 id="whats-next">What’s next</h2>
+<ul>
+  <li><a href="#3_">Getting started with building single apps</a></li>
+  <li><a href="#4_">Information needed for the development of multiple apps</a></li>
+</ul>
+
+      </section>
+    </div>
+
+    <!--FOOTER  -->
+    <div class="outer" id="footer_wrap">
+      <footer class="inner">
+        
+        <p class="copyright">MD² documentation maintained by <a href="http://github.com/wwu-pi">wwu-pi</a></p>
+        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+  
+
+<hr/>
+
+
+
+  
+
+  
+<a name="3_"></a>
+
+	<style type="text/css">
+		#main_content_wrap.outer {
+			display: grid;
+			grid-template-columns:25% 75%;
+		}
+		
+		header.inner, section.inner {
+			max-width:75%;
+		}
+	</style>
+
+    <!--HEADER -->
+    <div class="outer" id="header_wrap">
+        <header class="inner">
+          <a href="http://github.com/wwu-pi/md2-framework" id="forkme_banner">View on GitHub</a>
+
+          <h1 id="project_title">MD² documentation</h1>
+          <h2 id="project_tagline">Model-Driven Mobile Development for cross-platform generation of native mobile apps</h2>
+
+          
+        </header>
+    </div>
+
+    <!--MAIN CONTENT -->
+    <div class="outer" id="main_content_wrap">
+	  <style type="text/css">nav {	margin:25px 0px 50px 0px;}nav ul {	list-style-type: none;	margin-bottom: 0px;}nav ul li {	margin-bottom: 5px;}nav &gt; ul &gt; li {	font-weight: bold;}nav ul li a, nav ul li a:hover, nav ul li a:visited, nav ul li a:focus, nav ul li a:link {	color: black;}nav li.active {	margin-left: -0.5em;padding-left: 0.5em;padding-right: 0.5em;color: #fff;font-weight: bold;background: #7a8288;border-radius: 4px;}nav li.active a {	color: #fff !important;}</style><nav><ul><li class=""><a href="/">MD² documentation</a></li>																																																																																																																																																														<li class="">					<a href="/20_handbook-modeler/">Modeler&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/20_handbook-modeler/220_installation-modeler.html">Setting up your MD² Model Development Environment</a>				</li>																																																									<li class="active">					<a href="/20_handbook-modeler/230_single-apps.html">Getting started with building single apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/240_multiple-apps.html">Developing multiple apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/250_additional_features.html">Advanced features of the MD² language</a>				</li>																																																																								</ul>																												<li class="">					<a href="/40_handbook-dev/">Developer&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/40_handbook-dev/420_installation-dev.html">Development Environment</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/430_getting-started-dev.html">Getting Started with MD² Development</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/440_dsl_semantics.html">DSL semantics</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/450_preprocessor.html">Preprocessor</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/460_backend-generator.html">The backend generator</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/470_android-generator.html">Developing MD² apps for Android</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/480_ios-generator.html">Developing MD² apps for iOS</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/490_mapapps.html">map.apps Implementation</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/495_development-todos.html">Development TODOs and ideas for improvements</a>				</li>																					</ul>	</ul></nav>
+      <section class="inner" id="main_content">
+        <h1 id="getting-started-with-building-single-apps">Getting started with building single apps</h1>
+
+<h2 id="creating-a-project">Creating a Project</h2>
+<ul>
+  <li>Initialize a new project by navigating to <code class="highlighter-rouge">File</code> &gt; <code class="highlighter-rouge">New</code> &gt; <code class="highlighter-rouge">Project...</code>.
+There, choose <code class="highlighter-rouge">Other</code> &gt; <code class="highlighter-rouge">MD2 Project</code> and click “Next”.</li>
+  <li>Choose a project name that does not contain whitespaces or other non-alphanumerical characters.
+If necessary, choose a location different from the proposed default.</li>
+  <li>After clicking on “Finish”, a default project structure is generated which you can extend as you need.</li>
+</ul>
+
+<p>The new project contains the following folders:</p>
+<ul>
+  <li><code class="highlighter-rouge">src/</code> contains the MD² models of your application and is initialized with a simple default model.</li>
+  <li><code class="highlighter-rouge">resources/</code> contains resources that the generator will copy into the generated applications.</li>
+  <li><code class="highlighter-rouge">src-gen/</code> contains all artifacts that the generator derives from your model.
+This folder will contain multiple subfolder for different mobile platforms as well as the backend.
+Note, that everything in this directory will be overwritten when the generator is run.</li>
+</ul>
+
+<h2 id="developing-a-single-app">Developing a Single App</h2>
+<p>This section describes how an application can be developed based on the current state of the MD² DSL.
+At its core, MD² is structured according to the MVC-pattern.
+MVC stands for Model-View-Controller and ensures the principle of single responsibility for these classes.
+In order to enable the modelling and generation of workflows within and across apps in MD², this architecture was extended to include an additional layer, the workflow layer.</p>
+
+<p><img alt="" src="../figures/MD2Arch.png"/></p>
+
+<p>All components in MD² are organized in a package structure that corresponds to the aforementioned structure.
+Documents have to be placed in these packages (views, models, controllers or workflow).
+For example, all view files are expected to be in the package <code class="highlighter-rouge">projectname.views</code>.
+In every MD² file the package has to be defined as follows:
+<code class="highlighter-rouge">package PACKAGE_NAME</code>.
+The package name has to be a fully qualified name that reflects the actual folder structure.</p>
+
+<h3 id="workflow">Workflow</h3>
+<p>The workflow layer provides abstraction on top of the controller layer.
+While the controller contains most of the business logic, the workflow layer allows to specify the general course of action of one or more apps using a few simple and easily understandable model language constructs.
+Furthermore, the abstract workflow representation is intended to serve as a basis for communication with customers, e.g. for requirements engineering and collaborative app development through rapid prototyping.</p>
+
+<p>Workflows are specified as a (possibly cyclic) directed graph of workflow elements in the workflow file of an MD² model.
+Workflow elements represent encapsulated functionality which needs to be further specified in the controller layer.
+The workflow layer merely references the workflow elements from the controller layer to define their interaction.</p>
+
+<p>Workflow elements are linked to each other via events.
+For each workflow element one or more events can be specified that can be fired.
+However, at runtime a workflow element can fire only one of these events, i.e. a parallel processing of the workflow is not intended.
+Similar to the workflow elements, workflow events in the workflow layer are references to workflow events that are created in the respective controller.</p>
+
+<p>In addition to the events that can be fired, the workflow element also specifies which workflow element is to be started in response to a fired event using the keyword <code class="highlighter-rouge">start</code>.
+Moreover, when an event is fired, workflow elements can not only be started but the workflow can also be terminated using the keywords <code class="highlighter-rouge">end workflow</code>.
+A workflow element in the workflow layer typically looks as follows:</p>
+
+<pre><code class="language-MD2"> WorkflowElement &lt;NameOfWorkflowElement&gt;
+ 	fires &lt;NameOfEventOne&gt; {
+		start &lt;NameOfSubsequentWfeOne&gt;
+	}
+	fires &lt;NameOfEventTwo&gt; {
+		end workflow
+	}
+</code></pre>
+
+<p>After defining the sequence of workflow elements, the workflow also requires the specification of an application that executes the workflow elements.
+As shown in the following listing, an app consists of its ID, a list of workflow elements that are used in the app and a name that is used as the app’s title.
+In the scenario where only a single app is modeled, all workflow elements can be included in the app.
+However, it is also possible to have unused workflow elements.</p>
+
+<pre><code class="language-MD2">App &lt;AppID&gt; {
+	WorkflowElements {
+		&lt;WorkflowElementOne&gt;,
+		&lt;WorkflowElementTwo&gt; (startable: STRING),
+		&lt;WorkflowElementThree&gt;
+	}
+	appName STRING
+}
+</code></pre>
+
+<p>A workflow has one or more entry points, i.e. startable workflow elements.
+These are marked with <code class="highlighter-rouge">startable</code> in the app specification.
+In the final application this will result in a button on the app’s start screen that starts the corresponding workflow element.
+In addition, an alias needs to be provided which is used as a label or description for the button.</p>
+
+<p>A complete workflow specification for one app will be structured as shown in the next listing.
+Note, that MD² does not explicitly define different workflows.
+However, it is possible to implicitly create multiple workflows by using two or more startable workflow elements that start independent, disjunct sequences of workflow elements.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>package &lt;ProjectName&gt;.workflows
+
+WorkflowElement &lt;WorkflowElementOne&gt;
+[...]
+WorkflowElement &lt;WorkflowElementTwo&gt;
+[...]
+WorkflowElement &lt;WorkflowElementThree&gt;
+[...]
+
+App &lt;AppID&gt; {
+	[...]
+}
+</code></pre>
+</div>
+
+<h3 id="model">Model</h3>
+<p>In the model layer the structure of data objects is being described.
+As model elements Entities and Enums are supported.</p>
+
+<h4 id="entity">Entity</h4>
+<p>An entity is indicated by the keyword <code class="highlighter-rouge">entity</code> followed by an arbitrary name that identifies it.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>entity NAME {
+	&lt;attribute1 ...
+attribute n&gt;
+}
+</code></pre>
+</div>
+
+<p>Each entity may contain an arbitrary number of attributes of the form</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>ATTRIBUTE_NAME: &lt;datatype&gt;[] (&lt;parameters&gt;) {
+	name STRING
+	description STRING
+}
+</code></pre>
+</div>
+
+<p>The optional square brackets <code class="highlighter-rouge">[]</code> indicate a one-to-many relationship.
+That means that the corresponding object may hold an arbitrary number of values of the given datatype.
+Supported complex data types are:</p>
+<ul>
+  <li>Entity</li>
+  <li>Enum</li>
+</ul>
+
+<p>Supported simple data types are:</p>
+<ul>
+  <li><code class="highlighter-rouge">integer</code> - integer</li>
+  <li><code class="highlighter-rouge">float</code> - float of the form <code class="highlighter-rouge">#.#</code></li>
+  <li><code class="highlighter-rouge">boolean</code> - boolean (i.e. true or false)</li>
+  <li><code class="highlighter-rouge">string</code> - a string that is embraced by single quotes (‘) or double quotes (“)</li>
+  <li><code class="highlighter-rouge">date</code> - a date is a string that conforms the following format: <code class="highlighter-rouge">YYYY-MM-DD</code></li>
+  <li><code class="highlighter-rouge">time</code> - a time is a string that conforms the following format: <code class="highlighter-rouge">hh:mm:ss[(+|-)hh[:mm]]</code></li>
+  <li><code class="highlighter-rouge">datetime</code> - a date time is a string that conforms the following format: <code class="highlighter-rouge">YYYY-MM-DDThh:mm:ss [(+|-)hh[:mm]]</code></li>
+  <li><code class="highlighter-rouge">file</code> - a file to be uploaded and stored in an entity field</li>
+</ul>
+
+<p>Parameters are optional and will be transformed into implicit validators during the generation process.
+They have to be specified as a comma-separated list.
+On default, each specified attribute is mandatory.
+To allow empty values the parameter <code class="highlighter-rouge">optional</code> must be set.
+Further supported parameters depend on the used data type and are available as follows:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">integer</code> supports
+    <ul>
+      <li><code class="highlighter-rouge">max INTEGER</code> – maximum allowed value of the attribute</li>
+      <li><code class="highlighter-rouge">min INTEGER</code> – minimum allowed value of the attribute</li>
+    </ul>
+  </li>
+  <li><code class="highlighter-rouge">float</code> supports
+    <ul>
+      <li><code class="highlighter-rouge">max FLOAT</code> – maximum allowed value of the attribute</li>
+      <li><code class="highlighter-rouge">min FLOAT</code> – minimum allowed value of the attribute</li>
+    </ul>
+  </li>
+  <li><code class="highlighter-rouge">string</code> supports
+    <ul>
+      <li><code class="highlighter-rouge">maxLength INTEGER</code> – maximal length of the string value</li>
+      <li><code class="highlighter-rouge">minLength INTEGER</code> – minimal length of the string value</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Optionally, attributes can be annotated with a name and a description which are used for the labels and the tooltips in the auto-generation of views.
+If a tooltip is annotated an info icon, such as a question mark, will be shown next to the generated input field.
+If no name is annotated, a standard text for the label will be derived from the attribute’s name by transforming the camel case name to natural language, e.g. the implicit label text of the attribute <code class="highlighter-rouge">firstName</code> is “First name”.
+An exemplary entity is depicted in the following sample:</p>
+
+<pre><code class="language-MD2">entity Person {
+	name: string
+	birthdate: date {
+		name: &quot;Date of Birth&quot;
+		description: &quot;The exact day of birth of this person.&quot;
+	}
+	salary: float (optional, min 8.50, max 1000)
+	addresses: Address[]
+}
+</code></pre>
+
+<h4 id="enum">Enum</h4>
+<p>An enumeration is indicated by the keyword <code class="highlighter-rouge">enum</code> followed by an arbitrary name that identifies it.
+Each enum may contain an arbitrary number of comma-separated strings, as it is depicted in the following listing.
+Other data types are not supported.</p>
+
+<pre><code class="language-MD2">enum Weekday {
+	&quot;Mon&quot;, &quot;Tue&quot;, &quot;Wed&quot;, &quot;Thu&quot;, &quot;Fri&quot;, &quot;Sat&quot;, &quot;Sun&quot;
+}
+</code></pre>
+
+<h3 id="view">View</h3>
+<p>View elements are either <code class="highlighter-rouge">ContentElements</code> or <code class="highlighter-rouge">ContainerElements</code> that can contain other content or container elements.
+Furthermore, basic styles for some content elements can be defined.</p>
+
+<h4 id="container-elements">Container Elements</h4>
+<p><em>Grid layout panes</em> align all containing elements in a grid.
+Elements can either be containers or content elements.
+The grid is populated row-by-row beginning in the top-leftmost cell.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>GridLayoutPane NAME (&lt;parameters&gt;) {
+	&lt;Container | Content | [Container] | [Content]&gt;
+	&lt;Container | Content | [Container] | [Content]&gt;&lt;...&gt;
+}
+</code></pre>
+</div>
+
+<p>For each grid layout at least the number of rows or the number of columns has to be specified.
+If only one of these parameters is given, the other one is automatically calculated by MD² during the generation process.
+In case that both parameters are specified and there are too few cells, all elements that do not fit in the layout will be discarded.
+The following comma-separated parameters are supported:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">columns INTEGER</code> - the number of columns of the grid</li>
+  <li><code class="highlighter-rouge">rows INTEGER</code> - the number of rows of the grid</li>
+  <li><code class="highlighter-rouge">tabIcon PATH</code> - if the layout is a direct child of a <code class="highlighter-rouge">TabbedPane</code>, an icon can be specified that is displayed on the corresponding tab.
+See section on TabbedPanes for more details.</li>
+  <li><code class="highlighter-rouge">tabTitle STRING</code> - if the layout is a direct child of a <code class="highlighter-rouge">TabbedPane</code>, a text can be specified that is displayed on the corresponding tab.
+See section on TabbedPanes for more details.</li>
+</ul>
+
+<p>A <em>flow layout pane</em> arranges elements (containers or content elements) either horizontally or vertically.
+By default. all elements are arranged vertically in a left-to-right flow.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>FlowLayoutPane NAME (&lt;parameters&gt;) {
+	&lt;Container | Content | [Container] | [Content]&gt;
+	&lt;Container | Content | [Container] | [Content]&gt;
+	&lt;...&gt;
+}
+</code></pre>
+</div>
+
+<p>The following comma-separated parameters are supported:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">vertical</code> or <code class="highlighter-rouge">horizontal</code> (default) - flow direction</li>
+  <li><code class="highlighter-rouge">tabIcon PATH</code> - if the layout is a direct child of a <code class="highlighter-rouge">TabbedPane</code> (which are described subsequently), an icon can be specified that is displayed on the corresponding tab.</li>
+  <li><code class="highlighter-rouge">tabTitle STRING</code> - if the layout is a direct child of a <code class="highlighter-rouge">TabbedPane</code>, a text can be specified that is displayed on the corresponding tab.</li>
+</ul>
+
+<p>A <em>tabbed pane</em> is a special container element that can only contain container elements.
+Each contained container will be generated as a separate tab.
+Due to restrictions on the target platforms, tabbed panes can only be root panes, but not a child of another container element.
+By default the title of each tab equals the name of the contained containers.
+By using the <code class="highlighter-rouge">tabTitle</code> and <code class="highlighter-rouge">tabIcon</code> parameters, the appearance of the tabs can be customized.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>TabbedPane NAME {
+	&lt;Container | [Container]&gt;
+	&lt;Container | [Container]&gt;
+	&lt;...&gt;
+}
+</code></pre>
+</div>
+
+<h4 id="content-elements">Content Elements</h4>
+<p><em>Input elements</em> can be used to manipulate model data via mappings (see subsection “Conroller”).
+At the moment <code class="highlighter-rouge">BooleanInputs</code>, <code class="highlighter-rouge">TextInputs</code>, <code class="highlighter-rouge">IntegerInputs</code>, <code class="highlighter-rouge">NumberInputs</code>, <code class="highlighter-rouge">TimeInputs</code>, <code class="highlighter-rouge">DateInputs</code>,´<code class="highlighter-rouge">DateTimeInputs</code>, <code class="highlighter-rouge">OptionInputs</code> and <code class="highlighter-rouge">FileUploads</code> are supported.
+All input elements support the optional attributes <code class="highlighter-rouge">label</code>, <code class="highlighter-rouge">tooltip</code>, <code class="highlighter-rouge">type</code>, <code class="highlighter-rouge">disabled</code>, <code class="highlighter-rouge">default</code>, and <code class="highlighter-rouge">width</code>.</p>
+
+<ul>
+  <li><code class="highlighter-rouge">type</code> allows to specify the type of the field.</li>
+  <li><code class="highlighter-rouge">disabled</code> provides a boolean value for whether an input field is enabled or disabled.</li>
+  <li>Default values can be set using <code class="highlighter-rouge">default</code>.</li>
+  <li>The element’s width can be set using <code class="highlighter-rouge">width</code>.</li>
+</ul>
+
+<p><code class="highlighter-rouge">TextInput</code> fields can be used for freetext as well as date and time inputs.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>TextInput NAME {
+	label STRING
+	tooltip STRING
+	type &lt;TextInputType&gt;
+	disabled &lt;true|false&gt;
+	default STRING)
+	width &lt;width&gt;
+}
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">OptionInputs</code> are used to represent enumeration fields in the model.
+In addition to the aforementioned attributes, OptionInputs support the optional <code class="highlighter-rouge">options</code> attribute.
+This can be used to populate the input with the string values of the specified enum.
+If options are not given, the displayed options depend on the enum type of the attribute that has been mapped on the input field (see subsection “Controller”).</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>OptionInput NAME {
+	label STRING
+	tooltip STRING
+	type &lt;OptionInputType&gt;
+	disabled &lt;true|false&gt;
+	default STRING
+	width &lt;width&gt;
+	options &lt;enum&gt;
+}
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">Labels</code> allow the modeler to present text to the user.
+Often they are used to denote input elements.
+For the label definition there exist the following default definition</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Label NAME {
+	text STRING
+	style &lt;[style] | style&gt;
+}
+</code></pre>
+</div>
+
+<p>as well as this shorthand definition</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>Label NAME (STRING){
+	style &lt;[style] | style&gt;
+}
+</code></pre>
+</div>
+
+<p>The text can either be annotated as an explicit text attribute or noted in parentheses directly after the label definition.
+The optional style can either be noted directly, or by referencing an existing style definition (styles are described later in this section).</p>
+
+<p><code class="highlighter-rouge">Tooltips</code> allow the modeler to provide the user with additional information.
+For the tooltip definition there exists the following default definition</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Tooltip NAME {
+	text STRING
+}
+</code></pre>
+</div>
+
+<p>as well as this shorthand definition that allows to note the help text in parentheses directly after the label definition</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>Tooltip NAME (STRING)
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">Buttons</code> provide the user the possibility to call actions that have been bound on events of the Button.
+For the button definition there exists the following default definition</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Button NAME {
+	text STRING
+}
+</code></pre>
+</div>
+
+<p>as well as this shorthand definition that allows to specify the text in parentheses directly after the button definition</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>Button NAME (STRING)
+</code></pre>
+</div>
+
+<p>For the <code class="highlighter-rouge">image</code> exists the following default definition</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Image NAME {
+	src PATH
+	height INT
+	width INT
+}
+</code></pre>
+</div>
+
+<p>as well as this shorthand definition that allows to specify the image path in parentheses directly after the image name</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>Image NAME (PATH) {
+	height INT
+	width INT
+}
+</code></pre>
+</div>
+
+<p>Images support the following attributes:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">src</code> - Specifies the source path where the image is located.
+The path has to be relative to the directory <code class="highlighter-rouge">/resources/images</code> in the folder of the MD² project</li>
+  <li><code class="highlighter-rouge">height</code> (optional) - Height of the image in pixels</li>
+  <li><code class="highlighter-rouge">width</code> (optional) - Width of the image in pixels</li>
+</ul>
+
+<p>While the <code class="highlighter-rouge">Image</code> construct can only be used to display images that have a fixed URI, the <code class="highlighter-rouge">UploadedImageOutput</code> can be used to display images that are stored in a field of an entity and were uploaded before.
+<code class="highlighter-rouge">UploadedImageOutput</code> features the same attributes as <code class="highlighter-rouge">Image</code> and is specified as follows.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>UploadedImageOutput NAME {
+	height INT
+	width INT
+}
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">FileUpload</code> is an input element for files.
+Using this construct, a button having the specified attributes and allowing for uploading a file is displayed on the respective UI form.
+<code class="highlighter-rouge">FileUpload</code> can be specified using the following attributes.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>FileUpload NAME {
+	label STRING
+	text STRING
+	tooltip STRING		
+	style &lt;[style] | style&gt;
+	width INT%
+}
+</code></pre>
+</div>
+
+<p>To be able to display an uploaded image using the <code class="highlighter-rouge">UploadedImageOutput</code> construct, it is necessary to map the respective view elements to the corresponding entity fields in the controller as it is applicable for all other view content elements.</p>
+
+<p>A <code class="highlighter-rouge">Spacer</code> is used in a <code class="highlighter-rouge">GridLayoutPane</code> to mark an empty cell or in a <code class="highlighter-rouge">FlowLayoutPane</code> to occupy some space.
+Using an optional additional parameter the actual number of generated spacers, i.e. the number of occupied cells in a <code class="highlighter-rouge">GridLayoutPane</code>, can be specified: <code class="highlighter-rouge">Spacer (INT)</code>.</p>
+
+<p>The <code class="highlighter-rouge">AutoGenerator</code> is used to automatically generate view elements to display all attributes of a related entity and the corresponding mappings of the view elements to a content provider.
+It is possible to either exclude attributes using the <code class="highlighter-rouge">exclude</code> keyword or to provide a positive list of attributes using the keyword <code class="highlighter-rouge">only</code>:</p>
+
+<pre><code class="language-MD2">AutoGenerator NAME {
+	contentProvider [ContentProvider] (exclude|only [Attribute])
+}
+</code></pre>
+
+<p>In case of one-to-many relationships for attributes (annotated with <code class="highlighter-rouge">[]</code>) or a content provider, it has to be defined which of the elements should be displayed in the auto-generated fields.</p>
+
+<p>The <code class="highlighter-rouge">EntitySelector</code> allows the user to select an element from a list of elements.
+The attribute <code class="highlighter-rouge">textProposition</code> defines which content provider stores the list and which attribute of the elements shall be displayed to the user to allow him to find the desired element.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>EntitySelector NAME {
+	textProposition [ContentProvider.Attribute]
+}
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">Styles</code> can be annotated to several view elements such as labels and buttons to influence their design.
+They can either be defined globally as a root element in the view and then be referenced, or annotated directly to the appropriate elements.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>style NAME {
+	color &lt;color&gt;
+	fontSize INT
+	textStyle &lt;textstyle&gt;
+}
+</code></pre>
+</div>
+
+<p>The following optional style attributes are supported.
+If an attribute is not set, the standard setting is used for each platform.</p>
+
+<ul>
+  <li><code class="highlighter-rouge">color &lt;color&gt;</code> (optional) - specifies the color of the element as a named color or a six or eight digit hex color (with alpha channel)</li>
+  <li><code class="highlighter-rouge">fontSize INT</code> (optional) - specifies the font size</li>
+  <li><code class="highlighter-rouge">textStyle &lt;textstyle&gt;</code> (optional) - the text style can be <code class="highlighter-rouge">normal</code> or <code class="highlighter-rouge">italic</code>, <code class="highlighter-rouge">bold</code> or a combination of both.</li>
+</ul>
+
+<p>Sixteen default web colors are available as named colors: <code class="highlighter-rouge">aqua, black, blue, fuchsia, gray, green, lime, maroon, navy, olive, purple, red, silver, teal, white, yellow</code>.</p>
+
+<p>Elements can not only be defined at the place they should be used, but there is also a mechanism to define an element once and <code class="highlighter-rouge">reuse</code> it several times.
+Instead of defining a new element, another element can be referenced - internally this leads to a copy of the actual element during the preprocessing.
+However, names have to be unique so that each element could only be referenced once.
+To avoid those name clashes a renaming mechanism had been implemented that allows to set new names for the actual copied element.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Element -&gt; NAME
+</code></pre>
+</div>
+
+<h3 id="controller">Controller</h3>
+
+<h4 id="main">Main</h4>
+<p>The <code class="highlighter-rouge">main</code> object contains all basic information about a project.
+Each project must contain exactly one <code class="highlighter-rouge">main</code> object that can be in an arbitrary controller.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>main {
+	appVersion STRING
+	modelVersion STRING
+	workflowManager [RemoteConnection]
+	defaultConnection [RemoteConnection]
+	fileUploadConnection [RemoteConnection]
+}
+</code></pre>
+</div>
+
+<p>The attributes are explained as follows:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">appVersion</code> - a string representation of the current app version, e.g. “RC1”</li>
+  <li><code class="highlighter-rouge">modelVersion</code> - a string representation of the current model version that has to be in accordance with the model version of the backend</li>
+  <li><code class="highlighter-rouge">defaultConnection</code> (optional) - a default remote connection can be specified, so that it is not necessary to specify the same connection in each content provider</li>
+  <li><code class="highlighter-rouge">workflowManager</code> - the remote connection to the workflow manager, which may be different from the default backend connection</li>
+  <li><code class="highlighter-rouge">fileUploadConnection</code> (optional) - a remote connection to the file upload server must be specified if a file is expected to be uploaded or an uploaded file to be displayed.
+This connection can be similar to the default connection, but storing large amounts of files on a separate server is encouraged.
+Specifying the connection is obligatory if at least one <code class="highlighter-rouge">UploadedImageOutput</code> or <code class="highlighter-rouge">FileUpload</code> is present in the views.</li>
+</ul>
+
+<p>Furthermore, the controller layer is subdivided into one or more workflow elements.
+While a workflow describes the interaction of workflow elements, their internal functionality needs to be specified in the controller layer.
+Each workflow element can be seen as an independent controller which is responsible for the successful execution of its functionality.
+In general, workflow elements are structured as follows</p>
+
+<pre><code class="language-MD2">WorkflowElement &lt;workflowElementName&gt;{
+	defaultProcessChain &lt;ProcessChain&gt;
+	onInit {
+		&lt;...&gt;
+	}
+	&lt;...&gt;
+}
+</code></pre>
+
+<p>Workflow elements work with <code class="highlighter-rouge">ProcessChains</code> that allow to define a sequence of steps inside the workflow element.
+Since several process chains can be defined in a single workflow element, the <code class="highlighter-rouge">defaultProcessChain</code> keyword is used to set a default process chain.
+This process chain will then be used as starting point for the workflow element and the first view to be shown will be derived from it.</p>
+
+<p>The <code class="highlighter-rouge">onInit</code> block is used to define everything that is supposed to happen upon the initialization of the workflow element, e.g. binding actions to buttons or mapping content to view fields.
+In the <code class="highlighter-rouge">onInit</code> block, no workflow events may be fired, as this means handing off control from the workflow element directly during the initialization.
+This is enforced by through a validator that raises an error in case the modeler tries to throw an event here.</p>
+
+<p>Typically, workflow elements should be modeled in a way that they fire a workflow event after termination of their functionality to start a new workflow element or end the whole workflow.
+This can be done using the SimpleAction <code class="highlighter-rouge">FireEventAction</code>.</p>
+
+<h4 id="actions">Actions</h4>
+<p>An action provides the user the possibility to declare a set of tasks.
+An action can be either a <code class="highlighter-rouge">CustomAction</code> or a <code class="highlighter-rouge">CombinedAction</code>.</p>
+
+<p>A <code class="highlighter-rouge">CustomAction</code> contains a list of <code class="highlighter-rouge">CustomCodeFragments</code> where each CustomCodeFragment contains one task.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>CustomAction &lt;Action&gt; {
+	&lt;CustomCodeFragment&gt;
+	&lt;...&gt;
+}
+</code></pre>
+</div>
+
+<p>For each type of task there exists a specific <code class="highlighter-rouge">CustomCodeFragment</code> that is distinguished by the keyword that introduces it.</p>
+
+<ul>
+  <li>`bind <action1> ...</action1></li>
+</ul>
+<actionn> on <event1> ...
+<eventn>`
+* `bind <validator1> ...
+<validatorn> on <viewelement1> ...
+<viewelementn>`
+* `unbind <action1> ...
+<actionn> from <event1> ...
+<eventn>`
+* `unbind <validator1> ...
+<validatorn> from <viewelement1> ...
+<viewelementn>`
+* `call <action>`
+* `map <viewelement> to <contentproviderfield>`
+* `unmap <viewelement> from <contentproviderfield>`
+* `set <contentprovider> = <expression>`
+* `set <viewelement> = <expression>`
+* `if (<condition>) { <customcodefragment> }`
+* `elseif (<condition>) { <customcodefragment> }`
+* `else {<customcodefragment>}`
+
+The main tasks are binding actions to events, binding validators to view elements and mapping view elements to model elements.
+For every task there is a counterpart for unbinding and unmapping.
+`call` tasks can call other actions, `set` operations set the value of a content provider field or a view element.
+The `if`, `elseif` and `else` blocks allow to model case distictions, e.g. based on user input.
+
+*Actions* are bound to events.
+There are several types of actions and events available.
+`CustomActions` and `CombinedActions` are referenced externally whereas `SimpleActions` are declared directly.
+For events, there are local event types that listen to the state of a certain view element as well as global event types.
+The most powerful event type is the OnConditionEvent.
+
+`SimpleActions` provide a quick way to perform functionality:
+
+* `ProcessChainProceed`: ProcessChainProceedAction to proceed to the next ProcessChain step
+* `ProcessChainReverse`: ProcessChainReverseAction to go back to the last ProcessChain step
+* `ProcessChainGoto <processchainstep>`: ProcessChainGotoAction to  change to the given ProcessChain step
+* `SetProcessChain [ProcessChain]`SetProcessChainAction to change the current ProcessChain
+* `GotoView (<viewelement>)`: GotoViewAction to change to the given view element
+* `Disable (<viewelement>)`: DisableAction to disable a view element
+* `Enable (<viewelement>)`: EnableAction to enable a view element
+* `DisplayMessage (<simpleexpression>)`: DisplayMessageAction to display a message
+* `ContentProviderOperation (<allowedoperation> <contentprovider>)`: ContentProviderOperationAction to perform a CRUD action (save, load, remove) on the given ContentProvider
+* `ContentProviderReset (<contentprovider>)`: ContentProviderResetAction to reset the given ContentProvider
+* `FireEvent (<workflowevent>)`: FireEventAction to fire a workflow event to the backend.
+In response a new workflow element will be started or the workflow terminated.
+* `WebServiceCall (<webservicecall>)`: WebServiceCallAction to send a request to call an external web service to the backend (for details cf. &quot;CallingWebServices&quot;).
+* The `LocationAction` allows to extract an address from content provider fields and generate a geographic location (i.e. longitude and latitude) for this address.
+For this purpose, all input and output fields have to be defined.
+The calculation result for longitude and latitude will be written in their respective output fields.
+The LocationAction is structured as follows:
+
+```MD2
+Location (
+	inputs (
+		cityInput <contentproviderpath>
+		streetInput <contentproviderpath>
+		streetNumberInput <contentproviderpath>
+		postalInput <contentproviderpath>
+		countryInput <contentproviderpath> )
+	outputs (
+		latitudeOutput <contentproviderpath>
+		longitudeOutput <contentproviderpath>)
+)
+```
+
+There are different event types available:
+
+* `ElementEventTyp` - `onTouch, onLeftSwipe, onRightSwipe, onWrongValidation`; preceded by a dot and a reference to a `ContainerElement` or `ContentElement`
+* `GlobalEventType` - onConnectionLost
+* `OnConditionEvent`
+
+The `OnConditionEvent` provides the user the possibility to define own events via conditions.
+The event is fired when the conditional expression evaluates to true.
+
+```MD2
+event NAME {
+	<condition>
+}
+```
+
+A `Condition` allows to combine conditional expressions using the operators `and`, `or` and `no`!.
+Conditional expressions evaluate to true or false.
+They can be `BooleanExpressions`, `EqualsExpressions` or `GUIElementStateExpressions` that check the state of a `ViewGUIElement`.
+In addition, MD² supports mathematical expressions such as `equals`, `&gt;`, `&lt;`, `&gt;=`, and `&lt;=`.
+
+`Validators` are bound to view elements.
+The validator can be a referenced element or a shorthand definition can be used in place.
+
+```MD2
+bind|unbind validator
+	&lt;[Validator]&gt; &lt;...&gt;
+	on|from
+	&lt;[ContainerElement] | [ContentElement]&gt; &lt;...&gt;
+```
+
+The shorthand definition has the same options but does not allow reuse.
+
+```MD2
+bind|unbind validator
+	&lt;IsIntValidator | NotNullValidator | IsNumberValidator | IsDateValidator | RegExValidator |NumberRangeValidator | StringRangeValidator (<parameters>)
+	on|from
+	&lt;[ContainerElement] | [ContentElement]&gt; &lt;...&gt;
+```
+
+A detailed description for validator types can be found in the validator description in the following.
+The available parameters are identical to those of the validator element.
+
+View elements are *mapped* to model elements that are in turn accessed through a content provider.
+
+```MD2
+map|unmap
+	&lt;[ContainerElement] | [ContentElement]&gt;
+	to|from
+	&lt;[ContentProvider.Attribute]&gt;
+```
+
+`CallTasks` call a different action.
+
+```MD2
+call
+	&lt;[CustomAction] | [CombinedAction] | [SimpleAction]&gt;
+```
+
+`CombinedActions` allow the composition of actions.
+
+```MD2
+CombinedAction NAME {
+	actions <action> &lt;...&gt;
+}
+```
+
+`Validators` are used to validate user input.
+For each validator type corresponding parameters can be assigned.
+The `message` parameter is valid for every type and will be shown to the user if the validation fails.
+
+* The `RegExValidator` allows the definition of a regular expression that is used to validate the user input.
+```MD2
+validator RegExValidator NAME (message STRING regEx STRING)
+```
+* The `IsIntValidator` checks whether the user input is a valid integer.
+```MD2
+validator IsIntValidator NAME (message STRING)
+```
+* The `IsNumberValidator` checks whether the user input is a valid integer or float value.
+```MD2
+validator IsNumberValidator NAME (message STRING)
+```
+* The `IsDateValidator` allows to define a format that the date at hand shall conform to.
+```MD2
+validator IsDateValidator NAME (message STRING format STRING)
+```
+* The `NumberRangeValidator` allows the definition of a numeric range that shall contain the user input.
+```MD2
+validator NumberRangeValidator NAME (message STRING min FLOAT max FLOAT)
+```
+* The `StringRangeValidator` allows the definition of a string length range.
+The length of the `STRING` input by the user will be checked against this range.
+```MD2
+validator StringRangeValidator NAME (message STRING minLength INT maxLength INT)
+```
+* The `NotNullValidator` makes the input field required.
+```MD2
+validator NotNullValidator NAME (message STRING)
+```
+
+The `RemoteValidator` allows to use a validator offered by the backend server.
+By default only the content and id of the field on which the RemoteValidator has been assigned are transmitted to the backend server.
+However, additional information can be provided using the `provideModel` or `provideAttributes` keyword.
+
+```MD2
+validator RemoteValidator NAME (message STRING connection <remoteconnection> model <contentprovider>) |
+validator RemoteValidator NAME (message STRING connection <remoteconnection> attributes <contentprovider.attribute> &lt;...&gt;)
+```
+
+#### Process Chains
+A `ProcessChain` is used to define several steps in which the workflow element can currently be.
+It is possible to define several process chains.
+Process chains can be nested and there can be only one active process chain.
+
+```MD2
+ProcessChain NAME {
+	<processchainstep> &lt;...&gt;
+}
+```
+
+Each `ProcessChainStep` specifies a view that will be displayed once the process chain step becomes the current process chain step of the active process chain.
+Additionally, conditions can be defined that restrict switching to the next or previous process chain step.
+Events can trigger changing to the next or previous process chain step.
+
+Instead of the default of proceeding and reversing along the process chain, another step in the process chain will become active as successor or predecessor, if referenced using `goto` or `returnTo`.
+
+```MD2
+step NAME:
+	view &lt;[ContainerElement] | [ContentElement]&gt;
+	proceed {
+		on <event>
+		given <condition>
+		do <action>
+	}
+	reverse on <event>
+	(goto <processchainstep> | returnTo <processchainstep>) on <event>
+	return on <event>
+	return and proceed on <event>
+	message STRING
+```
+
+Process chains can be refined using sub process chains.
+```MD2
+step NAME:
+	subProcessChain <processchain>
+```
+
+The event definition for `EventDef` is the same as for event bindings:
+
+```MD2
+&lt;Container | Content&gt; .
+<elementeventtype> |
+<globaleventtype> |
+<onconditionevent> &lt;...&gt;
+```
+
+#### Content Providers
+Each content provider manages one instance of an entity.
+View fields are not mapped directly to a model element, but only content providers can be mapped to view elements.
+Data instances of the content providers can be updated or persisted using DataActions.
+
+It allows to create or update (save), read (load) or delete (remove) the stored instance.
+Which of those operations is possible is specified in `allowedOperations`.
+By default all operations are allowed.
+A filter enables to query a subset of all saved instances.
+The `providerType` defines whether the instances shall be stored locally or remotely.
+
+#### Remote Connections
+A remote connection allows specifying a URI for the backend communication as well as a path to specify the storage location of files to be uploaded.
+The backend must comply with the MD² web service interface as specified in the section on the [backend web service specification](060_backend-generator.html).
+
+```MD2
+remoteConnection NAME {
+	uri URI
+	storagePath PATH
+}
+```
+
+Furthermore, the MD² framework also provides a *location provider*, i.e. a virtual content provider for locations.
+The entity which is automatically handled by this content provider contains attributes such as latitude, longitude, street, etc.
+
+
+## Deploying a Single App
+
+### Backend
+The following steps will start the GlassFish server that is used to deploy the backend.
+Note, that in order to access the server you might need to grant additional privileges in the configuration of your firewall.d (Linux) or the requested Firewall ports (Windows), respectively.
+
+* Within the GlassFish installation directory, navigate to `glassfish/bin/`.
+* Run the `asadmin` utility (Windows: Double-click on `asadmin.bat`; Linux/OS X: Open a terminal in that directory and run `./asadmin`).
+* In the GlassFish administration utility, type `start-database` to start the Derby database for the backend.
+In a Unix environment, you can combine both steps by running `./asadmin start-database`.
+* Start Eclipse and import the generated project `<project_name>.backend` by choosing &quot;General&quot; &gt; &quot;Existing Projects into Workspace&quot; in the import wizard.
+* In the Project Explorer tab, right-click the project in Eclipse, choose &quot;Properties&quot;, and navigate to &quot;Targeted Runtime&quot;.
+* Deselect all runtimes and click &quot;Apply&quot;.
+* Select the item &quot;GlassFish 4.0&quot; and click &quot;Apply&quot;.
+* Correct JRE-related build path problems, if any, by resorting to the default JRE.
+* Confirm by clicking &quot;OK&quot;.
+* In the Servers tab, right-click the &quot;GlassFish 4.0&quot; entry, and choose &quot;Add/Remove&quot;.
+* Add the backend project to the server.
+* Start the server.
+
+## What&apos;s next
+* [Information needed for the development of multiple apps](240_multiple-apps.html)
+* [information about more advanced additional features of the language](250_additional_features.html)
+</project_name></onconditionevent></globaleventtype></elementeventtype></processchain></event></event></event></processchainstep></processchainstep></event></action></condition></event></processchainstep></contentprovider.attribute></remoteconnection></contentprovider></remoteconnection></action></parameters></condition></contentproviderpath></contentproviderpath></contentproviderpath></contentproviderpath></contentproviderpath></contentproviderpath></contentproviderpath></webservicecall></workflowevent></contentprovider></contentprovider></allowedoperation></simpleexpression></viewelement></viewelement></viewelement></processchainstep></customcodefragment></customcodefragment></condition></customcodefragment></condition></expression></viewelement></expression></contentprovider></contentproviderfield></viewelement></contentproviderfield></viewelement></action></viewelementn></viewelement1></validatorn></validator1></eventn></event1></actionn></action1></viewelementn></viewelement1></validatorn></validator1></eventn></event1></actionn>
+
+      </section>
+    </div>
+
+    <!--FOOTER  -->
+    <div class="outer" id="footer_wrap">
+      <footer class="inner">
+        
+        <p class="copyright">MD² documentation maintained by <a href="http://github.com/wwu-pi">wwu-pi</a></p>
+        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+  
+
+<hr/>
+
+
+
+  
+
+  
+<a name="4_"></a>
+
+	<style type="text/css">
+		#main_content_wrap.outer {
+			display: grid;
+			grid-template-columns:25% 75%;
+		}
+		
+		header.inner, section.inner {
+			max-width:75%;
+		}
+	</style>
+
+    <!--HEADER -->
+    <div class="outer" id="header_wrap">
+        <header class="inner">
+          <a href="http://github.com/wwu-pi/md2-framework" id="forkme_banner">View on GitHub</a>
+
+          <h1 id="project_title">MD² documentation</h1>
+          <h2 id="project_tagline">Model-Driven Mobile Development for cross-platform generation of native mobile apps</h2>
+
+          
+        </header>
+    </div>
+
+    <!--MAIN CONTENT -->
+    <div class="outer" id="main_content_wrap">
+	  <style type="text/css">nav {	margin:25px 0px 50px 0px;}nav ul {	list-style-type: none;	margin-bottom: 0px;}nav ul li {	margin-bottom: 5px;}nav &gt; ul &gt; li {	font-weight: bold;}nav ul li a, nav ul li a:hover, nav ul li a:visited, nav ul li a:focus, nav ul li a:link {	color: black;}nav li.active {	margin-left: -0.5em;padding-left: 0.5em;padding-right: 0.5em;color: #fff;font-weight: bold;background: #7a8288;border-radius: 4px;}nav li.active a {	color: #fff !important;}</style><nav><ul><li class=""><a href="/">MD² documentation</a></li>																																																																																																																																																														<li class="">					<a href="/20_handbook-modeler/">Modeler&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/20_handbook-modeler/220_installation-modeler.html">Setting up your MD² Model Development Environment</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/230_single-apps.html">Getting started with building single apps</a>				</li>																																																									<li class="active">					<a href="/20_handbook-modeler/240_multiple-apps.html">Developing multiple apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/250_additional_features.html">Advanced features of the MD² language</a>				</li>																																																																								</ul>																												<li class="">					<a href="/40_handbook-dev/">Developer&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/40_handbook-dev/420_installation-dev.html">Development Environment</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/430_getting-started-dev.html">Getting Started with MD² Development</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/440_dsl_semantics.html">DSL semantics</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/450_preprocessor.html">Preprocessor</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/460_backend-generator.html">The backend generator</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/470_android-generator.html">Developing MD² apps for Android</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/480_ios-generator.html">Developing MD² apps for iOS</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/490_mapapps.html">map.apps Implementation</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/495_development-todos.html">Development TODOs and ideas for improvements</a>				</li>																					</ul>	</ul></nav>
+      <section class="inner" id="main_content">
+        <h1 id="developing-multiple-apps">Developing multiple apps</h1>
+
+<p>The MD² framework allows to model and generate workflows that involve multiple apps.
+For this purpose, several apps rather than just one can be specified in the workflow layer.
+These apps can share the same workflow elements or use different ones as shown in the first listing.
+Apart from that, the workflow will look as usual, with the sequence of workflow elements being determined via events.
+Each app is provided with a list of open issues in the start screen.
+In this list, all events are presented that were fired from another app and are supposed to start a workflow element which belongs to the current app.
+A user can simply click on a listed issue to continue the workflow in the appropriate workflow element.</p>
+
+<pre><code class="language-MD2">package &lt;ProjectName&gt;.workflows
+
+WorkflowElement &lt;WorkflowElementOne&gt;
+&lt;...&gt;
+WorkflowElement &lt;WorkflowElementTwo&gt;
+&lt;...&gt;
+WorkflowElement &lt;WorkflowElementThree&gt;
+&lt;...&gt;
+
+App &lt;AppID1&gt; {
+	&lt;WorkflowElementOne&gt; (startable: STRING),
+	&lt;WorkflowElementTwo&gt;
+}
+
+App &lt;AppID2&gt; {
+	&lt;WorkflowElementOne&gt;,
+	&lt;WorkflowElementThree&gt;
+}
+</code></pre>
+
+<p>The deployment of multiple apps is similar to that of a single app.
+In this case, however, not just one but all created apps have to be deployed as described in the <a href="#3_">previous section</a> for each app.</p>
+
+<h2 id="whats-next">What’s next</h2>
+<ul>
+  <li><a href="#5_">information about more advanced additional features of the language</a></li>
+</ul>
+
+      </section>
+    </div>
+
+    <!--FOOTER  -->
+    <div class="outer" id="footer_wrap">
+      <footer class="inner">
+        
+        <p class="copyright">MD² documentation maintained by <a href="http://github.com/wwu-pi">wwu-pi</a></p>
+        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+  
+
+<hr/>
+
+
+
+  
+
+  
+<a name="5_"></a>
+
+	<style type="text/css">
+		#main_content_wrap.outer {
+			display: grid;
+			grid-template-columns:25% 75%;
+		}
+		
+		header.inner, section.inner {
+			max-width:75%;
+		}
+	</style>
+
+    <!--HEADER -->
+    <div class="outer" id="header_wrap">
+        <header class="inner">
+          <a href="http://github.com/wwu-pi/md2-framework" id="forkme_banner">View on GitHub</a>
+
+          <h1 id="project_title">MD² documentation</h1>
+          <h2 id="project_tagline">Model-Driven Mobile Development for cross-platform generation of native mobile apps</h2>
+
+          
+        </header>
+    </div>
+
+    <!--MAIN CONTENT -->
+    <div class="outer" id="main_content_wrap">
+	  <style type="text/css">nav {	margin:25px 0px 50px 0px;}nav ul {	list-style-type: none;	margin-bottom: 0px;}nav ul li {	margin-bottom: 5px;}nav &gt; ul &gt; li {	font-weight: bold;}nav ul li a, nav ul li a:hover, nav ul li a:visited, nav ul li a:focus, nav ul li a:link {	color: black;}nav li.active {	margin-left: -0.5em;padding-left: 0.5em;padding-right: 0.5em;color: #fff;font-weight: bold;background: #7a8288;border-radius: 4px;}nav li.active a {	color: #fff !important;}</style><nav><ul><li class=""><a href="/">MD² documentation</a></li>																																																																																																																																																														<li class="">					<a href="/20_handbook-modeler/">Modeler&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/20_handbook-modeler/220_installation-modeler.html">Setting up your MD² Model Development Environment</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/230_single-apps.html">Getting started with building single apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/240_multiple-apps.html">Developing multiple apps</a>				</li>																																																									<li class="active">					<a href="/20_handbook-modeler/250_additional_features.html">Advanced features of the MD² language</a>				</li>																																																																								</ul>																												<li class="">					<a href="/40_handbook-dev/">Developer&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/40_handbook-dev/420_installation-dev.html">Development Environment</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/430_getting-started-dev.html">Getting Started with MD² Development</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/440_dsl_semantics.html">DSL semantics</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/450_preprocessor.html">Preprocessor</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/460_backend-generator.html">The backend generator</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/470_android-generator.html">Developing MD² apps for Android</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/480_ios-generator.html">Developing MD² apps for iOS</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/490_mapapps.html">map.apps Implementation</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/495_development-todos.html">Development TODOs and ideas for improvements</a>				</li>																					</ul>	</ul></nav>
+      <section class="inner" id="main_content">
+        <h1 id="advanced-features-of-the-md-language">Advanced features of the MD² language</h1>
+
+<h2 id="calling-restful-web-services-from-an-app">Calling RESTful Web Services from an App</h2>
+<p>With the current MD² version it is possible to call RESTful web services that are provided by external applications.
+To do so, it is necessary to specify the web service’s URL and REST method (currently <em>GET</em>, <em>POST</em>, <em>PUT</em> and <em>DELETE</em> are supported), as well as the parameters to be transferred to it.
+The parameters are represented as &lt;key, value&gt; pairs and can be sent as query parameters and/or via the body of the request.
+Accordingly, depending on the option expected by the service to be called, the DSL allows the modeler to specify queryparams or bodyparams.</p>
+
+<p>Aside from static values to be set at design time, it is possible to set a parameter to the value of a particular <code class="highlighter-rouge">ContentProviderPath</code>, i.e. the value of a content provider’s field, which is derived at run time.
+If the value is set statically at design time the data types <code class="highlighter-rouge">String</code>, <code class="highlighter-rouge">Integer</code>, <code class="highlighter-rouge">Float</code> and <code class="highlighter-rouge">Boolean</code> are allowed (as they will internally be converted into JSON).</p>
+
+<p>An exemplary web service description based on the DSL as well as the corresponding call of the action is depicted in the following.</p>
+
+<pre><code class="language-MD2">// Specification of the web service call
+externalWebService &lt;externalWebServiceCallOne&gt; {
+	url URL
+	method (GET | POST | PUT | DELETE)
+	queryparams(
+		STRING : (INT | STRING | FLOAT | BOOLEAN | &lt;ContentProviderPath&gt;)
+		STRING : (INT | STRING | FLOAT | BOOLEAN | &lt;ContentProviderPath&gt;)
+		&lt;...&gt;
+	)
+	bodyparams (
+		STRING : (INT | STRING | FLOAT | BOOLEAN | &lt;ContentProviderPath&gt;)
+		&lt;...&gt;
+	)
+}
+
+// Specify action to call the web service
+action CustomAction &lt;CustomActionOne&gt; {
+	call WebServiceCall &lt;externalWebServiceCallOne&gt;
+}
+</code></pre>
+
+<h2 id="controlling-a-workflow-by-calling-a-restful-web-service">Controlling a Workflow by calling a RESTful Web Service</h2>
+<p>The MD² language offers a possibility to define a RESTful web service  which will start a certain workflow element.
+For this purpose, for each workflow element marked as <code class="highlighter-rouge">invokable</code> a web service is generated with one endpoint for each invoke definition.</p>
+
+<p>When an invoke definition is placed within a workflow element of the controller model, the respective workflow element in the workflow model has to be marked as invokable as well.
+An event description can be added, which will be shown in the list of open issues as the event which was fired last.</p>
+
+<pre><code class="language-MD2">invokable at STRING using (POST | PUT) {
+	&lt;ContentProviderPath&gt; as ALIAS
+	default &lt;ContentProviderPath&gt; = &lt;Value&gt;
+	set &lt;ContentProviderPath&gt; to &lt;ContentProvider&gt;
+}
+</code></pre>
+
+<p>The minimally required invoke definition is simply the keyword <code class="highlighter-rouge">invokable</code>.
+The standard path where an endpoint is injected is <code class="highlighter-rouge">/</code>.
+If another path should be used this must be defined after the <code class="highlighter-rouge">at</code> keyword.
+If multiple endpoints are defined, setting the path is mandatory.</p>
+
+<p>The standard REST method used for the RESTful web service endpoint is <em>POST</em>.
+However, after the keyword <code class="highlighter-rouge">using</code>, the modeller can choose <code class="highlighter-rouge">PUT</code> instead.
+In the body of an invoke definition it can be defined if entities and their attributes should be set during the web service call.
+Three different possibilities exist for this purpose.
+In the following they are described in the order of their appearance within the aforementioned listing.</p>
+
+<ul>
+  <li>The first type allows attribute values to be set by the web service call.
+This means that the attribute is transformed to a parameter of the endpoint and is then set to the received value.
+For the name of the parameter either the name of the attribute is used or an alternative alias can be defined.</li>
+  <li>If some attributes should always receive the same value regardless of the parameter values, they can be set to a default value using the second type.
+An example would be a status field which is set to “issue received” when the workflow is started.</li>
+  <li>The last type is similar to setting a content provider to an attribute (cf. <a href="#3_">DSL specification for the controller layer</a>).
+Since the language only knows how entities are related to each other, but not their corresponding content providers, this statement is needed for every nested entity.</li>
+</ul>
+
+<p>For each entity referenced within the definition an instance of it will be created and persisted.
+The type of persistence depends on whether the remote connection of the content provider equals the one of the <code class="highlighter-rouge">workflowManager</code>.
+If they are equal, the web service call and the persistence is handled on the same server, thus the internal Enterprise JavaBeans can be used.
+Otherwise, the other external backend server needs to be called - this is however not implemented in the current version of the MD².
+It is not only necessary that the URLs of the remote connections are equal, but the objects also need to be identical.
+If the body is missing, no entities or attributes are set.</p>
+
+<h2 id="whats-next">What’s next</h2>
+<ul>
+  <li><a href="../40_handbook-dev/">Getting started with the development of the MD² framework itself</a></li>
+</ul>
+
+      </section>
+    </div>
+
+    <!--FOOTER  -->
+    <div class="outer" id="footer_wrap">
+      <footer class="inner">
+        
+        <p class="copyright">MD² documentation maintained by <a href="http://github.com/wwu-pi">wwu-pi</a></p>
+        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+  
+
+<hr/>
+
+
+
+  
+
+  
+<a name="6_"></a>
+
+	<style type="text/css">
+		#main_content_wrap.outer {
+			display: grid;
+			grid-template-columns:25% 75%;
+		}
+		
+		header.inner, section.inner {
+			max-width:75%;
+		}
+	</style>
+
+    <!--HEADER -->
+    <div class="outer" id="header_wrap">
+        <header class="inner">
+          <a href="http://github.com/wwu-pi/md2-framework" id="forkme_banner">View on GitHub</a>
+
+          <h1 id="project_title">MD² documentation</h1>
+          <h2 id="project_tagline">Model-Driven Mobile Development for cross-platform generation of native mobile apps</h2>
+
+          
+        </header>
+    </div>
+
+    <!--MAIN CONTENT -->
+    <div class="outer" id="main_content_wrap">
+	  <style type="text/css">nav {	margin:25px 0px 50px 0px;}nav ul {	list-style-type: none;	margin-bottom: 0px;}nav ul li {	margin-bottom: 5px;}nav &gt; ul &gt; li {	font-weight: bold;}nav ul li a, nav ul li a:hover, nav ul li a:visited, nav ul li a:focus, nav ul li a:link {	color: black;}nav li.active {	margin-left: -0.5em;padding-left: 0.5em;padding-right: 0.5em;color: #fff;font-weight: bold;background: #7a8288;border-radius: 4px;}nav li.active a {	color: #fff !important;}</style><nav><ul><li class=""><a href="/">MD² documentation</a></li>																																																																																																																																																														<li class="active">					<a href="/20_handbook-modeler/">Modeler&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/20_handbook-modeler/220_installation-modeler.html">Setting up your MD² Model Development Environment</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/230_single-apps.html">Getting started with building single apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/240_multiple-apps.html">Developing multiple apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/250_additional_features.html">Advanced features of the MD² language</a>				</li>																																																																								</ul>																												<li class="">					<a href="/40_handbook-dev/">Developer&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/40_handbook-dev/420_installation-dev.html">Development Environment</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/430_getting-started-dev.html">Getting Started with MD² Development</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/440_dsl_semantics.html">DSL semantics</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/450_preprocessor.html">Preprocessor</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/460_backend-generator.html">The backend generator</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/470_android-generator.html">Developing MD² apps for Android</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/480_ios-generator.html">Developing MD² apps for iOS</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/490_mapapps.html">map.apps Implementation</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/495_development-todos.html">Development TODOs and ideas for improvements</a>				</li>																					</ul>	</ul></nav>
+      <section class="inner" id="main_content">
+        <h1 id="introduction-to-the-modelers-handbook">Introduction to the Modeler’s Handbook</h1>
+
+<p>This section serves as a handbook for people who want to use the MD² framework to develop mobile business applications.
+It consists of</p>
+
+<ul>
+  <li><a href="#2_">installation instructions</a>,</li>
+  <li><a href="#3_">a guideline for building single apps</a>, providing information about the
+    <ul>
+      <li>DSL and its language constructs,
+        <ul>
+          <li>the process of model creation using MD²,</li>
+          <li>the code generation, and</li>
+          <li>the deployment process of the developed app</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#4_">information needed for the development of multiple apps</a></li>
+  <li><a href="#5_">information about more advanced additional features of the language</a>.</li>
+</ul>
+
+<p>In general, the MD² framework provides the modeler with an understanding of how to generate a multitude of apps and a corresponding backend out of a single model source.
+Using Eclipse as an IDE, convenient features, like the auto formatting of the model code by pressing <code class="highlighter-rouge">STRG+SHIFT+F</code>, can be used.</p>
+
+<p>Additional (but likely outdated!) information may be found in the <a href="https://github.com/ps-md2/md2-documentation">project seminar handbook</a>, in particular related to the map.apps platform.</p>
+
+      </section>
+    </div>
+
+    <!--FOOTER  -->
+    <div class="outer" id="footer_wrap">
+      <footer class="inner">
+        
+        <p class="copyright">MD² documentation maintained by <a href="http://github.com/wwu-pi">wwu-pi</a></p>
+        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+  
+
+<hr/>
+
+
+
+  
+
+  
+<a name="7_"></a>
+
+	<style type="text/css">
+		#main_content_wrap.outer {
+			display: grid;
+			grid-template-columns:25% 75%;
+		}
+		
+		header.inner, section.inner {
+			max-width:75%;
+		}
+	</style>
+
+    <!--HEADER -->
+    <div class="outer" id="header_wrap">
+        <header class="inner">
+          <a href="http://github.com/wwu-pi/md2-framework" id="forkme_banner">View on GitHub</a>
+
+          <h1 id="project_title">MD² documentation</h1>
+          <h2 id="project_tagline">Model-Driven Mobile Development for cross-platform generation of native mobile apps</h2>
+
+          
+        </header>
+    </div>
+
+    <!--MAIN CONTENT -->
+    <div class="outer" id="main_content_wrap">
+	  <style type="text/css">nav {	margin:25px 0px 50px 0px;}nav ul {	list-style-type: none;	margin-bottom: 0px;}nav ul li {	margin-bottom: 5px;}nav &gt; ul &gt; li {	font-weight: bold;}nav ul li a, nav ul li a:hover, nav ul li a:visited, nav ul li a:focus, nav ul li a:link {	color: black;}nav li.active {	margin-left: -0.5em;padding-left: 0.5em;padding-right: 0.5em;color: #fff;font-weight: bold;background: #7a8288;border-radius: 4px;}nav li.active a {	color: #fff !important;}</style><nav><ul><li class=""><a href="/">MD² documentation</a></li>																																																																																																																																																														<li class="">					<a href="/20_handbook-modeler/">Modeler&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/20_handbook-modeler/220_installation-modeler.html">Setting up your MD² Model Development Environment</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/230_single-apps.html">Getting started with building single apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/240_multiple-apps.html">Developing multiple apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/250_additional_features.html">Advanced features of the MD² language</a>				</li>																																																																								</ul>																												<li class="">					<a href="/40_handbook-dev/">Developer&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="active">					<a href="/40_handbook-dev/420_installation-dev.html">Development Environment</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/430_getting-started-dev.html">Getting Started with MD² Development</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/440_dsl_semantics.html">DSL semantics</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/450_preprocessor.html">Preprocessor</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/460_backend-generator.html">The backend generator</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/470_android-generator.html">Developing MD² apps for Android</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/480_ios-generator.html">Developing MD² apps for iOS</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/490_mapapps.html">map.apps Implementation</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/495_development-todos.html">Development TODOs and ideas for improvements</a>				</li>																					</ul>	</ul></nav>
+      <section class="inner" id="main_content">
+        <h1 id="development-environment">Development Environment</h1>
+
+<p>To simplify development, the initial setup is mostly automated using build scripts (and automation is further improved in future). Therefore, Gradle should be installed on the system first.
+The installation was tested with Eclipse Neon 3 and Xtext 2.11.0 (March 2017).</p>
+
+<ol>
+  <li>Clone the repository to the local machine using <code class="highlighter-rouge">git clone https://github.com/wwu-pi/md2-framework.git</code>.</li>
+  <li>Cd into <code class="highlighter-rouge">/md2-framework</code> and initialize the project with <code class="highlighter-rouge">gradle setupMD2</code>. The first time, this will take a few minutes to download the dependencies. There might be quite some warnings but it should be fine if you find the line <code class="highlighter-rouge">[main] INFO  .emf.mwe2.runtime.workflow.Workflow  - Done.</code> in the middle and the Gradle script exits successfully.</li>
+  <li>Download and unzip the <a href="http://www.eclipse.org/downloads/packages/eclipse-modeling-tools/neon3">Eclipse Modeling Tools package</a>.</li>
+  <li>Start Eclipse and choose a workspace of your choice.</li>
+  <li>Go to <code class="highlighter-rouge">Help</code> &gt; <code class="highlighter-rouge">Install New Software...</code>, click on <code class="highlighter-rouge">Add...</code>, enter the Xtext Update Site <code class="highlighter-rouge">http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</code>.</li>
+  <li>Install at least the <code class="highlighter-rouge">Xtext Complete SDK</code> and <code class="highlighter-rouge">Xtend IDE</code> components from the <code class="highlighter-rouge">Xtext</code> branch and restart Eclipse (there seems to be some issue when installing Xtext 2.11 in current Eclipse Neon due to the component “EMF Parsley”. If asked you can update your installation and let Eclipse remove the conflicting component).</li>
+  <li>Switch to the Java perspective (red icon in top right corner) or open it first.</li>
+  <li>In Eclipse, choose <code class="highlighter-rouge">File</code> &gt; <code class="highlighter-rouge">Import</code> &gt; <code class="highlighter-rouge">Existing Projects into Workspace</code>, select the directory created in step 1 as root directory, and import the <code class="highlighter-rouge">de.wwu.md2.framework</code> and <code class="highlighter-rouge">de.wwu.md2.framework.ui</code> projects contained in the local MD2 repository.</li>
+  <li>Happy coding! To see your changes, run the <code class="highlighter-rouge">de.wwu.md2.framework</code> project as Eclipse Application. This way, the current projects are installed as plugins and you can test the modeling environment. End users should use the setup instructions in the modeler’s section to avoid running this Eclipse-in-Eclipse construct.</li>
+</ol>
+
+<h2 id="whats-next">What’s next</h2>
+<ul>
+  <li><a href="#8_">Getting Started with the development</a></li>
+  <li><a href="440_dsl-semantics.html">Md² DSL semantics</a></li>
+</ul>
+
+      </section>
+    </div>
+
+    <!--FOOTER  -->
+    <div class="outer" id="footer_wrap">
+      <footer class="inner">
+        
+        <p class="copyright">MD² documentation maintained by <a href="http://github.com/wwu-pi">wwu-pi</a></p>
+        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+  
+
+<hr/>
+
+
+
+  
+
+  
+<a name="8_"></a>
+
+	<style type="text/css">
+		#main_content_wrap.outer {
+			display: grid;
+			grid-template-columns:25% 75%;
+		}
+		
+		header.inner, section.inner {
+			max-width:75%;
+		}
+	</style>
+
+    <!--HEADER -->
+    <div class="outer" id="header_wrap">
+        <header class="inner">
+          <a href="http://github.com/wwu-pi/md2-framework" id="forkme_banner">View on GitHub</a>
+
+          <h1 id="project_title">MD² documentation</h1>
+          <h2 id="project_tagline">Model-Driven Mobile Development for cross-platform generation of native mobile apps</h2>
+
+          
+        </header>
+    </div>
+
+    <!--MAIN CONTENT -->
+    <div class="outer" id="main_content_wrap">
+	  <style type="text/css">nav {	margin:25px 0px 50px 0px;}nav ul {	list-style-type: none;	margin-bottom: 0px;}nav ul li {	margin-bottom: 5px;}nav &gt; ul &gt; li {	font-weight: bold;}nav ul li a, nav ul li a:hover, nav ul li a:visited, nav ul li a:focus, nav ul li a:link {	color: black;}nav li.active {	margin-left: -0.5em;padding-left: 0.5em;padding-right: 0.5em;color: #fff;font-weight: bold;background: #7a8288;border-radius: 4px;}nav li.active a {	color: #fff !important;}</style><nav><ul><li class=""><a href="/">MD² documentation</a></li>																																																																																																																																																														<li class="">					<a href="/20_handbook-modeler/">Modeler&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/20_handbook-modeler/220_installation-modeler.html">Setting up your MD² Model Development Environment</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/230_single-apps.html">Getting started with building single apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/240_multiple-apps.html">Developing multiple apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/250_additional_features.html">Advanced features of the MD² language</a>				</li>																																																																								</ul>																												<li class="">					<a href="/40_handbook-dev/">Developer&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/40_handbook-dev/420_installation-dev.html">Development Environment</a>				</li>																																																									<li class="active">					<a href="/40_handbook-dev/430_getting-started-dev.html">Getting Started with MD² Development</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/440_dsl_semantics.html">DSL semantics</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/450_preprocessor.html">Preprocessor</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/460_backend-generator.html">The backend generator</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/470_android-generator.html">Developing MD² apps for Android</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/480_ios-generator.html">Developing MD² apps for iOS</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/490_mapapps.html">map.apps Implementation</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/495_development-todos.html">Development TODOs and ideas for improvements</a>				</li>																					</ul>	</ul></nav>
+      <section class="inner" id="main_content">
+        <h1 id="getting-started-with-md-development">Getting Started with MD² Development</h1>
+
+<p>TODO</p>
+<ul>
+  <li>Overall structure of the repository</li>
+  <li>DSL, validators, scope providers</li>
+  <li>Generators, reference implementation</li>
+</ul>
+
+      </section>
+    </div>
+
+    <!--FOOTER  -->
+    <div class="outer" id="footer_wrap">
+      <footer class="inner">
+        
+        <p class="copyright">MD² documentation maintained by <a href="http://github.com/wwu-pi">wwu-pi</a></p>
+        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+  
+
+<hr/>
+
+
+
+  
+
+  
+<a name="9_"></a>
+
+	<style type="text/css">
+		#main_content_wrap.outer {
+			display: grid;
+			grid-template-columns:25% 75%;
+		}
+		
+		header.inner, section.inner {
+			max-width:75%;
+		}
+	</style>
+
+    <!--HEADER -->
+    <div class="outer" id="header_wrap">
+        <header class="inner">
+          <a href="http://github.com/wwu-pi/md2-framework" id="forkme_banner">View on GitHub</a>
+
+          <h1 id="project_title">MD² documentation</h1>
+          <h2 id="project_tagline">Model-Driven Mobile Development for cross-platform generation of native mobile apps</h2>
+
+          
+        </header>
+    </div>
+
+    <!--MAIN CONTENT -->
+    <div class="outer" id="main_content_wrap">
+	  <style type="text/css">nav {	margin:25px 0px 50px 0px;}nav ul {	list-style-type: none;	margin-bottom: 0px;}nav ul li {	margin-bottom: 5px;}nav &gt; ul &gt; li {	font-weight: bold;}nav ul li a, nav ul li a:hover, nav ul li a:visited, nav ul li a:focus, nav ul li a:link {	color: black;}nav li.active {	margin-left: -0.5em;padding-left: 0.5em;padding-right: 0.5em;color: #fff;font-weight: bold;background: #7a8288;border-radius: 4px;}nav li.active a {	color: #fff !important;}</style><nav><ul><li class=""><a href="/">MD² documentation</a></li>																																																																																																																																																														<li class="">					<a href="/20_handbook-modeler/">Modeler&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/20_handbook-modeler/220_installation-modeler.html">Setting up your MD² Model Development Environment</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/230_single-apps.html">Getting started with building single apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/240_multiple-apps.html">Developing multiple apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/250_additional_features.html">Advanced features of the MD² language</a>				</li>																																																																								</ul>																												<li class="">					<a href="/40_handbook-dev/">Developer&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/40_handbook-dev/420_installation-dev.html">Development Environment</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/430_getting-started-dev.html">Getting Started with MD² Development</a>				</li>																																																									<li class="active">					<a href="/40_handbook-dev/440_dsl_semantics.html">DSL semantics</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/450_preprocessor.html">Preprocessor</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/460_backend-generator.html">The backend generator</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/470_android-generator.html">Developing MD² apps for Android</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/480_ios-generator.html">Developing MD² apps for iOS</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/490_mapapps.html">map.apps Implementation</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/495_development-todos.html">Development TODOs and ideas for improvements</a>				</li>																					</ul>	</ul></nav>
+      <section class="inner" id="main_content">
+        <h1 id="dsl-semantics">DSL semantics</h1>
+
+<p>The MD² framework is intended to provide a cross-platform solution for multiple mobile platforms such as Android or iOS.
+For this purpose, this section delivers an overview about the semantics of the DSL, e.g. the different patterns targeted or forms of communication that are implied by certain model constructs.
+This will enable future developers to generate apps for other platforms which provide the same functionality as the apps currently generated from the DSL.</p>
+
+<p>First of all, the Model-View-Controller (MVC) pattern with an additional workflow layer used in the DSL should also be represented in the generated code.</p>
+
+<h2 id="workflow-layer">Workflow Layer</h2>
+<p>The workflow layer defines different apps and their workflow elements.
+Since workflows bundle specific functionality, each app can be seen as a user role, and the assigned workflow elements represent the role’s permissions.
+However, a sophisticated user or role management within the generated apps is not implemented in the MD² framework.</p>
+
+<p>Every app is supposed to have a start screen which contains buttons for workflow elements that can be started in the app as well as a list of open issues (workflow instances in a specific state) that can be continued by the app.
+The mapping of workflow elements to corresponding roles is stored in the backend, which connects workflow elements to their apps.
+This is for example important for the determination of open issues which might be created by one role and then need to be continued by another app.</p>
+
+<p>Similar to that, the backend needs to know the sequence of workflow elements, i.e. which workflow elements are to be started after which event and when to end the workflow.
+Note, that two different workflow elements can fire the same event and start different workflow elements.
+Thus, the backend also needs to know which combination of event and workflow element initializes the start of a specific new workflow element.</p>
+
+<p>However, to avoid unnecessary backend communication, transitions between workflow elements within the same app should be handled by the app-specific workflow manager.
+This is important to allow temporary off-line usage of apps in the future.
+Thus, the backend handles the start of new workflows <em>across</em> apps (currently implemented as <code class="highlighter-rouge">EventHandlerWS</code>) and the app-specific event handler is responsible to start new workflow elements <em>within</em> apps.</p>
+
+<p>When a workflow element is started across apps, it will appear in the list of open issues of all apps that have the respective workflow element assigned.</p>
+
+<h2 id="model-layer">Model Layer</h2>
+<p>The model is a rather thin layer in the overall architecture, the only components contained are entities and enumerations.
+In order to access core data functionality, a global data model has to be setup that defines the database structure to be accessed later through content providers.
+This database is currently located in the backend and is accessible via RESTful web services for apps from all platforms.</p>
+
+<h2 id="view-layer">View Layer</h2>
+<p>View elements should be implemented with the functionality described in the <a href="../20_handbook-modeler/">Modeler’s handbook</a>.</p>
+
+<h1 id="controller-layer">Controller Layer</h1>
+<p>The biggest and most important layer in this architecture is the controller layer, which has the role to connect the view with the model and vice versa.</p>
+
+<p>It consists of several workflow elements, each being an independent controller describing a <em>logical step in the process</em> to be accomplished by the app user.
+In contrast, a process chain contains more <em>fine-grained process steps</em> that boils down to individual views shown to the app user.
+For illustration, a process that requires the user to enter data (say, a list of dishes to order) and then perform the payment consists of those two logical steps represented by workflow elements.
+The payment itself might be split into an input view and a validation screen, both of which would be elements of the process chain within the payment workflow element.</p>
+
+<p>Technically, the default process chain of a workflow element should be used as starting process chain.
+Likewise, the first view from this process chain should be used as start view for the workflow element.
+Each workflow element (i.e. each controller) requires its own initialization, e.g. mappings of content to views.
+The required actions for this initialization can be found in the <code class="highlighter-rouge">onInit</code> block in a workflow element.
+When a workflow element fires a workflow event (in particular after completing the last process chain step), it should be terminated and the control handed to the app-specific event handler.
+Depending on the next workflow eleent to start the handler might communicate the state of the workflow to the backend (as described above for the workflow layer).</p>
+
+<p>Within the body of workflow elements, the controller behavior can be defined using actions and process chains.
+Process chains will be converted to actions in the <a href="#10_">preprocessor</a>, and therefore do not require specific handling by the generators.</p>
+
+<p>Content providers in the controller layer are used for data provisioning, either locally using a <code class="highlighter-rouge">LocalContentProvider</code> or by the server backend using <code class="highlighter-rouge">RemoteContentProvider</code>.
+RESTful webservice-based communication to the backend is required for every platform in order to store and request the remotely stored data.</p>
+
+<h2 id="whats-next">What’s next</h2>
+<ul>
+  <li><a href="#10_">The preprocessor</a></li>
+  <li><a href="#11_">The structure of the backend generator</a></li>
+  <li><a href="#12_">The structure of the Android generator</a></li>
+  <li><a href="#13_">The structure of the iOS generator</a></li>
+</ul>
+
+      </section>
+    </div>
+
+    <!--FOOTER  -->
+    <div class="outer" id="footer_wrap">
+      <footer class="inner">
+        
+        <p class="copyright">MD² documentation maintained by <a href="http://github.com/wwu-pi">wwu-pi</a></p>
+        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+  
+
+<hr/>
+
+
+
+  
+
+  
+<a name="10_"></a>
+
+	<style type="text/css">
+		#main_content_wrap.outer {
+			display: grid;
+			grid-template-columns:25% 75%;
+		}
+		
+		header.inner, section.inner {
+			max-width:75%;
+		}
+	</style>
+
+    <!--HEADER -->
+    <div class="outer" id="header_wrap">
+        <header class="inner">
+          <a href="http://github.com/wwu-pi/md2-framework" id="forkme_banner">View on GitHub</a>
+
+          <h1 id="project_title">MD² documentation</h1>
+          <h2 id="project_tagline">Model-Driven Mobile Development for cross-platform generation of native mobile apps</h2>
+
+          
+        </header>
+    </div>
+
+    <!--MAIN CONTENT -->
+    <div class="outer" id="main_content_wrap">
+	  <style type="text/css">nav {	margin:25px 0px 50px 0px;}nav ul {	list-style-type: none;	margin-bottom: 0px;}nav ul li {	margin-bottom: 5px;}nav &gt; ul &gt; li {	font-weight: bold;}nav ul li a, nav ul li a:hover, nav ul li a:visited, nav ul li a:focus, nav ul li a:link {	color: black;}nav li.active {	margin-left: -0.5em;padding-left: 0.5em;padding-right: 0.5em;color: #fff;font-weight: bold;background: #7a8288;border-radius: 4px;}nav li.active a {	color: #fff !important;}</style><nav><ul><li class=""><a href="/">MD² documentation</a></li>																																																																																																																																																														<li class="">					<a href="/20_handbook-modeler/">Modeler&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/20_handbook-modeler/220_installation-modeler.html">Setting up your MD² Model Development Environment</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/230_single-apps.html">Getting started with building single apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/240_multiple-apps.html">Developing multiple apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/250_additional_features.html">Advanced features of the MD² language</a>				</li>																																																																								</ul>																												<li class="">					<a href="/40_handbook-dev/">Developer&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/40_handbook-dev/420_installation-dev.html">Development Environment</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/430_getting-started-dev.html">Getting Started with MD² Development</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/440_dsl_semantics.html">DSL semantics</a>				</li>																																																									<li class="active">					<a href="/40_handbook-dev/450_preprocessor.html">Preprocessor</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/460_backend-generator.html">The backend generator</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/470_android-generator.html">Developing MD² apps for Android</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/480_ios-generator.html">Developing MD² apps for iOS</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/490_mapapps.html">map.apps Implementation</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/495_development-todos.html">Development TODOs and ideas for improvements</a>				</li>																					</ul>	</ul></nav>
+      <section class="inner" id="main_content">
+        <h1 id="preprocessor">Preprocessor</h1>
+
+<p>For each target platform, a generator class is created that implements the interface <code class="highlighter-rouge">IPlatformGenerator</code>.
+Each generator class is registered in the <code class="highlighter-rouge">MD2RuntimeModule</code> and gets injected into the framework automatically.
+During modeling, the Xtext Builder participant starts the building process every time a model file is saved with changes and regenerates the platform files.
+Prior to generating the source code, the model gets transformed and is passed on to the implementing generator classes.
+Basically, this step can be considered a model-to-model transformation with the aim to simplify the generation process.</p>
+
+<h2 id="model-combination">Model Combination</h2>
+<p>When MD² models are defined across multiple files (including the separation in model, view, and controller packages), the resulting model will also be split across multiple <code class="highlighter-rouge">MD2Models</code>.
+To avoid that these models have to be recollected over and over again throughout the preprocessing process, all controllers, models, workflows and views are combined into a single model prior to the actual preprocessing.</p>
+
+<h2 id="autogenerator">Autogenerator</h2>
+<p>The autogenerator is a feature that allows to easily create view elements from model definitions.
+During the preprocessing, the references to content providers are resolved and content elements are created based on the model attribute types that the content provider declares.
+The schema for generation is as follows:</p>
+<ul>
+  <li><code class="highlighter-rouge">IntegerType</code>, <code class="highlighter-rouge">FloatType</code>, <code class="highlighter-rouge">StringType</code> become text input fields</li>
+  <li><code class="highlighter-rouge">DateType</code>, <code class="highlighter-rouge">TimeType</code>, <code class="highlighter-rouge">DateTimeType</code> become text input fields with corresponding time type attribution (later depicted as date/time pickers)</li>
+  <li><code class="highlighter-rouge">BooleanType</code> becomes a checkbox field</li>
+  <li><code class="highlighter-rouge">ReferencedType</code>
+    <ul>
+      <li><code class="highlighter-rouge">Enum</code> becomes an option picker field</li>
+      <li><code class="highlighter-rouge">Entites</code> are processed recursively and all elements are wrapped in a <em>flow layout pane</em></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="remarks">Remarks</h3>
+<p>For each content element, a new <code class="highlighter-rouge">MappingTask</code> is created that maps the content element to the attribute provided by the content provider.
+For this purpose a <em>custom action</em> called “autoGenerationAction” is created that the platform generators need to parse.
+If the view element is unmapped on startup or a user-specified mapping is found, the auto-generated mapping is removed.</p>
+
+<p>In case the model attribute, from which a content element is created, has the optional parameters <code class="highlighter-rouge">name</code> or <code class="highlighter-rouge">description</code> set, these values are converted to label and tooltip representations for text inputs, option inputs and checkboxes.
+If no name is given by the modeller, the ID of the content element will be assigned as a label name with each uppercase letter preceded by a whitespace (e.g. “myAddress” will be transformed into “My Address”).</p>
+
+<h2 id="cloning-and-references">Cloning and References</h2>
+<p>The MD² language allows the modeller to define certain view elements once and then reuse them multiple times.
+Internally, these elements are copied and references pointing to them are resolved during the preprocessing.
+The same behavior applies to view elements that are referenced in a view container (e.g. a flow layout pane) but are defined outside of this container.
+The following example shall serve to illustrate these two use cases.</p>
+
+<pre><code class="language-MD2">TabbedPane mainView {
+	customerPane -&gt; customerView(tabTitle &quot;Customer&quot;)
+	generalPane -&gt; generalView(tabTitle &quot;General&quot;)
+}
+FlowLayoutPane customerPane(vertical) {
+	headerPane
+	TextInput myTextInput
+}
+FlowLayoutPane generalPane(vertical) {
+	headerPane
+	// Some view elements
+}
+FlowLayoutPane headerPane {
+	Image logoImage(&quot;./capitol.png&quot;)
+}
+</code></pre>
+
+<p>The code excerpt shows a tabbed pane that references two container elements.
+These containers again reference the same sub-container twice.
+After preprocessing, the model appears to the code generators as follows:</p>
+
+<pre><code class="language-MD2">TabbedPane mainView {
+	FlowLayoutPane customerView(tabTitle &quot;Customer&quot;, vertical) {
+		FlowLayoutPane headerPane {
+			Image logoImage(&quot;./capitol.png&quot;)
+	    }
+		TextInput myTextInput
+	}
+	FlowLayoutPane generalPane(tabTitle &quot;General&quot;, vertical) {
+		FlowLayoutPane headerPane {
+			Image logoImage(&quot;./capitol.png&quot;)
+		}
+	}
+}
+</code></pre>
+
+<h3 id="resolving-references">Resolving References</h3>
+<p>Because view elements can be reused and referenced across the whole model, MD² needs to provide means on how to use these virtual elements in behavioral elements like actions.
+The problem is that Xtext only allows to reference the originating element, but not the reference itself.
+In the example provided this means that the outer <code class="highlighter-rouge">headerPane</code> can be referenced, but any <code class="highlighter-rouge">headerPane</code> in a <code class="highlighter-rouge">customerPane</code> or <code class="highlighter-rouge">generalPane</code> can not, because there is no such element during runtime.
+To solve this issue, MD² has the language type <code class="highlighter-rouge">AbstractViewGUIElementRef</code> that deals with these kind of references.
+This element allows to chain references to any element of the model in an arbitrary order.
+However, the scope has to be restricted to offer just the possible elements during autocompletion.
+During preprocessing, the pseudo-referenced elements are converted into real elements as described befor, and any reference to them will be resolved.</p>
+
+<p>The reference to <code class="highlighter-rouge">myTextInput</code> that resides in <code class="highlighter-rouge">customerPane</code> and is part of the tabbed pane <code class="highlighter-rouge">mainView</code> can be referenced as <code class="highlighter-rouge">mainView.customerView-&gt;customerPane.myTextInput</code>.
+Basically, two elements are chained with <code class="highlighter-rouge">-&gt;</code> as the delimiter.</p>
+
+<p>The modeller also might want to reference an auto-generated content element.
+This is done by referencing the autogenerator followed by the model element in square brackets.
+In the following customer scenario, the text input field that is later generated for the customer’s first name can be referenced as <code class="highlighter-rouge">myPane.customerAutoGenerator[Customer.firstName]</code>.</p>
+
+<pre><code class="language-MD2">FlowLayoutPane myPane {
+	AutoGenerator customerAutoGenerator {
+		contentProvider customerContentProvider
+	}
+}
+contentProvider Customer customerContentProvider {
+	providerType default
+}
+
+entity Customer {
+	firstName: string
+}
+</code></pre>
+
+<h3 id="remarks-1">Remarks</h3>
+<p>When a view element, which is referenced or reused at a different place, is copied, each event binding, mapping or validator binding pointing to this view element will be copied as well.
+The copied version of the controller elements will be redirected to the copied version of the view elements.
+This does not work the other way around: any behavior element pointing to a referencing view element does not apply to the original element.</p>
+
+<h2 id="validators">Validators</h2>
+<p>To ensure proper data integrity and to validate user input, each content element can be attributed with validators in a <code class="highlighter-rouge">ValidatorBindingTask</code>.
+When a view element is mapped to a model attribute, some validators can be inferred automatically based on the attribute type (e.g. for integers) and its parameters (e.g. optional attributes).
+In these cases a validator is automatically created and bound to the view element in question.
+However, the modeler can still overwrite or unbind these validators in any actions that are performed upon startup.</p>
+
+<h3 id="type-specific-validators">Type-Specific Validators</h3>
+<ul>
+  <li><code class="highlighter-rouge">IntegerType</code> enforces a <code class="highlighter-rouge">StandardIsIntValidator</code> being bound</li>
+  <li><code class="highlighter-rouge">FloatType</code> enforces a <code class="highlighter-rouge">StandardIsNumberValidator</code> being bound</li>
+  <li><code class="highlighter-rouge">StringType</code> enforces a <code class="highlighter-rouge">StandardStringRangeValidator</code> being bound</li>
+</ul>
+
+<h3 id="type-parameter-specific-validators">Type Parameter-Specific Validators</h3>
+<ul>
+  <li>Omitting the <code class="highlighter-rouge">optional</code> keyword will result in a <code class="highlighter-rouge">StandardNotNullValidator</code> being bound</li>
+  <li>Setting <code class="highlighter-rouge">min</code> or <code class="highlighter-rouge">max</code> values for any kind of attribute will result in an appropriate validator being bound that ensures the range for this data type</li>
+</ul>
+
+<h2 id="replacements">Replacements</h2>
+<h3 id="enums">Enums</h3>
+<p>The MD² language allows to declare enums explicitly and implicitly.
+Internally, all enums will be treated as explicitly defined enums and converted accordingly.</p>
+
+<p>For example, before:</p>
+<pre><code class="language-MD2">entity User {
+	gender: {&quot;male&quot;, &quot;female&quot;}
+}
+</code></pre>
+
+<p>After:</p>
+<pre><code class="language-MD2">entity User {
+	gender: User_Gender
+}
+enum User_Gender {
+	&quot;male&quot;, &quot;female&quot;
+}
+</code></pre>
+
+<h3 id="process-chains">Process Chains</h3>
+<p>Nested process chains will be flattened.</p>
+
+<p>Before:</p>
+<pre><code class="language-MD2">processChain pc1 {
+	step firstStep:
+		view mainView.customerView
+	step nestedStep:
+		subProcessChain pc2
+	step thirdStep:
+		view mainView.resultView
+}
+processChain pc2 {
+	step secondStep:
+		view mainView.InputView
+}
+</code></pre>
+
+<p>After:</p>
+<pre><code class="language-MD2">processChain pc1 {
+	step firstStep:
+		view mainView.customerView
+	step secondStep:
+		view mainView.InputView
+	step thirdStep:
+		view mainView.resultView
+}
+</code></pre>
+
+<h3 id="combinedaction">CombinedAction</h3>
+<p>The sole use of combined actions is to trigger the execution of other actions.
+This behavior can also be achieved by using call tasks in custom actions.
+Hence, all combined actions will be converted to custom actions internally.</p>
+
+<h3 id="miscellaneous">Miscellaneous</h3>
+<p>Some minor adjustments are made to the model:</p>
+
+<ul>
+  <li>Check for existence of the <code class="highlighter-rouge">flowDirection</code> parameter for all flow layout panes.</li>
+  <li>Duplicate spacer according to the specified number of spacers.</li>
+  <li>Replace all named colours by their hex colour equivalents.</li>
+  <li>Replace custom validators with standard validator definitions.</li>
+</ul>
+
+<h2 id="testgenerator">TestGenerator</h2>
+<p>Usually model transformations are transparent to the modeler and even for the developer hard to trace.
+With the test generator, though, there is a way to get a glimpse of the model’s state as XMI definition before it gets passed to the platform generators.</p>
+
+<h2 id="whats-next">What’s next</h2>
+<ul>
+  <li><a href="#11_">The structure of the backend generator</a></li>
+  <li><a href="#12_">The structure of the Android generator</a></li>
+  <li><a href="#13_">The structure of the iOS generator</a></li>
+</ul>
+
+      </section>
+    </div>
+
+    <!--FOOTER  -->
+    <div class="outer" id="footer_wrap">
+      <footer class="inner">
+        
+        <p class="copyright">MD² documentation maintained by <a href="http://github.com/wwu-pi">wwu-pi</a></p>
+        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+  
+
+<hr/>
+
+
+
+  
+
+  
+<a name="11_"></a>
+
+	<style type="text/css">
+		#main_content_wrap.outer {
+			display: grid;
+			grid-template-columns:25% 75%;
+		}
+		
+		header.inner, section.inner {
+			max-width:75%;
+		}
+	</style>
+
+    <!--HEADER -->
+    <div class="outer" id="header_wrap">
+        <header class="inner">
+          <a href="http://github.com/wwu-pi/md2-framework" id="forkme_banner">View on GitHub</a>
+
+          <h1 id="project_title">MD² documentation</h1>
+          <h2 id="project_tagline">Model-Driven Mobile Development for cross-platform generation of native mobile apps</h2>
+
+          
+        </header>
+    </div>
+
+    <!--MAIN CONTENT -->
+    <div class="outer" id="main_content_wrap">
+	  <style type="text/css">nav {	margin:25px 0px 50px 0px;}nav ul {	list-style-type: none;	margin-bottom: 0px;}nav ul li {	margin-bottom: 5px;}nav &gt; ul &gt; li {	font-weight: bold;}nav ul li a, nav ul li a:hover, nav ul li a:visited, nav ul li a:focus, nav ul li a:link {	color: black;}nav li.active {	margin-left: -0.5em;padding-left: 0.5em;padding-right: 0.5em;color: #fff;font-weight: bold;background: #7a8288;border-radius: 4px;}nav li.active a {	color: #fff !important;}</style><nav><ul><li class=""><a href="/">MD² documentation</a></li>																																																																																																																																																														<li class="">					<a href="/20_handbook-modeler/">Modeler&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/20_handbook-modeler/220_installation-modeler.html">Setting up your MD² Model Development Environment</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/230_single-apps.html">Getting started with building single apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/240_multiple-apps.html">Developing multiple apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/250_additional_features.html">Advanced features of the MD² language</a>				</li>																																																																								</ul>																												<li class="">					<a href="/40_handbook-dev/">Developer&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/40_handbook-dev/420_installation-dev.html">Development Environment</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/430_getting-started-dev.html">Getting Started with MD² Development</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/440_dsl_semantics.html">DSL semantics</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/450_preprocessor.html">Preprocessor</a>				</li>																																																									<li class="active">					<a href="/40_handbook-dev/460_backend-generator.html">The backend generator</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/470_android-generator.html">Developing MD² apps for Android</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/480_ios-generator.html">Developing MD² apps for iOS</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/490_mapapps.html">map.apps Implementation</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/495_development-todos.html">Development TODOs and ideas for improvements</a>				</li>																					</ul>	</ul></nav>
+      <section class="inner" id="main_content">
+        <h1 id="the-backend-generator">The backend generator</h1>
+
+<p>The MD² backend is implemented in Java.
+It is automatically generated by from the MD² model.
+Note, that some parts of the backend are static while others are contingent upon the model.</p>
+
+<h2 id="beans">Beans</h2>
+<p>For entities that are used in at least one remote content provider, a stateless session bean is generated.
+Such a bean provides basic methods to create or manipulate entities of its type.
+The Java Persistence API (JPA) is used for the persistent storage of the data.
+The persistence configuration file is located at <code class="highlighter-rouge">META-INF/persistence.xml</code>.
+Currently, EclipseLink is used as persistence service.</p>
+
+<p>Additionally, a static session bean is generated for the workflow state of the instances of a workflow.
+Internally, a workflow instance is identified by a unique ID that is represented as an integer.
+However, since a workflow instance is generated on the client side, a single client cannot assure that a specific number is not used by another workflow instance of another client.
+Therefore, every client generates its own <code class="highlighter-rouge">instanceId</code> that is a hash value of the current time and other variables, and thus supposed to be unique.
+This generated hash value is represented as a string value.</p>
+
+<h2 id="datatypes">Datatypes</h2>
+<p>The datatypes used in the backend are static and implemented as simple wrappers.
+For instance, every entity has a unique internal identification number (<code class="highlighter-rouge">internalID</code>) that is an integer value.
+The respective wrapper implementation is depicted in the following listing.</p>
+
+<pre><code class="language-Java">@XmlRootElement(name = &quot;internalId&quot;)
+public class InternalIdWrapper {
+
+	@XmlElement
+	protected int __internalId;
+
+	protected InternalIdWrapper() {
+		// no-arg default constructor necessary
+	}
+
+	public InternalIdWrapper(int integer) {
+		this.__internalId = integer;
+	}
+}
+</code></pre>
+
+<h2 id="entities">Entities</h2>
+<p>The entities and enumerations defined in the MD² model are generated into the subpackage <code class="highlighter-rouge">entities.models</code>.
+Moreover, two static Java classes are generated: <code class="highlighter-rouge">RequestDTO</code> and <code class="highlighter-rouge">WorkflowState</code>.
+The former is used as an encapsulation for all client requests, e.g. to create a corresponding REST request.
+The latter is used as a representation of the state a particular workflow instance has.
+A workflow can consist of multiple workflow elements, that in turn can fire different events.
+Thus, every started workflow (more precisely, every workflow instance) must keep track of its current workflow element and the last event fired in it.</p>
+
+<h2 id="file-download-servlet">File Download Servlet</h2>
+<p>This servlet is used to deliver uploaded files to a requesting client.
+It is accessible at <code class="highlighter-rouge">DownloadFile</code> below the web root of your deployed project.</p>
+
+<p><img alt="" src="../figures/FileUploadProcess.png"/></p>
+
+<p>In a <em>GET</em> request to this servlet you need to set the parameter <code class="highlighter-rouge">file</code> to the identifier of an uploaded file, which was returned by the file upload web service before (cf.
+upload process depicted above).</p>
+
+<p>All files are stored in the file system.
+Therefore, the download servlet needs to look for files using the identifier in a central directory, which is also referenced by the upload web service.
+This location  is defined in the generated <code class="highlighter-rouge">Config.UPLOAD_FILE_STORAGE_PATH</code>, which is derived from the <code class="highlighter-rouge">storagePath</code> element in the file upload remote connection in your MD² model.</p>
+
+<p>Note, that currently only images can be delivered, as the download servlet assumes the content type to be <code class="highlighter-rouge">image/jpeg</code>.
+This could be changed in the future by storing the correct content type during upload and retrieving it in this servlet.</p>
+
+<h2 id="web-services">Web Services</h2>
+<p>Similar to the generation of the stateless session beans, a web service is only generated for those entities that are used in at least one remote content provider.
+Those web services provide simple access to entity data.
+Additionally, some static web services are generated that are used for specific features.
+Those are explained in the following.</p>
+
+<h3 id="calls-to-external-webservices">Calls to External Webservices</h3>
+<p>As a simple way to interact with external services, a web service <code class="highlighter-rouge">CallExternalWebServiceWS</code> in the backend allows to call another web service, that might be on a different system or server.
+The web service in the backend provides a method that takes a JSON-encoded object as an input.
+This object must contain the URL, the REST method type and the set of parameters of that method.
+For example, the following listing depicts how such a JSON object is constructed in map.apps.</p>
+
+<pre><code class="language-JavaScript">data: json.stringify({
+  &quot;url&quot;: this._url,
+  &quot;requestMethod&quot;: this._method,
+  &quot;queryParams&quot;: this._queryParams,
+  &quot;body&quot;: this._bodyParams
+})
+</code></pre>
+
+<p><code class="highlighter-rouge">queryParams</code>, as well as <code class="highlighter-rouge">bodyParams</code>, are basically key-value pairs.
+However, the Java library used for the REST endpoint was not able to map these key-value pairs to a Java <code class="highlighter-rouge">HashMap</code>.
+For that reason a workaround was introduced: Instead of a single JSON object containing all key-value pairs, an array of JSON objects needs to be transmitted, where each object contains exactly one key-value pair.
+In the backend, these are mapped to an object of type <code class="highlighter-rouge">ArrayList&lt;CustomHashMapEntry&gt;</code>.
+The class <code class="highlighter-rouge">CustomHashMapEntry</code> (and, therefore, each JSON object) consists of the attributes <code class="highlighter-rouge">key</code> and <code class="highlighter-rouge">value</code>.</p>
+
+<h3 id="offer-webservices-to-start-workflow">Offer Webservices to Start Workflow</h3>
+<p>Besides the possibility to start a workflow through an app, it is possible to invoke it using a webservice.
+The description of the corresponding model language is described in the Modeler’s handbook in the <a href="#5_">additional features</a> section.
+For each invokable workflow element a webservice is created and for each invoke definition a webservice endpoint is specified, including the defined parameters and the creation of the required entities.
+After the entities are saved using the internal beans, a <code class="highlighter-rouge">workflowState</code> is persisted using the workflow element the webservice belongs to.
+Additionally, the <code class="highlighter-rouge">lastEventFired</code> is set to the defined text specified in the workflow model after the <code class="highlighter-rouge">invokable</code> keyword, or to a default if not specified.
+The entity IDs returned by the internal beans are then injected as the content provider IDs.
+Directly afterwards, the workflow instance is accessible within the list of open issues of all apps that are allowed to view the invoked workflow element.
+Since a new workflow instance is created, the backend is creating a new random UUID for each webservice call.</p>
+
+<p>For each endpoint, a method <code class="highlighter-rouge">@POST</code> or <code class="highlighter-rouge">@PUT</code> can be defined.
+The used parameter types are specified as <code class="highlighter-rouge">@FormParam</code>.
+The path which has to be used to call the webservice endpoint consists of the workflow element name and the specified path in the invoke definition.</p>
+
+<h3 id="event-handler">Event Handler</h3>
+<p>For the communication across apps, the backend offers an event handler web service.
+This web service handles all workflow events that are fired in one app and need to start a workflow element in another app.
+Required parameters for this web service are</p>
+
+<ul>
+  <li>the instance ID of the workflow instance,</li>
+  <li>the event which was fired,</li>
+  <li>the content provider IDs, and</li>
+  <li>the current workflow element which fired the event.</li>
+</ul>
+
+<p>The event handler web service uses these parameters to perform adjustments in the workflow state of the current workflow instance.
+This includes setting the last event fired and the current workflow element.
+Furthermore, the content provider IDs are stored in the workflow state so that subsequent apps can load data from content providers using these IDs.</p>
+
+<h3 id="workflow-state">Workflow State</h3>
+<p>The workflow state web service allows to retrieve open workflow instances or add new ones.
+Whenever the list of open issues is opened in an app, this app sends its name to the workflow state web service.
+The web service then returns all workflow states whose current workflow element is part of the app with the given app name.
+For this purpose, the mapping of workflow elements to apps is originally derived from the DSL model and stored in a <code class="highlighter-rouge">HashMap</code> object in the backend.</p>
+
+<p>Furthermore, for every new workflow instance, a new workflow state needs to be created.
+To do so, the workflow state web service is called as soon as the app which started the workflow hands the control over to the backend.
+This app generates a globally unique identifier (as described in the first subsection “Beans”) and provides it in the web service call.</p>
+
+<h3 id="file-upload">File Upload</h3>
+<p>As another web service, a REST endpoint for uploading files is provided.
+In contrast to the other web services, it expects an input format of <code class="highlighter-rouge">MULTIPART_FORM_DATA</code>, thus allowing image uploads from HTML forms.</p>
+
+<p>Given an uploaded file, it creates a file with a unique file name using the <code class="highlighter-rouge">File.createTempFile()</code> interface.
+The file is stored in the location specified in <code class="highlighter-rouge">Config.UPLOAD_FILE_STORAGE_PATH</code> (or <code class="highlighter-rouge">storagePath</code> in the MD² model, respectively) and the generated file name is returned to the invoking client.
+No further information about the file is stored or checked, i.e. original file name and content type are lost.</p>
+
+<h3 id="version-negotiation">Version Negotiation</h3>
+<p>This web service can be used by generated apps to check whether they were generated from the same model version as the backend.
+Consequently, this is only useful if the modeler updates the model version after making changes to the data model.</p>
+
+<h2 id="backend-connection-specification">Backend connection specification</h2>
+
+<h3 id="resource-paths">Resource Paths</h3>
+<p><strong>Format:</strong></p>
+
+<p>VERB - Path - Request body</p>
+<blockquote>
+  <p><code class="highlighter-rouge">&lt;Status&gt;</code> - <code class="highlighter-rouge">&lt;Response body&gt;</code></p>
+</blockquote>
+
+<h4 id="entities-1">Entities</h4>
+<p><strong>Load</strong></p>
+
+<p><code class="highlighter-rouge">GET - /&lt;entity.name&gt;/?filter=&lt;filter&gt;</code></p>
+<blockquote>
+  <p><code class="highlighter-rouge">200 OK - List&lt;Entity&gt;</code></p>
+</blockquote>
+
+<p><code class="highlighter-rouge">GET - /&lt;entity.name&gt;/first?filter=&lt;filter&gt;</code></p>
+<blockquote>
+  <p><code class="highlighter-rouge">200 OK - Entity or 404 NOT FOUND</code></p>
+</blockquote>
+
+<p><strong>Save</strong></p>
+
+<p><code class="highlighter-rouge">PUT - /&lt;entity.name&gt;/ - List&lt;Entity&gt;</code></p>
+<blockquote>
+  <p><code class="highlighter-rouge">200 OK - List&lt;{ “__internalId”: &lt;id&gt; }&gt;</code></p>
+</blockquote>
+
+<p><strong>Delete</strong></p>
+
+<p><code class="highlighter-rouge">DEL - /&lt;entity.name&gt;/&lt;id&gt;</code></p>
+<blockquote>
+  <p><code class="highlighter-rouge">200 OK or 404 NOT FOUND</code></p>
+</blockquote>
+
+<h4 id="remote-validations">Remote Validations</h4>
+<p><code class="highlighter-rouge">GET - /md2_validator/&lt;remoteValidator.name&gt;/ - Entity</code></p>
+<blockquote>
+  <p><code class="highlighter-rouge">200 OK - ValidationResult object</code></p>
+</blockquote>
+
+<p><code class="highlighter-rouge">GET - /md2_validator/&lt;remoteValidator.name&gt;/?attrName1=content&amp;attrName2=content ... &amp;attrNameN=content</code></p>
+<blockquote>
+  <p><code class="highlighter-rouge">200 OK - ValidationResult object</code></p>
+</blockquote>
+
+<p>attrNameX is a fully qualified name, having <code class="highlighter-rouge">contentProviderName.path.to.attribute</code></p>
+
+<h4 id="filter-parameter">Filter Parameter</h4>
+<p><code class="highlighter-rouge">not &lt;Attribute&gt; (equals|greater|smaller| &lt;= | &gt;=) (&lt;Int&gt;|&lt;Float&gt;|&lt;String&gt;|&lt;InputField&gt;)
+((and|or)(not)? &lt;Attribute&gt; (equals|greater|smaller| &lt;= | &gt;=) (&lt;Int&gt;|&lt;Float&gt;|&lt;String&gt;|&lt;InputField&gt;))*
+</code></p>
+
+<h4 id="resource-for-model-version-checks">Resource for Model Version Checks</h4>
+<p>The model version should be checked by the apps for all remote connections. Requests are only valid if the server accepts the current model version.</p>
+
+<p><code class="highlighter-rouge">GET /md2_model_version/current</code></p>
+<blockquote>
+  <p><code class="highlighter-rouge">200 OK - &lt;version&gt;</code></p>
+</blockquote>
+
+<p><code class="highlighter-rouge">GET /md2_model_version/is_valid?version= &lt;version&gt;</code></p>
+<blockquote>
+  <p><code class="highlighter-rouge">200 OK - { &quot;isValid&quot;: (true|false) }</code></p>
+</blockquote>
+
+<h3 id="json-format-conventions">JSON Format Conventions</h3>
+<p>**List<entity>:**</entity></p>
+<pre><code class="language-Javascript">{
+	&quot;entityName&quot;: [
+	{
+		&quot;attribute&quot;: &lt;Value type see below&gt;,
+		[...]
+	},
+	{
+		&quot;attribut&quot;: &lt;Value type see below&gt;,
+		[...]
+	} [...]
+	]
+}
+</code></pre>
+<p>having <code class="highlighter-rouge">&lt;Entity&gt;</code> = Entity without root node</p>
+
+<p><strong>Entity:</strong></p>
+<pre><code class="language-Javascript">{
+	&quot;entityName&quot;: [
+		&quot;attribute&quot;: &lt;Value type see below&gt;,
+		[...]
+	}
+}
+</code></pre>
+
+<p><strong>Validation Result:</strong></p>
+<pre><code class="language-Javascript">{
+	&quot;ok&quot;: (true|false),
+	&quot;error&quot;: [
+	{
+		&quot;message&quot;: &quot;Allgemeine Fehlermeldung&quot;,
+		&quot;attributes&quot;: [&quot;attribut1&quot;, &quot;attribut2&quot;]
+	},
+	{
+		&quot;message&quot;: &quot;can’t be blank&quot;,
+		&quot;attributes&quot;: [&quot;forename&quot;, &quot;surname&quot;]
+	}
+	]
+	[...]
+}
+</code></pre>
+
+<p><strong>Data type mapping</strong>:</p>
+
+<p>Format: MD² language data type -&gt; JSON type for attribute values</p>
+
+<ul>
+  <li><code class="highlighter-rouge">Enum</code> -&gt; <code class="highlighter-rouge">Int</code> (index of the currently selected value)</li>
+  <li><code class="highlighter-rouge">Int</code> -&gt; <code class="highlighter-rouge">Number</code></li>
+  <li><code class="highlighter-rouge">Float</code> -&gt; <code class="highlighter-rouge">Number</code></li>
+  <li><code class="highlighter-rouge">Date</code> -&gt; <code class="highlighter-rouge">String</code> (with format “yyyy-mm-ddThh:mm:ss+hh:m”)</li>
+  <li>Everything else -&gt; <code class="highlighter-rouge">String</code></li>
+</ul>
+
+<h3 id="examples">Examples</h3>
+
+<p><em>GET</em> <code class="highlighter-rouge">/customer/first</code> returning one customer</p>
+<pre><code class="language-Javascript">{
+	&quot;customer&quot;: {
+		&quot;__internalId&quot;: &quot;0&quot;,
+		&quot;firstName&quot;: &quot;Ulrich&quot;,
+		&quot;lastName&quot;: &quot;M\u00c3\u00bcller&quot;,
+		&quot;membership&quot;: &quot;1&quot;,
+		&quot;professionalCategory&quot;: &quot;0&quot;
+	}
+}
+</code></pre>
+
+<p><em>GET</em> <code class="highlighter-rouge">/customer</code> returning multiple customers</p>
+<pre><code class="language-Javascript">{
+	&quot;customer&quot;: [
+	{
+		&quot;__internalId&quot;: &quot;0&quot;,
+		&quot;firstName&quot;: &quot;Ulrich&quot;,
+		&quot;lastName&quot;: &quot;M\u00c3\u00bcller&quot;,
+		&quot;membership&quot;: &quot;1&quot;,
+		&quot;professionalCategory&quot;: &quot;0&quot;
+	},
+	{
+		&quot;__internalId&quot;: &quot;0&quot;,
+		&quot;firstName&quot;: &quot;Hans&quot;,
+		&quot;lastName&quot;: &quot;Dampf&quot;,
+		&quot;membership&quot;: &quot;1&quot;,
+		&quot;professionalCategory&quot;: &quot;0&quot;
+	}
+	]
+}
+</code></pre>
+
+<h2 id="whats-next">What’s next</h2>
+<ul>
+  <li><a href="#12_">The structure of the Android generator</a></li>
+  <li><a href="#13_">The structure of the iOS generator</a></li>
+</ul>
+
+      </section>
+    </div>
+
+    <!--FOOTER  -->
+    <div class="outer" id="footer_wrap">
+      <footer class="inner">
+        
+        <p class="copyright">MD² documentation maintained by <a href="http://github.com/wwu-pi">wwu-pi</a></p>
+        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+  
+
+<hr/>
+
+
+
+  
+
+  
+<a name="12_"></a>
+
+	<style type="text/css">
+		#main_content_wrap.outer {
+			display: grid;
+			grid-template-columns:25% 75%;
+		}
+		
+		header.inner, section.inner {
+			max-width:75%;
+		}
+	</style>
+
+    <!--HEADER -->
+    <div class="outer" id="header_wrap">
+        <header class="inner">
+          <a href="http://github.com/wwu-pi/md2-framework" id="forkme_banner">View on GitHub</a>
+
+          <h1 id="project_title">MD² documentation</h1>
+          <h2 id="project_tagline">Model-Driven Mobile Development for cross-platform generation of native mobile apps</h2>
+
+          
+        </header>
+    </div>
+
+    <!--MAIN CONTENT -->
+    <div class="outer" id="main_content_wrap">
+	  <style type="text/css">nav {	margin:25px 0px 50px 0px;}nav ul {	list-style-type: none;	margin-bottom: 0px;}nav ul li {	margin-bottom: 5px;}nav &gt; ul &gt; li {	font-weight: bold;}nav ul li a, nav ul li a:hover, nav ul li a:visited, nav ul li a:focus, nav ul li a:link {	color: black;}nav li.active {	margin-left: -0.5em;padding-left: 0.5em;padding-right: 0.5em;color: #fff;font-weight: bold;background: #7a8288;border-radius: 4px;}nav li.active a {	color: #fff !important;}</style><nav><ul><li class=""><a href="/">MD² documentation</a></li>																																																																																																																																																														<li class="">					<a href="/20_handbook-modeler/">Modeler&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/20_handbook-modeler/220_installation-modeler.html">Setting up your MD² Model Development Environment</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/230_single-apps.html">Getting started with building single apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/240_multiple-apps.html">Developing multiple apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/250_additional_features.html">Advanced features of the MD² language</a>				</li>																																																																								</ul>																												<li class="">					<a href="/40_handbook-dev/">Developer&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/40_handbook-dev/420_installation-dev.html">Development Environment</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/430_getting-started-dev.html">Getting Started with MD² Development</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/440_dsl_semantics.html">DSL semantics</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/450_preprocessor.html">Preprocessor</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/460_backend-generator.html">The backend generator</a>				</li>																																																									<li class="active">					<a href="/40_handbook-dev/470_android-generator.html">Developing MD² apps for Android</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/480_ios-generator.html">Developing MD² apps for iOS</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/490_mapapps.html">map.apps Implementation</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/495_development-todos.html">Development TODOs and ideas for improvements</a>				</li>																					</ul>	</ul></nav>
+      <section class="inner" id="main_content">
+        <h1 id="developing-md-apps-for-android">Developing MD² apps for Android</h1>
+<p>TODO</p>
+
+      </section>
+    </div>
+
+    <!--FOOTER  -->
+    <div class="outer" id="footer_wrap">
+      <footer class="inner">
+        
+        <p class="copyright">MD² documentation maintained by <a href="http://github.com/wwu-pi">wwu-pi</a></p>
+        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+  
+
+<hr/>
+
+
+
+  
+
+  
+<a name="13_"></a>
+
+	<style type="text/css">
+		#main_content_wrap.outer {
+			display: grid;
+			grid-template-columns:25% 75%;
+		}
+		
+		header.inner, section.inner {
+			max-width:75%;
+		}
+	</style>
+
+    <!--HEADER -->
+    <div class="outer" id="header_wrap">
+        <header class="inner">
+          <a href="http://github.com/wwu-pi/md2-framework" id="forkme_banner">View on GitHub</a>
+
+          <h1 id="project_title">MD² documentation</h1>
+          <h2 id="project_tagline">Model-Driven Mobile Development for cross-platform generation of native mobile apps</h2>
+
+          
+        </header>
+    </div>
+
+    <!--MAIN CONTENT -->
+    <div class="outer" id="main_content_wrap">
+	  <style type="text/css">nav {	margin:25px 0px 50px 0px;}nav ul {	list-style-type: none;	margin-bottom: 0px;}nav ul li {	margin-bottom: 5px;}nav &gt; ul &gt; li {	font-weight: bold;}nav ul li a, nav ul li a:hover, nav ul li a:visited, nav ul li a:focus, nav ul li a:link {	color: black;}nav li.active {	margin-left: -0.5em;padding-left: 0.5em;padding-right: 0.5em;color: #fff;font-weight: bold;background: #7a8288;border-radius: 4px;}nav li.active a {	color: #fff !important;}</style><nav><ul><li class=""><a href="/">MD² documentation</a></li>																																																																																																																																																														<li class="">					<a href="/20_handbook-modeler/">Modeler&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/20_handbook-modeler/220_installation-modeler.html">Setting up your MD² Model Development Environment</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/230_single-apps.html">Getting started with building single apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/240_multiple-apps.html">Developing multiple apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/250_additional_features.html">Advanced features of the MD² language</a>				</li>																																																																								</ul>																												<li class="">					<a href="/40_handbook-dev/">Developer&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/40_handbook-dev/420_installation-dev.html">Development Environment</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/430_getting-started-dev.html">Getting Started with MD² Development</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/440_dsl_semantics.html">DSL semantics</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/450_preprocessor.html">Preprocessor</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/460_backend-generator.html">The backend generator</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/470_android-generator.html">Developing MD² apps for Android</a>				</li>																																																									<li class="active">					<a href="/40_handbook-dev/480_ios-generator.html">Developing MD² apps for iOS</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/490_mapapps.html">map.apps Implementation</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/495_development-todos.html">Development TODOs and ideas for improvements</a>				</li>																					</ul>	</ul></nav>
+      <section class="inner" id="main_content">
+        <h1 id="developing-md-apps-for-ios">Developing MD² apps for iOS</h1>
+
+<p>This page gathers information relevant when developing the iOS generators that generate iOS apps.</p>
+
+<p>iOS apps generated by MD2 consist of two parts: a static (generic) library (part of the target platform in MDSD terminology) and the dynamically generated parts that implement the functionality described in models.
+The library is always copied as-is to the generated Xcode project.</p>
+
+<p>In general, a development workflow similar to the following is advisable for the iOS generators, at least in case of larger changes: Modify a generated app to include the desired modifications, essentially utilizing it as a reference implementation. After you are confident about the modifications, adapt the framework, i.e., the iOS generators and the static library as necessary.</p>
+
+<h2 id="md2librar-structure">Md2Librar structure</h2>
+<p>TODO describe current iOS library setup</p>
+
+<h2 id="generator-pecularities">Generator pecularities</h2>
+<p>TODO</p>
+
+      </section>
+    </div>
+
+    <!--FOOTER  -->
+    <div class="outer" id="footer_wrap">
+      <footer class="inner">
+        
+        <p class="copyright">MD² documentation maintained by <a href="http://github.com/wwu-pi">wwu-pi</a></p>
+        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+  
+
+<hr/>
+
+
+
+  
+
+  
+<a name="14_"></a>
+
+	<style type="text/css">
+		#main_content_wrap.outer {
+			display: grid;
+			grid-template-columns:25% 75%;
+		}
+		
+		header.inner, section.inner {
+			max-width:75%;
+		}
+	</style>
+
+    <!--HEADER -->
+    <div class="outer" id="header_wrap">
+        <header class="inner">
+          <a href="http://github.com/wwu-pi/md2-framework" id="forkme_banner">View on GitHub</a>
+
+          <h1 id="project_title">MD² documentation</h1>
+          <h2 id="project_tagline">Model-Driven Mobile Development for cross-platform generation of native mobile apps</h2>
+
+          
+        </header>
+    </div>
+
+    <!--MAIN CONTENT -->
+    <div class="outer" id="main_content_wrap">
+	  <style type="text/css">nav {	margin:25px 0px 50px 0px;}nav ul {	list-style-type: none;	margin-bottom: 0px;}nav ul li {	margin-bottom: 5px;}nav &gt; ul &gt; li {	font-weight: bold;}nav ul li a, nav ul li a:hover, nav ul li a:visited, nav ul li a:focus, nav ul li a:link {	color: black;}nav li.active {	margin-left: -0.5em;padding-left: 0.5em;padding-right: 0.5em;color: #fff;font-weight: bold;background: #7a8288;border-radius: 4px;}nav li.active a {	color: #fff !important;}</style><nav><ul><li class=""><a href="/">MD² documentation</a></li>																																																																																																																																																														<li class="">					<a href="/20_handbook-modeler/">Modeler&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/20_handbook-modeler/220_installation-modeler.html">Setting up your MD² Model Development Environment</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/230_single-apps.html">Getting started with building single apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/240_multiple-apps.html">Developing multiple apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/250_additional_features.html">Advanced features of the MD² language</a>				</li>																																																																								</ul>																												<li class="">					<a href="/40_handbook-dev/">Developer&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/40_handbook-dev/420_installation-dev.html">Development Environment</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/430_getting-started-dev.html">Getting Started with MD² Development</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/440_dsl_semantics.html">DSL semantics</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/450_preprocessor.html">Preprocessor</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/460_backend-generator.html">The backend generator</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/470_android-generator.html">Developing MD² apps for Android</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/480_ios-generator.html">Developing MD² apps for iOS</a>				</li>																																																									<li class="active">					<a href="/40_handbook-dev/490_mapapps.html">map.apps Implementation</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/495_development-todos.html">Development TODOs and ideas for improvements</a>				</li>																					</ul>	</ul></nav>
+      <section class="inner" id="main_content">
+        <h1 id="mapapps-implementation">map.apps Implementation</h1>
+
+<p>Information on map.apps can be found in the <a href="https://github.com/ps-md2/md2-documentation">project seminar handbook</a>.
+Please note that meanwhile general information on MD² might be outdated.</p>
+
+      </section>
+    </div>
+
+    <!--FOOTER  -->
+    <div class="outer" id="footer_wrap">
+      <footer class="inner">
+        
+        <p class="copyright">MD² documentation maintained by <a href="http://github.com/wwu-pi">wwu-pi</a></p>
+        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+  
+
+<hr/>
+
+
+
+  
+
+  
+<a name="15_"></a>
+
+	<style type="text/css">
+		#main_content_wrap.outer {
+			display: grid;
+			grid-template-columns:25% 75%;
+		}
+		
+		header.inner, section.inner {
+			max-width:75%;
+		}
+	</style>
+
+    <!--HEADER -->
+    <div class="outer" id="header_wrap">
+        <header class="inner">
+          <a href="http://github.com/wwu-pi/md2-framework" id="forkme_banner">View on GitHub</a>
+
+          <h1 id="project_title">MD² documentation</h1>
+          <h2 id="project_tagline">Model-Driven Mobile Development for cross-platform generation of native mobile apps</h2>
+
+          
+        </header>
+    </div>
+
+    <!--MAIN CONTENT -->
+    <div class="outer" id="main_content_wrap">
+	  <style type="text/css">nav {	margin:25px 0px 50px 0px;}nav ul {	list-style-type: none;	margin-bottom: 0px;}nav ul li {	margin-bottom: 5px;}nav &gt; ul &gt; li {	font-weight: bold;}nav ul li a, nav ul li a:hover, nav ul li a:visited, nav ul li a:focus, nav ul li a:link {	color: black;}nav li.active {	margin-left: -0.5em;padding-left: 0.5em;padding-right: 0.5em;color: #fff;font-weight: bold;background: #7a8288;border-radius: 4px;}nav li.active a {	color: #fff !important;}</style><nav><ul><li class=""><a href="/">MD² documentation</a></li>																																																																																																																																																														<li class="">					<a href="/20_handbook-modeler/">Modeler&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/20_handbook-modeler/220_installation-modeler.html">Setting up your MD² Model Development Environment</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/230_single-apps.html">Getting started with building single apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/240_multiple-apps.html">Developing multiple apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/250_additional_features.html">Advanced features of the MD² language</a>				</li>																																																																								</ul>																												<li class="">					<a href="/40_handbook-dev/">Developer&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/40_handbook-dev/420_installation-dev.html">Development Environment</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/430_getting-started-dev.html">Getting Started with MD² Development</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/440_dsl_semantics.html">DSL semantics</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/450_preprocessor.html">Preprocessor</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/460_backend-generator.html">The backend generator</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/470_android-generator.html">Developing MD² apps for Android</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/480_ios-generator.html">Developing MD² apps for iOS</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/490_mapapps.html">map.apps Implementation</a>				</li>																																																									<li class="active">					<a href="/40_handbook-dev/495_development-todos.html">Development TODOs and ideas for improvements</a>				</li>																					</ul>	</ul></nav>
+      <section class="inner" id="main_content">
+        <h1 id="development-todos-and-ideas-for-improvements">Development TODOs and ideas for improvements</h1>
+
+<ul>
+  <li>This list might be moved to Github issues allowing for discussion.</li>
+</ul>
+
+<h2 id="dsl-improvements">DSL improvements</h2>
+<ul>
+  <li>Move content providers to model layer
+    <ul>
+      <li>avoid bi-directional reference between controller layer (current position of content providers) and view layer (in particular autolayout which uses these providers).</li>
+    </ul>
+  </li>
+  <li>renaming of workflow elements should be allowed in the model in a way that different apps can use the same workflow element using different names for them
+    <ul>
+      <li>This way, it would be possible to determine very precisely which workflow element in which app is to be started rather than starting a workflow element which can be processed by any app that has the respective workflow element assigned.</li>
+    </ul>
+  </li>
+  <li>return values when external webservices are called
+    <ul>
+      <li>This would enable programmers to include almost arbitrary functionality in the model without the need to offer it as explicit construct in the DSL. The only requirement is that return values comply with the data types supported by the MD² framework to ensure that they can be used in a purposeful way.</li>
+    </ul>
+  </li>
+  <li>call other external applications apart from REST</li>
+  <li>allow the definition of custom icons for startable elements</li>
+  <li>support white spaces in project names</li>
+  <li>support temporary offline usage</li>
+  <li>access foreign apps such as the phone, camera and GPS</li>
+  <li>customizable columns within the list of open issues</li>
+  <li>unify UploadedImageOutput and Image fields</li>
+</ul>
+
+<h2 id="tooling-improvements">Tooling improvements</h2>
+<ul>
+  <li>Improve validators
+    <ul>
+      <li>check whether the fire event action in a workflow element is the last action and warn if it is not. This can be helpful, for example, when a save action follows a fire event action. In this case, saving data will not be performed, since the fire event action immediately forwards control to the next workflow element.</li>
+      <li>throw warnings or errors when a controller maps something to view elements which are never used by the controller, e.g. mapping something to a view which only appears in a different app</li>
+      <li>check whether all content providers are saved, in order to ensure that a modeller does not forget any save actions.</li>
+    </ul>
+  </li>
+  <li>provide auto formatting in the IDE</li>
+</ul>
+
+<h2 id="documentation">Documentation</h2>
+<ul>
+  <li><a href="440_dsl-semantics.html">Elaborate on View layer</a></li>
+  <li><a href="#8_">Getting Started with MD² Development</a></li>
+  <li><a href="#12_">Android generator</a></li>
+  <li><a href="#13_">iOS generator</a></li>
+</ul>
+
+<h2 id="preprocessor-improvements">Preprocessor improvements</h2>
+<ul>
+  <li>generate only relevant content for each app, e.g. only generate entities which are used by the apps,</li>
+</ul>
+
+<h2 id="backend-generator-improvements">Backend generator improvements</h2>
+<ul>
+  <li>Check gradle build without manually passing jar files</li>
+  <li>Provide backend as Docker container</li>
+  <li>File upload only supports jpg</li>
+</ul>
+
+<h2 id="android-generator-improvements">Android generator improvements</h2>
+<ul>
+  <li>extend to feature parity with MD² language</li>
+  <li>Implement EntitySelector</li>
+</ul>
+
+<h2 id="ios-generator-modifications">iOS generator modifications</h2>
+<ul>
+  <li>extend to feature parity with MD² language</li>
+  <li>Implement EntitySelector</li>
+</ul>
+
+      </section>
+    </div>
+
+    <!--FOOTER  -->
+    <div class="outer" id="footer_wrap">
+      <footer class="inner">
+        
+        <p class="copyright">MD² documentation maintained by <a href="http://github.com/wwu-pi">wwu-pi</a></p>
+        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+  
+
+<hr/>
+
+
+
+  
+
+  
+<a name="16_"></a>
+
+	<style type="text/css">
+		#main_content_wrap.outer {
+			display: grid;
+			grid-template-columns:25% 75%;
+		}
+		
+		header.inner, section.inner {
+			max-width:75%;
+		}
+	</style>
+
+    <!--HEADER -->
+    <div class="outer" id="header_wrap">
+        <header class="inner">
+          <a href="http://github.com/wwu-pi/md2-framework" id="forkme_banner">View on GitHub</a>
+
+          <h1 id="project_title">MD² documentation</h1>
+          <h2 id="project_tagline">Model-Driven Mobile Development for cross-platform generation of native mobile apps</h2>
+
+          
+        </header>
+    </div>
+
+    <!--MAIN CONTENT -->
+    <div class="outer" id="main_content_wrap">
+	  <style type="text/css">nav {	margin:25px 0px 50px 0px;}nav ul {	list-style-type: none;	margin-bottom: 0px;}nav ul li {	margin-bottom: 5px;}nav &gt; ul &gt; li {	font-weight: bold;}nav ul li a, nav ul li a:hover, nav ul li a:visited, nav ul li a:focus, nav ul li a:link {	color: black;}nav li.active {	margin-left: -0.5em;padding-left: 0.5em;padding-right: 0.5em;color: #fff;font-weight: bold;background: #7a8288;border-radius: 4px;}nav li.active a {	color: #fff !important;}</style><nav><ul><li class=""><a href="/">MD² documentation</a></li>																																																																																																																																																														<li class="">					<a href="/20_handbook-modeler/">Modeler&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/20_handbook-modeler/220_installation-modeler.html">Setting up your MD² Model Development Environment</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/230_single-apps.html">Getting started with building single apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/240_multiple-apps.html">Developing multiple apps</a>				</li>																																																									<li class="">					<a href="/20_handbook-modeler/250_additional_features.html">Advanced features of the MD² language</a>				</li>																																																																								</ul>																												<li class="active">					<a href="/40_handbook-dev/">Developer&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="/40_handbook-dev/420_installation-dev.html">Development Environment</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/430_getting-started-dev.html">Getting Started with MD² Development</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/440_dsl_semantics.html">DSL semantics</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/450_preprocessor.html">Preprocessor</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/460_backend-generator.html">The backend generator</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/470_android-generator.html">Developing MD² apps for Android</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/480_ios-generator.html">Developing MD² apps for iOS</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/490_mapapps.html">map.apps Implementation</a>				</li>																																																									<li class="">					<a href="/40_handbook-dev/495_development-todos.html">Development TODOs and ideas for improvements</a>				</li>																					</ul>	</ul></nav>
+      <section class="inner" id="main_content">
+        <h1 id="introduction-to-the-developers-handbook">Introduction to the Developer’s Handbook</h1>
+
+<p>This section is intended to provide MD² developers with detailed information necessary to further develop the framework.
+In its current version, this handbook contains information about the</p>
+
+<ul>
+  <li><a href="#7_">Installation procedure</a>,</li>
+  <li><a href="#8_">Getting started with the structure of the framework</a>,</li>
+  <li><a href="440_dsl-semantics.html">DSL semantics</a>,</li>
+  <li><a href="#10_">the preprocessor</a>,</li>
+  <li><a href="#11_">the structure of the backend generator</a>,</li>
+  <li><a href="#12_">the structure of the Android generator</a>,</li>
+  <li><a href="#13_">the structure of the iOS generator</a>, and</li>
+  <li><a href="#14_">the structure of the mapapps backend and generator</a>.</li>
+</ul>
+
+<p>The whole development project can be found in this repository, additional tools and example apps can be obtained from separate repositories belonging to the project’s GitHub organisation.</p>
+
+<p>Additional (but likely outdated!) information may be found in the <a href="https://github.com/ps-md2/md2-documentation">project seminar handbook</a>, in particular related to the mapapps platform.</p>
+
+      </section>
+    </div>
+
+    <!--FOOTER  -->
+    <div class="outer" id="footer_wrap">
+      <footer class="inner">
+        
+        <p class="copyright">MD² documentation maintained by <a href="http://github.com/wwu-pi">wwu-pi</a></p>
+        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+  
+
+<hr/>
+
+
+
+  
+
+  
+<a name="17_"></a>
+
+	<style type="text/css">
+		#main_content_wrap.outer {
+			display: grid;
+			grid-template-columns:25% 75%;
+		}
+		
+		header.inner, section.inner {
+			max-width:75%;
+		}
+	</style>
+
+    <!--HEADER -->
+    <div class="outer" id="header_wrap">
+        <header class="inner">
+          <a href="http://github.com/wwu-pi/md2-framework" id="forkme_banner">View on GitHub</a>
+
+          <h1 id="project_title">MD² documentation</h1>
+          <h2 id="project_tagline">Model-Driven Mobile Development for cross-platform generation of native mobile apps</h2>
+
+          
+        </header>
+    </div>
+
+    <!--MAIN CONTENT -->
+    <div class="outer" id="main_content_wrap">
+	  <style type="text/css">nav {	margin:25px 0px 50px 0px;}nav ul {	list-style-type: none;	margin-bottom: 0px;}nav ul li {	margin-bottom: 5px;}nav &gt; ul &gt; li {	font-weight: bold;}nav ul li a, nav ul li a:hover, nav ul li a:visited, nav ul li a:focus, nav ul li a:link {	color: black;}nav li.active {	margin-left: -0.5em;padding-left: 0.5em;padding-right: 0.5em;color: #fff;font-weight: bold;background: #7a8288;border-radius: 4px;}nav li.active a {	color: #fff !important;}</style><nav><ul><li class="active"><a href="/">MD² documentation</a></li>																																																																																																																																																														<li class="">					<a href="/20_handbook-modeler/">Modeler&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="#2_">Setting up your MD² Model Development Environment</a>				</li>																																																									<li class="">					<a href="#3_">Getting started with building single apps</a>				</li>																																																									<li class="">					<a href="#4_">Developing multiple apps</a>				</li>																																																									<li class="">					<a href="#5_">Advanced features of the MD² language</a>				</li>																																																																								</ul>																												<li class="">					<a href="/40_handbook-dev/">Developer&apos;s Handbook</a>				</li>																																																																								<ul>																												<li class="">					<a href="#7_">Development Environment</a>				</li>																																																									<li class="">					<a href="#8_">Getting Started with MD² Development</a>				</li>																																																									<li class="">					<a href="#9_">DSL semantics</a>				</li>																																																									<li class="">					<a href="#10_">Preprocessor</a>				</li>																																																									<li class="">					<a href="#11_">The backend generator</a>				</li>																																																									<li class="">					<a href="#12_">Developing MD² apps for Android</a>				</li>																																																									<li class="">					<a href="#13_">Developing MD² apps for iOS</a>				</li>																																																									<li class="">					<a href="#14_">map.apps Implementation</a>				</li>																																																									<li class="">					<a href="#15_">Development TODOs and ideas for improvements</a>				</li>																					</ul>	</ul></nav>
+      <section class="inner" id="main_content">
+        <h1 id="documentation-on-md">Documentation on MD²</h1>
+
+<p>MD² is a framework for model-driven development of mobile business applications.
+It provides a domain specific language (DSL) for the specification of a textual model.
+Such a model can describe characteristics of a business scenario, including the communication between different apps and sequences of actions within each app, the views to be displayed and the data to be stored.
+A complete MD² model consists of four files, each representing a certain perspective – model, view, controller as well as workflow – on the application(s) to be generated.</p>
+
+<p>In addition to the DSL, the MD² framework comprises a generator, which uses models specified in the DSL to generate source code.
+The code generation process creates source code for all apps that are specified in the model as well as a backend that handles their communication via web services as well as the communication with external applications.
+Originally, the MD² framework supported code generation for Android and iOS, but also includes a generator for a JavaScript-based web-platform called map.apps.</p>
+
+<p>This handbook comprises a modeler’s handbook and a developer’s handbook.
+The <a href="20_handbook-modeler/">modeler’s handbook</a> is targeted towards people who want to use the MD² framework to create models and generate code from them.
+It describes the constructs provided by the DSL and how to use them.
+Furthermore, it explains how the applications generated by the framework can be deployed.
+The <a href="40_handbook-dev/">developer’s handbook</a> aims to provide all information that is necessary for further development of and with the MD² framework.</p>
+
+      </section>
+    </div>
+
+    <!--FOOTER  -->
+    <div class="outer" id="footer_wrap">
+      <footer class="inner">
+        
+        <p class="copyright">MD² documentation maintained by <a href="http://github.com/wwu-pi">wwu-pi</a></p>
+        
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+  </body>
+</html>
