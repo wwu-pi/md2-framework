@@ -42,7 +42,7 @@ class GradleGen {
 		apply plugin: 'com.android.application'
 		
 		android {
-		    compileSdkVersion 25
+		    compileSdkVersion 26
 		
 		    defaultConfig {
 		        applicationId "«appId»"
