@@ -121,7 +121,7 @@ class «className»: MD2Action {
 			codeFragment«actionCounter».execute() 
 		«ELSE»
 		«««Set a simple expression as value to a contentProvider»»»
-		
+
 			MD2ContentProviderRegistry.instance.getContentProvider("«task.pathDefinition.contentProviderRef.name»")!.setValue(
 				"«task.pathDefinition.tail.attributeRef.name»",
 				value: MD2String(«SimpleExpressionUtil.getStringValue(task.source)»)
@@ -212,7 +212,7 @@ class «className»: MD2Action {
 			}
 			«ENDFOR»
 			else {
-			«IF fragment.^else != null»
+			«IF fragment.^else !== null»
 				«FOR i : 0..<fragment.^else.codeFragments.length»
 				«generateCodeFragment(actionCounter + "_else_" + i, fragment.^else.codeFragments.get(i))»
 				«ENDFOR»

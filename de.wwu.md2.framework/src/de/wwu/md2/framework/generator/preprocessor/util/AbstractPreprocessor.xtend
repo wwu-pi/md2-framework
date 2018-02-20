@@ -96,17 +96,17 @@ abstract class AbstractPreprocessor {
 			switch modelLayer {
 				View: {
 					view.viewElements += modelLayer.viewElements
-					if((view.eContainer as MD2Model).package == null) (view.eContainer as MD2Model).package = md2model.
+					if((view.eContainer as MD2Model).package === null) (view.eContainer as MD2Model).package = md2model.
 						package
 				}
 				Model: {
 					model.modelElements += modelLayer.modelElements
-					if((model.eContainer as MD2Model).package == null) (model.eContainer as MD2Model).package = md2model.
+					if((model.eContainer as MD2Model).package === null) (model.eContainer as MD2Model).package = md2model.
 						package
 				}
 				Controller: {
 					controller.controllerElements += modelLayer.controllerElements
-					if((controller.eContainer as MD2Model).package == null) (controller.eContainer as MD2Model).package = md2model.
+					if((controller.eContainer as MD2Model).package === null) (controller.eContainer as MD2Model).package = md2model.
 						package
 				}
 				Workflow: {

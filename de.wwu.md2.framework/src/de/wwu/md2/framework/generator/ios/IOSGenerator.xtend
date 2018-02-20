@@ -6,22 +6,19 @@ import de.wwu.md2.framework.generator.ios.controller.IOSController
 import de.wwu.md2.framework.generator.ios.controller.IOSCustomAction
 import de.wwu.md2.framework.generator.ios.misc.DataModel
 import de.wwu.md2.framework.generator.ios.misc.ProjectBundle
+import de.wwu.md2.framework.generator.ios.misc.TestTarget
 import de.wwu.md2.framework.generator.ios.model.IOSContentProvider
 import de.wwu.md2.framework.generator.ios.model.IOSEntity
 import de.wwu.md2.framework.generator.ios.model.IOSEnum
-import de.wwu.md2.framework.generator.ios.util.FileSystemUtil
 import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 import de.wwu.md2.framework.generator.ios.view.WidgetMapping
 import de.wwu.md2.framework.generator.ios.workflow.IOSWorkflowEvent
 import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.SimpleType
-import java.io.File
-import org.eclipse.xtext.generator.IFileSystemAccessExtension2
 
 import static de.wwu.md2.framework.generator.ios.Settings.*
 import static de.wwu.md2.framework.util.MD2Util.*
-import de.wwu.md2.framework.generator.ios.misc.TestTarget
 
 /**
  * Main generator class for the Swift-iOS generation process. 

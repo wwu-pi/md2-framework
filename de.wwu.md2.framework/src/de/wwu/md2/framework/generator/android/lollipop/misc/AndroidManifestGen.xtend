@@ -1,7 +1,6 @@
 package de.wwu.md2.framework.generator.android.lollipop.misc
 
 import de.wwu.md2.framework.mD2.App
-import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.ViewFrame
 
 class AndroidManifestGen {	
@@ -10,10 +9,8 @@ class AndroidManifestGen {
 	def static String generateProjectAndroidManifest(App app, Iterable<ViewFrame> rootViews, String packageName)'''
 		<?xml version="1.0" encoding="utf-8"?>
 		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.misc.AndroidManifest.generateProjectAndroidManifest() -->
-		<manifest xmlns:android="http://schemas.android.com/apk/res/android"		
+		<manifest xmlns:android="http://schemas.android.com/apk/res/android" 
 		    package="«packageName»" >
-		    
-	
 		     
 		    <application
 		        android:name=".«app.name»"

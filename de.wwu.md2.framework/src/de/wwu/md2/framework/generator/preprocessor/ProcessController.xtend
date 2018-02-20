@@ -78,9 +78,9 @@ class ProcessController extends AbstractPreprocessor {
 		var remoteConnection = main.defaultConnection
 		
 		for (contentProvider : contentProviders) {
-			if (contentProvider.^default && remoteConnection == null) {
+			if (contentProvider.^default && remoteConnection === null) {
 				contentProvider.setLocal(true)
-			} else if (contentProvider.^default && remoteConnection != null) {
+			} else if (contentProvider.^default && remoteConnection !== null) {
 				contentProvider.setConnection(remoteConnection)
 			}
 		}
@@ -145,7 +145,7 @@ class ProcessController extends AbstractPreprocessor {
 
 		val initAction = wfe.initActions.filter(CustomAction).head
 		
-		if (wfe.defaultProcessChain != null)
+		if (wfe.defaultProcessChain !== null)
 		{
 			val callTask = factory.createCallTask
 			val simpleActionRef = factory.createSimpleActionRef

@@ -35,7 +35,7 @@ class MD2BackendUtil {
 	 * If set retrieve the alias; otherwise the name of the referenced attribute
 	 */
 	def static String getParamAlias(InvokeWSParam wsParam){
-		if (wsParam.alias != null){
+		if (wsParam.alias !== null){
 			return wsParam.alias
 		}
 		else{
@@ -81,13 +81,13 @@ class MD2BackendUtil {
 	 */
 	def static dispatch Set<Entity> getAllEntities(ContentProviderPath path){
 		var rootType = path.contentProviderRef.type
-		if (rootType != null) {
+		if (rootType !== null) {
 			var modelElement = (rootType as ReferencedModelType).entity
-			if (modelElement == null) {
+			if (modelElement === null) {
 				return new HashSet<Entity>()
 			} else {
 				var list = rootType.eAllContents.filter(Entity).toSet
-				if (modelElement as Entity != null) {
+				if (modelElement as Entity !== null) {
 					list.add(modelElement as Entity)
 				}
 				return list
@@ -118,7 +118,7 @@ class MD2BackendUtil {
 	 */
 	def static Entity getContentProviderEntity(ContentProvider contentProvider){
 		 var refModelType = contentProvider.type as ReferencedModelType
-		 if (refModelType != null){
+		 if (refModelType !== null){
 		 	return refModelType.entity as Entity
 		 } else {
 		 	return null
@@ -195,7 +195,7 @@ class MD2BackendUtil {
 	 * Retrieve the event description if set, otherwise default
 	 */
 	def static String getEventDescription(WorkflowElementEntry wfeEntry){
-		if (wfeEntry.eventDesc != null){
+		if (wfeEntry.eventDesc !== null){
 			wfeEntry.eventDesc.toString()
 		} else {
 			DEFAULT_INVOKE_EVENT_DESCRIPTION	

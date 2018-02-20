@@ -32,8 +32,6 @@ import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil
 
-import static de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
-
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 class ProcessView extends AbstractPreprocessor {
@@ -329,7 +327,7 @@ class ProcessView extends AbstractPreprocessor {
 								GridLayoutPane: childElement.params.filter(WidthParam).last
 								AlternativesPane: childElement.params.filter(WidthParam).last
 							}
-							if (widthParam == null) {
+							if (widthParam === null) {
 								widthParam = factory.createWidthParam
 								switch(childElement) {
 									GridLayoutPane: childElement.params.add(widthParam)
@@ -395,7 +393,7 @@ class ProcessView extends AbstractPreprocessor {
 					GridLayoutPane: containerElement.params.filter(WidthParam).last
 					AlternativesPane: containerElement.params.filter(WidthParam).last
 				}
-				if(widthParam == null) {
+				if(widthParam === null) {
 					widthParam = factory.createWidthParam
 					switch(containerElement) {
 						GridLayoutPane: containerElement.params.add(widthParam)

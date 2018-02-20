@@ -18,8 +18,8 @@ class SQLiteGen {
 		
 		public class Md2DataContract {
 		
-		    public Md2DataContract() {
-		    }
+			public Md2DataContract() {
+			}
 		
 		«FOR e : entities»
 			public static abstract class «e.name.toFirstUpper»Entry implements BaseColumns {
@@ -73,41 +73,41 @@ class SQLiteGen {
 
 			public Md2SQLiteHelperImpl(Context context) {
 				super(context, DATABASE_NAME, null, DATABASE_VERSION);
-		    }
+			}
 		
 		
-		    @Override
-		    public void onCreate(SQLiteDatabase database) {
-		    	«FOR e : entities»
-		    		database.execSQL(SQL_CREATE_«e.name.toUpperCase»_ENTRIES);
+			@Override
+			public void onCreate(SQLiteDatabase database) {
+				«FOR e : entities»
+					database.execSQL(SQL_CREATE_«e.name.toUpperCase»_ENTRIES);
 				«ENDFOR»
-		    }
+			}
 		
-		    @Override
-		    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		    	«FOR e : entities»
-		    		db.execSQL(SQL_DELETE_«e.name.toUpperCase»_ENTRIES);
+			@Override
+			public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+				«FOR e : entities»
+					db.execSQL(SQL_DELETE_«e.name.toUpperCase»_ENTRIES);
 				«ENDFOR»
-		        onCreate(db);		
-		    }
+				onCreate(db);		
+			}
 		
-		    @Override
-		    public SQLiteDatabase open(boolean writeAccess) {
-		        return (writeAccess) ? this.getWritableDatabase() : this.getReadableDatabase();
-		    }
+			@Override
+			public SQLiteDatabase open(boolean writeAccess) {
+				return (writeAccess) ? this.getWritableDatabase() : this.getReadableDatabase();
+			}
 		
-		    @Override
-		    public String[] getAllColumns(String typeName) {
-		    	if(typeName == null) return null;
-		        switch (typeName) {
-		        	«FOR e : entities»
-		        	case "«e.name.toFirstUpper»": {
-		        		return this.all«e.name.toFirstUpper»Columns;
-		        	}
+			@Override
+			public String[] getAllColumns(String typeName) {
+				if(typeName == null) return null;
+				switch (typeName) {
+					«FOR e : entities»
+					case "«e.name.toFirstUpper»": {
+						return this.all«e.name.toFirstUpper»Columns;
+					}
 					«ENDFOR»
-		        }
-		        return null;
-		    }
+				}
+				return null;
+			}
 		}
 	'''
 	
@@ -321,127 +321,106 @@ import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Entity;
 
 import «mainPackage».«app.name»;
 
-/**
- * Created by felix_000 on 19.05.2017.
- */
-
-
 public  class Md2OrmLiteDatastore<T extends  Md2Entity> extends AbstractMd2OrmLiteDatastore<T> {
 
-private String entityType;
-private DatabaseHelper databaseHelper;
-
-	Dao<T , Integer> myDao;
-	   private  SimpleDateFormat simpleDateFormat;
-
-	public Md2OrmLiteDatastore(String entity){
-	this.entityType=entity;
-	    initDatabaseHelper(«app.name».getAppContext());
-	     this.simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	        this.simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+	private String entityType;
+	private DatabaseHelper databaseHelper;
+	
+		Dao<T , Integer> myDao;
+		   private  SimpleDateFormat simpleDateFormat;
+	
+		public Md2OrmLiteDatastore(String entity){
+		this.entityType=entity;
+			initDatabaseHelper(«app.name».getAppContext());
+			 this.simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				this.simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+		}
+	
+	public void initDatabaseHelper(Context context){
+		databaseHelper = OpenHelperManager.getHelper(context,DatabaseHelper.class);
 	}
-
-public void initDatabaseHelper(Context context){
-    databaseHelper = OpenHelperManager.getHelper(context,DatabaseHelper.class);
+	
+	public DatabaseHelper getHelper() {
+		return databaseHelper;
+	}
+	
+	public Dao<T, Integer> getMyDao(){
+		if(myDao==null) {
+			myDao= this.getHelper().getDaoByName(entityType);
+		}
+		return myDao;	   
+	}
+	
+	public List<T> loadAll(){
+		List<T> all= new ArrayList<T>();
+		try {
+		   all=  getMyDao().queryForAll();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return all;
+	}
+	
+	@Override
+	public Where<T, Integer> whereBuilder(Expression exp, Where<T, Integer> where ){
+		if (exp != null) {
+	
+			if (exp instanceof AtomicExpression) {
+				AtomicExpression aexp = (AtomicExpression) exp;
+			  switch (aexp.getOperator()) {
+				  case EQUAL:
+					  try {
+						  where.eq((aexp).getLeftOperand(), aexp.getRightOperand());
+					  } catch (SQLException e) {
+						  e.printStackTrace();
+					  }
+					  break;
+				  case GREATEREQUAL:
+					  try {
+						  where.ge((aexp).getLeftOperand(), aexp.getRightOperand());
+					  } catch (SQLException e) {
+						  e.printStackTrace();
+					  }
+					  break;
+				  case LESSEQUAL:
+					  try {
+						  where.le((aexp).getLeftOperand(), aexp.getRightOperand());
+					  } catch (SQLException e) {
+						  e.printStackTrace();
+					  }
+					  break;
+				  case LESS:
+					  try {
+						  where.lt((aexp).getLeftOperand(), aexp.getRightOperand());
+					  } catch (SQLException e) {
+						  e.printStackTrace();
+					  }
+					  break;
+				  case GREATER:
+					  try {
+						  where.gt((aexp).getLeftOperand(), aexp.getRightOperand());
+					  } catch (SQLException e) {
+						  e.printStackTrace();
+					  }
+					  break;
+				}
+			} else {
+				CombinedExpression cexp = (CombinedExpression) exp;
+				whereBuilder(cexp.getLeftExpression(),where);
+				whereBuilder(cexp.getRightExpression(),where);
+				switch (cexp.getJunction()) {
+					case AND:
+						where.and(2);
+						break;
+					case OR:
+						where.or(2);
+						break;
+				}
+			}
+		}
+		return where;
+	}
 }
-
-public DatabaseHelper getHelper() {
-
-return databaseHelper;
-}
-
-
-
-public Dao<T, Integer> getMyDao(){
-   if(myDao==null) {
-   myDao= this.getHelper().getDaoByName(entityType);
-   }
-  return myDao;	   
-}
-
-
-
-public List<T> loadAll(){
-    List<T> all= new ArrayList<T>();
-        try {
-           all=  getMyDao().queryForAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return all;
-    }
-
-
-@Override
-public Where<T, Integer> whereBuilder(Expression exp, Where<T, Integer> where ){
-    if (exp != null) {
-
-        if (exp instanceof AtomicExpression) {
-            AtomicExpression aexp = (AtomicExpression) exp;
-          switch (aexp.getOperator()) {
-              case EQUAL:
-                  try {
-                      where.eq((aexp).getLeftOperand(), aexp.getRightOperand());
-                  } catch (SQLException e) {
-                      e.printStackTrace();
-                  }
-                  break;
-              case GREATEREQUAL:
-                  try {
-                      where.ge((aexp).getLeftOperand(), aexp.getRightOperand());
-                  } catch (SQLException e) {
-                      e.printStackTrace();
-                  }
-                  break;
-              case LESSEQUAL:
-                  try {
-                      where.le((aexp).getLeftOperand(), aexp.getRightOperand());
-                  } catch (SQLException e) {
-                      e.printStackTrace();
-                  }
-                  break;
-              case LESS:
-                  try {
-                      where.lt((aexp).getLeftOperand(), aexp.getRightOperand());
-                  } catch (SQLException e) {
-                      e.printStackTrace();
-                  }
-                  break;
-              case GREATER:
-                  try {
-                      where.gt((aexp).getLeftOperand(), aexp.getRightOperand());
-                  } catch (SQLException e) {
-                      e.printStackTrace();
-                  }
-                  break;
-
-          }
-        } else {
-            CombinedExpression cexp = (CombinedExpression) exp;
-            whereBuilder(cexp.getLeftExpression(),where);
-            whereBuilder(cexp.getRightExpression(),where);
-            switch (cexp.getJunction()) {
-                case AND:
-                    where.and(2);
-                    break;
-                case OR:
-                    where.or(2);
-                    break;
-            }
-
-        }
-
-    }
-    return where;
-}
-
-
-
-}
-
-
-
-
 
 '''		
 }

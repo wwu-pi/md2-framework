@@ -28,7 +28,7 @@ import de.wwu.md2.framework.mD2.RemoteConnection
 import de.wwu.md2.framework.mD2.SimpleType
 import de.wwu.md2.framework.mD2.StandardValidator
 import de.wwu.md2.framework.mD2.TabTitleParam
-import de.wwu.md2.framework.mD2.ViewElement
+import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import java.util.Collection
 import java.util.HashMap
@@ -40,8 +40,6 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameProvider
-import de.wwu.md2.framework.mD2.WorkflowElement
-import de.wwu.md2.framework.mD2.ViewElementType
 
 class MD2GeneratorUtil {
 	
@@ -77,19 +75,19 @@ class MD2GeneratorUtil {
 	 * @return A name that identifies the view element uniquely or null if the parameter was null.
 	 */
 	def static getName(ViewElementType obj) {
-		if (obj == null) {
+		if (obj === null) {
 			return null
 		}
 		
-		if(qualifiedNameProvider == null) {
+		if(qualifiedNameProvider === null) {
 			qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider
 		}
-		if(qualifiedNameToNameMapping == null) {
+		if(qualifiedNameToNameMapping === null) {
 			qualifiedNameToNameMapping = newHashMap
 		}
 		
 		// Fix problems for Spacers which have no name
-		if(obj.name == null) {
+		if(obj.name === null) {
 			obj.name = IOSGeneratorUtil.randomId()
 		}
 		var name = obj.name
@@ -114,7 +112,7 @@ class MD2GeneratorUtil {
 	 * @return A name that identifies the action uniquely or null if the parameter was null.
 	 */
 	def static getName(Action obj) {
-		if (obj == null) {
+		if (obj === null) {
 			return null
 		}
 		
@@ -156,7 +154,7 @@ class MD2GeneratorUtil {
 	 */
 	def static getViewOfGUIElement(Collection<ContainerElement> views, ViewGUIElement guiElement) {
 		var EObject obj = guiElement
-		while(!views.contains(obj) && obj != null) { obj = obj.eContainer }
+		while(!views.contains(obj) && obj !== null) { obj = obj.eContainer }
 		obj as ContainerElement
 	}
 	
@@ -199,13 +197,13 @@ class MD2GeneratorUtil {
 	
 	def static Attribute getReferencedAttribute(PathDefinition pathDefinition) {
 		val PathTail lastPathTail = getLastPathTail(pathDefinition)
-		if (lastPathTail == null) throw new IllegalArgumentException("Missing Attribute in PathDefinition")
+		if (lastPathTail === null) throw new IllegalArgumentException("Missing Attribute in PathDefinition")
 		lastPathTail.attributeRef
 	}
 	
 	def static PathTail getLastPathTail(PathDefinition pathDefinition) {
 		var PathTail lastPathTail = pathDefinition.getTail()
-		while (lastPathTail?.getTail() != null) {
+		while (lastPathTail?.getTail() !== null) {
 			lastPathTail = lastPathTail.getTail()
 		}
 		lastPathTail
@@ -213,7 +211,7 @@ class MD2GeneratorUtil {
 	
 	def static equals(PathDefinition p1, PathDefinition p2) {
 		if (p1 == p2) return true
-		if (p1 == null || p2 == null) return false
+		if (p1 === null || p2 === null) return false
 		if (p1 instanceof ContentProviderPath && p2 instanceof ContentProviderPath) {
 			val contentProvider1 = (p1 as ContentProviderPath).contentProviderRef
 			val contentProvider2 = (p2 as ContentProviderPath).contentProviderRef
@@ -237,8 +235,8 @@ class MD2GeneratorUtil {
 		var tail1 = p1.tail
 		var tail2 = p2.tail		
 		while (true) {
-			if (tail1 == null && tail2 == null) return true
-			if (tail1 == null || tail2 == null) return false
+			if (tail1 === null && tail2 === null) return true
+			if (tail1 === null || tail2 === null) return false
 			if (tail1.attributeRef != tail2.attributeRef) return false
 			tail1 = tail1.tail
 			tail2 = tail2.tail			
@@ -249,14 +247,14 @@ class MD2GeneratorUtil {
 	 * Recursive: Formats the path tail as a dot-separated string
 	 */
 	def static String getPathTailAsString(PathTail pathTail) {
-		if(pathTail == null) return ""
-		pathTail.attributeRef.name + if(pathTail.tail != null) '''.«getPathTailAsString(pathTail.tail)»'''.toString else ""
+		if(pathTail === null) return ""
+		pathTail.attributeRef.name + if(pathTail.tail !== null) '''.«getPathTailAsString(pathTail.tail)»'''.toString else ""
 	}
 	
 	def static List<Attribute> getPathTailAsList(PathTail pathTail) {
 		val result = new LinkedList<Attribute>
 		var part = pathTail
-		while (part != null) {
+		while (part !== null) {
 			result.add(part.attributeRef)
 			part = part.tail
 		}
@@ -265,20 +263,20 @@ class MD2GeneratorUtil {
 	
 	// Relies on simplified AbstractViewGUIElementRef from Preprocessing
 	def static resolveViewElement(AbstractViewGUIElementRef abstractRef) {
-		if (abstractRef == null) {
+		if (abstractRef === null) {
 			return null
 		}
-		if (abstractRef.ref == null) {
+		if (abstractRef.ref === null) {
 			throw new Error("No view element bound to AbstractViewGUIElementRef!")
 		}
 		return abstractRef.ref as ViewElementType
 	}
 	
 	def static resolveContainerElement(AbstractViewGUIElementRef abstractRef) {
-		if (abstractRef == null) {
+		if (abstractRef === null) {
 			return null
 		}
-		if (abstractRef.ref == null) {
+		if (abstractRef.ref === null) {
 			throw new Error("No view element bound to AbstractViewGUIElementRef!")
 		}
 		return abstractRef.ref as ContainerElement
@@ -299,7 +297,7 @@ class MD2GeneratorUtil {
 			GridLayoutPane: container.params
 			FlowLayoutPane: container.params
 		}.filter([it instanceof TabTitleParam]).head
-		if (param != null) (param as TabTitleParam).tabTitle else container.name.toFirstUpper
+		if (param !== null) (param as TabTitleParam).tabTitle else container.name.toFirstUpper
 	}
 
 	/**
@@ -327,7 +325,7 @@ class MD2GeneratorUtil {
 	 * Build and return the uri for the file upload connection, ensuring that a / is prepended
 	 */
 	def static getFileUploadConnectionURI(DataContainer container) {
-	    if(container.main.fileUploadConnection == null){
+	    if(container.main.fileUploadConnection === null){
 	        return ""
 	    }
 		var uri = container.main.fileUploadConnection.uri
@@ -346,7 +344,7 @@ class MD2GeneratorUtil {
 	 */
 	def static getEscapedStoragePath(RemoteConnection remoteConnection) {
 		val path = remoteConnection?.storagePath
-		if (path == null) return ''''''
+		if (path === null) return ''''''
 		
 		return path.replace("\\", "\\\\")
 	}

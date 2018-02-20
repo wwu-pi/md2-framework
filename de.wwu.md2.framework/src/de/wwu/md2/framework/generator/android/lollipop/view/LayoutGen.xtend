@@ -1,23 +1,27 @@
 package de.wwu.md2.framework.generator.android.lollipop.view
 
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
-import de.wwu.md2.framework.generator.android.lollipop.Settings
 import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
+import de.wwu.md2.framework.generator.android.lollipop.Settings
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
+import de.wwu.md2.framework.mD2.BooleanInput
 import de.wwu.md2.framework.mD2.Button
-import de.wwu.md2.framework.mD2.ContainerElement
-import de.wwu.md2.framework.mD2.ContainerElementReference
-import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.FlowDirection
 import de.wwu.md2.framework.mD2.FlowLayoutPane
 import de.wwu.md2.framework.mD2.FlowLayoutPaneFlowDirectionParam
 import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam
 import de.wwu.md2.framework.mD2.GridLayoutPaneRowsParam
+import de.wwu.md2.framework.mD2.IntegerInput
 import de.wwu.md2.framework.mD2.Label
-import de.wwu.md2.framework.mD2.SubViewContainer
+import de.wwu.md2.framework.mD2.ListView
+import de.wwu.md2.framework.mD2.MD2Factory
+import de.wwu.md2.framework.mD2.OptionInput
+import de.wwu.md2.framework.mD2.Spacer
 import de.wwu.md2.framework.mD2.TextInput
 import de.wwu.md2.framework.mD2.TextInputType
-import de.wwu.md2.framework.mD2.ViewElement
+import de.wwu.md2.framework.mD2.ViewElementType
+import de.wwu.md2.framework.mD2.ViewFrame
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
 import de.wwu.md2.framework.mD2.WidthParam
 import de.wwu.md2.framework.mD2.WorkflowElementReference
@@ -30,17 +34,6 @@ import javax.xml.transform.stream.StreamResult
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.w3c.dom.Document
 import org.w3c.dom.Element
-import de.wwu.md2.framework.mD2.OptionInput
-import de.wwu.md2.framework.mD2.Spacer
-import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
-import de.wwu.md2.framework.mD2.ListView
-import de.wwu.md2.framework.mD2.IntegerInput
-import de.wwu.md2.framework.mD2.ViewFrame
-import de.wwu.md2.framework.mD2.ViewElementType
-import de.wwu.md2.framework.mD2.MD2Factory
-import de.wwu.md2.framework.mD2.BooleanInput
-import de.wwu.md2.framework.mD2.BooleanInputType
-import de.wwu.md2.framework.mD2.MD2Package
 
 class LayoutGen {
 

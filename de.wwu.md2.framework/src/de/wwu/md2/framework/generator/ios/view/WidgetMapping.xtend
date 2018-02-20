@@ -42,7 +42,7 @@ class WidgetMapping {
 		
 		// Retrieve name once to increase performance
 		for(i : 0..<viewElements.length){
-			if(viewElements.get(i).name != null){
+			if(viewElements.get(i).name !== null){
 				viewElementNames.add(MD2GeneratorUtil.getName(viewElements.get(i)).toFirstUpper)
 			}
 		}

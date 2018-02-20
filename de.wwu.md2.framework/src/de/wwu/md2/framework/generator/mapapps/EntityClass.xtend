@@ -89,17 +89,17 @@ class EntityClass {
 					Entity: '''null'''
 					Enum: {
 						val defaultValue = type.params.filter(AttrEnumDefault).head
-						'''this._typeFactory.create("«element.name.toFirstUpper»", "«IF defaultValue != null»VALUE«element.enumBody.elements.indexOf(defaultValue.value)»«ELSE»VALUE0«ENDIF»")'''
+						'''this._typeFactory.create("«element.name.toFirstUpper»", "«IF defaultValue !== null»VALUE«element.enumBody.elements.indexOf(defaultValue.value)»«ELSE»VALUE0«ENDIF»")'''
 					}
 				}
 			}
 			IntegerType: {
 				val defaultValue = type.params.filter(AttrIntDefault).head
-				'''this._typeFactory.create("integer", «IF defaultValue != null»«defaultValue.value»«ELSE»null«ENDIF»)'''
+				'''this._typeFactory.create("integer", «IF defaultValue !== null»«defaultValue.value»«ELSE»null«ENDIF»)'''
 			}
 			FloatType: {
 				val defaultValue = type.params.filter(AttrFloatDefault).head
-				'''this._typeFactory.create("float", «IF defaultValue != null»«defaultValue.value»«ELSE»null«ENDIF»)'''
+				'''this._typeFactory.create("float", «IF defaultValue !== null»«defaultValue.value»«ELSE»null«ENDIF»)'''
 			}
 			StringType: {
 				val defaultValue = type.params.filter(AttrStringDefault).head
@@ -114,24 +114,24 @@ class EntityClass {
 			}
 			DateType: {
 				val defaultValue = type.params.filter(AttrDateDefault).head
-				if (defaultValue != null) {
+				if (defaultValue !== null) {
 					imports.put("stamp", "dojo/date/stamp")
 				}
-				'''this._typeFactory.create("date", «IF defaultValue != null»stamp.fromISOString("«defaultValue?.value.toISODate»")«ELSE»null«ENDIF»)'''
+				'''this._typeFactory.create("date", «IF defaultValue !== null»stamp.fromISOString("«defaultValue?.value.toISODate»")«ELSE»null«ENDIF»)'''
 			}
 			TimeType: {
 				val defaultValue = type.params.filter(AttrTimeDefault).head
-				if (defaultValue != null) {
+				if (defaultValue !== null) {
 					imports.put("stamp", "dojo/date/stamp")
 				}
-				'''this._typeFactory.create("time", «IF defaultValue != null»stamp.fromISOString("«defaultValue?.value.toISOTime»")«ELSE»null«ENDIF»)'''
+				'''this._typeFactory.create("time", «IF defaultValue !== null»stamp.fromISOString("«defaultValue?.value.toISOTime»")«ELSE»null«ENDIF»)'''
 			}
 			DateTimeType: {
 				val defaultValue = type.params.filter(AttrDateTimeDefault).head
-				if (defaultValue != null) {
+				if (defaultValue !== null) {
 					imports.put("stamp", "dojo/date/stamp")
 				}
-				'''this._typeFactory.create("datetime", «IF defaultValue != null»stamp.fromISOString("«defaultValue?.value.toISODateTime»")«ELSE»null«ENDIF»)'''
+				'''this._typeFactory.create("datetime", «IF defaultValue !== null»stamp.fromISOString("«defaultValue?.value.toISODateTime»")«ELSE»null«ENDIF»)'''
 			}
 			EnumType: {
 				val defaultValue = type.params.filter(AttrEnumDefault).head

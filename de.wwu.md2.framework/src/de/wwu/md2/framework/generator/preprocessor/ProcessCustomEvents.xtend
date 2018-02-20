@@ -170,7 +170,7 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 			val action = binding.actions.get(0)
 			val conditionalEvent = (binding.events.last as ConditionalEventRef).eventReference
 			
-			if(allEventActionTuples.get(conditionalEvent) == null) {
+			if(allEventActionTuples.get(conditionalEvent) === null) {
 				allEventActionTuples.put(conditionalEvent, newHashMap)
 			}
 			
@@ -181,7 +181,7 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 			val action = binding.actions.get(0)
 			val conditionalEvent = (binding.events.last as ConditionalEventRef).eventReference
 			
-			if(allEventActionTuples.get(conditionalEvent) == null) {
+			if(allEventActionTuples.get(conditionalEvent) === null) {
 				allEventActionTuples.put(conditionalEvent, newHashMap)
 			}
 			

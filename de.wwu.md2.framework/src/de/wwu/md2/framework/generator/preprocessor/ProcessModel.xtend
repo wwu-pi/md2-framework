@@ -39,7 +39,6 @@ import de.wwu.md2.framework.mD2.WorkflowElement
 import static de.wwu.md2.framework.generator.preprocessor.util.Util.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
-import de.wwu.md2.framework.mD2.SensorType
 
 class ProcessModel extends AbstractPreprocessor {
 	
@@ -84,7 +83,7 @@ class ProcessModel extends AbstractPreprocessor {
 			]).forEach [ mappingTask |
 				val validatorBindingTask = modelConstraintToValidator(mappingTask, autogenAction)
 				
-				if (validatorBindingTask != null && validatorBindingTask.validators.size > 0) {
+				if (validatorBindingTask !== null && validatorBindingTask.validators.size > 0) {
 					autogenAction?.codeFragments.add(validatorBindingTask)
 				}
 			]
@@ -97,7 +96,7 @@ class ProcessModel extends AbstractPreprocessor {
 			return null
 		}
 		
-		if (autogenAction == null) return null
+		if (autogenAction === null) return null
 		val validatorBindingTask = factory.createValidatorBindingTask()
 		validatorBindingTask.referencedFields.add(copyElement(mappingTask.referencedViewField) as AbstractViewGUIElementRef)
 		val attr = (mappingTask.pathDefinition as ContentProviderPath).getReferencedAttribute
@@ -124,12 +123,12 @@ class ProcessModel extends AbstractPreprocessor {
 					val max = type.params.filter(typeof(AttrIntMax)).last
 					val min = type.params.filter(typeof(AttrIntMin)).last
 					
-					if(max != null) {
+					if(max !== null) {
 						val validatorMaxParam = factory.createValidatorMaxParam
 						validatorMaxParam.setMax(max.max)
 						numberRangeValidator.validator.params.add(validatorMaxParam)
 					}
-					if(min != null) {
+					if(min !== null) {
 						val validatorMinParam = factory.createValidatorMinParam
 						validatorMinParam.setMin(min.min)
 						numberRangeValidator.validator.params.add(validatorMinParam)
@@ -147,12 +146,12 @@ class ProcessModel extends AbstractPreprocessor {
 					val max = type.params.filter(typeof(AttrFloatMax)).last
 					val min = type.params.filter(typeof(AttrFloatMin)).last
 					
-					if(max != null) {
+					if(max !== null) {
 						val validatorMaxParam = factory.createValidatorMaxParam
 						validatorMaxParam.setMax(max.max)
 						numberRangeValidator.validator.params.add(validatorMaxParam)
 					}
-					if(min != null) {
+					if(min !== null) {
 						val validatorMinParam = factory.createValidatorMinParam
 						validatorMinParam.setMin(min.min)
 						numberRangeValidator.validator.params.add(validatorMinParam)
@@ -170,12 +169,12 @@ class ProcessModel extends AbstractPreprocessor {
 					val maxLength = type.params.filter(typeof(AttrStringMax)).last
 					val minLength = type.params.filter(typeof(AttrStringMin)).last
 					
-					if(maxLength != null) {
+					if(maxLength !== null) {
 						val validatorMaxLengthParam = factory.createValidatorMaxLengthParam
 						validatorMaxLengthParam.setMaxLength(maxLength.max)
 						stringRangeValidator.validator.params.add(validatorMaxLengthParam)
 					}
-					if(minLength != null) {
+					if(minLength !== null) {
 						val validatorMinLengthParam = factory.createValidatorMinLengthParam
 						validatorMinLengthParam.setMinLength(minLength.min)
 						stringRangeValidator.validator.params.add(validatorMinLengthParam)
@@ -196,12 +195,12 @@ class ProcessModel extends AbstractPreprocessor {
 					val max = type.params.filter(typeof(AttrDateMax)).last
 					val min = type.params.filter(typeof(AttrDateMin)).last
 					
-					if(max != null) {
+					if(max !== null) {
 						val validatorMaxDateParam = factory.createValidatorMaxDateParam
 						validatorMaxDateParam.setMax(max.max)
 						dateRangeValidator.validator.params.add(validatorMaxDateParam)
 					}
-					if(min != null) {
+					if(min !== null) {
 						val validatorMinDateParam = factory.createValidatorMinDateParam
 						validatorMinDateParam.setMin(min.min)
 						dateRangeValidator.validator.params.add(validatorMinDateParam)
@@ -219,12 +218,12 @@ class ProcessModel extends AbstractPreprocessor {
 					val max = type.params.filter(typeof(AttrTimeMax)).last
 					val min = type.params.filter(typeof(AttrTimeMin)).last
 					
-					if(max != null) {
+					if(max !== null) {
 						val validatorMaxTimeParam = factory.createValidatorMaxTimeParam
 						validatorMaxTimeParam.setMax(max.max)
 						timeRangeValidator.validator.params.add(validatorMaxTimeParam)
 					}
-					if(min != null) {
+					if(min !== null) {
 						val validatorMinTimeParam = factory.createValidatorMinTimeParam
 						validatorMinTimeParam.setMin(min.min)
 						timeRangeValidator.validator.params.add(validatorMinTimeParam)
@@ -242,12 +241,12 @@ class ProcessModel extends AbstractPreprocessor {
 					val max = type.params.filter(typeof(AttrDateTimeMax)).last
 					val min = type.params.filter(typeof(AttrDateTimeMin)).last
 					
-					if(max != null) {
+					if(max !== null) {
 						val validatorMaxDateTimeParam = factory.createValidatorMaxDateTimeParam
 						validatorMaxDateTimeParam.setMax(max.max)
 						dateTimeRangeValidator.validator.params.add(validatorMaxDateTimeParam)
 					}
-					if(min != null) {
+					if(min !== null) {
 						val validatorMinDateTimeParam = factory.createValidatorMinDateTimeParam
 						validatorMinDateTimeParam.setMin(min.min)
 						dateTimeRangeValidator.validator.params.add(validatorMinDateTimeParam)
@@ -267,7 +266,7 @@ class ProcessModel extends AbstractPreprocessor {
 			return true
 		}
 		val startupAction = codeFragment.eResource.allContents.filter(WorkflowElement).last?.initActions.head
-		if (startupAction == null) {
+		if (startupAction === null) {
 			return false
 		}
 		return traverseAction(startupAction).filter(CustomAction).exists(customAction | customAction.codeFragments.contains(codeFragment))

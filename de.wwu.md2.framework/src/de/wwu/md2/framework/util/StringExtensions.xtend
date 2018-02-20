@@ -7,7 +7,7 @@ class StringExtensions {
 	 * parentheses is returned.
 	 */
 	def static trimParentheses(String str) {
-		if (str == null) {
+		if (str === null) {
 			return str;
 		} else if (str.startsWith("(") && str.endsWith(")")) {
 			return str.substring(1, str.length() - 1);
@@ -19,7 +19,7 @@ class StringExtensions {
 	 * Surround a given string with quotes.
 	 */
 	def static quotify(String str) {
-		if (str == null) {
+		if (str === null) {
 			return str;
 		}
 		return '''"«str»"'''
@@ -29,7 +29,7 @@ class StringExtensions {
 	 * Escapes 
 	 */
 	def static escape(String str) {
-		if (str == null) {
+		if (str === null) {
 			return str;
 		}
 		return str.replace("\\", "\\\\")
@@ -42,7 +42,7 @@ class StringExtensions {
 	 * Replace all tabs with n spaces.
 	 */
 	def static tabsToSpaces(String str, int n) {
-		if (str == null) {
+		if (str === null) {
 			return str;
 		}
 		var spaces = ""

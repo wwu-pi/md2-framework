@@ -47,7 +47,7 @@ class ModelValidator extends AbstractMD2JavaValidator {
 		
 		if (type.element instanceof Entity) {
 			val enumDefault = type.params.filter(AttrEnumDefault).head
-			if (enumDefault != null) {
+			if (enumDefault !== null) {
 				val error = '''Cannot assign a default value to an entity.'''
 				acceptError(error, enumDefault, null, -1, DEFAULTREFERENCEVALUE);
 			}

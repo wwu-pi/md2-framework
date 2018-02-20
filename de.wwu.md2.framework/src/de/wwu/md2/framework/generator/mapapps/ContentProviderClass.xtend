@@ -50,7 +50,7 @@ class ContentProviderClass {
 				«IF contentProvider.filter»
 					var filter = function() {
 						this.$ = $;
-						«IF contentProvider.whereClause != null»
+						«IF contentProvider.whereClause !== null»
 							«val expressionVars = newLinkedHashSet»
 							«val query = contentProvider.whereClause.buildContentProviderQuery(expressionVars, imports)»
 							

@@ -1,6 +1,5 @@
 package de.wwu.md2.framework.generator.mapapps
 
-import de.wwu.md2.framework.generator.preprocessor.ProcessController
 import de.wwu.md2.framework.generator.util.DataContainer
 import de.wwu.md2.framework.mD2.AlternativesPane
 import de.wwu.md2.framework.mD2.App
@@ -69,7 +68,7 @@ class ManifestJson {
 							"name": "md2_local_store"
 						},
 					«ENDIF»
-					«IF dataContainer.contentProviders.exists[it.connection != null || it.^default]»
+					«IF dataContainer.contentProviders.exists[it.connection !== null || it.^default]»
 						{
 							"name": "md2_store"
 						},
@@ -469,7 +468,7 @@ class ManifestJson {
 	'''
 	
 	def static getDataformControl(TextInput input) {
-		if (input.type != null && input.type.equals(TextInputType.TEXTAREA)) {
+		if (input.type !== null && input.type.equals(TextInputType.TEXTAREA)) {
 			'''textarea'''
 		} else {
 			'''textbox'''
@@ -533,7 +532,7 @@ class ManifestJson {
 		"field": "«getName(input)»",
 		«IF input.isIsDisabled»"disabled": true,«ENDIF»
 		"url": "«input.uploadWSPath»service/upload/file",
-		«IF input.buttonValueText != null»"value": "«input.buttonValueText»",«ENDIF»
+		«IF input.buttonValueText !== null»"value": "«input.buttonValueText»",«ENDIF»
 		«generateStyle(input.style, "width" -> '''«input.width»%''')»
 	'''
 	
@@ -553,20 +552,20 @@ class ManifestJson {
 		// all style references were replaced by the actual definitions during pre-processing
 		val style = (styleAssignment as StyleDefinition)?.definition
 		
-		if (style != null && style.bold) {
+		if (style !== null && style.bold) {
 			values.add("font-weight" -> "bold")
 		}
 		
-		if (style != null && style.italic) {
+		if (style !== null && style.italic) {
 			values.add("font-style" -> "italic")
 		}
 		
-		if (style?.color != null) {
+		if (style?.color !== null) {
 			// after pre-processing all colors are in hex format
 			values.add("color" -> (style.color as HexColorDef).color)
 		}
 		
-		if (style != null && style.fontSize != 0d) {
+		if (style !== null && style.fontSize != 0d) {
 			values.add("font-size" -> '''«style.fontSize»em''')
 		}
 		

@@ -35,7 +35,7 @@ class Util {
 	}
 	
 	def static int countContainers(EObject obj, int i) {
-		if (obj.eContainer != null) {
+		if (obj.eContainer !== null) {
 			countContainers(obj.eContainer, i+1)
 		} else {
 			return i;
@@ -60,7 +60,7 @@ class Util {
 					    val _value = switch(eRef) {
 					        EObject: {
                                 val eobj = (eRef as EObject)
-                                if (eobj != null) {
+                                if (eobj !== null) {
                                     val className = eobj.eClass.name
                                     val name = if (eobj.eClass.EAllAttributes.exists[ x | x.name.equals("name") ])
                                                  "[" + eobj.eGet(eobj.eClass.EAllAttributes.filter[ x | x.name.equals("name") ].last) + "]"

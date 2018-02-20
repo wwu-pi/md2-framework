@@ -1,21 +1,18 @@
 package de.wwu.md2.framework.generator.ios.model
 
 import de.wwu.md2.framework.generator.ios.Settings
+import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.Entity
-import de.wwu.md2.framework.mD2.Enum
-import de.wwu.md2.framework.mD2.impl.EntityImpl
 import de.wwu.md2.framework.mD2.impl.BooleanTypeImpl
 import de.wwu.md2.framework.mD2.impl.DateTimeTypeImpl
 import de.wwu.md2.framework.mD2.impl.DateTypeImpl
 import de.wwu.md2.framework.mD2.impl.FloatTypeImpl
 import de.wwu.md2.framework.mD2.impl.IntegerTypeImpl
+import de.wwu.md2.framework.mD2.impl.ReferencedTypeImpl
 import de.wwu.md2.framework.mD2.impl.StringTypeImpl
 import de.wwu.md2.framework.mD2.impl.TimeTypeImpl
 import java.lang.invoke.MethodHandles
-import de.wwu.md2.framework.mD2.impl.ReferencedTypeImpl
-import de.wwu.md2.framework.mD2.ReferencedType
-import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 
 /**
  * Generate entity types.
@@ -71,7 +68,7 @@ class «className»: NSObject, MD2Entity {
     required override init() {
         // Initialize fields
         «FOR attribute : entityInstance.attributes»
-        «IF attribute.extendedName != null »
+        «IF attribute.extendedName !== null »
         // «attribute.extendedName»
         «ENDIF»
         containedTypes["«attribute.name»"] = «generateEntityType(attribute)»

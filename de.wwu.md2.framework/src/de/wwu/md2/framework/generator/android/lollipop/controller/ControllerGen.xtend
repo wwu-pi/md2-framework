@@ -1,13 +1,12 @@
 package de.wwu.md2.framework.generator.android.lollipop.controller
 
-import de.wwu.md2.framework.generator.android.lollipop.Settings
 import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
+import de.wwu.md2.framework.generator.android.lollipop.Settings
+import de.wwu.md2.framework.generator.util.DataContainer
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.ContentProvider
-import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.SimpleType
-import de.wwu.md2.framework.generator.util.DataContainer
 import de.wwu.md2.framework.mD2.WorkflowElementEntry
 
 class ControllerGen {

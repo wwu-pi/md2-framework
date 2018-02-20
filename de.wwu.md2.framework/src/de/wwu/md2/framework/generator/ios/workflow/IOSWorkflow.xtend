@@ -20,7 +20,7 @@ class IOSWorkflow {
     
     let wfe«wfe.workflowElementReference.name.toFirstUpper» = MD2WorkflowElement(name: "«wfe.workflowElementReference.name.toFirstUpper»", onInit: MD2CustomAction___«wfe.workflowElementReference.name.toFirstUpper»_startupAction())
     «IF wfe.startable == true»
-    MD2WorkflowManager.instance.addStartableWorkflowElement(wfe«wfe.workflowElementReference.name.toFirstUpper», withCaption: "«IF wfe.alias != null»«wfe.alias»«ELSE»«wfe.workflowElementReference.name»«ENDIF»", forWidget: MD2WidgetMapping.__startScreen_Button_«wfe.workflowElementReference.name»)
+    MD2WorkflowManager.instance.addStartableWorkflowElement(wfe«wfe.workflowElementReference.name.toFirstUpper», withCaption: "«IF wfe.alias !== null»«wfe.alias»«ELSE»«wfe.workflowElementReference.name»«ENDIF»", forWidget: MD2WidgetMapping.__startScreen_Button_«wfe.workflowElementReference.name»)
     «ENDIF»
 «ENDFOR»
 	'''

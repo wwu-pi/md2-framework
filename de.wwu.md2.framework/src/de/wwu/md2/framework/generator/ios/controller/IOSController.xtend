@@ -5,13 +5,12 @@ import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
 import de.wwu.md2.framework.generator.ios.view.IOSView
 import de.wwu.md2.framework.generator.ios.workflow.IOSWorkflow
 import de.wwu.md2.framework.generator.util.DataContainer
-import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.RemoteConnection
 import de.wwu.md2.framework.mD2.Style
-import java.lang.invoke.MethodHandles
 import de.wwu.md2.framework.mD2.ViewFrame
+import java.lang.invoke.MethodHandles
 
 /**
  * Generate the main MD2Controller class.

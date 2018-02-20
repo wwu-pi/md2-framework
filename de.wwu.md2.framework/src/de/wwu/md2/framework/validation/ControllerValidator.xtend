@@ -222,7 +222,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	@Check
 	def checkFileUploadConnectionExistsIfNecessary (Main main){
 
-		if (main.fileUploadConnection == null){
+		if (main.fileUploadConnection === null){
 			
 			val controller = (main.eContainer as Controller)
 			
@@ -244,7 +244,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 
 		}
 		else{
-			if (main.fileUploadConnection.storagePath == null) {
+			if (main.fileUploadConnection.storagePath === null) {
 				error("The remote connection of the file upload connection needs to specify a storage path.", MD2Package.eINSTANCE.main_FileUploadConnection, -1, UPLOAD_SPECIFYPATH);
 			}
 		}
@@ -260,7 +260,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	def checkMappingOfFileUploadAndUploadedImageOutputToFileType(MappingTask task){
 	    val viewElementType = task.referencedViewField.ref
 	    var tail = (task.pathDefinition as ContentProviderPath).tail
-	    while(tail.tail != null){
+	    while(tail.tail !== null){
 	        tail = tail.tail
 	    }
 	    val type = tail.attributeRef.type
@@ -285,7 +285,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	def static AbstractViewGUIElementRef getViewElement(AbstractViewGUIElementRef ref)
 	{
 		
-		if (ref.tail != null)
+		if (ref.tail !== null)
 		{
 			return ref.tail.getViewElement;
 		}
@@ -564,7 +564,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 	            val refEntities = entity.attributes.filter[it.type instanceof ReferencedType].filter[(it.type as ReferencedType).element instanceof Entity].toList
 	            for (rE : refEntities){
 	                var temphashmap = hm.get(entity.name)
-	                if (temphashmap == null){
+	                if (temphashmap === null){
 	                    temphashmap = <String, String>newHashMap
 	                    hm.put(entity.name, temphashmap)
 	                }
@@ -688,17 +688,17 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 		var valueType = invokeValueTypeMap.get(defaultValue.invokeValue.class)
 		val attributeType = defaultValue.field.tail.resolveAttributeType
 		var cpType = supportedAttributeTypeMap.get(attributeType.class)
-		if (cpType ==null && attributeType instanceof ReferencedType){
+		if (cpType === null && attributeType instanceof ReferencedType){
 			var referencedType = (attributeType as ReferencedType).getElement()
 			if (referencedType instanceof Enum){
 				cpType = supportedAttributeTypeMap.get(EnumTypeImpl)
 			}
 		}
-		if (valueType != null && cpType!= null && !valueType.equals(cpType)){
+		if (valueType !== null && cpType!== null && !valueType.equals(cpType)){
 			val error = '''The types of the content provider and its default value have to match each other! Expected default value to be of type «cpType» but was «valueType»!'''
 			acceptError(error, defaultValue, MD2Package.eINSTANCE.invokeDefaultValue_InvokeValue, -1, INVOKEDEFAULTVALUETYPEMISSMATCH)
 		}
-		if (cpType == null){
+		if (cpType === null){
 			val error = '''The type «defaultValue.field.tail.resolveAttributeType.attributeTypeName» of the content provider reference is not supported to be set to a default value!'''
 			acceptError(error, defaultValue, MD2Package.eINSTANCE.invokeParam_Field, -1, INVOKEDEFAULTVALUETYPENOTSUPPORTED)
 		}	
@@ -726,7 +726,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 				if (conflictedPaths.contains(invoke.path?:"")){
 					var error = '''The paths of invoke definitions need to be unique!'''
 					var EStructuralFeature structuralFeature = null
-					if (invoke.path != null){
+					if (invoke.path !== null){
 						structuralFeature =  MD2Package.eINSTANCE.invokeDefinition_Path
 					} else {
 						error += ''' When the path is not set the default is "".'''
@@ -795,7 +795,7 @@ class ControllerValidator extends AbstractMD2JavaValidator {
 				error(error, defaultValue, MD2Package.eINSTANCE.invokeDefaultValue_InvokeValue, -1)
 			}
 		}
-		if (enumBody != null) {
+		if (enumBody !== null) {
 			if (defaultValue.invokeValue instanceof InvokeStringValue) {
 
 				var value = (defaultValue.invokeValue as InvokeStringValue).value

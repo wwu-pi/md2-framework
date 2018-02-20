@@ -1,6 +1,8 @@
 package de.wwu.md2.framework.generator.ios.view
 
 import de.wwu.md2.framework.generator.ios.Settings
+import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
+import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.BooleanInput
 import de.wwu.md2.framework.mD2.Button
 import de.wwu.md2.framework.mD2.ContainerElement
@@ -10,6 +12,8 @@ import de.wwu.md2.framework.mD2.DateTimeInput
 import de.wwu.md2.framework.mD2.FlowLayoutPane
 import de.wwu.md2.framework.mD2.FlowLayoutPaneFlowDirectionParam
 import de.wwu.md2.framework.mD2.GridLayoutPane
+import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam
+import de.wwu.md2.framework.mD2.GridLayoutPaneRowsParam
 import de.wwu.md2.framework.mD2.HexColorDef
 import de.wwu.md2.framework.mD2.Image
 import de.wwu.md2.framework.mD2.IntegerInput
@@ -25,17 +29,12 @@ import de.wwu.md2.framework.mD2.StyleReference
 import de.wwu.md2.framework.mD2.TextInput
 import de.wwu.md2.framework.mD2.TimeInput
 import de.wwu.md2.framework.mD2.Tooltip
-import de.wwu.md2.framework.mD2.ViewElement
+import de.wwu.md2.framework.mD2.ViewElementType
+import de.wwu.md2.framework.mD2.ViewFrame
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
 import de.wwu.md2.framework.mD2.WidthParam
 import java.util.Map
-import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam
-import de.wwu.md2.framework.mD2.GridLayoutPaneRowsParam
-import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
-import de.wwu.md2.framework.generator.ios.util.IOSGeneratorUtil
-import de.wwu.md2.framework.mD2.ViewFrame
-import de.wwu.md2.framework.mD2.ViewElementType
 
 /**
  * Generate the definition of the view element hierarchy for the MD2Controller class.
@@ -178,7 +177,7 @@ class IOSView {
 		«qualifiedName».width = Float(1/100 * «element.params.filter(WidthParam).get(0).width»)
 		«ENDIF»	
 		«««Add to surrounding container»»»
-		«IF container != null»
+		«IF container !== null»
 		«MD2GeneratorUtil.getName(container).toFirstLower».addWidget(«MD2GeneratorUtil.getName(element).toFirstLower»)
 		«ENDIF»
 		«««Generate Subelements»»
@@ -210,7 +209,7 @@ class IOSView {
 		«qualifiedName».width = Float(1/100 * «element.params.filter(WidthParam).get(0).width»)
 		«ENDIF»	
 		«««Add to surrounding container»»»
-		«IF container != null»
+		«IF container !== null»
 		«MD2GeneratorUtil.getName(container).toFirstLower».addWidget(«MD2GeneratorUtil.getName(element).toFirstLower»)
 		«ENDIF»
 		«««Generate Subelements»»
@@ -331,7 +330,7 @@ class IOSView {
 		let «qualifiedName» = MD2SwitchWidget(widgetId: MD2WidgetMapping.«qualifiedName.toFirstUpper»)
 		«««Element width»»»
 		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
-		«IF element.tooltipText != null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
+		«IF element.tooltipText !== null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
 		«««Add to surrounding container»»»
 		«MD2GeneratorUtil.getName(container).toFirstLower».addWidget(«qualifiedName»)
 		let wrapper_«qualifiedName» = MD2WidgetWrapper(widget: «qualifiedName»)
@@ -356,7 +355,7 @@ class IOSView {
 		«qualifiedName».value = MD2String("«element.defaultValue»")
 		«««Element width»»»
 		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
-		«IF element.tooltipText != null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
+		«IF element.tooltipText !== null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
 		«««Add to surrounding container»»»
 		«MD2GeneratorUtil.getName(container).toFirstLower».addWidget(«qualifiedName»)
 		let wrapper_«qualifiedName» = MD2WidgetWrapper(widget: «qualifiedName»)
@@ -381,7 +380,7 @@ class IOSView {
 		«qualifiedName».value = MD2Integer(«element.defaultValue»)
 		«««Element width»»»
 		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
-		«IF element.tooltipText != null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
+		«IF element.tooltipText !== null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
 		«««Add to surrounding container»»»
 		«MD2GeneratorUtil.getName(container).toFirstLower».addWidget(«qualifiedName»)
 		let wrapper_«qualifiedName» = MD2WidgetWrapper(widget: «qualifiedName»)
@@ -407,7 +406,7 @@ class IOSView {
 		«qualifiedName».value = MD2Float(Float(«element.defaultValue»))
 		«««Element width»»»
 		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
-		«IF element.tooltipText != null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
+		«IF element.tooltipText !== null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
 		«««Add to surrounding container»»»
 		«MD2GeneratorUtil.getName(container).toFirstLower».addWidget(«qualifiedName»)
 		let wrapper_«qualifiedName» = MD2WidgetWrapper(widget: «qualifiedName»)
@@ -439,7 +438,7 @@ class IOSView {
 		«qualifiedName».value = MD2String(«element.defaultValue»)
 		«««Element width»»»
 		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
-		«IF element.tooltipText != null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
+		«IF element.tooltipText !== null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
 		«qualifiedName».pickerMode = UIDatePickerMode.Date
 		«««Add to surrounding container»»»
 		«MD2GeneratorUtil.getName(container).toFirstLower».addWidget(«qualifiedName»)
@@ -464,7 +463,7 @@ class IOSView {
 		«qualifiedName».value = MD2String(«element.defaultValue»)
 		«««Element width»»»
 		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
-		«IF element.tooltipText != null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
+		«IF element.tooltipText !== null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
 		«qualifiedName».pickerMode = UIDatePickerMode.Time
 		«««Add to surrounding container»»»
 		«MD2GeneratorUtil.getName(container).toFirstLower».addWidget(«qualifiedName»)
@@ -489,7 +488,7 @@ class IOSView {
 		«qualifiedName».value = MD2String(«element.defaultValue»)
 		«««Element width»»»
 		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
-		«IF element.tooltipText != null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
+		«IF element.tooltipText !== null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
 		«qualifiedName».pickerMode = UIDatePickerMode.DateAndTime
 		«««Add to surrounding container»»»
 		«MD2GeneratorUtil.getName(container).toFirstLower».addWidget(«qualifiedName»)
@@ -514,9 +513,9 @@ class IOSView {
 		«qualifiedName».value = MD2String(«element.defaultValue»)
 		«««Element width»»»
 		«IF element.width < 100»«qualifiedName».width = Float(1/100 * «element.width»)«ENDIF»
-		«IF element.tooltipText != null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
+		«IF element.tooltipText !== null && element.tooltipText != ""»«qualifiedName».tooltip = MD2String("«element.tooltipText»")«ENDIF»
 		«««Set available options»»»
-		«IF element.enumReference != null»
+		«IF element.enumReference !== null»
 		«qualifiedName».options = «Settings.PREFIX_ENUM + element.enumReference.name.toFirstUpper».EnumType.getAllValues()
 		«ELSE»
 		«qualifiedName».options = [«FOR option : element.enumBody.elements SEPARATOR ", "»«option»«ENDFOR»]
@@ -539,7 +538,7 @@ class IOSView {
 	 */
 	def static String generateStyles(String elementName, StyleAssignment style) {
 		// No style -> skip
-		if(style == null) return ""
+		if(style === null) return ""
 		
 		// Style reference
 		var StyleBody styleBody = null
@@ -554,7 +553,7 @@ class IOSView {
 			result += elementName + ".fontSize = MD2Float(" + styleBody.fontSize + ")\n"
 		}
 		
-		if(styleBody.color != null) {
+		if(styleBody.color !== null) {
 			if(styleBody.color instanceof HexColorDef){
 				result += elementName + '.color = MD2String("' + (styleBody.color as HexColorDef).color + '")\n'
 			} else {

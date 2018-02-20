@@ -672,11 +672,11 @@ class ProcessProcessChain extends AbstractPreprocessor {
 			val eventsSubCondition = matchAllEventsCondition(newHashSet(goto), entity, contentProvider)
 			
 			// add 'given' condition of goto specification (with 'and')
-			val given = if (goto.spec instanceof ProcessChainGoToSpecExtended && (goto.spec as ProcessChainGoToSpecExtended).condition != null) {
+			val given = if (goto.spec instanceof ProcessChainGoToSpecExtended && (goto.spec as ProcessChainGoToSpecExtended).condition !== null) {
 				(goto.spec as ProcessChainGoToSpecExtended).condition
 			}
 			
-			if (given == null) {
+			if (given === null) {
 				innerIfCodeBlock.setCondition(eventsSubCondition)
 			} else {
 				val and = factory.createAnd
@@ -711,7 +711,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 		// add a final elseif that catches the event if none of the other conditions was satisfied
 		// ... elseif (lastEventFired equals "evt1" or lastEventFired equals "evt2" or ... or lastEventFired equals "evtX")
 		// for all events of the defined gotos
-		if (gotos.size > 0 && step.message != null) {
+		if (gotos.size > 0 && step.message !== null) {
 			val ifCodeBlock = createProcessChainProcessActionInnerIfBlockMessage(gotos, step, entity, contentProvider)
 			innerConditionalCodeFragment.elseifs.add(ifCodeBlock)
 		}
@@ -792,7 +792,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 		}
 		
 		// create action to execute after view change ('then' statement)
-		if (goto.spec instanceof ProcessChainGoToSpecExtended && (goto.spec as ProcessChainGoToSpecExtended).action != null) {
+		if (goto.spec instanceof ProcessChainGoToSpecExtended && (goto.spec as ProcessChainGoToSpecExtended).action !== null) {
 			val callTask = factory.createCallTask
 			val actionDef = (goto.spec as ProcessChainGoToSpecExtended).action
 			callTask.setAction(actionDef.copy)
@@ -815,7 +815,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 		var nextStep = ""
 		var previousStep = ""
 		
-		if (processChainGoToStep.returnTo != null) {
+		if (processChainGoToStep.returnTo !== null) {
 			val returnToStep = processChainGoToStep.returnTo
 			val returnToStepProcessChain = returnToStep.eContainer as ProcessChain
 			val currentStepIndex = returnToStepProcessChain.processChainSteps.indexOf(returnToStep)

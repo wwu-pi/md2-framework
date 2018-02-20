@@ -24,7 +24,7 @@ class EnumAndEntityClass {
 		import java.io.Serializable;
 		import java.sql.Timestamp;
 		
-	import java.util.Date;
+		import java.util.Date;
 		«IF entity.attributes.exists(a | a.type.many)»import java.util.List;«ENDIF»
 		
 		«IF entity.attributes.exists(a | a.type instanceof ReferencedType && (a.type as ReferencedType).element instanceof Entity)»

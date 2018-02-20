@@ -2095,6 +2095,7 @@ QUALIFIED_NAME:
  * Override default terminal rule ID to not allow two underscores (__) at the beginning of the ID
  * as such IDs are used internally by the pre-processor.
  */
+@Override 
 terminal ID:
 	'^'?('a'..'z'|'A'..'Z'|'_') (('a'..'z'|'A'..'Z'|'0'..'9') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*)?
 ;

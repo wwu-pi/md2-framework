@@ -49,7 +49,7 @@ class ExternalWebServiceClass {
 		public class «wfe.name.toFirstUpper»ExternalWS {
 			
 			«FOR cp: wfe.getInternalContentProviders(workflowManager)»
-				«IF cp.contentProviderEntity!=null»
+				«IF cp.contentProviderEntity !== null»
 				@EJB
 				«cp.contentProviderEntity.name.toFirstUpper»Bean «cp.contentProviderEntity.name.toFirstLower»Bean;
 			«ENDIF»
@@ -60,7 +60,7 @@ class ExternalWebServiceClass {
 			
 			«FOR invoke : wfe.invoke»
 			@«invoke.method»
-			«IF invoke.path != null»
+			«IF invoke.path !== null»
 			@Path("«invoke.path»")
 			«ENDIF»
 			@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -107,7 +107,7 @@ class ExternalWebServiceClass {
 	 */
 	def static createSaveContentProvider(ContentProvider contentProvider, RemoteConnection backendConnection)'''
 		«var entity =contentProvider.contentProviderEntity»
-		«IF contentProvider.connection.equals(backendConnection) && entity != null »
+		«IF contentProvider.connection.equals(backendConnection) && entity !== null »
 		«entity.name.toFirstLower» = «entity.name.toFirstLower»Bean.createOrUpdate«entity.name.toFirstUpper»(«entity.name.toFirstLower»);
 		«ENDIF»
 	'''

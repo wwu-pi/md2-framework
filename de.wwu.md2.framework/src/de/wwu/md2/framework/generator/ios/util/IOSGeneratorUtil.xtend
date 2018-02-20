@@ -22,7 +22,7 @@ class IOSGeneratorUtil {
 	 * @param generatorClass The Xtend class in which the file is generated (to lookup its origin).
 	 * @return The Swift header comment content.
 	 */
-	def static generateClassHeaderComment(String generatedClassName, Class generatorClass) '''
+	def static generateClassHeaderComment(String generatedClassName, Class<?> generatorClass) '''
 //
 //  «generatedClassName».swift
 //
@@ -102,9 +102,9 @@ class IOSGeneratorUtil {
 	 * @return The UUID.
 	 */
 	def static getUuid(String elementName) {
-		if (elementName == null) return null
+		if (elementName === null) return null
 		
-		if(uuidMapping == null) {
+		if(uuidMapping === null) {
 			uuidMapping = newHashMap
 		}
 		

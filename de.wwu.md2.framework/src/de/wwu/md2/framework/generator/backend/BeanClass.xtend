@@ -138,7 +138,7 @@ class BeanClass {
 			 */
 			
 			«FOR validator : remoteValidators»
-				«IF validator.contentProvider != null && validator.contentProvider.contentProvider.type instanceof ReferencedModelType»
+				«IF validator.contentProvider !== null && validator.contentProvider.contentProvider.type instanceof ReferencedModelType»
 					public ValidationResult validate«validator.name.toFirstUpper»(«(validator.contentProvider.contentProvider.type as ReferencedModelType).entity.name.toFirstUpper» «(validator.contentProvider.contentProvider.type as ReferencedModelType).entity.name.toFirstLower») {
 						
 						// TODO implement

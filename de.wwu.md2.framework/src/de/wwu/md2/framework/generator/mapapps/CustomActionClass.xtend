@@ -197,7 +197,7 @@ class CustomActionClass {
 				«generateCodeBlock(elseif.value, imports)»
 			}
 		«ENDFOR»
-		«IF task.^else != null»
+		«IF task.^else !== null»
 			else {
 				«generateCodeBlock(task.^else.codeFragments, imports)»
 			}
@@ -327,7 +327,7 @@ class CustomActionClass {
 	 */
 	def private static Attribute getAttributeFromContentProviderPath(ContentProviderPath path){
 	    var tail = path.tail
-	    while(tail.tail != null){
+	    while(tail.tail !== null){
 	        tail = path.tail
 	    }
 	    return tail.attributeRef
@@ -452,8 +452,8 @@ class CustomActionClass {
 		val minParam = validator.resolveValidatorParam(ValidatorMinParam)
 		val maxParam = validator.resolveValidatorParam(ValidatorMaxParam)
 		'''
-			var «minVarName» = «IF minParam != null»this.$.create("float", «minParam.min»)«ELSE»null«ENDIF»;
-			var «maxVarName» = «IF maxParam != null»this.$.create("float", «maxParam.max»)«ELSE»null«ENDIF»;
+			var «minVarName» = «IF minParam !== null»this.$.create("float", «minParam.min»)«ELSE»null«ENDIF»;
+			var «maxVarName» = «IF maxParam !== null»this.$.create("float", «maxParam.max»)«ELSE»null«ENDIF»;
 			«generateMessage(validator.resolveValidatorParam(ValidatorMessageParam)?.message, msgVarName, imports)»
 			var «varName» = this.$.validatorFactory.getNumberRangeValidator(«minVarName», «maxVarName», «msgVarName»);
 		'''
@@ -465,8 +465,8 @@ class CustomActionClass {
 		val msgVarName = getUnifiedName("message")
 		val minParam = validator.resolveValidatorParam(ValidatorMinLengthParam)
 		val maxParam = validator.resolveValidatorParam(ValidatorMaxLengthParam)
-		val min = if (minParam != null) minParam.minLength else "null"
-		val max = if (maxParam != null) maxParam.maxLength else "null"
+		val min = if (minParam !== null) minParam.minLength else "null"
+		val max = if (maxParam !== null) maxParam.maxLength else "null"
 		'''
 			«generateMessage(validator.resolveValidatorParam(ValidatorMessageParam)?.message, msgVarName, imports)»
 			var «varName» = this.$.validatorFactory.getStringRangeValidator(«min», «max», «msgVarName»);
@@ -481,12 +481,12 @@ class CustomActionClass {
 		val msgVarName = getUnifiedName("message")
 		val min = validator.resolveValidatorParam(ValidatorMinDateParam)?.min.toISODate.quotify
 		val max = validator.resolveValidatorParam(ValidatorMaxDateParam)?.max.toISODate.quotify
-		if (min != null || max != null) {
+		if (min !== null || max !== null) {
 			imports.put("stamp", "dojo/date/stamp")
 		}
 		'''
-			var «minVarName» = «IF min != null»this.$.create("date", stamp.fromISOString("«min»"))«ELSE»null«ENDIF»;
-			var «maxVarName» = «IF max != null»this.$.create("date", stamp.fromISOString("«max»"))«ELSE»null«ENDIF»;
+			var «minVarName» = «IF min !== null»this.$.create("date", stamp.fromISOString("«min»"))«ELSE»null«ENDIF»;
+			var «maxVarName» = «IF max !== null»this.$.create("date", stamp.fromISOString("«max»"))«ELSE»null«ENDIF»;
 			«generateMessage(validator.resolveValidatorParam(ValidatorMessageParam)?.message, msgVarName, imports)»
 			var «varName» = this.$.validatorFactory.getDateRangeValidator(«minVarName», «maxVarName», «msgVarName»);
 		'''
@@ -500,12 +500,12 @@ class CustomActionClass {
 		val msgVarName = getUnifiedName("message")
 		val min = validator.resolveValidatorParam(ValidatorMinTimeParam)?.min.toISOTime.quotify
 		val max = validator.resolveValidatorParam(ValidatorMaxTimeParam)?.max.toISOTime.quotify
-		if (min != null || max != null) {
+		if (min !== null || max !== null) {
 			imports.put("stamp", "dojo/date/stamp")
 		}
 		'''
-			var «minVarName» = «IF min != null»this.$.create("time", stamp.fromISOString("«min»"))«ELSE»null«ENDIF»;
-			var «maxVarName» = «IF max != null»this.$.create("time", stamp.fromISOString("«max»"))«ELSE»null«ENDIF»;
+			var «minVarName» = «IF min !== null»this.$.create("time", stamp.fromISOString("«min»"))«ELSE»null«ENDIF»;
+			var «maxVarName» = «IF max !== null»this.$.create("time", stamp.fromISOString("«max»"))«ELSE»null«ENDIF»;
 			«generateMessage(validator.resolveValidatorParam(ValidatorMessageParam)?.message, msgVarName, imports)»
 			var «varName» = this.$.validatorFactory.getTimeRangeValidator(«minVarName», «maxVarName», «msgVarName»);
 		'''
@@ -519,12 +519,12 @@ class CustomActionClass {
 		val msgVarName = getUnifiedName("message")
 		val min = validator.resolveValidatorParam(ValidatorMinDateTimeParam)?.min.toISODateTime.quotify
 		val max = validator.resolveValidatorParam(ValidatorMaxDateTimeParam)?.max.toISODateTime.quotify
-		if (min != null || max != null) {
+		if (min !== null || max !== null) {
 			imports.put("stamp", "dojo/date/stamp")
 		}
 		'''
-			var «minVarName» = «IF min != null»this.$.create("datetime", stamp.fromISOString("«min»"))«ELSE»null«ENDIF»;
-			var «maxVarName» = «IF max != null»this.$.create("datetime", stamp.fromISOString("«max»"))«ELSE»null«ENDIF»;
+			var «minVarName» = «IF min !== null»this.$.create("datetime", stamp.fromISOString("«min»"))«ELSE»null«ENDIF»;
+			var «maxVarName» = «IF max !== null»this.$.create("datetime", stamp.fromISOString("«max»"))«ELSE»null«ENDIF»;
 			«generateMessage(validator.resolveValidatorParam(ValidatorMessageParam)?.message, msgVarName, imports)»
 			var «varName» = this.$.validatorFactory.getDateTimeRangeValidator(«minVarName», «maxVarName», «msgVarName»);
 		'''
@@ -537,7 +537,7 @@ class CustomActionClass {
 	'''
 	
 	def private static generateMessage(SimpleExpression msg, String varName, Map<String, String> imports) '''
-		«IF msg != null»
+		«IF msg !== null»
 			«imports.put("lang", "dojo/_base/lang").returnVoid»
 			«val exprVar = getUnifiedName("expr")»
 			var «varName» = lang.hitch(this, function() {

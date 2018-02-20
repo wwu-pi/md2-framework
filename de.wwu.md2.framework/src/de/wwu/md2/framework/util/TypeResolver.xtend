@@ -94,7 +94,7 @@ class TypeResolver {
 	 */
 	def static AttributeType resolveAttributeType(PathTail pathTail) {
 		
-		if (pathTail.tail == null) {
+		if (pathTail.tail === null) {
 			return pathTail.attributeRef.type
 		}
 		return pathTail.tail.resolveAttributeType
@@ -106,7 +106,7 @@ class TypeResolver {
 	 */
 	def static Attribute resolveAttribute(PathTail pathTail) {
 		
-		if (pathTail.tail == null) {
+		if (pathTail.tail === null) {
 			return pathTail.attributeRef
 		}
 		return pathTail.tail.resolveAttribute
@@ -157,11 +157,11 @@ class TypeResolver {
 	
 	def private static String getAbstractViewGUIElementType(AbstractViewGUIElementRef ref) {
 		
-		if (ref.path != null) {
+		if (ref.path !== null) {
 			return ref.path.tail.resolveAttributeType.attributeTypeName
-		} else if (ref.simpleType != null) {
+		} else if (ref.simpleType !== null) {
 			return ref.simpleType.type.toString
-		} else if (ref.tail == null) {
+		} else if (ref.tail === null) {
 			return ref.ref.viewElementTypeName
 		}
 		ref.tail.abstractViewGUIElementType

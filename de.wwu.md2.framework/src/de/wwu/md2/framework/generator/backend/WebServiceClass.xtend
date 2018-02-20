@@ -227,7 +227,7 @@ class WebServiceClass {
 			RemoteValidationBean validatorBean;
 			
 			«FOR validator : remoteValidators»
-				«IF validator.contentProvider != null && validator.contentProvider.contentProvider.type instanceof ReferencedModelType»
+				«IF validator.contentProvider !== null && validator.contentProvider.contentProvider.type instanceof ReferencedModelType»
 					@GET
 					@Path(value = "«validator.name.toFirstLower»")
 					@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")

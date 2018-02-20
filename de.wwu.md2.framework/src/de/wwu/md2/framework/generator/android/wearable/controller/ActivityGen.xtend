@@ -7,7 +7,6 @@ import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.AttrSensorAxis
 import de.wwu.md2.framework.mD2.AttrSensorTyp
 import de.wwu.md2.framework.mD2.Button
-import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.GridLayoutPane
@@ -17,15 +16,9 @@ import de.wwu.md2.framework.mD2.ListView
 import de.wwu.md2.framework.mD2.SensorType
 import de.wwu.md2.framework.mD2.TextInput
 import de.wwu.md2.framework.mD2.ViewElementType
+import de.wwu.md2.framework.mD2.ViewFrame
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
 import de.wwu.md2.framework.mD2.WorkflowElementReference
-import de.wwu.md2.framework.mD2.impl.FlowLayoutPaneImpl
-import de.wwu.md2.framework.mD2.impl.GridLayoutPaneImpl
-import de.wwu.md2.framework.mD2.impl.ListViewImpl
-import de.wwu.md2.framework.mD2.ListViewIconParam
-import de.wwu.md2.framework.mD2.FlowLayoutPaneIconParam
-import de.wwu.md2.framework.mD2.GridLayoutPaneIconParam
-import de.wwu.md2.framework.mD2.ViewFrame
 
 class ActivityGen {
 

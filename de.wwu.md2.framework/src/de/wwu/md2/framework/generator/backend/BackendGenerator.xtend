@@ -65,7 +65,7 @@ class BackendGenerator extends AbstractPlatformGenerator {
 		
 		// Generate validation and model version web services
 		val affectedEntities = <ModelElement>newHashSet
-		affectedEntities.addAll(dataContainer.remoteValidators.filter(v | v.contentProvider != null && v.contentProvider.contentProvider.type instanceof ReferencedModelType)
+		affectedEntities.addAll(dataContainer.remoteValidators.filter(v | v.contentProvider !== null && v.contentProvider.contentProvider.type instanceof ReferencedModelType)
 			.map(v | (v.contentProvider.contentProvider.type as ReferencedModelType).entity).filter(typeof(Entity)))
 		
 		fsa.generateFile(rootFolder + "/src/" + rootFolder.replace('.', '/') + "/ws/VersionNegotiationWS.java", createVersionNegotiationWS(basePackageName))

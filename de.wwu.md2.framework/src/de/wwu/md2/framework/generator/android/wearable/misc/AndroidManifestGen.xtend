@@ -22,25 +22,17 @@ class AndroidManifestGen {
 		        android:icon="@drawable/ic_shopping_cart_white_24dp"
 		        android:label="@string/app_name"
 		        android:theme="@style/PSWatchapp" >
-		<!--			<activity
-					          android:name=".StartActivity"
-					          android:label="@string/app_name" >
-					          <intent-filter>
-					              <action android:name="android.intent.action.MAIN" />
-					              <category android:name="android.intent.category.LAUNCHER" />
-					          </intent-filter>
-					      </activity>		-->
 	        «FOR rv : rootViews»
-	        	<activity
-       		android:name=".«rv.name.toFirstUpper»Activity"
-	        		android:label="@string/title_activity_«rv.name.toFirstLower»"
-	        		android:launchMode="singleInstance">
-	        		«IF rv.equals(rootViews.get(0))»
-		        		<intent-filter>
-		        			<action android:name="android.intent.action.MAIN" />
-		        			<category android:name="android.intent.category.LAUNCHER" />
-		        		 </intent-filter>
-	        		«ENDIF»
+	        <activity
+       			android:name=".«rv.name.toFirstUpper»Activity"
+	        	android:label="@string/title_activity_«rv.name.toFirstLower»"
+	        	android:launchMode="singleInstance">
+        		«IF rv.equals(rootViews.get(0))»
+        			<intent-filter>
+        				<action android:name="android.intent.action.MAIN" />
+	        			<category android:name="android.intent.category.LAUNCHER" />
+	        		 </intent-filter>
+        		«ENDIF»
 	        	</activity>
 	        «ENDFOR»
 					 </application>

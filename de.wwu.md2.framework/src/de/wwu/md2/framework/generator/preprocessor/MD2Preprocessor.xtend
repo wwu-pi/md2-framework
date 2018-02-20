@@ -46,7 +46,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 	 */
 	def static getPreprocessedModel(ResourceSet input) {
 		if (!input.equals(previousInputSet)) {
-			if (instance == null) {
+			if (instance === null) {
 				initialize(new MD2ComplexElementFactory)
 				instance = new MD2Preprocessor
 			}
