@@ -51,7 +51,7 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			 * 
 			 ***************************************************/
 			// root folder
-			val rootFolder = rootFolder + "/md2_app_" + app.name + "/"
+			val rootFolder = rootFolder + "/"
 
 			// main package and path for java code within Android project
 			val mainPackage = "md2." +
