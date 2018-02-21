@@ -16,6 +16,7 @@ public class Settings {
 	public static String MD2LIBRARY_DEBUG_PATH = "md2Library-debug/"
 	public static String MD2LIBRARY_DEBUG_PROJECT = ":md2Library-debug"
 	public static String MD2LIBRARY_PACKAGE = "de.wwu.md2.android.md2library."
+	public static String MD2LIBRARY_PACKAGE_WEAR = MD2LIBRARY_PACKAGE + "wear."
 
 	// packages (for imports etc.)
 	public static String MD2LIBRARY_DATAMAPPER_PACKAGE_NAME = MD2LIBRARY_PACKAGE + "controller.datamapper.Md2DataMapper"

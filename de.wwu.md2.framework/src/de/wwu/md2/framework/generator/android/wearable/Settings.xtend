@@ -18,9 +18,9 @@ public class Settings {
 	public static String MD2LIBRARY_DEBUG_PATH = "md2Library-debug/"
 	public static String MD2LIBRARY_DEBUG_PROJECT = ":md2Library-debug"
 	public static String MD2LIBRARY_PACKAGE = "de.wwu.md2.android.md2library."
-	public static String MD2LIBRARY_WEAR_NAME = "md2libraryWear-debug.aar"
-	public static String MD2LIBRARY_WEAR_PATH = "md2libraryWear-debug/"
-	public static String MD2LIBRARY_WEAR_PROJECT = ":md2libraryWear-debug"
+	public static String MD2LIBRARY_WEAR_NAME = "md2wear-debug.aar"
+	public static String MD2LIBRARY_WEAR_PATH = "md2wear-debug/"
+	public static String MD2LIBRARY_WEAR_PROJECT = ":md2wear-debug"
 	
 	// packages (for imports etc.)
 	public static String MD2LIBRARY_DATAMAPPER_PACKAGE_NAME = MD2LIBRARY_PACKAGE + "controller.datamapper.Md2DataMapper"
