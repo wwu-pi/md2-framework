@@ -52,10 +52,10 @@ class ContentProviderGen {
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
-		import de.uni_muenster.wi.md2library.model.type.implementation.Md2List;
-		import de.uni_muenster.wi.md2library.model.dataStore.AtomicExpression;
-		import de.uni_muenster.wi.md2library.model.dataStore.Operator;
-		import de.uni_muenster.wi.md2library.model.dataStore.Filter;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2List;
+		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.AtomicExpression;
+		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.Operator;
+		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.Filter;
 					
 		import «mainPackage».md2.model.«(content.entity as Entity).name»;
 		
@@ -251,14 +251,14 @@ class ContentProviderGen {
 				import «mainPackage + ".md2.model"».«(element.type as ReferencedType).element.name.toFirstUpper»;		
 			«ENDIF»
 		«ENDFOR»
-		import de.uni_muenster.wi.md2library.model.contentProvider.implementation.AbstractMd2MultiContentProvider;
+		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.AbstractMd2MultiContentProvider;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
-		import de.uni_muenster.wi.md2library.model.dataStore.AtomicExpression;
-		import de.uni_muenster.wi.md2library.model.dataStore.Operator;
-		import de.uni_muenster.wi.md2library.model.dataStore.Filter;
+		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.AtomicExpression;
+		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.Operator;
+		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.Filter;
 		
 		«MD2AndroidUtil.generateImportAllTypes»
 		

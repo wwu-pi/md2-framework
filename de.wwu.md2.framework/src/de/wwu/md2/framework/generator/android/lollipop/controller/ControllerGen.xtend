@@ -15,7 +15,7 @@ class ControllerGen {
 		«var contentProviders = data.contentProviders»
 		«var workflowElements = data.workflow.workflowElementEntries.filter(entry | app.workflowElements.map(wfe | wfe.workflowElementReference).contains(entry.workflowElement))»
 		
-		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.Md2Controller.generateController()
+		// generated in de.wwu.md2.framework.generator.android.lollipop.controller.ControllerGen.generateController()
 		package «mainPackage».md2.controller;
 		
 		import android.app.Activity;
@@ -33,8 +33,8 @@ class ControllerGen {
 		import java.util.ArrayList;
 		import java.util.HashSet;
 		
-		import de.uni_muenster.wi.md2library.model.contentProvider.interfaces.Md2MultiContentProvider;
-		import de.uni_muenster.wi.md2library.model.dataStore.implementation.Md2RemoteStoreFactory;
+		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.interfaces.Md2MultiContentProvider;
+		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.implementation.Md2RemoteStoreFactory;
 		
 		«MD2AndroidUtil.generateImportAllActions»
 		«MD2AndroidUtil.generateImportAllTypes»

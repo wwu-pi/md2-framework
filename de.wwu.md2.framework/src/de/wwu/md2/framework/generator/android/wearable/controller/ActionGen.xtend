@@ -92,10 +92,10 @@ class ActionGen {
 		import «Settings.MD2LIBRARY_CONTENTPROVIDERREGISTRY_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
-		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderAddAction;
-		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderRemoveActiveAction;
-		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderGetActiveAction;
-		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2ContentProviderResetLocalAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderAddAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderRemoveActiveAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderGetActiveAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderResetLocalAction;
 
 		public class «qualifiedActionName.toFirstUpper»_Action extends AbstractMd2Action {
 		

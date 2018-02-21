@@ -17,7 +17,7 @@ public class Settings {
 	public static String MD2LIBRARY_DEBUG_NAME = "md2Library-debug.aar"
 	public static String MD2LIBRARY_DEBUG_PATH = "md2Library-debug/"
 	public static String MD2LIBRARY_DEBUG_PROJECT = ":md2Library-debug"
-	public static String MD2LIBRARY_PACKAGE = "de.uni_muenster.wi.md2library."
+	public static String MD2LIBRARY_PACKAGE = "de.wwu.md2.android.md2library."
 	public static String MD2LIBRARY_WEAR_NAME = "md2libraryWear-debug.aar"
 	public static String MD2LIBRARY_WEAR_PATH = "md2libraryWear-debug/"
 	public static String MD2LIBRARY_WEAR_PROJECT = ":md2libraryWear-debug"

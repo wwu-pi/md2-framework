@@ -18,6 +18,7 @@ class GradleGen {
 			
 			repositories {
 				jcenter()
+				google()
 			}
 			dependencies {
 				classpath 'com.android.tools.build:gradle:3.0.1'
@@ -27,6 +28,7 @@ class GradleGen {
 		allprojects {
 			repositories {
 				jcenter()
+				google()
 			}
 		}
 	'''
@@ -57,8 +59,8 @@ class GradleGen {
 		        }
 		    }
 			compileOptions {
-		        sourceCompatibility JavaVersion.VERSION_1_7
-		        targetCompatibility JavaVersion.VERSION_1_7
+		        sourceCompatibility JavaVersion.VERSION_1_8
+		        targetCompatibility JavaVersion.VERSION_1_8
 		    }
 		}
 		
@@ -68,7 +70,7 @@ class GradleGen {
 			compile group: 'com.j256.ormlite', name: 'ormlite-android', version: '4.45'
 		    compile 'com.google.code.gson:gson:2.8.0'
 			compile 'com.android.volley:volley:1.0.0'
-			compile 'com.android.support:recyclerview-v7:26.0.+'
+			compile 'com.android.support:recyclerview-v7:26.1.0'
 		}
 	'''
 	

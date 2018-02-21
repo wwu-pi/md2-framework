@@ -33,8 +33,8 @@ class ControllerGen {
 		import java.util.ArrayList;
 		import java.util.HashSet;
 		
-		import de.uni_muenster.wi.md2library.model.contentProvider.interfaces.Md2MultiContentProvider;
-		import de.uni_muenster.wi.md2library.model.dataStore.implementation.Md2RemoteStoreFactory;
+		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.interfaces.Md2MultiContentProvider;
+		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.implementation.Md2RemoteStoreFactory;
 		
 		«MD2AndroidUtil.generateImportAllActions»
 		«MD2AndroidUtil.generateImportAllTypes»

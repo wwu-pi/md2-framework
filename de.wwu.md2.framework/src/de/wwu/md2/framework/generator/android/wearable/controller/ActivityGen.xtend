@@ -60,15 +60,15 @@ class ActivityGen {
 		import android.support.v7.widget.RecyclerView;
 		import android.view.View;
 		import android.view.ViewGroup;
-		import de.uni_muenster.wi.md2library.controller.eventhandler.implementation.Md2ButtonOnSwipeHandler;
-		import de.uni_muenster.wi.md2library.controller.eventhandler.implementation.Md2OnClickHandler;
-		import de.uni_muenster.wi.md2library.view.widgets.implementation.Md2Button;
-		import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
-		import de.uni_muenster.wi.md2library.model.contentProvider.implementation.Md2ContentProviderRegistry;
-		import de.uni_muenster.wi.md2library.model.contentProvider.interfaces.Md2ContentProvider;
-		import de.uni_muenster.wi.md2library.model.contentProvider.interfaces.Md2MultiContentProvider;
-		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2UpdateListIndexAction;
-		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2RefreshListAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2ButtonOnSwipeHandler;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnClickHandler;
+		import «Settings.MD2LIBRARY_PACKAGE»view.widgets.implementation.Md2Button;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.interfaces.Md2Action;
+		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.Md2ContentProviderRegistry;
+		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.interfaces.Md2ContentProvider;
+		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.interfaces.Md2MultiContentProvider;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2UpdateListIndexAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2RefreshListAction;
 		
 		«IF(!(list.onClickAction === null))»
 			import «mainPackage».md2.controller.action.«MD2AndroidUtil.getQualifiedNameAsString(list.onClickAction, "_").toFirstUpper»_Action;
@@ -187,8 +187,8 @@ class ActivityGen {
 				
 				import android.graphics.drawable.Drawable;
 				import android.support.wearable.view.drawer.WearableNavigationDrawer;
-				import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
-				import de.uni_muenster.wi.md2library.view.management.implementation.Md2ViewManager;
+				import «Settings.MD2LIBRARY_PACKAGE»controller.action.interfaces.Md2Action;
+				import «Settings.MD2LIBRARY_PACKAGE»view.management.implementation.Md2ViewManager;
 				import java.util.ArrayList;
 				«FOR wer : startableWorkflowElements»					
 					import «mainPackage».md2.controller.action.«wer.workflowElementReference.name.toFirstUpper»___«wer.workflowElementReference.name.toFirstUpper»_startupAction_Action;
@@ -352,7 +352,7 @@ class ActivityGen {
 		«MD2AndroidUtil.generateImportAllTypes»
 		«MD2AndroidUtil.generateImportAllEventHandler»
 		
-		import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.interfaces.Md2Action;
 
 		«FOR action: frame.viewActions»
 			import «mainPackage».md2.controller.action.«MD2AndroidUtil.getQualifiedNameAsString(action.action, "_")»_Action;

@@ -58,15 +58,15 @@ class ActivityGen {
 		import android.support.v7.widget.RecyclerView;
 		import android.view.View;
 		import android.view.ViewGroup;
-		import de.uni_muenster.wi.md2library.controller.eventhandler.implementation.Md2ButtonOnSwipeHandler;
-		import de.uni_muenster.wi.md2library.controller.eventhandler.implementation.Md2OnClickHandler;
-		import de.uni_muenster.wi.md2library.view.widgets.implementation.Md2Button;
-		import de.uni_muenster.wi.md2library.controller.action.interfaces.Md2Action;
-		import de.uni_muenster.wi.md2library.model.contentProvider.implementation.Md2ContentProviderRegistry;
-		import de.uni_muenster.wi.md2library.model.contentProvider.interfaces.Md2ContentProvider;
-		import de.uni_muenster.wi.md2library.model.contentProvider.interfaces.Md2MultiContentProvider;
-		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2UpdateListIndexAction;
-		import de.uni_muenster.wi.md2library.controller.action.implementation.Md2RefreshListAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2ButtonOnSwipeHandler;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnClickHandler;
+		import «Settings.MD2LIBRARY_PACKAGE»view.widgets.implementation.Md2Button;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.interfaces.Md2Action;
+		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.Md2ContentProviderRegistry;
+		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.interfaces.Md2ContentProvider;
+		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.interfaces.Md2MultiContentProvider;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2UpdateListIndexAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2RefreshListAction;
 		
 		«IF(!(list.onClickAction === null))»
 			import «mainPackage».md2.controller.action.«MD2AndroidUtil.getQualifiedNameAsString(list.onClickAction, "_").toFirstUpper»_Action;

@@ -187,7 +187,7 @@ def static generateDataBaseHelper(String mainPackage,  App app, Iterable<Entity>
 	package «mainPackage».md2.model.sqlite;
 
 import java.sql.SQLException;
-import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Entity;
+import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -315,11 +315,11 @@ import java.util.List;
 import java.util.TimeZone;
 import java.text.SimpleDateFormat;
 
-import de.uni_muenster.wi.md2library.model.dataStore.AtomicExpression;
-import de.uni_muenster.wi.md2library.model.dataStore.CombinedExpression;
-import de.uni_muenster.wi.md2library.model.dataStore.Expression;
-import de.uni_muenster.wi.md2library.model.dataStore.implementation.AbstractMd2OrmLiteDatastore;
-import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Entity;
+import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.AtomicExpression;
+import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.CombinedExpression;
+import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.Expression;
+import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.implementation.AbstractMd2OrmLiteDatastore;
+import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
 
 import «mainPackage».«app.name»;
 
@@ -435,11 +435,11 @@ public  class Md2OrmLiteDatastore<T extends  Md2Entity> extends AbstractMd2OrmLi
  def static generateMd2LocalStoreFactory(String mainPackage,  App app, Iterable<Entity> entities){
 '''
 	package «mainPackage».md2.model.sqlite;
-	import de.uni_muenster.wi.md2library.model.dataStore.interfaces.Md2DataStore;
-	import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Entity;
-import de.uni_muenster.wi.md2library.controller.interfaces.Md2Controller;
-import de.uni_muenster.wi.md2library.model.dataStore.implementation.AbstractMd2LocalStoreFactory;
-import de.uni_muenster.wi.md2library.model.dataStore.interfaces.Md2LocalStore;
+	import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
+	import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
+import «Settings.MD2LIBRARY_PACKAGE»controller.interfaces.Md2Controller;
+import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.implementation.AbstractMd2LocalStoreFactory;
+import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
 «FOR element : entities»
 	import «mainPackage».md2.model.«element.name»;
 «ENDFOR»

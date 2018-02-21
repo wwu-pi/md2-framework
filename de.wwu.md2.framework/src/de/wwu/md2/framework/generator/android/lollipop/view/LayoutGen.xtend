@@ -118,10 +118,6 @@ class LayoutGen {
 		// special settings for root attributes
 		rootElement.setAttribute("android:layout_width", "match_parent")
 		rootElement.setAttribute("android:layout_height", "match_parent")
-		rootElement.setAttribute("android:paddingBottom", "@dimen/activity_vertical_margin")
-		rootElement.setAttribute("android:paddingLeft", "@dimen/activity_horizontal_margin")
-		rootElement.setAttribute("android:paddingRight", "@dimen/activity_horizontal_margin")
-		rootElement.setAttribute("android:paddingTop", "@dimen/activity_vertical_margin")
 		rootElement.setAttribute("tools:context", mainPackage + "." + frame.name + "Activity")
 
 		doc.appendChild(rootElement)
@@ -139,6 +135,11 @@ class LayoutGen {
 		wrapperLayout.params.add(flowDirection)
 		
 		var wrapperElement = createFlowLayoutPaneElement(doc, wrapperLayout)
+		wrapperElement.setAttribute("android:paddingBottom", "@dimen/activity_vertical_margin")
+		wrapperElement.setAttribute("android:paddingLeft", "@dimen/activity_horizontal_margin")
+		wrapperElement.setAttribute("android:paddingRight", "@dimen/activity_horizontal_margin")
+		wrapperElement.setAttribute("android:paddingTop", "@dimen/activity_vertical_margin")
+		
 		rootElement.appendChild(wrapperElement)
 		
 //		if (frame.elements.filter(ListView).length > 0) {
@@ -481,7 +482,7 @@ class LayoutGen {
 	
 	protected static def createBooleanInputElement(Document doc, BooleanInput booleanInput) {
 		//TODO real boolean switch
-		val booleanInputElement = doc.createElement(Settings.MD2LIBRARY_VIEW_TEXTINPUT)
+		val booleanInputElement = doc.createElement(Settings.MD2LIBRARY_VIEW_BOOLEANINPUT)
 		val qnp = new DefaultDeclarativeQualifiedNameProvider
 		val qualifiedName = qnp.getFullyQualifiedName(booleanInput).toString("_")
 
@@ -499,20 +500,12 @@ class LayoutGen {
 
 		booleanInputElement.setAttribute("android:hint", "@string/" + qualifiedName + "_tooltip")
 
-		booleanInputElement.setAttribute("android:text", booleanInput.defaultValue)
-		
 		// disabled
 		var isEnabled = true
 		if (booleanInput.isDisabled)
 			isEnabled = false
 
 		booleanInputElement.setAttribute("android:enabled", String.valueOf(isEnabled))
-
-		// type
-		switch booleanInput {
-			default:
-				booleanInputElement.setAttribute("android:inputType", "text")
-		}
 		
 		booleanInputElement.setAttribute("android:imeOptions","actionDone")
 

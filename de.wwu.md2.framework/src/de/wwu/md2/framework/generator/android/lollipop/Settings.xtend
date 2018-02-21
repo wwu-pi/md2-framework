@@ -15,7 +15,7 @@ public class Settings {
 	public static String MD2LIBRARY_DEBUG_NAME = "md2Library-debug.aar"
 	public static String MD2LIBRARY_DEBUG_PATH = "md2Library-debug/"
 	public static String MD2LIBRARY_DEBUG_PROJECT = ":md2Library-debug"
-	public static String MD2LIBRARY_PACKAGE = "de.uni_muenster.wi.md2library."
+	public static String MD2LIBRARY_PACKAGE = "de.wwu.md2.android.md2library."
 
 	// packages (for imports etc.)
 	public static String MD2LIBRARY_DATAMAPPER_PACKAGE_NAME = MD2LIBRARY_PACKAGE + "controller.datamapper.Md2DataMapper"
@@ -36,6 +36,7 @@ public class Settings {
 	public static String MD2LIBRARY_VIEW_GRIDLAYOUTPANE = MD2LIBRARY_VIEW_PACKAGE + "Md2GridLayoutPane"
 	public static String MD2LIBRARY_VIEW_BUTTON = MD2LIBRARY_VIEW_PACKAGE + "Md2Button"
 	public static String MD2LIBRARY_VIEW_TEXTINPUT = MD2LIBRARY_VIEW_PACKAGE + "Md2TextInput"
+	public static String MD2LIBRARY_VIEW_BOOLEANINPUT = MD2LIBRARY_VIEW_PACKAGE + "Md2BooleanInput"
 	public static String MD2LIBRARY_VIEW_OPTIONINPUT = MD2LIBRARY_VIEW_PACKAGE + "Md2OptionInput"
 	public static String MD2LIBRARY_VIEW_LABEL = MD2LIBRARY_VIEW_PACKAGE + "Md2Label"
 

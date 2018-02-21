@@ -51,7 +51,7 @@ class EntityGen {
 		import com.j256.ormlite.table.DatabaseTable;
 		import com.google.gson.annotations.SerializedName;
 		import com.google.gson.annotations.Expose;
-		import de.uni_muenster.wi.md2library.model.type.interfaces.Md2Entity;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.AbstractMd2Entity;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
 		«MD2AndroidUtil.generateImportAllTypes»

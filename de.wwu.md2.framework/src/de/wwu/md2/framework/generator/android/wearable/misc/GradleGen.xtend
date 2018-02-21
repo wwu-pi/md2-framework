@@ -18,6 +18,7 @@ class GradleGen {
 			
 			repositories {
 				jcenter()
+				google()
 			}
 			dependencies {
 				classpath 'com.android.tools.build:gradle:3.0.1'
@@ -27,6 +28,7 @@ class GradleGen {
 		allprojects {
 			repositories {
 				jcenter()
+				google()
 			}
 		} 
 		
@@ -62,8 +64,8 @@ class GradleGen {
 		        } 
 		    }
 			compileOptions {
-			       sourceCompatibility JavaVersion.VERSION_1_7
-			       targetCompatibility JavaVersion.VERSION_1_7
+			       sourceCompatibility JavaVersion.VERSION_1_8
+			       targetCompatibility JavaVersion.VERSION_1_8
 			   }
 		}
 		
