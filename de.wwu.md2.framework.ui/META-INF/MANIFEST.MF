@@ -11,6 +11,15 @@ Require-Bundle: de.wwu.md2.framework,
  org.eclipse.xtext.ui.shared,
  org.eclipse.xtext.ui.codetemplates.ui,
  org.eclipse.ui.editors;bundle-version="3.5.0",
- org.eclipse.ui.ide;bundle-version="3.5.0"
+ org.eclipse.ui.ide;bundle-version="3.5.0",
+ org.eclipse.ui,
+ org.eclipse.compare,
+ org.eclipse.xtext.builder,
+ org.eclipse.xtend.lib;resolution:=optional,
+ org.eclipse.xtext.xbase.lib;bundle-version="2.13.0"
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.wwu.md2.framework.ui.quickfix,
+ de.wwu.md2.framework.ui.internal,
+ de.wwu.md2.framework.ui.contentassist
+Bundle-Activator: de.wwu.md2.framework.ui.internal.FrameworkActivator

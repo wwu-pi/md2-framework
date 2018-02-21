@@ -3,6 +3,7 @@
 /xtend-gen
 /target
 /build
+/bin 
 
 # Eclipse project files
 .project

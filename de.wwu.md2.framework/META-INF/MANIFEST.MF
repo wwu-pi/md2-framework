@@ -7,5 +7,23 @@ Bundle-SymbolicName: de.wwu.md2.framework; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext,
  org.eclipse.xtext.xbase,
- org.eclipse.equinox.common;bundle-version="3.5.0"
+ org.eclipse.equinox.common;bundle-version="3.5.0",
+ org.eclipse.emf.ecore,
+ org.eclipse.xtext.xbase.lib;bundle-version="2.13.0",
+ org.antlr.runtime,
+ org.eclipse.xtext.util,
+ org.eclipse.emf.common,
+ org.eclipse.xtend.lib;bundle-version="2.13.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.wwu.md2.framework,
+ de.wwu.md2.framework.mD2,
+ de.wwu.md2.framework.parser.antlr,
+ de.wwu.md2.framework.scoping,
+ de.wwu.md2.framework.serializer,
+ de.wwu.md2.framework.services,
+ de.wwu.md2.framework.parser.antlr.internal,
+ de.wwu.md2.framework.validation,
+ de.wwu.md2.framework.mD2.util,
+ de.wwu.md2.framework.generator,
+ de.wwu.md2.framework.mD2.impl
+Import-Package: org.apache.log4j
