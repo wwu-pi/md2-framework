@@ -1,6 +1,9 @@
 dependencies {
 	compile "org.eclipse.xtext:org.eclipse.xtext:${xtextVersion}"
 	compile "org.eclipse.xtext:org.eclipse.xtext.xbase:${xtextVersion}"
+	// MD2-specific dependencies
+	compile "commons-codec:commons-codec:1.11"
+	compile 'com.google.inject.extensions:guice-multibindings:3.0'
 }
 configurations {
 	mwe2 {

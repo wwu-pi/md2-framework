@@ -3,9 +3,56 @@
  */
 package de.wwu.md2.framework
 
+import de.wwu.md2.framework.generator.IPlatformGenerator
+import org.eclipse.xtext.scoping.impl.ImportedNamespaceAwareLocalScopeProvider
+import de.wwu.md2.framework.generator.android.lollipop.AndroidLollipopGenerator
+import org.eclipse.xtext.conversion.IValueConverterService
+import com.google.inject.name.Names
+import de.wwu.md2.framework.conversion.MD2ValueConverterService
+import com.google.inject.multibindings.Multibinder
+import de.wwu.md2.framework.generator.backend.BackendGenerator
+import de.wwu.md2.framework.scoping.MD2ImportedNamespaceAwareLocalScopeProvider
+import de.wwu.md2.framework.generator.TestGenerator
+import com.google.inject.Binder
+import de.wwu.md2.framework.generator.android.wearable.AndroidWearableGenerator
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
 class MD2RuntimeModule extends AbstractMD2RuntimeModule {
+	
+	override public def void configure(Binder binder) {
+		super.configure(binder);
+		val multiGenBinder = Multibinder.newSetBinder(binder, IPlatformGenerator);
+
+		// Bind all generators here
+		//multiGenBinder.addBinding().to(IOSGenerator);
+		multiGenBinder.addBinding().to(AndroidLollipopGenerator);
+		multiGenBinder.addBinding().to(BackendGenerator);
+		multiGenBinder.addBinding().to(AndroidWearableGenerator);
+		//multiGenBinder.addBinding().to(TestGenerator);
+		//multiGenBinder.addBinding().to(MapAppsGenerator);
+
+		binder.bind(Boolean).annotatedWith(Names.named("Debug MD2GeneratorUtil")).toInstance(true);
+	}
+
+	public def Class<? extends ImportedNamespaceAwareLocalScopeProvider> bindImportedNamespaceAwareLocalScopeProvider() {
+		return MD2ImportedNamespaceAwareLocalScopeProvider;
+	}
+
+	override public def Class<? extends IValueConverterService> bindIValueConverterService() {
+		return MD2ValueConverterService;
+	}
+
+	public def Class<? extends org.eclipse.xtext.generator.IGenerator> bindIGenerator() {
+		// the IGenerator interface is not used anymore. However, org.eclipse.xtext.builder.BuilderParticipant injects
+		// an IGenerator implementation (that is never used, because the according methods are overwritten) and thus Guice
+		// needs any binding. Just provide any implementing class here to make Guice happy...
+		return TestGenerator;
+	}
+	
+	// contributed by org.eclipse.xtext.generator.formatting.FormatterFragment
+	override public def Class<? extends org.eclipse.xtext.formatting.IFormatter> bindIFormatter() {
+		return de.wwu.md2.framework.formatting.MD2Formatter;
+	}
 }

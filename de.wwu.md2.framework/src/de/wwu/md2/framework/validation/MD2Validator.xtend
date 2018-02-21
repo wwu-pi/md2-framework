@@ -3,12 +3,23 @@
  */
 package de.wwu.md2.framework.validation
 
+import org.eclipse.xtext.validation.ComposedChecks
 
 /**
  * This class contains custom validation rules. 
  *
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
+ @ComposedChecks(validators= #[
+	LegacyValidator,
+	ProjectValidator,
+	ControllerValidator,
+	ModelValidator,
+	ViewValidator,
+	WorkflowValidator,
+	//AndroidLollipopValidator // TODO commented out to reduce errors
+	IOSValidator
+])
 class MD2Validator extends AbstractMD2Validator {
 	
 //	public static val INVALID_NAME = 'invalidName'
