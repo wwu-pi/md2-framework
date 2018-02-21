@@ -1,0 +1,41 @@
+import ecore;
+
+EPackage ecorePackage() :
+	JAVA org.eclipse.emf.ecore.impl.EcorePackageImpl.init()
+;
+
+process(xtext::GeneratedMetamodel this) :
+	ePackage.process()
+;
+
+process(EPackage this) :
+	eClassifiers.typeSelect(EClass).process()
+;
+
+process(EClass this) :
+	switch (name) {
+		case "Spacer": eAttributes.processSpacer()
+		case "WidthParam": eAttributes.processWidthParam()
+		case "ContentElement": eAttributes.processContentElement()
+		case "SimpleAction": addStringAttribute("parameterSignature")
+		default: null
+	}
+;
+
+processSpacer(EAttribute this) :
+	if name == "number" then setDefaultValueLiteral('1')
+;
+
+processWidthParam(EAttribute this) :
+	if name == "width" then setDefaultValueLiteral('-1')
+;
+
+processContentElement(EAttribute this) :
+	if name == "width" then setDefaultValueLiteral('-1')
+;
+
+create EAttribute addStringAttribute(EClass eClass, String attrName) :
+	setName(attrName) ->
+	setEType(ecorePackage().getEClassifier("EString")) ->
+	eClass.eStructuralFeatures.add(this)
+;

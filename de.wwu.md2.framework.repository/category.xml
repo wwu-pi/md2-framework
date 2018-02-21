@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+	<feature id="de.wwu.md2.framework.feature" version="0.0.0">
+		<category name="main"/>
+	</feature>
+	<feature id="de.wwu.md2.framework.feature.source" version="0.0.0">
+		<category name="main.source"/>
+	</feature>
+	<category-def name="main" label="MD2"/>
+	<category-def name="main.source" label="MD2 (Sources)"/>
+</site>

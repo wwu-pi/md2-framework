@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature id="de.wwu.md2.framework.feature"
+	label="MD2 Feature "
+	version="1.0.0.qualifier">
+	<plugin
+			id="de.wwu.md2.framework"
+			download-size="0"
+			install-size="0"
+			version="0.0.0"
+			unpack="false"/>
+	<plugin
+			id="de.wwu.md2.framework.ide"
+			download-size="0"
+			install-size="0"
+			version="0.0.0"
+			unpack="false"/>
+	<plugin
+			id="de.wwu.md2.framework.ui"
+			download-size="0"
+			install-size="0"
+			version="0.0.0"
+			unpack="false"/>
+</feature>

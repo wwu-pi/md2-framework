@@ -1,39 +1,32 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
 	repositories {
 		jcenter()
-		mavenLocal()
 	}
 	dependencies {
-		// NOTE: Do not place your application dependencies here; they belong
-		// in the individual module build.gradle files
+		classpath 'org.xtext:xtext-gradle-plugin:1.0.18'
 	}
 }
 
-allprojects {
-	apply plugin: 'java'
-	apply plugin: 'eclipse'
-    
+subprojects {
+	ext.xtextVersion = '2.13.0'
 	repositories {
-        jcenter()
-    }
+		jcenter()
+	}
+	
+	apply plugin: 'java'
+	apply plugin: 'org.xtext.xtend'
+	apply from: "${rootDir}/gradle/source-layout.gradle"
+	apply from: "${rootDir}/gradle/maven-deployment.gradle"
+	apply plugin: 'eclipse'
+	apply plugin: 'idea'
+	
+	group = 'de.wwu.md2.framework'
+	version = '1.0.0-SNAPSHOT'
+	
+	sourceCompatibility = '1.8'
+	targetCompatibility = '1.8'
+	
+	configurations.all {
+		exclude group: 'asm'
+	}
 }
-
-task setupMD2 {
-	doLast {
-        println 'Setup done!'
-    }
-}
-
-// Project dependencies
-project(':de.wwu.md2.framework.ui') {
-    dependencies {
-        compile project(':de.wwu.md2.framework')
-    }
-}
-
-// Task ordering
-setupMD2.dependsOn ':de.wwu.md2.framework:generateMD2LanguageArtifacts'
-setupMD2.dependsOn ':de.wwu.md2.framework.ui:setupFrameworkUi'
-
-project.tasks.findByPath(':de.wwu.md2.framework.ui:setupFrameworkUi').mustRunAfter ':de.wwu.md2.framework:generateMD2LanguageArtifacts'
