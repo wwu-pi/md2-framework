@@ -31,7 +31,6 @@ import java.util.List
 import org.eclipse.emf.ecore.EObject
 
 import static extension de.wwu.md2.framework.generator.preprocessor.util.Helper.*
-import static extension org.apache.commons.codec.digest.DigestUtils.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 class ProcessProcessChain extends AbstractPreprocessor {
