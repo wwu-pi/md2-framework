@@ -128,9 +128,9 @@ public class LegacyValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	public void checkSpacerNumberParam(Spacer spacer) {
-		if(spacer.getNumber() < 1) {
-			acceptError("The number param has to be > 0", spacer, MD2Package.eINSTANCE.getSpacer_Number(), -1, null);
-		}
+//		if(spacer.getNumber() < 0) {
+//			acceptError("The number param has to be > 0", spacer, MD2Package.eINSTANCE.getSpacer_Number(), -1, null);
+//		}
 	}
 
 	/**
@@ -258,7 +258,7 @@ public class LegacyValidator extends AbstractMD2Validator {
 	public void checkViewGUIElementWidthIsGreaterZeroAndLessOrEqualThanHundret(ViewGUIElement guiElement) {
 		if (guiElement instanceof ContentElement) {
 			int width = ((ContentElement) guiElement).getWidth();
-			if (width == 0 || width > 100) {
+			if (width < 0 || width > 100) {
 				error("The width parameter may not be " + width + "%. Please set a value between 1% and 100%.", MD2Package.eINSTANCE.getContentElement_Width());
 			}
 		} else if (guiElement instanceof ContainerElement) {
