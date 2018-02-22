@@ -15,6 +15,7 @@ import de.wwu.md2.framework.scoping.MD2ImportedNamespaceAwareLocalScopeProvider
 import de.wwu.md2.framework.generator.TestGenerator
 import com.google.inject.Binder
 import de.wwu.md2.framework.generator.android.wearable.AndroidWearableGenerator
+import org.eclipse.xtext.generator.IGenerator2
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -54,5 +55,9 @@ class MD2RuntimeModule extends AbstractMD2RuntimeModule {
 	// contributed by org.eclipse.xtext.generator.formatting.FormatterFragment
 	override public def Class<? extends org.eclipse.xtext.formatting.IFormatter> bindIFormatter() {
 		return de.wwu.md2.framework.formatting.MD2Formatter;
+	}
+	
+	override public def Class<? extends IGenerator2> bindIGenerator2() {
+		return null;
 	}
 }

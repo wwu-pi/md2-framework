@@ -3,11 +3,39 @@
  */
 package de.wwu.md2.framework.ui
 
+import de.wwu.md2.framework.ui.generator.MD2BuilderParticipent
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
+import org.eclipse.xtext.builder.BuilderParticipant
 
 /**
  * Use this class to register components to be used within the Eclipse IDE.
  */
 @FinalFieldsConstructor
 class MD2UiModule extends AbstractMD2UiModule {
+	
+	override public Class<? extends BuilderParticipant> bindIXtextBuilderParticipant() {
+		return MD2BuilderParticipent;
+	}
+//
+//	@Override
+//	public Class<? extends AbstractEditStrategyProvider> bindAbstractEditStrategyProvider() {
+//		return MD2AutoEditStrategyProvider.class;
+//	}
+//	
+//	@Override
+//	public Class<? extends IProjectCreator> bindIProjectCreator() {
+//		return MD2ExtendedProjectCreator.class;
+//	}
+//	
+//	public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration () {
+//		return MD2HighlightingConfiguration.class;
+//	}
+//	
+//	public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator(){
+//		return MD2HighlightingCalculator.class;
+//	}
+//	
+//	public Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindTokenToAttributeIdMapper() {
+//		return MD2TokenToAttributeIdMapper.class;
+//	}
 }
