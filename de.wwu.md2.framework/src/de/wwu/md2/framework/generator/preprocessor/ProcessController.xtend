@@ -14,7 +14,6 @@ import de.wwu.md2.framework.mD2.Main
 import de.wwu.md2.framework.mD2.NotNullValidator
 import de.wwu.md2.framework.mD2.NumberRangeValidator
 import de.wwu.md2.framework.mD2.RegExValidator
-import de.wwu.md2.framework.mD2.SimpleAction
 import de.wwu.md2.framework.mD2.StandardValidator
 import de.wwu.md2.framework.mD2.StandardValidatorType
 import de.wwu.md2.framework.mD2.StringRangeValidator
@@ -22,7 +21,6 @@ import de.wwu.md2.framework.mD2.TimeRangeValidator
 import de.wwu.md2.framework.mD2.WorkflowElement
 import org.eclipse.emf.ecore.util.EcoreUtil
 
-import static extension de.wwu.md2.framework.generator.preprocessor.util.Util.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 class ProcessController extends AbstractPreprocessor {
@@ -167,12 +165,12 @@ class ProcessController extends AbstractPreprocessor {
 	 * </p>
 	 */
 	def calculateParameterSignatureForAllSimpleActions(WorkflowElement wfe) {
-		
-		val simpleActions = wfe.eAllContents.toIterable.filter(SimpleAction).toList
-				
-		for (simpleAction : simpleActions) {
-			simpleAction.setParameterSignature(simpleAction.calculateParameterSignatureHash)
-		}
+		// Not required anymore as it is calculated on usage
+//		val simpleActions = wfe.eAllContents.toIterable.filter(SimpleAction).toList
+//				
+//		for (simpleAction : simpleActions) {
+//			simpleAction.setParameterSignature(simpleAction.calculateParameterSignatureHash)
+//		}
 	}
 	
 	/**

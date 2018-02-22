@@ -74,6 +74,7 @@ import org.eclipse.xtend2.lib.StringConcatenation
 import static de.wwu.md2.framework.generator.mapapps.Expressions.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
+import static extension de.wwu.md2.framework.generator.preprocessor.util.Util.*
 import static extension de.wwu.md2.framework.util.DateISOFormatter.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
 
@@ -263,7 +264,7 @@ class CustomActionClass {
 	def private static dispatch String generateActionCodeFragment(DisplayMessageAction action, String varName, Map<String, String> imports) '''
 		«val messageExpressionVar = getUnifiedName("message")»
 		«generateMessage(action.message, messageExpressionVar, imports)»
-		var «varName» = this.$.actionFactory.getDisplayMessageAction("«action.parameterSignature»", «messageExpressionVar»);
+		var «varName» = this.$.actionFactory.getDisplayMessageAction("«action.calculateParameterSignature»", «messageExpressionVar»);
 	'''
 	
 	def private static dispatch String generateActionCodeFragment(ContentProviderOperationAction action, String varName, Map<String, String> imports) '''

@@ -411,7 +411,7 @@ class LayoutGen {
 				GridLayoutPaneRowsParam:
 					glpElement.setAttribute("android:rowCount", String.valueOf(p.value))
 				// width
-				WidthParam:{
+				WidthParam case p.width > 0:{
 					glpElement.setAttribute("android:layout_columnWeight", String.valueOf(p.width))
 					glpElement.getAttributeNode("android:layout_width").nodeValue = "0dp"
 				}
@@ -429,7 +429,7 @@ class LayoutGen {
 		buttonElement.setAttribute("android:id", "@id/" + qualifiedName)
 
 		// height and width
-		if(button.width == -1){
+		if(button.width <= 0){
 			buttonElement.setAttribute("android:layout_width", "match_parent")
 		}else{
 			buttonElement.setAttribute("android:layout_width", "0dp")
@@ -461,7 +461,7 @@ class LayoutGen {
 		// id
 		textInputElement.setAttribute("android:id", "@id/" + qualifiedName)
 
-		if(textInput.width == -1){
+		if(textInput.width <= 0){
 			textInputElement.setAttribute("android:layout_width", "match_parent")
 		}else{
 			textInputElement.setAttribute("android:layout_width", "0dp")
@@ -505,7 +505,7 @@ class LayoutGen {
 		// id
 		labelElement.setAttribute("android:id", "@id/" + qualifiedName)
 
-		if(label.width == -1){
+		if(label.width <= 0){
 			labelElement.setAttribute("android:layout_width", "match_parent")
 		}else{
 			labelElement.setAttribute("android:layout_width", "0dp")
@@ -529,7 +529,7 @@ class LayoutGen {
 		// id
 		optionInputElement.setAttribute("android:id", "@id/" + qualifiedName)
 
-		if(optionInput.width == -1){
+		if(optionInput.width <= 0){
 			optionInputElement.setAttribute("android:layout_width", "match_parent")
 		}else{
 			optionInputElement.setAttribute("android:layout_width", "0dp")

@@ -173,7 +173,7 @@ class IOSView {
 		«qualifiedName».rows = MD2Integer(«element.params.filter(GridLayoutPaneRowsParam).get(0).value»)
 		«ENDIF»
 		«««Element width»»»
-		«IF element.params.filter(WidthParam).length > 0»
+		«IF element.params.filter(WidthParam).length > 0 && element.params.filter(WidthParam).get(0).width > 0»
 		«qualifiedName».width = Float(1/100 * «element.params.filter(WidthParam).get(0).width»)
 		«ENDIF»	
 		«««Add to surrounding container»»»
@@ -205,7 +205,7 @@ class IOSView {
 		«qualifiedName».orientation = MD2FlowLayoutPane.Orientation.Horizontal
 		«ENDIF»	
 		«««Element width»»»
-		«IF element.params.filter(WidthParam).length > 0»
+		«IF element.params.filter(WidthParam).length > 0 && element.params.filter(WidthParam).get(0).width > 0»
 		«qualifiedName».width = Float(1/100 * «element.params.filter(WidthParam).get(0).width»)
 		«ENDIF»	
 		«««Add to surrounding container»»»

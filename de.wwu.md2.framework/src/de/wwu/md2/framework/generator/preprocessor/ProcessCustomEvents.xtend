@@ -22,6 +22,7 @@ import de.wwu.md2.framework.mD2.WorkflowElement
 import java.util.HashMap
 
 import static extension de.wwu.md2.framework.generator.preprocessor.util.Helper.*
+import static extension de.wwu.md2.framework.generator.preprocessor.util.Util.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 /**
@@ -504,7 +505,7 @@ class ProcessCustomEvents extends AbstractPreprocessor {
 		}
 		
 		val actionIdentifier = switch (action) {
-			SimpleActionRef: "__simple__" + action.action.eClass.name + "_" + action.action.parameterSignature
+			SimpleActionRef: "__simple__" + action.action.eClass.name + "_" + action.action.calculateParameterSignature
 			ActionReference: action.actionRef.name
 		}
 		val conditionalEvent = (event as ConditionalEventRef).eventReference

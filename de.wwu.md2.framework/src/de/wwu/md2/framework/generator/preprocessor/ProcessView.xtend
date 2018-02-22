@@ -74,7 +74,8 @@ class ProcessView extends AbstractPreprocessor {
 				val width = spacer.width
 				val idx = lst.indexOf(spacer)
 				var i = 0
-				while (i < spacer.number) {
+				val amt = if(spacer.number > 0) spacer.number else 1 
+				while (i < amt) {
 					val newSpacer = factory.createSpacer
 					newSpacer.setNumber(1)
 					newSpacer.setWidth(width)
@@ -256,7 +257,7 @@ class ProcessView extends AbstractPreprocessor {
 	 * algorithm:
 	 * <ol>
 	 *   <li>Find all view container elements. For each view container, so row-wise:</li>
-	 *     <li>Find all view elements in the parent container and sum up the widths of all view elements for which it is explicitly defined (!= -1).</li>
+	 *     <li>Find all view elements in the parent container and sum up the widths of all view elements for which it is explicitly defined (> 0).</li>
 	 *     <li>If the summed up width of all elements is > 100% or all elements have the width value explicitly set, all widths are normalized so that they sum up to 100%.</li>
 	 *     <li>The remaining space is distributed evenly over all other elements without an explicitly defined width. E.g. there are three view elements
 	 *         A, B and C with A having an explicit width of 30%. Then B and C share the remaining space and get 35% each. If the sum of all other elements
@@ -315,7 +316,7 @@ class ProcessView extends AbstractPreprocessor {
 				for (childElement : rowChilds) {
 					switch(childElement) {
 						ContentElement: {
-							if (childElement.width == -1) {
+							if (childElement.width <= 0) {
 								elementsWithImplicitWidthMap.put(childElement, -1)
 							} else {
 								sumOfWidths = sumOfWidths + childElement.width
@@ -334,7 +335,7 @@ class ProcessView extends AbstractPreprocessor {
 									AlternativesPane: childElement.params.add(widthParam)
 								}
 							}
-							if (widthParam.width == -1) {
+							if (widthParam.width <= 0) {
 								elementsWithImplicitWidthMap.put(widthParam, -1)
 							} else {
 								sumOfWidths = sumOfWidths + widthParam.width

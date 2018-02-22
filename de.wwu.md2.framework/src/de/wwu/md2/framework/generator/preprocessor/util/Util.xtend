@@ -9,6 +9,8 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList
 import org.eclipse.emf.ecore.util.EcoreUtil
 
 import static extension org.apache.commons.codec.digest.DigestUtils.*
+import java.util.HashSet
+import java.util.HashMap
 
 /**
  * Provides utility methods to operate on EMF models.
@@ -93,6 +95,8 @@ class Util {
 	    }
         return signature.toString
     }
+    
+    private static HashMap<EObject, String> uniqueParameterSignatures = newHashMap
 	
 	/**
 	 * Calculate a SHA1 hash of the string representation (@see eObjectRecusriveStringRepresentation) of an EObject.
@@ -100,8 +104,11 @@ class Util {
 	 * a Validator with the same message as parameter) exists multiple times it gets assigned the same hash value and thus
 	 * has to be generated only once.
 	 */
-	def static String calculateParameterSignatureHash(EObject eObject) {
-		eObjectRecursiveStringRepresentation(eObject).sha1Hex
+	def static String calculateParameterSignature(EObject eObject) {
+		if (!uniqueParameterSignatures.keySet.contains(eObject)) {
+			uniqueParameterSignatures.put(eObject, eObjectRecursiveStringRepresentation(eObject).sha1Hex)
+		}
+		return uniqueParameterSignatures.get(eObject)	
 	}
 	
 }
