@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>de.wwu.md2.framework</groupId>
 		<artifactId>de.wwu.md2.framework.parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>2.0.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>de.wwu.md2.framework.ui</artifactId>
 	<packaging>eclipse-plugin</packaging>
