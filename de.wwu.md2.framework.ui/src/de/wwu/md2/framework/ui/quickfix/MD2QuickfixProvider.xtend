@@ -4,6 +4,14 @@
 package de.wwu.md2.framework.ui.quickfix
 
 import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider
+import de.wwu.md2.framework.validation.ModelValidator
+import org.eclipse.xtext.ui.editor.quickfix.Fix
+import org.eclipse.xtext.validation.Issue
+import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.xtext.ui.editor.model.edit.IModificationContext
+import de.wwu.md2.framework.mD2.Entity
+import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification
 
 /**
  * Custom quickfixes.
@@ -12,6 +20,15 @@ import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider
  */
 class MD2QuickfixProvider extends DefaultQuickfixProvider {
 
+	@Fix(ModelValidator.ENTITYWITHOUTUNDERSCORE)
+	def deleteUnderscoreFromEntityname(Issue issue, IssueResolutionAcceptor acceptor){
+		acceptor.accept(issue, "Delete underscore", "Deletes the underscore from the entity/enum identifier.", "upcase.png", new ISemanticModification() {
+			override public def apply(EObject element, IModificationContext context) {
+				val entity = element as Entity;
+				entity.setName(entity.getName().substring(1));
+			}
+		});
+	}
 //	@Fix(MD2Validator.INVALID_NAME)
 //	def capitalizeName(Issue issue, IssueResolutionAcceptor acceptor) {
 //		acceptor.accept(issue, 'Capitalize name', 'Capitalize the name.', 'upcase.png') [

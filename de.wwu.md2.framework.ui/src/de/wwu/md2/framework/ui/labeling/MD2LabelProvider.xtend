@@ -21,11 +21,12 @@ class MD2LabelProvider extends DefaultEObjectLabelProvider {
 
 	// Labels and icons can be computed like this:
 	
-//	def text(Greeting ele) {
-//		'A greeting to ' + ele.name
-//	}
-//
-//	def image(Greeting ele) {
-//		'Greeting.gif'
-//	}
+	override def String text(Object ele) {
+		try {
+			val getNameMethod = ele.getClass().getMethod("getName");
+			return getNameMethod.invoke(ele) + " <"+ele.getClass().interfaces.get(0).getSimpleName()+">";
+		} catch (Exception e1) {
+			return "<"+ele.getClass().interfaces.get(0).getSimpleName()+">";
+		}
+	}
 }

@@ -6,6 +6,12 @@ package de.wwu.md2.framework.ui
 import de.wwu.md2.framework.ui.generator.MD2BuilderParticipent
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
 import org.eclipse.xtext.builder.BuilderParticipant
+import de.wwu.md2.framework.ui.autoedit.MD2AutoEditStrategyProvider
+import org.eclipse.xtext.ui.editor.autoedit.AbstractEditStrategyProvider
+import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator
+import de.wwu.md2.framework.ui.highlighting.MD2HighlightingCalculator
+import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration
+import de.wwu.md2.framework.ui.highlighting.MD2HighlightingConfiguration
 
 /**
  * Use this class to register components to be used within the Eclipse IDE.
@@ -16,25 +22,24 @@ class MD2UiModule extends AbstractMD2UiModule {
 	override public Class<? extends BuilderParticipant> bindIXtextBuilderParticipant() {
 		return MD2BuilderParticipent;
 	}
-//
-//	@Override
-//	public Class<? extends AbstractEditStrategyProvider> bindAbstractEditStrategyProvider() {
-//		return MD2AutoEditStrategyProvider.class;
-//	}
-//	
+
+	def Class<? extends AbstractEditStrategyProvider> bindAbstractEditStrategyProvider() {
+		return MD2AutoEditStrategyProvider;
+	}
+	
 //	@Override
 //	public Class<? extends IProjectCreator> bindIProjectCreator() {
 //		return MD2ExtendedProjectCreator.class;
 //	}
 //	
-//	public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration () {
-//		return MD2HighlightingConfiguration.class;
-//	}
-//	
-//	public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator(){
-//		return MD2HighlightingCalculator.class;
-//	}
-//	
+	public def Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration () {
+		return MD2HighlightingConfiguration;
+	}
+	
+	public def Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator(){
+		return MD2HighlightingCalculator;
+	}
+	
 //	public Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindTokenToAttributeIdMapper() {
 //		return MD2TokenToAttributeIdMapper.class;
 //	}
