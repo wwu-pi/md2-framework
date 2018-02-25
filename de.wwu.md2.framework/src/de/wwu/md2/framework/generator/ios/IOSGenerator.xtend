@@ -19,6 +19,8 @@ import de.wwu.md2.framework.mD2.SimpleType
 
 import static de.wwu.md2.framework.generator.ios.Settings.*
 import static de.wwu.md2.framework.util.MD2Util.*
+import de.wwu.md2.framework.generator.preprocessor.SmartphonePreprocessor
+import de.wwu.md2.framework.generator.util.DataContainer
 
 /**
  * Main generator class for the Swift-iOS generation process. 
@@ -32,6 +34,10 @@ class IOSGenerator extends AbstractPlatformGenerator {
 	 */
 	override doGenerate(IExtendedFileSystemAccess fsa) {
 		System.out.println("START GENERATION")
+		
+		// Apply device class preprocessing
+		processedInput = SmartphonePreprocessor.getPreprocessedModel(processedInput)
+		dataContainer = new DataContainer(processedInput);
 		
 		/***************************************************
 		 * 

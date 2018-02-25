@@ -21,6 +21,8 @@ import org.apache.log4j.Logger
 
 import static de.wwu.md2.framework.util.MD2Util.*
 import de.wwu.md2.framework.mD2.ViewFrame
+import de.wwu.md2.framework.generator.preprocessor.SmartwatchPreprocessor
+import de.wwu.md2.framework.generator.util.DataContainer
 
 /**
  * This is the start point for the Android generator.
@@ -31,6 +33,9 @@ import de.wwu.md2.framework.mD2.ViewFrame
 class AndroidWearableGenerator extends AbstractPlatformGenerator {
 
 	override doGenerate(IExtendedFileSystemAccess fsa) {
+		// Apply device class preprocessing
+		processedInput = SmartwatchPreprocessor.getPreprocessedModel(processedInput)
+		dataContainer = new DataContainer(processedInput);
 
 		val Logger log = Logger.getLogger(this.class)
 

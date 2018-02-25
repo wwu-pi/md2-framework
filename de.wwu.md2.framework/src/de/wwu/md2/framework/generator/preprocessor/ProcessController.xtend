@@ -157,23 +157,6 @@ class ProcessController extends AbstractPreprocessor {
 	}
 	
 	/**
-	 * Calculate an MD5 hash for each SimpleAction and assign it to the parameterSignature attribute of the according
-	 * SimpleActions. If all attribute values are equal, the assigned parameter signature is the same as well.
-	 * 
-	 * <p>
-	 *   DEPENDENCIES: None
-	 * </p>
-	 */
-	def calculateParameterSignatureForAllSimpleActions(WorkflowElement wfe) {
-		// Not required anymore as it is calculated on usage
-//		val simpleActions = wfe.eAllContents.toIterable.filter(SimpleAction).toList
-//				
-//		for (simpleAction : simpleActions) {
-//			simpleAction.setParameterSignature(simpleAction.calculateParameterSignatureHash)
-//		}
-	}
-	
-	/**
 	 * In the MD2 language it is allowed to bind a list of actions to a list of events. That is comfortable for the developer, however
 	 * for the generation process it is preferable to not have combined statements. Therefore, transform all event binding and unbinding
 	 * tasks to multiple tasks that only contain one-to-one mappings. E.g.

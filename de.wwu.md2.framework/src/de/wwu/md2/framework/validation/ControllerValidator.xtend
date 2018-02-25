@@ -82,7 +82,6 @@ import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.xtext.validation.Check
 
 import static extension de.wwu.md2.framework.util.TypeResolver.*
-import de.wwu.md2.framework.mD2.InvokeIntValue
 
 /**
  * Validators for all controller elements of MD2.

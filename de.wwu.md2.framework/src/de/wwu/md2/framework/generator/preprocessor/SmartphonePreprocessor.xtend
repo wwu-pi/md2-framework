@@ -30,6 +30,7 @@ class SmartphonePreprocessor extends AbstractPreprocessor {
 			}
 			previousInputSet = input
 			instance.setNewModel(input)
+			println("Smartphone preprocessing running...")
 			preprocessedModel = instance.preprocessModel
 		}
 		return preprocessedModel

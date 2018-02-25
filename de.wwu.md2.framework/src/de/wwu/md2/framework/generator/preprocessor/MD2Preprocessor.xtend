@@ -52,6 +52,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 			}
 			previousInputSet = input
 			instance.setNewModel(input)
+			println("General model preprocessing running...")
 			preprocessedModel = instance.preprocessModel
 		}
 		return preprocessedModel
@@ -136,10 +137,7 @@ class MD2Preprocessor extends AbstractPreprocessor {
 			controller.setInitialProcessChainAction(wfe) // done
 		
 			controller.transformEventBindingAndUnbindingTasksToOneToOneRelations(wfe) // done
-		
-			controller.calculateParameterSignatureForAllSimpleActions(wfe) // done
 		]
-		
 		
 		processChains.transformProcessChainsToSequenceOfCoreLanguageElements() // done
 		
