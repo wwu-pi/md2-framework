@@ -12,6 +12,8 @@ import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculat
 import de.wwu.md2.framework.ui.highlighting.MD2HighlightingCalculator
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration
 import de.wwu.md2.framework.ui.highlighting.MD2HighlightingConfiguration
+import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper
+import de.wwu.md2.framework.ui.highlighting.MD2TokenToAttributeIdMapper
 
 /**
  * Use this class to register components to be used within the Eclipse IDE.
@@ -40,7 +42,7 @@ class MD2UiModule extends AbstractMD2UiModule {
 		return MD2HighlightingCalculator;
 	}
 	
-//	public Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindTokenToAttributeIdMapper() {
-//		return MD2TokenToAttributeIdMapper.class;
-//	}
+	public def Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindTokenToAttributeIdMapper() {
+		return MD2TokenToAttributeIdMapper;
+	}
 }
