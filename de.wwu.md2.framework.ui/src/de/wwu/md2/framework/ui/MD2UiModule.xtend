@@ -23,7 +23,7 @@ class MD2UiModule extends AbstractMD2UiModule {
 		return MD2BuilderParticipent;
 	}
 
-	def Class<? extends AbstractEditStrategyProvider> bindAbstractEditStrategyProvider() {
+	override def Class<? extends AbstractEditStrategyProvider> bindAbstractEditStrategyProvider() {
 		return MD2AutoEditStrategyProvider;
 	}
 	

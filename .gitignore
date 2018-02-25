@@ -5,8 +5,8 @@ Thumbs.db
 # generated directories
 /*/bin/
 /*/build/
-/*/src-gen/
-/*/xtend-gen/
+/*/src-gen/*
+/*/xtend-gen/*
 
 # generated files
 plugin.xml_gen
