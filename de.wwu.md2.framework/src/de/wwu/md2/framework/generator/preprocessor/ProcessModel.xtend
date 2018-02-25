@@ -98,7 +98,7 @@ class ProcessModel extends AbstractPreprocessor {
 		
 		if (autogenAction === null) return null
 		val validatorBindingTask = factory.createValidatorBindingTask()
-		validatorBindingTask.referencedFields.add(copyElement(mappingTask.referencedViewField) as AbstractViewGUIElementRef)
+		validatorBindingTask.referencedFields.add(copyElement(mappingTask.referencedViewField))
 		val attr = (mappingTask.pathDefinition as ContentProviderPath).getReferencedAttribute
 		
 		// Add IsNotNullValidator

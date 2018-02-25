@@ -222,14 +222,14 @@ class MD2GeneratorUtil {
 		var ModelElement model1
 		var ModelElement model2
 		if (p1 instanceof EntityPath) {
-			model1 = (p1 as EntityPath).entityRef
+			model1 = p1.entityRef
 		} else if (p1 instanceof ContentProviderPath) {
-			model1 = ((p1 as ContentProviderPath).contentProviderRef.type as ReferencedModelType).entity
+			model1 = (p1.contentProviderRef.type as ReferencedModelType).entity
 		}
 		if (p2 instanceof EntityPath) {
-			model2 = (p2 as EntityPath).entityRef
+			model2 = p2.entityRef
 		} else if (p2 instanceof ContentProviderPath) {
-			model2 = ((p2 as ContentProviderPath).contentProviderRef.type as ReferencedModelType).entity
+			model2 = (p2.contentProviderRef.type as ReferencedModelType).entity
 		}
 		if (model1 != model2) return false
 		var tail1 = p1.tail
@@ -269,7 +269,7 @@ class MD2GeneratorUtil {
 		if (abstractRef.ref === null) {
 			throw new Error("No view element bound to AbstractViewGUIElementRef!")
 		}
-		return abstractRef.ref as ViewElementType
+		return abstractRef.ref
 	}
 	
 	def static resolveContainerElement(AbstractViewGUIElementRef abstractRef) {

@@ -88,7 +88,7 @@ class «className»: MD2Action {
 	def static CharSequence generateCodeFragment(String actionCounter, CustomCodeFragment fragment){
 		// MARK incomplete list to be extended in future version
 		switch fragment {
-			CallTask: return generateCallTask(actionCounter, (fragment as CallTask))
+			CallTask: return generateCallTask(actionCounter, fragment)
 			AttributeSetTask: return generateAttributeSetTask(actionCounter, fragment)
 			EventBindingTask: return generateEventBindingTask(actionCounter, fragment)
 			EventUnbindTask: return generateEventUnbindTask(actionCounter, fragment)
@@ -225,9 +225,9 @@ class «className»: MD2Action {
 		var Enumerator eventType = null;
 		
 		switch event {
-			ViewElementEventRef: eventType = (event as ViewElementEventRef).event
-			ContentProviderEventRef: eventType = (event as ContentProviderEventRef).event
-			GlobalEventRef: eventType = (event as GlobalEventRef).event
+			ViewElementEventRef: eventType = event.event
+			ContentProviderEventRef: eventType = event.event
+			GlobalEventRef: eventType = event.event
 			default: {
 				IOSGeneratorUtil.printError("IOSCustomAction encountered unsupported EventDef: " + event)
 				return ""

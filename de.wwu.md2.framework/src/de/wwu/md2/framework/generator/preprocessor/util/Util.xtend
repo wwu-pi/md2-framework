@@ -1,5 +1,6 @@
 package de.wwu.md2.framework.generator.preprocessor.util
 
+import java.util.HashMap
 import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
@@ -9,8 +10,6 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList
 import org.eclipse.emf.ecore.util.EcoreUtil
 
 import static extension de.wwu.md2.framework.generator.preprocessor.util.Helper.*
-import java.util.HashSet
-import java.util.HashMap
 
 /**
  * Provides utility methods to operate on EMF models.
@@ -61,17 +60,16 @@ class Util {
 					    val eRef = o.eGet(a)
 					    val _value = switch(eRef) {
 					        EObject: {
-                                val eobj = (eRef as EObject)
-                                if (eobj !== null) {
-                                    val className = eobj.eClass.name
-                                    val name = if (eobj.eClass.EAllAttributes.exists[ x | x.name.equals("name") ])
-                                                 "[" + eobj.eGet(eobj.eClass.EAllAttributes.filter[ x | x.name.equals("name") ].last) + "]"
+                                if (eRef !== null) {
+                                    val className = eRef.eClass.name
+                                    val name = if (eRef.eClass.EAllAttributes.exists[ x | x.name.equals("name") ])
+                                                 "[" + eRef.eGet(eRef.eClass.EAllAttributes.filter[ x | x.name.equals("name") ].last) + "]"
                                                else "[]"
                                     className + name
                                 }
 					        }
 					        EObjectContainmentEList<Object>: {
-					            (eRef as EObjectContainmentEList<Object>).eObjectContainmentEListRecursiveStringRepresentation
+					            eRef.eObjectContainmentEListRecursiveStringRepresentation
 					        }
 					    }
 						_value

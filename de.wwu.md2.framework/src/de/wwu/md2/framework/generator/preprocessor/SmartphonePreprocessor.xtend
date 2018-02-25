@@ -61,7 +61,7 @@ class SmartphonePreprocessor extends AbstractPreprocessor {
 			wfes.forEach[wfe |
 				var currentAction = wfe.initActions.get(0)
 				while(currentAction instanceof CombinedAction){
-					currentAction = (currentAction as CombinedAction).actions.get(0)
+					currentAction = currentAction.actions.get(0)
 				}
 				
 				// Set action

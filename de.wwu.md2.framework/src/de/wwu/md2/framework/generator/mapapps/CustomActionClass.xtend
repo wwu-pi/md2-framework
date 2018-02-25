@@ -317,7 +317,7 @@ class CustomActionClass {
 			FloatRestParam:      (param.value as FloatRestParam).value + ""
 			IntegerRestParam:    (param.value as IntegerRestParam).value + ""
 			ContentProviderRestParam: {
-			    val cpPath = (param.value as ContentProviderRestParam).value as ContentProviderPath
+			    val cpPath = (param.value as ContentProviderRestParam).value
                 "lang.hitch(this, function(){return this.$.contentProviderRegistry.getContentProvider(\"" + cpPath.contentProviderRef.name.toFirstLower + "\").getValue(\"" + cpPath.attributeFromContentProviderPath.name + "\");})"
             }
 		}

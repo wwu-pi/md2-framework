@@ -123,7 +123,7 @@ class ProcessViewReferences extends AbstractPreprocessor {
 		
 		val codeFragments = wfe.eAllContents.toIterable.filter(CustomCodeFragment).toList
 		// get a list of all ViewElements that are referenced in the WorkflowElement
-		val viewElementsReferencedInWorkflow = wfe.eAllContents.filter(AbstractViewGUIElementRef).map[it.ref as ViewElementType]
+		val viewElementsReferencedInWorkflow = wfe.eAllContents.filter(AbstractViewGUIElementRef).map[it.ref]
 		// get all view elements that belong to views referenced by the WorkflowElement
 		val workflowSpecificViewElements = viewElementsReferencedInWorkflow.map[it.eAllContents.toList].toList.flatten.toList
 		

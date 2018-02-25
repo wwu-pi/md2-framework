@@ -771,7 +771,7 @@ class ProcessProcessChain extends AbstractPreprocessor {
 		
 		// if this is a 'goto' statement => put current step on stack to allow to return
 		if (processChainGoTo instanceof ProcessChainGoToStep) {
-			val processChainGoToStep = processChainGoTo as ProcessChainGoToStep
+			val processChainGoToStep = processChainGoTo
 			createCodeToAddStepToReturnStack(processChainGoToStep, steps, step, stepIndex, innerIfCodeBlock, stack)
 		}
 		

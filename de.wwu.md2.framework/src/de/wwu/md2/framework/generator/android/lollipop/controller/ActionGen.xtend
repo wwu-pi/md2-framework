@@ -107,7 +107,7 @@ class ActionGen {
 		    public void execute() {
 		    	«/*actions should actually always be a custom action */»
 				«IF action instanceof CustomAction»
-					«val customAction = action as CustomAction»
+					«val customAction = action»
 					«var counter = 1»
 					«FOR ccf : customAction.codeFragments»
 						«generateCodeForCodeFragment(ccf, app, wfe, counter++)»

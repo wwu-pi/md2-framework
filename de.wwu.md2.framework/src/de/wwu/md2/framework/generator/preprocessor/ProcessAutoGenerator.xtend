@@ -173,7 +173,7 @@ class ProcessAutoGenerator extends AbstractPreprocessor {
 	def private Collection<EntityPath> entityToPathDefinition(EntityPath pathDefinition, Entity element) { 
 		val Collection<EntityPath> entityPathes = newHashSet()
 		element.attributes.forEach [
-			val iterPathDefinition = copyElement(pathDefinition) as EntityPath
+			val iterPathDefinition = copyElement(pathDefinition)
 			if (iterPathDefinition.lastPathTail === null) {
 				iterPathDefinition.tail = factory.createPathTail() 
 			} else {
@@ -199,11 +199,10 @@ class ProcessAutoGenerator extends AbstractPreprocessor {
 	) {
 		val viewElements = Lists::newArrayList
 		if (m instanceof Entity) {
-			(m as Entity).attributes.forEach [ a |
-				
+			m.attributes.forEach [ a |
 				
 				// New PathDefinition for every attribute
-				val pathDefinitionIter = copyElement(pathDefinition) as ContentProviderPath
+				val pathDefinitionIter = copyElement(pathDefinition)
 				val PathTail pathTail = factory.createPathTail()
 				pathTail.setAttributeRef(a)
 				if (pathDefinitionIter.getTail === null) pathDefinitionIter.setTail(pathTail)
@@ -226,7 +225,7 @@ class ProcessAutoGenerator extends AbstractPreprocessor {
 									val flowLayoutPane = factory.createFlowLayoutPane()
 									flowLayoutPane.name = a.name + "FlowLayoutPane"
 									// Recursive modelToView for referenced entities
-									for (childElem : modelToView((a.type as ReferencedType).element, copyElement(pathDefinitionIter) as ContentProviderPath, filteredAttributes, a.labelText + " - ", wfe)) {
+									for (childElem : modelToView((a.type as ReferencedType).element, copyElement(pathDefinitionIter), filteredAttributes, a.labelText + " - ", wfe)) {
 										flowLayoutPane.elements.add(childElem)
 									}
 									flowLayoutPane.params.add(factory.createFlowLayoutPaneFlowDirectionParam)
@@ -307,7 +306,7 @@ class ProcessAutoGenerator extends AbstractPreprocessor {
 		val mappingTask = factory.createMappingTask()
 		mappingTask.referencedViewField = factory.createAbstractViewGUIElementRef()
 		mappingTask.referencedViewField.ref = guiElem
-		mappingTask.pathDefinition = pathDefinition as ContentProviderPath
+		mappingTask.pathDefinition = pathDefinition
 		autoGenAction.codeFragments.add(mappingTask)
 	}
 	
@@ -323,10 +322,6 @@ class ProcessAutoGenerator extends AbstractPreprocessor {
 	}
 	
 	def private getLabelText(Attribute attr) {
-		switch (attr.extendedName) {
-			String: attr.extendedName
-			default: attr.name.toFirstUpper.replaceAll("(.)([A-Z])","$1 $2")
-		}
+		return attr.extendedName
 	}
-	
 }

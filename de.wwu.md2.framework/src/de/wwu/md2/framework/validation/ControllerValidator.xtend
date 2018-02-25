@@ -557,7 +557,7 @@ class ControllerValidator extends AbstractMD2Validator {
         // Check for the remaining CustomActions, if the saved entity is nested
         for (sc : savecalls){
             // Save information about savecall
-            val savedEntity = (((sc.contentProvider as ContentProviderReference).contentProvider as ContentProvider).type as ReferencedModelType).entity as Entity
+            val savedEntity = ((sc.contentProvider as ContentProviderReference).contentProvider.type as ReferencedModelType).entity as Entity
             val savedEntityName = savedEntity.name
             val indexOfSaveCall = caction.codeFragments.indexOf((sc.eContainer as SimpleActionRef).eContainer as CallTask)
             
@@ -761,10 +761,10 @@ class ControllerValidator extends AbstractMD2Validator {
 		var String enumName = null
 		switch (attributeType) {
 			ReferencedType: {
-				var element = (attributeType as ReferencedType).getElement()
+				var element = attributeType.getElement()
 				if (element instanceof Enum) {
-					enumBody = (element as Enum).enumBody
-					enumName = (element as Enum).name
+					enumBody = element.enumBody
+					enumName = element.name
 				}
 			}
 			EnumType: {

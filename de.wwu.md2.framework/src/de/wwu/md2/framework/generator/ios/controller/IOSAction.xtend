@@ -35,8 +35,8 @@ class IOSAction {
 	 */
 	def static CharSequence generateAction(String actionSignature, ActionDef action) {
 		switch action {
-			SimpleActionRef: return generateSimpleAction(actionSignature, action as SimpleActionRef)
-			ActionReference: return generateAction(actionSignature, (action as ActionReference).actionRef)
+			SimpleActionRef: return generateSimpleAction(actionSignature, action)
+			ActionReference: return generateAction(actionSignature, action.actionRef)
 			default: {
 				IOSGeneratorUtil.printError("IOSAction encountered unknown action: " + action)
 				return ""
@@ -53,8 +53,8 @@ class IOSAction {
 	 */
 	def static CharSequence generateAction(String actionSignature, Action action) {
 		switch action {
-			CombinedAction: return generateCombinedAction(actionSignature, action as CombinedAction)
-			CustomAction: return generateCustomAction(actionSignature, action as CustomAction)
+			CombinedAction: return generateCombinedAction(actionSignature, action)
+			CustomAction: return generateCustomAction(actionSignature, action)
 		}
 	}
 	

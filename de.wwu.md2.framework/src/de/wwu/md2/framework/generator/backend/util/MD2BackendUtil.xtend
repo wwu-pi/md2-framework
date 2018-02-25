@@ -165,10 +165,10 @@ class MD2BackendUtil {
 		var attributeType = invokeDefaultValue.field.tail.resolveAttributeType
 		switch (attributeType) {
 			ReferencedType: {
-				var element = (attributeType as ReferencedType).getElement()
+				var element = attributeType.getElement()
 				if (element instanceof Enum) {
 					var invokeValue = invokeDefaultValue.invokeValue as InvokeStringValue
-					'''«element.name.toFirstUpper».VALUE«(element as Enum).enumBody.elements.indexOf(invokeValue.value)»'''
+					'''«element.name.toFirstUpper».VALUE«element.enumBody.elements.indexOf(invokeValue.value)»'''
 				}
 			}
 			default: {

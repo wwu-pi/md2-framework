@@ -72,7 +72,7 @@ class IOSView {
 	def static String generateViewElement(ViewElementType element, ContainerElement container) {
 		switch element {
 			ViewGUIElement:	return generateViewGUIElement(element, container)
-			ViewGUIElementReference: return generateViewGUIElement((element as ViewGUIElementReference).value, container)
+			ViewGUIElementReference: return generateViewGUIElement(element.value, container)
 			default: {
 				IOSGeneratorUtil.printError("IOSView encountered unknown ViewElement: " + element)
 				return ""

@@ -117,7 +117,7 @@ class ProcessView extends AbstractPreprocessor {
 		while(iterator.hasNext) {
 			val next = iterator.next
 			if (next instanceof FlowLayoutPane) {
-				val flowLayoutPane = next as FlowLayoutPane
+				val flowLayoutPane = next
 				
 				// reset iterator after each match to avoid concurrent modification exceptions
 				// => is iterating over the tree while replacing flowLayouts with gridLayouts

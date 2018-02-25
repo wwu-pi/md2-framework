@@ -55,7 +55,7 @@ class Helper {
 				var str = if (event.referencedField.path !== null) "." + event.referencedField.path?.tail.getPathTailAsString else ""
 				while (!(eObject instanceof View)) {
 					if(eObject instanceof ViewElementType) {
-						str = "." + (eObject as ViewElementType).name + str
+						str = "." + eObject.name + str
 					}
 					eObject = eObject.eContainer
 				}

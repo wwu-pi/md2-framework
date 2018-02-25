@@ -66,16 +66,16 @@ class WidgetMapping {
 			ViewGUIElement: {
 				switch (element as ViewGUIElement) {
 					ContainerElement: {
-						targetContainer.add(element as ContainerElement)
-						switch (element as ContainerElement) {
+						targetContainer.add(element)
+						switch (element) {
 							GridLayoutPane, 
-							FlowLayoutPane: (element as ContentContainer).elements.forEach[ elem | 
+							FlowLayoutPane: element.elements.forEach[ elem | 
 								getSubGUIElementsRecursive(elem, targetContainer)
 							]
 							AlternativesPane,
 							TabbedAlternativesPane: (element as SubViewContainer).elements.forEach[ elem | 
 								if(elem instanceof ContainerElement) {
-									getSubGUIElementsRecursive(elem as ContainerElement, targetContainer)
+									getSubGUIElementsRecursive(elem, targetContainer)
 								} else if (elem instanceof ContainerElementReference){
 									getSubGUIElementsRecursive(elem.value, targetContainer)	
 								}
@@ -83,12 +83,12 @@ class WidgetMapping {
 						}
 					}
 					ContentElement: {
-						targetContainer.add(element as ContentElement)
+						targetContainer.add(element)
 					}
 				}
 			}
 			ViewGUIElementReference: {
-				getSubGUIElementsRecursive((element as ViewGUIElementReference).value, targetContainer) 
+				getSubGUIElementsRecursive(element.value, targetContainer) 
 			}
 		}
 	}
