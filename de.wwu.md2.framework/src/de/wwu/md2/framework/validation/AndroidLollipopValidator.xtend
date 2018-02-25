@@ -1,7 +1,6 @@
 package de.wwu.md2.framework.validation
 
 import com.google.common.collect.Sets
-import com.google.inject.Inject
 import de.wwu.md2.framework.mD2.AttributeType
 import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.ContentElement
@@ -12,17 +11,8 @@ import de.wwu.md2.framework.mD2.StandardValidator
 import org.eclipse.xtext.Keyword
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.validation.Check
-import org.eclipse.xtext.validation.EValidatorRegistrar
-
-// TODO: implement further validators to check supported types
 
 class AndroidLollipopValidator extends AbstractMD2Validator{
-
-	@Inject
-    override register(EValidatorRegistrar registrar) {
-        // nothing to do
-    }
-    
     public static final String NOTSUPPORTEDBYANDROIDGENERATOR = "Keyword not supported by Android Lollipop Generator: "
     public static final String USAGEOFKEYWORD = ". Using this keyword will have no effect."
     public static final String UNSUPPORTEDKEYWORD = "unsupportedKeywordByAndroidLollipopGenerator"
@@ -142,5 +132,4 @@ class AndroidLollipopValidator extends AbstractMD2Validator{
             );
         }
     }
-
 }

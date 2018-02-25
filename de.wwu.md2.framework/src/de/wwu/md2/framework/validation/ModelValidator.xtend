@@ -1,27 +1,19 @@
 package de.wwu.md2.framework.validation
 
-import com.google.common.collect.Sets
 import com.google.inject.Inject
 import de.wwu.md2.framework.mD2.AttrEnumDefault
 import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.AttributeType
-import de.wwu.md2.framework.mD2.AttributeTypeParam
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.MD2Package
 import de.wwu.md2.framework.mD2.ModelElement
 import de.wwu.md2.framework.mD2.ReferencedType
 import org.eclipse.xtext.validation.Check
-import org.eclipse.xtext.validation.EValidatorRegistrar
 
 /**
  * Validators for all model elements of MD2.
  */
 class ModelValidator extends AbstractMD2Validator {
-	
-	@Inject
-    override register(EValidatorRegistrar registrar) {
-        // nothing to do
-    }
     
     @Inject
     private ValidatorHelpers helper;
@@ -37,20 +29,15 @@ class ModelValidator extends AbstractMD2Validator {
     /////////////////////////////////////////////////////////
 	/// Validators
 	/////////////////////////////////////////////////////////
-	
-	
 	/**
 	 * Ensures that no default values are assigned to entities.
 	 */
 	@Check
 	def checkParameterBelongsToReferencedType(ReferencedType type) {
-		
-		if (type.element instanceof Entity) {
-			val enumDefault = type.params.filter(AttrEnumDefault).head
-			if (enumDefault !== null) {
-				val error = '''Cannot assign a default value to an entity.'''
-				acceptError(error, enumDefault, null, -1, DEFAULTREFERENCEVALUE);
-			}
+		if (type.element instanceof Entity && !type.params.filter(AttrEnumDefault).empty){
+			error("Cannot assign a default value to an entity.",
+				MD2Package.eINSTANCE.referencedType_Element,
+				DEFAULTREFERENCEVALUE);
 		}
 	}
 	
@@ -63,7 +50,10 @@ class ModelValidator extends AbstractMD2Validator {
     @Check
     def checkEntityStartsWithCapital(ModelElement modelElement) {
         if(!Character.isUpperCase(modelElement.name.charAt(0))) {
-            warning("Entity and Enum identifiers should start with an upper case letter", MD2Package.eINSTANCE.modelElement_Name, -1, ENTITYENUMUPPERCASE);
+            warning("Entity and Enum identifiers should start with an upper case letter", 
+            	MD2Package.eINSTANCE.modelElement_Name,
+				ENTITYENUMUPPERCASE
+            );
         }
     }
     
@@ -73,7 +63,10 @@ class ModelValidator extends AbstractMD2Validator {
      @Check
      def checkEntityDoesntStartWithUnderscore(ModelElement modelElement){
      	if(modelElement.name.charAt(0).equals(new Character ('_'))){
-     		error("Entity and Enum identifiers shouldn't start with an underscore.",MD2Package.eINSTANCE.modelElement_Name,ENTITYWITHOUTUNDERSCORE);
+     		error("Entity and Enum identifiers shouldn't start with an underscore.",
+     			MD2Package.eINSTANCE.modelElement_Name,
+     			ENTITYWITHOUTUNDERSCORE
+     		);
      	}
      }
      
@@ -92,10 +85,11 @@ class ModelValidator extends AbstractMD2Validator {
      										"EventHandler",
      										"VersionNegotiation",
      										"FileUpload")
-     	// for every preset identifier, check if used as entity / enum name --> then error
      	
 		if(presetIdentifiers.contains(modelElement.name)){
- 			error(presetIdentifiers+" shouldn't be used as an entity / enum name, since it is a preset identifier.", MD2Package.eINSTANCE.modelElement_Name, ENTITYWITHRESERVEDNAME);
+ 			error(presetIdentifiers+" shouldn't be used as an entity / enum name, since it is a preset identifier.", 
+ 				MD2Package.eINSTANCE.modelElement_Name, 
+ 				ENTITYWITHRESERVEDNAME);
  		}
      }
 	
@@ -108,7 +102,9 @@ class ModelValidator extends AbstractMD2Validator {
     @Check
     def checkAttributeStartsWithCapital(Attribute attribute) {        
         if(!Character.isLowerCase(attribute.name.charAt(0))) {
-            warning("Attribute should start with a lower case letter", MD2Package.eINSTANCE.attribute_Name, -1, ATTRIBUTELOWERCASE);
+            warning("Attribute should start with a lower case letter", 
+            	MD2Package.eINSTANCE.attribute_Name, 
+				ATTRIBUTELOWERCASE);
         }
     }
     
@@ -128,27 +124,5 @@ class ModelValidator extends AbstractMD2Validator {
                 "AttrDateMax", "max", "AttrDateMin", "min",
                 "AttrTimeMax", "max", "AttrTimeMin", "min",
                 "AttrDateTimeMax", "max", "AttrDateTimeMin", "min");
-    }
-	
-	/**
-     * Inform the user about unsupported language features.
-     * @param attributeTypeParam
-     */
-    @Check
-    def checkAttributeTypeParam(AttributeTypeParam attributeTypeParam) {
-        var unsupportedParamTypes = Sets.newHashSet(
-            MD2Package.eINSTANCE.attrDateMax,
-            MD2Package.eINSTANCE.attrDateMin,
-            MD2Package.eINSTANCE.attrTimeMax,
-            MD2Package.eINSTANCE.attrTimeMin,
-            MD2Package.eINSTANCE.attrDateTimeMax,
-            MD2Package.eINSTANCE.attrDateTimeMin
-        );
-        
-        if (unsupportedParamTypes.contains(attributeTypeParam.eClass)) {
-            warning("Unsupported language feature: " + attributeTypeParam.eClass.name + ". Using this parameter will have no effect.",
-                MD2Package.eINSTANCE.attributeTypeParam.EIDAttribute, -1, UNSUPPORTEDPARAMTYPE
-            );
-        }
     }
 }

@@ -12,6 +12,8 @@ import org.eclipse.xtext.validation.CancelableDiagnostician
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.NamesAreUniqueValidator
 
+import static extension de.wwu.md2.framework.util.IterableExtensions.*
+
 class MD2NamesAreUniqueValidator extends NamesAreUniqueValidator {
 	
 	@Inject
@@ -25,38 +27,28 @@ class MD2NamesAreUniqueValidator extends NamesAreUniqueValidator {
 	
 	@Check
 	override def checkUniqueNamesInResourceOf(EObject eObject) {
-		val context = getContext();
 		val res = eObject.eResource();
 		
 		if (res === null)
 			return;
-		var CancelIndicator cancelIndicator = null;
-		if (context !== null) {
+		if (getContext() !== null) {
 			if (context.containsKey(res))
 				return; // resource was already validated
 			context.put(res, this);
-			cancelIndicator = context.get(CancelableDiagnostician.CANCEL_INDICATOR) as CancelIndicator;
+			val cancelIndicator = context.get(CancelableDiagnostician.CANCEL_INDICATOR) as CancelIndicator;
+			
+			doCheckUniqueNames(util.getAllResources(res), cancelIndicator, res.getURI());
 		}
-		
-		doCheckUniqueNames(util.getAllResources(res), cancelIndicator, res.getURI());
 	}
 	
 	def doCheckUniqueNames(Collection<Resource> resources, CancelIndicator cancelIndicator, URI uri) {
-		
 		val descriptions = newArrayList();
 		
-		for(Resource resource : resources) {
-			val resourceServiceProvider = resourceServiceProviderRegistry.getResourceServiceProvider(resource.getURI());
-			if (resourceServiceProvider === null)
-				return;
-			val manager = resourceServiceProvider.getResourceDescriptionManager();
-			if (manager !== null) {
-				val description = manager.getResourceDescription(resource);
-				if (description !== null) {
-					descriptions.addAll(description.getExportedObjects())
-				}
-			}
-		}
+		resources.forEach[
+			descriptions.addAllIfNotNull(
+				resourceServiceProviderRegistry.getResourceServiceProvider(it.getURI())?.
+					getResourceDescriptionManager()?.getResourceDescription(it)?.getExportedObjects().toList)
+		]
 		
 		helper.checkUniqueNames(descriptions, cancelIndicator, this, uri);
 	}

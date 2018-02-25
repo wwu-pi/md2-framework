@@ -1,15 +1,9 @@
 package de.wwu.md2.framework.validation
 
-import com.google.inject.Inject
-import org.eclipse.xtext.validation.Check
-
-import org.eclipse.xtext.validation.EValidatorRegistrar
-import de.wwu.md2.framework.mD2.Workflow
-import de.wwu.md2.framework.mD2.FireEventEntry
-
-import de.wwu.md2.framework.mD2.WorkflowElementEntry
 import de.wwu.md2.framework.mD2.MD2Package
-
+import de.wwu.md2.framework.mD2.Workflow
+import de.wwu.md2.framework.mD2.WorkflowElementEntry
+import org.eclipse.xtext.validation.Check
 
 /**
  * Validators for all workflow elements of MD2.
@@ -17,36 +11,26 @@ import de.wwu.md2.framework.mD2.MD2Package
 
 class WorkflowValidator extends AbstractMD2Validator {
 	
-	@Inject
-    override register(EValidatorRegistrar registrar) {
-        // nothing to do
-    }
-    
     public static final String WORKFLOWENDED = "WorkflowEnded";
     
 	@Check
 	def checkWorkflowThrowsEndEvent(Workflow workflow){
 		var wfes = workflow.workflowElementEntries;
 		var fireEventEntries = wfes.map[wf| wf.firedEvents].flatten;
-		var workflowEnded = false;
 		
-		for(FireEventEntry fee : fireEventEntries){
-			if (fee.endWorkflow){
-				workflowEnded = true;
-			}
-		}
-		if(workflowEnded == false){
-			acceptWarning("The Workflow should be finished at some point", workflow, null, -1, WORKFLOWENDED)
+		if(!fireEventEntries.exists[it.endWorkflow]){
+			warning("The Workflow should be finished at some point", 
+				MD2Package.eINSTANCE.workflow_WorkflowElementEntries,
+				WORKFLOWENDED)
 		}
 	}
-		
-		
+	
     public static final String INVOKEEVENTDESCMAYNOTBEEMPTY = "invokeEventDescMayNotBeEmpty"
     public static final String INVOKEHASTOBEINVOKABLE = "invokeHasToBeInvokable"
     public static final String INVOKEMAYNOTBEINVOKABLE = "invokeMayNotBeInvokable"
     
 	/////////////////////////////////////////////////////////
-	/// Invoke Validators
+	/// Invocation Validators
 	/////////////////////////////////////////////////////////
 	
 	/**
@@ -54,10 +38,10 @@ class WorkflowValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkThatEventDescNotEmpty(WorkflowElementEntry wfeEntry) {
-		
 		if (wfeEntry.eventDesc == ""){
-			val error = '''An empty string as event description for invoking the workflow element is not allowed.'''
-			acceptError(error, wfeEntry, MD2Package.eINSTANCE.workflowElementEntry_EventDesc , -1, INVOKEEVENTDESCMAYNOTBEEMPTY);
+			error("An empty string as event description for invoking the workflow element is not allowed.",
+				MD2Package.eINSTANCE.workflowElementEntry_EventDesc, 
+				INVOKEEVENTDESCMAYNOTBEEMPTY);
 		}
 	}
 	
@@ -68,12 +52,14 @@ class WorkflowValidator extends AbstractMD2Validator {
 	def checkThatInvokeIsUsedInBothModelParts(WorkflowElementEntry wfeEntry) {
 		val wfe = wfeEntry.workflowElement
 		if (wfe.invoke.size==0 && wfeEntry.invokable){
-			val error = '''The workflow element is set invokable, but does not specify invoke structures in the controller model part.'''
-			acceptError(error, wfeEntry, MD2Package.eINSTANCE.workflowElementEntry_Invokable , -1, INVOKEMAYNOTBEINVOKABLE);
+			error("The workflow element is set invokable, but does not specify invoke structures in the controller model part.", 
+				MD2Package.eINSTANCE.workflowElementEntry_Invokable,
+				INVOKEMAYNOTBEINVOKABLE)
 		}
 		if (wfe.invoke.size>0 && !wfeEntry.invokable){
-			val error = '''The workflow element is not set invokable, but has invoke structures specified in the controller model part.'''
-			acceptError(error, wfeEntry, MD2Package.eINSTANCE.workflowElementEntry_WorkflowElement , -1, INVOKEHASTOBEINVOKABLE);
+			error("The workflow element is not set invokable, but has invoke structures specified in the controller model part.", 
+				MD2Package.eINSTANCE.workflowElementEntry_WorkflowElement,
+				INVOKEHASTOBEINVOKABLE)
 		}
 	}
 }

@@ -1,7 +1,9 @@
 package de.wwu.md2.framework.util;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.xtext.xbase.lib.Functions;
 
@@ -88,5 +90,11 @@ public class IterableExtensions {
 				};
 			}
 		};
+	}
+	
+	public static <E> void addAllIfNotNull(List<E> list, Collection<? extends E> c) {
+	    if (c != null) {
+	        list.addAll(c);
+	    }
 	}
 }

@@ -1,25 +1,13 @@
 package de.wwu.md2.framework.validation
 
-import com.google.inject.Inject
 import de.wwu.md2.framework.mD2.MD2Package
 import de.wwu.md2.framework.mD2.ViewFrame
 import org.eclipse.xtext.validation.Check
-import org.eclipse.xtext.validation.EValidatorRegistrar
 
 /**
  * Valaidators for all view elements of MD2.
  */
 class ViewValidator extends AbstractMD2Validator {
-	
-	@Inject
-    override register(EValidatorRegistrar registrar) {
-        // nothing to do
-    }
-    
-    
-    /////////////////////////////////////////////////////////
-	/// Validators
-	/////////////////////////////////////////////////////////
 	
 	/**
 	 * Ensures only one default proceed/back action exists per ViewFrame

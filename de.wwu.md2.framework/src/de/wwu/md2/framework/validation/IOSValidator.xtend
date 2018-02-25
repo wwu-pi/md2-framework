@@ -1,36 +1,23 @@
 package de.wwu.md2.framework.validation
 
 //import de.wwu.md2.framework.validation.AbstractMD2JavaValidator
-import com.google.inject.Inject
-import org.eclipse.xtext.validation.Check
-import org.eclipse.xtext.validation.EValidatorRegistrar
-//import de.wwu.md2.framework.mD2.MD2Model
-//import de.wwu.md2.framework.mD2.AttributeTypeParam
+
 import com.google.common.collect.Sets
-import de.wwu.md2.framework.mD2.MD2Package
-import de.wwu.md2.framework.mD2.StandardValidator
+import de.wwu.md2.framework.mD2.Action
+import de.wwu.md2.framework.mD2.AttributeType
 import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.ContentElement
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils
-import org.eclipse.xtext.Keyword
-import de.wwu.md2.framework.mD2.AttributeType
-import de.wwu.md2.framework.mD2.SimpleAction
-import de.wwu.md2.framework.mD2.Action
+import de.wwu.md2.framework.mD2.CustomCodeFragment
 import de.wwu.md2.framework.mD2.EventDef
 import de.wwu.md2.framework.mD2.InputElement
-import de.wwu.md2.framework.mD2.CustomCodeFragment
-
-//import de.wwu.md2.framework.services.MD2GrammarAccess
+import de.wwu.md2.framework.mD2.MD2Package
+import de.wwu.md2.framework.mD2.SimpleAction
+import de.wwu.md2.framework.mD2.StandardValidator
+import org.eclipse.xtext.Keyword
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils
+import org.eclipse.xtext.validation.Check
 
 class IOSValidator extends AbstractMD2Validator{
-
-	@Inject
-    override register(EValidatorRegistrar registrar) {
-        // nothing to do
-    }
-    
-    //@Inject extension MD2GrammarAccess
-    
     public static final String NOTSUPPORTEDBYIOSGENERATOR = " not supported by iOS Generator: "
     public static final String USAGEOFKEYWORD = ". Using this keyword will have no effect."
     public static final String UNSUPPORTEDKEYWORD = "unsupportedKeywordByIOSGenerator"
@@ -53,7 +40,7 @@ class IOSValidator extends AbstractMD2Validator{
 
 				if (ge instanceof Keyword) {
 					messageAcceptor.acceptWarning(
-						"ContainerElement" + de.wwu.md2.framework.validation.IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + containerElement.eClass.name + USAGEOFKEYWORD,
+						"ContainerElement" + IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + containerElement.eClass.name + USAGEOFKEYWORD,
 						containerElement,
 						n.offset,
 						n.length,
@@ -86,13 +73,12 @@ class IOSValidator extends AbstractMD2Validator{
         );
         
         if (!supportedKeywords.contains(contentElement.eClass)) {
-            warning("ContentElement" + de.wwu.md2.framework.validation.IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + contentElement.eClass.name + USAGEOFKEYWORD,
+            warning("ContentElement" + IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + contentElement.eClass.name + USAGEOFKEYWORD,
                 MD2Package.eINSTANCE.attributeTypeParam.EIDAttribute, -1, UNSUPPORTEDKEYWORD
             );
         }
     }
     
-    // TODO support more
     @Check
     def checkInputElements(InputElement inputElement) {
         var supportedKeywords = Sets.newHashSet(
@@ -109,7 +95,7 @@ class IOSValidator extends AbstractMD2Validator{
         );
         
         if (!supportedKeywords.contains(inputElement.eClass)) {
-            warning("InputElement" + de.wwu.md2.framework.validation.IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + inputElement.eClass.name + USAGEOFKEYWORD,
+            warning("InputElement" + IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + inputElement.eClass.name + USAGEOFKEYWORD,
                 MD2Package.eINSTANCE.attributeTypeParam.EIDAttribute, -1, UNSUPPORTEDKEYWORD
             );
         }
@@ -123,7 +109,7 @@ class IOSValidator extends AbstractMD2Validator{
         );
         
         if (!supportedValidator.contains(validator.eClass)) {
-            warning("StandardValidator" + de.wwu.md2.framework.validation.IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + validator.eClass.name + ". Using this parameter will have no effect.",
+            warning("StandardValidator" + IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + validator.eClass.name + ". Using this parameter will have no effect.",
                 MD2Package.eINSTANCE.standardValidator.EIDAttribute, -1, UNSUPPORTEDKEYWORD
             );
         }
@@ -137,7 +123,7 @@ class IOSValidator extends AbstractMD2Validator{
         );
         
         if (!supportedActions.contains(action.eClass)) {
-            warning("Action" + de.wwu.md2.framework.validation.IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + action.eClass.name + ". Using this parameter will have no effect.",
+            warning("Action" + IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + action.eClass.name + ". Using this parameter will have no effect.",
                 MD2Package.eINSTANCE.standardValidator.EIDAttribute, -1, UNSUPPORTEDKEYWORD
             );
         }
@@ -157,7 +143,7 @@ class IOSValidator extends AbstractMD2Validator{
         );
         
         if (!supportedActionTypes.contains(simpleAction.eClass)) {
-            warning("SimpleActionRef" + de.wwu.md2.framework.validation.IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + simpleAction.eClass.name + ". Using this parameter will have no effect.",
+            warning("SimpleActionRef" + IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + simpleAction.eClass.name + ". Using this parameter will have no effect.",
                 MD2Package.eINSTANCE.standardValidator.EIDAttribute, -1, UNSUPPORTEDKEYWORD
             );
         }
@@ -176,7 +162,7 @@ class IOSValidator extends AbstractMD2Validator{
         );
         
         if (!supportedKeywords.contains(eventDef.eClass)) {
-            warning("EventDef" + de.wwu.md2.framework.validation.IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + eventDef.eClass.name + ". Using this parameter will have no effect.",
+            warning("EventDef" + IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + eventDef.eClass.name + ". Using this parameter will have no effect.",
                 MD2Package.eINSTANCE.standardValidator.EIDAttribute, -1, UNSUPPORTEDKEYWORD
             );
         }
@@ -202,7 +188,7 @@ class IOSValidator extends AbstractMD2Validator{
         );
         
         if (!supportedKeywords.contains(fragment.eClass)) {
-            warning("CustomCodeFragment" + de.wwu.md2.framework.validation.IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + fragment.eClass.name + ". Using this parameter will have no effect.",
+            warning("CustomCodeFragment" + IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + fragment.eClass.name + ". Using this parameter will have no effect.",
                 MD2Package.eINSTANCE.standardValidator.EIDAttribute, -1, UNSUPPORTEDKEYWORD
             );
         }
@@ -225,10 +211,9 @@ class IOSValidator extends AbstractMD2Validator{
         );
         
         if (!supportedParamTypes.contains(attributeType.eClass)) {
-            warning("AttributeType" + de.wwu.md2.framework.validation.IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + attributeType.eClass.name + USAGEOFKEYWORD,
+            warning("AttributeType" + IOSValidator.NOTSUPPORTEDBYIOSGENERATOR + attributeType.eClass.name + USAGEOFKEYWORD,
                 MD2Package.eINSTANCE.attributeTypeParam.EIDAttribute, -1, UNSUPPORTEDKEYWORD
             );
         }
     }
-    
 }

@@ -11,15 +11,19 @@ import de.wwu.md2.framework.mD2.BooleanType
 import de.wwu.md2.framework.mD2.CallTask
 import de.wwu.md2.framework.mD2.CompareExpression
 import de.wwu.md2.framework.mD2.ContentProvider
+import de.wwu.md2.framework.mD2.ContentProviderGetActiveAction
 import de.wwu.md2.framework.mD2.ContentProviderOperationAction
 import de.wwu.md2.framework.mD2.ContentProviderPath
 import de.wwu.md2.framework.mD2.ContentProviderReference
+import de.wwu.md2.framework.mD2.ContentProviderRemoveActiveAction
 import de.wwu.md2.framework.mD2.ContentProviderSetTask
 import de.wwu.md2.framework.mD2.Controller
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.DateTimeType
 import de.wwu.md2.framework.mD2.DateType
 import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.Enum
+import de.wwu.md2.framework.mD2.EnumBody
 import de.wwu.md2.framework.mD2.EnumType
 import de.wwu.md2.framework.mD2.FileType
 import de.wwu.md2.framework.mD2.FileUpload
@@ -29,6 +33,7 @@ import de.wwu.md2.framework.mD2.IntegerType
 import de.wwu.md2.framework.mD2.InvokeDefaultValue
 import de.wwu.md2.framework.mD2.InvokeDefinition
 import de.wwu.md2.framework.mD2.InvokeParam
+import de.wwu.md2.framework.mD2.InvokeStringValue
 import de.wwu.md2.framework.mD2.InvokeValue
 import de.wwu.md2.framework.mD2.Label
 import de.wwu.md2.framework.mD2.LocationProviderReference
@@ -56,6 +61,7 @@ import de.wwu.md2.framework.mD2.WorkflowElementEntry
 import de.wwu.md2.framework.mD2.impl.BooleanTypeImpl
 import de.wwu.md2.framework.mD2.impl.DateTimeTypeImpl
 import de.wwu.md2.framework.mD2.impl.DateTypeImpl
+import de.wwu.md2.framework.mD2.impl.EnumTypeImpl
 import de.wwu.md2.framework.mD2.impl.FloatTypeImpl
 import de.wwu.md2.framework.mD2.impl.IntegerTypeImpl
 import de.wwu.md2.framework.mD2.impl.InvokeBooleanValueImpl
@@ -71,29 +77,17 @@ import de.wwu.md2.framework.util.GetFiredEventsHelper
 import java.util.HashMap
 import java.util.HashSet
 import java.util.Map
+import java.util.Set
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.xtext.validation.Check
-import org.eclipse.xtext.validation.EValidatorRegistrar
 
 import static extension de.wwu.md2.framework.util.TypeResolver.*
-import de.wwu.md2.framework.mD2.impl.EnumTypeImpl
-import de.wwu.md2.framework.mD2.Enum
-import de.wwu.md2.framework.mD2.EnumBody
-import de.wwu.md2.framework.mD2.InvokeStringValue
-import java.util.Set
-import de.wwu.md2.framework.mD2.ContentProviderGetActiveAction
-import de.wwu.md2.framework.mD2.ContentProviderRemoveActiveAction
 
 /**
  * Validators for all controller elements of MD2.
  */
 class ControllerValidator extends AbstractMD2Validator {
-	
-	@Inject
-    override register(EValidatorRegistrar registrar) {
-        // nothing to do
-    }
-    
+
     public static final String EMPTYPROCESSCHAIN = "emptyProcessChain";
     public static final String NESTEDENTITYWITHOUTCONTENTPROVIDER = "nestedEntityWithoutContentProvider";
     public static final String SAVINGCHECKOFNESTEDENTITY = "savingCheckOfNestedEntity";
@@ -103,6 +97,7 @@ class ControllerValidator extends AbstractMD2Validator {
     public static final String INVOKEMISSINGREQUIREDATTRIBUTE = "invokeMissingRequiredAttribute";
     public static final String INVOKEPATHCOLLISION = "invokePathCollision";
     public static final String ENUMENTRYNOTKNOWN = "enumEntryNotKnown";
+    public static final String ACTIONINVALID = "actionInvalid";
     
     @Inject
     GetFiredEventsHelper helper;
@@ -119,19 +114,19 @@ class ControllerValidator extends AbstractMD2Validator {
 	@Check
 	def checkCorrectUseOfContentProvidersInGetActiveAction(ContentProviderGetActiveAction action){
 		
-		//check target
 		val cpt = action.contentProviderTarget.contentProvider;
 		if (cpt.getType.isMany()){
-			acceptError("Tried to use multicontentprovider as target, only singlecontentprovider allowed.",
-					action, null, -1, null);
+			error("Tried to use multicontentprovider as target, only singlecontentprovider allowed.",			
+				MD2Package.eINSTANCE.contentProviderGetActiveAction_ContentProviderTarget,
+				ACTIONINVALID);
 		}
 		
 		val cps = action.contentProviderSource.contentProvider;
 		if(!cps.getType.isMany()){
-			acceptError("Tried to use singlecontentprovider as source, only multicontentprovider allowed.",			
-			action, null, -1, null);
+			error("Tried to use singlecontentprovider as source, only multicontentprovider allowed.",			
+				MD2Package.eINSTANCE.contentProviderGetActiveAction_ContentProviderSource,
+				ACTIONINVALID);
 		}
-		
 	}
 	
 	/**
@@ -139,13 +134,11 @@ class ControllerValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkCorrectUseOfContentProviderInRemoveActiveAction(ContentProviderRemoveActiveAction action){
-		
-		val cpt = action.contentProvider.contentProvider;
-		if (!cpt.getType.isMany()){
-			acceptError("Tried to use singlecontentprovider in removeActiveAction, only multicontentprovider allowed.",
-					action, null, -1, null);
+		if (!action.contentProvider.contentProvider.getType.isMany()){
+			error("Tried to use singlecontentprovider in removeActiveAction, only multicontentprovider allowed.",			
+				MD2Package.eINSTANCE.contentProviderRemoveActiveAction_ContentProvider,
+				ACTIONINVALID);
 		}
-		
 	}
 	
 	/**
@@ -178,10 +171,8 @@ class ControllerValidator extends AbstractMD2Validator {
 		}
 		
 		if (isReadOnly && !action.operation.equals(AllowedOperation::READ)) {
-			val error = '''
-				You tried to apply a '«action.operation»'-operation on a read-only content provider. Only 'load' is allowed in this location.
-			'''
-			acceptError(error, action, MD2Package.eINSTANCE.contentProviderOperationAction_Operation, -1, null);
+			val error = "You tried to apply a '«action.operation»'-operation on a read-only content provider. Only 'load' is allowed in this location."
+			error(error, MD2Package.eINSTANCE.contentProviderOperationAction_Operation, ACTIONINVALID);
 		}
 	}
 	
@@ -243,10 +234,8 @@ class ControllerValidator extends AbstractMD2Validator {
 			}
 
 		}
-		else{
-			if (main.fileUploadConnection.storagePath === null) {
-				error("The remote connection of the file upload connection needs to specify a storage path.", MD2Package.eINSTANCE.main_FileUploadConnection, -1, UPLOAD_SPECIFYPATH);
-			}
+		else if (main.fileUploadConnection.storagePath === null) {
+			error("The remote connection of the file upload connection needs to specify a storage path.", MD2Package.eINSTANCE.main_FileUploadConnection, -1, UPLOAD_SPECIFYPATH);
 		}
 	}
 	
@@ -277,21 +266,15 @@ class ControllerValidator extends AbstractMD2Validator {
         }  
 	}
 	
-	
 	/////////////////////////////////////////////////////////
 	/// Type Validators
 	/////////////////////////////////////////////////////////
 	
-	def static AbstractViewGUIElementRef getViewElement(AbstractViewGUIElementRef ref)
-	{
-		
-		if (ref.tail !== null)
-		{
+	def static AbstractViewGUIElementRef getViewElement(AbstractViewGUIElementRef ref){
+		if (ref.tail !== null) {
 			return ref.tail.getViewElement;
 		}
-		else {
-			return ref;
-		}
+		return ref;
 	}
 	
 	/**
@@ -299,7 +282,6 @@ class ControllerValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkDataTypesOfMappingTask(MappingTask task) {
-		
 		val viewField = task.referencedViewField.getViewElement.ref
 		
 		val viewFieldType = task.referencedViewField.expressionType
@@ -314,7 +296,6 @@ class ControllerValidator extends AbstractMD2Validator {
 			val error = '''Cannot map an attribute with value of type '«attributeType»' to a view element that handles values of type '«viewFieldType»'.'''
 			acceptError(error, task, MD2Package.eINSTANCE.mappingTask_PathDefinition, -1, null);
 		}
-	
 	}
 	
 	/**
@@ -326,7 +307,7 @@ class ControllerValidator extends AbstractMD2Validator {
 		val attributeType = task.pathDefinition.expressionType
 		
 		if (!viewFieldType.equals(attributeType)) {
-			val error = '''Cannot map an attribute with value of type '«attributeType»' to a view element that handles values of type '«viewFieldType»'.'''
+			val error = '''Cannot (un)map an attribute with value of type '«attributeType»' to a view element that handles values of type '«viewFieldType»'.'''
 			acceptError(error, task, MD2Package.eINSTANCE.unmappingTask_PathDefinition, -1, null);
 		}
 	}
@@ -413,7 +394,7 @@ class ControllerValidator extends AbstractMD2Validator {
 		
 		if (isNumericOperator && !numericTypes.contains(left)) {
 			val error = '''Cannot use operator '«expr.op.toString»' on a value of type '«left»'.'''
-			acceptError(error, expr, MD2Package.eINSTANCE.compareExpression_Op, -1, null);
+			error(error, MD2Package.eINSTANCE.compareExpression_Op, null);
 		}
 	}
 	
@@ -428,7 +409,7 @@ class ControllerValidator extends AbstractMD2Validator {
 		
 		if (!attrType.equals(valueType)) {
 			val error = '''Cannot compare a value of type '«valueType»' with an attribute that has a value of type '«attrType»'.'''
-			acceptError(error, expr, MD2Package.eINSTANCE.whereClauseCompareExpression_EqRight, -1, null);
+			error(error, MD2Package.eINSTANCE.whereClauseCompareExpression_EqRight, null);
 		}
 	}
 	
@@ -449,15 +430,13 @@ class ControllerValidator extends AbstractMD2Validator {
 		
 		if (isNumericOperator && !numericTypes.contains(left)) {
 			val error = '''Cannot use operator '«expr.op.toString»' on a value of type '«left»'.'''
-			acceptError(error, expr, MD2Package.eINSTANCE.whereClauseCompareExpression_Op, -1, null);
+			error(error, MD2Package.eINSTANCE.whereClauseCompareExpression_Op, null);
 		}
 	}
-	
 	
 	/////////////////////////////////////////////////////////
 	/// ProcessChain Validators
 	/////////////////////////////////////////////////////////
-	
 	/**
 	 * Avoids that reverse operations can be assigned to the first step of a ProcessChain.
 	 */
@@ -540,7 +519,6 @@ class ControllerValidator extends AbstractMD2Validator {
         }
      }
      
-     
      /**
       * Validator for saving of nested entities. 
       * Show warning, if not set directly before saving.
@@ -618,21 +596,21 @@ class ControllerValidator extends AbstractMD2Validator {
     /**
      * Ensures that, when the REST method 'GET' is chosen, no body params are set.  
      */
-     
+    
     public static final String NOBODYPARAMSWHENGET = "noBodyParamsWhenGET";
      
     @Check
     def checkNoBodyParamsWhenGETMethod(WebServiceCall wscall){
-        if(wscall.method.equals(RESTMethod.GET) && wscall.bodyparams.size > 0) 
-        {
-            acceptError("When REST method 'GET' is chosen, no body params are allowed. Use the queryparams construct instead.", wscall, null, -1, NOBODYPARAMSWHENGET);
+        if(wscall.method.equals(RESTMethod.GET) && wscall.bodyparams.size > 0){
+            error("When REST method 'GET' is chosen, no body params are allowed. Use the queryparams construct instead.", 
+            	MD2Package.eINSTANCE.webServiceCall_Bodyparams, 
+            	NOBODYPARAMSWHENGET);
         }
     }
     
 	/////////////////////////////////////////////////////////
 	/// Invoke Validators
 	/////////////////////////////////////////////////////////
-	
 	public static final String UNSUPPORTEDRESTMETHOD = "unsupportedRESTMethod"
 	
 	/**
@@ -642,10 +620,11 @@ class ControllerValidator extends AbstractMD2Validator {
 	def checkRestMethod(InvokeDefinition invokeDefinition){
 	    val method = invokeDefinition?.method
 	    if(method == RESTMethod.GET || method == RESTMethod.DELETE){
-	        acceptError("The method type " + method.toString + " is not supported. Please use POST or PUT.", invokeDefinition, MD2Package.eINSTANCE.invokeDefinition_Method, -1, UNSUPPORTEDRESTMETHOD);
+	        error("The method type " + method.toString + " is not supported. Please use POST or PUT.", 
+				MD2Package.eINSTANCE.invokeDefinition_Method,
+				UNSUPPORTEDRESTMETHOD);
 	    }
 	}
-	
 	
 	/**
 	 * These maps enable for a comparison between the two class types and to ensure, that no unsupported value is set.
@@ -654,29 +633,25 @@ class ControllerValidator extends AbstractMD2Validator {
 
 	static final Map<Class<? extends AttributeType>, String> supportedAttributeTypeMap= getSupportedAttributeTypeHashMap()
 
-	private static def getInvokeValueTypeHashMap(){
-		val map = new HashMap<Class<? extends InvokeValue>,String>()
-		map.put(InvokeIntValueImpl,"integer")
-		map.put(InvokeFloatValueImpl, "float")
-		map.put(InvokeStringValueImpl, "string")
-		map.put(InvokeBooleanValueImpl, "boolean")
-		map.put(InvokeDateValueImpl, "date")
-		map.put(InvokeTimeValueImpl, "time")
-		map.put(InvokeDateTimeValueImpl, "datetime")
-		return map
+	private static def HashMap<Class<? extends InvokeValue>,String> getInvokeValueTypeHashMap(){
+		return #{InvokeIntValueImpl -> "integer",
+			InvokeFloatValueImpl -> "float",
+			InvokeStringValueImpl -> "string",
+			InvokeBooleanValueImpl -> "boolean",
+			InvokeDateValueImpl -> "date",
+			InvokeTimeValueImpl -> "time",
+			InvokeDateTimeValueImpl -> "datetime"}
 	}
 	
-	private static def getSupportedAttributeTypeHashMap(){
-		val map = new HashMap<Class<? extends AttributeType>,String>()
-		map.put(IntegerTypeImpl, "integer")
-		map.put(FloatTypeImpl, "float")
-		map.put(StringTypeImpl, "string")
-		map.put(BooleanTypeImpl, "boolean")
-		map.put(DateTypeImpl, "date")
-		map.put(TimeTypeImpl, "time")
-		map.put(DateTimeTypeImpl, "datetime")
-		map.put(EnumTypeImpl, "string")
-		return map
+	private static def HashMap<Class<? extends AttributeType>,String> getSupportedAttributeTypeHashMap(){
+		return #{IntegerTypeImpl -> "integer",
+			FloatTypeImpl -> "float",
+			StringTypeImpl -> "string",
+			BooleanTypeImpl -> "boolean",
+			DateTypeImpl -> "date",
+			TimeTypeImpl -> "time",
+			DateTimeTypeImpl -> "datetime",
+			EnumTypeImpl -> "string"}
 	}
 
 	/**
@@ -694,13 +669,15 @@ class ControllerValidator extends AbstractMD2Validator {
 				cpType = supportedAttributeTypeMap.get(EnumTypeImpl)
 			}
 		}
-		if (valueType !== null && cpType!== null && !valueType.equals(cpType)){
-			val error = '''The types of the content provider and its default value have to match each other! Expected default value to be of type «cpType» but was «valueType»!'''
-			acceptError(error, defaultValue, MD2Package.eINSTANCE.invokeDefaultValue_InvokeValue, -1, INVOKEDEFAULTVALUETYPEMISSMATCH)
-		}
-		if (cpType === null){
-			val error = '''The type «defaultValue.field.tail.resolveAttributeType.attributeTypeName» of the content provider reference is not supported to be set to a default value!'''
-			acceptError(error, defaultValue, MD2Package.eINSTANCE.invokeParam_Field, -1, INVOKEDEFAULTVALUETYPENOTSUPPORTED)
+		
+		if (cpType !== null && !valueType?.equals(cpType)){
+			error('''The types of the content provider and its default value have to match each other! Expected default value to be of type «cpType» but was «valueType»!''', 
+				MD2Package.eINSTANCE.invokeDefaultValue_InvokeValue,
+				INVOKEDEFAULTVALUETYPEMISSMATCH)
+		} else  if (cpType === null){
+			error('''The type «defaultValue.field.tail.resolveAttributeType.attributeTypeName» of the content provider reference is not supported to be set to a default value!''', 
+				MD2Package.eINSTANCE.invokeParam_Field,
+				INVOKEDEFAULTVALUETYPENOTSUPPORTED)
 		}	
     }
     
@@ -710,7 +687,7 @@ class ControllerValidator extends AbstractMD2Validator {
      */
     @Check
     def checkForInvokePathsBeingUnique(WorkflowElement wfe) {
-    	if (wfe.invoke.size>1){
+    	if (wfe.invoke.size > 1){
 			val paths = wfe.invoke.map[it.path?:""]
 			val allpaths = new HashSet<String>()
 			val conflictedPaths = new HashSet<String>()
@@ -733,7 +710,7 @@ class ControllerValidator extends AbstractMD2Validator {
 					}
 					error(error, invoke, structuralFeature, -1, INVOKEPATHCOLLISION)
 				}
-		}
+			}
 		}
     }
     
@@ -791,8 +768,9 @@ class ControllerValidator extends AbstractMD2Validator {
 				}
 			}
 			EnumType: {
-				var error = '''An internal enum is not supported to be set as default value. Please create a enum object for it.'''
-				error(error, defaultValue, MD2Package.eINSTANCE.invokeDefaultValue_InvokeValue, -1)
+				error("An internal enum is not supported to be set as default value. Please create a enum object for it.",
+					defaultValue, MD2Package.eINSTANCE.invokeDefaultValue_InvokeValue,
+					null)
 			}
 		}
 		if (enumBody !== null) {
@@ -800,8 +778,9 @@ class ControllerValidator extends AbstractMD2Validator {
 
 				var value = (defaultValue.invokeValue as InvokeStringValue).value
 				if (!enumBody.elements.contains(value)) {
-					var error = '''The enum value does not equal any entry of the enum «enumName»'''
-					error(error, defaultValue, MD2Package.eINSTANCE.invokeDefaultValue_InvokeValue, -1, ENUMENTRYNOTKNOWN)
+					error('''The enum value does not equal any entry of the enum «enumName»''', 
+						MD2Package.eINSTANCE.invokeDefaultValue_InvokeValue, 
+						ENUMENTRYNOTKNOWN)
 				}
 			}
 		}
@@ -826,7 +805,7 @@ class ControllerValidator extends AbstractMD2Validator {
 				FileType: type.params
 				default: throw new RuntimeException("The attribute type is not registered in this method.")
 			}
-			params.filter(AttrIsOptional).size==0		
+			params.filter(AttrIsOptional).size == 0		
 		].toSet
     }
 }

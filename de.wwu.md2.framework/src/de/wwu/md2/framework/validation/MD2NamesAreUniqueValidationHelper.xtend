@@ -37,10 +37,9 @@ class MD2NamesAreUniqueValidationHelper extends NamesAreUniqueValidationHelper {
 			IEObjectDescription description,
 			Map<EClass, Map<QualifiedName, IEObjectDescription>> clusterTypeToName,
 			ValidationMessageAcceptor acceptor, URI uri) {
-		val object = description.getEObjectOrProxy();
-		val eClass = object.eClass();
 		val qualifiedName = description.getName();
-		val clusterType = getAssociatedClusterType(eClass);
+		val clusterType = getAssociatedClusterType(description.getEObjectOrProxy().eClass());
+		
 		var nameToDescription = clusterTypeToName.get(clusterType);
 		if (nameToDescription === null) {
 			nameToDescription = Maps.newHashMap();
