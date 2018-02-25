@@ -82,6 +82,7 @@ import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.xtext.validation.Check
 
 import static extension de.wwu.md2.framework.util.TypeResolver.*
+import de.wwu.md2.framework.mD2.InvokeIntValue
 
 /**
  * Validators for all controller elements of MD2.
@@ -634,24 +635,28 @@ class ControllerValidator extends AbstractMD2Validator {
 	static final Map<Class<? extends AttributeType>, String> supportedAttributeTypeMap= getSupportedAttributeTypeHashMap()
 
 	private static def HashMap<Class<? extends InvokeValue>,String> getInvokeValueTypeHashMap(){
-		return #{InvokeIntValueImpl -> "integer",
-			InvokeFloatValueImpl -> "float",
-			InvokeStringValueImpl -> "string",
-			InvokeBooleanValueImpl -> "boolean",
-			InvokeDateValueImpl -> "date",
-			InvokeTimeValueImpl -> "time",
-			InvokeDateTimeValueImpl -> "datetime"}
+		val HashMap<Class<? extends InvokeValue>,String> map = newHashMap()
+		map.put(InvokeIntValueImpl, "integer")
+		map.put(InvokeFloatValueImpl, "float")
+		map.put(InvokeStringValueImpl, "string")
+		map.put(InvokeBooleanValueImpl, "boolean")
+		map.put(InvokeDateValueImpl, "date")
+		map.put(InvokeTimeValueImpl, "time")
+		map.put(InvokeDateTimeValueImpl, "datetime")
+		return map;
 	}
 	
 	private static def HashMap<Class<? extends AttributeType>,String> getSupportedAttributeTypeHashMap(){
-		return #{IntegerTypeImpl -> "integer",
-			FloatTypeImpl -> "float",
-			StringTypeImpl -> "string",
-			BooleanTypeImpl -> "boolean",
-			DateTypeImpl -> "date",
-			TimeTypeImpl -> "time",
-			DateTimeTypeImpl -> "datetime",
-			EnumTypeImpl -> "string"}
+		val HashMap<Class<? extends AttributeType>,String> map = newHashMap()
+		map.put(IntegerTypeImpl, "integer")
+		map.put(FloatTypeImpl, "float")
+		map.put(StringTypeImpl, "string")
+		map.put(BooleanTypeImpl, "boolean")
+		map.put(DateTypeImpl, "date")
+		map.put(TimeTypeImpl, "time")
+		map.put(DateTimeTypeImpl, "datetime")
+		map.put(EnumTypeImpl, "enum")
+		return map
 	}
 
 	/**
