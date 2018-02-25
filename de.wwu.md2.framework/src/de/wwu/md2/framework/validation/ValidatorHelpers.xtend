@@ -1,16 +1,12 @@
 package de.wwu.md2.framework.validation;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Set;
-
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.xtext.validation.ValidationMessageAcceptor;
-
-import com.google.common.collect.Sets;
+import com.google.common.collect.Sets
+import java.lang.reflect.InvocationTargetException
+import java.util.HashMap
+import org.eclipse.emf.common.util.EList
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.EStructuralFeature
+import org.eclipse.xtext.validation.ValidationMessageAcceptor
 
 /**
  * This class provides helper methods for the MD2 validators. The easiest way to
@@ -20,7 +16,7 @@ import com.google.common.collect.Sets;
  * private ValidatorHelpers helper;
  * </pre>
  */
-public class ValidatorHelpers {
+class ValidatorHelpers {
 	
 	/**
 	 * This method is a short cut for the method {@code repeatedParamsError(EObject element, EAttribute literal, HashMap<String, String> eClassToNameMapping)}.
@@ -50,13 +46,13 @@ public class ValidatorHelpers {
 	 * @param acceptor Instance of the validator that calls this method.
 	 * @param mappings An even number of strings is expected that represent key-value-pairs for each defined parameter for which duplicity has to be checked.
 	 */
-	public void repeatedParamsError(EObject element, EStructuralFeature literal, ValidationMessageAcceptor acceptor, String ... mappings) {
+	def repeatedParamsError(EObject element, EStructuralFeature literal, ValidationMessageAcceptor acceptor, String ... mappings) {
 		
-		assert mappings.length % 2 == 0 : "Expects an even number of mapping strings";
+		if(!(mappings.length % 2 == 0)) new RuntimeException("Expects an even number of mapping strings")
 		
-		HashMap<String, String> eClassToNameMapping = new HashMap<String, String>();
-		for(int i = 0; i < mappings.length - 1; i += 2) {
-			eClassToNameMapping.put(mappings[i], mappings[i + 1]);
+		val eClassToNameMapping = new HashMap<String, String>();
+		for(var i = 0; i < mappings.length - 1; i += 2) {
+			eClassToNameMapping.put(mappings.get(i), mappings.get(i + 1));
 		}
 		
 		repeatedParamsError(element, literal, acceptor, eClassToNameMapping);
@@ -88,26 +84,25 @@ public class ValidatorHelpers {
 	 * @param acceptor Instance of the validator that calls this method.
 	 * @param eClassToNameMapping A HashMap that contains key-value-pairs for each defined parameter for which duplicity has to be checked.
 	 */
-	public void repeatedParamsError(EObject element, EStructuralFeature literal, ValidationMessageAcceptor acceptor, HashMap<String, String> eClassToNameMapping) {
+	def repeatedParamsError(EObject element, EStructuralFeature literal, ValidationMessageAcceptor acceptor, HashMap<String, String> eClassToNameMapping) {
 		
-		Set<String> set = Sets.newHashSet();
+		val set = Sets.newHashSet();
 		
 		try {
-			Method m = element.getClass().getMethod("getParams");
-			Object params = m.invoke(element);
+			val m = element.getClass().getMethod("getParams");
+			val params = m.invoke(element);
 			
-			assert params instanceof EList : "Expects params to be an instance of EList";
+			if(!(params instanceof EList<?>)) new RuntimeException("Expects params to be an instance of EList")
 			
-			for(Object param : EList.class.cast(params)) {
-				String name = ((EObject)param).eClass().getName();
+			EList.cast(params).forEach[param |
+				val name = (param as EObject).eClass().getName();
 				if(set.contains(name)) {
 					acceptor.acceptError("Parameter \"" + eClassToNameMapping.get(name)
 							+ "\" has been defined multiple times", element, literal, -1, ModelValidator.REPEATEDPARAMS);
-					break;
 				} else {
 					set.add(name);
 				}
-			}
+			]
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {

@@ -8,13 +8,13 @@ import org.eclipse.xtext.conversion.ValueConverter;
 
 import com.google.inject.Inject;
 
-public class MD2ValueConverterService extends DefaultTerminalConverters {
+class MD2ValueConverterService extends DefaultTerminalConverters {
 	
 	@Inject
 	private DateValueConverter dateValueConverter;
 	
 	@ValueConverter(rule = "DATE")
-	public IValueConverter<Date> getDateConverter() {
+	public def IValueConverter<Date> getDateConverter() {
 		return dateValueConverter;
 	}
 	
@@ -22,7 +22,7 @@ public class MD2ValueConverterService extends DefaultTerminalConverters {
 	private TimeValueConverter timeValueConverter;
 	
 	@ValueConverter(rule = "TIME")
-	public IValueConverter<Date> getTimeConverter() {
+	public def IValueConverter<Date> getTimeConverter() {
 		return timeValueConverter;
 	}
 	
@@ -30,7 +30,7 @@ public class MD2ValueConverterService extends DefaultTerminalConverters {
 	private DateTimeValueConverter dateTimeValueConverter;
 	
 	@ValueConverter(rule = "DATE_TIME")
-	public IValueConverter<Date> getDateTimeConverter() {
+	public def IValueConverter<Date> getDateTimeConverter() {
 		return dateTimeValueConverter;
 	}
 	
@@ -38,7 +38,7 @@ public class MD2ValueConverterService extends DefaultTerminalConverters {
 	private PercentValueConverter percentValueConverter;
 	
 	@ValueConverter(rule = "PERCENT")
-	public IValueConverter<Integer> getPercentConverter() {
+	def IValueConverter<Integer> getPercentConverter() {
 		return percentValueConverter;
 	}
 	

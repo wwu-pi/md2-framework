@@ -1,37 +1,29 @@
 package de.wwu.md2.framework.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.xtext.EcoreUtil2;
-import org.eclipse.xtext.resource.IResourceDescription;
-import org.eclipse.xtext.resource.IResourceDescriptions;
-import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
-import com.google.inject.Inject;
-
-import de.wwu.md2.framework.generator.IExtendedFileSystemAccess;
-import de.wwu.md2.framework.mD2.MD2Model;
+import com.google.common.base.Joiner
+import com.google.common.collect.Sets
+import com.google.inject.Inject
+import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
+import de.wwu.md2.framework.mD2.MD2Model
+import java.io.IOException
+import java.io.InputStream
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Arrays
+import java.util.Collection
+import java.util.Set
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
+import org.eclipse.emf.common.util.URI
+import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.xtext.EcoreUtil2
+import org.eclipse.xtext.resource.IResourceDescription
+import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider
 
 /**
  * This util class offers helper methods for the MD2 framework development.
  */
-public class MD2Util {
+class MD2Util {
 	
 	@Inject
 	ResourceDescriptionsProvider resourceDescriptionsProvider;
@@ -66,13 +58,13 @@ public class MD2Util {
 	 * @param uri URI of the resource.
 	 * @return Name of the package that has been derived from the resource path.
 	 */
-	public String getPackageNameFromPath(URI uri) {
-		Joiner joiner = Joiner.on(".");
-		String[] pathSegments = uri.path().split("/");
+	def getPackageNameFromPath(URI uri) {
+		val joiner = Joiner.on(".");
+		val pathSegments = uri.path().split("/");
 		
-		int from = firstOccurenceOfElement(pathSegments, "src") + 1;
-		int to =  pathSegments.length - 1; //-1 to cut-off the file name which is not part of the package
-		String[] target = Arrays.copyOfRange(pathSegments, from, to);
+		val from = firstOccurenceOfElement(pathSegments, "src") + 1;
+		val to =  pathSegments.length - 1; //-1 to cut-off the file name which is not part of the package
+		val target = Arrays.copyOfRange(pathSegments, from, to);
 		
 		return joiner.join(target);
 	}
@@ -84,8 +76,8 @@ public class MD2Util {
 	 * @param element Element that should be found in the array.
 	 * @return The index of {@code element} in the given array or -1 if the array does not contain {@code element}.
 	 */
-	public <T> int firstOccurenceOfElement(T[] arr, T element) {
-		int pos = 0;
+	def <T> int firstOccurenceOfElement(T[] arr, T element) {
+		var pos = 0;
 		for(T t : arr) {
 			if(t.equals(element)) return pos;
 			pos++;
@@ -99,30 +91,30 @@ public class MD2Util {
 	 * @param resourceSet
 	 * @return List with the resources of all models.
 	 */
-	public Collection<Resource> getAllResources(final Resource resource) {
+	def Collection<Resource> getAllResources(Resource resource) {
 		
-		Set<Resource> resources = Sets.newHashSet();
-		ResourceSet resourceSet = resource.getResourceSet();
+		val resources = Sets.newHashSet();
+		val resourceSet = resource.getResourceSet();
 		EcoreUtil2.resolveAll(resourceSet);
-		IResourceDescriptions resourceDescriptions = resourceDescriptionsProvider.createResourceDescriptions();
+		val resourceDescriptions = resourceDescriptionsProvider.createResourceDescriptions();
 		
 		for (IResourceDescription resourceDescription : resourceDescriptions.getAllResourceDescriptions()) {
-			Resource resourceFromDescription = resourceSet.getResource(resourceDescription.getURI(), true);
+			val resourceFromDescription = resourceSet.getResource(resourceDescription.getURI(), true);
 			if(resourcesBelongToSameProject(resource, resourceFromDescription)) {
 				resources.add(resourceFromDescription);
 			}
 		}
 		
 		// resource cache handling
-		if(resources.isEmpty() && MD2Util.resources == null) {
+		if(resources.isEmpty() && MD2Util.resources === null) {
 			// The resource provider register has not been updated, yet. (e.g. after a project clean up)
 			// => populate the result set with the current model
 			resources.add(resource);
-		} else if(resources.isEmpty() && MD2Util.resources != null) {
+		} else if(resources.isEmpty() && MD2Util.resources !== null) {
 			resources = MD2Util.resources;
 		}
 		
-		assert !resources.isEmpty() : "The resource set should not be empty at this point.";
+		if(resources.isEmpty()) new RuntimeException("The resource set should not be empty at this point.")
 		MD2Util.resources = resources;
 		
 		return resources;
@@ -136,8 +128,8 @@ public class MD2Util {
 	 * @param r2 Resource 2.
 	 * @return True if r1 and r2 belong to the same project. Otherwise false.
 	 */
-	public boolean resourcesBelongToSameProject(Resource r1, Resource r2) {
-		return r1.getURI().path().split("/")[2].equals(r2.getURI().path().split("/")[2]);
+	def resourcesBelongToSameProject(Resource r1, Resource r2) {
+		return r1.getURI().path().split("/").get(2).equals(r2.getURI().path().split("/").get(2));
 	}
 	
 	/**
@@ -147,17 +139,8 @@ public class MD2Util {
 	 * 
 	 * @return List of all MD2Model objects.
 	 */
-	public Collection<MD2Model> getAllMD2Models(Resource resource) {
-		ArrayList<MD2Model> lst = new ArrayList<MD2Model>();
-		
-		// generate list of all models
-		for(Resource res : getAllResources(resource)) {
-			EObject o = res.getContents().get(0);
-			assert o instanceof MD2Model : "Instance is expected to be of type MD2Model";
-			lst.add((MD2Model)o);
-		}
-		
-		return lst;
+	def getAllMD2Models(Resource resource) {
+		return getAllResources(resource).map[it.getContents().get(0)].filter(MD2Model).toList
 	}
 	
 	/**
@@ -167,8 +150,9 @@ public class MD2Util {
 	 * @param file File name. File paths have to be relative to the base directory /resources/.
 	 * @return Input stream for the given file.
 	 */
-	public static InputStream getSystemResource(final String file) {System.out.println("/resources/" + file.replaceFirst("^(\\.)?/(resources/)?", new String()));
-		return MD2Util.class.getResourceAsStream("/resources/" + file.replaceFirst("^(\\.)?/(resources/)?", new String()));
+	static def getSystemResource(String file) {
+		System.out.println("/resources/" + file.replaceFirst("^(\\.)?/(resources/)?", new String()));
+		return MD2Util.getResourceAsStream("/resources/" + file.replaceFirst("^(\\.)?/(resources/)?", new String()));
 	}
 	
 	/**
@@ -178,14 +162,16 @@ public class MD2Util {
 	 *	Empty directories within the ZIP file will be ignored.
 	 * @param fsa Access to the file system.
 	 */
-	public static void extractArchive(InputStream archive, String folder, IExtendedFileSystemAccess fsa) {
-		ZipInputStream zip = new ZipInputStream(archive);
-		ZipEntry cur;
+	static def extractArchive(InputStream archive, String folderIn, IExtendedFileSystemAccess fsa) {
+		val zip = new ZipInputStream(archive);
+		var ZipEntry cur = zip.getNextEntry()
+		var folder = folderIn
 		if(!folder.endsWith("/"))
 			folder = folder + "/";
 		try {
-			while((cur = zip.getNextEntry()) != null) {
+			while(cur !== null) {
 				extractEntry(cur, zip, folder, fsa);
+				cur = zip.getNextEntry()
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -199,20 +185,18 @@ public class MD2Util {
 	 * @param folder The target folder.
 	 * @param fsa Access to the file system, used to generate the file.
 	 */
-	private static void extractEntry(ZipEntry entry, final ZipInputStream zipStream, String folder, IExtendedFileSystemAccess fsa) {
+	private static def extractEntry(ZipEntry entry, ZipInputStream zipStream, String folder, IExtendedFileSystemAccess fsa) {
 		if(entry.isDirectory())
 			// do not create empty directories, others will implicitly be created by contained files
 			return;
 		
 		// Input stream that acts as a proxy to the zip input stream, needed because generateFileFromInputStream will close the stream given as a parameter
-		InputStream entryStream = new InputStream() {
-			@Override
-			public int read() throws IOException {
+		val entryStream = new InputStream() {
+			override public int read() throws IOException {
 				return zipStream.read();
 			}
 			
-			@Override
-			public int read(byte[] b, int off, int len) throws IOException {
+			override public int read(byte[] b, int off, int len) throws IOException {
 				return zipStream.read(b, off, len);
 			}
 		};
@@ -227,12 +211,12 @@ public class MD2Util {
 	 * @param format SimpleDateFormat that should be used for parsing.
 	 * @return A date object or null if string is not parsable.
 	 */
-	public static Date tryToParse(String input, SimpleDateFormat format) {
-		Date date = null;
+	static def tryToParse(String input, SimpleDateFormat format) {
 		try {
-			date = format.parse(input);
+			val date = format.parse(input);
+			return date
 		} catch (ParseException e) {}
-		return date;
+		return null
 	}
 	
 }

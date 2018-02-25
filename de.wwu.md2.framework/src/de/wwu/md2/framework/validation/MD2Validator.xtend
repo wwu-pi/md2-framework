@@ -22,15 +22,6 @@ import org.eclipse.xtext.validation.ComposedChecks
 ])
 class MD2Validator extends AbstractMD2Validator {
 	
-//	public static val INVALID_NAME = 'invalidName'
-//
-//	@Check
-//	def checkGreetingStartsWithCapital(Greeting greeting) {
-//		if (!Character.isUpperCase(greeting.name.charAt(0))) {
-//			warning('Name should start with a capital', 
-//					MD2Package.Literals.GREETING__NAME,
-//					INVALID_NAME)
-//		}
-//	}
+	// Validation delegated to referenced classes
 	
 }

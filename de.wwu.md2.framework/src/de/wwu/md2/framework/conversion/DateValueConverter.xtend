@@ -13,19 +13,18 @@ import org.eclipse.xtext.nodemodel.INode;
  * String - Date converter for strings conforming the following format:
  * {@code yyyy-MM-dd}
  */
-public class DateValueConverter extends AbstractNullSafeConverter<Date> {
+class DateValueConverter extends AbstractNullSafeConverter<Date> {
 	
 	private final String PATTERN = "yyyy-MM-dd";
 	
-	@Override
-	protected String internalToString(Date date) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat(PATTERN);
+	override protected def internalToString(Date date) {
+		val dateFormat = new SimpleDateFormat(PATTERN);
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		return dateFormat.format(date);
 	}
 	
-	@Override
-	protected Date internalToValue(String dateString, INode node) throws ValueConverterException {
+	override protected def internalToValue(String dateStringIn, INode node) throws ValueConverterException {
+		var dateString = dateStringIn
 		
 		// get rid of quotes
 		if(dateString.indexOf("\"") != -1 || dateString.indexOf("'") != -1) {
@@ -33,7 +32,7 @@ public class DateValueConverter extends AbstractNullSafeConverter<Date> {
 		}
 		
 		try {
-			SimpleDateFormat dateFormat = new SimpleDateFormat(PATTERN);
+			val dateFormat = new SimpleDateFormat(PATTERN);
 			dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 			dateFormat.setLenient(false);
 			return dateFormat.parse(dateString);

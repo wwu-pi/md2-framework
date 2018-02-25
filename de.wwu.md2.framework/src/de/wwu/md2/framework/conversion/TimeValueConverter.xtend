@@ -1,4 +1,4 @@
-package de.wwu.md2.framework.conversion;
+package de.wwu.md2.framework.conversion
 
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -16,40 +16,32 @@ import de.wwu.md2.framework.util.MD2Util;
  * String - Time converter for strings conforming the following format:
  * {@code hh:mm:ss[Z]} The optional 'Z' represents a RFC 822 4-digit time zone.
  */
-public class TimeValueConverter extends AbstractNullSafeConverter<Date> {
+class TimeValueConverter extends AbstractNullSafeConverter<Date> {
 	
 	private final Collection<String> PATTERNS = Sets.newHashSet("HH:mm:ssZ", "HH:mm:ssXXX", "HH:mm:ss");
 	private final String DEFAULT_PATTERN = "HH:mm:ssXXX";
 	
-	@Override
-	protected String internalToString(Date date) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_PATTERN);
-		return dateFormat.format(date);
+	override protected def internalToString(Date date) {
+		return new SimpleDateFormat(DEFAULT_PATTERN).format(date);
 	}
 	
-	@Override
-	protected Date internalToValue(String dateString, INode node) throws ValueConverterException {
+	override protected def internalToValue(String dateStringIn, INode node) throws ValueConverterException {
+		var dateString = dateStringIn
 		
 		// get rid of quotes
 		if(dateString.indexOf("\"") != -1 || dateString.indexOf("'") != -1) {
 			dateString = dateString.substring(1, dateString.length() - 1);
 		}
 		
-		SimpleDateFormat dateFormat = new SimpleDateFormat();
+		val dateFormat = new SimpleDateFormat();
 		dateFormat.setLenient(false);
-		Date date = null;
-		
 		for(String pattern : PATTERNS) {
 			dateFormat.applyPattern(pattern);
-			date = MD2Util.tryToParse(dateString, dateFormat);
-			if(date != null) break;
+			val date = MD2Util.tryToParse(dateString, dateFormat);
+			if(date !== null) return date;
 		}
 		
-		if(date == null) {
-			throw new ValueConverterException("No valid date format: Expects \"HH:mm:ss[(+|-)HHmm]\".", node, null);
-		} else {
-			return date;
-		}
+		throw new ValueConverterException("No valid date format: Expects \"HH:mm:ss[(+|-)HHmm]\".", node, null);
 	}
 	
 }

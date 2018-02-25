@@ -14,7 +14,7 @@ import org.eclipse.xtext.Keyword
  * 
  * Also see {@link org.eclipse.xtext.xtext.XtextFormattingTokenSerializer} as an example
  */
-public class MD2Formatter extends AbstractDeclarativeFormatter {
+class MD2Formatter extends AbstractDeclarativeFormatter {
 	
 	/**
 	 * The formatter has to implement the method configureFormatting(...)
@@ -266,7 +266,6 @@ public class MD2Formatter extends AbstractDeclarativeFormatter {
 		}
 		
 	}
-	
 	
 	/**
 	 * WORKFLOW formatting
