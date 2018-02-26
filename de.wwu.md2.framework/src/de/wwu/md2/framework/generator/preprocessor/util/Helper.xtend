@@ -17,7 +17,6 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
-import java.security.MessageDigest
 
 /**
  * Provides static MD2 specific helper methods to be used in all preprocessing steps.
@@ -79,16 +78,4 @@ class Helper {
 			ConditionalEventRef: "__conditional." + event.eventReference.name
 		}
 	}
-	
-	def static String sha1Hex(String input){
-		val mDigest = MessageDigest.getInstance("SHA1");
-        val byte[] result = mDigest.digest(input.getBytes());
-        val sb = new StringBuffer();
-        for (var i = 0; i < result.length; i++) {
-            sb.append(Integer.toString(result.get(i).bitwiseAnd(0xff) + 0x100, 16).substring(1));
-        }
-         
-        return sb.toString();
-	}
-	
 }

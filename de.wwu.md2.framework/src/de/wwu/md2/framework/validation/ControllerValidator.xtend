@@ -82,6 +82,7 @@ import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.xtext.validation.Check
 
 import static extension de.wwu.md2.framework.util.TypeResolver.*
+import de.wwu.md2.framework.util.MD2Type
 
 /**
  * Validators for all controller elements of MD2.
@@ -284,8 +285,8 @@ class ControllerValidator extends AbstractMD2Validator {
 	def checkDataTypesOfMappingTask(MappingTask task) {
 		val viewField = task.referencedViewField.getViewElement.ref
 		
-		val viewFieldType = task.referencedViewField.expressionType
-		val attributeType = task.pathDefinition.expressionType
+		val viewFieldType = task.referencedViewField.calculateType
+		val attributeType = task.pathDefinition.calculateType
 		
 		if(viewField instanceof Label) {
 			// Mapping to a Label is always ok.
@@ -303,8 +304,8 @@ class ControllerValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkDataTypesOfUnmappingTask(UnmappingTask task) {
-		val viewFieldType = task.referencedViewField.expressionType
-		val attributeType = task.pathDefinition.expressionType
+		val viewFieldType = task.referencedViewField.calculateType
+		val attributeType = task.pathDefinition.calculateType
 		
 		if (!viewFieldType.equals(attributeType)) {
 			val error = '''Cannot (un)map an attribute with value of type '«attributeType»' to a view element that handles values of type '«viewFieldType»'.'''
@@ -317,8 +318,8 @@ class ControllerValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkDataTypesOfAttributeSetTask(AttributeSetTask task) {
-		val targetType = task.pathDefinition.expressionType
-		val sourceType = task.source.expressionType
+		val targetType = task.pathDefinition.calculateType
+		val sourceType = task.source.calculateType
 		val isValidEnum = task.source.isValidEnumType(task.pathDefinition)
 		
 		if (!targetType.equals(sourceType) && !targetType.equals("string") && !isValidEnum) {
@@ -335,8 +336,8 @@ class ControllerValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkDataTypesOfContentProviderSetTask(ContentProviderSetTask task) {
-		val targetType = task.contentProvider.expressionType
-		val sourceType = task.source.expressionType
+		val targetType = task.contentProvider.calculateType
+		val sourceType = task.source.calculateType
 		
 		if (!targetType.equals(sourceType)) {
 			val error = '''Cannot set value of type '«sourceType»' to content provider of type '«targetType»'.'''
@@ -349,14 +350,14 @@ class ControllerValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkDataTypesOfViewElementSetTask(ViewElementSetTask task) {
-		val targetType = task.referencedViewField.expressionType
-		val sourceType = task.source.expressionType
+		val targetType = task.referencedViewField.calculateType
+		val sourceType = task.source.calculateType
 		val isValidEnum = task.source.isValidEnumType(task.referencedViewField)
 		
-		if (!targetType.equals(sourceType) && !targetType.equals("string") && !isValidEnum) {
+		if (!targetType.equals(sourceType) && !targetType.equals(MD2Type.STRING) && !isValidEnum) {
 			val error = '''Cannot set value of type '«sourceType»' to a view element that handles values of type '«targetType»'.'''
 			acceptError(error, task, MD2Package.eINSTANCE.viewElementSetTask_Source, -1, null);
-		} else if (!targetType.equals(sourceType) && targetType.equals("string") && !isValidEnum) {
+		} else if (!targetType.equals(sourceType) && targetType.equals(MD2Type.STRING) && !isValidEnum) {
 			val warning = '''You are assigning a value of type '«sourceType»' to view element of type string. The string representation of '«sourceType»' will be assigned instead.'''
 			acceptWarning(warning, task, MD2Package.eINSTANCE.viewElementSetTask_Source, -1, null);
 		}
@@ -367,8 +368,8 @@ class ControllerValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkBothExpressionsInComparisonOfSameType(CompareExpression expr) {
-		val left = expr.eqLeft.expressionType
-		val right = expr.eqRight.expressionType
+		val left = expr.eqLeft.calculateType
+		val right = expr.eqRight.calculateType
 		val isValidEnum = expr.eqLeft.isValidEnumType(expr.eqRight)
 		
 		if (!left.equals(right) && !isValidEnum) {
@@ -382,7 +383,7 @@ class ControllerValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkCorrectUsageOfOperators(CompareExpression expr) {
-		val left = expr.eqLeft.expressionType
+		val left = expr.eqLeft.calculateType
 		val isNumericOperator = switch expr.op {
 			case Operator::GREATER: true
 			case Operator::GREATER_OR_EQUAL: true
@@ -390,9 +391,8 @@ class ControllerValidator extends AbstractMD2Validator {
 			case Operator::SMALLER_OR_EQUAL: true
 			default: false
 		}
-		val numericTypes = newHashSet("integer", "float", "date", "time", "datetime")
 		
-		if (isNumericOperator && !numericTypes.contains(left)) {
+		if (isNumericOperator && !left.numeric) {
 			val error = '''Cannot use operator '«expr.op.toString»' on a value of type '«left»'.'''
 			error(error, MD2Package.eINSTANCE.compareExpression_Op, null);
 		}
@@ -404,8 +404,8 @@ class ControllerValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkBothExpressionsInWhereClauseComparisonOfSameType(WhereClauseCompareExpression expr) {
-		val attrType = expr.eqLeft.tail.resolveAttributeType.attributeTypeName
-		val valueType = expr.eqRight.expressionType
+		val attrType = expr.eqLeft.tail.calculateType
+		val valueType = expr.eqRight.calculateType
 		
 		if (!attrType.equals(valueType)) {
 			val error = '''Cannot compare a value of type '«valueType»' with an attribute that has a value of type '«attrType»'.'''
@@ -418,7 +418,7 @@ class ControllerValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkCorrectUsageOfOperatorsInWhereClauseComparison(WhereClauseCompareExpression expr) {
-		val left = expr.eqLeft.tail.resolveAttributeType.attributeTypeName
+		val left = expr.eqLeft.tail.calculateType
 		val isNumericOperator = switch expr.op {
 			case Operator::GREATER: true
 			case Operator::GREATER_OR_EQUAL: true
@@ -426,9 +426,8 @@ class ControllerValidator extends AbstractMD2Validator {
 			case Operator::SMALLER_OR_EQUAL: true
 			default: false
 		}
-		val numericTypes = newHashSet("integer", "float", "date", "time", "datetime")
 		
-		if (isNumericOperator && !numericTypes.contains(left)) {
+		if (isNumericOperator && !left.numeric) {
 			val error = '''Cannot use operator '«expr.op.toString»' on a value of type '«left»'.'''
 			error(error, MD2Package.eINSTANCE.whereClauseCompareExpression_Op, null);
 		}
@@ -665,7 +664,7 @@ class ControllerValidator extends AbstractMD2Validator {
     @Check
     def checkForTypeOfInvokeDefaultValue(InvokeDefaultValue defaultValue) {
 		var valueType = invokeValueTypeMap.get(defaultValue.invokeValue.class)
-		val attributeType = defaultValue.field.tail.resolveAttributeType
+		val attributeType = defaultValue.field.tail.calculateType
 		var cpType = supportedAttributeTypeMap.get(attributeType.class)
 		if (cpType === null && attributeType instanceof ReferencedType){
 			var referencedType = (attributeType as ReferencedType).getElement()
@@ -679,7 +678,7 @@ class ControllerValidator extends AbstractMD2Validator {
 				MD2Package.eINSTANCE.invokeDefaultValue_InvokeValue,
 				INVOKEDEFAULTVALUETYPEMISSMATCH)
 		} else  if (cpType === null){
-			error('''The type «defaultValue.field.tail.resolveAttributeType.attributeTypeName» of the content provider reference is not supported to be set to a default value!''', 
+			error('''The type «defaultValue.field.tail.calculateType» of the content provider reference is not supported to be set to a default value!''', 
 				MD2Package.eINSTANCE.invokeParam_Field,
 				INVOKEDEFAULTVALUETYPENOTSUPPORTED)
 		}	
@@ -760,7 +759,7 @@ class ControllerValidator extends AbstractMD2Validator {
      */
     @Check
 	def checkForValidEnumString(InvokeDefaultValue defaultValue) {
-		var attributeType = defaultValue.field.tail.resolveAttributeType
+		var attributeType = defaultValue.field.tail.calculateType
 		var EnumBody enumBody = null
 		var String enumName = null
 		switch (attributeType) {

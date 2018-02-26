@@ -62,27 +62,11 @@ class MD2Util {
 		val joiner = Joiner.on(".");
 		val pathSegments = uri.path().split("/");
 		
-		val from = firstOccurenceOfElement(pathSegments, "src") + 1;
+		val from = pathSegments.indexOf("src") + 1;
 		val to =  pathSegments.length - 1; //-1 to cut-off the file name which is not part of the package
 		val target = Arrays.copyOfRange(pathSegments, from, to);
 		
 		return joiner.join(target);
-	}
-	
-	/**
-	 * Returns the index of the first occurence of {@code element} in an array.
-	 * 
-	 * @param arr Array of any type.
-	 * @param element Element that should be found in the array.
-	 * @return The index of {@code element} in the given array or -1 if the array does not contain {@code element}.
-	 */
-	def <T> int firstOccurenceOfElement(T[] arr, T element) {
-		var pos = 0;
-		for(T t : arr) {
-			if(t.equals(element)) return pos;
-			pos++;
-		}
-		return -1;
 	}
 	
 	/**

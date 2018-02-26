@@ -1,5 +1,7 @@
 package de.wwu.md2.framework.util
 
+import java.security.MessageDigest
+
 class StringExtensions {
 	
 	/**
@@ -54,4 +56,17 @@ class StringExtensions {
 		str.replace("\t", spaces)
 	}
 	
+	/**
+	 * Get SHA-1 hash for input string
+	 */
+	def static String sha1Hex(String input){
+		val mDigest = MessageDigest.getInstance("SHA1");
+        val byte[] result = mDigest.digest(input.getBytes());
+        val sb = new StringBuffer();
+        for (var i = 0; i < result.length; i++) {
+            sb.append(Integer.toString(result.get(i).bitwiseAnd(0xff) + 0x100, 16).substring(1));
+        }
+         
+        return sb.toString();
+	}
 }

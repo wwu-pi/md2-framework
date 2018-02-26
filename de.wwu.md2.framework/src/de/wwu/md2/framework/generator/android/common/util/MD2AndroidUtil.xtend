@@ -11,6 +11,8 @@ import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 
 class MD2AndroidUtil {
 	
+	static val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider
+	
 	/**
 	 * Returns the package name that is being derived from the String path
 	 */
@@ -30,16 +32,11 @@ class MD2AndroidUtil {
 	}
 	
 	def static getQualifiedName(EObject obj){
-		val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider
 		qualifiedNameProvider.getFullyQualifiedName(obj)
 	}
 	
 	def static getQualifiedNameAsString(EObject obj, String delimiter){
-		val qualifiedNameProvider = new DefaultDeclarativeQualifiedNameProvider
-		var qualifiedName = qualifiedNameProvider.getFullyQualifiedName(obj)
-		if(qualifiedName !== null)
-			return qualifiedName.toString(delimiter)
-		return ""
+		return getQualifiedName(obj)?.toString(delimiter) ?: ""
 	}
 	
 	//TODO: These methods simply add all possible imports. It is not really a problem as Android Studio

@@ -53,54 +53,12 @@ import de.wwu.md2.framework.mD2.UploadedImageOutput
 import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.SensorType
 import de.wwu.md2.framework.mD2.SensorVal
+import de.wwu.md2.framework.mD2.SimpleDataType
 
 /**
  * Helper class to resolve the data type of a SimpleExpression.
  */
 class TypeResolver {
-	
-	/**
-	 * Resolves the data type of a simple expression and returns a string representation
-	 * of the type.
-	 */
-	def static getExpressionType(SimpleExpression expr) {
-		
-		switch expr {
-			StringVal: "string"
-			BooleanVal: "boolean"
-			DateVal: "date"
-			TimeVal: "time"
-			DateTimeVal: "datetime"
-			IntVal: "integer"
-			FloatVal: "float"
-			
-			SensorVal: "sensor"
-			
-			AbstractContentProviderPath: expr.abstractContentProviderPathType
-			AbstractProviderReference: expr.abstractContentProviderType
-			AbstractViewGUIElementRef: expr.abstractViewGUIElementType
-			
-			ConcatenatedString: "string"
-			Plus: "float"
-			Minus: "float"
-			Div: "float"
-			Mult: "float"
-		}
-		
-	}
-	
-	/**
-	 * Recursively resolve last attribute of a path and return its attribute type name.
-	 */
-	def static AttributeType resolveAttributeType(PathTail pathTail) {
-		
-		if (pathTail.tail === null) {
-			return pathTail.attributeRef.type
-		}
-		return pathTail.tail.resolveAttributeType
-		
-	}
-	
 	/**
 	 * Recursively resolve last attribute of a path and return its attribute.
 	 */
@@ -131,143 +89,228 @@ class TypeResolver {
 			default: false
 		}
 		
-		lhsIsEnum && rhs.expressionType.equals("string") || rhsIsEnum && lhs.expressionType.equals("string")
+		lhsIsEnum && rhs.calculateType === MD2Type.STRING || rhsIsEnum && lhs.calculateType === MD2Type.STRING
 	}
 	
-	def static getAttributeTypeName(AttributeType type) {
-		
-		switch type {
-			IntegerType: "integer"
-			FloatType: "float"
-			StringType: "string"
-			FileType: "string"
-			BooleanType: "boolean"
-			DateType: "date"
-			TimeType: "time"
-			DateTimeType: "datetime"
-			
-			SensorType: "float" //aktuelles Problem
-			
-			ReferencedType: type.element.name
-			EnumType: "Enum"
-			default: System::err.println("Unexpected AttributeType found: " + type.eClass.name)
-		}
-		
-	}
-	
-	def private static String getAbstractViewGUIElementType(AbstractViewGUIElementRef ref) {
-		
-		if (ref.path !== null) {
-			return ref.path.tail.resolveAttributeType.attributeTypeName
-		} else if (ref.simpleType !== null) {
-			return ref.simpleType.type.toString
-		} else if (ref.tail === null) {
-			return ref.ref.viewElementTypeName
-		}
-		ref.tail.abstractViewGUIElementType
-		
-	}
-	
-	def private static getAbstractContentProviderPathType(AbstractContentProviderPath path) {
-		
-		switch path {
-			LocationProviderPath: "string"
-			ContentProviderPath: path.tail.resolveAttributeType.attributeTypeName
-		}
-		
-	}
-	
-	def private static getAbstractContentProviderType(AbstractProviderReference ref) {
-		
-		switch ref {
-			LocationProviderReference: "Location"
-			ContentProviderReference: {
-				val providerType = ref.contentProvider.type
-				switch providerType {
-					SimpleType: providerType.type.toString
-					ReferencedModelType: providerType.entity.name
-				}
-			}
-		}
-		
-	}
-	
-	def private static getViewElementTypeName(ViewElementType elementType) {
-		
-		val viewGUIElement = switch elementType {
-			ViewGUIElement: elementType
-			ViewGUIElementReference: elementType.value
-		}
-		
-		switch viewGUIElement {
-			BooleanInput: "boolean"
-			TextInput: "string"
-			IntegerInput: "integer"
-			NumberInput: "float"
-			DateInput: "date"
-			TimeInput: "Time"
-			DateTimeInput: "datetime"
-			FileUpload: "string"
-			UploadedImageOutput: "string"
-			OptionInput: viewGUIElement.enumReference?.name ?: "string"
-			Tooltip: "string"
-			Label: "string"
-			
-			default: "undefined"
-		}
-		
-	}
-	
-		/**
+	/**
 	 * Resolves the data type of a simple expression and returns a string representation
 	 * of the type.
 	 */
 	def static getJavaExpressionType(SimpleExpression expr) {
-		
-		switch expr {
-			StringVal: "String"
-			BooleanVal: "boolean"
-			DateVal: "Date"
-			TimeVal: "Date"
-			DateTimeVal: "Date"
-			IntVal: "int"
-			FloatVal: "double"
-			
-			SensorVal: "double"
-			
-						
-			AbstractContentProviderPath: expr.abstractJavaContentProviderPathType
-		}
-		
+		expr.calculateType.javaType
 	}
 	
-		def private static getAbstractJavaContentProviderPathType(AbstractContentProviderPath path) {
-		
-		switch path {
-			LocationProviderPath: "String"
-			ContentProviderPath: path.tail.resolveAttributeType.javaAttributeTypeName
-		}
-		
+	static dispatch def MD2Type calculateType(IntVal expr){
+		return MD2Type.INT
 	}
 	
-		def static getJavaAttributeTypeName(AttributeType type) {
-		
-		switch type {
-			IntegerType: "int"
-			FloatType: "double"
-			StringType: "String"
-			BooleanType: "boolean"
-			DateType: "Date"
-			TimeType: "Date"
-			DateTimeType: "Date"
-			
-			SensorType:  "double"
-			
-			ReferencedType: System::err.println("ReferencedType can not be translated to Java")
-			EnumType: System::err.println("EnumType can not be translated to Java")
-			default: System::err.println("Unexpected AttributeType found: " + type.eClass.name)
-		}
-		
+	static dispatch def MD2Type calculateType(FloatVal expr){
+		return MD2Type.FLOAT
 	}
 	
+	static dispatch def MD2Type calculateType(StringVal expr){
+		return MD2Type.STRING
+	}
+	
+	static dispatch def MD2Type calculateType(BooleanVal expr){
+		return MD2Type.BOOL
+	}
+	
+	static dispatch def MD2Type calculateType(DateVal expr){
+		return MD2Type.DATE
+	}
+	
+	static dispatch def MD2Type calculateType(TimeVal expr){
+		return MD2Type.TIME
+	}
+	
+	static dispatch def MD2Type calculateType(DateTimeVal expr){
+		return MD2Type.DATETIME
+	}
+	
+	static dispatch def MD2Type calculateType(SensorVal expr){
+		return MD2Type.SENSOR
+	}
+	
+	static dispatch def MD2Type calculateType(ConcatenatedString expr){
+		return MD2Type.STRING
+	}
+	
+	static dispatch def MD2Type calculateType(Plus expr){
+		return MD2Type.FLOAT
+	}
+	
+	static dispatch def MD2Type calculateType(Minus expr){
+		return MD2Type.FLOAT
+	}
+	
+	static dispatch def MD2Type calculateType(Div expr){
+		return MD2Type.FLOAT
+	}
+	
+	static dispatch def MD2Type calculateType(Mult expr){
+		return MD2Type.FLOAT
+	}
+	
+	/**
+	 * Recursively resolve last attribute of a path and return its attribute type name.
+	 */
+	static dispatch def MD2Type calculateType(PathTail pathTail){
+		if (pathTail.tail === null) {
+			return pathTail.attributeRef.type.calculateType
+		}
+		return pathTail.tail.calculateType
+	}
+	
+	static dispatch def MD2Type calculateType(AbstractViewGUIElementRef ref){
+		if (ref.path !== null) {
+			return ref.path.tail.calculateType
+		} else if (ref.simpleType !== null) {
+			return ref.simpleType.type.calculateType
+		} else if (ref.tail === null) {
+			return ref.ref.calculateType
+		}
+		ref.tail.calculateType
+	}
+
+	static dispatch def MD2Type calculateType(LocationProviderReference p){
+		return MD2Type.LOCATION
+	}
+	
+	static dispatch def MD2Type calculateType(ContentProviderReference ref){
+		val providerType = ref.contentProvider.type
+		switch providerType {
+			SimpleType: return providerType.type.calculateType
+			ReferencedModelType: return new MD2Type(providerType.entity)
+		}
+	}
+	
+	static dispatch def MD2Type calculateType(AbstractProviderReference p){
+		System::err.println("Unexpected AbstractProviderReference found: " + p.eClass.name)
+		return null
+	}
+	
+	static dispatch def MD2Type calculateType(ViewElementType elementType){	
+		switch elementType {
+			ViewGUIElement: return elementType.calculateType
+			ViewGUIElementReference: elementType.value.calculateType
+		}
+	}
+	
+	static dispatch def MD2Type calculateType(IntegerInput t){
+		return MD2Type.INT
+	}
+	
+	static dispatch def MD2Type calculateType(NumberInput t){
+		return MD2Type.FLOAT
+	}
+	
+	static dispatch def MD2Type calculateType(TextInput t){
+		return MD2Type.STRING
+	}
+	
+	static dispatch def MD2Type calculateType(BooleanInput t){
+		return MD2Type.BOOL
+	}
+	
+	static dispatch def MD2Type calculateType(DateInput t){
+		return MD2Type.DATE
+	}
+	
+	static dispatch def MD2Type calculateType(TimeInput t){
+		return MD2Type.TIME
+	}
+	
+	static dispatch def MD2Type calculateType(DateTimeInput t){
+		return MD2Type.DATETIME
+	}
+	
+	static dispatch def MD2Type calculateType(FileUpload t){
+		return MD2Type.STRING // really?
+	}
+	
+	static dispatch def MD2Type calculateType(UploadedImageOutput t){
+		return MD2Type.STRING // really?
+	}
+	
+	static dispatch def MD2Type calculateType(Tooltip t){
+		return MD2Type.STRING
+	}
+	
+	static dispatch def MD2Type calculateType(Label t){
+		return MD2Type.STRING
+	}
+	
+	static dispatch def MD2Type calculateType(OptionInput t){
+		if(t.enumReference !== null){
+			return new MD2Type(t.enumReference)
+		}
+		return MD2Type.STRING
+	}
+			
+	static dispatch def MD2Type calculateType(LocationProviderPath p){
+		return MD2Type.LOCATION
+	}
+	
+	static dispatch def MD2Type calculateType(ContentProviderPath p){
+		return p.tail.calculateType
+	}
+	
+	static dispatch def MD2Type calculateType(AbstractContentProviderPath p){
+		System::err.println("Unexpected AbstractContentProviderPath found: " + p.eClass.name)
+		return null
+	}
+	
+	static dispatch def MD2Type calculateType(IntegerType t){
+		return MD2Type.INT
+	}
+	
+	static dispatch def MD2Type calculateType(FloatType t){
+		return MD2Type.FLOAT
+	}
+	
+	static dispatch def MD2Type calculateType(StringType t){
+		return MD2Type.STRING
+	}
+	
+	static dispatch def MD2Type calculateType(BooleanType t){
+		return MD2Type.BOOL
+	}
+	
+	static dispatch def MD2Type calculateType(DateType t){
+		return MD2Type.DATE
+	}
+	
+	static dispatch def MD2Type calculateType(TimeType t){
+		return MD2Type.TIME
+	}
+	
+	static dispatch def MD2Type calculateType(DateTimeType t){
+		return MD2Type.DATETIME
+	}
+	
+	static dispatch def MD2Type calculateType(SensorType t){
+		return MD2Type.SENSOR
+	}
+	
+	static dispatch def MD2Type calculateType(FileType t){
+		return MD2Type.FILE
+	}
+	
+	static dispatch def MD2Type calculateType(EnumType t){
+		return new MD2Type(null).toEnum
+	}
+	
+	static dispatch def MD2Type calculateType(ReferencedType t){
+		return new MD2Type(t.element)
+	}
+	
+	static dispatch def MD2Type calculateType(SimpleDataType t){
+		return new MD2Type(t)
+	}
+	
+	static def dispatch MD2Type calculateType(AttributeType t){
+		System::err.println("Unexpected AttributeType found: " + t.eClass.name)
+		return null
+	}
 }
