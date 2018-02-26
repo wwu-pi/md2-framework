@@ -8,24 +8,24 @@ import de.wwu.md2.framework.mD2.SimpleDataType
 
 class MD2Type {
 	
-	public static final MD2Type INT = new MD2Type(PrimitiveTypeLiteral.INT)
-	public static final MD2Type FLOAT = new MD2Type(PrimitiveTypeLiteral.FLOAT)
-	public static final MD2Type BOOL = new MD2Type(PrimitiveTypeLiteral.BOOL)
-	public static final MD2Type STRING = new MD2Type(PrimitiveTypeLiteral.STRING)
-	public static final MD2Type DATE = new MD2Type(PrimitiveTypeLiteral.DATE)
-	public static final MD2Type DATETIME = new MD2Type(PrimitiveTypeLiteral.DATETIME)
-	public static final MD2Type TIME = new MD2Type(PrimitiveTypeLiteral.TIME)
-	public static final MD2Type FILE = new MD2Type(PrimitiveTypeLiteral.FILE)
-	public static final MD2Type SENSOR = new MD2Type(PrimitiveTypeLiteral.SENSOR)
-	public static final MD2Type LOCATION = new MD2Type(PrimitiveTypeLiteral.LOCATION)
+	public static final MD2Type INT = new MD2Type(SimpleDataType.INTEGER)
+	public static final MD2Type FLOAT = new MD2Type(SimpleDataType.FLOAT)
+	public static final MD2Type BOOL = new MD2Type(SimpleDataType.BOOLEAN)
+	public static final MD2Type STRING = new MD2Type(SimpleDataType.STRING)
+	public static final MD2Type DATE = new MD2Type(SimpleDataType.DATE)
+	public static final MD2Type DATETIME = new MD2Type(SimpleDataType.DATE_TIME)
+	public static final MD2Type TIME = new MD2Type(SimpleDataType.TIME)
+	public static final MD2Type FILE = new MD2Type(SimpleDataType.STRING)
+	public static final MD2Type SENSOR = new MD2Type(SimpleDataType.SENSOR)
+	public static final MD2Type LOCATION = new MD2Type(SimpleDataType.STRING)
 	
-	protected PrimitiveTypeLiteral type = null
+	protected SimpleDataType type = null
 	protected String customName = null
 	protected boolean isArray = false
 	protected boolean isEnum = false
 	protected boolean isEntity = false
 	
-	new(PrimitiveTypeLiteral t){
+	new(SimpleDataType t){
 		type = t
 	}
 	
@@ -34,19 +34,6 @@ class MD2Type {
 		switch(m){
 			Entity: isEntity = true
 			Enum: isEnum = true
-		}
-	}
-	
-	new(SimpleDataType t){
-		switch(t){
-			case BOOLEAN: type = PrimitiveTypeLiteral.BOOL
-			case DATE: type = PrimitiveTypeLiteral.DATE
-			case DATE_TIME: type = PrimitiveTypeLiteral.DATETIME
-			case FLOAT: type = PrimitiveTypeLiteral.FLOAT
-			case INTEGER: type = PrimitiveTypeLiteral.INT
-			case SENSOR: type = PrimitiveTypeLiteral.SENSOR
-			case STRING: type = PrimitiveTypeLiteral.STRING
-			case TIME: type = PrimitiveTypeLiteral.TIME
 		}
 	}
 	
@@ -73,7 +60,11 @@ class MD2Type {
 	}
 	
 	def isNumeric(){
-		return !isArray && (type === PrimitiveTypeLiteral.INT || type === PrimitiveTypeLiteral.FLOAT)
+		return !isArray && (type === SimpleDataType.INTEGER || type === SimpleDataType.FLOAT)
+	}
+	
+	def isTemporal(){
+		return !isArray && (type === SimpleDataType.DATE || type === SimpleDataType.TIME || type === SimpleDataType.DATE_TIME)
 	}
 	
 	def isCollection() {
@@ -115,5 +106,4 @@ class MD2Type {
 			case LOCATION: return 'String' // TODO?
 		}
 	}
-	
 }
