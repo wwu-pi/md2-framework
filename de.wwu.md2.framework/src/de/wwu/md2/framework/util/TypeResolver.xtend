@@ -3,6 +3,7 @@ package de.wwu.md2.framework.util
 import de.wwu.md2.framework.mD2.AbstractContentProviderPath
 import de.wwu.md2.framework.mD2.AbstractProviderReference
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
+import de.wwu.md2.framework.mD2.Attribute
 import de.wwu.md2.framework.mD2.AttributeType
 import de.wwu.md2.framework.mD2.BooleanInput
 import de.wwu.md2.framework.mD2.BooleanType
@@ -18,7 +19,8 @@ import de.wwu.md2.framework.mD2.DateType
 import de.wwu.md2.framework.mD2.DateVal
 import de.wwu.md2.framework.mD2.Div
 import de.wwu.md2.framework.mD2.Enum
-import de.wwu.md2.framework.mD2.EnumType
+import de.wwu.md2.framework.mD2.FileType
+import de.wwu.md2.framework.mD2.FileUpload
 import de.wwu.md2.framework.mD2.FloatType
 import de.wwu.md2.framework.mD2.FloatVal
 import de.wwu.md2.framework.mD2.IntVal
@@ -35,6 +37,9 @@ import de.wwu.md2.framework.mD2.PathTail
 import de.wwu.md2.framework.mD2.Plus
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.ReferencedType
+import de.wwu.md2.framework.mD2.SensorType
+import de.wwu.md2.framework.mD2.SensorVal
+import de.wwu.md2.framework.mD2.SimpleDataType
 import de.wwu.md2.framework.mD2.SimpleExpression
 import de.wwu.md2.framework.mD2.SimpleType
 import de.wwu.md2.framework.mD2.StringType
@@ -44,16 +49,10 @@ import de.wwu.md2.framework.mD2.TimeInput
 import de.wwu.md2.framework.mD2.TimeType
 import de.wwu.md2.framework.mD2.TimeVal
 import de.wwu.md2.framework.mD2.Tooltip
+import de.wwu.md2.framework.mD2.UploadedImageOutput
 import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
-import de.wwu.md2.framework.mD2.FileType
-import de.wwu.md2.framework.mD2.FileUpload
-import de.wwu.md2.framework.mD2.UploadedImageOutput
-import de.wwu.md2.framework.mD2.Attribute
-import de.wwu.md2.framework.mD2.SensorType
-import de.wwu.md2.framework.mD2.SensorVal
-import de.wwu.md2.framework.mD2.SimpleDataType
 
 /**
  * Helper class to resolve the data type of a SimpleExpression.
@@ -71,25 +70,9 @@ class TypeResolver {
 		
 	}
 	
-	def static boolean isValidEnumType(SimpleExpression lhs, SimpleExpression rhs) {
-		
-		val lhsIsEnum = switch lhs {
-			ContentProviderPath: lhs.tail.resolveAttribute instanceof ReferencedType
-					&& (lhs.tail.resolveAttribute as ReferencedType).element instanceof Enum
-			AbstractViewGUIElementRef: lhs.path.tail.resolveAttribute instanceof ReferencedType
-					&& (lhs.path.tail.resolveAttribute as ReferencedType).element instanceof Enum
-			default: false
-		}
-		
-		val rhsIsEnum = switch rhs {
-			ContentProviderPath: rhs.tail.resolveAttribute instanceof ReferencedType
-					&& (rhs.tail.resolveAttribute as ReferencedType).element instanceof Enum
-			AbstractViewGUIElementRef: rhs.path.tail.resolveAttribute instanceof ReferencedType
-					&& (rhs.path.tail.resolveAttribute as ReferencedType).element instanceof Enum
-			default: false
-		}
-		
-		lhsIsEnum && rhs.calculateType === MD2Type.STRING || rhsIsEnum && lhs.calculateType === MD2Type.STRING
+	def static boolean isValidEnumType(SimpleExpression lhs, SimpleExpression rhs) {		
+		return lhs.calculateType instanceof Enum && rhs.calculateType === MD2Type.STRING 
+			|| rhs.calculateType instanceof Enum && lhs.calculateType === MD2Type.STRING
 	}
 	
 	/**
@@ -295,10 +278,6 @@ class TypeResolver {
 	
 	static dispatch def MD2Type calculateType(FileType t){
 		return MD2Type.FILE
-	}
-	
-	static dispatch def MD2Type calculateType(EnumType t){
-		return new MD2Type(null).toEnum
 	}
 	
 	static dispatch def MD2Type calculateType(ReferencedType t){

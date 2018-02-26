@@ -54,7 +54,7 @@ class MD2BackendUtil {
 	 * Get all enum within invoke default values within a workflowElement
 	 */
 	def static Set<Enum> getAllEnumsWithinInvoke(WorkflowElement wfe){
-		wfe.invoke.map[it.params].flatten.filter(InvokeDefaultValue).map[it.field.tail.resolveAttributeType].filter(ReferencedType).map[it.element].filter(Enum).toSet
+		wfe.invoke.map[it.params].flatten.filter(InvokeDefaultValue).map[it.field.tail.calculateType].filter(ReferencedType).map[it.element].filter(Enum).toSet
 	}
 	
 	/**
@@ -162,7 +162,7 @@ class MD2BackendUtil {
 	 * Get the java string to create the value of an invoke default value
 	 */
 	def static String getStringValue(InvokeDefaultValue invokeDefaultValue){
-		var attributeType = invokeDefaultValue.field.tail.resolveAttributeType
+		var attributeType = invokeDefaultValue.field.tail.calculateType
 		switch (attributeType) {
 			ReferencedType: {
 				var element = attributeType.getElement()
