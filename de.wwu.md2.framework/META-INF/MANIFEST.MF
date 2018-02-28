@@ -25,5 +25,6 @@ Export-Package: de.wwu.md2.framework,
  de.wwu.md2.framework.validation,
  de.wwu.md2.framework.mD2.util,
  de.wwu.md2.framework.generator,
- de.wwu.md2.framework.mD2.impl
+ de.wwu.md2.framework.mD2.impl,
+ de.wwu.md2.framework.util
 Import-Package: org.apache.log4j
