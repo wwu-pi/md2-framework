@@ -1,5 +1,0 @@
-package TestProject.controllers
-
-remoteConnection testConnection {
-    uri "test"
-}

@@ -1,5 +1,0 @@
-package TestProject.models
-
-entity UnsupportedFeatures {
-    testDate: date (max 2014-10-12)
-}

@@ -1,6 +1,0 @@
-package TestProject.models
-
-entity _Default {
-    att1: string
-    att2: string
-}

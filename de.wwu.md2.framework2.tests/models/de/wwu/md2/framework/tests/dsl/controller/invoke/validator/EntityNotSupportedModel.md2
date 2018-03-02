@@ -1,9 +1,0 @@
-package models
-
-entity Complaint {
-	nested: Nested
-}
-
-entity Nested {
-	myName: string (optional)
-}

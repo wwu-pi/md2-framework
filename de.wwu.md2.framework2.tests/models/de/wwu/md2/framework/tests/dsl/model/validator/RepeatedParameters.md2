@@ -1,5 +1,0 @@
-package TestProject.models
-
-entity RepeatedParams {
-    test3: integer (optional, optional)
-}
