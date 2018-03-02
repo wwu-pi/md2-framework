@@ -33,6 +33,7 @@ import javax.xml.transform.stream.StreamResult
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.w3c.dom.Document
 import org.w3c.dom.Element
+import de.wwu.md2.framework.mD2.BooleanInput
 
 class LayoutGen {
 
@@ -347,6 +348,9 @@ class LayoutGen {
 				//if(viewElement.name.startsWith("_title")) { return } // Skip title label --> landet das irgendwo anders?
 				newElement = createLabelElement(doc, viewElement)
 			}
+			BooleanInput: {
+				newElement = createBooleanInputElement(doc, viewElement)
+			}
 //TODO
 //			OptionInput: {
 //				newElement = createOptionInputElement(doc, viewElement)
@@ -558,8 +562,12 @@ class LayoutGen {
 		// id
 		integerInputElement.setAttribute("android:id", "@id/" + qualifiedName)
 
-		
-		integerInputElement.setAttribute("android:layout_width", "match_parent")
+		if(integerInput.width <= 0){
+			integerInputElement.setAttribute("android:layout_width", "match_parent")
+		}else{
+			integerInputElement.setAttribute("android:layout_width", "0dp")
+			integerInputElement.setAttribute("android:layout_columnWeight", String.valueOf(integerInput.width))
+		}
 		
 		integerInputElement.setAttribute("android:layout_height", "wrap_content")
 		integerInputElement.setAttribute("android:layout_gravity", "fill_horizontal")
@@ -580,6 +588,37 @@ class LayoutGen {
 		integerInputElement.setAttribute("android:imeOptions","actionDone")
 
 		return integerInputElement
+	}
+	
+	protected static def createBooleanInputElement(Document doc, BooleanInput booleanInput) {
+		val booleanInputElement = doc.createElement(Settings.MD2LIBRARY_VIEW_BOOLEANINPUT)
+		val qnp = new DefaultDeclarativeQualifiedNameProvider
+		val qualifiedName = qnp.getFullyQualifiedName(booleanInput).toString("_")
+
+		// id
+		booleanInputElement.setAttribute("android:id", "@id/" + qualifiedName)
+
+		if(booleanInput.width <= 0){
+			booleanInputElement.setAttribute("android:layout_width", "50dp")
+		}else{
+			booleanInputElement.setAttribute("android:layout_width", "50dp")
+			booleanInputElement.setAttribute("android:layout_columnWeight", String.valueOf(booleanInput.width))
+		}
+		booleanInputElement.setAttribute("android:layout_height", "wrap_content")
+		booleanInputElement.setAttribute("android:layout_gravity", "start")
+
+		booleanInputElement.setAttribute("android:hint", "@string/" + qualifiedName + "_tooltip")
+
+		// disabled
+		var isEnabled = true
+		if (booleanInput.isDisabled)
+			isEnabled = false
+
+		booleanInputElement.setAttribute("android:enabled", String.valueOf(isEnabled))
+		
+		booleanInputElement.setAttribute("android:imeOptions","actionDone")
+
+		return booleanInputElement
 	}
 	
 	protected static def createSpacerElement(Document doc, Spacer spacer) {

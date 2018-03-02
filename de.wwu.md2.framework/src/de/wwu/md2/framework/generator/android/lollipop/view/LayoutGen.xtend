@@ -481,7 +481,6 @@ class LayoutGen {
 	}
 	
 	protected static def createBooleanInputElement(Document doc, BooleanInput booleanInput) {
-		//TODO real boolean switch
 		val booleanInputElement = doc.createElement(Settings.MD2LIBRARY_VIEW_BOOLEANINPUT)
 		val qnp = new DefaultDeclarativeQualifiedNameProvider
 		val qualifiedName = qnp.getFullyQualifiedName(booleanInput).toString("_")
@@ -490,13 +489,13 @@ class LayoutGen {
 		booleanInputElement.setAttribute("android:id", "@id/" + qualifiedName)
 
 		if(booleanInput.width <= 0){
-			booleanInputElement.setAttribute("android:layout_width", "match_parent")
+			booleanInputElement.setAttribute("android:layout_width", "50dp")
 		}else{
-			booleanInputElement.setAttribute("android:layout_width", "0dp")
+			booleanInputElement.setAttribute("android:layout_width", "50dp")
 			booleanInputElement.setAttribute("android:layout_columnWeight", String.valueOf(booleanInput.width))
 		}
 		booleanInputElement.setAttribute("android:layout_height", "wrap_content")
-		booleanInputElement.setAttribute("android:layout_gravity", "fill_horizontal")
+		booleanInputElement.setAttribute("android:layout_gravity", "start")
 
 		booleanInputElement.setAttribute("android:hint", "@string/" + qualifiedName + "_tooltip")
 
