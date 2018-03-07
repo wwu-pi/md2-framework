@@ -70,7 +70,6 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		//                                                                         //
 		/////////////////////////////////////////////////////////////////////////////
 		
-		
 		// Mapping of cloned (key) and original (value) elements
 		// This is necessary to recalculate dependencies such as mappings,
 		// event bindings and validator bindings after the cloning of references
@@ -97,6 +96,9 @@ class MD2Preprocessor extends AbstractPreprocessor {
 		val workflowElements = workingInput.resources.map[ r |
 			r.allContents.toIterable.filter(WorkflowElement)
 		].flatten.toList
+		
+		// Ensure workflow elements names are FirstUpper
+		workflowElements.forEach[it.name = it.name.toFirstUpper]
 		
 		// Rename custom actions to ensure unique naming
 		// QualifiedNames fail here because init actions are copied and loose their eContainer workflow reference

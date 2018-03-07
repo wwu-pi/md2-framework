@@ -404,8 +404,8 @@ class ControllerValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkBothExpressionsInWhereClauseComparisonOfSameType(WhereClauseCompareExpression expr) {
-		val attrType = expr.eqLeft.tail.calculateType
-		val valueType = expr.eqRight.calculateType
+		val attrType = expr.eqLeft.tail?.calculateType
+		val valueType = expr.eqRight?.calculateType
 		
 		if (!attrType.equals(valueType)) {
 			val error = '''Cannot compare a value of type '«valueType»' with an attribute that has a value of type '«attrType»'.'''

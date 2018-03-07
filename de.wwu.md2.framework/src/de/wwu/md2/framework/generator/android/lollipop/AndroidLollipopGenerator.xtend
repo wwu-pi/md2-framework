@@ -37,6 +37,8 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 		processedInput = SmartphonePreprocessor.getPreprocessedModel(processedInput)
 		dataContainer = new DataContainer(processedInput);
 		
+		doAndroidPreprocessing()
+		
 		val Logger log = Logger.getLogger(this.class)
 
 		log.info("Android Lollipop Generator started")
@@ -216,6 +218,11 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
 	override getPlatformPrefix() {
 		Settings.PLATTFORM_PREFIX
+	}
+	
+	def doAndroidPreprocessing(){
+		// Ensure App names are FirstUpper (as they are transferred to Java classes)
+		dataContainer.apps.forEach[it.name = it.name.toFirstUpper]
 	}
 
 }
