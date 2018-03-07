@@ -502,16 +502,16 @@ CustomAction <Action> {
 
 For each type of task there exists a specific `CustomCodeFragment` that is distinguished by the keyword that introduces it.
 
-* ```bind <Action1> ...<ActionN> on <Event1> ... <EventN>```
-* ```bind <Validator1> ... <ValidatorN> on <ViewElement1> ... <ViewelementN>```
-* ```unbind <Action1> ... <ActionN> from <Event1> ... <EventN>```
-* ```unbind <Validator1> ... <ValidatorN> from <ViewElement1> ... <ViewelementN>```
-* ```call <Action>```
-* ```map <ViewElement> to <ContentProviderField>```
-* ```unmap <ViewElement> from <ContentProviderField>```
-* ```set <ContentProvider> = <Expression>```
-* ```set <ViewElement> = <Expression>```
-* ```if (<Condition>) { <CustomCodeFragment> } elseif (<Condition>) { <CustomCodeFragment> } else {<CustomCodeFragment>}```
+* `bind <Action1> ...<ActionN> on <Event1> ... <EventN>`
+* `bind <Validator1> ... <ValidatorN> on <ViewElement1> ... <ViewelementN>`
+* `unbind <Action1> ... <ActionN> from <Event1> ... <EventN>`
+* `unbind <Validator1> ... <ValidatorN> from <ViewElement1> ... <ViewelementN>`
+* `call <Action>`
+* `map <ViewElement> to <ContentProviderField>`
+* `unmap <ViewElement> from <ContentProviderField>`
+* `set <ContentProvider> = <Expression>`
+* `set <ViewElement> = <Expression>`
+* `if (<Condition>) { <CustomCodeFragment> } elseif (<Condition>) { <CustomCodeFragment> } else {<CustomCodeFragment>}`
 
 The main tasks are binding actions to events, binding validators to view elements and mapping view elements to model elements.
 For every task there is a counterpart for unbinding and unmapping.
