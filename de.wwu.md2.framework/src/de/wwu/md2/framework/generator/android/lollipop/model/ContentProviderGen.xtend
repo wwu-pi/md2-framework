@@ -47,6 +47,7 @@ class ContentProviderGen {
 
 		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnAttributeChangedHandler;
 		import java.util.HashMap;
+		import java.util.Calendar;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
 		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.AbstractMd2ContentProvider;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
@@ -121,6 +122,11 @@ class ContentProviderGen {
 					«FOR attribute: (content.entity as Entity).attributes»			
 					case "«attribute.name»":
 						if(((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»() != null){
+							«IF attribute.type instanceof DateType || attribute.type instanceof DateTimeType || attribute.type instanceof TimeType»
+							Calendar cal = Calendar.getInstance();
+							cal.setTime(((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»());
+							return new «EntityGen.getMd2TypeStringForAttributeType(attribute.type)»(cal);
+							«ELSE»
 							return  
 								«IF attribute.type instanceof ReferencedType && !attribute.type.many»
 								((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»();	
@@ -131,6 +137,7 @@ class ContentProviderGen {
 									new «EntityGen.getMd2TypeStringForAttributeType(attribute.type)»
 									«ENDIF»(((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»());	
 								«ENDIF»
+							«ENDIF»
 						} else { return null;}
 					«ENDFOR»
 					default: return null;

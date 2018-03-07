@@ -48,7 +48,7 @@ class SQLiteGen {
 		
 		public class Md2SQLiteHelperImpl extends SQLiteOpenHelper implements Md2SQLiteHelper {
 			private static final String DATABASE_NAME = "«app.name.toLowerCase».db";
-			private static final int DATABASE_VERSION = (int) «main.appVersion»;
+			private static final int DATABASE_VERSION = (int) «main.modelVersion»;
 			private static final String TEXT_TYPE = " TEXT";
 			private static final String COMMA_SEP = ",";
 			«FOR e : entities»

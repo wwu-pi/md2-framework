@@ -41,10 +41,12 @@ class EntityGen {
 		«ENDFOR»
 
 		import java.sql.Timestamp;
+		import java.util.Date;
 		import java.util.HashMap;
 		import java.util.List;
 		import java.util.ArrayList;
 		import java.io.Serializable;
+		import com.j256.ormlite.field.DataType;
 		import com.j256.ormlite.field.DatabaseField;
 		import com.j256.ormlite.dao.ForeignCollection;
 		import com.j256.ormlite.field.ForeignCollectionField;
@@ -85,7 +87,16 @@ class EntityGen {
 			«ELSE»
 				«IF element.type instanceof ReferencedType»
 					@DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
-				«ELSE»	
+				«ELSEIF element.type instanceof DateType»
+					@Expose
+					@DatabaseField(columnName = "«element.name.toFirstLower»", dataType = DataType.DATE_STRING, format = "yyyy-MM-dd")
+				«ELSEIF element.type instanceof DateTimeType»
+					@Expose
+					@DatabaseField(columnName = "«element.name.toFirstLower»", dataType = DataType.DATE_STRING, format = "yyyy-MM-dd HH:mm:ss")
+				«ELSEIF element.type instanceof TimeType»
+					@Expose
+					@DatabaseField(columnName = "«element.name.toFirstLower»", dataType = DataType.DATE_STRING, format = "HH:mm:ss")
+				«ELSE»
 					@Expose
 					@DatabaseField(columnName = "«element.name.toFirstLower»")
 				«ENDIF»	
