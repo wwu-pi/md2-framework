@@ -130,9 +130,9 @@ class MD2ScopeProvider extends AbstractMD2ScopeProvider {
 				return IScope.NULLSCOPE;
 			} else {
 				val ContainerElement container = // Get the reference to the parent container
-					if (parent.getRef() instanceof ViewGUIElementReference) {
+					if (parent.getRef() instanceof ViewGUIElementReference && (parent.getRef() as ViewGUIElementReference).getValue() instanceof ContainerElement) {
 						(parent.getRef() as ViewGUIElementReference).getValue() as ContainerElement;
-					} else {
+					} else if (parent.getRef() instanceof ContainerElement) {
 						parent.getRef() as ContainerElement;
 					}
 				// May be null in case of linking errors - quit gracefully to avoid NullPointer below

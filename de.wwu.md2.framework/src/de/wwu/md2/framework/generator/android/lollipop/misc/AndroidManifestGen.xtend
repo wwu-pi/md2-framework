@@ -11,7 +11,9 @@ class AndroidManifestGen {
 		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.misc.AndroidManifest.generateProjectAndroidManifest() -->
 		<manifest xmlns:android="http://schemas.android.com/apk/res/android" 
 		    package="«packageName»" >
-		     
+		    
+		    <uses-permission android:name="android.permission.INTERNET" />
+		    
 		    <application
 		        android:name=".«app.name»"
 		        android:allowBackup="true"
