@@ -318,9 +318,9 @@ class ControllerValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkDataTypesOfAttributeSetTask(AttributeSetTask task) {
-		val targetType = task.pathDefinition.calculateType
-		val sourceType = task.source.calculateType
-		val isValidEnum = task.source.isValidEnumType(task.pathDefinition)
+		val targetType = task.pathDefinition?.calculateType
+		val sourceType = task.source?.calculateType
+		val isValidEnum = task.source?.isValidEnumType(task.pathDefinition)
 		
 		if (!targetType.equals(sourceType) && !targetType.equals("string") && !isValidEnum) {
 			val error = '''Cannot set value of type '«sourceType»' to attribute with value of type '«targetType»'.'''

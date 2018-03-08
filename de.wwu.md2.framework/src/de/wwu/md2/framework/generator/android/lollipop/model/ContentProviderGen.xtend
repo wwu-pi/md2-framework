@@ -169,6 +169,16 @@ class ContentProviderGen {
 									((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«getMd2TypeStringForAttributeType(attribute.type)»)value).getPlatformValue());
 								}
 								break;
+								«ELSEIF (attribute.type instanceof Entity)»
+								((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«IF attribute.type.many»
+									Md2List«ELSE»«getMd2TypeStringForAttributeType(attribute.type)»«ENDIF») value)«IF attribute.type instanceof ReferencedType && !attribute.type.many»
+									);
+									«ELSEIF attribute.type.many»
+									.getContents());
+									«ELSE».getPlatformValue());«ENDIF»
+									notifyChangeHandler(name);
+									break;
+								«ELSE»break; // Avoid errors for unsupported type
 								«ENDIF»
 							«ELSE»
 								((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«IF attribute.type.many»
