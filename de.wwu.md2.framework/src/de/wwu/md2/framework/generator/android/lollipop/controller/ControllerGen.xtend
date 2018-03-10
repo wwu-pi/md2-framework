@@ -74,6 +74,9 @@ class ControllerGen {
 		    public void run() {
 		        this.registerContentProviders();
 		        this.registerWorkflowEvents();
+		        
+		        // Register start action to ViewManager
+		        Md2ViewManager.getInstance().setStartActivity("«mainPackage».StartActivity"); 
 		    }
 
 		    public void registerContentProviders() {
