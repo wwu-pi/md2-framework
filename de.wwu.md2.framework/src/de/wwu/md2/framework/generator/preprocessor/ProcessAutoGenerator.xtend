@@ -327,6 +327,6 @@ class ProcessAutoGenerator extends AbstractPreprocessor {
 	}
 	
 	def private getLabelText(Attribute attr) {
-		return attr.extendedName
+		return attr.extendedName ?: attr.name
 	}
 }
