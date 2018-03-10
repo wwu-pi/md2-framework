@@ -231,7 +231,7 @@ class DataContainer {
        
        var wfeEntry = workflow.workflowElementEntries.filter[it.workflowElement.equals(wfe)].head
        
-       return wfeEntry.firedEvents.map[it.event]
+       return wfeEntry?.firedEvents.map[it?.event] ?: emptyList
     }
     
     /**
