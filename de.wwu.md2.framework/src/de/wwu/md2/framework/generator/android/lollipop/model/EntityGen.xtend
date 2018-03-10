@@ -131,17 +131,44 @@ class EntityGen {
 		
 			@Override
 			public Md2String getString() {
-				return null; //TODO
+				return new Md2String((toString()));
 			}
 		
 			@Override
 			public Md2Type get(String s) {
-				return null; //TODO
+				switch(s) {
+					// TODO Collections
+				«FOR element : entity.attributes»
+					case "«element.name»": 
+					«IF element.type instanceof ReferencedType»
+						return get«element.name.toFirstUpper»();
+					«ELSEIF element.type instanceof DateType || element.type instanceof TimeType || element.type instanceof DateTimeType»
+						{
+							Calendar cal = Calendar.getInstance();
+							cal.setTime(get«element.name.toFirstUpper»());
+							return new «getMd2TypeStringForAttributeType(element.type)»(cal);
+						}
+					«ELSE»
+						return new «getMd2TypeStringForAttributeType(element.type)»(get«element.name.toFirstUpper»());
+					«ENDIF»
+				«ENDFOR»
+				}
+				return null;
 			}
-		
+			
 			@Override
 			public void set(String s, Md2Type md2Type) {
-				//TODO
+				switch(s) {
+					// TODO Collections, TemporalTypes
+				«FOR element : entity.attributes»
+					case "«element.name»": 
+					«IF element.type instanceof ReferencedType»
+						set«element.name.toFirstUpper»(md2Type);
+					«ELSE»
+						set«element.name.toFirstUpper»(((«getMd2TypeStringForAttributeType(element.type)») md2Type).getPlatformValue();
+					«ENDIF»
+				«ENDFOR»
+				}
 			}
 		
 			@Override
