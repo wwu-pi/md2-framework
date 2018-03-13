@@ -14,6 +14,7 @@ import de.wwu.md2.framework.mD2.WhereClauseCondition
 import de.wwu.md2.framework.mD2.WhereClauseNot
 import de.wwu.md2.framework.mD2.WhereClauseOr
 import de.wwu.md2.framework.generator.android.lollipop.controller.ActionGen
+import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 
 /**
  * Die Klasse FilterGen dient zur Erstellung der Filter, die bei einem ContenProvider definierte werden
@@ -55,6 +56,7 @@ class FilterGen {
 		
 		var left = genEntity(Entity)
 		var right = ActionGen.generateSimpleExpression(expr)//genSimpleExpr(expr)
+		if(expr instanceof AbstractViewGUIElementRef) right = right + ".toString()"
 		
 		var result = "(new AtomicExpression(\"" + left + "\"," + op + "," + right + "))"
 		return result

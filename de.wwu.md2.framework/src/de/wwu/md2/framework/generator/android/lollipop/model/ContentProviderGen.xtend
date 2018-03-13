@@ -74,7 +74,9 @@ class ContentProviderGen {
 			public «contentProvider.name.toFirstUpper»(String key, Md2Entity content, Md2DataStore md2DataStore) {
 				super(key, content, md2DataStore);
 				«IF contentProvider.filter && contentProvider.filterType !== FilterType.ALL»
-				this.filter = new Filter(«FilterGen.generateFilter(contentProvider)»);
+				try{
+					this.filter = new Filter(«FilterGen.generateFilter(contentProvider)»);
+				} catch(Exception e){}
 				«ENDIF»
 			}
 			
@@ -209,7 +211,9 @@ class ContentProviderGen {
 			@Override
 			public void load() {
 				«IF contentProvider.filter && contentProvider.filterType !== FilterType.ALL»
-				this.filter = new Filter(«FilterGen.generateFilter(contentProvider)»);
+				try{
+					this.filter = new Filter(«FilterGen.generateFilter(contentProvider)»);
+				} catch(Exception e){}
 				«ENDIF»
 				
 				super.load();
@@ -296,8 +300,10 @@ class ContentProviderGen {
 			public «contentProvider.name.toFirstUpper»(String key , Md2DataStore dataStore) {				   
 				super(key, dataStore);
 		
-				«IF contentProvider.filter»
-				this.filter = new Filter(«FilterGen.generateFilter(contentProvider)»);
+				«IF contentProvider.filter && contentProvider.filterType !== FilterType.ALL»
+				try{
+					this.filter = new Filter(«FilterGen.generateFilter(contentProvider)»);
+				} catch(Exception e){}
 				«ENDIF»
 			}
 			
