@@ -56,7 +56,7 @@ class FilterGen {
 		var left = genEntity(Entity)
 		var right = ActionGen.generateSimpleExpression(expr)//genSimpleExpr(expr)
 		
-		var result = "(new AtomicExpression(\"" + left + "\"," + op + ",\"" + right + "\"))"
+		var result = "(new AtomicExpression(\"" + left + "\"," + op + "," + right + "))"
 		return result
 	}
 	

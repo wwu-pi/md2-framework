@@ -49,6 +49,12 @@ class ContentProviderGen {
 		import «Settings.MD2LIBRARY_PACKAGE»controller.eventhandler.implementation.Md2OnAttributeChangedHandler;
 		import java.util.HashMap;
 		import java.util.Calendar;
+		
+		import «mainPackage».R;
+		«MD2AndroidUtil.generateImportAllTypes»
+		import «Settings.MD2LIBRARY_CONTENTPROVIDERREGISTRY_PACKAGE_NAME»;
+		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
+				
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
 		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.AbstractMd2ContentProvider;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
