@@ -18,6 +18,7 @@ import de.wwu.md2.framework.mD2.ReferencedType
 import de.wwu.md2.framework.mD2.SensorType
 import de.wwu.md2.framework.mD2.StringType
 import de.wwu.md2.framework.mD2.TimeType
+import de.wwu.md2.framework.mD2.FilterType
 
 class ContentProviderGen {
 	
@@ -66,7 +67,7 @@ class ContentProviderGen {
 		
 			public «contentProvider.name.toFirstUpper»(String key, Md2Entity content, Md2DataStore md2DataStore) {
 				super(key, content, md2DataStore);
-				«IF contentProvider.filter»
+				«IF contentProvider.filter && contentProvider.filterType !== FilterType.ALL»
 				this.filter = new Filter(«FilterGen.generateFilter(contentProvider)»);
 				«ENDIF»
 			}
@@ -196,28 +197,34 @@ class ContentProviderGen {
 			}
 			
 			public void reset(){ 
-			   
+			   newEntity();
 			}
 			
 			@Override
 			public void load() {
-				if(!(this.content == null | this.md2DataStore == null)) {
-					if(this.content.getId() > 0L) {
-						this.existsInDataStore = true;
-						this.internalId = this.content.getId();
-					} else {
-						long id = -1;
-						this.md2DataStore.getInternalId(this.content);
-						if(id == -1L) {
-							this.existsInDataStore = false;
-							this.internalId = -1L;
-						} else {
-							this.existsInDataStore = true;
-							this.internalId = id;
-							this.content.setId(id);
-						}
-					}
-				}
+				«IF contentProvider.filter && contentProvider.filterType !== FilterType.ALL»
+				this.filter = new Filter(«FilterGen.generateFilter(contentProvider)»);
+				«ENDIF»
+				
+				super.load();
+				
+			//	if(!(this.content == null | this.md2DataStore == null)) {
+			//		if(this.content.getId() > 0L) {
+			//			this.existsInDataStore = true;
+			//			this.internalId = this.content.getId();
+			//		} else {
+			//			long id = -1;
+			//			this.md2DataStore.getInternalId(this.content);
+			//			if(id == -1L) {
+			//				this.existsInDataStore = false;
+			//				this.internalId = -1L;
+			//			} else {
+			//				this.existsInDataStore = true;
+			//				this.internalId = id;
+			//				this.content.setId(id);
+			//			}
+			//		}
+			//	}
 			}
 			
 			@Override

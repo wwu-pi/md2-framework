@@ -163,9 +163,9 @@ class EntityGen {
 				«FOR element : entity.attributes»
 					case "«element.name»": 
 					«IF element.type instanceof ReferencedType»
-						set«element.name.toFirstUpper»(md2Type);
+						set«element.name.toFirstUpper»((«getMd2TypeStringForAttributeType(element.type)») md2Type);
 					«ELSE»
-						set«element.name.toFirstUpper»(((«getMd2TypeStringForAttributeType(element.type)») md2Type).getPlatformValue();
+						set«element.name.toFirstUpper»(((«getMd2TypeStringForAttributeType(element.type)») md2Type).getPlatformValue());
 					«ENDIF»
 				«ENDFOR»
 				}
