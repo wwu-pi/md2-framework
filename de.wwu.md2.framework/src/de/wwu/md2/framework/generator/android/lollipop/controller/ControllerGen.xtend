@@ -45,7 +45,8 @@ class ControllerGen {
 		import «Settings.MD2LIBRARY_PACKAGE»controller.implementation.AbstractMd2Controller;
 		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.Md2ContentProviderRegistry;
 		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.interfaces.Md2ContentProvider;
-		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.implementation.Md2LocalStoreFactory;
+		//import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.implementation.Md2LocalStoreFactory;
+		import «mainPackage».md2.model.sqlite.Md2LocalStoreFactory;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2SQLiteHelper;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.implementation.Md2SQLiteDataStore;
 		import «Settings.MD2LIBRARY_PACKAGE»view.management.implementation.Md2ViewManager;

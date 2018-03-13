@@ -13,6 +13,7 @@ import de.wwu.md2.framework.mD2.WhereClauseCompareExpression
 import de.wwu.md2.framework.mD2.WhereClauseCondition
 import de.wwu.md2.framework.mD2.WhereClauseNot
 import de.wwu.md2.framework.mD2.WhereClauseOr
+import de.wwu.md2.framework.generator.android.lollipop.controller.ActionGen
 
 /**
  * Die Klasse FilterGen dient zur Erstellung der Filter, die bei einem ContenProvider definierte werden
@@ -53,12 +54,13 @@ class FilterGen {
 		}
 		
 		var left = genEntity(Entity)
-		var right = genSimpleExpr(expr)
+		var right = ActionGen.generateSimpleExpression(expr)//genSimpleExpr(expr)
 		
 		var result = "(new AtomicExpression(\"" + left + "\"," + op + ",\"" + right + "\"))"
 		return result
 	}
 	
+	// TODO replace by ActionGen.generateSimpleExpression
 	def private static String genSimpleExpr(SimpleExpression expr){
 		switch (expr) {
 			IntVal: return expr.value.toString
