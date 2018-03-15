@@ -172,11 +172,11 @@ class ContentProviderGen {
 								if(!(value instanceof «getMd2TypeStringForAttributeType(attribute.type)»)){
 									if(!(value.getString().toString().isEmpty())) {
 								 		((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(Integer.parseInt(value.getString().toString()));	
-										notifyChangeHandler(name);
 									}
 								} else {
 									((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«getMd2TypeStringForAttributeType(attribute.type)»)value).getPlatformValue());
 								}
+								notifyChangeHandler(name);
 								break;
 								«ELSEIF (attribute.type instanceof Entity)»
 								((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«IF attribute.type.many»

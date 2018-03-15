@@ -58,6 +58,11 @@ import de.wwu.md2.framework.mD2.ContentProviderRemoveActiveAction
 import de.wwu.md2.framework.mD2.ContentProviderGetActiveAction
 import de.wwu.md2.framework.mD2.ElementEventType;
 import de.wwu.md2.framework.mD2.ContentProviderResetLocalAction
+import de.wwu.md2.framework.mD2.Plus
+import de.wwu.md2.framework.mD2.Div
+import de.wwu.md2.framework.mD2.Mult
+import de.wwu.md2.framework.mD2.Minus
+import de.wwu.md2.framework.generator.android.lollipop.model.EntityGen
 
 class ActionGen {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
@@ -392,9 +397,17 @@ class ActionGen {
 				return '''new Md2Float(«expression.value»)'''
 			SensorVal:
 				return '''new Md2Sensor(«expression.value»)'''
+			Plus:
+				return expression.leftOperand.generateSimpleExpression + '''.plus(''' + expression.rightOperand.generateSimpleExpression + ''')'''
+			Minus:
+				return expression.leftOperand.generateSimpleExpression + '''.minus(''' + expression.rightOperand.generateSimpleExpression + ''')'''
+			Mult:
+				return expression.leftOperand.generateSimpleExpression + '''.mult(''' + expression.rightOperand.generateSimpleExpression + ''')'''
+			Div:
+				return expression.leftOperand.generateSimpleExpression + '''.div(''' + expression.rightOperand.generateSimpleExpression + ''')'''
 			AbstractContentProviderPath: {
 				switch expression {
-					ContentProviderPath: return '''Md2ContentProviderRegistry.getInstance().getContentProvider("«expression.contentProviderRef.name»").getValue("«expression.tail.attributeRef.name»")'''
+					ContentProviderPath: return '''((«EntityGen.getMd2TypeStringForAttributeType(expression.tail.attributeRef.type)») Md2ContentProviderRegistry.getInstance().getContentProvider("«expression.contentProviderRef.name»").getValue("«expression.tail.attributeRef.name»"))'''
 //					LocationProvider: ...
 				}
 			}
