@@ -416,4 +416,17 @@
 			type="text">
 		</fileTypes>
 	</extension>
+	<extension
+		point="org.eclipse.ui.newWizards">
+		<category
+            id="de.wwu.md2.wizard.category.ID"
+            name="MD2 Development"/>
+		<wizard
+			category="de.wwu.md2.wizard.category.ID"
+			class="de.wwu.md2.framework.ui.MD2ExecutableExtensionFactory:de.wwu.md2.framework.ui.wizard.MD2NewProjectWizard"
+			id="de.wwu.md2.framework.ui.wizard.MD2NewProjectWizard"
+			name="MD2 Project"
+				project="true">
+		</wizard>
+	</extension>
 </plugin>
