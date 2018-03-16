@@ -295,10 +295,9 @@ public Dao<«element.name», Integer> get«element.name»Dao() throws SQLExcepti
 }
 
 
-def static generateOrmLiteDatastore(String mainPackage,  App app, Iterable<Entity> entities){
-'''
-	package «mainPackage».md2.model.sqlite;
-	//package «mainPackage».«app.name»;
+def static generateOrmLiteDatastore(String mainPackage,  App app, Iterable<Entity> entities)'''
+package «mainPackage».md2.model.sqlite;
+//package «mainPackage».«app.name»;
 
 import android.content.Context;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -321,20 +320,20 @@ import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
 
 import «mainPackage».«app.name»;
 
-public  class Md2OrmLiteDatastore<T extends  Md2Entity> extends AbstractMd2OrmLiteDatastore<T> {
-
+public class Md2OrmLiteDatastore<T extends Md2Entity> extends AbstractMd2OrmLiteDatastore<T> {
+	
 	private String entityType;
 	private DatabaseHelper databaseHelper;
 	
-		Dao<T , Integer> myDao;
-		   private  SimpleDateFormat simpleDateFormat;
-	
-		public Md2OrmLiteDatastore(String entity){
-		this.entityType=entity;
-			initDatabaseHelper(«app.name».getAppContext());
-			 this.simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				this.simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-		}
+	Dao<T , Integer> myDao;
+	   private  SimpleDateFormat simpleDateFormat;
+
+	public Md2OrmLiteDatastore(String entity){
+	this.entityType=entity;
+		initDatabaseHelper(«app.name».getAppContext());
+		 this.simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			this.simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+	}
 	
 	public void initDatabaseHelper(Context context){
 		databaseHelper = OpenHelperManager.getHelper(context,DatabaseHelper.class);
@@ -421,39 +420,37 @@ public  class Md2OrmLiteDatastore<T extends  Md2Entity> extends AbstractMd2OrmLi
 		return where;
 	}
 }
-
-'''		
-}
+'''
 
 def static generateMd2LocalStoreFactory(String mainPackage,  App app, Iterable<Entity> entities)'''
-	package «mainPackage».md2.model.sqlite;
-	import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
-	import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
-	import «Settings.MD2LIBRARY_PACKAGE»controller.interfaces.Md2Controller;
-	import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.implementation.AbstractMd2LocalStoreFactory;
-	import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
-	«FOR element : entities»
-		import «mainPackage».md2.model.«element.name»;
-	«ENDFOR»
+package «mainPackage».md2.model.sqlite;
+import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
+import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
+import «Settings.MD2LIBRARY_PACKAGE»controller.interfaces.Md2Controller;
+import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.implementation.AbstractMd2LocalStoreFactory;
+import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
+«FOR element : entities»
+	import «mainPackage».md2.model.«element.name»;
+«ENDFOR»
+
+
+public class Md2LocalStoreFactory extends AbstractMd2LocalStoreFactory{
 	
-	
-	public class Md2LocalStoreFactory extends AbstractMd2LocalStoreFactory{
-		
 	public Md2LocalStoreFactory(Md2Controller controller){
 		super(controller);
 	
 	}	
 	
-	 public <T extends Md2Entity>  Md2DataStore getDataStore(String entity){
-	final String entityName= entity;
-	switch(entity){
-		«FOR element : entities»
-		case "«element.name»": return new Md2OrmLiteDatastore<«element.name»>(entity); 	
-		«ENDFOR»
-	default: throw new IllegalArgumentException("Unknown Entity Type: "+ entity); 
-	} 	
-	 	
-	 }
+	public <T extends Md2Entity>  Md2DataStore getDataStore(String entity){
+		final String entityName= entity;
+		
+		switch(entity){
+			«FOR element : entities»
+			case "«element.name»": return new Md2OrmLiteDatastore<«element.name»>(entity); 	
+			«ENDFOR»
+			default: throw new IllegalArgumentException("Unknown Entity Type: "+ entity); 
+		}
 	}
+}
 '''
 }
