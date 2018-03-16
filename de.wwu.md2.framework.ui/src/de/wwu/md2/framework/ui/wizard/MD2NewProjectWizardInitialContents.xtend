@@ -7,19 +7,116 @@ package de.wwu.md2.framework.ui.wizard
 import com.google.inject.Inject
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.resource.FileExtensionProvider
+import org.eclipse.xtend.lib.annotations.Accessors
 
 class MD2NewProjectWizardInitialContents {
 	@Inject
 	FileExtensionProvider fileExtensionProvider
 
+	@Accessors
+	MD2ProjectInfo projectInfo
+	
 	def generateInitialContents(IFileSystemAccess2 fsa) {
+		val projectName = projectInfo.projectName.replaceAll("\\.", "/")
+		
 		fsa.generateFile(
-			"src/model/Model." + fileExtensionProvider.primaryFileExtension,
+			"src/" + projectName + "/models/defaultModel." + fileExtensionProvider.primaryFileExtension,
 			'''
+			package «projectName + ".models"»
+			
 			/*
-			 * This is an example model
+			 * Implement the model here
 			 */
-			Hello Xtext!
+			'''
+			)
+			
+		fsa.generateFile(
+			"src/" + projectName + "/controllers/defaultController." + fileExtensionProvider.primaryFileExtension,
+			'''
+			package «projectName + ".controllers"»
+			
+			/*
+			 * Implement the controller here
+			 */
+			
+			main {
+				appVersion "1.0"
+				modelVersion "1.0"
+				workflowManager WorkflowBackendConnection
+			}
+			
+			remoteConnection WorkflowBackendConnection {
+				uri "http://localhost:8080/«projectName».backend/service/"
+			}
+			
+			WorkflowElement firstWFE {
+				defaultProcessChain firstProcessChain
+				
+				onInit {
+					init
+				}
+				
+				action CustomAction init {
+					
+				}
+				
+				action CustomAction firstAction {
+					call FireEvent (BasicEvent)
+				}
+				
+				processChain  firstProcessChain {
+					step firstStep:
+						view firstView
+				}
+			}
+			'''
+			)
+			
+		fsa.generateFile(
+			"src/" + projectName + "/views/defaultView." + fileExtensionProvider.primaryFileExtension,
+			'''
+			package «projectName + ".views"»
+			
+			/*
+			 * Implement the view here
+			 */
+			
+			View firstView {
+				title "View title"
+				
+				Label desc ("View description")
+			}
+			'''
+			)
+			
+		fsa.generateFile(
+			"src/" + projectName + "/workflows/defaultWorkflow." + fileExtensionProvider.primaryFileExtension,
+			'''
+			package «projectName + ".workflows"»
+			
+			/*
+			 * Implement the workflow here
+			 */
+			 
+			WorkflowElement firstWFE
+				fires BasicEvent {
+					end workflow
+				}
+			
+			App «projectName»App {
+				WorkflowElements {
+					firstWFE (startable: "Start WFE 1")
+				}
+				appName "«projectName»"
+			}
+			'''
+			)
+			
+		fsa.generateFile(
+			"settings/org.eclipse.core.resources.prefs",
+			'''
+			eclipse.preferences.version=1
+			encoding/<project>=UTF-8
 			'''
 			)
 	}

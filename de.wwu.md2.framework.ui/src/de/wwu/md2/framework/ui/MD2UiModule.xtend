@@ -14,6 +14,8 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration
 import de.wwu.md2.framework.ui.highlighting.MD2HighlightingConfiguration
 import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper
 import de.wwu.md2.framework.ui.highlighting.MD2TokenToAttributeIdMapper
+import org.eclipse.xtext.ui.wizard.IProjectCreator
+import de.wwu.md2.framework.ui.wizard.MD2ExtendedProjectCreator
 
 /**
  * Use this class to register components to be used within the Eclipse IDE.
@@ -29,11 +31,6 @@ class MD2UiModule extends AbstractMD2UiModule {
 		return MD2AutoEditStrategyProvider;
 	}
 	
-//	@Override
-//	public Class<? extends IProjectCreator> bindIProjectCreator() {
-//		return MD2ExtendedProjectCreator.class;
-//	}
-//	
 	public def Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration () {
 		return MD2HighlightingConfiguration;
 	}
@@ -44,5 +41,10 @@ class MD2UiModule extends AbstractMD2UiModule {
 	
 	public def Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindTokenToAttributeIdMapper() {
 		return MD2TokenToAttributeIdMapper;
+	}
+	
+	// contributed by org.eclipse.xtext.xtext.generator.ui.projectWizard.SimpleProjectWizardFragment2
+	override public Class<? extends IProjectCreator> bindIProjectCreator() {
+		return MD2ExtendedProjectCreator;
 	}
 }
