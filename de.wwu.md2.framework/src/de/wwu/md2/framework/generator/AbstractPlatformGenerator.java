@@ -1,5 +1,10 @@
 package de.wwu.md2.framework.generator;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
+import java.util.Date;
+
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.generator.IFileSystemAccess;
@@ -23,8 +28,17 @@ public abstract class AbstractPlatformGenerator implements IPlatformGenerator {
 	protected String rootFolder;
 	protected String basePackageName;
 	
+	LocalDateTime lastGenerationRun = LocalDateTime.now();
+	
 	@Override
 	public void doGenerate(ResourceSet input, IExtendedFileSystemAccess fsa) {
+		// Throttle to avoid constant regeneration
+		if(lastGenerationRun.plus(20, ChronoUnit.SECONDS).isAfter(LocalDateTime.now())) {
+			System.out.println("Throttling repeated generation (" + lastGenerationRun + ")");
+			return;
+		}
+		lastGenerationRun = LocalDateTime.now();
+		System.out.println("Generation started at " + lastGenerationRun);
 		
 		/////////////////////////////////////////
 		// Setup
