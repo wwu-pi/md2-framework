@@ -41,6 +41,7 @@ class EntityGen {
 		«ENDFOR»
 
 		import java.sql.Timestamp;
+		import java.util.Calendar;
 		import java.util.Date;
 		import java.util.HashMap;
 		import java.util.List;
@@ -100,7 +101,7 @@ class EntityGen {
 					@Expose
 					@DatabaseField(columnName = "«element.name.toFirstLower»")
 				«ENDIF»	
-				private «getJavaTypeStringForAttributeType(element.type)» «element.name»;
+				private «getJavaTypeStringForAttributeType(element.type, true)» «element.name»;
 			«ENDIF»
 			
 		«ENDFOR»
@@ -142,12 +143,6 @@ class EntityGen {
 					case "«element.name»": 
 					«IF element.type instanceof ReferencedType»
 						return get«element.name.toFirstUpper»();
-					«ELSEIF element.type instanceof DateType || element.type instanceof TimeType || element.type instanceof DateTimeType»
-						{
-							Calendar cal = Calendar.getInstance();
-							cal.setTime(get«element.name.toFirstUpper»());
-							return new «getMd2TypeStringForAttributeType(element.type)»(cal);
-						}
 					«ELSE»
 						return new «getMd2TypeStringForAttributeType(element.type)»(get«element.name.toFirstUpper»());
 					«ENDIF»
@@ -164,6 +159,8 @@ class EntityGen {
 					case "«element.name»": 
 					«IF element.type instanceof ReferencedType»
 						set«element.name.toFirstUpper»((«getMd2TypeStringForAttributeType(element.type)») md2Type);
+					«ELSEIF element.type instanceof DateType»
+						set«element.name.toFirstUpper»(((«getMd2TypeStringForAttributeType(element.type)») md2Type).getPlatformValue());
 					«ELSE»
 						set«element.name.toFirstUpper»(((«getMd2TypeStringForAttributeType(element.type)») md2Type).getPlatformValue());
 					«ENDIF»
@@ -199,12 +196,27 @@ class EntityGen {
 				}
 			«ELSE»		
 				public «getJavaTypeStringForAttributeType(element.type)» get«element.name.toFirstUpper»(){
-					return this.«element.name»;	
+					«IF element.type instanceof DateType || element.type instanceof DateTimeType || element.type instanceof TimeType»
+						if(this.«element.name» != null){
+							Calendar calendar = Calendar.getInstance();
+							calendar.setTime(this.«element.name»);
+							return calendar;
+						} 
+						return null;
+					«ELSE»
+					return this.«element.name»;
+					«ENDIF»	
 				}
 
 				public void set«element.name.toFirstUpper»(«getJavaTypeStringForAttributeType(element.type)» «element.name» ){
-					this.«element.name»=«element.name»;
-					this.setModifiedDate(new Timestamp(System.currentTimeMillis()));
+					if(«element.name» != null){
+						«IF element.type instanceof DateType || element.type instanceof DateTimeType || element.type instanceof TimeType»
+							this.«element.name»=«element.name».getTime();
+						«ELSE»
+							this.«element.name»=«element.name»;
+						«ENDIF»
+						this.setModifiedDate(new Timestamp(System.currentTimeMillis()));
+					}
 				}
 			«ENDIF»
 		«ENDFOR»
@@ -305,13 +317,17 @@ class EntityGen {
 	}
 	
 	private def static String getJavaTypeStringForAttributeType(AttributeType attributeType){
+		return attributeType.getJavaTypeStringForAttributeType(false)
+	}
+	
+	private def static String getJavaTypeStringForAttributeType(AttributeType attributeType, boolean forDatabase){
 		switch attributeType{
 			ReferencedType: attributeType.element.name.toFirstUpper
 			IntegerType: "Integer"
 			FloatType: "Float"
 			StringType: "String"
 			BooleanType: "Boolean"
-			DateType: "Date"
+			DateType: if(forDatabase) "Date" else "Calendar"
 			TimeType: "Md2Time"
 			DateTimeType: "Md2DateTime"		
 			

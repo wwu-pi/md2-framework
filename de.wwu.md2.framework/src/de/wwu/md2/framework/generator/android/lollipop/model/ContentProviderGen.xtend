@@ -131,11 +131,6 @@ class ContentProviderGen {
 					«FOR attribute: (content.entity as Entity).attributes»			
 					case "«attribute.name»":
 						if(((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»() != null){
-							«IF attribute.type instanceof DateType || attribute.type instanceof DateTimeType || attribute.type instanceof TimeType»
-							Calendar cal = Calendar.getInstance();
-							cal.setTime(((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»());
-							return new «EntityGen.getMd2TypeStringForAttributeType(attribute.type)»(cal);
-							«ELSE»
 							return  
 								«IF attribute.type instanceof ReferencedType && !attribute.type.many»
 								((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»();	
@@ -146,7 +141,6 @@ class ContentProviderGen {
 									new «EntityGen.getMd2TypeStringForAttributeType(attribute.type)»
 									«ENDIF»(((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»());	
 								«ENDIF»
-							«ENDIF»
 						} else { return null;}
 					«ENDFOR»
 					default: return null;
@@ -293,6 +287,7 @@ class ContentProviderGen {
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.AtomicExpression;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.Operator;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.Filter;
+		import java.util.Calendar;
 		
 		«MD2AndroidUtil.generateImportAllTypes»
 		
@@ -313,7 +308,8 @@ class ContentProviderGen {
 				if(this.getContentsList()!=null && this.getContentsList().get(entityIndex)!=null){  				
 					switch (attribute){
 						«FOR attribute: (content.entity as Entity).attributes»			
-						case "«attribute.name»": return  
+						case "«attribute.name»": 
+							return  
 							«IF attribute.type instanceof ReferencedType && !attribute.type.many»
 							((«(content.entity as Entity).name»)this.getContentsList().get(entityIndex)).get«attribute.name.toFirstUpper»();	
 							«ELSE»
@@ -338,14 +334,15 @@ class ContentProviderGen {
 				if ((this.getValue(entityIndex,name) == null && value != null) || !this.getValue(entityIndex,name).equals(value)) {
 					switch (name){
 						«FOR attribute: (content.entity as Entity).attributes»			
-						case "«attribute.name»":   ((«(content.entity as Entity).name»)this.getContentsList().get(entityIndex)).set«attribute.name.toFirstUpper»(((«IF attribute.type.many»
-							Md2List«ELSE»«getMd2TypeStringForAttributeType(attribute.type)»«ENDIF») value)«IF attribute.type instanceof ReferencedType && !attribute.type.many»
-							);
-							«ELSEIF attribute.type.many»
-							.getContents());
-							«ELSE».getPlatformValue());«ENDIF»	
-							notifyAllAdapters();
-							break;
+						case "«attribute.name»":   
+							((«(content.entity as Entity).name»)this.getContentsList().get(entityIndex)).set«attribute.name.toFirstUpper»(((«IF attribute.type.many»
+								Md2List«ELSE»«getMd2TypeStringForAttributeType(attribute.type)»«ENDIF») value)«IF attribute.type instanceof ReferencedType && !attribute.type.many»
+								);
+								«ELSEIF attribute.type.many»
+								.getContents());
+								«ELSE».getPlatformValue());«ENDIF»	
+								notifyAllAdapters();
+								break;
 						«ENDFOR»		
 					}
 				}

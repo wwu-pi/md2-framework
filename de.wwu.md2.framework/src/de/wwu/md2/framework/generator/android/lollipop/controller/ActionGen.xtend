@@ -149,29 +149,36 @@ class ActionGen {
 						qualifiedNameAction = generateSimpleAction(app, action.action)
 				}
 
-				val event = ccf.events.head as ViewElementEventRef
-				val viewElementType = event.referencedField.ref
-				val ElementEventType eventType = event.event
-				var eventString = ""
-				switch eventType {
-					case eventType == ON_CHANGE: eventString = "Md2WidgetEventType.ON_CHANGE"
-					case eventType == ON_CLICK: eventString = "Md2WidgetEventType.ON_CLICK"
-					//add longclick support
-					case eventType == ON_LONG_CLICK: eventString = "Md2WidgetEventType.ON_LONG_CLICK"
-					//add swipe support
-					case eventType == ON_LEFT_SWIPE: eventString = "Md2WidgetEventType.ON_LEFT_SWIPE"
-					case eventType == ON_RIGHT_SWIPE: eventString = "Md2WidgetEventType.ON_RIGHT_SWIPE"
-				}
-
-				val qualifiedNameView = qualifiedNameProvider.getFullyQualifiedName(viewElementType).toString("_")
-
-				instantiation = '''
-					new «qualifiedNameAction», R.id.«qualifiedNameView», «eventString»
-				'''
-
-				// get working code if sth went wrong
-				if (qualifiedNameAction.empty || qualifiedNameView.empty || eventString.empty)
-					instantiation = ""
+				switch ccf.events.head {
+					// TODO GlobalEventRef
+					ViewElementEventRef: {
+						val event = ccf.events.head as ViewElementEventRef
+						val viewElementType = event.referencedField.ref
+						val ElementEventType eventType = event.event
+						var eventString = ""
+						switch eventType {
+							case eventType == ON_CHANGE: eventString = "Md2WidgetEventType.ON_CHANGE"
+							case eventType == ON_CLICK: eventString = "Md2WidgetEventType.ON_CLICK"
+							//add longclick support
+							case eventType == ON_LONG_CLICK: eventString = "Md2WidgetEventType.ON_LONG_CLICK"
+							//add swipe support
+							case eventType == ON_LEFT_SWIPE: eventString = "Md2WidgetEventType.ON_LEFT_SWIPE"
+							case eventType == ON_RIGHT_SWIPE: eventString = "Md2WidgetEventType.ON_RIGHT_SWIPE"
+						}
+					
+				
+						val qualifiedNameView = qualifiedNameProvider.getFullyQualifiedName(viewElementType).toString("_")
+		
+						instantiation = '''
+							new «qualifiedNameAction», R.id.«qualifiedNameView», «eventString»
+						'''
+		
+						// get working code if sth went wrong
+						if (qualifiedNameAction.empty || qualifiedNameView.empty || eventString.empty)
+							instantiation = ""
+							
+						}
+					}
 			}
 			
 //			TODO: implement EventUnbindTask

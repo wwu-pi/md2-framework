@@ -30,11 +30,11 @@ class ActivityGen {
 				generateStartActivity(mainPackage, startableWorkflowElements))	
 		
 		frames.forEach [ frame |
-			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + frame.name + "Activity.java",
+			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + frame.name.toFirstUpper + "Activity.java",
 				generateActivity(mainPackage, entities, frame))
 				
 				if (frame.elements.filter(ListView).length > 0){
-					fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + frame.name + "ListAdapter.java",
+					fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + frame.name.toFirstUpper + "ListAdapter.java",
 					generateListAdapter(mainPackage, frame, app))
 				}
 		]
@@ -264,7 +264,7 @@ class ActivityGen {
 		«MD2AndroidUtil.generateImportAllTypes»
 		«MD2AndroidUtil.generateImportAllEventHandler»
 				
-		public class «frame.name»Activity extends Activity {
+		public class «frame.name.toFirstUpper»Activity extends Activity {
 		
 			private RecyclerView wrv;
 		
