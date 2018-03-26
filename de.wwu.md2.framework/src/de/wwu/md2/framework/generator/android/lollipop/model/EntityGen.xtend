@@ -272,6 +272,11 @@ class EntityGen {
 		// generated in de.wwu.md2.framework.generator.android.lollipop.model.Md2Entity.generateEnum()
 		package «mainPackage + ".md2.model"»;
 		
+		import com.google.gson.annotations.Expose;
+		import com.google.gson.annotations.SerializedName;
+		import com.j256.ormlite.field.DatabaseField;
+		
+		import java.sql.Timestamp;
 		import java.util.ArrayList;
 		import java.util.Arrays;
 		
@@ -280,6 +285,22 @@ class EntityGen {
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
 		
 		public class «entity.name.toFirstUpper» extends AbstractMd2Enum {
+			
+			@SerializedName("__internalId")
+			@Expose
+			@DatabaseField(generatedId = true, columnName = "id")
+			private long id;
+		
+			@Expose
+			@DatabaseField
+			private String value;
+		
+			@Expose(serialize = false)
+			private Timestamp modifiedDate;
+		
+			public «entity.name.toFirstUpper»() {
+				this.setModifiedDate(new Timestamp(System.currentTimeMillis()));
+			}
 		
 			ArrayList<Md2String> values = new ArrayList<Md2String>(Arrays.asList(
 			«FOR elem: entity.enumBody.elements SEPARATOR ", "»
@@ -288,10 +309,39 @@ class EntityGen {
 			
 			public «entity.name.toFirstUpper»(String enumName) {
 				super(enumName);
+				setModifiedDate(new Timestamp(System.currentTimeMillis()));
 			}
 			
 			public «entity.name.toFirstUpper»(String enumName, ArrayList<Md2String> values) {
 				super(enumName, values);
+				setModifiedDate(new Timestamp(System.currentTimeMillis()));
+			}
+			
+			public String getValue() {
+				return value;
+			}
+		
+			public void setValue(String value) {
+				if(values.contains(value)){
+					this.value = value;
+					setModifiedDate(new Timestamp(System.currentTimeMillis()));
+				}
+			}
+		
+			public long getId() {
+				return id;
+			}
+		
+			public void setId(long id) {
+				this.id = id;
+			}
+		
+			public Timestamp getModifiedDate() {
+				return modifiedDate;
+			}
+		
+			public void setModifiedDate(Timestamp modifiedDate) {
+				this.modifiedDate = modifiedDate;
 			}
 			
 			@Override
