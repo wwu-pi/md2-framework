@@ -36,6 +36,8 @@ import org.w3c.dom.Document
 import org.w3c.dom.Element
 
 class LayoutGen {
+	
+	final static String elementMarginBottom = "20dp"
 
 	def static generateLayouts(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<ViewFrame> rootViews, Iterable<WorkflowElementReference> startableWorkflowElements) {
@@ -333,6 +335,7 @@ class LayoutGen {
 		
 		buttonElement.setAttribute("android:layout_height", "wrap_content")
 		buttonElement.setAttribute("android:layout_gravity", "fill_horizontal")
+		buttonElement.setAttribute("android:layout_marginBottom", elementMarginBottom)
 
 		// text
 		buttonElement.setAttribute("android:text", "@string/" + qualifiedName + "_text")
@@ -363,6 +366,7 @@ class LayoutGen {
 		}
 		textInputElement.setAttribute("android:layout_height", "wrap_content")
 		textInputElement.setAttribute("android:layout_gravity", "fill_horizontal")
+		textInputElement.setAttribute("android:layout_marginBottom", elementMarginBottom)
 
 		textInputElement.setAttribute("android:hint", "@string/" + qualifiedName + "_tooltip")
 
@@ -429,6 +433,7 @@ class LayoutGen {
 			optionInputElement.setAttribute("android:layout_columnWeight", String.valueOf(optionInput.width))
 		}
 		optionInputElement.setAttribute("android:layout_height", "wrap_content")
+		optionInputElement.setAttribute("android:layout_marginBottom", elementMarginBottom)
 		
 		optionInputElement.setAttribute("android:entries", "@array/" + qualifiedName + "_entries")
 		
@@ -461,6 +466,7 @@ class LayoutGen {
 		
 		integerInputElement.setAttribute("android:layout_height", "wrap_content")
 		integerInputElement.setAttribute("android:layout_gravity", "fill_horizontal")
+		integerInputElement.setAttribute("android:layout_marginBottom", elementMarginBottom)
 
 		integerInputElement.setAttribute("android:hint", "@string/" + qualifiedName + "_tooltip")
 
@@ -496,6 +502,7 @@ class LayoutGen {
 		}
 		booleanInputElement.setAttribute("android:layout_height", "wrap_content")
 		booleanInputElement.setAttribute("android:layout_gravity", "start")
+		booleanInputElement.setAttribute("android:layout_marginBottom", elementMarginBottom)
 
 		booleanInputElement.setAttribute("android:hint", "@string/" + qualifiedName + "_tooltip")
 
