@@ -49,6 +49,8 @@ import de.wwu.md2.framework.mD2.ViewGUIElement
 import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.SubViewContainer
 import de.wwu.md2.framework.util.MD2Util
+import de.wwu.md2.framework.mD2.Controller
+import de.wwu.md2.framework.mD2.WorkflowElement
 
 /**
  * This class contains custom scoping description.
@@ -71,26 +73,33 @@ class MD2ScopeProvider extends AbstractMD2ScopeProvider {
 		MD2Package.eINSTANCE.getProcessChainStep(), MD2Package.eINSTANCE.getSimpleAction());
 
 	def dispatch IScope getScope(FireEventEntry fireEventEntry, EReference eventRef) {
-		val wfe = fireEventEntry.eContainer() as WorkflowElementEntry;
-
-		// Get set of all Workflow Events fired within the Workflow Element
-		val firedEvents = helper.getFiredEvents(wfe.getWorkflowElement());
-
-		// Remove those that are already handled in other FireEventEntries
-		for (FireEventEntry otherFireEventEntry : wfe.getFiredEvents()) {
-			// Really only consider others
-			if (otherFireEventEntry != fireEventEntry) {
-
-				// remove Entry:
-				// requires access to implementation, because getEvent() causes
-				// exceptions with cyclic references when trying to resolve the Workflow Event
-				firedEvents.remove(
-					(otherFireEventEntry as FireEventEntryImpl).basicGetEvent()
-				);
+		if(eventRef == MD2Package.eINSTANCE.fireEventEntry_StartedWorkflowElement){
+			val wfe = fireEventEntry.eContainer() as WorkflowElementEntry;
+			val controller = wfe.workflowElement.eContainer as Controller
+			
+			return Scopes.scopeFor(controller.controllerElements.filter(WorkflowElement))
+		} else {
+			val wfe = fireEventEntry.eContainer() as WorkflowElementEntry;
+		
+			// Get set of all Workflow Events fired within the Workflow Element
+			val firedEvents = helper.getFiredEvents(wfe.getWorkflowElement());
+		
+			// Remove those that are already handled in other FireEventEntries
+			for (FireEventEntry otherFireEventEntry : wfe.getFiredEvents()) {
+				// Really only consider others
+				if (otherFireEventEntry != fireEventEntry) {
+		
+					// remove Entry:
+					// requires access to implementation, because getEvent() causes
+					// exceptions with cyclic references when trying to resolve the Workflow Event
+					firedEvents.remove(
+						(otherFireEventEntry as FireEventEntryImpl).basicGetEvent()
+					);
+				}
 			}
+		
+			return Scopes.scopeFor(firedEvents);
 		}
-
-		return Scopes.scopeFor(firedEvents);
 	}
 
 	// Scoping for nested attributes
