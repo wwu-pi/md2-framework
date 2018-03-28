@@ -11,10 +11,13 @@ import de.wwu.md2.framework.mD2.WorkflowElement
 import de.wwu.md2.framework.mD2.CombinedAction
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.ElementEventType
+import de.wwu.md2.framework.mD2.MD2Model
+import de.wwu.md2.framework.mD2.Controller
 
 class SmartphonePreprocessor extends AbstractPreprocessor {
 	
 	var static ResourceSet preprocessedModel;
+	var static ResourceSet unprocessedModel;
 	var static ResourceSet previousInputSet;
 	/**
 	 * Singleton instance of this preprocessor.
@@ -22,13 +25,14 @@ class SmartphonePreprocessor extends AbstractPreprocessor {
 	private static SmartphonePreprocessor instance
 	
 	
-	def static getPreprocessedModel(ResourceSet input) {
+	def static getPreprocessedModel(ResourceSet input, ResourceSet unprocessedInput) {
 		if (!input.equals(previousInputSet)) {
 			if (instance === null) {
 				//initialize(new MD2ComplexElementFactory)
 				instance = new SmartphonePreprocessor
 			}
 			previousInputSet = input
+			unprocessedModel = unprocessedInput
 			instance.setNewModel(input)
 			println("Smartphone preprocessing running...")
 			preprocessedModel = instance.preprocessModel
@@ -49,16 +53,17 @@ class SmartphonePreprocessor extends AbstractPreprocessor {
 	def transformViewActionsToButtons(){
 		view.eAllContents.toIterable.filter(ViewFrame).map[it.viewActions].flatten.forEach[viewAction |
 			// Display viewActions as buttons below other content
+			val viewFrame = (viewAction.eContainer as ViewFrame)
 			val button = MD2Factory.eINSTANCE.createButton
 			button.name = MD2GeneratorUtil.getName(button)
 			button.text = viewAction.getTitle()
-			(viewAction.eContainer as ViewFrame).elements.add(button) 
+			viewFrame.elements.add(button) 
 			
-			// Move action bindings
-			// TODO switch order of preprocessing first smartphone then general resolution of elements (here no process chains remain)
-			//val wfes2 = controller.controllerElements.filter(WorkflowElement)
-			//val wfe3 = wfes2.map[it.processChain.map[it.processChainSteps.map[it.view.ref]].flatten]
-			val wfes = controller.controllerElements.filter(WorkflowElement).filter[it.processChain.map[it.processChainSteps.map[it.view.ref]].flatten.exists[true]]
+			// Not so nice workaround using unprocessed model to get from viewFrame to respective workflowElement
+			val origController = unprocessedModel.resources.map[it.contents].flatten.filter(MD2Model).map[it.modelLayer].filter(Controller)?.head
+			val wfeName = origController.controllerElements.filter(WorkflowElement).filter[it.processChain.map[it.processChainSteps.map[it.view.ref]].flatten.exists[it.name == viewFrame.name]]?.head?.name
+		
+			val wfes = controller.controllerElements.filter(WorkflowElement).filter[it.name == wfeName]
 			wfes.forEach[wfe |
 				var currentAction = wfe.initActions.get(0)
 				while(currentAction instanceof CombinedAction){
@@ -76,6 +81,7 @@ class SmartphonePreprocessor extends AbstractPreprocessor {
 				val eventDef = MD2Factory.eINSTANCE.createViewElementEventRef
 				eventDef.referencedField = viewElementRef
 				eventDef.event = ElementEventType.ON_CLICK;
+				bindTask.events.add(eventDef)
 				
 				(currentAction as CustomAction).codeFragments.add(bindTask)
 			]

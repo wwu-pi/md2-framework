@@ -36,7 +36,7 @@ class IOSGenerator extends AbstractPlatformGenerator {
 		System.out.println("START GENERATION")
 		
 		// Apply device class preprocessing
-		processedInput = SmartphonePreprocessor.getPreprocessedModel(processedInput)
+		processedInput = SmartphonePreprocessor.getPreprocessedModel(processedInput, unprocessedInput)
 		dataContainer = new DataContainer(processedInput);
 		
 		/***************************************************

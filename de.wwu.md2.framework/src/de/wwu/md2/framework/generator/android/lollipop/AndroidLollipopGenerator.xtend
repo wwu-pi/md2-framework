@@ -34,7 +34,7 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
 	override doGenerate(IExtendedFileSystemAccess fsa) {
 		// Apply device class preprocessing
-		processedInput = SmartphonePreprocessor.getPreprocessedModel(processedInput)
+		processedInput = SmartphonePreprocessor.getPreprocessedModel(processedInput, unprocessedInput)
 		dataContainer = new DataContainer(processedInput);
 		
 		doAndroidPreprocessing()

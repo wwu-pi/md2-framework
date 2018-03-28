@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.generator.IFileSystemAccess;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 import de.wwu.md2.framework.generator.preprocessor.MD2Preprocessor;
 import de.wwu.md2.framework.generator.util.DataContainer;
@@ -20,6 +22,8 @@ public abstract class AbstractPlatformGenerator implements IPlatformGenerator {
 	 * DataContainer, which contains all collections of model elements
 	 */
 	protected DataContainer dataContainer;
+	
+	protected ResourceSet unprocessedInput;
 	protected ResourceSet processedInput;
 
 	protected String rootFolder;
@@ -43,6 +47,8 @@ public abstract class AbstractPlatformGenerator implements IPlatformGenerator {
 		
 		// Pre process model (M2M transformation)
 		// Note: input is not being passed back to concrete Xtend generator classes (parameters are final by default)
+		unprocessedInput = new ResourceSetImpl();
+		EcoreUtil2.clone(unprocessedInput, input);
 		processedInput = MD2Preprocessor.getPreprocessedModel(input);
 		
 		// Initialize DataContainer
