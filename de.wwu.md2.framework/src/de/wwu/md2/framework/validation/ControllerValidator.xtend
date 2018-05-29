@@ -285,8 +285,8 @@ class ControllerValidator extends AbstractMD2Validator {
 	def checkDataTypesOfMappingTask(MappingTask task) {
 		val viewField = task.referencedViewField.getViewElement.ref
 		
-		val viewFieldType = task.referencedViewField.calculateType
-		val attributeType = task.pathDefinition.calculateType
+		val viewFieldType = task.referencedViewField?.calculateType
+		val attributeType = task.pathDefinition?.calculateType
 		
 		if(viewField instanceof Label) {
 			// Mapping to a Label is always ok.
@@ -304,8 +304,8 @@ class ControllerValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkDataTypesOfUnmappingTask(UnmappingTask task) {
-		val viewFieldType = task.referencedViewField.calculateType
-		val attributeType = task.pathDefinition.calculateType
+		val viewFieldType = task.referencedViewField?.calculateType
+		val attributeType = task.pathDefinition?.calculateType
 		
 		if (!viewFieldType.equals(attributeType)) {
 			val error = '''Cannot (un)map an attribute with value of type '«attributeType»' to a view element that handles values of type '«viewFieldType»'.'''
@@ -336,8 +336,8 @@ class ControllerValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkDataTypesOfContentProviderSetTask(ContentProviderSetTask task) {
-		val targetType = task.contentProvider.calculateType
-		val sourceType = task.source.calculateType
+		val targetType = task.contentProvider?.calculateType
+		val sourceType = task.source?.calculateType
 		
 		if (!targetType.equals(sourceType)) {
 			val error = '''Cannot set value of type '«sourceType»' to content provider of type '«targetType»'.'''
@@ -350,8 +350,8 @@ class ControllerValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkDataTypesOfViewElementSetTask(ViewElementSetTask task) {
-		val targetType = task.referencedViewField.calculateType
-		val sourceType = task.source.calculateType
+		val targetType = task.referencedViewField?.calculateType
+		val sourceType = task.source?.calculateType
 		val isValidEnum = task.source.isValidEnumType(task.referencedViewField)
 		
 		if (!targetType.equals(sourceType) && !targetType.equals(MD2Type.STRING) && !isValidEnum) {
@@ -368,8 +368,8 @@ class ControllerValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkBothExpressionsInComparisonOfSameType(CompareExpression expr) {
-		val left = expr.eqLeft.calculateType
-		val right = expr.eqRight.calculateType
+		val left = expr.eqLeft?.calculateType
+		val right = expr.eqRight?.calculateType
 		val isValidEnum = expr.eqLeft.isValidEnumType(expr.eqRight)
 		
 		if (!left.equals(right) && !isValidEnum) {
@@ -383,7 +383,7 @@ class ControllerValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkCorrectUsageOfOperators(CompareExpression expr) {
-		val left = expr.eqLeft.calculateType
+		val left = expr.eqLeft?.calculateType
 		val isNumericOperator = switch expr.op {
 			case Operator::GREATER: true
 			case Operator::GREATER_OR_EQUAL: true
@@ -418,7 +418,7 @@ class ControllerValidator extends AbstractMD2Validator {
 	 */
 	@Check
 	def checkCorrectUsageOfOperatorsInWhereClauseComparison(WhereClauseCompareExpression expr) {
-		val left = expr.eqLeft.tail.calculateType
+		val left = expr.eqLeft.tail?.calculateType
 		val isNumericOperator = switch expr.op {
 			case Operator::GREATER: true
 			case Operator::GREATER_OR_EQUAL: true
@@ -664,7 +664,7 @@ class ControllerValidator extends AbstractMD2Validator {
     @Check
     def checkForTypeOfInvokeDefaultValue(InvokeDefaultValue defaultValue) {
 		var valueType = invokeValueTypeMap.get(defaultValue.invokeValue.class)
-		val attributeType = defaultValue.field.tail.calculateType
+		val attributeType = defaultValue.field.tail?.calculateType
 		var cpType = supportedAttributeTypeMap.get(attributeType.class)
 		if (cpType === null && attributeType instanceof ReferencedType){
 			var referencedType = (attributeType as ReferencedType).getElement()
@@ -678,7 +678,7 @@ class ControllerValidator extends AbstractMD2Validator {
 				MD2Package.eINSTANCE.invokeDefaultValue_InvokeValue,
 				INVOKEDEFAULTVALUETYPEMISSMATCH)
 		} else  if (cpType === null){
-			error('''The type «defaultValue.field.tail.calculateType» of the content provider reference is not supported to be set to a default value!''', 
+			error('''The type «defaultValue.field.tail?.calculateType» of the content provider reference is not supported to be set to a default value!''', 
 				MD2Package.eINSTANCE.invokeParam_Field,
 				INVOKEDEFAULTVALUETYPENOTSUPPORTED)
 		}	
@@ -759,7 +759,7 @@ class ControllerValidator extends AbstractMD2Validator {
      */
     @Check
 	def checkForValidEnumString(InvokeDefaultValue defaultValue) {
-		var attributeType = defaultValue.field.tail.calculateType
+		var attributeType = defaultValue.field.tail?.calculateType
 		var EnumBody enumBody = null
 		var String enumName = null
 		switch (attributeType) {
