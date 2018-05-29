@@ -19,6 +19,9 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.resource.IResourceDescription
 import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider
+import java.io.File
+import com.google.inject.TypeLiteral
+import com.google.inject.util.Types
 
 /**
  * This util class offers helper methods for the MD2 framework development.
@@ -203,4 +206,34 @@ class MD2Util {
 		return null
 	}
 	
+	/**
+	 * Recursive list of all files within a given path
+	 */
+	 static def Collection<File> getFilesRecursive(File path){
+	 	if(path.isFile) return newArrayList
+	 	
+	 	val listOfContents = path.listFiles();
+	 	
+	 	if(listOfContents === null || listOfContents.isEmpty) {
+			return newArrayList
+		}
+		
+		val files = newArrayList
+		for (singleFile : listOfContents) {
+			if(singleFile.isFile()) {
+				files.add(singleFile)
+				System.out.println("File " + singleFile.getName());
+			} else if(singleFile.isDirectory()) {
+				System.out.println("Directory " + singleFile.getName());
+				val subFiles = getFilesRecursive(singleFile)
+				files.addAll(subFiles)
+			}
+		}
+		return files
+	 }
+	 
+	@SuppressWarnings("unchecked")
+	static def <T> TypeLiteral<Set<T>> setOf(Class<T> type) {
+		return TypeLiteral.get(Types.setOf(type)) as TypeLiteral<Set<T>>
+	}
 }
