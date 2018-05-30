@@ -36,11 +36,10 @@ class MD2TransformationRunner {
 		val XtextResourceSet source = injector.getInstance(XtextResourceSet)
 		source.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
 		
-		val rootFolder = "src-gen/input/" + inputPath
 		val layers = #["/models", "/views", "/controllers", "/workflows"] // Order is important to resolve cross-references
 		
 		layers.forEach[
-			val files = MD2Util.getFilesRecursive(new File(rootFolder + "/models"))
+			val files = MD2Util.getFilesRecursive(new File(inputPath + it))
 			
 			files.forEach[
 				// Load resource
