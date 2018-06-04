@@ -21,15 +21,23 @@ class MD2TransformationRunner {
 	 * Main program
 	 */	
 	def static void main(String[] args){
-		if(args === null || args.size == 0) {
-			println("No input models given")
-			return
+		if (args === null) {
+			if (args.size == 0) {
+				println("No input models given")
+				return
+			}
+
+			if (args.size < 2) {
+				println("No output folder given")
+				return
+			}
+
 		}
-		
-		new MD2TransformationRunner().transformInput(args.get(0))
+
+		new MD2TransformationRunner().transformInput(args.get(0), args.get(1))
 	}
 	
-	def transformInput(String inputPath){
+	def transformInput(String inputPath, String outputPath) {
 		new StandaloneSetup().setPlatformUri("../");
 		
 		val injector = new MD2StandaloneSetup().createInjectorAndDoEMFRegistration
@@ -63,7 +71,7 @@ class MD2TransformationRunner {
 		
 		val generators = injector.getInstance(Key.get(MD2Util.setOf(IPlatformGenerator)))
 		val fsa = injector.getInstance(ExtendedJavaIoFileSystemAccess)
-		fsa.setOutputPath("src-gen/")
+		fsa.setOutputPath(outputPath)
 		
 		for(generator : generators){
 			generator.doGenerate(source, fsa)
