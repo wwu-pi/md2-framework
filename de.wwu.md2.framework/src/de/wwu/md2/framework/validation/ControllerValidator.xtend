@@ -536,7 +536,7 @@ class ControllerValidator extends AbstractMD2Validator {
         
         // Search for Entities with nested Entities and put them into hm
         for (cp : cpList) {
-        	if((cp.type as ReferencedModelType).entity instanceof Entity) {
+        	if(cp.type instanceof ReferencedModelType && (cp.type as ReferencedModelType).entity instanceof Entity) {
 	            val entity = (cp.type as ReferencedModelType).entity as Entity
 	            val refEntities = entity.attributes.filter[it.type instanceof ReferencedType].filter[(it.type as ReferencedType).element instanceof Entity].toList
 	            for (rE : refEntities){
