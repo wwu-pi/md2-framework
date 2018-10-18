@@ -8,15 +8,13 @@ order: 220
 
 The following steps will provide you with the software required to enable modelling of MD² models:
 
-* Download and unzip a current Eclipse IDE with support for Java EE development (e.g. [Oxygen package](https://www.eclipse.org/downloads/packages/release/oxygen/2)).
-* Start Eclipse, choose "Help | Install New Software...", add the Xtext update site [http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/](http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/) and install a current version of the "Xtext Complete SDK" (at least version 2.13).
-* Download the MD² plugins from the [MD² repository](https://github.com/wwu-pi/md2-framework/tree/master/plugins) and copy them to the `/plugins` directory of your Eclipse installation.
-* Restart Eclipse.
-* Import an MD² project, e.g. the `de.wwu.md2.simple` example from [https://github.com/wwu-pi/md2-testApps](https://github.com/wwu-pi/md2-testApps). Whenever you perform changes to a model and save the file, the generation process is triggered (visible as "Build workspace" message).
+* Download and unzip a current Eclipse IDE for Java and DSL Developers (e.g. [Eclipse 2018-09 package](https://www.eclipse.org/downloads/packages/release/2018-09/r/eclipse-ide-java-and-dsl-developers)).
+* Download the MD² plugins and the Google Multibindings jar file from the [MD² repository](https://github.com/wwu-pi/md2-framework/tree/master/plugins) and copy them to the `/plugins` directory of your Eclipse installation.
+* Start Eclipse and import an MD² project, e.g. the `de.wwu.md2.simple` example from [https://github.com/wwu-pi/md2-testApps](https://github.com/wwu-pi/md2-testApps). Whenever you perform changes to a model and save the file, the generation process is triggered (visible as "Build workspace" message).
 
 To run the generated Android app:
-* Download a current version of Android Studio and open the generated project which was created in the `src-gen/projectName.lollipop` subdirectory of the sample project (accept the Gradle wrapper message). The first time, you may be requested to install different components (build tools etc.) matching yout development environment. Now you can run the app in the emulator or on connected devices.
-* Please note, that currently the generated app project is replaced (i.e. deleted) when re-generated (the respective files should not be open in other programs to avoid conflicts). Re-opening the project in Android Studio sometimes causes an incorrect "Unsupported Modules Detected" error message and the project cannot be built/run. Simply choose "Tool | Android | Sync Project with Gradle Files" and the project should be fixed.
+* Download a current version of Android Studio and open the generated project which was created in the `src-gen/projectName.lollipop` subdirectory of the sample project (accept the Gradle wrapper message). The first time, you may be requested to install different components (build tools etc.) matching your development environment. Now you can run the app in the emulator or on connected devices.
+* Please note: Currently the generated app project is replaced (i.e., deleted) when re-generated (the respective files should not be open in other programs to avoid conflicts). Re-opening the project in Android Studio sometimes causes an incorrect "Unsupported Modules Detected" error message and the project cannot be built/run. Simply choose "Tool > Android > Sync Project with Gradle Files" and the project should be fixed.
 
 ## Setting up GlassFish to Run Generated Backends
 To deploy the generated backends, follow the subsequent steps:
