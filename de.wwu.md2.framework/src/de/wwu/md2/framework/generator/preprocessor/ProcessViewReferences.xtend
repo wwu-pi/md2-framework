@@ -18,7 +18,6 @@ import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.MappingTask
 import de.wwu.md2.framework.mD2.SimpleType
 import de.wwu.md2.framework.mD2.StyleReference
-import de.wwu.md2.framework.mD2.TabSpecificParam
 import de.wwu.md2.framework.mD2.UnmappingTask
 import de.wwu.md2.framework.mD2.ValidatorBindingTask
 import de.wwu.md2.framework.mD2.ValidatorUnbindTask
@@ -52,7 +51,7 @@ class ProcessViewReferences extends AbstractPreprocessor {
 			val containerElement = copyViewElementType(containerRef.value, clonedElements)
 			if (containerRef.rename) containerElement.name = containerRef.name
 			containerRef.params.forEach [ param |
-				val newParam = copyElement(param as TabSpecificParam)
+				val newParam = copyElement(param)
 				switch (containerElement) {
 					GridLayoutPane: containerElement.params.add(newParam)
 					FlowLayoutPane: containerElement.params.add(newParam)

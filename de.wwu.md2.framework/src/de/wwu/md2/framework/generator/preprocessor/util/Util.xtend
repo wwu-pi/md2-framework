@@ -9,7 +9,6 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.emf.ecore.util.EObjectContainmentEList
 import org.eclipse.emf.ecore.util.EcoreUtil
 
-import static extension de.wwu.md2.framework.generator.preprocessor.util.Helper.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
 
 /**

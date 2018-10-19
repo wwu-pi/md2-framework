@@ -5,7 +5,6 @@ import de.wwu.md2.framework.generator.util.MD2GeneratorUtil
 import de.wwu.md2.framework.mD2.AlternativesPane
 import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.ContainerElementReference
-import de.wwu.md2.framework.mD2.ContentContainer
 import de.wwu.md2.framework.mD2.ContentElement
 import de.wwu.md2.framework.mD2.FlowLayoutPane
 import de.wwu.md2.framework.mD2.GridLayoutPane
@@ -64,7 +63,7 @@ class WidgetMapping {
 	static def void getSubGUIElementsRecursive(ViewElementType element, Collection<ViewElementType> targetContainer) {
 		switch element {
 			ViewGUIElement: {
-				switch (element as ViewGUIElement) {
+				switch (element) {
 					ContainerElement: {
 						targetContainer.add(element)
 						switch (element) {
@@ -73,7 +72,7 @@ class WidgetMapping {
 								getSubGUIElementsRecursive(elem, targetContainer)
 							]
 							AlternativesPane,
-							TabbedAlternativesPane: (element as SubViewContainer).elements.forEach[ elem | 
+							TabbedAlternativesPane: element.elements.forEach[ elem | 
 								if(elem instanceof ContainerElement) {
 									getSubGUIElementsRecursive(elem, targetContainer)
 								} else if (elem instanceof ContainerElementReference){

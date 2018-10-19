@@ -38,7 +38,6 @@ import org.eclipse.xtend.lib.annotations.Accessors
 import static de.wwu.md2.framework.generator.preprocessor.util.Util.*
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
-import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 import de.wwu.md2.framework.mD2.ViewFrame
 import org.eclipse.xtext.EcoreUtil2

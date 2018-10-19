@@ -38,7 +38,7 @@ class MD2TransformationRunner {
 	}
 	
 	def transformInput(String inputPath, String outputPath) {
-		new StandaloneSetup().setPlatformUri("../");
+		new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri("../");
 		
 		val injector = new MD2StandaloneSetup().createInjectorAndDoEMFRegistration
 		val XtextResourceSet source = injector.getInstance(XtextResourceSet)

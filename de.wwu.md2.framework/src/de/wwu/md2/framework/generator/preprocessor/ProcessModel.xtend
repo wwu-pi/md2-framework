@@ -2,7 +2,6 @@ package de.wwu.md2.framework.generator.preprocessor
 
 import com.google.common.collect.Sets
 import de.wwu.md2.framework.generator.preprocessor.util.AbstractPreprocessor
-import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
 import de.wwu.md2.framework.mD2.AttrDateMax
 import de.wwu.md2.framework.mD2.AttrDateMin
 import de.wwu.md2.framework.mD2.AttrDateTimeMax
