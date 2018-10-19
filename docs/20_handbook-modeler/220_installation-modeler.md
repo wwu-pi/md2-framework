@@ -8,7 +8,7 @@ order: 220
 
 The following steps will provide you with the software required to enable modelling of MD² models:
 
-* Download and unzip a current Eclipse IDE for Java and DSL Developers (e.g. [Eclipse 2018-09 package](https://www.eclipse.org/downloads/packages/release/2018-09/r/eclipse-ide-java-and-dsl-developers)).
+* Download and unzip a current Eclipse IDE for Java and DSL Developers (e.g., [Eclipse 2018-09 package](https://www.eclipse.org/downloads/packages/release/2018-09/r/eclipse-ide-java-and-dsl-developers)).
 * Download the MD² plugins and the Google Multibindings jar file from the [MD² repository](https://github.com/wwu-pi/md2-framework/tree/master/plugins) and copy them to the `/plugins` directory of your Eclipse installation.
 * Start Eclipse and import an MD² project, e.g. the `de.wwu.md2.simple` example from [https://github.com/wwu-pi/md2-testApps](https://github.com/wwu-pi/md2-testApps). Whenever you perform changes to a model and save the file, the generation process is triggered (visible as "Build workspace" message).
 
