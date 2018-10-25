@@ -5,6 +5,7 @@ package de.wwu.md2.framework.ui.quickfix
 
 import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider
 import de.wwu.md2.framework.validation.ModelValidator
+import de.wwu.md2.framework.validation.AccessibilityVisionValidator
 import org.eclipse.xtext.ui.editor.quickfix.Fix
 import org.eclipse.xtext.validation.Issue
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor
@@ -12,6 +13,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext
 import de.wwu.md2.framework.mD2.Entity
 import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification
+import de.wwu.md2.framework.mD2.Button
 
 /**
  * Custom quickfixes.
@@ -23,7 +25,7 @@ class MD2QuickfixProvider extends DefaultQuickfixProvider {
 	@Fix(ModelValidator.ENTITYWITHOUTUNDERSCORE)
 	def deleteUnderscoreFromEntityname(Issue issue, IssueResolutionAcceptor acceptor){
 		acceptor.accept(issue, "Delete underscore", "Deletes the underscore from the entity/enum identifier.", "upcase.png", new ISemanticModification() {
-			override public def apply(EObject element, IModificationContext context) {
+			override apply(EObject element, IModificationContext context) {
 				val entity = element as Entity;
 				entity.setName(entity.getName().substring(1));
 			}
@@ -38,4 +40,18 @@ class MD2QuickfixProvider extends DefaultQuickfixProvider {
 //			xtextDocument.replace(issue.offset, 1, firstLetter.toUpperCase)
 //		]
 //	}
+
+	// Provides a quick fix for the accessibility issue of small button widths 
+	@Fix(AccessibilityVisionValidator.ACCESSIBILITY_SIZE)
+	def fixMinimumButtonSize(Issue issue, IssueResolutionAcceptor acceptor){
+		acceptor.accept(issue, 
+			"Increase button width", 
+			"Increase button width to a minimum of 9%.", 
+			"upcase.png", 
+			new ISemanticModification() {
+				override apply(EObject element, IModificationContext context) {
+					(element as Button).width = 9;
+				}
+			});
+	}
 }

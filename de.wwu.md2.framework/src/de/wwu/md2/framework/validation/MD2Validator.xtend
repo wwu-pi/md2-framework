@@ -18,7 +18,8 @@ import org.eclipse.xtext.validation.ComposedChecks
 	ViewValidator,
 	WorkflowValidator,
 	//AndroidLollipopValidator // TODO commented out to reduce errors
-	IOSValidator
+	IOSValidator,
+	AccessibilityVisionValidator
 ])
 class MD2Validator extends AbstractMD2Validator {
 	
