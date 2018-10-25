@@ -67,7 +67,7 @@ ViewElement:
  */
 ViewFrame:
 	'View' name=ID '{'
-		('title' title=STRING)?
+		'title' title=STRING
 		('icon' icon=ViewIcon)?
 		viewActions += ViewAction*
 		elements += ViewElementType+
