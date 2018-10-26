@@ -11,8 +11,8 @@ import org.eclipse.core.runtime.IProgressMonitor
 
 class MD2ExtendedProjectCreator extends MD2ProjectCreator {
 	
-	@Inject
-	private MD2NewProjectWizardInitialContents initialContents;
+	@Inject 
+	MD2NewProjectWizardInitialContents initialContents;
 	
 	override enhanceProject(IProject project, IProgressMonitor monitor) throws CoreException {
 		val access = getFileSystemAccess(project, monitor);
@@ -28,12 +28,9 @@ class MD2ExtendedProjectCreator extends MD2ProjectCreator {
 	}
 	
 	override protected String[] getProjectNatures() {
-		// Skip "org.eclipse.pde.PluginNature" nature which causes generation problems
 		var natures = new ArrayList<String>();
 		for(String nature : super.getProjectNatures()) {
-			if(!nature.equals("org.eclipse.pde.PluginNature")) {
-				natures.add(nature);
-			}
+			natures.add(nature);
 		}
 		return natures.toArray(#[] as String[]);
 	}

@@ -77,7 +77,10 @@ public class MD2BuilderParticipent extends BuilderParticipant {
 			ResourceSet resourceSet = new ResourceSetImpl();
 			for (IContainer c : visibleContainers) {
 				for (IResourceDescription rd : c.getResourceDescriptions()) {
-					resourceSet.getResource(rd.getURI(), true);
+					if(!rd.getURI().lastSegment().equals("GenerateMD2.mwe2") &&
+							!rd.getURI().lastSegment().equals("MD2.xtext")) {
+						resourceSet.getResource(rd.getURI(), true);
+					}
 				}
 			}
 			
