@@ -36,7 +36,7 @@ import de.wwu.md2.framework.generator.IPlatformGenerator;
 /**
  * Builder Participant changes the way the generators get invoked
  */
-public class MD2BuilderParticipent extends BuilderParticipant {
+public class MD2BuilderParticipant extends BuilderParticipant {
 	
 	@Inject
 	ResourceDescriptionsProvider resourceDescriptionsProvider;
