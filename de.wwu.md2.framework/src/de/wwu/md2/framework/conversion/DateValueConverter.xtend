@@ -15,15 +15,15 @@ import org.eclipse.xtext.nodemodel.INode;
  */
 class DateValueConverter extends AbstractNullSafeConverter<Date> {
 	
-	private final String PATTERN = "yyyy-MM-dd";
+	final String PATTERN = "yyyy-MM-dd";
 	
-	override protected def internalToString(Date date) {
+	override protected internalToString(Date date) {
 		val dateFormat = new SimpleDateFormat(PATTERN);
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		return dateFormat.format(date);
 	}
 	
-	override protected def internalToValue(String dateStringIn, INode node) throws ValueConverterException {
+	override protected internalToValue(String dateStringIn, INode node) throws ValueConverterException {
 		var dateString = dateStringIn
 		
 		// get rid of quotes

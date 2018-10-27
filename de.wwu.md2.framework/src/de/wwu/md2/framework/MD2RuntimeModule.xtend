@@ -22,7 +22,7 @@ import org.eclipse.xtext.generator.IGenerator2
  */
 class MD2RuntimeModule extends AbstractMD2RuntimeModule {
 	
-	override public def void configure(Binder binder) {
+	override void configure(Binder binder) {
 		super.configure(binder);
 		val multiGenBinder = Multibinder.newSetBinder(binder, IPlatformGenerator);
 
@@ -37,15 +37,15 @@ class MD2RuntimeModule extends AbstractMD2RuntimeModule {
 		binder.bind(Boolean).annotatedWith(Names.named("Debug MD2GeneratorUtil")).toInstance(true);
 	}
 
-	public def Class<? extends ImportedNamespaceAwareLocalScopeProvider> bindImportedNamespaceAwareLocalScopeProvider() {
+	def Class<? extends ImportedNamespaceAwareLocalScopeProvider> bindImportedNamespaceAwareLocalScopeProvider() {
 		return MD2ImportedNamespaceAwareLocalScopeProvider;
 	}
 
-	override public def Class<? extends IValueConverterService> bindIValueConverterService() {
+	override Class<? extends IValueConverterService> bindIValueConverterService() {
 		return MD2ValueConverterService;
 	}
 
-	public def Class<? extends org.eclipse.xtext.generator.IGenerator> bindIGenerator() {
+	def Class<? extends org.eclipse.xtext.generator.IGenerator> bindIGenerator() {
 		// the IGenerator interface is not used anymore. However, org.eclipse.xtext.builder.BuilderParticipant injects
 		// an IGenerator implementation (that is never used, because the according methods are overwritten) and thus Guice
 		// needs any binding. Just provide any implementing class here to make Guice happy...
@@ -53,11 +53,11 @@ class MD2RuntimeModule extends AbstractMD2RuntimeModule {
 	}
 	
 	// contributed by org.eclipse.xtext.generator.formatting.FormatterFragment
-	override public def Class<? extends org.eclipse.xtext.formatting.IFormatter> bindIFormatter() {
+	override Class<? extends org.eclipse.xtext.formatting.IFormatter> bindIFormatter() {
 		return de.wwu.md2.framework.formatting.MD2Formatter;
 	}
 	
-	override public def Class<? extends IGenerator2> bindIGenerator2() {
+	override Class<? extends IGenerator2> bindIGenerator2() {
 		return null;
 	}
 }

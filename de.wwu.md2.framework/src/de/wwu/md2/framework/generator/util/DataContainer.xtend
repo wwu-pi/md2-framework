@@ -190,7 +190,7 @@ class DataContainer {
 		rootViewContainers = extractRootViews(workflowElements)
 	}
 	
-	def public extractRootViews(Iterable<WorkflowElement> workflowElements) {
+	def extractRootViews(Iterable<WorkflowElement> workflowElements) {
 		var rootViews = newHashMap
 			
 		for (WorkflowElement workflowElement : workflowElements){
@@ -219,7 +219,7 @@ class DataContainer {
 	/**
 	 * Returns all workflows associated with the current app.
 	 */
-	def public workflowElementsForApp(App app) {
+	def workflowElementsForApp(App app) {
 	    val wfes = app.workflowElements.map[it.workflowElementReference].toSet
 	    return wfes
 	}
@@ -227,7 +227,7 @@ class DataContainer {
 	/**
 	 * Return all events declared in a workflowElement.
 	 */
-    def public Iterable<WorkflowEvent> getEventsFromWorkflowElement(WorkflowElement wfe) {
+    def Iterable<WorkflowEvent> getEventsFromWorkflowElement(WorkflowElement wfe) {
        
        var wfeEntry = workflow.workflowElementEntries.filter[it.workflowElement.equals(wfe)].head
        
@@ -237,7 +237,7 @@ class DataContainer {
     /**
 	 * Return fireEventEntry for workflow event.
 	 */
-    def public FireEventEntry getFireEventEntryForWorkflowEvent(WorkflowEvent we, WorkflowElement wfe) {
+    def FireEventEntry getFireEventEntryForWorkflowEvent(WorkflowEvent we, WorkflowElement wfe) {
        
        var wfeEntry = workflow.workflowElementEntries.filter[it.workflowElement.equals(wfe)].head
        
@@ -248,7 +248,7 @@ class DataContainer {
     /**
 	 * Return the workflowElement that is started by an event.
 	 */
-    def public WorkflowElement getNextWorkflowElement(WorkflowElement wfe, WorkflowEvent e) {
+    def WorkflowElement getNextWorkflowElement(WorkflowElement wfe, WorkflowEvent e) {
         var wfes = workflow.workflowElementEntries
 
         for (WorkflowElementEntry entry : wfes) {

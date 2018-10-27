@@ -46,7 +46,7 @@ class MD2ScopeProvider extends AbstractMD2ScopeProvider {
 //	private IQualifiedNameProvider qualifiedNameProvider;
 
 	@Inject
-	private GetFiredEventsHelper helper;
+	GetFiredEventsHelper helper;
 
 	public static Collection<EClass> validContainerForAbstractViews = Sets.newHashSet(MD2Package.eINSTANCE.getMain(),
 		MD2Package.eINSTANCE.getProcessChainStep(), MD2Package.eINSTANCE.getSimpleAction());

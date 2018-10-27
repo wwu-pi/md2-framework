@@ -21,7 +21,7 @@ class MD2LabelProvider extends DefaultEObjectLabelProvider {
 
 	// Labels and icons can be computed like this:
 	
-	override def String text(Object ele) {
+	override String text(Object ele) {
 		try {
 			val getNameMethod = ele.getClass().getMethod("getName");
 			return getNameMethod.invoke(ele) + " <"+ele.getClass().interfaces.get(0).getSimpleName()+">";

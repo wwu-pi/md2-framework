@@ -18,14 +18,14 @@ import de.wwu.md2.framework.util.MD2Util;
  */
 class TimeValueConverter extends AbstractNullSafeConverter<Date> {
 	
-	private final Collection<String> PATTERNS = Sets.newHashSet("HH:mm:ssZ", "HH:mm:ssXXX", "HH:mm:ss");
-	private final String DEFAULT_PATTERN = "HH:mm:ssXXX";
+	final Collection<String> PATTERNS = Sets.newHashSet("HH:mm:ssZ", "HH:mm:ssXXX", "HH:mm:ss");
+	final String DEFAULT_PATTERN = "HH:mm:ssXXX";
 	
-	override protected def internalToString(Date date) {
+	override protected internalToString(Date date) {
 		return new SimpleDateFormat(DEFAULT_PATTERN).format(date);
 	}
 	
-	override protected def internalToValue(String dateStringIn, INode node) throws ValueConverterException {
+	override protected internalToValue(String dateStringIn, INode node) throws ValueConverterException {
 		var dateString = dateStringIn
 		
 		// get rid of quotes

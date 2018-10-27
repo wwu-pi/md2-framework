@@ -19,15 +19,15 @@ import de.wwu.md2.framework.util.MD2Util;
  */
 class DateTimeValueConverter extends AbstractNullSafeConverter<Date> {
 	
-	private final Collection<String> PATTERNS = Sets.newHashSet("yyyy-MM-dd'T'HH:mm:ssZ", "yyyy-MM-dd'T'HH:mm:ssXXX", "yyyy-MM-dd'T'HH:mm:ss");
-	private final String DEFAULT_PATTERN = "yyyy-MM-dd'T'HH:mm:ssXXX";
+	final Collection<String> PATTERNS = Sets.newHashSet("yyyy-MM-dd'T'HH:mm:ssZ", "yyyy-MM-dd'T'HH:mm:ssXXX", "yyyy-MM-dd'T'HH:mm:ss");
+	final String DEFAULT_PATTERN = "yyyy-MM-dd'T'HH:mm:ssXXX";
 	
-	override protected def internalToString(Date date) {
+	override protected internalToString(Date date) {
 		val dateFormat = new SimpleDateFormat(DEFAULT_PATTERN);
 		return dateFormat.format(date);
 	}
 	
-	override protected def internalToValue(String dateStringIn, INode node) throws ValueConverterException {
+	override protected internalToValue(String dateStringIn, INode node) throws ValueConverterException {
 		var dateString = dateStringIn
 		
 		// get rid of quotes

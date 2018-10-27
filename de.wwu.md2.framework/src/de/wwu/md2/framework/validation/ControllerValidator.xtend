@@ -330,14 +330,14 @@ class ControllerValidator extends AbstractMD2Validator {
 	def checkDataTypesOfAttributeSetTask(AttributeSetTask task) {
 		val targetType = task.pathDefinition?.calculateType
 		val sourceType = task.source?.calculateType
-		val isValidEnum = task.source?.isValidEnumType(task.pathDefinition)
+		val isValidEnum = (task.source !== null && task.source.isValidEnumType(task.pathDefinition)) || false
 
 		if (!targetType.equals(sourceType) && !targetType.equals("string") && !isValidEnum) {
-			val error = '''Cannot set value of type '«sourceType»' to attribute with value of type '«targetType»'.'''
-			acceptError(error, task, MD2Package.eINSTANCE.attributeSetTask_Source, -1, null);
+			val errorText = '''Cannot set value of type '«sourceType»' to attribute with value of type '«targetType»'.'''
+			error(errorText, MD2Package.eINSTANCE.attributeSetTask_Source);
 		} else if (!targetType.equals(sourceType) && targetType.equals("string") && !isValidEnum) {
-			val warning = '''You are assigning a value of type '«sourceType»' to an attribute of type string. The string representation of '«sourceType»' will be assigned instead.'''
-			acceptWarning(warning, task, MD2Package.eINSTANCE.attributeSetTask_Source, -1, null);
+			val warningText = '''You are assigning a value of type '«sourceType»' to an attribute of type string. The string representation of '«sourceType»' will be assigned instead.'''
+			warning(warningText, MD2Package.eINSTANCE.attributeSetTask_Source);
 		}
 	}
 
@@ -696,7 +696,7 @@ class ControllerValidator extends AbstractMD2Validator {
 			}
 		}
 
-		if (cpType !== null && !valueType?.equals(cpType)) {
+		if (cpType !== null && valueType !== null && !valueType.equals(cpType)) {
 			error('''The types of the content provider and its default value have to match each other! Expected default value to be of type «cpType» but was «valueType»!''',
 				MD2Package.eINSTANCE.invokeDefaultValue_InvokeValue, INVOKEDEFAULTVALUETYPEMISSMATCH)
 		} else if (cpType === null) {

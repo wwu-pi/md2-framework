@@ -386,7 +386,7 @@ class ActionGen {
 		}
 	}
 
-	public static def String generateSimpleExpression(SimpleExpression expression) {
+	static def String generateSimpleExpression(SimpleExpression expression) {
 		switch expression {
 			StringVal:
 				return '''new Md2String("«expression.value»")'''
