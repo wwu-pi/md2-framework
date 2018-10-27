@@ -14,19 +14,22 @@ import org.eclipse.xtext.validation.NamesAreUniqueValidator
 
 import static extension de.wwu.md2.framework.util.IterableExtensions.*
 
+/**
+ * General validator that checks for duplicate names in all model elements. 
+ */
 class MD2NamesAreUniqueValidator extends NamesAreUniqueValidator {
 	
 	@Inject
-	private IResourceServiceProvider.Registry resourceServiceProviderRegistry = IResourceServiceProvider.Registry.INSTANCE;
+	IResourceServiceProvider.Registry resourceServiceProviderRegistry = IResourceServiceProvider.Registry.INSTANCE;
 	
 	@Inject
-	private MD2NamesAreUniqueValidationHelper helper;
+	MD2NamesAreUniqueValidationHelper helper;
 	
 	@Inject
-	private MD2Util util;
+	MD2Util util;
 	
 	@Check
-	override def checkUniqueNamesInResourceOf(EObject eObject) {
+	override checkUniqueNamesInResourceOf(EObject eObject) {
 		val res = eObject.eResource();
 		
 		if (res === null)

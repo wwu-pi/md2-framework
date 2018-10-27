@@ -103,7 +103,8 @@ class AndroidLollipopValidator extends AbstractMD2Validator{
             MD2Package.eINSTANCE.gotoViewAction,
             MD2Package.eINSTANCE.displayMessageAction,
             MD2Package.eINSTANCE.contentProviderOperationAction,
-            MD2Package.eINSTANCE.contentProviderResetAction
+            MD2Package.eINSTANCE.contentProviderResetAction,
+            MD2Package.eINSTANCE.fireEventAction
         );
         
         if (!supportedSimpleActions.contains(simpleAction.eClass)) {
@@ -123,7 +124,8 @@ class AndroidLollipopValidator extends AbstractMD2Validator{
             MD2Package.eINSTANCE.conditionalCodeFragment,
             MD2Package.eINSTANCE.abstractViewGUIElementRef,
             MD2Package.eINSTANCE.contentProviderPath,
-            MD2Package.eINSTANCE.contentProviderReference
+            MD2Package.eINSTANCE.contentProviderReference,
+            MD2Package.eINSTANCE.callTask
         );
         
         if (!supportedCustomCodeFragments.contains(customCodeFragment.eClass)) {

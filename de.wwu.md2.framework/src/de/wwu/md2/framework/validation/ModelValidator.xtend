@@ -16,7 +16,7 @@ import org.eclipse.xtext.validation.Check
 class ModelValidator extends AbstractMD2Validator {
     
     @Inject
-    private ValidatorHelpers helper;
+    ValidatorHelpers helper;
     
     public static final String DEFAULTREFERENCEVALUE = "defaultReferenceValue"
     public static final String ENTITYENUMUPPERCASE = "entityEnumUppercase"
