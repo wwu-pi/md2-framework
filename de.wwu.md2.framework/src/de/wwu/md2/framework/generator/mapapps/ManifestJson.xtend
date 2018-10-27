@@ -403,8 +403,8 @@ class ManifestJson {
 	def private static dispatch String getViewElement(Image image) '''
 		"type": "simpleimage",
 		"src": "md2_app_", //TODO: fix url
-		«IF image.imgWidth > 0»"imgW": «image.imgWidth»,«ENDIF»
-		«IF image.imgHeight > 0»"imgH": «image.imgHeight»,«ENDIF»
+		«IF image.width > 0»"imgW": «image.width»,«ENDIF»
+		«IF image.height > 0»"imgH": «image.height»,«ENDIF»
 		«generateStyle(null, "width" -> '''«image.width»%''')»
 	'''
 	 
@@ -412,8 +412,8 @@ class ManifestJson {
 		"type": "uploadimageoutput",
 		"field": "«getName(uploadedImageOutput)»",
 		"datatype": "string",
-		«IF uploadedImageOutput.imgWidth > 0»"imgW": «uploadedImageOutput.imgWidth»,«ENDIF»
-		«IF uploadedImageOutput.imgHeight > 0»"imgH": «uploadedImageOutput.imgHeight»,«ENDIF»
+		«IF uploadedImageOutput.width > 0»"imgW": «uploadedImageOutput.width»,«ENDIF»
+		«IF uploadedImageOutput.height > 0»"imgH": «uploadedImageOutput.height»,«ENDIF»
 		«generateStyle(null, "width" -> '''«uploadedImageOutput.width»%''')»
 	'''
 	

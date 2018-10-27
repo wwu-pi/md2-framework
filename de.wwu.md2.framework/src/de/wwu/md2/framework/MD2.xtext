@@ -393,11 +393,7 @@ Button:
  * the text will be set in brackets behind the ID
  */
 ButtonShorthandDefinition returns Button:
-	'Button' name = EID '(' text = STRING ')' ('{' (
-		('style' style = StyleAssignment)? &
-		('disabled' ((isDisabled ?= 'true') | 'false'))? &
-		('width' width = PERCENT)?
-	) '}')?
+	'Button' name = EID '(' text = STRING ')'
 ;
 
 /*
@@ -427,9 +423,7 @@ Tooltip:
  * the image source will be set in brackets behind the ID
  */
 TooltipShorthandDefinition returns Tooltip:
-	'Tooltip' name = EID '(' text = STRING ')' ('{'
-		('width' width = PERCENT)?
-	'}')?
+	'Tooltip' name = EID '(' text = STRING ')'
 ;
 
 /*
@@ -457,11 +451,7 @@ Image:
  * the image source will be set in brackets behind the ID
  */
 ImageShorthandDefinition returns Image:
-	'Image' name = EID '(' src = STRING ')' ('{' (
-		('imgHeight' imgHeight = INT)? &
-		('imgWidth' imgWidth = INT)? &
-		('width' width = PERCENT)?
-	) '}')?
+	'Image' name = EID '(' src = STRING ')'
 ;
 
 /*
@@ -483,8 +473,7 @@ ImageExtendedDefinition returns Image:
  */
 UploadedImageOutput:
 	'UploadedImageOutput' name = EID ('{' (
-		('imgHeight' imgHeight = INT)? &
-		('imgWidth' imgWidth = INT)? &
+		('height' height = INT)? &
 		('width' width = INT)?
 	) '}')?
 ;
@@ -504,10 +493,7 @@ Label:
  * the text will be set in brackets behind the ID
  */
 LabelShorthandDefinition returns Label:
-	'Label' name = EID '(' text = STRING ')' ('{' (
-		('style' style = StyleAssignment)? &
-		('width' width = PERCENT)?
-	) '}')?
+	'Label' name = EID '(' text = STRING ')'
 ;
 
 /*

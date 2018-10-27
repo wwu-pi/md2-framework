@@ -277,12 +277,12 @@ class IOSView {
 		«««Element height»»»
 		«IF element.height > 0»
 			«qualifiedName».height = Float(«element.height»)
-		«ELSEIF element.imgHeight > 0»
-			«qualifiedName».height = Float(«element.imgHeight»)
+		«ELSEIF element.height > 0»
+			«qualifiedName».height = Float(«element.height»)
 		«ENDIF»
 		«««Element width»»»
-		«IF element.imgWidth > 0»
-			«qualifiedName».width = Float(«element.imgWidth»)
+		«IF element.width > 0»
+			«qualifiedName».width = Float(«element.width»)
 		«ELSEIF element.width> 0»
 			«qualifiedName».width = Float(«element.width»)
 		«ENDIF»
