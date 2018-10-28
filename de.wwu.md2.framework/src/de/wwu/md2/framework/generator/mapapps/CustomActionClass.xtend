@@ -294,7 +294,7 @@ class CustomActionClass {
         var «varName» = this.$.actionFactory.getWebServiceCallAction("«action.webServiceCall.url»", "«action.webServiceCall.method»", «action.webServiceCall.queryparams.transformToJson», «action.webServiceCall.bodyparams.transformToJson»);
 	'''
 	
-	def public static String transformToJson(List<RESTParam> params){
+	def static String transformToJson(List<RESTParam> params){
 		var json = '''
 		[
 			«FOR RESTParam p : params SEPARATOR ","»
@@ -308,7 +308,7 @@ class CustomActionClass {
 	 * Extracts the type of the value and formats it for JavaScript.
 	 * If a contentProviderField is referenced, add a function to load the data from the contentprovider
 	 */
-	def public static String getType(RESTParam param)
+	def static String getType(RESTParam param)
 	{
 		switch (param.value){
 			//for values written manually in model
@@ -334,7 +334,7 @@ class CustomActionClass {
 	    return tail.attributeRef
 	}
 	
-	def public static WorkflowElement getContainingWorkflowElement(FireEventAction context)
+	def static WorkflowElement getContainingWorkflowElement(FireEventAction context)
 	{
 		var EObject current = context;
 		while(!(current.eContainer() instanceof WorkflowElement))

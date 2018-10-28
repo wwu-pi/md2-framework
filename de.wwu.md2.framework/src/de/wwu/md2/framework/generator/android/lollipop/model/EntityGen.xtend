@@ -22,7 +22,7 @@ import java.util.List
 
 class EntityGen {
 	
-	private static List<ForeignObject> foreinReferences= new ArrayList<ForeignObject>();
+	static List<ForeignObject> foreinReferences= new ArrayList<ForeignObject>();
 	
 	def static generateEntities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<Entity> entities) {
@@ -351,7 +351,7 @@ class EntityGen {
 		}
 	'''
 	
-	public def static String getMd2TypeStringForAttributeType(AttributeType attributeType){
+	def static String getMd2TypeStringForAttributeType(AttributeType attributeType){
 		switch attributeType{
 			ReferencedType: attributeType.element.name.toFirstUpper
 			IntegerType: "Md2Integer"

@@ -13,7 +13,7 @@ import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 abstract class AbstractPreprocessor {
 	
-	private static boolean isInitialized = false;
+	static boolean isInitialized = false;
 	
 	/**
 	 * The cloned working set.

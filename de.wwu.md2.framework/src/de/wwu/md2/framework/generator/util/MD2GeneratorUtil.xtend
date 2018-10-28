@@ -43,15 +43,15 @@ import org.eclipse.xtext.naming.IQualifiedNameProvider
 
 class MD2GeneratorUtil {
 	
-	private static IQualifiedNameProvider qualifiedNameProvider
-	private static HashMap<String, String> qualifiedNameToNameMapping
+	static IQualifiedNameProvider qualifiedNameProvider
+	static HashMap<String, String> qualifiedNameToNameMapping
 	
-	private static AtomicInteger atomicInteger = new AtomicInteger
+	static AtomicInteger atomicInteger = new AtomicInteger
 	
 	/**
 	 * Stores all names that were already delivered by getUnifiedName#name.
 	 */
-	private static HashSet<String> uniqueNames = newHashSet
+	static HashSet<String> uniqueNames = newHashSet
 	
 	/**
 	 * Get the base package name of the current project by taking a random package name and removing the last segment

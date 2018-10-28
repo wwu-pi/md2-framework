@@ -8,7 +8,6 @@ import de.wwu.md2.framework.mD2.ContainerElementReference
 import de.wwu.md2.framework.mD2.ContentElement
 import de.wwu.md2.framework.mD2.FlowLayoutPane
 import de.wwu.md2.framework.mD2.GridLayoutPane
-import de.wwu.md2.framework.mD2.SubViewContainer
 import de.wwu.md2.framework.mD2.TabbedAlternativesPane
 import de.wwu.md2.framework.mD2.View
 import de.wwu.md2.framework.mD2.ViewElementType

@@ -9,11 +9,11 @@ import org.eclipse.xtext.nodemodel.INode;
  */
 class PercentValueConverter extends AbstractNullSafeConverter<Integer> {
 	
-	override protected def internalToString(Integer value) {
+	override protected internalToString(Integer value) {
 		return value.toString() + "%";
 	}
 	
-	override protected def internalToValue(String percentString, INode node) throws ValueConverterException {
+	override protected internalToValue(String percentString, INode node) throws ValueConverterException {
 		
 		val index = percentString.indexOf("%");
 		

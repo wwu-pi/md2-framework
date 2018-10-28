@@ -1,6 +1,6 @@
 package de.wwu.md2.framework.generator.android.lollipop
 
-public class Settings {
+class Settings {
 	/***
 	 * Generator
 	 */

@@ -3,7 +3,6 @@
  */
 package de.wwu.md2.framework.ui
 
-import de.wwu.md2.framework.ui.generator.MD2BuilderParticipent
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
 import org.eclipse.xtext.builder.BuilderParticipant
 import de.wwu.md2.framework.ui.autoedit.MD2AutoEditStrategyProvider
@@ -16,6 +15,7 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeI
 import de.wwu.md2.framework.ui.highlighting.MD2TokenToAttributeIdMapper
 import org.eclipse.xtext.ui.wizard.IProjectCreator
 import de.wwu.md2.framework.ui.wizard.MD2ExtendedProjectCreator
+import de.wwu.md2.framework.ui.generator.MD2BuilderParticipant
 
 /**
  * Use this class to register components to be used within the Eclipse IDE.
@@ -23,28 +23,28 @@ import de.wwu.md2.framework.ui.wizard.MD2ExtendedProjectCreator
 @FinalFieldsConstructor
 class MD2UiModule extends AbstractMD2UiModule {
 	
-	override public Class<? extends BuilderParticipant> bindIXtextBuilderParticipant() {
-		return MD2BuilderParticipent;
+	override Class<? extends BuilderParticipant> bindIXtextBuilderParticipant() {
+		return MD2BuilderParticipant;
 	}
 
-	override def Class<? extends AbstractEditStrategyProvider> bindAbstractEditStrategyProvider() {
+	override Class<? extends AbstractEditStrategyProvider> bindAbstractEditStrategyProvider() {
 		return MD2AutoEditStrategyProvider;
 	}
 	
-	public def Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration () {
+	def Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration () {
 		return MD2HighlightingConfiguration;
 	}
 	
-	public def Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator(){
+	def Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator(){
 		return MD2HighlightingCalculator;
 	}
 	
-	public def Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindTokenToAttributeIdMapper() {
+	def Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindTokenToAttributeIdMapper() {
 		return MD2TokenToAttributeIdMapper;
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.ui.projectWizard.SimpleProjectWizardFragment2
-	override public Class<? extends IProjectCreator> bindIProjectCreator() {
+	override Class<? extends IProjectCreator> bindIProjectCreator() {
 		return MD2ExtendedProjectCreator;
 	}
 }

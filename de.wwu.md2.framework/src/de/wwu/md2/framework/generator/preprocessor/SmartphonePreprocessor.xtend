@@ -22,7 +22,7 @@ class SmartphonePreprocessor extends AbstractPreprocessor {
 	/**
 	 * Singleton instance of this preprocessor.
 	 */
-	private static SmartphonePreprocessor instance
+	static SmartphonePreprocessor instance
 	
 	
 	def static getPreprocessedModel(ResourceSet input, ResourceSet unprocessedInput) {

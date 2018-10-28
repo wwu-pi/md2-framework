@@ -21,19 +21,19 @@ class MD2Preprocessor extends AbstractPreprocessor {
 	/**
 	 * Each unique input model is only generated once and stored in this class attribute.
 	 */
-	private static ResourceSet preprocessedModel
+	static ResourceSet preprocessedModel
 	
 	/**
 	 * A reference to the previous (unpreprocessed) resource set is stored to compare it with
 	 * the current one. If they equal, the preprocessing can be skipped and the stored preprocessedModel
 	 * is returned.
 	 */
-	private static ResourceSet previousInputSet
+	static ResourceSet previousInputSet
 	
 	/**
 	 * Singleton instance of this preprocessor.
 	 */
-	private static MD2Preprocessor instance
+	static MD2Preprocessor instance
 	
 	/**
 	 * For each different model resource input, generate the preprocessed model.

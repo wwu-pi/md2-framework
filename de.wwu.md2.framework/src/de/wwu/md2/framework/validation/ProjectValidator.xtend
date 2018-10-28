@@ -16,7 +16,7 @@ import org.eclipse.xtext.validation.Check
 class ProjectValidator extends AbstractMD2Validator {
 
 	@Inject
-	private MD2Util util;
+	MD2Util util;
 
 	/**
 	 * Enforce that the declared package name complies with the actual package location

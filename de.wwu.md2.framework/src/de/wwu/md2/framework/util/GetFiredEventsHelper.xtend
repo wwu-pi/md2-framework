@@ -4,7 +4,7 @@ import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.FireEventAction
 import de.wwu.md2.framework.mD2.WorkflowElement
 
-public class GetFiredEventsHelper {
+class GetFiredEventsHelper {
 	
 	/**
 	 * Calculate the set of all Workflow Events that are fired by actions in a Workflow Element

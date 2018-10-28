@@ -189,7 +189,7 @@ class MD2BackendUtil {
 		}
 	}
 	
-	private static final String DEFAULT_INVOKE_EVENT_DESCRIPTION = "__invokedByWS"
+	static final String DEFAULT_INVOKE_EVENT_DESCRIPTION = "__invokedByWS"
 	
 	/**
 	 * Retrieve the event description if set, otherwise default

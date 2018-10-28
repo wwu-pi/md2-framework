@@ -25,9 +25,9 @@ import de.wwu.md2.framework.util.MD2Util;
 class MD2ProposalProvider extends AbstractMD2ProposalProvider {
 	
 	@Inject
-	private MD2Util util;
+	MD2Util util;
 	
-	override def completeMD2Model_Package(EObject model, Assignment assignment,
+	override completeMD2Model_Package(EObject model, Assignment assignment,
 			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		
 		super.completeMD2Model_Package(model, assignment, context, acceptor);
@@ -38,7 +38,7 @@ class MD2ProposalProvider extends AbstractMD2ProposalProvider {
 		acceptor.accept(createCompletionProposal(proposal, display, null, context));
 	}
 	
-	override def completePackageDefinition_PkgName(EObject model, Assignment assignment,
+	override completePackageDefinition_PkgName(EObject model, Assignment assignment,
 			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		
 		super.completePackageDefinition_PkgName(model, assignment, context, acceptor);
@@ -47,7 +47,7 @@ class MD2ProposalProvider extends AbstractMD2ProposalProvider {
 		acceptor.accept(createCompletionProposal(proposal, context));
 	}
 	
-	override def void complete_STRING(EObject model, RuleCall ruleCall,
+	override void complete_STRING(EObject model, RuleCall ruleCall,
 			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		
 		val displayString = new StyledString("\"\" [string]");
@@ -55,7 +55,7 @@ class MD2ProposalProvider extends AbstractMD2ProposalProvider {
 		acceptor.accept(createCompletionProposal("\"\"", displayString, null, 1000, "", context));
 	}
 	
-	override def void complete_INT(EObject model, RuleCall ruleCall,
+	override void complete_INT(EObject model, RuleCall ruleCall,
 			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		
 		val displayString = new StyledString("1 [integer]");
@@ -63,7 +63,7 @@ class MD2ProposalProvider extends AbstractMD2ProposalProvider {
 		acceptor.accept(createCompletionProposal("1", displayString, null, 999, "", context));
 	}
 	
-	override def void complete_FLOAT(EObject model, RuleCall ruleCall,
+	override void complete_FLOAT(EObject model, RuleCall ruleCall,
 			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		
 		val displayString = new StyledString("1.0 [number]");
@@ -71,7 +71,7 @@ class MD2ProposalProvider extends AbstractMD2ProposalProvider {
 		acceptor.accept(createCompletionProposal("1.0", displayString, null, 998, "", context));
 	}
 	
-	override def complete_Boolean(EObject model, RuleCall ruleCall,
+	override complete_Boolean(EObject model, RuleCall ruleCall,
 			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		
 		val displayStringFalse = new StyledString("false [boolean]");
@@ -83,7 +83,7 @@ class MD2ProposalProvider extends AbstractMD2ProposalProvider {
 		acceptor.accept(createCompletionProposal("true", displayStringTrue, null, 997, "", context));
 	}
 	
-	override def complete_DATE(EObject model, RuleCall ruleCall,
+	override complete_DATE(EObject model, RuleCall ruleCall,
 			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		
 		val displayString = new StyledString("2000-01-01 [date]");
@@ -91,7 +91,7 @@ class MD2ProposalProvider extends AbstractMD2ProposalProvider {
 		acceptor.accept(createCompletionProposal("2000-01-01", displayString, null, 996, "", context));
 	}
 	
-	override def complete_TIME(EObject model, RuleCall ruleCall,
+	override complete_TIME(EObject model, RuleCall ruleCall,
 			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		
 		val displayString = new StyledString("00:00:00Z [time]");
@@ -99,7 +99,7 @@ class MD2ProposalProvider extends AbstractMD2ProposalProvider {
 		acceptor.accept(createCompletionProposal("00:00:00Z", displayString, null, 995, "", context));
 	}
 	
-	override def complete_DATE_TIME(EObject model, RuleCall ruleCall,
+	override complete_DATE_TIME(EObject model, RuleCall ruleCall,
 			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		
 		val displayString = new StyledString("2000-01-01T00:00:00Z [datetime]");
@@ -107,7 +107,7 @@ class MD2ProposalProvider extends AbstractMD2ProposalProvider {
 		acceptor.accept(createCompletionProposal("2000-01-01T00:00:00Z", displayString, null, 994, "", context));
 	}
 	
-	override def completeKeyword(Keyword keyword, ContentAssistContext contentAssistContext, ICompletionProposalAcceptor acceptor) {
+	override completeKeyword(Keyword keyword, ContentAssistContext contentAssistContext, ICompletionProposalAcceptor acceptor) {
 		
 		if(keyword.getValue().equals("__Dummy")) {
 			return;

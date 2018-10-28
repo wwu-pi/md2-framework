@@ -266,7 +266,7 @@ class WebServiceClass {
 		}
 	'''
 	
-	def public static createEventHandlerWS(String basePackage) '''
+	def static createEventHandlerWS(String basePackage) '''
 		package «basePackage».ws;
 		
 		import javax.ejb.EJB;
@@ -309,7 +309,7 @@ class WebServiceClass {
 		}
 	'''
 	
-	def public static createWorkflowStateWS(String basePackage) '''
+	def static createWorkflowStateWS(String basePackage) '''
 		package «basePackage».ws;
 		
 		import java.util.ArrayList;
@@ -396,7 +396,7 @@ class WebServiceClass {
 		}
 	'''
 	
-	def public static createCallExternalWSProxy(String basePackage) '''
+	def static createCallExternalWSProxy(String basePackage) '''
         package «basePackage».ws;
         import org.json.simple.JSONValue;
         

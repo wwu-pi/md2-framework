@@ -16,7 +16,7 @@ import org.eclipse.xtext.validation.CheckMode
 
 class MD2TransformationRunner {
 	
-	private static final Logger logger = LogManager.getLogger(MD2TransformationRunner)
+	static final Logger logger = LogManager.getLogger(MD2TransformationRunner)
 	/**
 	 * Main program
 	 */	
@@ -38,7 +38,7 @@ class MD2TransformationRunner {
 	}
 	
 	def transformInput(String inputPath, String outputPath) {
-		new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri("../");
+		new StandaloneSetup().setPlatformUri("../");
 		
 		val injector = new MD2StandaloneSetup().createInjectorAndDoEMFRegistration
 		val XtextResourceSet source = injector.getInstance(XtextResourceSet)

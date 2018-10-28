@@ -75,7 +75,7 @@ class MD2Type {
 		Objects.hash(this.type, this.customName, this.isArray, this.isEnum, this.isEntity)
 	}
 	
-	override def equals(Object obj){
+	override equals(Object obj){
 		if(!(obj instanceof MD2Type)) return false
 		
 		return this.type === (obj as MD2Type).type && this.customName == (obj as MD2Type).customName
@@ -83,7 +83,7 @@ class MD2Type {
 			&& this.isEnum === (obj as MD2Type).isEnum
 	}
 	
-	override def String toString(){
+	override String toString(){
 		val name = customName ?: type.toString
 		
 		if(isArray) {

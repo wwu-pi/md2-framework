@@ -94,7 +94,7 @@ class Util {
         return signature.toString
     }
     
-    private static HashMap<EObject, String> uniqueParameterSignatures = newHashMap
+    static HashMap<EObject, String> uniqueParameterSignatures = newHashMap
 	
 	/**
 	 * Calculate a SHA1 hash of the string representation (@see eObjectRecusriveStringRepresentation) of an EObject.
