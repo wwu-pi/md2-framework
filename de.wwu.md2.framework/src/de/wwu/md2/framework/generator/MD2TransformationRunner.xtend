@@ -16,7 +16,7 @@ import org.eclipse.xtext.validation.CheckMode
 
 class MD2TransformationRunner {
 	
-	private static final Logger logger = LogManager.getLogger(MD2TransformationRunner)
+	static final Logger logger = LogManager.getLogger(MD2TransformationRunner)
 	/**
 	 * Main program
 	 */	

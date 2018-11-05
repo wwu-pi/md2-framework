@@ -10,7 +10,7 @@ class SmartwatchPreprocessor extends AbstractPreprocessor {
 	/**
 	 * Singleton instance of this preprocessor.
 	 */
-	private static SmartwatchPreprocessor instance
+	static SmartwatchPreprocessor instance
 	
 	
 	def static getPreprocessedModel(ResourceSet input) {

@@ -36,7 +36,7 @@ import de.wwu.md2.framework.generator.IPlatformGenerator;
 /**
  * Builder Participant changes the way the generators get invoked
  */
-public class MD2BuilderParticipent extends BuilderParticipant {
+public class MD2BuilderParticipant extends BuilderParticipant {
 	
 	@Inject
 	ResourceDescriptionsProvider resourceDescriptionsProvider;
@@ -77,7 +77,10 @@ public class MD2BuilderParticipent extends BuilderParticipant {
 			ResourceSet resourceSet = new ResourceSetImpl();
 			for (IContainer c : visibleContainers) {
 				for (IResourceDescription rd : c.getResourceDescriptions()) {
-					resourceSet.getResource(rd.getURI(), true);
+					if(!rd.getURI().lastSegment().equals("GenerateMD2.mwe2") &&
+							!rd.getURI().lastSegment().equals("MD2.xtext")) {
+						resourceSet.getResource(rd.getURI(), true);
+					}
 				}
 			}
 			

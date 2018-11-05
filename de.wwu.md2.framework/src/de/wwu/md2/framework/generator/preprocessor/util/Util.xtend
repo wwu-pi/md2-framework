@@ -9,7 +9,6 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.emf.ecore.util.EObjectContainmentEList
 import org.eclipse.emf.ecore.util.EcoreUtil
 
-import static extension de.wwu.md2.framework.generator.preprocessor.util.Helper.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
 
 /**
@@ -95,7 +94,7 @@ class Util {
         return signature.toString
     }
     
-    private static HashMap<EObject, String> uniqueParameterSignatures = newHashMap
+    static HashMap<EObject, String> uniqueParameterSignatures = newHashMap
 	
 	/**
 	 * Calculate a SHA1 hash of the string representation (@see eObjectRecusriveStringRepresentation) of an EObject.

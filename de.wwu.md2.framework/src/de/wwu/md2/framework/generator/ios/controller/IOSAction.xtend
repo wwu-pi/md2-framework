@@ -161,13 +161,7 @@ class IOSAction {
 	def static generateContentProviderResetAction(String actionSignature, ContentProviderResetAction action) '''
 		MD2ContentProviderResetAction(actionSignature: "«actionSignature»", 
 			contentProvider: MD2ContentProviderRegistry.instance.getContentProvider(
-			«IF action.contentProvider instanceof ContentProviderReference»
 				"«(action.contentProvider as ContentProviderReference).contentProvider.name»"
-			«ELSEIF action.contentProvider instanceof LocationProviderReference»
-				"location"
-			«ELSE»
-				«IOSGeneratorUtil.printError("IOSAction encountered unknown AbstractProviderReference: " + action.contentProvider)»
-			«ENDIF»
 			)!)
 	'''
 	

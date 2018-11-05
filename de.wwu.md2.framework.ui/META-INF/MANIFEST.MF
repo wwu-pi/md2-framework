@@ -25,3 +25,4 @@ Export-Package: de.wwu.md2.framework.ui.quickfix,
  de.wwu.md2.framework.ui.internal,
  de.wwu.md2.framework.ui.contentassist
 Bundle-Activator: de.wwu.md2.framework.ui.internal.FrameworkActivator
+Automatic-Module-Name: de.wwu.md2.framework.ui

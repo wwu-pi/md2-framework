@@ -31,7 +31,7 @@ class MD2Util {
 	@Inject
 	ResourceDescriptionsProvider resourceDescriptionsProvider;
 	
-	private static Set<Resource> resources;
+	static Set<Resource> resources;
 	
 	/**
 	 * Set of all keywords that are allowed in a controller.
@@ -179,11 +179,11 @@ class MD2Util {
 		
 		// Input stream that acts as a proxy to the zip input stream, needed because generateFileFromInputStream will close the stream given as a parameter
 		val entryStream = new InputStream() {
-			override public int read() throws IOException {
+			override int read() throws IOException {
 				return zipStream.read();
 			}
 			
-			override public int read(byte[] b, int off, int len) throws IOException {
+			override int read(byte[] b, int off, int len) throws IOException {
 				return zipStream.read(b, off, len);
 			}
 		};

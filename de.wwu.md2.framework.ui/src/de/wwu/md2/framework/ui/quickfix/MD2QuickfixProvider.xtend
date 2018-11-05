@@ -23,7 +23,7 @@ class MD2QuickfixProvider extends DefaultQuickfixProvider {
 	@Fix(ModelValidator.ENTITYWITHOUTUNDERSCORE)
 	def deleteUnderscoreFromEntityname(Issue issue, IssueResolutionAcceptor acceptor){
 		acceptor.accept(issue, "Delete underscore", "Deletes the underscore from the entity/enum identifier.", "upcase.png", new ISemanticModification() {
-			override public def apply(EObject element, IModificationContext context) {
+			override apply(EObject element, IModificationContext context) {
 				val entity = element as Entity;
 				entity.setName(entity.getName().substring(1));
 			}

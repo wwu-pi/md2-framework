@@ -11,31 +11,31 @@ import com.google.inject.Inject;
 class MD2ValueConverterService extends DefaultTerminalConverters {
 	
 	@Inject
-	private DateValueConverter dateValueConverter;
+	DateValueConverter dateValueConverter;
 	
 	@ValueConverter(rule = "DATE")
-	public def IValueConverter<Date> getDateConverter() {
+	def IValueConverter<Date> getDateConverter() {
 		return dateValueConverter;
 	}
 	
 	@Inject
-	private TimeValueConverter timeValueConverter;
+	TimeValueConverter timeValueConverter;
 	
 	@ValueConverter(rule = "TIME")
-	public def IValueConverter<Date> getTimeConverter() {
+	def IValueConverter<Date> getTimeConverter() {
 		return timeValueConverter;
 	}
 	
 	@Inject
-	private DateTimeValueConverter dateTimeValueConverter;
+	DateTimeValueConverter dateTimeValueConverter;
 	
 	@ValueConverter(rule = "DATE_TIME")
-	public def IValueConverter<Date> getDateTimeConverter() {
+	def IValueConverter<Date> getDateTimeConverter() {
 		return dateTimeValueConverter;
 	}
 	
 	@Inject
-	private PercentValueConverter percentValueConverter;
+	PercentValueConverter percentValueConverter;
 	
 	@ValueConverter(rule = "PERCENT")
 	def IValueConverter<Integer> getPercentConverter() {

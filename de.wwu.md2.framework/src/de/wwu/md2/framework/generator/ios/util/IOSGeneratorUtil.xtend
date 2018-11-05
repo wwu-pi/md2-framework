@@ -13,7 +13,7 @@ class IOSGeneratorUtil {
 	/**
 	 * A map of references (e.g. objects, files, etc.) and the generated Apple-UUID value. 
 	 */
-	private static HashMap<String, String> uuidMapping
+	static HashMap<String, String> uuidMapping
 	
 	/**
 	 * Output a common class header for all generated files.
