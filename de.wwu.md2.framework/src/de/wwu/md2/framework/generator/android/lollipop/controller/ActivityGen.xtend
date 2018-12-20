@@ -21,8 +21,6 @@ import de.wwu.md2.framework.mD2.WorkflowElementReference
 
 class ActivityGen {
 	
-	static boolean FirstCall = true;
-	
 	def static generateActivities(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
 		Iterable<ViewFrame> frames, Iterable<WorkflowElementReference> startableWorkflowElements, Iterable<Entity> entities, App app) {
 		
@@ -39,7 +37,6 @@ class ActivityGen {
 				}
 		]
 		
-		FirstCall = true;
 	}
 	
 		//generiert ListAdapter für Inhalt einer Listenansicht
@@ -256,6 +253,7 @@ class ActivityGen {
 		import android.support.v7.widget.DividerItemDecoration;
 		import android.support.v7.widget.DefaultItemAnimator;
 		
+		import de.wwu.md2.android.md2library.SensorHelper; // TODO Generalize
 		import «mainPackage».md2.controller.Controller;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_WIDGETREGISTRY_PACKAGE_NAME»;
@@ -294,10 +292,8 @@ class ActivityGen {
 				«ENDIF»
 			}
 
-	    «IF FirstCall»
-			//HardwareSensoren
-			«generateSensor(entities)»
-		«ENDIF»
+	    //HardwareSensoren
+		«generateSensorDef(entities)»
 		
 		    @Override
 		    protected void onStart(){
@@ -307,6 +303,9 @@ class ActivityGen {
 		        «FOR viewElement: frame.eAllContents.filter(ViewElementType).toIterable»
 		        	«generateLoadViewElement(viewElement)»
 		        «ENDFOR»
+		        
+		        //HardwareSensoren
+		        «generateSensor(entities)»
 		        
 		        Md2TaskQueue.getInstance().tryExecutePendingTasks();
 		    }
@@ -457,5 +456,15 @@ class ActivityGen {
 			println(result)
 			return result;
 		}
+	}
+	
+	private static def String generateSensorDef(Iterable<Entity> entities){
+		var String result = "";
+		for(attribute : entities.flatMap[it.attributes].filter[it.type instanceof SensorType]){
+			for(param : (attribute.type as SensorType).params.filter(AttrSensorTyp).map[it as AttrSensorTyp]){
+				result += ("SensorHelper meinSensorHelper_" + attribute.name +";")
+			}
+		}
+		return result
 	}
 }

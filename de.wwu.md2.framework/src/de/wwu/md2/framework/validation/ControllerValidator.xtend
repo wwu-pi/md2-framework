@@ -479,7 +479,6 @@ class ControllerValidator extends AbstractMD2Validator {
 			acceptError(error, next, null, -1, null);
 		}
 	}
-
 	/**
 	 * Avoid empty processChains.
 	 * @param processChain
@@ -630,10 +629,11 @@ class ControllerValidator extends AbstractMD2Validator {
 				MD2Package.eINSTANCE.webServiceCall_Bodyparams, NOBODYPARAMSWHENGET);
 		}
 	}
+    
+	/////////////////////////////////////////////////////////
+	/// Invoke Validators
+	/////////////////////////////////////////////////////////
 
-	// ///////////////////////////////////////////////////////
-	// / Invoke Validators
-	// ///////////////////////////////////////////////////////
 	public static final String UNSUPPORTEDRESTMETHOD = "unsupportedRESTMethod"
 
 	/**

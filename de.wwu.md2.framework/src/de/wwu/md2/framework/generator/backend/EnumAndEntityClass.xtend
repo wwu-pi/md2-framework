@@ -15,6 +15,7 @@ import de.wwu.md2.framework.mD2.TimeType
 
 import static extension de.wwu.md2.framework.util.IterableExtensions.*
 import de.wwu.md2.framework.mD2.FileType
+import de.wwu.md2.framework.mD2.SensorType
 
 class EnumAndEntityClass {
 	
@@ -437,6 +438,7 @@ class EnumAndEntityClass {
 			DateType: type.params
 			TimeType: type.params
 			DateTimeType: type.params
+			SensorType: type.params
 		}.exists(p | p instanceof AttrIsOptional)
 		
 		val isEntity = type instanceof ReferencedType && (type as ReferencedType).element instanceof Entity
