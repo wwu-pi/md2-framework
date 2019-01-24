@@ -333,6 +333,10 @@ class LayoutGen {
 			buttonElement.setAttribute("android:layout_columnWeight", String.valueOf(button.width))
 		}
 		
+		if(button.focusNext !== null){
+			buttonElement.setAttribute("android:nextFocusForward", "@id/" + qnp.getFullyQualifiedName(button.focusNext).toString("_"))
+		}
+		
 		buttonElement.setAttribute("android:layout_height", "wrap_content")
 		buttonElement.setAttribute("android:layout_gravity", "fill_horizontal")
 		buttonElement.setAttribute("android:layout_marginBottom", elementMarginBottom)

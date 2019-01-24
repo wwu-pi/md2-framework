@@ -405,7 +405,8 @@ ButtonExtendedDefinition returns Button:
 		'text' text = STRING &
 		('style' style = StyleAssignment)? &
 		('disabled' ((isDisabled ?= 'true') | 'false'))? &
-		('width' width = PERCENT)?
+		('width' width = PERCENT)? &
+		('focusNext' focusNext = [ContentElement])?
 	) '}'
 ;
 
