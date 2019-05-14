@@ -335,7 +335,7 @@ class LayoutGen {
 		
 		if(button.focusNext !== null){
 			buttonElement.setAttribute("android:nextFocusForward", "@id/" + qnp.getFullyQualifiedName(button.focusNext).toString("_"))
-		}
+		} // TODO fallback solution when nextFocusForward is not specified -> use next ContentElement (potentially in following containers) 
 		
 		buttonElement.setAttribute("android:layout_height", "wrap_content")
 		buttonElement.setAttribute("android:layout_gravity", "fill_horizontal")

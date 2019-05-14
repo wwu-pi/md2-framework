@@ -412,8 +412,8 @@ class ManifestJson {
 		"type": "uploadimageoutput",
 		"field": "«getName(uploadedImageOutput)»",
 		"datatype": "string",
-		«IF uploadedImageOutput.imgWidth > 0»"imgW": «uploadedImageOutput.imgWidth»,«ENDIF»
-		«IF uploadedImageOutput.imgHeight > 0»"imgH": «uploadedImageOutput.imgHeight»,«ENDIF»
+		«IF uploadedImageOutput.width > 0»"imgW": «uploadedImageOutput.width»,«ENDIF»
+		«IF uploadedImageOutput.height > 0»"imgH": «uploadedImageOutput.height»,«ENDIF»
 		«generateStyle(null, "width" -> '''«uploadedImageOutput.width»%''')»
 	'''
 	
