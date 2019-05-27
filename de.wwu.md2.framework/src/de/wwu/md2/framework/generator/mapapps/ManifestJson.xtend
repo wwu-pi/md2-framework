@@ -24,7 +24,6 @@ import de.wwu.md2.framework.mD2.StyleAssignment
 import de.wwu.md2.framework.mD2.StyleDefinition
 import de.wwu.md2.framework.mD2.TabbedAlternativesPane
 import de.wwu.md2.framework.mD2.TextInput
-import de.wwu.md2.framework.mD2.TextInputType
 import de.wwu.md2.framework.mD2.TimeInput
 import de.wwu.md2.framework.mD2.Tooltip
 import de.wwu.md2.framework.mD2.UploadedImageOutput
@@ -35,6 +34,7 @@ import de.wwu.md2.framework.mD2.WorkflowElement
 import static extension de.wwu.md2.framework.generator.mapapps.util.MD2MapappsUtil.*
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
 import static extension de.wwu.md2.framework.util.StringExtensions.*
+import de.wwu.md2.framework.mD2.InputType
 
 class ManifestJson {
 		
@@ -468,7 +468,7 @@ class ManifestJson {
 	'''
 	
 	def static getDataformControl(TextInput input) {
-		if (input.type !== null && input.type.equals(TextInputType.TEXTAREA)) {
+		if (input.type !== null && input.type.equals(InputType.TEXTAREA)) {
 			'''textarea'''
 		} else {
 			'''textbox'''

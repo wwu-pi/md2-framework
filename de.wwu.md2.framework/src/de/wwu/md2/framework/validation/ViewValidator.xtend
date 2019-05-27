@@ -3,20 +3,30 @@ package de.wwu.md2.framework.validation
 import com.google.common.collect.Maps
 import com.google.common.collect.Sets
 import com.google.inject.Inject
+import de.wwu.md2.framework.mD2.BooleanInput
 import de.wwu.md2.framework.mD2.ContainerElement
 import de.wwu.md2.framework.mD2.ContainerElementReference
 import de.wwu.md2.framework.mD2.ContentElement
 import de.wwu.md2.framework.mD2.ContentProviderPath
+import de.wwu.md2.framework.mD2.DateInput
+import de.wwu.md2.framework.mD2.DateTimeInput
 import de.wwu.md2.framework.mD2.EntitySelector
+import de.wwu.md2.framework.mD2.FileUpload
 import de.wwu.md2.framework.mD2.GridLayoutPane
 import de.wwu.md2.framework.mD2.GridLayoutPaneColumnsParam
 import de.wwu.md2.framework.mD2.GridLayoutPaneParam
 import de.wwu.md2.framework.mD2.GridLayoutPaneRowsParam
+import de.wwu.md2.framework.mD2.InputType
+import de.wwu.md2.framework.mD2.IntegerInput
 import de.wwu.md2.framework.mD2.ListView
 import de.wwu.md2.framework.mD2.MD2Package
+import de.wwu.md2.framework.mD2.NumberInput
+import de.wwu.md2.framework.mD2.OptionInput
 import de.wwu.md2.framework.mD2.Spacer
 import de.wwu.md2.framework.mD2.TabSpecificParam
 import de.wwu.md2.framework.mD2.TabbedAlternativesPane
+import de.wwu.md2.framework.mD2.TextInput
+import de.wwu.md2.framework.mD2.TimeInput
 import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewFrame
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
@@ -251,5 +261,71 @@ class ViewValidator extends AbstractMD2Validator {
 		}
 	}
 
-	    
+	@Check
+	def checkInputType(TextInput input){
+		if(input.type !== InputType.DEFAULT && 
+			input.type !== InputType.INPUT && 
+			input.type !== InputType.TEXTAREA && 
+			input.type !== InputType.PASSWORD)
+		
+			error("'" + input.type + "' is not a valid input type for this field.", MD2Package.eINSTANCE.inputElement_Type);
+	}   
+	
+	@Check
+	def checkInputType(OptionInput input){
+		if(input.type !== InputType.DEFAULT)
+			error("'" + input.type + "' is not a valid input type for this field.", MD2Package.eINSTANCE.inputElement_Type);
+	} 
+	
+	@Check
+	def checkInputType(DateTimeInput input){
+		if(input.type !== InputType.DEFAULT)
+			error("'" + input.type + "' is not a valid input type for this field.", MD2Package.eINSTANCE.inputElement_Type);
+	} 
+	
+	@Check
+	def checkInputType(TimeInput input){
+		if(input.type !== InputType.DEFAULT)
+			error("'" + input.type + "' is not a valid input type for this field.", MD2Package.eINSTANCE.inputElement_Type);
+	} 
+	
+	@Check
+	def checkInputType(DateInput input){
+		if(input.type !== InputType.DEFAULT)
+			error("'" + input.type + "' is not a valid input type for this field.", MD2Package.eINSTANCE.inputElement_Type);
+	} 
+	
+	@Check
+	def checkInputType(NumberInput input){
+		if(input.type !== InputType.DEFAULT &&
+			input.type !== InputType.INPUT)
+	
+			error("'" + input.type + "' is not a valid input type for this field.", MD2Package.eINSTANCE.inputElement_Type);
+	} 
+	
+	@Check
+	def checkInputType(IntegerInput input){
+		if(input.type !== InputType.DEFAULT &&
+			input.type !== InputType.INPUT)
+			
+			error("'" + input.type + "' is not a valid input type for this field.", MD2Package.eINSTANCE.inputElement_Type);
+	} 
+	
+	@Check
+	def checkInputType(BooleanInput input){
+		if(input.type !== InputType.DEFAULT)
+			error("'" + input.type + "' is not a valid input type for this field.", MD2Package.eINSTANCE.inputElement_Type);
+	} 
+	
+	@Check
+	def checkInputType(FileUpload input){
+		if(input.type !== InputType.DEFAULT)
+			error("'" + input.type + "' is not a valid input type for this field.", MD2Package.eINSTANCE.inputElement_Type);
+	} 
+	
+	@Check
+	def checkInputType(EntitySelector input){
+		if(input.type !== InputType.DEFAULT)
+			error("'" + input.type + "' is not a valid input type for this field.", MD2Package.eINSTANCE.inputElement_Type);
+	}
 }
