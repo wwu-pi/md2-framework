@@ -139,13 +139,8 @@ InputElement:
  */
 TextInput:
 	'TextInput' name = EID ('{' (
-		('label' labelText = STRING)? &
-		('tooltip' tooltipText = STRING)? &
-		('type' type = InputType)? &
-		('disabled' ((isDisabled ?= 'true') | 'false'))? &
-		('default' defaultValue = STRING)? &
-		('width' width = PERCENT)?
-	) '}')?
+		('default' defaultValue = STRING)? 
+	) InputParams '}')? // due to Xtext bug a fragment cannot be part of unordered group yet https://www.eclipse.org/forums/index.php/t/1075202/
 ;
 
 /*
@@ -155,13 +150,8 @@ TextInput:
  */
 BooleanInput:
 	'BooleanInput' name = EID ('{' (
-		('label' labelText = STRING)? &
-		('tooltip' tooltipText = STRING)? &
-		('type' type = InputType)? &
-		('disabled' ((isDisabled ?= 'true') | 'false'))? &
-		('default' defaultValue = ('true' | 'false'))? &
-		('width' width = PERCENT)?
-	) '}')?
+		('default' defaultValue = ('true' | 'false'))?
+	) InputParams '}')?
 ;
 
 /*
@@ -170,13 +160,8 @@ BooleanInput:
  */
 IntegerInput:
 	'IntegerInput' name = EID ('{' (
-		('label' labelText = STRING)? &
-		('tooltip' tooltipText = STRING)? &
-		('type' type = InputType)? &
-		('disabled' ((isDisabled ?= 'true') | 'false'))? &
-		('default' defaultValue = INT)? &
-		('width' width = PERCENT)?
-	) '}')?
+		('default' defaultValue = INT)?
+	) InputParams '}')?
 ;
 
 /*
@@ -185,14 +170,9 @@ IntegerInput:
  */
 NumberInput:
 	'NumberInput' name = EID ('{' (
-		('label' labelText = STRING)? &
-		('tooltip' tooltipText = STRING)? &
-		('type' type = InputType)? &
-		('disabled' ((isDisabled ?= 'true') | 'false'))? &
 		( placesSet?='places' places=INT)? &
-		('default' defaultValue = FLOAT)? &
-		('width' width = PERCENT)?
-	) '}')?
+		('default' defaultValue = FLOAT)?
+	) InputParams '}')?
 ;
 
 /*
@@ -201,13 +181,8 @@ NumberInput:
  */
 DateInput:
 	'DateInput' name = EID ('{' (
-		('label' labelText = STRING)? &
-		('tooltip' tooltipText = STRING)? &
-		('type' type = InputType)? &
-		('disabled' ((isDisabled ?= 'true') | 'false'))? &
-		('default' defaultValue = DATE)? &
-		('width' width = PERCENT)?
-	) '}')?
+		('default' defaultValue = DATE)?
+	) InputParams '}')?
 ;
 
 /*
@@ -216,13 +191,8 @@ DateInput:
  */
 TimeInput:
 	'TimeInput' name = EID ('{' (
-		('label' labelText = STRING)? &
-		('tooltip' tooltipText = STRING)? &
-		('type' type = InputType)? &
-		('disabled' ((isDisabled ?= 'true') | 'false'))? &
-		('default' defaultValue = TIME)? &
-		('width' width = PERCENT)?
-	) '}')?
+		('default' defaultValue = TIME)?
+	) InputParams '}')?
 ;
 
 /*
@@ -231,13 +201,8 @@ TimeInput:
  */
 DateTimeInput:
 	'DateTimeInput' name = EID ('{' (
-		('label' labelText = STRING)? &
-		('tooltip' tooltipText = STRING)? &
-		('type' type = InputType)? &
-		('disabled' ((isDisabled ?= 'true') | 'false'))? &
-		('default' defaultValue = DATE_TIME)? &
-		('width' width = PERCENT)?
-	) '}')?
+		('default' defaultValue = DATE_TIME)?
+	) InputParams '}')?
 ;
 
 /*
@@ -245,15 +210,10 @@ DateTimeInput:
  */
 OptionInput:
 	'OptionInput' name = EID ('{' (
-		('label' labelText = STRING)? &
-		('tooltip' tooltipText = STRING)? &
-		('type' type = InputType)? &
-		('disabled' ((isDisabled ?= 'true') | 'false'))? &
 		('default' defaultValue = STRING)? &
-		('width' width = PERCENT)? &
 		// Optional: Options may be inferred from the mapped model if its data type is an enum
 		('options' (enumReference = [Enum] | '{' (enumBody = EnumBody)? '}'))?
-	) '}')?
+	) InputParams '}')?
 ;
 
 /*
@@ -261,14 +221,9 @@ OptionInput:
  */
 FileUpload:
 	'FileUpload' name = EID ('{' (
-		('label' labelText = STRING)? &
-		('tooltip' tooltipText = STRING)? &
-		('disabled' ((isDisabled ?= 'true') | 'false'))? &
 		('style' style = StyleAssignment)? &
-		('width' width = PERCENT)? &
-		('type' type = InputType)? &
 		('text' buttonValueText = STRING)?
-	) '}')?
+	) InputParams '}')?
 ;
 
 /*
@@ -279,13 +234,19 @@ FileUpload:
  */
 EntitySelector:
 	'EntitySelector' name = EID '{' (
-		('label' labelText = STRING)? &
-		('tooltip' tooltipText = STRING)? &
-		('disabled' ((isDisabled ?= 'true') | 'false'))? &
-		('width' width = PERCENT)? &
-		('type' type = InputType)? &
 		('textProposition' textProposition = ContentProviderPath)
-	) '}'
+	) InputParams '}'
+;
+
+/*
+ * Common options for all InputElements
+ */
+fragment InputParams*:
+	('label' labelText = STRING)? &
+	('tooltip' tooltipText = STRING)? &
+	('type' type = InputType)? &
+	('disabled' ((isDisabled ?= 'true') | 'false'))? &
+	('width' width = PERCENT)?
 ;
 
 /*

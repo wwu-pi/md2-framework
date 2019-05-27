@@ -151,7 +151,6 @@ class MD2Formatter extends AbstractDeclarativeFormatter {
 		for (Keyword k : f.findKeywords("places")) {
 			c.setLinewrap.before(k);
 		}
-		c.setLinewrap.before(f.optionInputAccess.optionsKeyword_2_1_6_0)
 	}
 	
 	
