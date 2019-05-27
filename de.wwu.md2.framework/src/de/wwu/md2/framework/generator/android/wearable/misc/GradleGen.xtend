@@ -49,7 +49,7 @@ class GradleGen {
 		    defaultConfig {
 		        applicationId "«appId»"
 		        minSdkVersion 24
-		        targetSdkVersion 25
+		        targetSdkVersion 28
 		        versionCode 1
 		        versionName "1.0"
 		    }
@@ -71,14 +71,14 @@ class GradleGen {
 		
 		dependencies {
 		    compile fileTree(include: ['*.jar'], dir: 'libs')
-		       compile project('«Settings.MD2LIBRARY_DEBUG_PROJECT»')
-		       compile project('«Settings.MD2LIBRARY_WEAR_PROJECT»')
-		       provided 'com.google.android.wearable:wearable:2.0.1'
-		       compile 'com.google.android.support:wearable:2.0.1'
-		       compile 'com.google.android.gms:play-services-wearable:10.2.1'
-		       compile group: 'com.j256.ormlite', name: 'ormlite-android', version: '4.45'
-		       compile 'com.google.code.gson:gson:2.8.0'
-		       compile 'com.android.volley:volley:1.0.0'
+		       implementation project('«Settings.MD2LIBRARY_DEBUG_PROJECT»')
+		       implementation project('«Settings.MD2LIBRARY_WEAR_PROJECT»')
+		       compileOnly 'com.google.android.wearable:wearable:2.0.1'
+		       implementation 'com.google.android.support:wearable:2.0.1'
+		       implementation 'com.google.android.gms:play-services-wearable:10.2.1'
+		       implementation group: 'com.j256.ormlite', name: 'ormlite-android', version: '4.45'
+		       implementation 'com.google.code.gson:gson:2.8.2'
+		       implementation 'com.android.volley:volley:1.1.0'
 		}
 	'''
 	
