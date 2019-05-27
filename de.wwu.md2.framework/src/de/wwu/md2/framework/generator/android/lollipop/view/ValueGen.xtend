@@ -111,7 +111,7 @@ class ValueGen {
 		<resources>
 		    <string name="StartActivity">«mainPackage».StartActivity</string>
 		    «FOR rce : rootContainerElements»
-		    	<string name="«rce.name»Activity">«mainPackage».«rce.name»Activity</string>
+		    	<string name="«rce.name»Activity">«mainPackage».«rce.name.toFirstUpper»Activity</string>
 			«ENDFOR»
 		</resources>
 	'''
