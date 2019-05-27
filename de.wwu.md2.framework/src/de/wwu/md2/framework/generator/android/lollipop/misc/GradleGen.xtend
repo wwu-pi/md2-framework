@@ -21,7 +21,7 @@ class GradleGen {
 				google()
 			}
 			dependencies {
-				classpath 'com.android.tools.build:gradle:3.0.1'
+				classpath 'com.android.tools.build:gradle:3.4.1'
 			}
 		}
 

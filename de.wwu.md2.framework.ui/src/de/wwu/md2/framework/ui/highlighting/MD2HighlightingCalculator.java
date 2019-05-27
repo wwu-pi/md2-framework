@@ -26,7 +26,7 @@ import de.wwu.md2.framework.mD2.HexColorDef;
 import de.wwu.md2.framework.mD2.LocationField;
 import de.wwu.md2.framework.mD2.NamedColor;
 import de.wwu.md2.framework.mD2.TextInput;
-import de.wwu.md2.framework.mD2.TextInputType;
+import de.wwu.md2.framework.mD2.InputType;
 
 public class MD2HighlightingCalculator implements ISemanticHighlightingCalculator {
 	
@@ -101,7 +101,7 @@ public class MD2HighlightingCalculator implements ISemanticHighlightingCalculato
 					&& node.getSemanticElement() != null && node.getSemanticElement() instanceof ContentProvider) {
 				acceptor.addPosition(node.getOffset(), node.getLength(), MD2HighlightingConfiguration.PARAMETER_VALUE);
 			} else if(node.getGrammarElement() != null && node.getGrammarElement() instanceof EnumLiteralDeclaration
-					&& ((EnumLiteralDeclaration)node.getGrammarElement()).getEnumLiteral().getInstance() instanceof TextInputType
+					&& ((EnumLiteralDeclaration)node.getGrammarElement()).getEnumLiteral().getInstance() instanceof InputType
 					&& node.getSemanticElement() != null && node.getSemanticElement() instanceof TextInput) {
 				acceptor.addPosition(node.getOffset(), node.getLength(), MD2HighlightingConfiguration.PARAMETER_VALUE);
 			} else if(node.getGrammarElement() != null && node.getGrammarElement() instanceof EnumLiteralDeclaration
