@@ -123,10 +123,6 @@ class MD2Formatter extends AbstractDeclarativeFormatter {
 		c.setLinewrap.before(f.styleBodyAccess.colorKeyword_2_1_0)
 		c.setLinewrap.before(f.styleBodyAccess.textStyleKeyword_2_2_0)
 
-		//Button
-		c.setLinewrap.before(f.buttonShorthandDefinitionAccess.buttonKeyword_0)
-		c.setLinewrap.before(f.buttonExtendedDefinitionAccess.buttonKeyword_0)
-		
 		//Attributes (a somewhat dirty way of handling the keywords [affects the whole model], but seems to work ;) )
 		for (Keyword k : f.findKeywords("label")) {
 			c.setLinewrap.before(k);
@@ -155,9 +151,6 @@ class MD2Formatter extends AbstractDeclarativeFormatter {
 		for (Keyword k : f.findKeywords("places")) {
 			c.setLinewrap.before(k);
 		}
-		c.setLinewrap.before(f.optionInputAccess.optionsKeyword_2_1_6_0)
-		c.setLinewrap.before(f.entitySelectorAccess.textPropositionKeyword_3_4_0)
-		
 	}
 	
 	

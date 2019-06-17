@@ -17,7 +17,8 @@ import org.eclipse.xtext.validation.NamesAreUniqueValidator
 	ControllerValidator,
 	ModelValidator,
 	ViewValidator,
-	WorkflowValidator
+	WorkflowValidator,
+	AccessibilityVisionValidator
 	//AndroidLollipopValidator,
 	//IOSValidator
 ])

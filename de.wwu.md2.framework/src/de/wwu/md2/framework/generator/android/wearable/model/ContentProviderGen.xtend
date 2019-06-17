@@ -149,7 +149,7 @@ class ContentProviderGen {
 						«FOR attribute: (content.entity as Entity).attributes»			
 						case "«attribute.name»":
 							«IF !(attribute.type instanceof StringType)»
-								// Umgang mit anderen Datentypen hier einfügen - derzeit kein Support für Listen innerhalb v. Entities
+								// Umgang mit anderen Datentypen hier einfuegen - derzeit kein Support fuer Listen innerhalb v. Entities
 								// angenommen wird entweder Md2String oder passender Md2Type als value
 								
 								«IF (attribute.type instanceof IntegerType)»

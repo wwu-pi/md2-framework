@@ -21,7 +21,7 @@ class GradleGen {
 				google()
 			}
 			dependencies {
-				classpath 'com.android.tools.build:gradle:3.0.1'
+				classpath 'com.android.tools.build:gradle:3.4.1'
 			}
 		}
 
@@ -44,7 +44,7 @@ class GradleGen {
 		    defaultConfig {
 		        applicationId "«appId»"
 		        minSdkVersion 22
-		        targetSdkVersion 25
+		        targetSdkVersion 28
 		        versionCode 1
 		        versionName "1.0"
 		    }
@@ -65,12 +65,12 @@ class GradleGen {
 		}
 		
 		dependencies {
-		    compile fileTree(include: ['*.jar'], dir: 'libs')
-		    compile project('«Settings.MD2LIBRARY_DEBUG_PROJECT»')
-			compile group: 'com.j256.ormlite', name: 'ormlite-android', version: '4.45'
-		    compile 'com.google.code.gson:gson:2.8.0'
-			compile 'com.android.volley:volley:1.0.0'
-			compile 'com.android.support:recyclerview-v7:26.1.0'
+		    implementation fileTree(include: ['*.jar'], dir: 'libs')
+		    implementation project('«Settings.MD2LIBRARY_DEBUG_PROJECT»')
+			implementation group: 'com.j256.ormlite', name: 'ormlite-android', version: '4.45'
+		    implementation 'com.google.code.gson:gson:2.8.2'
+			implementation 'com.android.volley:volley:1.1.0'
+			implementation 'com.android.support:recyclerview-v7:26.1.0'
 		}
 	'''
 	

@@ -17,12 +17,14 @@ class MD2NewProjectWizardInitialContents {
 	MD2ProjectInfo projectInfo
 	
 	def generateInitialContents(IFileSystemAccess2 fsa) {
-		val projectName = projectInfo.projectName.replaceAll("\\.", "/")
+		val projectPath = projectInfo.projectName.replaceAll("\\.", "/")
+		val projectNameDot = projectInfo.projectName.replaceAll("\\/", ".")
+		val projectName = projectNameDot.split("\\.").last.toFirstUpper
 		
 		fsa.generateFile(
-			"src/" + projectName + "/models/defaultModel." + fileExtensionProvider.primaryFileExtension,
+			"src/" + projectPath + "/models/defaultModel." + fileExtensionProvider.primaryFileExtension,
 			'''
-			package «projectName + ".models"»
+			package «projectNameDot + ".models"»
 			
 			/*
 			 * Implement the model here
@@ -31,9 +33,9 @@ class MD2NewProjectWizardInitialContents {
 			)
 			
 		fsa.generateFile(
-			"src/" + projectName + "/controllers/defaultController." + fileExtensionProvider.primaryFileExtension,
+			"src/" + projectPath + "/controllers/defaultController." + fileExtensionProvider.primaryFileExtension,
 			'''
-			package «projectName + ".controllers"»
+			package «projectNameDot + ".controllers"»
 			
 			/*
 			 * Implement the controller here
@@ -46,7 +48,7 @@ class MD2NewProjectWizardInitialContents {
 			}
 			
 			remoteConnection WorkflowBackendConnection {
-				uri "http://localhost:8080/«projectName».backend/service/"
+				uri "http://localhost:8080/«projectPath».backend/service/"
 			}
 			
 			WorkflowElement firstWFE {
@@ -73,9 +75,9 @@ class MD2NewProjectWizardInitialContents {
 			)
 			
 		fsa.generateFile(
-			"src/" + projectName + "/views/defaultView." + fileExtensionProvider.primaryFileExtension,
+			"src/" + projectPath + "/views/defaultView." + fileExtensionProvider.primaryFileExtension,
 			'''
-			package «projectName + ".views"»
+			package «projectNameDot + ".views"»
 			
 			/*
 			 * Implement the view here
@@ -90,9 +92,9 @@ class MD2NewProjectWizardInitialContents {
 			)
 			
 		fsa.generateFile(
-			"src/" + projectName + "/workflows/defaultWorkflow." + fileExtensionProvider.primaryFileExtension,
+			"src/" + projectPath + "/workflows/defaultWorkflow." + fileExtensionProvider.primaryFileExtension,
 			'''
-			package «projectName + ".workflows"»
+			package «projectNameDot + ".workflows"»
 			
 			/*
 			 * Implement the workflow here
@@ -103,7 +105,7 @@ class MD2NewProjectWizardInitialContents {
 					end workflow
 				}
 			
-			App «projectName»App {
+			App «projectName» {
 				WorkflowElements {
 					firstWFE (startable: "Start WFE 1")
 				}

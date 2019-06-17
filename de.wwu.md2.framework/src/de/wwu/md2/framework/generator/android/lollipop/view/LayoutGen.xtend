@@ -19,7 +19,7 @@ import de.wwu.md2.framework.mD2.MD2Factory
 import de.wwu.md2.framework.mD2.OptionInput
 import de.wwu.md2.framework.mD2.Spacer
 import de.wwu.md2.framework.mD2.TextInput
-import de.wwu.md2.framework.mD2.TextInputType
+import de.wwu.md2.framework.mD2.InputType
 import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewFrame
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
@@ -333,6 +333,10 @@ class LayoutGen {
 			buttonElement.setAttribute("android:layout_columnWeight", String.valueOf(button.width))
 		}
 		
+		if(button.focusNext !== null){
+			buttonElement.setAttribute("android:nextFocusForward", "@id/" + qnp.getFullyQualifiedName(button.focusNext).toString("_"))
+		} // TODO fallback solution when nextFocusForward is not specified -> use next ContentElement (potentially in following containers) 
+		
 		buttonElement.setAttribute("android:layout_height", "wrap_content")
 		buttonElement.setAttribute("android:layout_gravity", "fill_horizontal")
 		buttonElement.setAttribute("android:layout_marginBottom", elementMarginBottom)
@@ -381,9 +385,9 @@ class LayoutGen {
 
 		// type
 		switch textInput {
-			case textInput.type == TextInputType.PASSWORD:
+			case textInput.type == InputType.PASSWORD:
 				textInputElement.setAttribute("android:inputType", "textPassword")
-			case textInput.type == TextInputType.TEXTAREA:
+			case textInput.type == InputType.TEXTAREA:
 				textInputElement.setAttribute("android:inputType",
 					"text|textMultiLine")
 			default:
