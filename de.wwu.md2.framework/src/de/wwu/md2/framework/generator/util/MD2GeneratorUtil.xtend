@@ -40,6 +40,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
 import org.eclipse.xtext.naming.IQualifiedNameProvider
+import de.wwu.md2.framework.mD2.EnumPath
 
 class MD2GeneratorUtil {
 	
@@ -348,5 +349,12 @@ class MD2GeneratorUtil {
 		
 		return path.replace("\\", "\\\\")
 	}
-
+	
+	def static PathTail getTail(PathDefinition definition){
+		switch definition {
+			EnumPath: return null
+			ContentProviderPath: return definition.tail
+			EntityPath: return definition.tail
+		}
+	}
 }

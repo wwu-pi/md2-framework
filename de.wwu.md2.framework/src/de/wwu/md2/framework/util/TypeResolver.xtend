@@ -53,6 +53,7 @@ import de.wwu.md2.framework.mD2.Tooltip
 import de.wwu.md2.framework.mD2.UploadedImageOutput
 import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
+import de.wwu.md2.framework.mD2.EnumPath
 
 /**
  * Helper class to resolve the data type of a SimpleExpression.
@@ -246,6 +247,10 @@ class TypeResolver {
 	
 	static dispatch def MD2Type calculateType(ContentProviderPath p){
 		return p.tail?.calculateType
+	}
+	
+	static dispatch def MD2Type calculateType(EnumPath p){
+		return new MD2Type(p.enumRef)
 	}
 	
 	static dispatch def MD2Type calculateType(AbstractContentProviderPath p){

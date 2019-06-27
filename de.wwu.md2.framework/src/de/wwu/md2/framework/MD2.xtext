@@ -1160,7 +1160,7 @@ LocationProviderReference:
  * it can be seen as a workaround to manipulate the meta model, that will be built by Xtext.
  */
 PathDefinition:
-	ContentProviderPath | EntityPath
+	ContentProviderPath | EntityPath | EnumPath
 ;
 
 /*
@@ -1171,11 +1171,15 @@ EntityPath:
 	entityRef = [Entity] tail = PathTail
 ;
 
+EnumPath:
+	enumRef = [Enum] '::' value = EID
+;
+
 /*
  * Super class for normal content providers and fake content providers such as the location content provider.
  */
 AbstractContentProviderPath:
-	ContentProviderPath | LocationProviderPath
+	ContentProviderPath | LocationProviderPath | EnumPath
 ;
 
 /*
@@ -1506,7 +1510,8 @@ Enum:
  * An EnumBody allows the user to define a list of STRING values.
  */
 EnumBody:
-	elements += STRING (',' elements += STRING)*
+	elements += EID (',' elements += EID)* |
+	elements += EID desc += STRING (',' elements += EID desc += STRING)* 
 ;
 
 /*

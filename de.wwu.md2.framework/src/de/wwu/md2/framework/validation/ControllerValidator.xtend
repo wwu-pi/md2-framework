@@ -85,6 +85,7 @@ import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 
 import static extension de.wwu.md2.framework.util.TypeResolver.*
+import de.wwu.md2.framework.mD2.EnumPath
 
 /**
  * Validators for all controller elements of MD2.
@@ -810,6 +811,17 @@ class ControllerValidator extends AbstractMD2Validator {
 			}
 		}
 	}
+	
+	/** 
+	 * Check that paths to enum values are ok
+	 */
+	 @Check
+	 def checkEnumPathValidity(EnumPath path){
+	 	if(path.value !== null && !path.enumRef?.enumBody?.elements?.contains(path.value)) {
+	 		error('''The specified value does not equal any entry of the enum «path.enumRef.name ?: ""»''',
+				MD2Package.eINSTANCE.enumPath_Value, ENUMENTRYNOTKNOWN)
+	 	}
+	 }
 
 	/**
 	 * This validator enforces the declaration of exactly one Main block in all of the
