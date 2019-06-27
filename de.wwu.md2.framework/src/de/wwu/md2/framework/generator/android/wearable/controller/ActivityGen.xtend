@@ -121,7 +121,7 @@ class ActivityGen {
 				} else {
 					li.getButton().setText("Fehler");
 				}
-				//Listener hinzufügen
+				//Listener hinzufuegen
 				Md2UpdateListIndexAction indexAction = new Md2UpdateListIndexAction("«list.name»", i, content);
 				Md2OnClickHandler ch = new Md2OnClickHandler();
 				Md2ButtonOnSwipeHandler sw = new Md2ButtonOnSwipeHandler();

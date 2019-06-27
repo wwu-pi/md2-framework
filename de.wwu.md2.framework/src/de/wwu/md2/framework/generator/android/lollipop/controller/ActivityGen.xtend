@@ -75,7 +75,7 @@ class ActivityGen {
 			import «mainPackage».md2.controller.action.«MD2AndroidUtil.getQualifiedNameAsString(list.rightSwipeAction, "_").toFirstUpper»_Action;
 		«ENDIF»
 		
-		public class «frame.name»ListAdapter extends RecyclerView.Adapter{
+		public class «frame.name.toFirstUpper»ListAdapter extends RecyclerView.Adapter{
 			
 			private Md2MultiContentProvider content;
 			private Md2ButtonOnSwipeHandler swipeHandler;
@@ -89,7 +89,7 @@ class ActivityGen {
 				return clickHandler;
 			}
 			
-			public «frame.name»ListAdapter(){
+			public «frame.name.toFirstUpper»ListAdapter(){
 				content = Md2ContentProviderRegistry.getInstance().getContentMultiProvider("«list.connectedProvider.contentProviderRef.name»");
 				content.addAdapter(this, "«frame.name»ListAdapter");
 				swipeHandler = new Md2ButtonOnSwipeHandler();
@@ -116,7 +116,7 @@ class ActivityGen {
 				} else {
 					li.getButton().setText("Fehler");
 				}
-				//Listener hinzufügen
+				//Listener hinzufuegen
 				Md2UpdateListIndexAction indexAction = new Md2UpdateListIndexAction("«list.name»", i, content);
 				Md2OnClickHandler ch = new Md2OnClickHandler();
 				Md2ButtonOnSwipeHandler sw = new Md2ButtonOnSwipeHandler();
