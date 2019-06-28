@@ -19,6 +19,7 @@ import de.wwu.md2.framework.mD2.SensorType
 import de.wwu.md2.framework.mD2.StringType
 import de.wwu.md2.framework.mD2.TimeType
 import de.wwu.md2.framework.mD2.FilterType
+import de.wwu.md2.framework.mD2.ModelElement
 
 class ContentProviderGen {
 	
@@ -159,10 +160,26 @@ class ContentProviderGen {
 						«FOR attribute: (content.entity as Entity).attributes»			
 						case "«attribute.name»":
 							«IF !(attribute.type instanceof StringType)»
-								// Umgang mit anderen Datentypen hier einfuegen - derzeit kein Support fuer Listen innerhalb v. Entities
+								// Umgang mit anderen Datentypen hier einfuegen 
 								// angenommen wird entweder Md2String oder passender Md2Type als value
 								
-								«IF (attribute.type instanceof IntegerType)»
+								«IF (attribute.type instanceof ReferencedType && (attribute.type as ReferencedType).element instanceof de.wwu.md2.framework.mD2.Enum)»
+								if(value instanceof «(attribute.type as ReferencedType).element.name.toFirstUpper»){
+									((«content.entity.name»)content).set«attribute.name.toFirstUpper»((«(attribute.type as ReferencedType).element.name.toFirstUpper») value);
+								} else {
+									if(!(value.getString().toString().isEmpty())) {
+										«(attribute.type as ReferencedType).element.name.toFirstUpper» «(attribute.type as ReferencedType).element.name.toFirstLower» = new «(attribute.type as ReferencedType).element.name.toFirstUpper»();
+										«(attribute.type as ReferencedType).element.name.toFirstLower».setValue(value.getString().toString());
+										((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(«(attribute.type as ReferencedType).element.name.toFirstLower»);
+									}
+								}
+								notifyChangeHandler(name);
+								break;
+								«ELSEIF (attribute.type instanceof DateTimeType)»
+								((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«getMd2TypeStringForAttributeType(attribute.type)»)value).getPlatformValue());
+								notifyChangeHandler(name);
+								break;
+								«ELSEIF (attribute.type instanceof IntegerType)»
 								if(!(value instanceof «getMd2TypeStringForAttributeType(attribute.type)»)){
 									if(!(value.getString().toString().isEmpty())) {
 								 		((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(Integer.parseInt(value.getString().toString()));	
