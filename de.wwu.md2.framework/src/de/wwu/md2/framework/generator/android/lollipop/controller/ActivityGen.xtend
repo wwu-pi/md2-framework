@@ -281,7 +281,7 @@ class ActivityGen {
 				layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 				wrv.setLayoutManager(layoutManager);
 				        
-				«frame.name»ListAdapter listAdapter = new «frame.name»ListAdapter();
+				«frame.name.toFirstUpper»ListAdapter listAdapter = new «frame.name.toFirstUpper»ListAdapter();
 				wrv.setAdapter(listAdapter);
 				   	
 				wrv.addItemDecoration(new DividerItemDecoration(
