@@ -134,15 +134,15 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
 			// SQLite classes (DataContract and SQLiteHelper)
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2DataContract.java",
-				SQLiteGen.generateDataContract(mainPackage, dataContainer.entities))
+				SQLiteGen.generateDataContract(mainPackage, dataContainer.entities + dataContainer.enums))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2SQLiteHelperImpl.java",
-				SQLiteGen.generateSQLiteHelper(mainPackage, app, dataContainer.main, dataContainer.entities))
+				SQLiteGen.generateSQLiteHelper(mainPackage, app, dataContainer.main, dataContainer.entities + dataContainer.enums))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/DatabaseConfigUtil.java",
-				SQLiteGen.generateOrmLiteDatabaseConfigUtil(mainPackage,dataContainer.entities))
+				SQLiteGen.generateOrmLiteDatabaseConfigUtil(mainPackage,dataContainer.entities + dataContainer.enums))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/DatabaseHelper.java",
-				SQLiteGen.generateDataBaseHelper(mainPackage,app,dataContainer.entities))
+				SQLiteGen.generateDataBaseHelper(mainPackage,app,dataContainer.entities + dataContainer.enums))
 			fsa.generateFile(rootFolder + Settings.RES_PATH + "raw/ormlite_config.txt",
-				SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.entities))
+				SQLiteGen.generateOrmLiteConfig(mainPackage,dataContainer.entities + dataContainer.enums))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2LocalStoreFactory.java",
 				SQLiteGen.generateMd2LocalStoreFactory(mainPackage, app, dataContainer.entities))
 			fsa.generateFile(rootFolder + Settings.JAVA_PATH + mainPath + "md2/model/sqlite/Md2OrmLiteDatastore.java",

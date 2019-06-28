@@ -86,8 +86,10 @@ class EntityGen {
 				private ForeignCollection<«getMd2TypeStringForAttributeType(element.type)»>	«element.name»;
 				«var boolean b = foreinReferences.add(new ForeignObject(entity.name, element.name, getMd2TypeStringForAttributeType(element.type)))»
 			«ELSE»
-				«IF element.type instanceof ReferencedType»
+				«IF element.type instanceof Entity»
 					@DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
+				«ELSEIF element.type instanceof Enum»
+					@DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true)
 				«ELSEIF element.type instanceof DateType»
 					@Expose
 					@DatabaseField(columnName = "«element.name.toFirstLower»", dataType = DataType.DATE_STRING, format = "yyyy-MM-dd")
@@ -275,6 +277,7 @@ class EntityGen {
 		import com.google.gson.annotations.Expose;
 		import com.google.gson.annotations.SerializedName;
 		import com.j256.ormlite.field.DatabaseField;
+		import com.j256.ormlite.table.DatabaseTable;
 		
 		import java.sql.Timestamp;
 		import java.util.ArrayList;
@@ -284,6 +287,7 @@ class EntityGen {
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2String;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
 		
+		@DatabaseTable(tableName = "«entity.name.toFirstLower»")
 		public class «entity.name.toFirstUpper» extends AbstractMd2Enum {
 			
 			@SerializedName("__internalId")
@@ -378,8 +382,8 @@ class EntityGen {
 			StringType: "String"
 			BooleanType: "Boolean"
 			DateType: if(forDatabase) "Date" else "Calendar"
-			TimeType: "Md2Time"
-			DateTimeType: "Md2DateTime"		
+			TimeType: if(forDatabase) "Date" else "Calendar"
+			DateTimeType: if(forDatabase) "Date" else "Calendar"	
 			
 			SensorType: "Float"		
 			FileType: "Object" // TODO not implemented

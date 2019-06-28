@@ -8,9 +8,10 @@ import de.wwu.md2.framework.mD2.ReferencedType
 import java.util.ArrayList
 import java.util.List
 import de.wwu.md2.framework.generator.android.common.model.ForeignObject
+import de.wwu.md2.framework.mD2.ModelElement
 
 class SQLiteGen {
-	def static generateDataContract(String mainPackage, Iterable<Entity> entities)'''
+	def static generateDataContract(String mainPackage, Iterable<ModelElement> elements)'''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.model.SQLite.generateDataContract()
 		package «mainPackage».md2.model.sqlite;
 
@@ -21,18 +22,25 @@ class SQLiteGen {
 			public Md2DataContract() {
 			}
 		
-		«FOR e : entities»
+		«FOR e : elements.filter(Entity)»
 			public static abstract class «e.name.toFirstUpper»Entry implements BaseColumns {
-				public static final String TABLE_NAME = "«e.name.toLowerCase»";
+				public static final String TABLE_NAME = "«e.name.toFirstLower»";
 				«FOR a : e.attributes»
 					public static final String COLUMN_NAME_«a.name.toUpperCase» = "«a.name»";
 				«ENDFOR»
 			}
 		«ENDFOR»
+		
+		«FOR e : elements.filter(de.wwu.md2.framework.mD2.Enum)»
+			public static abstract class «e.name.toFirstUpper»Entry implements BaseColumns {
+				public static final String TABLE_NAME = "«e.name.toFirstLower»";
+				public static final String COLUMN_NAME_VALUE = "value";
+			}
+		«ENDFOR»
 		}
 	'''
 	
-	def static generateSQLiteHelper(String mainPackage, App app, Main main, Iterable<Entity> entities)'''
+	def static generateSQLiteHelper(String mainPackage, App app, Main main, Iterable<ModelElement> elements)'''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.model.SQLite.generateSQLiteHelper()
 		package «mainPackage».md2.model.sqlite;
 		
@@ -40,7 +48,7 @@ class SQLiteGen {
 		import android.database.sqlite.SQLiteDatabase;
 		import android.database.sqlite.SQLiteOpenHelper;
 		
-		«FOR e : entities»
+		«FOR e : elements»
 			import «mainPackage».md2.model.sqlite.Md2DataContract.«e.name.toFirstUpper»Entry;
 		«ENDFOR»
 		
@@ -51,7 +59,7 @@ class SQLiteGen {
 			private static final int DATABASE_VERSION = (int) «main.modelVersion»;
 			private static final String TEXT_TYPE = " TEXT";
 			private static final String COMMA_SEP = ",";
-			«FOR e : entities»
+			«FOR e : elements.filter(Entity)»
 			private static final String SQL_CREATE_«e.name.toUpperCase»_ENTRIES =
 				"CREATE TABLE " + «e.name.toFirstUpper»Entry.TABLE_NAME + " (" +
 				«e.name.toFirstUpper»Entry._ID + " INTEGER PRIMARY KEY" +
@@ -70,6 +78,21 @@ class SQLiteGen {
 				«ENDFOR»
 				};
 			«ENDFOR»
+			
+			«FOR e : elements.filter(de.wwu.md2.framework.mD2.Enum)»
+			private static final String SQL_CREATE_«e.name.toUpperCase»_ENTRIES =
+				"CREATE TABLE " + «e.name.toFirstUpper»Entry.TABLE_NAME + " (" +
+				«e.name.toFirstUpper»Entry._ID + " INTEGER PRIMARY KEY" +
+				«e.name.toFirstUpper»Entry.COLUMN_NAME_VALUE + TEXT_TYPE +
+				" )";
+										
+				private static final String SQL_DELETE_«e.name.toUpperCase»_ENTRIES =
+					"DROP TABLE IF EXISTS " + «e.name.toFirstUpper»Entry.TABLE_NAME;
+								
+				private final String[] all«e.name.toFirstUpper»Columns = {
+					«e.name.toFirstUpper»Entry.COLUMN_NAME_VALUE
+				};
+			«ENDFOR»
 
 			public Md2SQLiteHelperImpl(Context context) {
 				super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -78,14 +101,14 @@ class SQLiteGen {
 		
 			@Override
 			public void onCreate(SQLiteDatabase database) {
-				«FOR e : entities»
+				«FOR e : elements»
 					database.execSQL(SQL_CREATE_«e.name.toUpperCase»_ENTRIES);
 				«ENDFOR»
 			}
 		
 			@Override
 			public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-				«FOR e : entities»
+				«FOR e : elements»
 					db.execSQL(SQL_DELETE_«e.name.toUpperCase»_ENTRIES);
 				«ENDFOR»
 				onCreate(db);		
@@ -100,7 +123,7 @@ class SQLiteGen {
 			public String[] getAllColumns(String typeName) {
 				if(typeName == null) return null;
 				switch (typeName) {
-					«FOR e : entities»
+					«FOR e : elements»
 					case "«e.name.toFirstUpper»": {
 						return this.all«e.name.toFirstUpper»Columns;
 					}
@@ -111,10 +134,10 @@ class SQLiteGen {
 		}
 	'''
 	
-	def static generateOrmLiteConfig(String mainPackage, Iterable<Entity> entities){
+	def static generateOrmLiteConfig(String mainPackage, Iterable<ModelElement> elements){
 '''
 «var List<ForeignObject> foreignReferences= new ArrayList<ForeignObject>()»
-«FOR entity : entities»
+«FOR entity : elements.filter(Entity)»
 # --table-start--
 # --table-fields-start--
 # --field-start--
@@ -154,12 +177,29 @@ foreign=true
 # --table-fields-end--
 # --table-end--	
 «ENDFOR»
+«FOR enu : elements.filter(de.wwu.md2.framework.mD2.Enum)»
+# --table-start--
+# --table-fields-start--
+# --field-start--
+fieldName=id
+columnName=id
+generatedId=true
+# --field-end--	
+«FOR value :enu.enumBody.elements»
+# --field-start--
+fieldName=«value»
+columnName=«enu.name.toFirstLower»_«value.toFirstLower»
+# --field-end--	
+«ENDFOR»
+# --table-fields-end--
+# --table-end--	
+«ENDFOR»
 '''
 	
 }
 
 
-def static generateOrmLiteDatabaseConfigUtil(String mainPackage, Iterable<Entity> entities){'''
+def static generateOrmLiteDatabaseConfigUtil(String mainPackage, Iterable<ModelElement> entities){'''
 package «mainPackage».md2.model.sqlite;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -180,18 +220,18 @@ public class DatabaseConfigUtil extends OrmLiteConfigUtil {
 
 
 
-def static generateDataBaseHelper(String mainPackage,  App app, Iterable<Entity> entities){
+def static generateDataBaseHelper(String mainPackage,  App app, Iterable<ModelElement> elements){
 '''
-	package «mainPackage».md2.model.sqlite;
+package «mainPackage».md2.model.sqlite;
 
 import java.sql.SQLException;
-import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Entity;
+import «Settings.MD2LIBRARY_PACKAGE»model.type.interfaces.Md2Type;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import «mainPackage».R;
 
-«FOR element : entities»
+«FOR element : elements»
 	import «mainPackage».md2.model.«element.name»;
 «ENDFOR»
 
@@ -213,7 +253,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	private static final int DATABASE_VERSION = 1; 
  
 	
-	«FOR element : entities»
+	«FOR element : elements»
 	private Dao<«element.name», Integer> «element.name»Dao;	
 	«ENDFOR»
 	
@@ -228,8 +268,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		try {
 			
 			// Create tables. This onCreate() method will be invoked only once of the application life time i.e. the first time when the application starts.
-			«FOR element : entities»
-			TableUtils.createTable(connectionSource, «element.name».class);	
+			«FOR element : elements»
+			TableUtils.createTable(connectionSource, «element.name.toFirstUpper».class);	
 			«ENDFOR»
 			
 		} catch (SQLException e) {
@@ -245,9 +285,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			//automatically. Developer needs to handle the upgrade logic here, i.e. create a new table or a new column to an existing table, take the backups of the
 			// existing database etc.
 			
-			//TableUtils.dropTable(connectionSource, TeacherDetails.class, true);
-			//TableUtils.dropTable(connectionSource, StudentDetails.class, true);
-			//onCreate(sqliteDatabase, connectionSource);
+			«FOR element : elements»
+			TableUtils.dropTable(connectionSource, «element.name.toFirstUpper».class, true);
+			«ENDFOR»
+			onCreate(sqliteDatabase, connectionSource);
 			
 		} catch (Exception e) {
 			Log.e(DatabaseHelper.class.getName(), "Unable to upgrade database from version " + oldVer + " to new "
@@ -259,7 +300,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	// Create the getDao methods of all database tables to access those from android code.
 	// Insert, delete, read, update everything will be happened through DAOs
  
-«FOR element : entities»
+«FOR element : elements»
 public Dao<«element.name», Integer> get«element.name»Dao() throws SQLException {
 		if («element.name»Dao == null) {
 			«element.name»Dao = getDao(«element.name».class);
@@ -269,11 +310,11 @@ public Dao<«element.name», Integer> get«element.name»Dao() throws SQLExcepti
 «ENDFOR»
 	
  
- public <T extends Md2Entity> Dao<T, Integer> getDaoByName(String entity){
+ public <T extends Md2Type> Dao<T, Integer> getDaoByName(String entity){
  final String entityType= entity;
  try{
  switch(entityType){
- «FOR element : entities»
+ «FOR element : elements»
  case "«element.name»": 	if («element.name»Dao == null) {
  			«element.name»Dao =  getDao(«element.name».class);
  		}
