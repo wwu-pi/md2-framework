@@ -1442,7 +1442,12 @@ StringPartial returns SimpleExpression:
 	{BooleanVal} value = Boolean |
 	{DateVal} value = DATE |
 	{TimeVal} value = TIME |
-	{DateTimeVal} value = DATE_TIME
+	TemporalExpression
+;
+
+TemporalExpression returns SimpleExpression:
+	{DateTimeVal} value = DATE_TIME |
+	{NowVal} 'now'
 ;
 
 

@@ -54,6 +54,7 @@ import de.wwu.md2.framework.mD2.UploadedImageOutput
 import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
 import de.wwu.md2.framework.mD2.EnumPath
+import de.wwu.md2.framework.mD2.NowVal
 
 /**
  * Helper class to resolve the data type of a SimpleExpression.
@@ -106,6 +107,10 @@ class TypeResolver {
 	
 	static dispatch def MD2Type calculateType(TimeVal expr){
 		return MD2Type.TIME
+	}
+	
+	static dispatch def MD2Type calculateType(NowVal expr){
+		return MD2Type.DATETIME
 	}
 	
 	static dispatch def MD2Type calculateType(DateTimeVal expr){

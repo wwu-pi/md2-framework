@@ -65,6 +65,7 @@ import de.wwu.md2.framework.mD2.Minus
 import de.wwu.md2.framework.generator.android.lollipop.model.EntityGen
 import de.wwu.md2.framework.mD2.EnumPath
 import de.wwu.md2.framework.mD2.LocationProviderPath
+import de.wwu.md2.framework.mD2.NowVal
 
 class ActionGen {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
@@ -406,6 +407,8 @@ class ActionGen {
 				return '''new Md2Float(«expression.value»)'''
 			SensorVal:
 				return '''new Md2Sensor(«expression.value»)'''
+			NowVal:
+				return '''new Md2DateTime(java.util.Calendar.getInstance())'''
 			Plus:
 				return expression.leftOperand.generateSimpleExpression + '''.plus(''' + expression.rightOperand.generateSimpleExpression + ''')'''
 			Minus:

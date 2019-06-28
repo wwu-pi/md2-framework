@@ -86,9 +86,9 @@ class EntityGen {
 				private ForeignCollection<«getMd2TypeStringForAttributeType(element.type)»>	«element.name»;
 				«var boolean b = foreinReferences.add(new ForeignObject(entity.name, element.name, getMd2TypeStringForAttributeType(element.type)))»
 			«ELSE»
-				«IF element.type instanceof Entity»
+				«IF element.type instanceof ReferencedType && (element.type as ReferencedType).element instanceof Entity»
 					@DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
-				«ELSEIF element.type instanceof Enum»
+				«ELSEIF element.type instanceof ReferencedType && (element.type as ReferencedType).element instanceof Enum»
 					@DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true)
 				«ELSEIF element.type instanceof DateType»
 					@Expose
@@ -326,9 +326,12 @@ class EntityGen {
 			}
 		
 			public void setValue(String value) {
-				if(values.contains(value)){
-					this.value = value;
-					setModifiedDate(new Timestamp(System.currentTimeMillis()));
+				for (Md2String v : values){
+					if(v.toString().equals(value)){
+						this.value = value;
+						setModifiedDate(new Timestamp(System.currentTimeMillis()));
+						break;
+					}
 				}
 			}
 		

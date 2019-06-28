@@ -63,6 +63,7 @@ import de.wwu.md2.framework.mD2.Minus
 import de.wwu.md2.framework.mD2.Mult
 import de.wwu.md2.framework.mD2.Div
 import de.wwu.md2.framework.generator.android.wearable.model.EntityGen
+import de.wwu.md2.framework.mD2.NowVal
 
 class ActionGen {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
@@ -404,6 +405,8 @@ class ActionGen {
 				return '''new Md2Float(«expression.value»)'''
 			SensorVal:
 				return '''new Md2Sensor(«expression.value»)'''
+			NowVal:
+				return '''new Md2DateTime(java.util.Calendar.getInstance())'''
 			Plus:
 				return expression.leftOperand.generateSimpleExpression + ''' + ''' + expression.rightOperand.generateSimpleExpression
 			Minus:
