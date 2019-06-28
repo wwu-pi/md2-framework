@@ -63,6 +63,8 @@ import de.wwu.md2.framework.mD2.Div
 import de.wwu.md2.framework.mD2.Mult
 import de.wwu.md2.framework.mD2.Minus
 import de.wwu.md2.framework.generator.android.lollipop.model.EntityGen
+import de.wwu.md2.framework.mD2.EnumPath
+import de.wwu.md2.framework.mD2.LocationProviderPath
 
 class ActionGen {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
@@ -414,8 +416,9 @@ class ActionGen {
 				return expression.leftOperand.generateSimpleExpression + '''.div(''' + expression.rightOperand.generateSimpleExpression + ''')'''
 			AbstractContentProviderPath: {
 				switch expression {
+					EnumPath: return '''new Md2String("«expression.value»")'''
 					ContentProviderPath: return '''((«EntityGen.getMd2TypeStringForAttributeType(expression.tail.attributeRef.type)») Md2ContentProviderRegistry.getInstance().getContentProvider("«expression.contentProviderRef.name»").getValue("«expression.tail.attributeRef.name»"))'''
-//					LocationProvider: ...
+					LocationProviderPath: return '''new Md2String("42")''' //TODO
 				}
 			}
 			AbstractProviderReference: {
