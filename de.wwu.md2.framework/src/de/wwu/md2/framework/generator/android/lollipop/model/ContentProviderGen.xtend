@@ -279,6 +279,7 @@ class ContentProviderGen {
 				import «mainPackage + ".md2.model"».«(element.type as ReferencedType).element.name.toFirstUpper»;		
 			«ENDIF»
 		«ENDFOR»
+		import java.sql.Timestamp;
 		import «Settings.MD2LIBRARY_PACKAGE»model.contentProvider.implementation.AbstractMd2MultiContentProvider;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2LocalStore;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.interfaces.Md2DataStore;
@@ -288,6 +289,8 @@ class ContentProviderGen {
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.Operator;
 		import «Settings.MD2LIBRARY_PACKAGE»model.dataStore.Filter;
 		import java.util.Calendar;
+		import java.util.ArrayList;
+		import «mainPackage».md2.model.sqlite.Md2OrmLiteDatastore;
 		
 		«MD2AndroidUtil.generateImportAllTypes»
 		
@@ -346,6 +349,24 @@ class ContentProviderGen {
 						«ENDFOR»		
 					}
 				}
+			}
+			
+			@Override
+			public void update(){
+				Timestamp oldStamp = syncTimestamp;
+				this.syncTimestamp = new Timestamp(System.currentTimeMillis());
+		
+				if(this.filter == null){
+					System.out.println("No filter");
+					entities.clear();
+					entities = new ArrayList<Md2Entity>(((Md2OrmLiteDatastore<«(content.entity as Entity).name.toFirstUpper»>) dataStore).loadAll());
+				}
+				else {
+					// if(!(this.dataStore instanceof AbstractMd2OrmLiteDatastore)) {
+					dataStore.query(this.filter, oldStamp);
+					//  }
+				}
+		
 			}
 		}
 	'''	
