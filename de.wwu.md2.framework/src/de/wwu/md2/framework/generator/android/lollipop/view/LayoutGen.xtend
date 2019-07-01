@@ -120,7 +120,7 @@ class LayoutGen {
 		// special settings for root attributes
 		rootElement.setAttribute("android:layout_width", "match_parent")
 		rootElement.setAttribute("android:layout_height", "match_parent")
-		rootElement.setAttribute("tools:context", mainPackage + "." + frame.name + "Activity")
+		rootElement.setAttribute("tools:context", mainPackage + "." + frame.name.toFirstUpper + "Activity")
 
 		doc.appendChild(rootElement)
 
