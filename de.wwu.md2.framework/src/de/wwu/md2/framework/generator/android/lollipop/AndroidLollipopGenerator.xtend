@@ -176,8 +176,6 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 
 			// Layouts
 			LayoutGen.generateLayouts(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
-
-			LayoutGen.generateMaterialIcons(fsa, rootFolder)
 			
 			/***************************************************
 			 * 

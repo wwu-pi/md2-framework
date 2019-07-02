@@ -298,7 +298,7 @@ class LayoutGen {
 			println("ActionDrawer itemClickAction:" + menuItem.action)
 			var Element item = doc.createElement("item")
 			item.setAttribute("android:id", ("@+id/" + (frame.name + "_item" + (elementCounter++).toString)))
-			item.setAttribute("android:icon", ("@drawable/" + MD2AndroidUtil.getAndroidIconString(menuItem.icon)))
+			item.setAttribute("android:icon", ("@md2library:drawable/" + menuItem.icon))
 			item.setAttribute("android:title", menuItem.title);
  			rootElement.appendChild(item)
 		}

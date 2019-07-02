@@ -276,7 +276,7 @@ class ActivityGen {
 		if(frames.length === 0 || frames.get(0).icon === null) {
 		return '''return Md2ViewManager.getInstance().getActiveView().getDrawable(R.mipmap.ic_launcher);'''
 		} else { 
-		return '''return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable.«MD2AndroidUtil.getAndroidIconString(frames.get(0).icon)»);'''
+		return '''return Md2ViewManager.getInstance().getActiveView().getDrawable(R.drawable.«frames.get(0).icon»);'''
 		}
 		
 //		var String result = "switch(position){"
