@@ -1,24 +1,20 @@
 package de.wwu.md2.framework.generator.android.lollipop.model
 
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
-import de.wwu.md2.framework.generator.android.lollipop.Settings
+import de.wwu.md2.framework.generator.android.common.model.ForeignObject
 import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
-import de.wwu.md2.framework.mD2.AttributeType
-import de.wwu.md2.framework.mD2.BooleanType
+import de.wwu.md2.framework.generator.android.lollipop.Settings
 import de.wwu.md2.framework.mD2.DateTimeType
 import de.wwu.md2.framework.mD2.DateType
 import de.wwu.md2.framework.mD2.Entity
-import de.wwu.md2.framework.mD2.FloatType
-import de.wwu.md2.framework.mD2.IntegerType
-import de.wwu.md2.framework.mD2.ReferencedType
-import de.wwu.md2.framework.mD2.StringType
-import de.wwu.md2.framework.mD2.TimeType
-import de.wwu.md2.framework.mD2.FileType
 import de.wwu.md2.framework.mD2.Enum
-import de.wwu.md2.framework.mD2.SensorType
-import de.wwu.md2.framework.generator.android.common.model.ForeignObject
+import de.wwu.md2.framework.mD2.FileType
+import de.wwu.md2.framework.mD2.ReferencedType
+import de.wwu.md2.framework.mD2.TimeType
 import java.util.ArrayList
 import java.util.List
+
+import static extension de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil.*;
 
 class EntityGen {
 	
@@ -89,7 +85,7 @@ class EntityGen {
 				«IF element.type instanceof ReferencedType && (element.type as ReferencedType).element instanceof Entity»
 					@DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
 				«ELSEIF element.type instanceof ReferencedType && (element.type as ReferencedType).element instanceof Enum»
-					@DatabaseField(canBeNull = true, foreign = true, foreignAutoRefresh = true)
+					@DatabaseField(canBeNull = true, foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
 				«ELSEIF element.type instanceof DateType»
 					@Expose
 					@DatabaseField(columnName = "«element.name.toFirstLower»", dataType = DataType.DATE_STRING, format = "yyyy-MM-dd")
@@ -205,6 +201,9 @@ class EntityGen {
 							return calendar;
 						} 
 						return null;
+					«ELSEIF element.type instanceof ReferencedType && (element.type as ReferencedType).element instanceof Enum»
+						if(this.«element.name» == null) return «(element.type as ReferencedType).element.name.toFirstUpper».getDefault();
+						return this.«element.name»;
 					«ELSE»
 					return this.«element.name»;
 					«ENDIF»	
@@ -306,7 +305,7 @@ class EntityGen {
 				this.setModifiedDate(new Timestamp(System.currentTimeMillis()));
 			}
 		
-			ArrayList<Md2String> values = new ArrayList<Md2String>(Arrays.asList(
+			static ArrayList<Md2String> values = new ArrayList<Md2String>(Arrays.asList(
 			«FOR elem: entity.enumBody.elements SEPARATOR ", "»
 				new Md2String("«elem»")
 			«ENDFOR»));
@@ -355,41 +354,20 @@ class EntityGen {
 			public Md2Type clone() {
 				return new «entity.name.toFirstUpper»(this.enumName, this.getAll());
 			}
+			
+			@Override
+			public String toString() {
+				if(this.getValue() == null && !this.values.isEmpty()){
+					return this.values.get(0).toString();
+				}
+				return this.getValue();
+			}
+			
+			public static «entity.name.toFirstUpper» getDefault(){
+				«entity.name.toFirstUpper» defaultEnum = new «entity.name.toFirstUpper»();
+				defaultEnum.setValue(values.get(0).toString());
+				return defaultEnum;
+			}
 		}
 	'''
-	
-	def static String getMd2TypeStringForAttributeType(AttributeType attributeType){
-		switch attributeType{
-			ReferencedType: attributeType.element.name.toFirstUpper
-			IntegerType: "Md2Integer"
-			FloatType: "Md2Float"
-			StringType: "Md2String"
-			BooleanType: "Md2Boolean"
-			DateType: "Md2Date"
-			TimeType: "Md2Time"
-			DateTimeType: "Md2DateTime"	
-			SensorType: "Md2Float"	
-			FileType: "Md2File"
-		}		
-	}
-	
-	private def static String getJavaTypeStringForAttributeType(AttributeType attributeType){
-		return attributeType.getJavaTypeStringForAttributeType(false)
-	}
-	
-	private def static String getJavaTypeStringForAttributeType(AttributeType attributeType, boolean forDatabase){
-		switch attributeType{
-			ReferencedType: attributeType.element.name.toFirstUpper
-			IntegerType: "Integer"
-			FloatType: "Float"
-			StringType: "String"
-			BooleanType: "Boolean"
-			DateType: if(forDatabase) "Date" else "Calendar"
-			TimeType: if(forDatabase) "Date" else "Calendar"
-			DateTimeType: if(forDatabase) "Date" else "Calendar"	
-			
-			SensorType: "Float"		
-			FileType: "byte[]"
-		}
-	}
 }

@@ -4,22 +4,18 @@ import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
 import de.wwu.md2.framework.generator.android.common.model.FilterGen
 import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
 import de.wwu.md2.framework.generator.android.lollipop.Settings
-import de.wwu.md2.framework.mD2.AttributeType
-import de.wwu.md2.framework.mD2.BooleanType
 import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.DateTimeType
-import de.wwu.md2.framework.mD2.DateType
 import de.wwu.md2.framework.mD2.Entity
 import de.wwu.md2.framework.mD2.Enum
 import de.wwu.md2.framework.mD2.FileType
 import de.wwu.md2.framework.mD2.FilterType
-import de.wwu.md2.framework.mD2.FloatType
 import de.wwu.md2.framework.mD2.IntegerType
 import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.ReferencedType
-import de.wwu.md2.framework.mD2.SensorType
 import de.wwu.md2.framework.mD2.StringType
-import de.wwu.md2.framework.mD2.TimeType
+
+import static extension de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil.*;
 
 class ContentProviderGen {
 	
@@ -137,9 +133,9 @@ class ContentProviderGen {
 								((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»();	
 								«ELSE»
 									«IF attribute.type.many»
-									new Md2List<«EntityGen.getMd2TypeStringForAttributeType(attribute.type)»>
+									new Md2List<«attribute.type.getMd2TypeStringForAttributeType»>
 									«ELSE»
-									new «EntityGen.getMd2TypeStringForAttributeType(attribute.type)»
+									new «attribute.type.getMd2TypeStringForAttributeType»
 									«ENDIF»(((«(content.entity as Entity).name»)content).get«attribute.name.toFirstUpper»());	
 								«ENDIF»
 						} else { return null;}
@@ -178,7 +174,7 @@ class ContentProviderGen {
 								notifyChangeHandler(name);
 								break;
 								«ELSEIF (attribute.type instanceof IntegerType)»
-								if(!(value instanceof «getMd2TypeStringForAttributeType(attribute.type)»)){
+								if(!(value instanceof «attribute.type.getMd2TypeStringForAttributeType»)){
 									if(!(value.getString().toString().isEmpty())) {
 								 		((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(Integer.parseInt(value.getString().toString()));	
 									}
@@ -188,7 +184,7 @@ class ContentProviderGen {
 								notifyChangeHandler(name);
 								break;
 								«ELSEIF (attribute.type instanceof FileType)»
-								if(value instanceof File){
+								if(value instanceof «attribute.type.getMd2TypeStringForAttributeType»){
 									((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«getMd2TypeStringForAttributeType(attribute.type)»)value).getPlatformValue());
 								}
 								notifyChangeHandler(name);
@@ -340,8 +336,8 @@ class ContentProviderGen {
 							((«(content.entity as Entity).name»)this.getContentsList().get(entityIndex)).get«attribute.name.toFirstUpper»();	
 							«ELSE»
 							new «IF attribute.type.many»
-							Md2List<«EntityGen.getMd2TypeStringForAttributeType(attribute.type)»>	«ELSE»
-							«EntityGen.getMd2TypeStringForAttributeType(attribute.type)»«ENDIF»(((«(content.entity as Entity).name»)this.getContentsList().get(entityIndex)).get«attribute.name.toFirstUpper»());	
+							Md2List<«attribute.type.getMd2TypeStringForAttributeType»>	«ELSE»
+							«attribute.type.getMd2TypeStringForAttributeType»«ENDIF»(((«(content.entity as Entity).name»)this.getContentsList().get(entityIndex)).get«attribute.name.toFirstUpper»());	
 							«ENDIF»
 						«ENDFOR»
 						default:return null;		
@@ -393,19 +389,4 @@ class ContentProviderGen {
 			}
 		}
 	'''	
-	
-	private def static String getMd2TypeStringForAttributeType(AttributeType attributeType){
-		switch attributeType{
-			ReferencedType: attributeType.element.name.toFirstUpper
-			IntegerType: "Md2Integer"
-			FloatType: "Md2Float"
-			StringType: "Md2String"
-			BooleanType: "Md2Boolean"
-			DateType: "Md2Date"
-			TimeType: "Md2Time"
-			DateTimeType: "Md2DateTime"		
-			SensorType: "Md2Sensor"	
-			FileType: "Md2File"
-		}		
-	}
 }

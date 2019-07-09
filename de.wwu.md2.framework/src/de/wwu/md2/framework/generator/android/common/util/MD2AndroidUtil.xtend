@@ -7,6 +7,17 @@ import de.wwu.md2.framework.mD2.ReferencedModelType
 import de.wwu.md2.framework.mD2.SimpleType
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
+import de.wwu.md2.framework.mD2.AttributeType
+import de.wwu.md2.framework.mD2.ReferencedType
+import de.wwu.md2.framework.mD2.IntegerType
+import de.wwu.md2.framework.mD2.FloatType
+import de.wwu.md2.framework.mD2.StringType
+import de.wwu.md2.framework.mD2.BooleanType
+import de.wwu.md2.framework.mD2.DateType
+import de.wwu.md2.framework.mD2.TimeType
+import de.wwu.md2.framework.mD2.DateTimeType
+import de.wwu.md2.framework.mD2.SensorType
+import de.wwu.md2.framework.mD2.FileType
 
 class MD2AndroidUtil {
 	
@@ -105,4 +116,39 @@ class MD2AndroidUtil {
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.Md2UnbindTask;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.customCode.Md2UnmapTask;
 	'''
+	
+	def static String getMd2TypeStringForAttributeType(AttributeType attributeType){
+		switch attributeType{
+			ReferencedType: attributeType.element.name.toFirstUpper
+			IntegerType: "Md2Integer"
+			FloatType: "Md2Float"
+			StringType: "Md2String"
+			BooleanType: "Md2Boolean"
+			DateType: "Md2Date"
+			TimeType: "Md2Time"
+			DateTimeType: "Md2DateTime"		
+			SensorType: "Md2Sensor"	
+			FileType: "Md2File"
+		}		
+	}
+	
+	def static String getJavaTypeStringForAttributeType(AttributeType attributeType){
+		return attributeType.getJavaTypeStringForAttributeType(false)
+	}
+	
+	def static String getJavaTypeStringForAttributeType(AttributeType attributeType, boolean forDatabase){
+		switch attributeType{
+			ReferencedType: attributeType.element.name.toFirstUpper
+			IntegerType: "Integer"
+			FloatType: "Float"
+			StringType: "String"
+			BooleanType: "Boolean"
+			DateType: if(forDatabase) "Date" else "Calendar"
+			TimeType: if(forDatabase) "Date" else "Calendar"
+			DateTimeType: if(forDatabase) "Date" else "Calendar"	
+			
+			SensorType: "Float"		
+			FileType: "byte[]"
+		}
+	}
 }

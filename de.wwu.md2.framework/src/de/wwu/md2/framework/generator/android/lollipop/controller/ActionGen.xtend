@@ -1,8 +1,8 @@
 package de.wwu.md2.framework.generator.android.lollipop.controller
 
 import de.wwu.md2.framework.generator.IExtendedFileSystemAccess
-import de.wwu.md2.framework.generator.android.lollipop.Settings
 import de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil
+import de.wwu.md2.framework.generator.android.lollipop.Settings
 import de.wwu.md2.framework.mD2.AbstractContentProviderPath
 import de.wwu.md2.framework.mD2.AbstractProviderReference
 import de.wwu.md2.framework.mD2.AbstractViewGUIElementRef
@@ -13,16 +13,20 @@ import de.wwu.md2.framework.mD2.App
 import de.wwu.md2.framework.mD2.AttributeSetTask
 import de.wwu.md2.framework.mD2.BooleanVal
 import de.wwu.md2.framework.mD2.CallTask
+import de.wwu.md2.framework.mD2.CameraAction
 import de.wwu.md2.framework.mD2.CompareExpression
 import de.wwu.md2.framework.mD2.ConditionalCodeFragment
 import de.wwu.md2.framework.mD2.ConditionalExpression
 import de.wwu.md2.framework.mD2.ContentProviderAddAction
 import de.wwu.md2.framework.mD2.ContentProviderGetAction
+import de.wwu.md2.framework.mD2.ContentProviderGetActiveAction
 import de.wwu.md2.framework.mD2.ContentProviderOperationAction
 import de.wwu.md2.framework.mD2.ContentProviderPath
 import de.wwu.md2.framework.mD2.ContentProviderReference
 import de.wwu.md2.framework.mD2.ContentProviderRemoveAction
+import de.wwu.md2.framework.mD2.ContentProviderRemoveActiveAction
 import de.wwu.md2.framework.mD2.ContentProviderResetAction
+import de.wwu.md2.framework.mD2.ContentProviderResetLocalAction
 import de.wwu.md2.framework.mD2.ContentProviderSetTask
 import de.wwu.md2.framework.mD2.CustomAction
 import de.wwu.md2.framework.mD2.CustomCodeFragment
@@ -30,43 +34,40 @@ import de.wwu.md2.framework.mD2.DateTimeVal
 import de.wwu.md2.framework.mD2.DateVal
 import de.wwu.md2.framework.mD2.DisableAction
 import de.wwu.md2.framework.mD2.DisplayMessageAction
+import de.wwu.md2.framework.mD2.Div
+import de.wwu.md2.framework.mD2.ElementEventType
 import de.wwu.md2.framework.mD2.EnableAction
+import de.wwu.md2.framework.mD2.EnumPath
 import de.wwu.md2.framework.mD2.EventBindingTask
 import de.wwu.md2.framework.mD2.FireEventAction
 import de.wwu.md2.framework.mD2.FloatVal
 import de.wwu.md2.framework.mD2.GotoViewAction
 import de.wwu.md2.framework.mD2.IntVal
+import de.wwu.md2.framework.mD2.LocationAction
+import de.wwu.md2.framework.mD2.LocationProviderPath
 import de.wwu.md2.framework.mD2.MappingTask
+import de.wwu.md2.framework.mD2.Minus
+import de.wwu.md2.framework.mD2.Mult
 import de.wwu.md2.framework.mD2.Not
+import de.wwu.md2.framework.mD2.NowVal
 import de.wwu.md2.framework.mD2.Operator
 import de.wwu.md2.framework.mD2.Or
+import de.wwu.md2.framework.mD2.Plus
+import de.wwu.md2.framework.mD2.SensorVal
 import de.wwu.md2.framework.mD2.SimpleAction
 import de.wwu.md2.framework.mD2.SimpleActionRef
 import de.wwu.md2.framework.mD2.SimpleExpression
 import de.wwu.md2.framework.mD2.StringVal
 import de.wwu.md2.framework.mD2.TimeVal
 import de.wwu.md2.framework.mD2.UnmappingTask
+import de.wwu.md2.framework.mD2.ValidatorBindingTask
 import de.wwu.md2.framework.mD2.ViewElementEventRef
 import de.wwu.md2.framework.mD2.ViewElementSetTask
+import de.wwu.md2.framework.mD2.WebServiceCallAction
 import de.wwu.md2.framework.mD2.WorkflowElement
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider
-import de.wwu.md2.framework.mD2.WebServiceCallAction
-import de.wwu.md2.framework.mD2.LocationAction
-import de.wwu.md2.framework.mD2.ValidatorBindingTask
-import de.wwu.md2.framework.mD2.SensorVal
-import de.wwu.md2.framework.mD2.ContentProviderRemoveActiveAction
-import de.wwu.md2.framework.mD2.ContentProviderGetActiveAction
-import de.wwu.md2.framework.mD2.ElementEventType;
-import de.wwu.md2.framework.mD2.ContentProviderResetLocalAction
-import de.wwu.md2.framework.mD2.Plus
-import de.wwu.md2.framework.mD2.Div
-import de.wwu.md2.framework.mD2.Mult
-import de.wwu.md2.framework.mD2.Minus
-import de.wwu.md2.framework.generator.android.lollipop.model.EntityGen
-import de.wwu.md2.framework.mD2.EnumPath
-import de.wwu.md2.framework.mD2.LocationProviderPath
-import de.wwu.md2.framework.mD2.NowVal
-import de.wwu.md2.framework.mD2.CameraAction
+
+import static extension de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil.*;
 
 class ActionGen {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
@@ -427,7 +428,7 @@ class ActionGen {
 			AbstractContentProviderPath: {
 				switch expression {
 					EnumPath: return '''new Md2String("«expression.value»")'''
-					ContentProviderPath: return '''((«EntityGen.getMd2TypeStringForAttributeType(expression.tail.attributeRef.type)») Md2ContentProviderRegistry.getInstance().getContentProvider("«expression.contentProviderRef.name»").getValue("«expression.tail.attributeRef.name»"))'''
+					ContentProviderPath: return '''((«expression.tail.attributeRef.type.getMd2TypeStringForAttributeType») Md2ContentProviderRegistry.getInstance().getContentProvider("«expression.contentProviderRef.name»").getValue("«expression.tail.attributeRef.name»"))'''
 					LocationProviderPath: return '''new Md2String("42")''' //TODO
 				}
 			}
