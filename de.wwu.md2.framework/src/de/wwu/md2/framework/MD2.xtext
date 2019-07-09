@@ -718,7 +718,8 @@ SimpleAction:
 	// TODO -- does not make sense as action; maybe allow getters as follows :contentProviderRef(first where Customer.name equals "John").name
     {ContentProviderGetAction} ('ContentProviderGet' '('contentProvider = AbstractProviderReference ('where' whereClause = WhereClauseCondition)? ')') |
 	
-	{ContentProviderResetLocalAction} ('ContentProviderResetLocal' '('contentProvider = ContentProviderReference ')')
+	{ContentProviderResetLocalAction} ('ContentProviderResetLocal' '('contentProvider = ContentProviderReference ')') |
+	{CameraAction} ('Camera' ('(' target=ContentProviderPath ')')?)
 ;
 
 /////////////////////////////////////
@@ -1135,11 +1136,10 @@ WhereClauseConditionalExpression returns WhereClauseConditionalExpression:
 //////////////////////////////////////////////////////////////
 
 /*
- * Super class for all kind of content providers. Up to now just normal content providers
- * and location content providers are supported.
+ * Super class for all kind of normal and virtual content providers.
  */
 AbstractProviderReference:
-	ContentProviderReference | LocationProviderReference
+	ContentProviderReference | VirtualProviderReference
 ;
 
 /*
@@ -1151,13 +1151,11 @@ ContentProviderReference:
 ;
 
 /*
- * A 'virtual' content provider that can be used as it were a normal read-only content provider with the name 'location'
- * that provides fields such as street, country etc. The formatting highlights the location keyword as it were a cross-reference.
+ * A 'virtual' content provider that can be used as it were a normal read-only content provider.
  */
-LocationProviderReference:
+VirtualProviderReference:
 	{LocationProviderReference} ':' 'location'
 ;
-
 
 //////////////////////////////////////////////////////////////
 // Controller layer => ContentProvider => Pathes
@@ -1222,7 +1220,6 @@ enum LocationField:
 	LATITUDE = 'latitude' | LONGITUDE = 'longitude' | ALTITUDE = 'altitude' | CITY = 'city' | STREET = 'street' |
 	NUMBER = 'number' | POSTAL_CODE = 'postalCode' | COUNTRY = 'country' | PROVINCE = 'province'
 ;
-
 
 /////////////////////////////////////////
 // Controller layer => ProcessChains
