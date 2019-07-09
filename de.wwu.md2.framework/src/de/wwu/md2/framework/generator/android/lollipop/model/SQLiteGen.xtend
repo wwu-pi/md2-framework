@@ -10,6 +10,8 @@ import java.util.List
 import de.wwu.md2.framework.generator.android.common.model.ForeignObject
 import de.wwu.md2.framework.mD2.ModelElement
 
+import static extension de.wwu.md2.framework.generator.android.common.util.MD2AndroidUtil.*;
+
 class SQLiteGen {
 	def static generateDataContract(String mainPackage, Iterable<ModelElement> elements)'''
 		// generated in de.wwu.md2.framework.generator.android.lollipop.model.SQLite.generateDataContract()
@@ -148,7 +150,7 @@ generatedId=true
 «FOR attribute :entity.attributes »
 «IF attribute.type instanceof ReferencedType»
 «IF attribute.type.many»
-«var boolean b=foreignReferences.add(new ForeignObject(entity.name, attribute.name, EntityGen.getMd2TypeStringForAttributeType(attribute.type)))»
+«var boolean b=foreignReferences.add(new ForeignObject(entity.name, attribute.name, attribute.type.getMd2TypeStringForAttributeType))»
 foreignCollectionFieldName=«attribute.name»
 columnName=«entity.name.toFirstLower»_«attribute.name.toFirstLower»
 «ELSE»
@@ -185,12 +187,10 @@ fieldName=id
 columnName=id
 generatedId=true
 # --field-end--	
-«FOR value :enu.enumBody.elements»
 # --field-start--
-fieldName=«value»
-columnName=«enu.name.toFirstLower»_«value.toFirstLower»
+fieldName=value
+columnName=«enu.name.toFirstLower»_value
 # --field-end--	
-«ENDFOR»
 # --table-fields-end--
 # --table-end--	
 «ENDFOR»
