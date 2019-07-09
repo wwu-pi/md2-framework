@@ -40,6 +40,7 @@ class Settings {
 	public static String MD2LIBRARY_VIEW_BOOLEANINPUT = MD2LIBRARY_VIEW_PACKAGE + "Md2BooleanInput"
 	public static String MD2LIBRARY_VIEW_OPTIONINPUT = MD2LIBRARY_VIEW_PACKAGE + "Md2OptionInput"
 	public static String MD2LIBRARY_VIEW_LABEL = MD2LIBRARY_VIEW_PACKAGE + "Md2Label"
+	public static String MD2LIBRARY_VIEW_IMAGE = MD2LIBRARY_VIEW_PACKAGE + "Md2Image"
 
 	/***
 	 * Android app
@@ -53,6 +54,7 @@ class Settings {
 	public static String MENU_PATH = RES_PATH + "menu/"
 	public static String VALUES_PATH = RES_PATH + "values/"
 	public static String DRAWABLE_PATH = RES_PATH + "drawable/"
+	public static String XML_PATH = RES_PATH + "xml/"
 	public static String MIPMAP_PATH = RES_PATH
 
 	// files
@@ -69,6 +71,7 @@ class Settings {
 	public static String STYLES_XML_NAME = "styles.xml"
 	public static String DIMENS_XML_NAME = "dimens.xml"
 	public static String COLORS_XML_NAME = "colors.xml"
+	public static String PATHS_XML_NAME = "file_provider_paths.xml"
 	
 	// packages for app generation
 	public static String MD2_APP_FILES_PACKAGE = ".md2."

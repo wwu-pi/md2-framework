@@ -174,6 +174,9 @@ class AndroidLollipopGenerator extends AbstractPlatformGenerator {
 			// Dimensions
 			fsa.generateFile(rootFolder + Settings.VALUES_PATH + Settings.DIMENS_XML_NAME, ValueGen.generateDimensXml)
 
+			// Paths
+			fsa.generateFile(rootFolder + Settings.XML_PATH + Settings.PATHS_XML_NAME, ValueGen.generatePathsXml)
+
 			// Layouts
 			LayoutGen.generateLayouts(fsa, rootFolder, mainPath, mainPackage, rootViews, startableWorkflowElements)
 			

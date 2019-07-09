@@ -64,6 +64,7 @@ import de.wwu.md2.framework.mD2.Mult
 import de.wwu.md2.framework.mD2.Div
 import de.wwu.md2.framework.generator.android.wearable.model.EntityGen
 import de.wwu.md2.framework.mD2.NowVal
+import de.wwu.md2.framework.mD2.CameraAction
 
 class ActionGen {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
@@ -345,8 +346,10 @@ class ActionGen {
 //			TODO: implement LocationAction
 			LocationAction:
 				result = ''''''
+			CameraAction:
+				result = ''''''
 			default:
-				throw new UnsupportedOperationException("generateSimpleAction()")
+				throw new UnsupportedOperationException("generateSimpleAction() for " + sa.toString)
 		}
 
 		return result

@@ -10,7 +10,9 @@ import de.wwu.md2.framework.mD2.ContentProvider
 import de.wwu.md2.framework.mD2.DateTimeType
 import de.wwu.md2.framework.mD2.DateType
 import de.wwu.md2.framework.mD2.Entity
+import de.wwu.md2.framework.mD2.Enum
 import de.wwu.md2.framework.mD2.FileType
+import de.wwu.md2.framework.mD2.FilterType
 import de.wwu.md2.framework.mD2.FloatType
 import de.wwu.md2.framework.mD2.IntegerType
 import de.wwu.md2.framework.mD2.ReferencedModelType
@@ -18,8 +20,6 @@ import de.wwu.md2.framework.mD2.ReferencedType
 import de.wwu.md2.framework.mD2.SensorType
 import de.wwu.md2.framework.mD2.StringType
 import de.wwu.md2.framework.mD2.TimeType
-import de.wwu.md2.framework.mD2.FilterType
-import de.wwu.md2.framework.mD2.ModelElement
 
 class ContentProviderGen {
 	
@@ -160,10 +160,8 @@ class ContentProviderGen {
 						«FOR attribute: (content.entity as Entity).attributes»			
 						case "«attribute.name»":
 							«IF !(attribute.type instanceof StringType)»
-								// Umgang mit anderen Datentypen hier einfuegen 
 								// angenommen wird entweder Md2String oder passender Md2Type als value
-								
-								«IF (attribute.type instanceof ReferencedType && (attribute.type as ReferencedType).element instanceof de.wwu.md2.framework.mD2.Enum)»
+								«IF (attribute.type instanceof ReferencedType && (attribute.type as ReferencedType).element instanceof Enum)»
 								if(value instanceof «(attribute.type as ReferencedType).element.name.toFirstUpper»){
 									((«content.entity.name»)content).set«attribute.name.toFirstUpper»((«(attribute.type as ReferencedType).element.name.toFirstUpper») value);
 								} else {
@@ -189,6 +187,12 @@ class ContentProviderGen {
 								}
 								notifyChangeHandler(name);
 								break;
+								«ELSEIF (attribute.type instanceof FileType)»
+								if(value instanceof File){
+									((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«getMd2TypeStringForAttributeType(attribute.type)»)value).getPlatformValue());
+								}
+								notifyChangeHandler(name);
+								break;
 								«ELSEIF (attribute.type instanceof Entity)»
 								((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«IF attribute.type.many»
 									Md2List«ELSE»«getMd2TypeStringForAttributeType(attribute.type)»«ENDIF») value)«IF attribute.type instanceof ReferencedType && !attribute.type.many»
@@ -198,7 +202,9 @@ class ContentProviderGen {
 									«ELSE».getPlatformValue());«ENDIF»
 									notifyChangeHandler(name);
 									break;
-								«ELSE»break; // Avoid errors for unsupported type
+								«ELSE»
+								// Umgang mit anderen Datentypen hier einfuegen 
+								break; // Avoid errors for unsupported type
 								«ENDIF»
 							«ELSE»
 								((«(content.entity as Entity).name»)content).set«attribute.name.toFirstUpper»(((«IF attribute.type.many»
@@ -399,7 +405,7 @@ class ContentProviderGen {
 			TimeType: "Md2Time"
 			DateTimeType: "Md2DateTime"		
 			SensorType: "Md2Sensor"	
-			FileType: "Object" // TODO not implemented
+			FileType: "Md2File"
 		}		
 	}
 }

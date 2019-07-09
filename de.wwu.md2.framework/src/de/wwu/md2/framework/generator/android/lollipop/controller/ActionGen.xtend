@@ -66,6 +66,7 @@ import de.wwu.md2.framework.generator.android.lollipop.model.EntityGen
 import de.wwu.md2.framework.mD2.EnumPath
 import de.wwu.md2.framework.mD2.LocationProviderPath
 import de.wwu.md2.framework.mD2.NowVal
+import de.wwu.md2.framework.mD2.CameraAction
 
 class ActionGen {
 	def static generateActions(IExtendedFileSystemAccess fsa, String rootFolder, String mainPath, String mainPackage,
@@ -100,10 +101,6 @@ class ActionGen {
 		import «Settings.MD2LIBRARY_CONTENTPROVIDERREGISTRY_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_VIEWMANAGER_PACKAGE_NAME»;
 		import «Settings.MD2LIBRARY_TASKQUEUE_PACKAGE_NAME»;
-		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderAddAction;
-		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderRemoveActiveAction;
-		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderGetActiveAction;
-		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderResetLocalAction;
 
 		public class «qualifiedActionName.toFirstUpper»_Action extends AbstractMd2Action {
 		
@@ -347,8 +344,18 @@ class ActionGen {
 //			TODO: implement LocationAction
 			LocationAction:
 				result = ''''''
+			CameraAction:
+				result = '''
+					Md2CameraAction(
+					«IF (sa.target.contentProviderRef !== null && sa.target.tail !== null)»
+					new Md2AttributeSetTask("«sa.target.contentProviderRef.name.toFirstUpper»", "«sa.target.tail.attributeRef.name»", null)
+					«ELSE»
+					null
+					«ENDIF»
+					)
+				'''
 			default:
-				throw new UnsupportedOperationException("generateSimpleAction()")
+				throw new UnsupportedOperationException("generateSimpleAction() for " + sa.toString)
 		}
 
 		return result

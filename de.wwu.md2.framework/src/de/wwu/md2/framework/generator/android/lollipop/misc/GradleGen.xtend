@@ -71,6 +71,8 @@ class GradleGen {
 		    implementation 'com.google.code.gson:gson:2.8.2'
 			implementation 'com.android.volley:volley:1.1.0'
 			implementation 'com.android.support:recyclerview-v7:26.1.0'
+			implementation 'com.android.support:support-v4:26.1.0'
+			implementation 'com.android.support:exifinterface:26.1.0' // for image capture
 		}
 	'''
 	

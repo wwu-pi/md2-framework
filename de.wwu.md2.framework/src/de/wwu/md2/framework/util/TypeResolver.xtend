@@ -55,6 +55,7 @@ import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
 import de.wwu.md2.framework.mD2.EnumPath
 import de.wwu.md2.framework.mD2.NowVal
+import de.wwu.md2.framework.mD2.LocationField
 
 /**
  * Helper class to resolve the data type of a SimpleExpression.
@@ -245,9 +246,23 @@ class TypeResolver {
 		}
 		return MD2Type.STRING
 	}
-			
+	
+	static dispatch def MD2Type calculateType(LocationField f){
+		switch f {
+			case ALTITUDE: return MD2Type.FLOAT
+			case CITY: return MD2Type.STRING
+			case COUNTRY: return MD2Type.STRING
+			case LATITUDE: return MD2Type.STRING
+			case LONGITUDE: return MD2Type.STRING
+			case NUMBER: return MD2Type.STRING
+			case POSTAL_CODE: return MD2Type.STRING
+			case PROVINCE: return MD2Type.STRING
+			case STREET: return MD2Type.STRING			
+		}
+	}
+	
 	static dispatch def MD2Type calculateType(LocationProviderPath p){
-		return MD2Type.LOCATION
+		return p.locationField.calculateType
 	}
 	
 	static dispatch def MD2Type calculateType(ContentProviderPath p){

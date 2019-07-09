@@ -62,9 +62,6 @@ class MD2Formatter extends AbstractDeclarativeFormatter {
 		for (Keyword k : f.contentProviderReferenceAccess.findKeywords(":")) {
 			c.setNoSpace.after(k);
 		}
-		for (Keyword k : f.locationProviderReferenceAccess.findKeywords(":")) {
-			c.setNoSpace.after(k);
-		}
 		
 		//Formatting of workflow:
 		formattingWorkflow(c,f)

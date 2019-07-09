@@ -574,44 +574,47 @@ class ControllerValidator extends AbstractMD2Validator {
 
 		// Check for the remaining CustomActions, if the saved entity is nested
 		for (sc : savecalls) {
-			// Save information about savecall
-			val savedEntity = ((sc.contentProvider as ContentProviderReference).contentProvider.
-				type as ReferencedModelType).entity as Entity
-			val savedEntityName = savedEntity.name
-			val indexOfSaveCall = caction.codeFragments.indexOf(
-				(sc.eContainer as SimpleActionRef).eContainer as CallTask)
-
-			// Check, if saved-Entity includes nested entities
-			if (hm.containsKey(savedEntityName)) {
-				var nestedEntities = hm.get(savedEntityName)
-
-				// Check, if attribute of the entity is set onto the corresponding nested contentProvider BEFORE the save operation
-				for (var i = 0; i < indexOfSaveCall; i++) {
-					var codeFragment = caction.codeFragments.get(i)
-
-					// Check, if the codeFragement is a set operation
-					if (codeFragment instanceof AttributeSetTask) {
-						val sourceEntity = (codeFragment.pathDefinition.contentProviderRef.type as ReferencedModelType).
-							entity.name
-						val sourceAttr = codeFragment.pathDefinition.tail.attributeRef.name
-						val target = ((codeFragment.source as ContentProviderReference).contentProvider.
-							type as ReferencedModelType).entity.name
-
-						// Check, if savedEntity is saved within the set command 
-						if (savedEntityName == sourceEntity) {
-							// Check, if the target of the set statement corresponds to one of the nestedEntities
-							if (target == nestedEntities.get(sourceAttr)) {
-								// if correct, delete from list of unset nested entity attributes
-								nestedEntities.remove(sourceAttr)
+			val entity = ((sc.contentProvider as ContentProviderReference).contentProvider.
+				type as ReferencedModelType).entity
+			if(entity instanceof Entity){
+				// Save information about savecall
+				val savedEntity = entity as Entity
+				val savedEntityName = savedEntity.name
+				val indexOfSaveCall = caction.codeFragments.indexOf(
+					(sc.eContainer as SimpleActionRef).eContainer as CallTask)
+	
+				// Check, if saved-Entity includes nested entities
+				if (hm.containsKey(savedEntityName)) {
+					var nestedEntities = hm.get(savedEntityName)
+	
+					// Check, if attribute of the entity is set onto the corresponding nested contentProvider BEFORE the save operation
+					for (var i = 0; i < indexOfSaveCall; i++) {
+						var codeFragment = caction.codeFragments.get(i)
+	
+						// Check, if the codeFragement is a set operation
+						if (codeFragment instanceof AttributeSetTask) {
+							val sourceEntity = (codeFragment.pathDefinition.contentProviderRef.type as ReferencedModelType).
+								entity.name
+							val sourceAttr = codeFragment.pathDefinition.tail.attributeRef.name
+							val target = ((codeFragment.source as ContentProviderReference).contentProvider.
+								type as ReferencedModelType).entity.name
+	
+							// Check, if savedEntity is saved within the set command 
+							if (savedEntityName == sourceEntity) {
+								// Check, if the target of the set statement corresponds to one of the nestedEntities
+								if (target == nestedEntities.get(sourceAttr)) {
+									// if correct, delete from list of unset nested entity attributes
+									nestedEntities.remove(sourceAttr)
+								}
 							}
 						}
 					}
-				}
-				if (!nestedEntities.empty) {
-					// System.out.println("WARNING! Following nested Entities are not set: " + nestedEntities.toString) //for debugging
-					warning(
-						"Not all Attributes of nested Entities within the Provider are set to their corresponding providers before saving. Please make sure, this is wanted.",
-						sc, null, -1, SAVINGCHECKOFNESTEDENTITY);
+					if (!nestedEntities.empty) {
+						// System.out.println("WARNING! Following nested Entities are not set: " + nestedEntities.toString) //for debugging
+						warning(
+							"Not all Attributes of nested Entities within the Provider are set to their corresponding providers before saving. Please make sure, this is wanted.",
+							sc, null, -1, SAVINGCHECKOFNESTEDENTITY);
+					}
 				}
 			}
 		}

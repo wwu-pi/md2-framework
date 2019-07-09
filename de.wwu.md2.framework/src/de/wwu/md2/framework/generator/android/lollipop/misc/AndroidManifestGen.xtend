@@ -20,6 +20,15 @@ class AndroidManifestGen {
 		        android:icon="@mipmap/ic_launcher"
 		        android:label="@string/app_name"
 		        android:theme="@style/AppTheme" >
+		        	<provider
+		        		android:name="android.support.v4.content.FileProvider"
+		        		android:authorities="de.wwu.md2.android.md2library.model.contentProvider.fileprovider"
+		        		android:exported="false"
+		        		android:grantUriPermissions="true">
+		        		<meta-data
+		        			android:name="android.support.FILE_PROVIDER_PATHS"
+		        			android:resource="@xml/file_provider_paths"></meta-data>
+		        	</provider>
 					<activity
 			            android:name=".StartActivity"
 			            android:label="@string/app_name" >

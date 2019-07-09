@@ -99,6 +99,8 @@ class EntityGen {
 				«ELSEIF element.type instanceof TimeType»
 					@Expose
 					@DatabaseField(columnName = "«element.name.toFirstLower»", dataType = DataType.DATE_STRING, format = "HH:mm:ss")
+				«ELSEIF element.type instanceof FileType»
+					// TODO database storage not yet implemented
 				«ELSE»
 					@Expose
 					@DatabaseField(columnName = "«element.name.toFirstLower»")
@@ -161,8 +163,6 @@ class EntityGen {
 					case "«element.name»": 
 					«IF element.type instanceof ReferencedType»
 						set«element.name.toFirstUpper»((«getMd2TypeStringForAttributeType(element.type)») md2Type);
-					«ELSEIF element.type instanceof DateType»
-						set«element.name.toFirstUpper»(((«getMd2TypeStringForAttributeType(element.type)») md2Type).getPlatformValue());
 					«ELSE»
 						set«element.name.toFirstUpper»(((«getMd2TypeStringForAttributeType(element.type)») md2Type).getPlatformValue());
 					«ENDIF»
@@ -369,7 +369,7 @@ class EntityGen {
 			TimeType: "Md2Time"
 			DateTimeType: "Md2DateTime"	
 			SensorType: "Md2Float"	
-			FileType: "Object" // TODO not implemented
+			FileType: "Md2File"
 		}		
 	}
 	
@@ -389,7 +389,7 @@ class EntityGen {
 			DateTimeType: if(forDatabase) "Date" else "Calendar"	
 			
 			SensorType: "Float"		
-			FileType: "Object" // TODO not implemented
+			FileType: "byte[]"
 		}
 	}
 }

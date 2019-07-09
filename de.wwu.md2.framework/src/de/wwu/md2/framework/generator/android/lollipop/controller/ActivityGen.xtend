@@ -18,6 +18,7 @@ import de.wwu.md2.framework.mD2.ViewElementType
 import de.wwu.md2.framework.mD2.ViewFrame
 import de.wwu.md2.framework.mD2.ViewGUIElementReference
 import de.wwu.md2.framework.mD2.WorkflowElementReference
+import de.wwu.md2.framework.mD2.Image
 
 class ActivityGen {
 	
@@ -261,6 +262,9 @@ class ActivityGen {
 		«MD2AndroidUtil.generateImportAllWidgets»
 		«MD2AndroidUtil.generateImportAllTypes»
 		«MD2AndroidUtil.generateImportAllEventHandler»
+		import android.widget.ImageView; // For camera actions
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2CameraAction;
+		
 				
 		public class «frame.name.toFirstUpper»Activity extends Activity {
 		
@@ -275,25 +279,25 @@ class ActivityGen {
 		        «ENDFOR»
 
 		        «IF (frame.elements.filter(ListView).length > 0)»
-				wrv = (RecyclerView) findViewById(R.id.recycler_view_«frame.name»);
-				
-				final LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-				layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-				wrv.setLayoutManager(layoutManager);
-				        
-				«frame.name.toFirstUpper»ListAdapter listAdapter = new «frame.name.toFirstUpper»ListAdapter();
-				wrv.setAdapter(listAdapter);
-				   	
-				wrv.addItemDecoration(new DividerItemDecoration(
-					wrv.getContext(),
-				   	layoutManager.getOrientation()
-				));
-				wrv.setItemAnimator(new DefaultItemAnimator());
+		        wrv = (RecyclerView) findViewById(R.id.recycler_view_«frame.name»);
+		        
+		        final LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+		        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+		        wrv.setLayoutManager(layoutManager);
+		        
+		        «frame.name.toFirstUpper»ListAdapter listAdapter = new «frame.name.toFirstUpper»ListAdapter();
+		        wrv.setAdapter(listAdapter);
+		        
+		        wrv.addItemDecoration(new DividerItemDecoration(
+		        	wrv.getContext(),
+		        	layoutManager.getOrientation()
+		        ));
+		        wrv.setItemAnimator(new DefaultItemAnimator());
 				«ENDIF»
 			}
-
-	    //HardwareSensoren
-		«generateSensorDef(entities)»
+		
+			//HardwareSensoren
+			«generateSensorDef(entities)»
 		
 		    @Override
 		    protected void onStart(){
@@ -323,6 +327,21 @@ class ActivityGen {
 				// go back to start screen
 				Md2ViewManager.getInstance().goTo(getString(R.string.StartActivity));
 			}
+			
+			«IF (frame.elements.filter(Image).size() > 0)»
+			@Override
+			protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+				// Check which request we're responding to
+				if (requestCode == Md2CameraAction.REQUEST_TAKE_PHOTO) {
+					// Make sure the request was successful
+					if (resultCode == Activity.RESULT_OK) {
+						// The user picked a photo.
+						ImageView imageView = (ImageView) findViewById(R.id.«MD2AndroidUtil.getQualifiedNameAsString(frame.elements.filter(Image).head, "_")»);
+						Md2CameraAction.callback(imageView);
+					}
+				}
+			}
+			«ENDIF»
 		}
 	'''
 	

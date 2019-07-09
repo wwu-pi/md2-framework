@@ -44,6 +44,7 @@ class ValueGen {
 		<!-- generated in de.wwu.md2.framework.generator.android.lollipop.view.Values.generateStringsXml() -->
 		<resources>
 			<string name="app_name">«app.appName»</string>
+			<string name="picture_content_description">Camera capture preview</string>
 			«FOR frame : frames»
 				<string name="title_activity_«frame.name.toFirstLower»">«frame.title»</string>
 			«ENDFOR»
@@ -140,5 +141,26 @@ class ValueGen {
 			<color name="foreground_material_light">#ff0909</color>
 			<color name="white">#ffffff</color>
 		</resources>
+	'''
+	
+	def static String generatePathsXml() '''
+		<?xml version="1.0" encoding="utf-8"?>
+		<paths>
+		    <external-path
+		        name="external"
+		        path="." />
+		    <external-files-path
+		        name="external_files"
+		        path="." />
+		    <cache-path
+		        name="cache"
+		        path="." />
+		    <external-cache-path
+		        name="external_cache"
+		        path="." />
+		    <files-path
+		        name="files"
+		        path="." />
+		</paths>
 	'''
 }

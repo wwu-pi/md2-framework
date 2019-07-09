@@ -59,10 +59,13 @@ class MD2AndroidUtil {
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Time;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2Sensor;
 		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2List;
+		import «Settings.MD2LIBRARY_PACKAGE»model.type.implementation.Md2File;
+		import java.io.File;
 	'''
 	
 	def static String generateImportAllActions()'''
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.AbstractMd2Action;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2CameraAction;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderOperationAction;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderOperations;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderResetAction;
@@ -71,8 +74,11 @@ class MD2AndroidUtil {
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2GoToViewAction;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2SynchronizeContentProviderDataMappingAction;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2SynchronizeWidgetDataMappingAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderAddAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderRemoveActiveAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderGetActiveAction;
+		import «Settings.MD2LIBRARY_PACKAGE»controller.action.implementation.Md2ContentProviderResetLocalAction;
 		import «Settings.MD2LIBRARY_PACKAGE»controller.action.interfaces.Md2Action;
-		
 	'''
 	
 	def static String generateImportAllEventHandler()'''

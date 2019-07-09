@@ -36,6 +36,7 @@ import org.w3c.dom.Document
 import org.w3c.dom.Element
 
 import static extension de.wwu.md2.framework.generator.util.MD2GeneratorUtil.*
+import de.wwu.md2.framework.mD2.Image
 
 class LayoutGen {
 	
@@ -253,6 +254,9 @@ class LayoutGen {
 			}
 			ListView: {
 				newElement = createListViewElement(doc, viewElement)
+			}
+			Image: {
+				newElement = createImageElement(doc, viewElement)
 			}
 			default:
 				return
@@ -548,6 +552,38 @@ class LayoutGen {
 		//listElement.setAttribute("tools:context", mainPackage + "." + frame.name + "Activity")
 
 		return listElement
+	}
+	
+	protected static def createImageElement(Document doc, Image image) {
+		val imageElement = doc.createElement(Settings.MD2LIBRARY_VIEW_IMAGE)
+		val qnp = new DefaultDeclarativeQualifiedNameProvider
+		val qualifiedName = qnp.getFullyQualifiedName(image).toString("_")
+
+		// id
+		imageElement.setAttribute("android:id", "@id/" + qualifiedName)
+
+		// height and width
+		if(image.width <= 0){
+			imageElement.setAttribute("android:layout_width", "match_parent")
+		}else{
+			imageElement.setAttribute("android:layout_width", "0dp")
+			imageElement.setAttribute("android:layout_columnWeight", String.valueOf(image.width))
+		}
+		
+		imageElement.setAttribute("android:layout_height", "wrap_content")
+		imageElement.setAttribute("android:adjustViewBounds", "true")
+		imageElement.setAttribute("android:layout_marginBottom", elementMarginBottom)
+		imageElement.setAttribute("android:background", "#9B9B9B")
+		imageElement.setAttribute("android:contentDescription", "@string/picture_content_description")
+		imageElement.setAttribute("android:scaleType", "fitCenter")
+		imageElement.setAttribute("android:maxHeight", "400dp")
+		
+		// style
+//		if(!image?.style?.body?.icon.nullOrEmpty){
+//			imageElement.setAttribute("android:drawableLeft", "@md2library:drawable/" + image.style.body.icon + "_black")
+//		}
+
+		return imageElement
 	}
 	
 	protected static def createSpacerElement(Document doc, Spacer spacer) {
