@@ -83,8 +83,10 @@ class EntityGen {
 				«var boolean b = foreinReferences.add(new ForeignObject(entity.name, element.name, getMd2TypeStringForAttributeType(element.type)))»
 			«ELSE»
 				«IF element.type instanceof ReferencedType && (element.type as ReferencedType).element instanceof Entity»
+					@Expose
 					@DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
 				«ELSEIF element.type instanceof ReferencedType && (element.type as ReferencedType).element instanceof Enum»
+					@Expose
 					@DatabaseField(canBeNull = true, foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
 				«ELSEIF element.type instanceof DateType»
 					@Expose
@@ -96,7 +98,8 @@ class EntityGen {
 					@Expose
 					@DatabaseField(columnName = "«element.name.toFirstLower»", dataType = DataType.DATE_STRING, format = "HH:mm:ss")
 				«ELSEIF element.type instanceof FileType»
-					// TODO database storage not yet implemented
+					@Expose
+					@DatabaseField(dataType = DataType.BYTE_ARRAY)
 				«ELSE»
 					@Expose
 					@DatabaseField(columnName = "«element.name.toFirstLower»")
