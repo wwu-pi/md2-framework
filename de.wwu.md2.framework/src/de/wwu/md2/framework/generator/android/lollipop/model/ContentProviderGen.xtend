@@ -78,51 +78,6 @@ class ContentProviderGen {
 			}
 			
 			@Override
-			public String getKey() {
-				return this.key;
-			}
-			
-			@Override
-			protected long getInternalId() {
-				return this.internalId;
-			}
-			
-			@Override
-			protected void setInternalId(long internalId) {
-				this.internalId = internalId;
-			}
-			@Override
-			
-			public Md2Entity getContent() {
-				return this.content;
-			}
-			
-			@Override
-			public void setContent(Md2Entity content) {
-				if(content != null) {
-					this.content = content;
-					this.backup = (Md2Entity)content.clone();
-					this.internalId = -1L;
-					this.load();
-				}
-			}
-			
-			@Override
-			public void registerAttributeOnChangeHandler(String attribute, Md2OnAttributeChangedHandler onAttributeChangedHandler) {
-				this.attributeChangedEventHandlers.put(attribute, onAttributeChangedHandler);
-			}
-			
-			@Override
-			public void unregisterAttributeOnChangeHandler(String attribute) {
-				this.attributeChangedEventHandlers.remove(attribute);
-			}
-			
-			@Override
-			public Md2OnAttributeChangedHandler getOnAttributeChangedHandler(String attribute) {
-				return (Md2OnAttributeChangedHandler)this.attributeChangedEventHandlers.get(attribute);
-			}
-			
-			@Override
 			public Md2Type getValue(String attribute) {			
 				switch (attribute){
 					«FOR attribute: (content.entity as Entity).attributes»			
@@ -217,10 +172,6 @@ class ContentProviderGen {
 				}
 			}
 			
-			public void reset(){ 
-			   newEntity();
-			}
-			
 			@Override
 			public void load() {
 				«IF contentProvider.filter && contentProvider.filterType !== FilterType.ALL»
@@ -230,49 +181,23 @@ class ContentProviderGen {
 				«ENDIF»
 				
 				super.load();
-				
-			//	if(!(this.content == null | this.md2DataStore == null)) {
-			//		if(this.content.getId() > 0L) {
-			//			this.existsInDataStore = true;
-			//			this.internalId = this.content.getId();
-			//		} else {
-			//			long id = -1;
-			//			this.md2DataStore.getInternalId(this.content);
-			//			if(id == -1L) {
-			//				this.existsInDataStore = false;
-			//				this.internalId = -1L;
-			//			} else {
-			//				this.existsInDataStore = true;
-			//				this.internalId = id;
-			//				this.content.setId(id);
-			//			}
-			//		}
-			//	}
 			}
 			
 			@Override
 			public void save() {
 				if(this.content != null && this.md2DataStore != null) {
-					if(this.existsInDataStore) {
-						this.md2DataStore.put(this.internalId, this.content);
-					} else {
-						long newId = 0;
+			//		if(this.existsInDataStore) {
+			//			this.md2DataStore.put(this.internalId, this.content);
+			//		} else {
+			//			long newId = 0;
 						this.md2DataStore.put(this.content);
-						if(newId > 0L) {
-							this.existsInDataStore = true;
-							this.internalId = newId;
-						}
-					}
+			//			if(newId > 0L) {
+			//				this.existsInDataStore = true;
+			//				this.internalId = newId;
+			//			}
+			//		}
 		
-					this.backup = (Md2Entity)this.content.clone();
-				}
-			}
-			
-			@Override
-			public void remove() {
-				if(this.content != null && this.md2DataStore != null) {
-					this.md2DataStore.remove(this.internalId, this.content.getClass());
-					this.internalId = -1L;
+			//		this.backup = (Md2Entity)this.content.clone();
 				}
 			}
 			
@@ -280,11 +205,7 @@ class ContentProviderGen {
 			public void newEntity(){
 				content = new «(content.entity as Entity).name»();
 			}
-«««						public void update() {
-«««				System.out.println("single wurde geupdated");			
-«««						}
 		}
-		
 	'''
 		
 	private def static generateMultiContentProvider(String mainPackage, ContentProvider contentProvider) '''
